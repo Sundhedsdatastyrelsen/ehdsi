@@ -1,0 +1,51 @@
+version: '3.5'
+
+#
+# Network definitions
+#
+networks:
+  epps-backend:
+
+services:
+  #
+  # epps-backend
+  #
+  epps-backend:
+    image: eclipse-temurin:17-jre-alpine
+    command: sh /setup/run-in-container.sh /code/epps-application.jar
+    container_name: epps-backend-application
+    ports:
+      - "4000:4000"
+      - "8080:8080"
+    environment:
+      - "JAVA_DEBUG=${JAVA_DEBUG:-}"
+      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
+      - "SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb-server/epps"
+      - "SPRING_DATASOURCE_USERNAME=epps"
+      - "SPRING_DATASOURCE_PASSWORD=epps"
+    volumes:
+      - ./epps-application/target/epps-application.jar:/code/epps-application.jar:ro
+      - ./epps-application/src/main/scripts/:/setup/:ro
+    links:
+      - mariadb-server:mariadb-server
+    depends_on:
+      - mariadb-server
+    networks:
+      - epps-backend
+
+  #
+  # Database
+  #
+  mariadb-server:
+    image: mariadb:11.1
+    restart: always
+    container_name: epps-backend-database
+    ports:
+      - "3306:3306"
+    environment:
+      - "MARIADB_ROOT_PASSWORD=7b1c3deda5144f99a6973f462215b8cd"
+      - "MARIADB_USER=epps"
+      - "MARIADB_PASSWORD=epps"
+      - "MARIADB_DATABASE=epps"
+    networks:
+      - epps-backend
