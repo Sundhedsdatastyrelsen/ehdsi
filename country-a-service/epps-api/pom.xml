@@ -35,11 +35,14 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>jakarta.xml.ws</groupId>
+			<artifactId>jakarta.xml.ws-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<!--
 			<plugin>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-maven-plugin</artifactId>
@@ -51,16 +54,14 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>dk.nsp.epps.api.generated.ws</packageName>
 					<wsdlUrls>
-						<wsdlUrl>./src/main/resources/MedicineCard_2015_06_01_E2.wsdl</wsdlUrl>
+						<wsdlUrl>./src/main/resources/wsdl/fmk/MedicineCard-inline_2015_06_01_E6.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>
 					<extension>true</extension>
 				</configuration>
 			</plugin>
-			-->
 		</plugins>
 	</build>
 </project>
