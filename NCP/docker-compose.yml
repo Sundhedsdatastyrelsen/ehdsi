@@ -1,0 +1,40 @@
+version: '3.5'
+
+#
+# Network definitions
+#
+networks:
+  opennpc:
+
+services:
+  #
+  # Tomcat for NCP-A (inbound protocol terminator):
+  #
+  tomcat-ncp-a:
+    build: ./ncp-a
+    container_name: opennpc-ncp-a
+    volumes:
+      # Tomcat configuration:
+      - ./ncp-a/conf/server.xml:/usr/local/tomcat/conf/server.xml:ro
+    depends_on:
+      - mariadb-server
+    ports:
+      - "8080:8080"
+    networks:
+      - opennpc
+
+  #
+  # Database
+  #
+  mariadb-server:
+    image: mariadb:11.1
+    restart: always
+    container_name: opennpc-database
+    ports:
+      - "33306:3306"
+    environment:
+      - "MARIADB_ROOT_PASSWORD=verys3cret"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - opennpc
