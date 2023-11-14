@@ -4,37 +4,72 @@ version: '3.5'
 # Network definitions
 #
 networks:
-  opennpc:
+  ncp:
+
+volumes:
+  db-data:
+
+secrets:
+  db_username:
+    file: db_username.txt
+  db_password:
+    file: db_password.txt
+  db_root_password:
+    file: db_root_password.txt
+  cts_password:
+    file: cts_password.txt
+  cts_username:
+    file: cts_username.txt
+  tls_password:
+    file: tls_password.txt
 
 services:
   #
-  # Tomcat for NCP-A (inbound protocol terminator):
-  #
-  tomcat-ncp-a:
-    build: ./ncp-a
-    container_name: opennpc-ncp-a
-    volumes:
-      # Tomcat configuration:
-      - ./ncp-a/conf/server.xml:/usr/local/tomcat/conf/server.xml:ro
-    depends_on:
-      - mariadb-server
-    ports:
-      - "8080:8080"
-    networks:
-      - opennpc
-
-  #
   # Database
   #
-  mariadb-server:
+  mariadb:
     image: mariadb:11.1
-    restart: always
-    container_name: opennpc-database
+    restart: on-failure
+    container_name: openncp-database
     ports:
       - "33306:3306"
     environment:
-      - "MARIADB_ROOT_PASSWORD=verys3cret"
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MARIADB_USER_FILE: /run/secrets/db_username
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./mariadb/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+      - ./mariadb/init-scripts:/docker-entrypoint-initdb.d-original:ro
+      - db-data:/var/lib/mysql
+      - ./logs/mysql:/var/log/mysql
+    entrypoint: /usr/local/bin/entrypoint.sh
+    secrets:
+      - db_username
+      - db_password
+      - db_root_password
     networks:
-      - opennpc
+      - ncp
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # #
+  # # Tomcat for NCP-A (inbound protocol terminator):
+  # #
+  # tomcat-ncp-a:
+  #   build: ./ncp-a
+  #   container_name: openncp-ncp-a
+  #   volumes:
+  #     # Tomcat configuration:
+  #     - ./ncp-a/conf/server.xml:/usr/local/tomcat/conf/server.xml:ro
+  #     - ./openncp-configuration:/opt/openncp-configuration:ro
+  #   environment:
+  #     - EPSOS_PROPS_PATH=/opt/openncp-configuration/
+  #   depends_on:
+  #     - mariadb-server
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - ncp

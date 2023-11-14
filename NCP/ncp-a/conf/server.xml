@@ -47,17 +47,17 @@
     <!-- OpenNCP database connection pool configuration: -->
     <Resource name="jdbc/ConfMgr" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
               minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="org.mariadb.jdbc.MariaDbDataSource"
-              dataSource.url="jdbc:mariadb://mariadb-server:3306/ehealth_properties?useSSL=false"
+              dataSource.url="jdbc:mariadb://mariadb:3306/ehealth_properties?useSSL=false"
               dataSource.user="myUsername" dataSource.password="myPassword" />
 
     <Resource name="jdbc/OPEN_ATNA" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
               minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="org.mariadb.jdbc.MariaDbDataSource"
-              dataSource.url="jdbc:mariadb://mariadb-server:3306/ehealth_atna?useSSL=false"
+              dataSource.url="jdbc:mariadb://mariadb:3306/ehealth_atna?useSSL=false"
               dataSource.user="myUsername" dataSource.password="myPassword" />
 
     <Resource name="jdbc/EADC" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
               minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="org.mariadb.jdbc.MariaDbDataSource"
-              dataSource.url="jdbc:mariadb://mariadb-server:3306/ehealth_eadc?useSSL=false"
+              dataSource.url="jdbc:mariadb://mariadb:3306/ehealth_eadc?useSSL=false"
               dataSource.user="myUsername" dataSource.password="myPassword" />
 
   </GlobalNamingResources>
