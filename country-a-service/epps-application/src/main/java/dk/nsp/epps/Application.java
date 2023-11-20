@@ -33,7 +33,7 @@ public class Application {
     }
 
     /**
-     * DatabaseStartupValidator will wait for a successfull database connection before the rest of the application starts.
+     * DatabaseStartupValidator will wait for a successful database connection before the rest of the application starts.
      */
     @Bean
     public DatabaseStartupValidator databaseStartupValidator(DataSource dataSource) {
