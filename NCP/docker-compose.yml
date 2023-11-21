@@ -22,6 +22,8 @@ secrets:
     file: cts_username.txt
   tls_password:
     file: tls_password.txt
+  truststore_password:
+    file: truststore_password.txt
 
 services:
   #
@@ -54,6 +56,40 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  openncp-configuration-utility:
+    build:
+      context: .
+      dockerfile: ./openncp-configuration-utility/Dockerfile
+      args:
+        openncp_version: ${OPENNCP_VERSION}
+    container_name: openncp-configuration-utility
+    image: openncp-configuration-utility:${OPENNCP_VERSION}
+    volumes:
+      - ./openncp-configuration:/opt/openncp-configuration/
+    environment:
+      RUN_TSAM: ${RUN_TSAM}
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      LOAD_PROPERTIES: ${LOAD_PROPERTIES}
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      MARIADB_USERNAME_FILE: /run/secrets/db_username
+      CTS_PASSWORD_FILE: /run/secrets/cts_password
+      CTS_USERNAME_FILE: /run/secrets/cts_username
+      TLS_PASSWORD_FILE: /run/secrets/tls_password
+      TRUSTSTORE_PASSWORD_FILE: /run/secrets/truststore_password
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - ncp
+    secrets:
+      - db_password
+      - db_username
+      - cts_password
+      - cts_username
+      - tls_password
+      - truststore_password
 
   # #
   # # Tomcat for NCP-A (inbound protocol terminator):

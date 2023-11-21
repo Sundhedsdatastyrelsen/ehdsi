@@ -1,0 +1,27 @@
+debug: false
+logging:
+  level:
+     org.hibernate: ERROR
+     org.springframework.web.client: DEBUG
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+    generate-ddl: true
+    hibernate:
+      naming:
+        physical_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
+  datasource:
+    url: jdbc:mysql://${MARIADB_HOST}:${MARIADB_PORT}/ehealth_properties?useSSL=false
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+openncp:
+  property-file:
+    path: /opt/openncp-configuration/openncp-configuration.properties
+profiles:
+   active: mysql

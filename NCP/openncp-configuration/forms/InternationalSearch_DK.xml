@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<patientSearch>
+   <!-- min and max -1 means no length check -->
+   <!-- id format="LLLLLLNNLNNLNNNL" means 'L'etter 'N'umber -->
+   <!-- validation contains the fields which are mandatory -->
+   <!-- more then one validation means or -->
+   <!-- only one input field no validation necessary because minimum value which has to be filled out is 1 -->
+   <country code="DK">
+      <searchFields>
+         <id label="patient.data.unique.identifier" min="-1" max="-1" domain="2.16.17.710.802.1000.990.1" />
+      </searchFields>
+   </country>
+</patientSearch>

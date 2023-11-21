@@ -6,6 +6,15 @@ set -o pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+ENV_FILE_CONTENT="$(cat << EOF
+RUN_TSAM="true"
+LOAD_PROPERTIES="true"
+MARIADB_HOST="mariadb"
+MARIADB_PORT="3306"
+OPENNCP_VERSION="7.0.0"
+EOF
+)"
+
 error_exit() {
   echo "$1" >&2
   exit 1
@@ -34,6 +43,8 @@ initialize_secrets() {
   initialize_file "$SCRIPT_DIR/cts_username.txt" "ncpeh@dk"
   initialize_file "$SCRIPT_DIR/cts_password.txt" "<password for the central terminology service - ask someone>"
   initialize_file "$SCRIPT_DIR/tls_password.txt" "ncptestis"
+  initialize_file "$SCRIPT_DIR/truststore_password.txt" "changeit"
+  initialize_file "$SCRIPT_DIR/.env" "${ENV_FILE_CONTENT}"
 }
 
 init() {
@@ -52,6 +63,7 @@ else
       docker compose down --remove-orphans --volumes
       ;;
     up)
+      init
       docker compose up --build
       ;;
     -h|--help)

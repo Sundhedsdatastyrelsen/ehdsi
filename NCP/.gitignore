@@ -1,3 +1,6 @@
+/openncp-configuration/EpsosRepository
+
+/.env
 /db_password.txt
 /db_username.txt
 /db_root_password.txt
@@ -5,4 +8,5 @@
 /cts_username.txt
 /cts_password.txt
 /tls_password.txt
+/truststore_password.txt
 hs_err_pid*

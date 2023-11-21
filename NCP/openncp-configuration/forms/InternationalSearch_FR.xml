@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ism:searchFields xmlns:ism="http://ec.europa.eu/sante/ehncp/ism"
+                  xmlns="http://docs.oasis-open.org/bdxr/ns/SMP/2016/05"
+                  xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
+   <ism:id domain="2.16.17.710.790.1000.990.1"
+           label="patient.data.ins"
+           max="-1"
+           min="-1"/>
+      </ism:searchFields>
