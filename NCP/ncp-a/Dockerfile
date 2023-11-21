@@ -12,7 +12,8 @@ RUN download_maven_artifact com.zaxxer HikariCP 4.0.3 && \
     download_maven_artifact org.mariadb.jdbc mariadb-java-client 3.2.0
 
 # Download main artifact
-RUN download_maven_artifact eu.europa.ec.sante.ehdsi.openncp-protocol-terminators.openncp-ncp-server \
+RUN download_maven_artifact \
+    eu.europa.ec.sante.ehdsi.openncp-protocol-terminators.openncp-ncp-server \
     openncp-ws-server \
     ${openncp_version} \
     war \
