@@ -20,10 +20,10 @@ secrets:
     file: cts_password.txt
   cts_username:
     file: cts_username.txt
-  tls_password:
-    file: tls_password.txt
-  truststore_password:
-    file: truststore_password.txt
+  tls_keystore_password:
+    file: tls_keystore_password.txt
+  tls_truststore_password:
+    file: tls_truststore_password.txt
 
 services:
   #
@@ -76,8 +76,9 @@ services:
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       CTS_PASSWORD_FILE: /run/secrets/cts_password
       CTS_USERNAME_FILE: /run/secrets/cts_username
-      TLS_PASSWORD_FILE: /run/secrets/tls_password
-      TRUSTSTORE_PASSWORD_FILE: /run/secrets/truststore_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
+      TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
+      TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
     depends_on:
       mariadb:
         condition: service_healthy
@@ -88,24 +89,43 @@ services:
       - db_username
       - cts_password
       - cts_username
-      - tls_password
-      - truststore_password
+      - tls_keystore_password
+      - tls_truststore_password
 
-  # #
-  # # Tomcat for NCP-A (inbound protocol terminator):
-  # #
-  # tomcat-ncp-a:
-  #   build: ./ncp-a
-  #   container_name: openncp-ncp-a
-  #   volumes:
-  #     # Tomcat configuration:
-  #     - ./ncp-a/conf/server.xml:/usr/local/tomcat/conf/server.xml:ro
-  #     - ./openncp-configuration:/opt/openncp-configuration:ro
-  #   environment:
-  #     - EPSOS_PROPS_PATH=/opt/openncp-configuration/
-  #   depends_on:
-  #     - mariadb-server
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - ncp
+  #
+  # NCP server / inbound protocol terminator
+  #
+  openncp-server:
+    build:
+      context: ./
+      dockerfile: ./openncp-server/Dockerfile
+      args:
+        openncp_version: ${OPENNCP_VERSION}
+    container_name: openncp-server
+    image: openncp-server:${OPENNCP_VERSION}
+    ports:
+      - "6443:6443"
+      - "8080:8080"
+    depends_on:
+      - mariadb
+      - openncp-configuration-utility
+    environment:
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_USERNAME_FILE: /run/secrets/db_username
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
+      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
+      TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
+      TLS_TRUSTSTORE_FILE: /opt/openncp-configuration/cert/bootcamp-truststore.jks
+      TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
+    volumes:
+      - ./openncp-configuration:/opt/openncp-configuration
+      - ./logs/openncp-server:/usr/local/tomcat/logs
+    networks:
+      - ncp
+    secrets:
+      - db_password
+      - db_username
+      - tls_keystore_password
+      - tls_truststore_password
