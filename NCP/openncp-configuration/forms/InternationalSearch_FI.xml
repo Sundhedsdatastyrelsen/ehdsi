@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchFields xmlns:ism="http://ec.europa.eu/sante/ehncp/ism">
+   <!-- min and max -1 means no length check -->
+   <!-- id format="LLLLLLNNLNNLNNNL" means 'L'etter 'N'umber -->
+   <!-- validation contains the fields which are mandatory -->
+   <!-- more then one validation means or -->
+   <!-- only one input field no validation necessary because minimum value which has to be filled out is 1 -->
+   <country code="FI" label="label.ism.addressCountry" friendlyName="Personal number (Henkilötunnus)">
+      <patientSearch friendlyName="Patient Identity Trait" scope="ALL">
+         <identifier type="NORMAL">
+            <id domain="1.2.246.556.12001.4.1000.990.1" label="label.ism.nationalSocialSecurityNumber" contextualDescription="nationalSocialSecurityNumber" format="\d{11}[0-9]"/>
+         </identifier>
+      </patientSearch>
+   </country>
+</searchFields>

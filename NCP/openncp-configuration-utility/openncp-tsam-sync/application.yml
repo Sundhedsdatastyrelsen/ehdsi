@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: mysql
+  datasource:
+    url: jdbc:mysql://${MARIADB_HOST}:${MARIADB_PORT}/ehealth_ltrdb?useSSL=false
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+tsam-sync:
+  database:
+    backup: false
+  pageable:
+    default-page-size: 250
+  cts:
+    url: https://webgate.training.ec.europa.eu/ehealth-term-server
+    username: ${CTS_USERNAME}
+    password: ${CTS_PASSWORD}

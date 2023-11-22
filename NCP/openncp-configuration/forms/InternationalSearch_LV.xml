@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchFields xmlns="http://ec.europa.eu/sante/ehncp/ism"
+              xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
+   <country code="LV"
+            friendlyName="person identifier"
+            label="label.ism.nationalPersonIdentifier">
+      <patientSearch friendlyName="patient search" scope="ALL">
+         <identifier type="NORMAL">
+            <id contextualDescription="person identifier"
+                domain="2.16.17.710.816.1000.990.1"
+                format="[0-9]{6}-[0-9]{5}"
+                label="label.ism.nationalPersonIdentifier"
+                mandatory="true"/>
+			      </identifier>
+		    </patientSearch>
+	  </country>
+</searchFields>
