@@ -129,3 +129,40 @@ services:
       - db_username
       - tls_keystore_password
       - tls_truststore_password
+
+  #
+  # Gateway, TRC-STS, OpenATNA
+  #
+  openncp-gateway:
+    build:
+      context: ./
+      dockerfile: ./openncp-gateway/Dockerfile
+      args:
+        openncp_version: ${OPENNCP_VERSION}
+    container_name: openncp-gateway
+    image: openncp-gateway:${OPENNCP_VERSION}
+    ports:
+      - "8443:8443"
+      - "8082:8082"
+      - "2861:2861"
+    depends_on:
+      - mariadb
+      - openncp-configuration-utility
+    environment:
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_USERNAME_FILE: /run/secrets/db_username
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
+      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
+      TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
+    volumes:
+      - ./openncp-configuration:/opt/openncp-configuration
+      - ./logs/openncp-gateway:/usr/local/tomcat/logs
+      - ./logs/validation/gateway:/opt/openncp-configuration/validation
+    networks:
+      - ncp
+    secrets:
+      - db_password
+      - db_username
+      - tls_keystore_password

@@ -1,4 +1,5 @@
 /openncp-configuration/EpsosRepository
+/logs
 
 /.env
 /db_password.txt

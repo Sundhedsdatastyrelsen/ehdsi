@@ -30,7 +30,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MariaDBDialect
   jackson:
     default-property-inclusion: non_empty
   mail:
@@ -56,7 +56,7 @@ application:
   mail:
     from: sante-ehealth-dsi-support@ec.europa.eu
   portal:
-    base-url: https://10.5.0.6:8443/openncp-gateway
+    base-url: https://openncp-gateway:8443/openncp-gateway
   security:
     jwt:
       secret: S7U418zVNeAIRmznNyNQec7eimPD0qEv
