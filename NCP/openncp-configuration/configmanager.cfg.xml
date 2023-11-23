@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MariaDBDialect</property>
         <!--property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property-->
         <property name="connection.datasource">java:comp/env/jdbc/ConfMgr</property>
         <!-- Echo all executed SQL to stdout -->
@@ -11,7 +11,7 @@
         <property name="current_session_context_class">thread</property>
         <!-- Disable the second-level cache  -->
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
-        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.hbm2ddl.auto">validate</property>
         <mapping class="eu.europa.ec.sante.ehdsi.openncp.configmanager.domain.Property"/>
     </session-factory>
 </hibernate-configuration>

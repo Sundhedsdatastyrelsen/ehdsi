@@ -12,6 +12,7 @@ LOAD_PROPERTIES="true"
 MARIADB_HOST="mariadb"
 MARIADB_PORT="3306"
 OPENNCP_VERSION="7.0.0"
+TLS_KEYSTORE_ALIAS=ncptestis
 EOF
 )"
 
@@ -42,8 +43,8 @@ initialize_secrets() {
   initialize_file "$SCRIPT_DIR/db_root_password.txt" "s3cret"
   initialize_file "$SCRIPT_DIR/cts_username.txt" "ncpeh@dk"
   initialize_file "$SCRIPT_DIR/cts_password.txt" "<password for the central terminology service - ask someone>"
-  initialize_file "$SCRIPT_DIR/tls_password.txt" "ncptestis"
-  initialize_file "$SCRIPT_DIR/truststore_password.txt" "changeit"
+  initialize_file "$SCRIPT_DIR/tls_keystore_password.txt" "ncptestis"
+  initialize_file "$SCRIPT_DIR/tls_truststore_password.txt" "changeit"
   initialize_file "$SCRIPT_DIR/.env" "${ENV_FILE_CONTENT}"
 }
 

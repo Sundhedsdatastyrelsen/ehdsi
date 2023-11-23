@@ -1,9 +1,9 @@
 FROM tomcat:9.0-jdk11-temurin
 
-ARG openncp_version="6.5.0"
+ARG openncp_version
 ARG openncp_repo="https://code.europa.eu/api/v4/projects/347/packages/maven/"
 
-COPY ./bin/download_maven_artifact /usr/local/bin/download_maven_artifact
+COPY ./common/bin/download_maven_artifact /usr/local/bin/download_maven_artifact
 
 # Download JAR dependencies
 RUN download_maven_artifact com.zaxxer HikariCP 4.0.3 && \
@@ -19,3 +19,13 @@ RUN download_maven_artifact \
     war \
     ${openncp_repo} \
     webapps/openncp-ws-server.war
+
+COPY ./openncp-server/server.xml conf/server.xml
+COPY ./openncp-server/context.xml conf/context.xml
+COPY ./openncp-server/setenv.sh bin/setenv.sh
+
+ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
+ENV LOGGING_LEVEL_ROOT=INFO
+
+EXPOSE 8080
+EXPOSE 6443
