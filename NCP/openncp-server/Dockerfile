@@ -20,6 +20,17 @@ RUN download_maven_artifact \
     ${openncp_repo} \
     webapps/openncp-ws-server.war
 
+# Unpack the war to allow us to patch the internal configuration files
+RUN mkdir -p webapps/openncp-ws-server && \
+    cd webapps/openncp-ws-server && \
+    jar -xf ../openncp-ws-server.war && \
+    rm ../openncp-ws-server.war
+
+# Patch the Axis2 configuration with the correct port number:
+RUN sed -i \
+    's/<parameter name="port">8443<\/parameter>/<parameter name="port">6443<\/parameter>/g' \
+    webapps/openncp-ws-server/WEB-INF/conf/axis2.xml
+
 COPY ./openncp-server/server.xml conf/server.xml
 COPY ./openncp-server/context.xml conf/context.xml
 COPY ./openncp-server/setenv.sh bin/setenv.sh
