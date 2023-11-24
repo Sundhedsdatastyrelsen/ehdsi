@@ -7,17 +7,17 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>ePrescriptionPoC - API Root</name>
+	<name>ePrescriptionPoC - Mocks Root</name>
 	<groupId>dk.nsp.epps</groupId>
-	<artifactId>epps-api-root</artifactId>
+	<artifactId>epps-mocks-root</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<description>ePrescriptionPoC - API Root</description>
+	<description>ePrescriptionPoC - Mocks Root</description>
 
 	<modules>
-		<module>epps-ncp-api</module>
-		<module>epps-fmk-api</module>
+		<module>epps-fmk-mock-data</module>
+		<module>epps-fmk-mock</module>
 	</modules>
 
 </project>

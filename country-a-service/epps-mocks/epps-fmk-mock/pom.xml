@@ -3,26 +3,22 @@
 
 	<parent>
 		<groupId>dk.nsp.epps</groupId>
-		<artifactId>epps-root</artifactId>
+		<artifactId>epps-mocks-root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>ePrescriptionPoC - SpringBoot Application</name>
+	<name>ePrescriptionPoC - FMK Mock Application</name>
 	<groupId>dk.nsp.epps</groupId>
-	<artifactId>epps-application</artifactId>
+	<artifactId>epps-fmk-mock</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<description>ePrescriptionPoC - SpringBoot App</description>
+	<description>ePrescriptionPoC - FMK Mock Application</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>dk.nsp.epps</groupId>
-			<artifactId>epps-service</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>dk.nsp.epps</groupId>
-			<artifactId>epps-persistence</artifactId>
+			<artifactId>epps-fmk-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -40,6 +36,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 		<dependency>
@@ -51,12 +51,8 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
+			<groupId>dk.nsp.epps</groupId>
+			<artifactId>epps-fmk-mock-data</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -86,10 +82,10 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>dk.nsp.epps</groupId>
-									<artifactId>epps-application</artifactId>
+									<artifactId>epps-fmk-mock</artifactId>
 									<version>${project.version}</version>
 									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>epps-application.jar</destFileName>
+									<destFileName>epps-fmk-mock.jar</destFileName>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

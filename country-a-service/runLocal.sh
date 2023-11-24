@@ -90,6 +90,10 @@ while [[ $# -gt 0 ]]; do
 			echo -e "\n\e[1;33m* Starting database and pgweb\e[0m\n"
 			$compose --file docker-compose.local.yml up -d mariadb-server
 		;;
+		startmocks)
+			echo -e "\n\e[1;33m* Starting database and pgweb\e[0m\n"
+			$compose --file docker-compose.local.yml up -d epps-fmk-mock
+		;;
 		*)
 			echo "Unknown arguments: $option"
 			echo "Usage: $0 build|start|logs|stop|refresh"

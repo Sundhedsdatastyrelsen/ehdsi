@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+				  xmlns:gs="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01">
+   <soapenv:Header/>
+   <soapenv:Body>
+	<gs:GetPrescriptionRequest>
+		<PersonIdentifier source="CPR">1111111118</PersonIdentifier>
+		<Identifier>21298478</Identifier>
+		<IncludeEffectuations>true</IncludeEffectuations>
+	</gs:GetPrescriptionRequest>
+</soapenv:Body>
+</soapenv:Envelope>
