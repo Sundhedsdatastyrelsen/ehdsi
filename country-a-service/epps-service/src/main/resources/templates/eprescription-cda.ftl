@@ -163,9 +163,9 @@
                                         <pharm:asContent classCode="CONT">
                                             <pharm:quantity unit="{dose}" value="${ drugStrength.value }">
 <#if prescription.drug.form?? && prescription.drug.form.text??>
-                                                <pharm:translation>
-                                                    <pharm:originalText>${ prescription.drug.form.text }</pharm:originalText>
-                                                </pharm:translation>
+                                                <translation>
+                                                    <originalText>${ prescription.drug.form.text }</originalText>
+                                                </translation>
 </#if>
                                             </pharm:quantity>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
