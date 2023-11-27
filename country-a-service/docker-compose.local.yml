@@ -8,12 +8,12 @@ networks:
 
 services:
   #
-  # epps-backend
+  # epps-country-a service
   #
-  epps-backend:
+  epps-country-a:
     image: eclipse-temurin:17-jre-alpine
     command: sh /setup/run-in-container.sh /code/epps-application.jar
-    container_name: epps-backend-application
+    container_name: epps-country-a
     ports:
       - "4000:4000"
       - "8080:8080"
@@ -23,6 +23,7 @@ services:
       - "SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb-server/epps"
       - "SPRING_DATASOURCE_USERNAME=epps"
       - "SPRING_DATASOURCE_PASSWORD=epps"
+      - "FMK_ENDPOINT_URL=http://epps-fmk-mock:8080/ws/"
     volumes:
       - ./epps-application/target/epps-application.jar:/code/epps-application.jar:ro
       - ./epps-application/src/main/scripts/:/setup/:ro
@@ -35,7 +36,7 @@ services:
       - epps-backend
 
   #
-  # epps-backend
+  # fmk mock
   #
   epps-fmk-mock:
     image: eclipse-temurin:17-jre-alpine
@@ -59,7 +60,7 @@ services:
   mariadb-server:
     image: mariadb:11.1
     restart: always
-    container_name: epps-backend-database
+    container_name: epps-country-a-db
     ports:
       - "3306:3306"
     environment:
@@ -67,14 +68,14 @@ services:
       - "MARIADB_USER=epps"
       - "MARIADB_PASSWORD=epps"
       - "MARIADB_DATABASE=epps"
-    #volumes:
-    #  - type: volume
-    #    source: dbdata
-    #    target: /var/lib/mysql
-    #    read_only: false
+    volumes:
+      - type: volume
+        source: dbdata
+        target: /var/lib/mysql
+        read_only: false
     networks:
       - epps-backend
 
-#volumes:
-#  dbdata:
-#    driver: local
+volumes:
+  dbdata:
+    driver: local

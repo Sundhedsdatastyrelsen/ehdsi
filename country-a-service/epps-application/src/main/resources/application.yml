@@ -10,6 +10,9 @@ spring:
       dev: default
       prod: default
 
+app:
+  fmk.endpoint.url: ${FMK_ENDPOINT_URL}
+
 management:
   endpoint:
     health:

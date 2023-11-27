@@ -72,11 +72,11 @@ while [[ $# -gt 0 ]]; do
 		restart)
 			echo -e "\n\e[1;33m* Restarting containers:\e[0m\n"
 			load_env
-			$compose --file docker-compose.local.yml kill epps-backend && $compose --file docker-compose.local.yml --env-file=.env up -d -V --build epps-backend
+			$compose --file docker-compose.local.yml kill epps-country-a && $compose --file docker-compose.local.yml --env-file=.env up -d -V --build epps-country-a
 		;;
 		log|logs)
 			echo -e "\n\e[1;33m* Tailing logs for containers:\e[0m\n"
-			docker logs -f --tail=20 epps-backend-application
+			$compose --file docker-compose.local.yml logs -f --tail=20 epps-country-a epps-fmk-mock
 		;;
 		stop|down)
 			echo -e "\n\e[1;33m* Stopping and removing containers\e[0m\n"

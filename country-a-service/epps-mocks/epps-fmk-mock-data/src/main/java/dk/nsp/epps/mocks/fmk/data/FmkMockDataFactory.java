@@ -4,7 +4,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatedWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatedWithoutPersonType;
@@ -232,7 +232,7 @@ public class FmkMockDataFactory {
     }
 
     private static void addCreatedByFields(List<JAXBElement<?>> target, String date) {
-        target.add(jaxbElement("AuthorisedHealthcareProfessional", apply(new AuthorisedHealthcareProfessionalType(), ahp -> {
+        target.add(jaxbElement("AuthorisedHealthcareProfessional", apply(new AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType(), ahp -> {
             ahp.setAuthorisationIdentifier("2Q5TK");
             ahp.setName("Tess Christoffersen");
             ahp.setSpecialityCode(apply(new SpecialityCodeType(), specialityCode -> {

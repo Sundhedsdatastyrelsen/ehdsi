@@ -1,6 +1,6 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatedWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthUnitCodeType;
@@ -11,6 +11,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.PatientType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SimpleCPRPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.nsp.epps.ncp.api.ClassCodeDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -44,19 +45,21 @@ public class EPrescriptionMapper {
         template = cfg.getTemplate("eprescription-cda.ftl");
     }
 
-    public List<EpsosDocumentDto> mapResponse(GetPrescriptionResponseType src) throws TemplateException, IOException {
+    public List<EpsosDocumentDto> mapResponse(String patientId, GetPrescriptionResponseType src) throws TemplateException, IOException {
         return src.getPrescription().stream()
-            .map(prescription -> mapPrescription(src, prescription))
+            .map(prescription -> mapPrescription(patientId, src, prescription))
             .collect(Collectors.toList());
     }
 
-    private EpsosDocumentDto mapPrescription(GetPrescriptionResponseType src, PrescriptionType prescription) {
+    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType src, PrescriptionType prescription) {
         try {
             var result = new EpsosDocumentDto();
 
             var out = new StringWriter();
             template.process(new GetPrescriptionResponseModel(src, prescription), out);
+            result.setPatientId(patientId);
             result.setDocument(out.toString());
+            result.setClassCode(ClassCodeDto._57833_6);
 
             return result;
         } catch (TemplateException|IOException e) {
@@ -164,12 +167,12 @@ public class EPrescriptionMapper {
                 .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
                 .map(list ->
                     list.stream().filter(jaxb ->
-                            jaxb.getDeclaredType().isAssignableFrom(AuthorisedHealthcareProfessionalType.class)
+                            jaxb.getDeclaredType().isAssignableFrom(AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType.class)
                         )
                         .findFirst()
                         .orElse(null)
                 )
-                .map(xml -> (AuthorisedHealthcareProfessionalType) xml.getValue())
+                .map(xml -> (AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType) xml.getValue())
                 .map(ahp -> new Names(ahp.getName()))
                 .orElse(null);
         }

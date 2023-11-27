@@ -11,9 +11,10 @@ public class SoapClientsConfiguration {
     @Bean
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        // this package must match the package in the <generatePackage> specified in
-        // pom.xml
-        marshaller.setContextPaths("dk.dkma.medicinecard.xml_schema._2015._06._01");
+        marshaller.setContextPaths(
+            "dk.dkma.medicinecard.xml_schema._2015._06._01",
+            "dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
+        );
         return marshaller;
     }
 

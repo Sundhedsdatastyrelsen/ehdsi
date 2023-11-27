@@ -2,6 +2,7 @@ package dk.nsp.epps.service.mapping;
 
 import dk.nsp.epps.mocks.fmk.data.FmkMockDataFactory;
 import freemarker.template.TemplateExceptionHandler;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +16,10 @@ public class EPrescriptionMapperTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testExpectedNumberOfEpsosDocuments() throws Exception {
         var response = FmkMockDataFactory.getPrescriptionResponse();
-        var result = mapper.mapResponse(response);
-        System.out.println(result.get(0).getDocument());
+        var result = mapper.mapResponse("1111111118", response);
+        Assertions.assertEquals(1, result.size());
     }
 
     private static freemarker.template.Configuration freemarkerCfg() {

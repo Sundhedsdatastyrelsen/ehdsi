@@ -9,6 +9,7 @@ servers:
 
 paths:
 
+  # 55
   /api/find-patients:
     get:
       summary: return info about patients
@@ -35,7 +36,7 @@ paths:
                 $ref: '#/components/schemas/Error'
 
   # 39
-  /api/document:
+  /api/documents/:
     get:
       summary: |
         Retrieve a single document matching search criteria.
@@ -46,6 +47,7 @@ paths:
           in: query
           schema:
             type: string
+          required: true
         - name: repositoryId
           in: query
           schema:
@@ -71,11 +73,13 @@ paths:
             format: date-time
       responses:
         200:
-          description: Document
+          description: Documents
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EpsosDocument'
+                type: array
+                items:
+                  $ref: '#/components/schemas/EpsosDocument'
         400:
           description: 400 BadRequest
           content:
@@ -126,7 +130,7 @@ paths:
             format: date-time
       responses:
         200:
-          description: Document
+          description: ePrescription document metadata matching criteria.
           content:
             application/json:
               schema:
@@ -139,12 +143,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        404:
-          description: Could not locate document
+
+  /api/edispensation/submit:
+    post:
+      summary: |
+        Submit an eDispensation document.
+        Corresponds to XDC ITI-41.
+      operationId: submitDispensation
+      requestBody:
+        description: The eDispensation document
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EpsosDocument'
+      responses:
+        204:
+          description: Dispensation submitted successfully.
+        400:
+          description: Invalid eDispensation.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /api/edispensation/discard:
+    post:
+      summary: |
+        Discard an eDispensation.
+      operationId: disardDispensation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                disardDispenseDetails:
+                  $ref: '#/components/schemas/DiscardDispenseDetails'
+                dispensationToDiscard:
+                  $ref: '#/components/schemas/EpsosDocument'
+      responses:
+        204:
+          description: Dispensation discarded successfully.
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 
 components:
   schemas:
@@ -220,7 +269,7 @@ components:
 
     EpsosDocument:
       type: object
-      description: A representation of a concrete document, e.g., an ePrescription.
+      description: A representation of a concrete document, e.g., an ePrescription or a dispensation.
       required:
         - patientId
         - document
@@ -267,7 +316,7 @@ components:
           type: string
         confidentiality:
           $ref: '#/components/schemas/ConfidentialityMetadata'
-    
+
     EPrescriptionDocumentMetadata:
       description: Metadata for an ePrescription document.
       allOf:
@@ -309,11 +358,35 @@ components:
       description: LOINC code for the document type.
       type: string
       enum:
-        # For PoC we only support ePrescriptions:
+        # For PoC we only support ePrescriptions and eDispensations:
         - "57833-6" # Prescription for medication https://loinc.org/57833-6
+        - "60593-1" # Medication dispensed.extended Document https://loinc.org/60593-1
 
     DocumentFormat:
       type: string
       enum:
         - pdf
         - xml
+
+    DiscardDispenseDetails:
+      type: object
+      properties:
+        discardId:
+          type: string
+        dispenseId:
+          type: string
+        discardDate:
+          type: string
+          format: date-time
+        patientId:
+          type: string
+        healthCareProviderId:
+          type: string
+        healthCareProvider:
+          type: string
+        healthCareProviderFacility:
+          type: string
+        healthCareProviderOrganizationId:
+          type: string
+        healthCareProviderOrganization:
+          type: string
