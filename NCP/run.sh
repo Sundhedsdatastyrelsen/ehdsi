@@ -13,6 +13,7 @@ MARIADB_HOST="mariadb"
 MARIADB_PORT="3306"
 OPENNCP_VERSION="7.0.0"
 TLS_KEYSTORE_ALIAS=ncptestis
+TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/test-truststore.jks
 EOF
 )"
 
@@ -24,8 +25,10 @@ error_exit() {
 USAGE=$(echo "Usage: $0 [options]";
         echo "Options:";
         echo "  init          Initialize the project dir for running the NCP"
-        echo "  up            Build and run the containers"
-        echo "  down          Stop and clean up the containers (wipes database)"
+        echo "  up            Build and run the containers in the background"
+        echo "  down          Stop the containers"
+        echo "  clean         Clean up the containers and volumes (wipes database)"
+        echo "  logs          Follow the stdout logs of the containers"
         echo "  -h, --help    Display this help message")
 
 initialize_file() {
@@ -61,11 +64,17 @@ else
       initialize_secrets
       ;;
     down)
+      docker compose down --remove-orphans
+      ;;
+    clean)
       docker compose down --remove-orphans --volumes
       ;;
     up)
       init
-      docker compose up --build
+      docker compose up --build --detach
+      ;;
+    logs)
+      docker compose logs --follow
       ;;
     -h|--help)
       echo "$USAGE";
