@@ -1,4 +1,11 @@
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+.idea/
+
 /openncp-configuration/EpsosRepository
+/openncp-configuration/obligations
 /logs
 
 /.env
