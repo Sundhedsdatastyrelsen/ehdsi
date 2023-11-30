@@ -1,7 +1,8 @@
 package dk.nsp.epps.controller;
 
+import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
-import dk.nsp.epps.service.GetPrescriptionService;
+import dk.nsp.epps.service.PrescriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,15 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class GetPrescriptionController {
-    private final GetPrescriptionService getPrescriptionService;
+public class PrescriptionController {
+    private final PrescriptionService prescriptionService;
 
-    @GetMapping(path = "/api/documents/")
-    public List<EpsosDocumentDto> stuff(
+    @GetMapping(path = "/api/find-eprescription-documents")
+    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestParam(value = "patientId", required = true) String patientId,
         @Valid @RequestParam(value = "repositoryId", required = false) String repositoryId,
         @Valid @RequestParam(value = "documentId", required = false) String documentId,
@@ -26,6 +28,18 @@ public class GetPrescriptionController {
         @Valid @RequestParam(value = "createdBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdBefore,
         @Valid @RequestParam(value = "createdAfter", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdAfter
     ) {
-        return getPrescriptionService.getPrescriptions(patientId);
+        return Collections.emptyList();
+    }
+
+    @GetMapping(path = "/api/documents/")
+    public List<EpsosDocumentDto> getDocuments(
+        @Valid @RequestParam(value = "patientId", required = true) String patientId,
+        @Valid @RequestParam(value = "repositoryId", required = false) String repositoryId,
+        @Valid @RequestParam(value = "documentId", required = false) String documentId,
+        @Valid @RequestParam(value = "maximumSize", required = false) Long maximumSize,
+        @Valid @RequestParam(value = "createdBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdBefore,
+        @Valid @RequestParam(value = "createdAfter", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdAfter
+    ) {
+        return prescriptionService.getPrescriptions(patientId);
     }
 }

@@ -1,6 +1,7 @@
 package dk.nsp.epps.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.client.FmkClient;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
@@ -10,12 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GetPrescriptionService {
+public class PrescriptionService {
     private final FmkClient fmkClient;
     private final EPrescriptionMapper ePrescriptionMapper;
 
@@ -28,5 +30,12 @@ public class GetPrescriptionService {
         } catch (IOException | TemplateException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String cpr) {
+        log.debug("Looking up info for {}", cpr);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptions(cpr);
+
+        return Collections.emptyList();
     }
 }

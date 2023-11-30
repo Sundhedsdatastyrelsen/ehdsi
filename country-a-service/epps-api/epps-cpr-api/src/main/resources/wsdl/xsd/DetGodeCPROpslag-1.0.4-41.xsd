@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:cprnr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+    <xs:element name="PersonSpouseRelation" type="medcom:PersonSpouseRelationType"/>
+    
+    <xs:simpleType name="PersonSpouseRelationType">
+        <xs:annotation>
+            <xs:documentation>Ægtefælles relation til patienten</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="aegtefaelle"/>
+            <xs:enumeration value="registreret_partner"/>
+            <xs:enumeration value="samboende"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>

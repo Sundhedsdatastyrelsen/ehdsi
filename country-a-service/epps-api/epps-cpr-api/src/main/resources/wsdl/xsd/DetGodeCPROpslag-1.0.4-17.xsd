@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified">
+
+	<include schemaLocation="./DetGodeCPROpslag-1.0.4-18.xsd"/>
+	<include schemaLocation="./DetGodeCPROpslag-1.0.4-16.xsd"/>
+
+	<element name="AddressComplete" type="medcom:AddressCompleteType"/>
+	<complexType name="AddressCompleteType">
+		<sequence>
+			<element ref="medcom:AddressAccess"/>
+			<element ref="medcom:AddressPostal"/>
+		</sequence>
+	</complexType>
+
+</schema>

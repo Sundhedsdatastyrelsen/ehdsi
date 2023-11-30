@@ -69,6 +69,11 @@
 			</dependency>
 			<dependency>
 				<groupId>dk.nsp.epps</groupId>
+				<artifactId>epps-cpr-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dk.nsp.epps</groupId>
 				<artifactId>epps-persistence</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -80,6 +85,11 @@
 			<dependency>
 				<groupId>dk.nsp.epps</groupId>
 				<artifactId>epps-fmk-mock-data</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dk.nsp.epps</groupId>
+				<artifactId>epps-cpr-mock-data</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

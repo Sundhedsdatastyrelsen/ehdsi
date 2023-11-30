@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-40.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-20.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-46.xsd"/>
+    
+    <xs:element name="PersonHealthCareInformationStructure" type="medcom:PersonHealthCareInformationStructureType">
+        <xs:annotation>
+            <xs:documentation>Information vedr. en Persons læge og sygesikringsgruppe</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="PersonHealthCareInformationStructureType">
+        <xs:annotation>
+            <xs:documentation>Informationer vedr. en persons læge og sygesikringsgruppe.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="medcom:CurrentGeneralPractitionerStructure" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Informationer vedr. personens aktuelle læge.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:PriorGeneralPractitionerStructure" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Informationer vedr. personens tidligere læge.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:PersonPublicHealthInsurance">
+                <xs:annotation>
+                    <xs:documentation>Informationer vedr. personens sygesikringsgruppe.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

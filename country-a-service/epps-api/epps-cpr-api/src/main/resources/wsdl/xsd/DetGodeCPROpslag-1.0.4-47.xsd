@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:element name="PublicHealthInsuranceGroupIdentifier" type="medcom:PublicHealthInsuranceGroupIdentifierType">
+        <xs:annotation>
+            <xs:documentation>Sygesikringsgruppenummer</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="PublicHealthInsuranceGroupIdentifierType">
+        <xs:annotation>
+            <xs:documentation>Sygesikringsgruppe, angiver dækning af sundhedsydelser (og andet).</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="sygesikringsgruppe_0">
+                <xs:annotation>
+                    <xs:documentation>Sygesikringsgruppe ikke kendt (fx ved skattepligtigt CPR-nr.)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_1">
+                <xs:annotation>
+                    <xs:documentation>Gruppe 1 dækning.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_2">
+                <xs:annotation>
+                    <xs:documentation>Gruppe 2 dækning.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_4">
+                <xs:annotation>
+                    <xs:documentation>Er optaget i fængselsvæsnets institutioner efter dom (3 måneder eller mere).</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_5">
+                <xs:annotation>
+                    <xs:documentation>Er værnepligtig (3 måneder eller mere).</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_6">
+                <xs:annotation>
+                    <xs:documentation>Er institutionsanbragt (§112).</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_7">
+                <xs:annotation>
+                    <xs:documentation>Har bopæl i udlandet.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_8">
+                <xs:annotation>
+                    <xs:documentation>Har status afgangsført - fraflyttet regionen, ihjelslagne, (personer der har haft 2 CPR numre), forsvundne eller omnummererede.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="sygesikringsgruppe_9">
+                <xs:annotation>
+                    <xs:documentation>Er død.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

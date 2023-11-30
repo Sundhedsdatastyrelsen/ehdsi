@@ -26,6 +26,10 @@
 		</dependency>
 		<dependency>
 			<groupId>dk.nsp.epps</groupId>
+			<artifactId>epps-cpr-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>dk.nsp.epps</groupId>
 			<artifactId>epps-persistence</artifactId>
 		</dependency>
 		<dependency>

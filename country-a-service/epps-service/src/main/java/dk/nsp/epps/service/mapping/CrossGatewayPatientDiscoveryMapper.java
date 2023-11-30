@@ -1,68 +1,80 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.PersonIdentifierType;
+import dk.nsp.epps.ncp.api.GenderDto;
+import dk.nsp.epps.ncp.api.PatientDemographicsDto;
+import dk.oio.rep.ebxml.xml.schemas.dkcc._2003._02._13.PersonGenderCodeType;
 import lombok.experimental.UtilityClass;
+import oio.medcom.cprservice._1_0.GetPersonInformationOut;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Mapping for Cross Gateway Patient Discovery (IHE ITE-55).
  */
 @UtilityClass
 public class CrossGatewayPatientDiscoveryMapper {
-    public static GetPrescriptionRequestType mapRequest(String patientId) {
-        var request = new GetPrescriptionRequestType();
-        request.setPersonIdentifier(toPersonIdentifierType(patientId));
-        request.setIncludeEffectuations(false);
-        return request;
-    }
 
-    private static PersonIdentifierType toPersonIdentifierType(String patientId) {
-        // TODO
-        var personIdentifier = new PersonIdentifierType();
-        // personIdentifier.setSource("CPR");
-        personIdentifier.setValue(patientId);
-        return personIdentifier;
-    }
+    public static PatientDemographicsDto mapResponse(GetPersonInformationOut src) {
+        var info = src != null ? src.getPersonInformationStructure() : null;
+        var regular = info != null ? info.getRegularCPRPerson() : null;
+        var simple = regular != null ? regular.getSimpleCPRPerson() : null;
+        var name = simple != null ? simple.getPersonNameStructure() : null;
+        var birthdate = regular != null ? regular.getPersonBirthDateStructure() : null;
+        var structure = info != null ? info.getPersonAddressStructure() : null;
+        var address = structure != null ? structure.getAddressComplete() : null;
+        var postal = address != null ? address.getAddressPostal() : null;
+        var country = postal != null ? postal.getCountryIdentificationCode() : null;
 
-    private static String givenName(String givenName, String middleName) {
-        if (givenName != null && middleName != null) {
-            return givenName + " " + middleName;
+        var result = new PatientDemographicsDto(
+            info != null ? List.of(PatientIdMapper.toPatientId(info.getCurrentPersonCivilRegistrationIdentifier())) : Collections.emptyList());
+        result.setFamilyName(name != null ? name.getPersonSurnameName() : null);
+        result.setGivenName(name != null ? name.getPersonGivenName() : null);
+        result.setBirthDate(birthdate != null ? toLocalDate(birthdate.getBirthDate()) : null);
+        result.setAdministrativeGender(regular != null ? toGenderDto(regular.getPersonGenderCode()) : null);
+        result.setCountry(country != null ? country.getValue() : null);
+        result.setTelephone(null);
+        result.setEmail(null);
+
+        if (postal != null) {
+            result.setPostalCode(postal.getPostCodeIdentifier());
+            result.setCity(postal.getDistrictName());
+
+            StringBuilder streetAddress = new StringBuilder();
+            if (postal.getStreetNameForAddressingName() != null) {
+                streetAddress.append(postal.getStreetNameForAddressingName());
+            } else if (postal.getStreetName() != null) {
+                streetAddress.append(postal.getStreetName());
+            }
+            if (postal.getStreetBuildingIdentifier() != null) {
+                streetAddress.append(" ").append(postal.getStreetBuildingIdentifier());
+            }
+            if (postal.getFloorIdentifier() != null) {
+                streetAddress.append(" ").append(postal.getFloorIdentifier());
+            }
+            if (postal.getSuiteIdentifier() != null) {
+                streetAddress.append(" ").append(postal.getSuiteIdentifier());
+            }
+            result.setStreetAddress(streetAddress.isEmpty() ? null : streetAddress.toString());
         }
-        return givenName;
-    }
 
-    /*
-    public static PatientDemographicsDto mapResponse(GetPrescriptionResponseType src) {
-        var patient = src.getPatient();
-        var person = patient != null ? patient.getPerson() : null;
-        var name = person != null ? person.getName() : null;
-        var personIdentifier = person != null ? person.getPersonIdentifier() : null;
-        var patientIdList = personIdentifier != null ? List.of(toEuPatientId(personIdentifier)) : null;
-
-        var result = new PatientDemographicsDto(patientIdList);
-        result.setGivenName(name != null ? givenName(name.getGivenName(), name.getMiddleName()) : null);
-        result.setFamilyName(name != null ? name.getSurname(): null);
-        result.setBirthDate(person != null ? toLocalDate(person.getBirthDate()) : null);
-        result.setAdministrativeGender(person != null ? mapGender(person.getGender()) : null);
         return result;
     }
 
-    private static String toEuPatientId(PersonIdentifierType personIdentifier) {
-        // TODO
-        return personIdentifier.getValue();
+    private static LocalDate toLocalDate(XMLGregorianCalendar xml) {
+        return xml != null ? LocalDate.of(xml.getYear(), xml.getMonth(), xml.getDay()) : null;
     }
 
-    private static LocalDate toLocalDate(XMLGregorianCalendar src) {
-        // TODO
-        return null;
-    }
-
-    private static GenderDto mapGender(GenderType src) {
+    private static GenderDto toGenderDto(PersonGenderCodeType src) {
+        if (src == null) {
+            return null;
+        }
         return switch (src) {
             case FEMALE -> GenderDto.FEMALE;
             case MALE -> GenderDto.MALE;
-            // default -> GenderDto.UNDIFFERENTIATED;
+            case UNKNOWN -> GenderDto.UNDIFFERENTIATED;
         };
     }
-     */
 }

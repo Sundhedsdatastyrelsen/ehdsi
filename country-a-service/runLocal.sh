@@ -76,7 +76,7 @@ while [[ $# -gt 0 ]]; do
 		;;
 		log|logs)
 			echo -e "\n\e[1;33m* Tailing logs for containers:\e[0m\n"
-			$compose --file docker-compose.local.yml logs -f --tail=20 epps-country-a epps-fmk-mock
+			$compose --file docker-compose.local.yml logs -f --tail=20 epps-country-a epps-fmk-mock epps-cpr-mock
 		;;
 		stop|down)
 			echo -e "\n\e[1;33m* Stopping and removing containers\e[0m\n"
@@ -92,7 +92,7 @@ while [[ $# -gt 0 ]]; do
 		;;
 		startmocks)
 			echo -e "\n\e[1;33m* Starting database and pgweb\e[0m\n"
-			$compose --file docker-compose.local.yml up -d epps-fmk-mock
+			$compose --file docker-compose.local.yml up -d epps-fmk-mock epps-cpr-mock
 		;;
 		*)
 			echo "Unknown arguments: $option"
