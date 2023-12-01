@@ -28,6 +28,7 @@ public class CprService {
                 GetPersonInformationOut response = cprClient.getPersonInformation(PatientIdMapper.toCpr(patientId));
                 found.add(CrossGatewayPatientDiscoveryMapper.mapResponse(response));
             } catch (Exception e) {
+                log.warn(e.getMessage(), e);
                 // TODO what really happens when the cpr is not found??
                 notFound.add(patientId);
             }

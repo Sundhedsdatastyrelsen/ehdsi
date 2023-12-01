@@ -12,7 +12,10 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.SimpleCPRPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.ncp.api.ClassCodeDto;
+import dk.nsp.epps.ncp.api.DocumentFormatDto;
+import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
+import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import jakarta.annotation.PostConstruct;
@@ -32,7 +35,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -42,26 +44,58 @@ public class EPrescriptionMapper {
 
     @PostConstruct
     public void initTemplate() throws IOException {
-        template = cfg.getTemplate("eprescription-cda.ftl");
+        template = cfg.getTemplate("eprescription-cda.ftlx");
     }
 
-    public List<EpsosDocumentDto> mapResponse(String patientId, GetPrescriptionResponseType src) throws TemplateException, IOException {
-        return src.getPrescription().stream()
+    public List<EPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter, GetPrescriptionResponseType src) {
+        return filter.applyTo(src.getPrescription())
+            .map(prescription -> mapMeta(patientId, src, prescription))
+            .toList();
+    }
+
+    public List<EpsosDocumentDto> mapResponse(String patientId, PrescriptionFilter filter, GetPrescriptionResponseType src) throws TemplateException, IOException {
+        return filter.applyTo(src.getPrescription())
             .map(prescription -> mapPrescription(patientId, src, prescription))
-            .collect(Collectors.toList());
+            .toList();
+    }
+
+    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType src, PrescriptionType prescription) {
+        var model = new GetPrescriptionResponseModel(src, prescription);
+        var drug = prescription.getDrug();
+        var meta = new EPrescriptionDocumentMetadataDto(String.valueOf(prescription.getIdentifier()));
+        meta.setPatientId(patientId);
+        meta.setFormat(DocumentFormatDto.XML);
+        meta.setEffectiveTime(OffsetDateTime.now());
+        meta.setClassCode(ClassCodeDto._57833_6);
+        meta.setRepositoryId(null);
+        meta.setTitle(prescription.getDrug().getName());
+        meta.setAuthor(Optional.ofNullable(model.getAuthorisedHealthcareProfessionalNames()).map(Names::fullName).orElse(null));
+        meta.setLanguage(null);
+        meta.setSize(null);
+        meta.setHash(null);
+        meta.setConfidentiality(null);
+        if (prescription.getIndication() != null) {
+            meta.setDescription(prescription.getIndication().getFreeText() != null ? prescription.getIndication().getFreeText() : prescription.getIndication().getText());
+        }
+        meta.setProductCode(String.valueOf(drug.getIdentifier().getValue()));
+        meta.setProductName(drug.getName());
+        meta.setDispensable(null);
+        meta.setAtcCode(drug.getATC().getCode().getValue());
+        meta.setAtcName(drug.getATC().getText());
+        meta.setDoseFormCode(null);
+        meta.setDoseFormName(null);
+        meta.setStrength(model.getDrugStrength().getText());
+        meta.setSubstitutionCode(null);
+        meta.setSubstitutionDisplayName(null);
+        return meta;
     }
 
     private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType src, PrescriptionType prescription) {
         try {
-            var result = new EpsosDocumentDto();
+            var document = new StringWriter();
+            template.process(new GetPrescriptionResponseModel(src, prescription), document);
 
-            var out = new StringWriter();
-            template.process(new GetPrescriptionResponseModel(src, prescription), out);
-            result.setPatientId(patientId);
-            result.setDocument(out.toString());
-            result.setClassCode(ClassCodeDto._57833_6);
-
-            return result;
+            return new EpsosDocumentDto(patientId, document.toString(), ClassCodeDto._57833_6);
         } catch (TemplateException|IOException e) {
             throw new RuntimeException(e);
         }
@@ -99,6 +133,17 @@ public class EPrescriptionMapper {
             String[] nameArr = names.split(" ");
             givenNames = List.of(Arrays.copyOfRange(nameArr, 0, nameArr.length - 1));
             surName = nameArr[nameArr.length - 1];
+        }
+
+        public String fullName() {
+            StringBuilder builder = new StringBuilder();
+            if (givenNames != null) {
+                givenNames.forEach(name -> builder.append(" ").append(name));
+            }
+            if (surName != null) {
+                builder.append(" ").append(surName);
+            }
+            return builder.toString().trim();
         }
     }
 
@@ -219,7 +264,5 @@ public class EPrescriptionMapper {
                 })
                 .orElse(null);
         }
-
     }
-
 }
