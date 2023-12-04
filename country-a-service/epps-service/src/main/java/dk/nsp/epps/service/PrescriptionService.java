@@ -5,11 +5,13 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.client.FmkClient;
+import dk.nsp.epps.service.exception.CountryAException;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -32,6 +34,10 @@ public class PrescriptionService {
         OffsetDateTime createdAfter
     ) {
         public Stream<PrescriptionType> applyTo(List<PrescriptionType> list) {
+            if (list == null || list.isEmpty()) {
+                return Stream.empty();
+            }
+
             Stream<PrescriptionType> stream = list.stream();
 
             if (documentId != null) {
@@ -75,7 +81,7 @@ public class PrescriptionService {
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
             return ePrescriptionMapper.mapResponse(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
         } catch (IOException | TemplateException e) {
-            throw new RuntimeException(e);
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 }

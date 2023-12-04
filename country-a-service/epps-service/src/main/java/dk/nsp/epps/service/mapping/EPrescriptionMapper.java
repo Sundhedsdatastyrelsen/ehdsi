@@ -16,6 +16,7 @@ import dk.nsp.epps.ncp.api.DocumentFormatDto;
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
+import dk.nsp.epps.service.exception.CountryAException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import jakarta.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -62,6 +64,8 @@ public class EPrescriptionMapper {
     private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType src, PrescriptionType prescription) {
         var model = new GetPrescriptionResponseModel(src, prescription);
         var drug = prescription.getDrug();
+        var indication = prescription.getIndication();
+
         var meta = new EPrescriptionDocumentMetadataDto(String.valueOf(prescription.getIdentifier()));
         meta.setPatientId(patientId);
         meta.setFormat(DocumentFormatDto.XML);
@@ -74,17 +78,22 @@ public class EPrescriptionMapper {
         meta.setSize(null);
         meta.setHash(null);
         meta.setConfidentiality(null);
-        if (prescription.getIndication() != null) {
-            meta.setDescription(prescription.getIndication().getFreeText() != null ? prescription.getIndication().getFreeText() : prescription.getIndication().getText());
+        if (indication != null) {
+            meta.setDescription(indication.getFreeText() != null ? indication.getFreeText() : indication.getText());
         }
-        meta.setProductCode(String.valueOf(drug.getIdentifier().getValue()));
-        meta.setProductName(drug.getName());
+        if (drug != null) {
+            meta.setProductCode(drug.getIdentifier() != null ? String.valueOf(drug.getIdentifier().getValue()) : null);
+            meta.setProductName(drug.getName());
+            var atc = drug.getATC();
+            if (atc != null) {
+                meta.setAtcCode(atc.getCode() != null ? atc.getCode().getValue() : null);
+                meta.setAtcName(atc.getText());
+            }
+        }
         meta.setDispensable(null);
-        meta.setAtcCode(drug.getATC().getCode().getValue());
-        meta.setAtcName(drug.getATC().getText());
         meta.setDoseFormCode(null);
         meta.setDoseFormName(null);
-        meta.setStrength(model.getDrugStrength().getText());
+        meta.setStrength(model.getDrugStrength() != null ? model.getDrugStrength().getText() : null);
         meta.setSubstitutionCode(null);
         meta.setSubstitutionDisplayName(null);
         return meta;
@@ -97,10 +106,9 @@ public class EPrescriptionMapper {
 
             return new EpsosDocumentDto(patientId, document.toString(), ClassCodeDto._57833_6);
         } catch (TemplateException|IOException e) {
-            throw new RuntimeException(e);
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
-
 
     @Value
     public static class AdministrativeGender {

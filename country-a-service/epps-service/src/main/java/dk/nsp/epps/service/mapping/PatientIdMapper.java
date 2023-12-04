@@ -1,6 +1,8 @@
 package dk.nsp.epps.service.mapping;
 
+import dk.nsp.epps.service.exception.CountryAException;
 import lombok.experimental.UtilityClass;
+import org.springframework.http.HttpStatus;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +37,7 @@ public class PatientIdMapper {
             return matcher.group(1) + matcher.group(2);
         }
 
-        throw new IllegalArgumentException("'" + patientId + "' doesn't match any of the expected patterns");
+        throw new CountryAException(HttpStatus.BAD_REQUEST, "'" + patientId + "' doesn't match any of the expected patterns");
     }
 
     public String toPatientId(String cpr) {
@@ -43,6 +45,6 @@ public class PatientIdMapper {
             return null;
         }
 
-        return cpr.toUpperCase().startsWith(PATIENTID_PREFIX) ? cpr : "DKCPR^^^" + cpr;
+        return cpr.toUpperCase().startsWith(PATIENTID_PREFIX) ? cpr : PATIENTID_PREFIX + cpr;
     }
 }
