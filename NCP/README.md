@@ -42,3 +42,22 @@ The certificate will need to be imported into the truststore:
 Connect with curl using the new certificate:
 
     curl --cert test/client-dk.crt --key test/client-dk.key https://localhost:6443
+
+# Connecting a debugger
+
+The IntelliJ debugger can be connected to the server process like this:
+
+In `docker-compose.yml`, under the container you want to debug (e.g. `openncp-server`), add the following line to the environment map:
+
+    JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+
+Additionally, make the port available by adding the following line to "ports":
+
+    - "5005:5005"
+
+
+Restart the service.
+
+In IntelliJ, open the project that you are running in the container (e.g. the ehealth project: https://code.europa.eu/ehdsi/ehealth) and open Run > Edit Configurations...
+Add a new "Remote JVM Debug configuration" and ensure that host and port are correct.
+You should now be able to start the debugger and add breakpoints.

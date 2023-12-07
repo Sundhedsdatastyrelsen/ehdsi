@@ -15,6 +15,9 @@ COPY ./common/bin/download_maven_artifact /usr/local/bin/download_maven_artifact
 RUN download_maven_artifact com.zaxxer HikariCP 4.0.3 && \
     download_maven_artifact org.slf4j slf4j-api 2.0.9 && \
     download_maven_artifact org.slf4j slf4j-jdk14 2.0.9 && \
+    download_maven_artifact com.fasterxml.jackson.core jackson-databind 2.14.2 && \
+    download_maven_artifact com.fasterxml.jackson.core jackson-annotations 2.14.2 && \
+    download_maven_artifact com.fasterxml.jackson.core jackson-core 2.14.2 && \
     download_maven_artifact org.mariadb.jdbc mariadb-java-client 3.2.0
 
 # Download main artifact

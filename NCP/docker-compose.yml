@@ -108,10 +108,13 @@ services:
     ports:
       - "6443:6443"
       - "8080:8080"
+      # - "5005:5005"
     depends_on:
       - mariadb
       - openncp-configuration-utility
     environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+      NC_DK_COUNTRY_A_HOST: "http://host.docker.internal:8180"
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
@@ -147,10 +150,12 @@ services:
       - "8443:8443"
       - "8082:8082"
       - "2861:2861"
+      # - "5006:5006"
     depends_on:
       - mariadb
       - openncp-configuration-utility
     environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
