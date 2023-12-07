@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="{{assertion-id}}" IssueInstant="{{issue-instant}}" Version="2.0">
+  <saml:Issuer NameQualifier="urn:ehdsi:assertions:hcp">urn:idp:DK:countryB</saml:Issuer>
+  <saml:Subject>
+    <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">drdoolittle</saml:NameID>
+    <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:sender-vouches"/>
+  </saml:Subject>
+  <saml:Conditions NotBefore="{{not-before}}" NotOnOrAfter="{{not-on-or-after}}"/>
+  <saml:AuthnStatement AuthnInstant="{{authn-instant}}">
+    <saml:AuthnContext>
+      <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract</saml:AuthnContextClassRef>
+    </saml:AuthnContext>
+  </saml:AuthnStatement>
+  <saml:AttributeStatement>
+    <saml:Attribute FriendlyName="XSPA Subject" Name="urn:oasis:names:tc:xspa:1.0:subject:subject-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>Dr. Doolittle</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute FriendlyName="XSPA Role" Name="urn:oasis:names:tc:xacml:2.0:subject:role" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>
+        <Role xmlns="urn:hl7-org:v3" code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Medical Doctors"/>
+      </saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute FriendlyName="XSPA Purpose of Use" Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>
+        <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="2.16.840.1.113883.3.18.7.1" codeSystemName="nhin-purpose" displayName="Treatment"/>
+      </saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute FriendlyName="XSPA Healthcare Facility" Name="urn:ehdsi:names:subject:healthcare-facility-type" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>Hospital</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute FriendlyName="XSPA Locality" Name="urn:oasis:names:tc:xspa:1.0:environment:locality" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>XSPA locality</saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute FriendlyName="Hl7 Permissions" Name="urn:oasis:names:tc:xspa:1.0:subject:hl7:permission" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-003</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-005</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-016</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-006</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-004</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-010</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-046</saml:AttributeValue>
+    </saml:Attribute>
+  </saml:AttributeStatement>
+</saml:Assertion>

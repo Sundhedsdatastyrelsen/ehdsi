@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Header xmlns:addressing="http://www.w3.org/2005/08/addressing" xmlns:spirit="spirit:soap:transaction:1.0">
+    <addressing:Action env:mustUnderstand="1">urn:ihe:iti:2007:CrossGatewayRetrieve</addressing:Action>
+    <addressing:MessageID>{{message-id}}</addressing:MessageID>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      {{hcp-assertion|safe}}
+      {{trc-assertion|safe}}
+    </wsse:Security>
+  </env:Header>
+  <env:Body>
+    <xdsb:RetrieveDocumentSetRequest xmlns:xdsb="urn:ihe:iti:xds-b:2007">
+      <xdsb:DocumentRequest>
+        <xdsb:DocumentUniqueId>2.16.17.710.850.1000.990.1^3000.1</xdsb:DocumentUniqueId>
+      </xdsb:DocumentRequest>
+    </xdsb:RetrieveDocumentSetRequest>
+  </env:Body>
+</env:Envelope>
