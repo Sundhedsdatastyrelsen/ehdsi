@@ -11,7 +11,7 @@
   <env:Body>
     <xdsb:RetrieveDocumentSetRequest xmlns:xdsb="urn:ihe:iti:xds-b:2007">
       <xdsb:DocumentRequest>
-        <xdsb:DocumentUniqueId>2.16.17.710.850.1000.990.1^3000.1</xdsb:DocumentUniqueId>
+        <xdsb:DocumentUniqueId>21298478</xdsb:DocumentUniqueId>
       </xdsb:DocumentRequest>
     </xdsb:RetrieveDocumentSetRequest>
   </env:Body>
