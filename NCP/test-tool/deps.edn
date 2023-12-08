@@ -1,0 +1,7 @@
+{:paths ["src"]
+ :deps {medley/medley {:mvn/version "1.4.0"}
+        metabase/saml20-clj {:mvn/version "2.2.4"}
+        org.slf4j/slf4j-nop {:mvn/version "2.0.9"}
+        selmer/selmer {:mvn/version "1.12.59"}}
+
+ :mvn/repos {"opensaml" {:url "https://build.shibboleth.net/nexus/content/repositories/releases/"}}}
