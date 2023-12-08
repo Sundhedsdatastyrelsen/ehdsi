@@ -77,7 +77,9 @@ services:
       CTS_PASSWORD_FILE: /run/secrets/cts_password
       CTS_USERNAME_FILE: /run/secrets/cts_username
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
+      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
+      TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
     depends_on:
       mariadb:
@@ -117,7 +119,7 @@ services:
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
       TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
-      TLS_TRUSTSTORE_FILE: /opt/openncp-configuration/cert/bootcamp-truststore.jks
+      TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
     volumes:
       - ./openncp-configuration:/opt/openncp-configuration
