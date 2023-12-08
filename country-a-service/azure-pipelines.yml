@@ -1,0 +1,48 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+variables:
+- group: eppsregistry.azurecr.io
+
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: DownloadSecureFile@1
+  name: sds_deploy_sshkey
+  displayName: 'Download SSH Key'
+  inputs:
+    secureFile: 'sds_deploy_sshkey'
+
+- script: |
+    echo Login to eppsregistry.azurecr.io
+    docker login -u PipelineToken -p $(dockerToken) eppsregistry.azurecr.io
+
+    echo Building docker image for the app
+    docker build -f epps-application/Dockerfile.build -t eppsregistry.azurecr.io/countrya-poc .
+
+    echo Building docker image for the fmk mock
+    docker build -f epps-mocks/epps-fmk-mock/Dockerfile.build -t eppsregistry.azurecr.io/countrya-fmk-mock .
+
+    echo Building docker image for the cpr mock
+    docker build -f epps-mocks/epps-cpr-mock/Dockerfile.build -t eppsregistry.azurecr.io/countrya-cpr-mock .
+
+    echo Pushing docker images to repo
+    docker push eppsregistry.azurecr.io/countrya-poc
+    docker push eppsregistry.azurecr.io/countrya-fmk-mock
+    docker push eppsregistry.azurecr.io/countrya-cpr-mock
+  displayName: 'Build and push docker images'
+
+#- script: |
+#    echo deploy to server
+#    curl -i http://www.fnie.dk/
+#    ssh -i $(sds_deploy_sshkey.secureFilePath) sdsdeploy@91.197.249.227 ls -las
+#  displayName: 'Deploy to server'
+
