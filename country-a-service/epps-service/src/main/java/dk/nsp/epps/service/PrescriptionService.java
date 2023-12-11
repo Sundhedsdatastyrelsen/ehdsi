@@ -70,6 +70,7 @@ public class PrescriptionService {
         String cpr = PatientIdMapper.toCpr(patientId);
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptions(cpr);
+        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapMeta(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
     }
 
