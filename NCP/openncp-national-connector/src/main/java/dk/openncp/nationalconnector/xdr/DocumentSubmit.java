@@ -1,5 +1,9 @@
 package dk.openncp.nationalconnector.xdr;
 
+import dk.nsp.epps.ApiException;
+import dk.nsp.epps.api.model.ClassCode;
+import dk.nsp.epps.api.model.EpsosDocument;
+import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
 import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
 import eu.epsos.protocolterminators.ws.server.exception.NIException;
@@ -18,11 +22,6 @@ import org.w3c.dom.Element;
 public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmitInterface {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
 
-    /**
-     * For use when logging clinical and personal data
-     */
-    private static final Logger loggerClinical = LoggerFactory.getLogger("LOGGER_CLINICAL");
-
     private Element soapHeader;
 
     @Override
@@ -32,26 +31,40 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
 
     @Override
     public void cancelDispensation(DiscardDispenseDetails discardDispenseDetails, EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
-
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public void submitPatientConsent(EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void cancelConsent(DocumentAssociation<ConsentDocumentMetaData> documentAssociation) throws NIException, InsufficientRightsException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void submitHCER(EPSOSDocument epsosDocument) throws DocumentProcessingException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setSOAPHeader(Element soapHeader) {
         this.soapHeader = soapHeader;
+    }
+
+    public static void main(String[] args) {
+        try {
+            var res = CountryAService.api().submitDispensationWithHttpInfo(new EpsosDocument()
+                    .patientId("DKCPR^^^0101010101")
+                    .classCode(ClassCode._60593_1)
+                    .document("<dummy/>"));
+
+            res.getStatusCode();
+
+        } catch (ApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
