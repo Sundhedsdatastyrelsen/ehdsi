@@ -1,6 +1,5 @@
-{:paths ["src"]
- :deps {medley/medley {:mvn/version "1.4.0"}
-        metabase/saml20-clj {:mvn/version "2.2.4"}
+{:paths ["src" "classes"]
+ :deps {metabase/saml20-clj {:mvn/version "2.2.4"}
         org.slf4j/slf4j-nop {:mvn/version "2.0.9"}
         selmer/selmer {:mvn/version "1.12.59"}}
 

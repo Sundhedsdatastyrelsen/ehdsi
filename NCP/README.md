@@ -15,8 +15,9 @@ Run `./run.sh up` to start the system.
 
 # Tests
 
-The `test` folder contains curl scripts for hitting the SOAP endpoints.
-The curl commands can be imported into e.g. Postman, or run from the commandline.
+The `test-tool` directory contains scripts for querying the SOAP endpoints, and a request builder tool for building valid SOAP request bodies with signed SAML2.0 assertions.
+
+See `test-tool/README.md`.
 
 # Generating self-signed test certificate
 
