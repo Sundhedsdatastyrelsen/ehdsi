@@ -81,17 +81,19 @@
         hcp-assertion (load-xml hcp-template
                                 (assoc common-context
                                        :assertion-id hcp-assertion-id))
-        trc-assertion (load-xml trc-template
-                                (assoc common-context
-                                       :assertion-id (str "id" (random-uuid))
-                                       :hcp-assertion-id hcp-assertion-id)) ]
+        trc-assertion (when trc-template
+                        (load-xml trc-template
+                                  (assoc common-context
+                                         :assertion-id (str "id" (random-uuid))
+                                         :hcp-assertion-id hcp-assertion-id))) ]
 
     (-> (io/file request-template)
         .toURL
         (selmer/render-file {:message-id (str "uuid:" (random-uuid))
                              :hcp-assertion (sign-assertion hcp-assertion)
-                             :trc-assertion (sign-assertion trc-assertion)})
-        println)))
+                             :trc-assertion (when trc-assertion
+                                              (sign-assertion trc-assertion))})
+        print)))
 
 (comment
   (.toURL (io/file "hcp1.xml"))
@@ -99,8 +101,5 @@
   (build {:cert "../test/client-dk.crt" :private-key "../test/client-dk.key"
           :request-template "request1.xml" :hcp-template "hcp1.xml"
           :trc-template "trc1.xml"})
-
-  (io/file "asdga")
-  (io/file nil)
 
   )

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Header xmlns:addressing="http://www.w3.org/2005/08/addressing">
+    <addressing:Action env:mustUnderstand="1">urn:ihe:iti:2007:CrossGatewayQuery</addressing:Action>
+    <addressing:MessageID>{{message-id}}</addressing:MessageID>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      {{hcp-assertion|safe}}
+      {{trc-assertion|safe}}
+    </wsse:Security>
+  </env:Header>
+  <env:Body>
+    <ns4:AdhocQueryRequest
+        xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
+        xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+        xmlns:ns6="urn:ihe:iti:xds-b:2007">
+      <ns4:ResponseOption returnComposedObjects="true" returnType="LeafClass"/>
+      <ns2:AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
+        <ns2:Slot name="$XDSDocumentEntryPatientId">
+          <ns2:ValueList>
+            <ns2:Value>'DKCPR^^^0101010000'</ns2:Value>
+          </ns2:ValueList>
+        </ns2:Slot>
+        <ns2:Slot name="$XDSDocumentEntryStatus">
+          <ns2:ValueList>
+            <ns2:Value>('urn:oasis:names:tc:ebxml-regrep:StatusType:')</ns2:Value>
+          </ns2:ValueList>
+        </ns2:Slot>
+        <ns2:Slot name="$XDSDocumentEntryClassCode">
+          <ns2:ValueList>
+            <ns2:Value>57833-6^^</ns2:Value>
+          </ns2:ValueList>
+        </ns2:Slot>
+      </ns2:AdhocQuery>
+    </ns4:AdhocQueryRequest>
+  </env:Body>
+</env:Envelope>

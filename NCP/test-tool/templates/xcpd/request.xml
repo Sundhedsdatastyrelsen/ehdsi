@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap12:Envelope xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+<soap12:Header xmlns:addressing="http://www.w3.org/2005/08/addressing" xmlns:spirit="spirit:soap:transaction:1.0">
+    <addressing:Action soap12:mustUnderstand="1">urn:hl7-org:v3:PRPA_IN201305UV02:CrossGatewayPatientDiscovery</addressing:Action>
+    <addressing:MessageID>{{message-id}}</addressing:MessageID>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      {{hcp-assertion|safe}}
+    </wsse:Security>
+  </soap12:Header>
+  <soap12:Body>
+    <PRPA_IN201305UV02 ITSVersion="XML_1.0" xmlns="urn:hl7-org:v3">
+      <id extension="4733101d-aaa4-49af-be0f-bf8e16c1a97d" root="4ad4e0af-59bc-4233-aa50-27ff21883104"/>
+      <creationTime value="20120531131021.710+0300"/>
+      <versionCode code="V3PR1"/>
+      <interactionId extension="PRPA_IN201305UV02" root="2.16.840.1.113883.1.6"/>
+      <processingCode code="P"/>
+      <processingModeCode code="T"/>
+      <acceptAckCode code="AL"/>
+      <receiver typeCode="RCV">
+        <device classCode="DEV" determinerCode="INSTANCE">
+          <id root="2.16.17.710.860.1000.990.1"/>
+          <asAgent classCode="AGNT">
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+              <id root="2.16.17.710.820.1000.990.1"/>
+            </representedOrganization>
+          </asAgent>
+        </device>
+      </receiver>
+      <sender typeCode="SND">
+        <device classCode="DEV" determinerCode="INSTANCE">
+          <id root="2.16.999.1000.990.1"/>
+          <asAgent classCode="AGNT">
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+              <id root="2.16.999.1000.990.1"/>
+            </representedOrganization>
+          </asAgent>
+        </device>
+      </sender>
+      <controlActProcess classCode="CACT" moodCode="EVN">
+        <code code="PRPA_TE201305UV02" codeSystemName="2.16.840.1.113883.1.6"/>
+        <authorOrPerformer typeCode="AUT">
+          <assignedPerson classCode="ASSIGNED"/>
+        </authorOrPerformer>
+        <queryByParameter>
+          <queryId root="1.263507841149"/>
+          <statusCode code="new"/>
+          <responseModalityCode code="R"/>
+          <responsePriorityCode code="I"/>
+          <matchCriterionList/>
+          <parameterList>
+            <livingSubjectId>
+              <value extension="0101010000" root="DKCPR"/>
+              <semanticsText/>
+            </livingSubjectId>
+          </parameterList>
+        </queryByParameter>
+      </controlActProcess>
+    </PRPA_IN201305UV02>
+  </soap12:Body>
+</soap12:Envelope>

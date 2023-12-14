@@ -18,6 +18,8 @@ RUN download_maven_artifact com.zaxxer HikariCP 4.0.3 && \
     download_maven_artifact com.fasterxml.jackson.core jackson-databind 2.14.2 && \
     download_maven_artifact com.fasterxml.jackson.core jackson-annotations 2.14.2 && \
     download_maven_artifact com.fasterxml.jackson.core jackson-core 2.14.2 && \
+    download_maven_artifact com.fasterxml.jackson.datatype jackson-datatype-jsr310 2.14.2 && \
+    download_maven_artifact org.openapitools jackson-databind-nullable 0.2.6 && \
     download_maven_artifact org.mariadb.jdbc mariadb-java-client 3.2.0
 
 # Download main artifact
