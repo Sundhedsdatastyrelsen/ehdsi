@@ -3,21 +3,23 @@
 
 	<parent>
 		<groupId>dk.nsp.epps</groupId>
-		<artifactId>epps-root</artifactId>
+		<artifactId>epps-mocks-root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>ePrescriptionPoC - API Root</name>
+	<name>ePrescriptionPoC - FMK Mock Data</name>
 	<groupId>dk.nsp.epps</groupId>
-	<artifactId>epps-api-root</artifactId>
+	<artifactId>epps-fmk-mock-data</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
-	<description>ePrescriptionPoC - API Root</description>
+	<description>ePrescriptionPoC - FMK Mock Data</description>
 
-	<modules>
-		<module>epps-ncp-api</module>
-		<module>epps-fmk-api</module>
-	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>dk.nsp.epps</groupId>
+			<artifactId>epps-fmk-api</artifactId>
+		</dependency>
+	</dependencies>
 
 </project>

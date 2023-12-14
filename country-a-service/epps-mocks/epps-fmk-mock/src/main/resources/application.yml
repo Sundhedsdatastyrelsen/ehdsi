@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: ePrescriptionPoC-fmk-mock
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    diskspace:
+      enabled: false
+
+logging:
+  level:
+    root: info
+    org.springframework: info
+    dk.nsp.epps: debug

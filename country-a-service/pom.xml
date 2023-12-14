@@ -21,6 +21,7 @@
 		<module>epps-persistence</module>
 		<module>epps-service</module>
 		<module>epps-application</module>
+		<module>epps-mocks</module>
 	</modules>
 
 	<properties>
@@ -58,7 +59,12 @@
 		<dependencies>
 			<dependency>
 				<groupId>dk.nsp.epps</groupId>
-				<artifactId>epps-api</artifactId>
+				<artifactId>epps-fmk-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dk.nsp.epps</groupId>
+				<artifactId>epps-ncp-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -70,6 +76,17 @@
 				<groupId>dk.nsp.epps</groupId>
 				<artifactId>epps-service</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dk.nsp.epps</groupId>
+				<artifactId>epps-fmk-mock-data</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openapitools</groupId>
+				<artifactId>jackson-databind-nullable</artifactId>
+				<version>0.2.6</version>
 			</dependency>
 
 			<!-- Solve convergence errors -->
@@ -247,7 +264,7 @@
 				<plugin>
 					<groupId>com.sun.xml.ws</groupId>
 					<artifactId>jaxws-maven-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>4.0.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
