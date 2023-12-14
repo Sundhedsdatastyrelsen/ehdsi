@@ -1,7 +1,6 @@
 (ns request-builder
   (:require
    [clojure.java.io :as io]
-   [medley.core :as medley]
    [saml20-clj.coerce :as saml-coerce]
    [saml20-clj.crypto :as saml-crypto]
    [selmer.parser :as selmer]))
@@ -62,7 +61,7 @@
 
 (defn build [args]
   (let [{:keys [hcp-template trc-template request-template
-                cert private-key] :as args} (medley/map-vals str args)
+                cert private-key] :as args} (into {} (map (juxt key (comp str val))) args)
         cert (try (saml-coerce/->Credential (slurp cert))
                   (catch Throwable _ (throw (ex-info (str "Invalid/missing certificate: " cert)
                                                      (or args {})))))
