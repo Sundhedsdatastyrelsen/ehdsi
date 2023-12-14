@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:dkcc="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/09/01/" targetNamespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/09/01/" elementFormDefault="qualified">
+	<!-- -->
+	<element name="TelephoneSubscriberIdentifier" type="dkcc:TelephoneSubscriberIdentifierType"/>
+	<!-- -->
+	<simpleType name="TelephoneSubscriberIdentifierType">
+		<restriction base="string">
+			<pattern value="[0-9]{1,15}"/>
+		</restriction>
+	</simpleType>
+</schema>

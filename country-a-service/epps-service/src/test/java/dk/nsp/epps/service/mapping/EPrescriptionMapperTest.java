@@ -1,6 +1,7 @@
 package dk.nsp.epps.service.mapping;
 
 import dk.nsp.epps.mocks.fmk.data.FmkMockDataFactory;
+import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import freemarker.template.TemplateExceptionHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +19,7 @@ public class EPrescriptionMapperTest {
     @Test
     public void testExpectedNumberOfEpsosDocuments() throws Exception {
         var response = FmkMockDataFactory.getPrescriptionResponse();
-        var result = mapper.mapResponse("1111111118", response);
+        var result = mapper.mapResponse("DKCPR^^^1111111118", new PrescriptionFilter( null, null, null, null), response);
         Assertions.assertEquals(1, result.size());
     }
 
@@ -30,9 +31,7 @@ public class EPrescriptionMapperTest {
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
         cfg.setFallbackOnNullLoopVariable(false);
+        cfg.setRecognizeStandardFileExtensions(true);
         return cfg;
     }
-
-
-
 }

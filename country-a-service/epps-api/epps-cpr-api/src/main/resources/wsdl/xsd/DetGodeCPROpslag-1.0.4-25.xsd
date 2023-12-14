@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mc100="http://rep.oio.dk/medcom.sundcom.dk/xml/schemas/2007/02/01/" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://rep.oio.dk/medcom.sundcom.dk/xml/schemas/2007/02/01/" schemaLocation="./DetGodeCPROpslag-1.0.4-8.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-31.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-24.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-23.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-27.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-30.xsd"/>
+    
+    <xs:element name="FrontierInformationStructure" type="medcom:FrontierInformationStructureType">
+        <xs:annotation>
+            <xs:documentation>Information vedr. grænsegængere.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="FrontierInformationStructureType">
+        <xs:annotation>
+            <xs:documentation>Informationer vedr. grænsegængere.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="medcom:FrontierStartDate">
+                <xs:annotation>
+                    <xs:documentation>Grænsegænger startdato.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:FrontierEndDate">
+                <xs:annotation>
+                    <xs:documentation>Grænsegænger alutdato.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:FrontierCitizenshipStructure" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Grænsegængers statsborgerskab.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:FrontierResidenceCountryStructure" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Grænsegængers bopælsland.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:FrontierSocialSecurityStructure" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Grænsegængers sociale sikring.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

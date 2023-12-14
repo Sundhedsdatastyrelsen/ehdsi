@@ -10,7 +10,6 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 
 @Slf4j
@@ -21,7 +20,7 @@ public class FmkEndpoint {
 
     @PayloadRoot(namespace = REQUEST_NAMESPACE_URI, localPart = "GetPrescriptionRequest")
     @ResponsePayload
-    public JAXBElement<GetPrescriptionResponseType> getPrescription(@RequestPayload GetPrescriptionRequestType request) throws DatatypeConfigurationException {
+    public JAXBElement<GetPrescriptionResponseType> getPrescription(@RequestPayload GetPrescriptionRequestType request) {
         log.info("Returning mock result");
         var result = FmkMockDataFactory.getPrescriptionResponse();
         return new JAXBElement<>(new QName(RESPONSE_NAMESPACE_URI, "GetPrescriptionResponse"), GetPrescriptionResponseType.class, result);

@@ -12,6 +12,7 @@ spring:
 
 app:
   fmk.endpoint.url: ${FMK_ENDPOINT_URL}
+  cpr.endpoint.url: ${CPR_ENDPOINT_URL}
 
 management:
   endpoint:

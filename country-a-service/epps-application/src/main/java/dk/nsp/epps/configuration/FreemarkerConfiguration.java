@@ -15,6 +15,7 @@ public class FreemarkerConfiguration {
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
         cfg.setFallbackOnNullLoopVariable(false);
+        cfg.setRecognizeStandardFileExtensions(true);
         return cfg;
     }
 }

@@ -10,7 +10,7 @@ servers:
 paths:
 
   # 55
-  /api/find-patients:
+  /api/find-patients/:
     get:
       summary: return info about patients
       operationId: findPatients
@@ -41,7 +41,7 @@ paths:
       summary: |
         Retrieve a single document matching search criteria.
         Corresponds to XCA ITI-39 endpoint.
-      operationId: getDocument
+      operationId: getDocuments
       parameters:
         - name: patientId
           in: query
@@ -94,7 +94,7 @@ paths:
                 $ref: '#/components/schemas/Error'
 
   # 38
-  /api/find-eprescription-documents:
+  /api/find-eprescription-documents/:
     get:
       summary: |
         Search for ePrescriptions matching the given search criteria.
@@ -105,6 +105,7 @@ paths:
           in: query
           schema:
             type: string
+          required: true
         - name: repositoryId
           in: query
           schema:

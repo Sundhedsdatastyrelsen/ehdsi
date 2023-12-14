@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" targetNamespace="urn:oio:medcom:cprservice:1.0.4">
+    
+    <xs:import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="./DetGodeCPROpslag-1.0.4-56.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-21.xsd"/>
+    
+    <xs:element name="getPersonWithHealthCareInformationIn">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="cpr:PersonCivilRegistrationIdentifier"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPersonInformationIn">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="cpr:PersonCivilRegistrationIdentifier"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPersonWithHealthCareInformationOut">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="medcom:PersonWithHealthCareInformationStructure"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPersonInformationOut">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="medcom:PersonInformationStructure"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

@@ -1,6 +1,8 @@
 package dk.nsp.epps.configuration;
 
+import dk.nsp.epps.service.client.CprClient;
 import dk.nsp.epps.service.client.FmkClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -8,8 +10,8 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 @Configuration
 public class SoapClientsConfiguration {
 
-    @Bean
-    public Jaxb2Marshaller marshaller() {
+    @Bean(name = "fmkMarshaller")
+    public Jaxb2Marshaller fmkMarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setContextPaths(
             "dk.dkma.medicinecard.xml_schema._2015._06._01",
@@ -19,8 +21,26 @@ public class SoapClientsConfiguration {
     }
 
     @Bean
-    public FmkClient fmkClient(Jaxb2Marshaller marshaller) {
+    public FmkClient fmkClient(@Qualifier("fmkMarshaller") Jaxb2Marshaller marshaller) {
         FmkClient client = new FmkClient();
+        client.setDefaultUri("");
+        client.setMarshaller(marshaller);
+        client.setUnmarshaller(marshaller);
+        return client;
+    }
+
+    @Bean(name = "cprMarshaller")
+    public Jaxb2Marshaller cprMarshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setContextPaths(
+            "oio.medcom.cprservice._1_0"
+        );
+        return marshaller;
+    }
+
+    @Bean
+    public CprClient cprClient(@Qualifier("cprMarshaller") Jaxb2Marshaller marshaller) {
+        CprClient client = new CprClient();
         client.setDefaultUri("");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);

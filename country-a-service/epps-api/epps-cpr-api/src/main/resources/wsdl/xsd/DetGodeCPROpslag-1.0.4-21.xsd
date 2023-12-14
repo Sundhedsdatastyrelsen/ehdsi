@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified">
+
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-45.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-16.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-17.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-33.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-18.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-39.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-19.xsd"/>
+
+</xs:schema>

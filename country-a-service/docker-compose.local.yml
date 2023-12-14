@@ -14,6 +14,7 @@ services:
     image: eclipse-temurin:17-jre-alpine
     command: sh /setup/run-in-container.sh /code/epps-application.jar
     container_name: epps-country-a
+    restart: on-failure:3
     ports:
       - "4000:4000"
       - "8080:8080"
@@ -24,12 +25,14 @@ services:
       - "SPRING_DATASOURCE_USERNAME=epps"
       - "SPRING_DATASOURCE_PASSWORD=epps"
       - "FMK_ENDPOINT_URL=http://epps-fmk-mock:8080/ws/"
+      - "CPR_ENDPOINT_URL=http://epps-cpr-mock:8080/ws/"
     volumes:
       - ./epps-application/target/epps-application.jar:/code/epps-application.jar:ro
       - ./epps-application/src/main/scripts/:/setup/:ro
     links:
       - mariadb-server:mariadb-server
       - epps-fmk-mock:epps-fmk-mock
+      - epps-cpr-mock:epps-cpr-mock
     depends_on:
       - mariadb-server
     networks:
@@ -40,6 +43,7 @@ services:
   #
   epps-fmk-mock:
     image: eclipse-temurin:17-jre-alpine
+    restart: always
     command: sh /setup/run-in-container.sh /code/epps-fmk-mock.jar
     container_name: epps-fmk-mock
     ports:
@@ -50,6 +54,26 @@ services:
       - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
     volumes:
       - ./epps-mocks/epps-fmk-mock/target/epps-fmk-mock.jar:/code/epps-fmk-mock.jar:ro
+      - ./epps-application/src/main/scripts/:/setup/:ro
+    networks:
+      - epps-backend
+
+  #
+  # cpr mock
+  #
+  epps-cpr-mock:
+    image: eclipse-temurin:17-jre-alpine
+    restart: always
+    command: sh /setup/run-in-container.sh /code/epps-cpr-mock.jar
+    container_name: epps-cpr-mock
+    ports:
+      - "4002:4000"
+      - "8082:8080"
+    environment:
+      - "JAVA_DEBUG=${JAVA_DEBUG:-}"
+      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
+    volumes:
+      - ./epps-mocks/epps-cpr-mock/target/epps-cpr-mock.jar:/code/epps-cpr-mock.jar:ro
       - ./epps-application/src/main/scripts/:/setup/:ro
     networks:
       - epps-backend

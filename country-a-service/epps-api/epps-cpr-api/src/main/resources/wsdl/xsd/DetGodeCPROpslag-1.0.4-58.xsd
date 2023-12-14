@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns:cpr2005="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/03/15/" xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/11/24/" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/11/24/" elementFormDefault="qualified">
+
+	<import namespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/03/15/" schemaLocation="./DetGodeCPROpslag-1.0.4-86.xsd"/>
+	
+	<include schemaLocation="./DetGodeCPROpslag-1.0.4-61.xsd"/>
+
+	<element name="PersonBirthDateStructure" type="cpr:PersonBirthDateStructureType"/>
+	<complexType name="PersonBirthDateStructureType">
+		<sequence>
+			<element ref="cpr2005:BirthDate"/>
+			<element ref="cpr:BirthDateUncertaintyIndicator"/>
+		</sequence>
+	</complexType>
+</schema>

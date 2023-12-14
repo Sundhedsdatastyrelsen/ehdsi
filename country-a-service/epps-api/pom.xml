@@ -18,6 +18,7 @@
 	<modules>
 		<module>epps-ncp-api</module>
 		<module>epps-fmk-api</module>
+		<module>epps-cpr-api</module>
 	</modules>
 
 </project>

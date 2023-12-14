@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" xmlns:itst="http://rep.oio.dk/itst.dk/xml/schemas/2006/01/17/" xmlns:cpr2="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified">
+
+	<import namespace="http://rep.oio.dk/itst.dk/xml/schemas/2006/01/17/" schemaLocation="./DetGodeCPROpslag-1.0.4-97.xsd"/>
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="./DetGodeCPROpslag-1.0.4-56.xsd"/>
+
+	<element name="SimpleCPRPerson" type="medcom:SimpleCPRPersonType"/>
+	<complexType name="SimpleCPRPersonType">
+		<sequence>
+			<element ref="itst:PersonNameStructure" minOccurs="0"/>
+			<element ref="cpr2:PersonCivilRegistrationIdentifier"/>
+		</sequence>
+	</complexType>
+</schema>
