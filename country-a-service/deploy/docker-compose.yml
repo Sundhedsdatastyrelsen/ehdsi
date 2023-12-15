@@ -9,14 +9,16 @@ networks:
 
 services:
 
+  # watchtower only runs on startup - after that it is started by the deploy server on-demand
   watchtower:
     image: containrrr/watchtower
     container_name: epps-country-a-watchtower
-    restart: always
-    command: --interval 600 --cleanup epps-country-a epps-fmk-mock epps-cpr-mock
+    command: --run-once --cleanup epps-country-a epps-fmk-mock epps-cpr-mock
     volumes:
       - $HOME/.docker/config.json:/config.json
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - epps-backend
 
   #
   # epps-country-a service

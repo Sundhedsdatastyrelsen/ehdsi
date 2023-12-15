@@ -40,9 +40,7 @@ steps:
     docker push eppsregistry.azurecr.io/countrya-cpr-mock
   displayName: 'Build and push docker images'
 
-#- script: |
-#    echo deploy to server
-#    curl -i http://www.fnie.dk/
-#    ssh -i $(sds_deploy_sshkey.secureFilePath) sdsdeploy@91.197.249.227 ls -las
-#  displayName: 'Deploy to server'
-
+- script: |
+    echo Deploy to server
+    ssh -i $(sds_deploy_sshkey.secureFilePath) sdsdeploy@91.197.249.227 docker compose --file  ./country-a/docker-compose.yml up -d watchtower
+  displayName: 'Redeploy on server'
