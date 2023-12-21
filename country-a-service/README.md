@@ -32,6 +32,14 @@ The following command will build the code and run unit tests
     $ mvn -B clean package
 ```
 
+## Configuration
+
+To run the Country A service (the "epps-application") we need to have some configuration in place.
+Look at `epps-application/src/main/resources/application.yml` for the application configuration.
+
+In order to authenticate with the NSP test services we need to have a keystore with certificate and private key.
+The `app.sts.keystore` configuration values must point to this keystore.
+
 ## Running this project locally / runLocal.sh
 
 ```runLocal.sh``` is a script that runs commands to help speed up the implementation and testing of services by running services
@@ -82,8 +90,3 @@ Start only the database:
 ```bash
     $ ./runLocal.sh startdb
 ```
-
-
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better.
-

@@ -57,6 +57,10 @@
 			<artifactId>freemarker</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>dk.sosi.seal</groupId>
+			<artifactId>seal</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>dk.nsp.epps</groupId>
 			<artifactId>epps-fmk-mock-data</artifactId>
 			<scope>test</scope>

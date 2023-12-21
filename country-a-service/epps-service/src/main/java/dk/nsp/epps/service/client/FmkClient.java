@@ -7,6 +7,7 @@ import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
+import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.namespace.QName;
 import java.util.function.Consumer;
@@ -21,7 +22,9 @@ public class FmkClient extends WebServiceGatewaySupport {
     public GetPrescriptionResponseType getPrescriptions(String cpr) {
         log.info("Calling '{}' with a GetPrescriptionRequestType", fmkEndpointUrl);
         var response = (JAXBElement<GetPrescriptionResponseType>) getWebServiceTemplate()
-            .marshalSendAndReceive(fmkEndpointUrl, getPrescriptionRequest(cpr));
+            .marshalSendAndReceive(fmkEndpointUrl, getPrescriptionRequest(cpr), message -> {
+                ((SoapMessage) message).setSoapAction(NAMESPACE_URI + "/E6#GetPrescription");
+            });
         return response.getValue();
     }
 

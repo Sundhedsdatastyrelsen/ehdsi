@@ -16,4 +16,11 @@ logging:
   level:
     root: info
     org.springframework: info
+    org.springframework.ws:
+      client.MessageTracing:
+        sent: debug
+        received: trace
+      server.MessageTracing:
+        sent: debug
+        received: trace
     dk.nsp.epps: debug
