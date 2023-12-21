@@ -28,22 +28,4 @@ public class SoapClientsConfiguration {
         client.setUnmarshaller(marshaller);
         return client;
     }
-
-    @Bean(name = "cprMarshaller")
-    public Jaxb2Marshaller cprMarshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPaths(
-            "oio.medcom.cprservice._1_0"
-        );
-        return marshaller;
-    }
-
-    @Bean
-    public CprClient cprClient(@Qualifier("cprMarshaller") Jaxb2Marshaller marshaller) {
-        CprClient client = new CprClient();
-        client.setDefaultUri("");
-        client.setMarshaller(marshaller);
-        client.setUnmarshaller(marshaller);
-        return client;
-    }
 }

@@ -28,8 +28,8 @@
 		<!-- Project configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<targetJdk>17</targetJdk>
-		<java.version>17</java.version>
+		<targetJdk>21</targetJdk>
+		<java.version>21</java.version>
 	</properties>
 
 	<!-- Dependencies that all projects get -->
@@ -98,6 +98,11 @@
 				<artifactId>jackson-databind-nullable</artifactId>
 				<version>0.2.6</version>
 			</dependency>
+			<dependency>
+				<groupId>dk.sosi.seal</groupId>
+				<artifactId>seal</artifactId>
+				<version>2.6.25</version>
+			</dependency>
 
 			<!-- Solve convergence errors -->
 			<dependency>
@@ -110,9 +115,49 @@
 				<artifactId>checker-qual</artifactId>
 				<version>3.37.0</version>
 			</dependency>
+			<dependency><!-- seal -->
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.1.1</version>
+			</dependency>
+			<dependency><!-- seal -->
+				<groupId>org.apache.santuario</groupId>
+				<artifactId>xmlsec</artifactId>
+				<version>1.4.8</version>
+			</dependency>
+			<dependency><!-- seal -->
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>1.4.01</version>
+			</dependency>
 			<!-- Solve convergence errors -->
 		</dependencies>
 	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>nspop-nexus</id>
+			<url>https://nexus.nspop.dk/nexus/repository/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
