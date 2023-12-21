@@ -70,15 +70,15 @@ public class FmkMockDataFactory {
         return apply(new PatientType(), patient -> {
             patient.setPerson(apply(new SimpleCPRPersonType(), person -> {
                 person.setName(apply(new PersonNameType(), name -> {
-                    name.setGivenName("Sonja");
-                    name.setMiddleName("Dalgård");
-                    name.setSurname("Knudsen");
+                    name.setGivenName("Helle");
+                    name.setMiddleName("");
+                    name.setSurname("Pedersen");
                 }));
                 person.setPersonIdentifier(apply(new PersonIdentifierType(), personId -> {
                     personId.setSource("CPR");
-                    personId.setValue("1111111118");
+                    personId.setValue("0101010000");
                 }));
-                person.setBirthDate(xmldate(1998, 11, 14));
+                person.setBirthDate(xmldate(2001, 1, 1));
                 person.setGender(GenderType.FEMALE);
             }));
         });

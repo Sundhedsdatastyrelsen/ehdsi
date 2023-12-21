@@ -16,7 +16,12 @@ public class CprEndpoint {
     @PayloadRoot(namespace = CprMockDataFactory.NAMESPACE_URI, localPart = "getPersonInformationIn")
     @ResponsePayload
     public JAXBElement<GetPersonInformationOut> getPersonInformation(@RequestPayload GetPersonInformationIn request) {
-        log.info("Returning mock result");
-        return CprMockDataFactory.getPersonInformationOutAsJaxb();
+        final var result = CprMockDataFactory.getPersonInformationOutAsJaxb();
+        log.info(
+            "Returning mock result for CPR: {}",
+            result.getValue().getPersonInformationStructure().getCurrentPersonCivilRegistrationIdentifier()
+        );
+
+        return result;
     }
 }

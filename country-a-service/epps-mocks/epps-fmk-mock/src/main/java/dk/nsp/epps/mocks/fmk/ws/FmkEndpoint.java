@@ -2,6 +2,7 @@ package dk.nsp.epps.mocks.fmk.ws;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.mocks.fmk.data.FmkMockDataFactory;
 import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import javax.xml.namespace.QName;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Endpoint
@@ -21,8 +23,15 @@ public class FmkEndpoint {
     @PayloadRoot(namespace = REQUEST_NAMESPACE_URI, localPart = "GetPrescriptionRequest")
     @ResponsePayload
     public JAXBElement<GetPrescriptionResponseType> getPrescription(@RequestPayload GetPrescriptionRequestType request) {
-        log.info("Returning mock result");
         var result = FmkMockDataFactory.getPrescriptionResponse();
-        return new JAXBElement<>(new QName(RESPONSE_NAMESPACE_URI, "GetPrescriptionResponse"), GetPrescriptionResponseType.class, result);
+        log.info(
+            "Returning mock prescription(s): {}",
+            result.getPrescription().stream()
+                .map(PrescriptionType::getIdentifier)
+                .map(Object::toString)
+                .collect(Collectors.joining(","))
+        );
+        return new JAXBElement<>(new QName(RESPONSE_NAMESPACE_URI, "GetPrescriptionResponse"),
+            GetPrescriptionResponseType.class, result);
     }
 }

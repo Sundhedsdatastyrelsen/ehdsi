@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +24,7 @@ public class CprService {
         final List<PatientDemographicsDto> found = new ArrayList<>();
         final List<String> notFound = new ArrayList<>();
 
+        log.info("Retrieving citizen(s): {}", String.join(",", patientIds));
         patientIds.forEach(patientId -> {
             try {
                 GetPersonInformationOut response = cprClient.getPersonInformation(PatientIdMapper.toCpr(patientId));
@@ -33,6 +35,10 @@ public class CprService {
                 notFound.add(patientId);
             }
         });
+        log.info(
+            "Found CPR information for: {}",
+            found.stream().flatMap(i -> i.getIdList().stream()).collect(Collectors.joining(","))
+        );
 
         return new FindPatientsResponseDto(found, notFound);
     }
