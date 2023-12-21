@@ -1,0 +1,100 @@
+version: '3.5'
+
+#
+# Network definitions
+#
+networks:
+  epps-backend:
+
+
+services:
+
+  # watchtower only runs on startup - after that it is started by the deploy pipeline on-demand
+  watchtower:
+    image: containrrr/watchtower
+    container_name: epps-country-a-watchtower
+    command: --run-once --cleanup epps-country-a epps-fmk-mock epps-cpr-mock
+    volumes:
+      - $HOME/.docker/config.json:/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - epps-backend
+
+  #
+  # epps-country-a service
+  #
+  epps-country-a:
+    image: eppsregistry.azurecr.io/countrya-poc:latest
+    container_name: epps-country-a
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
+      - "SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb-server/epps"
+      - "SPRING_DATASOURCE_USERNAME=epps"
+      - "SPRING_DATASOURCE_PASSWORD=epps"
+      - "FMK_ENDPOINT_URL=http://epps-fmk-mock:8080/ws/"
+      - "CPR_ENDPOINT_URL=http://epps-cpr-mock:8080/ws/"
+    links:
+      - mariadb-server:mariadb-server
+      - epps-fmk-mock:epps-fmk-mock
+      - epps-cpr-mock:epps-cpr-mock
+    depends_on:
+      - mariadb-server
+    networks:
+      - epps-backend
+
+  #
+  # fmk mock
+  #
+  epps-fmk-mock:
+    image: eppsregistry.azurecr.io/countrya-fmk-mock:latest
+    restart: always
+    container_name: epps-fmk-mock
+    ports:
+      - "8081:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
+    networks:
+      - epps-backend
+
+  #
+  # cpr mock
+  #
+  epps-cpr-mock:
+    image: eppsregistry.azurecr.io/countrya-cpr-mock:latest
+    restart: always
+    container_name: epps-cpr-mock
+    ports:
+      - "8082:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
+    networks:
+      - epps-backend
+
+  #
+  # Database
+  #
+  mariadb-server:
+    image: mariadb:11.1
+    restart: always
+    container_name: epps-country-a-db
+    #ports:
+    #  - "3306:3306"
+    environment:
+      - "MARIADB_ROOT_PASSWORD=7b1c3deda5144f99a6973f462215b8cd"
+      - "MARIADB_USER=epps"
+      - "MARIADB_PASSWORD=epps"
+      - "MARIADB_DATABASE=epps"
+    volumes:
+      - type: volume
+        source: countrya-data
+        target: /var/lib/mysql
+        read_only: false
+    networks:
+      - epps-backend
+
+volumes:
+  countrya-data:
+    driver: local

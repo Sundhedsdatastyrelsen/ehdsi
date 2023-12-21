@@ -12,6 +12,6 @@ FROM eclipse-temurin:17-jre
 EXPOSE 8080
 
 COPY --from=builder /usr/src/build/epps-application/src/main/scripts/run-in-container.sh .
-COPY --from=builder /usr/src/build/epps-application/target/epps-application.jar .
+COPY --from=builder /usr/src/build/epps-mocks/epps-fmk-mock/target/epps-fmk-mock.jar .
 RUN chmod +x /run-in-container.sh
-CMD /run-in-container.sh epps-application.jar
+CMD /run-in-container.sh epps-fmk-mock.jar

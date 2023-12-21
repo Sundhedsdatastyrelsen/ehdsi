@@ -90,3 +90,26 @@ Start only the database:
 ```bash
     $ ./runLocal.sh startdb
 ```
+
+# Deployment
+
+At the time of writing this app is deployet to a server [documented here ](https://dev.azure.com/globeteam/ePrescription/_wiki/wikis/ePrescription.wiki/926/Server) using azure pipelines.
+
+An ssh key for the server and a token for azure container registry is configured for the pipeline.
+
+Initial deployment is done by
+
+1. Ensuring that the server has credentials to pull from azure container registry.
+2. Copying the ```deploy/docker-compose.yml``` file to ```country-a/docker-compose.yml``` on the server.
+3. performing ```docker compose up -d``` in the ```country-a``` directory.
+
+
+Step 1 can be accomplished by running
+```bash
+    docker login -u PipelineToken -p <token> eppsregistry.azurecr.io
+```
+with a valid token.
+
+
+After that the pipeline will redeploy by ssh-ing to the server and causing [Watchtower](https://containrrr.dev/watchtower/)
+to run upon merge to main.
