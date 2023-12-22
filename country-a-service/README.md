@@ -93,23 +93,40 @@ Start only the database:
 
 # Deployment
 
-At the time of writing this app is deployet to a server [documented here ](https://dev.azure.com/globeteam/ePrescription/_wiki/wikis/ePrescription.wiki/926/Server) using azure pipelines.
+At the time of writing this app is deployed to a server [documented here](https://dev.azure.com/globeteam/ePrescription/_wiki/wikis/ePrescription.wiki/926/Server) using Azure Pipelines.
 
-An ssh key for the server and a token for azure container registry is configured for the pipeline.
+An SSH key for the server and a token for Azure Container Registry is configured for the pipeline.
 
 Initial deployment is done by
 
-1. Ensuring that the server has credentials to pull from azure container registry.
-2. Copying the ```deploy/docker-compose.yml``` file to ```country-a/docker-compose.yml``` on the server.
-3. performing ```docker compose up -d``` in the ```country-a``` directory.
+1. Ensuring that the server has credentials to pull from Azure Container Registry.
+2. Copying `deploy/docker-compose.yml` to `country-a/docker-compose.yml` on the server.
+3. Locating and copying the secret keystore `epps-test-cert.p12` into `country-a/epps-test-cert.p12` on the server.
+4. Copying `.env.defaults` to `country-a/.env` on the server, and filling out `STS_KEYSTORE_PASSWORD` with the correct value.
+5. Performing `docker compose up -d` in the `country-a` directory.
 
 
-Step 1 can be accomplished by running
+The following commmands can be used to perform the steps:
+
 ```bash
-    docker login -u PipelineToken -p <token> eppsregistry.azurecr.io
+# Login to container registry
+ssh sdsdeploy@sdseppstest "docker login -u PipelineToken -p <token> eppsregistry.azurecr.io"
+
+# Ensure folder exists
+ssh sdsdeploy@sdseppstest "mkdir -p country-a"
+
+# Copy files
+scp deploy/docker-compose.yml  sdsdeploy@sdseppstest:country-a/
+scp epps-test-cert.p12 sdsdeploy@sdseppstest:country-a/
+scp .env.defaults sdsdeploy@sdseppstest:country-a/.env
+
+# Insert keystore password
+ssh -t sdsdeploy@sdseppstest "vim country-a/.env"
+
+# Start the system
+ssh sdsdeploy@sdseppstest "cd country-a && docker compose up -d"
 ```
-with a valid token.
 
+where `sdseppstest` is the address of the server.
 
-After that the pipeline will redeploy by ssh-ing to the server and causing [Watchtower](https://containrrr.dev/watchtower/)
-to run upon merge to main.
+After that the pipeline will redeploy on merges to `main` by re-running [Watchtower](https://containrrr.dev/watchtower/).
