@@ -11,7 +11,7 @@ services:
   # epps-country-a service
   #
   epps-country-a:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     command: sh /setup/run-in-container.sh /code/epps-application.jar
     container_name: epps-country-a
     restart: on-failure:3
@@ -42,7 +42,7 @@ services:
   # fmk mock
   #
   epps-fmk-mock:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     restart: always
     command: sh /setup/run-in-container.sh /code/epps-fmk-mock.jar
     container_name: epps-fmk-mock
@@ -62,7 +62,7 @@ services:
   # cpr mock
   #
   epps-cpr-mock:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     restart: always
     command: sh /setup/run-in-container.sh /code/epps-cpr-mock.jar
     container_name: epps-cpr-mock

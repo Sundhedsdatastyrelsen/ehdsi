@@ -1,14 +1,14 @@
 # This docker file contains the instructions for building and then running the backend application.
 
 # Build image
-FROM maven:3.9-eclipse-temurin-17 as builder
+FROM maven:3.9-eclipse-temurin-21 as builder
 WORKDIR /usr/src/build
 COPY ./ /usr/src/build
 RUN --mount=type=cache,target=/root/.m2 mvn -B clean package
 
 
 # Finished backend image
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 EXPOSE 8080
 
 COPY --from=builder /usr/src/build/epps-application/src/main/scripts/run-in-container.sh .

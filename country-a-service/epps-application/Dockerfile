@@ -1,6 +1,6 @@
 # Build production image for ePrescriptionPoC
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre
 
 EXPOSE 8080
 

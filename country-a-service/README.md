@@ -12,7 +12,7 @@ TODO: Give a short introduction of your project. Let this section explain the ob
 ## Getting Started
 
 * Maven - version 3.8 was used to develop this, it may or may not work with older versions.
-* Java JDK 17 - [Eclipse Temurin 17](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot) from Adoptium was used to develop this project.
+* Java JDK 21 - [Eclipse Temurin 21](https://adoptium.net/?variant=openjdk21&jvmVariant=hotspot) from Adoptium was used to develop this project.
 * Docker + Docker-Compose - Docker version 20.10.12 and docker-compose version 1.29.2 was used to develop this project.
 * Bash - version 5+ - Most scripts in this project are Bash scripts - Linux and Mac should have that already installed, but if you are on windows you might need to install.
 
