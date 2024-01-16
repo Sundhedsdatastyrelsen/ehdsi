@@ -5,12 +5,14 @@ import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import jakarta.validation.Valid;
+import jakarta.xml.bind.JAXBException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class PrescriptionController {
         @Valid @RequestParam(value = "maximumSize", required = false) Long maximumSize,
         @Valid @RequestParam(value = "createdBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdBefore,
         @Valid @RequestParam(value = "createdAfter", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdAfter
-    ) {
+    ) throws JAXBException, IOException, InterruptedException {
         var filter = new PrescriptionFilter(documentId, maximumSize, createdBefore, createdAfter);
         return prescriptionService.findEPrescriptionDocuments(patientId, filter);
     }
@@ -40,7 +42,7 @@ public class PrescriptionController {
         @Valid @RequestParam(value = "maximumSize", required = false) Long maximumSize,
         @Valid @RequestParam(value = "createdBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdBefore,
         @Valid @RequestParam(value = "createdAfter", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdAfter
-    ) {
+    ) throws JAXBException, InterruptedException {
         var filter = new PrescriptionFilter(documentId, maximumSize, createdBefore, createdAfter);
         return prescriptionService.getPrescriptions(patientId, filter);
     }

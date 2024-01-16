@@ -16,4 +16,9 @@ public class ServiceResponseException extends Exception {
     public int getStatusCode() {
         return statusCode;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Status code: %s, Body: %s", statusCode, body);
+    }
 }

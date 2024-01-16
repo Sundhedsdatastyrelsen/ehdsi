@@ -1,6 +1,6 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatedWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthUnitCodeType;
@@ -220,12 +220,12 @@ public class EPrescriptionMapper {
                 .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
                 .map(list ->
                     list.stream().filter(jaxb ->
-                            jaxb.getDeclaredType().isAssignableFrom(AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType.class)
+                            jaxb.getDeclaredType().isAssignableFrom(AuthorisedHealthcareProfessionalType.class)
                         )
                         .findFirst()
                         .orElse(null)
                 )
-                .map(xml -> (AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType) xml.getValue())
+                .map(xml -> (AuthorisedHealthcareProfessionalType) xml.getValue())
                 .map(ahp -> new Names(ahp.getName()))
                 .orElse(null);
         }
