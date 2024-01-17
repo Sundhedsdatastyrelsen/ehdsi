@@ -28,6 +28,7 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -36,7 +37,7 @@ import java.util.Properties;
 public class SosiClient {
     private final URI stsUri;
     private final CredentialVault credentialVault;
-    private final Properties props = SignatureUtil.setupCryptoProviderForJVM(); // does this work for modern JVMs?
+    private final Properties props = SignatureUtil.setupCryptoProviderForJVM();
     private final SOSIFactory sosiFactory;
     private final CareProvider careProvider =
         new CareProvider(SubjectIdentifierTypeValues.CVR_NUMBER, "33257872", "Sundhedsdatastyrelsen");
@@ -48,8 +49,8 @@ public class SosiClient {
         @Value("${app.sts.keystore.path}") String keystorePath,
         @Value("${app.sts.keystore.password}") String keystorePassword,
         @Value("${app.sts.keystore.alias}") String keystoreAlias
-    ) throws URISyntaxException, IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException,
-        UnrecoverableKeyException {
+    ) throws URISyntaxException, IOException, CertificateException,
+        NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
         this.stsUri = new URI(stsUri);
         credentialVault = makeCredentialVault(keystorePath, keystorePassword, keystoreAlias);
         // TODO: shouldn't only support test federation
@@ -104,6 +105,7 @@ public class SosiClient {
         InterruptedException, ServiceResponseException {
         final var client = HttpClient.newHttpClient();
         final var requestString = XmlUtil.node2String(request.serialize2DOMDocument());
+        log.info("Sending request to uri {}: {}", uri, requestString);
         final var r = HttpRequest.newBuilder(uri)
             .header("SOAPAction", String.format("\"%s\"", Optional.ofNullable(soapAction).orElse("")))
             .header("Content-Type", "text/xml; charset=utf-8")
@@ -127,9 +129,18 @@ public class SosiClient {
 
     public Reply sendNspRequest(URI uri, Element soapBody, String soapAction) throws IOException,
         InterruptedException, ServiceResponseException {
+        return sendNspRequest(uri, soapBody, soapAction, Collections.emptyList());
+    }
+
+    public Reply sendNspRequest(URI uri, Element soapBody, String soapAction, Iterable<Element> extraHeaders) throws IOException,
+        InterruptedException, ServiceResponseException {
         final var request = sosiFactory.createNewRequest(false, null);
         request.setIDCard(getIdCard());
         request.setBody(soapBody);
+        for (var extraHeader : extraHeaders) {
+            request.addNonSOSIHeader(extraHeader);
+        }
+
         final var response = sendRequest(uri, request, soapAction);
         return sosiFactory.deserializeReply(response);
     }
@@ -138,20 +149,22 @@ public class SosiClient {
      * Only used for development and testing.
      */
     public static void main(String[] args) throws Exception {
-        var stsClient = new SosiClient(
-                    "http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService",
+        var sosiClient = new SosiClient(
+            "http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService",
             "epps-test-cert.p12",
             System.getenv("EPPS_TEST_CERT_PASSWORD"),
             "epps - nsp testmiljø - 3/11/2026"
         );
 
-        var cprClient = new CprClient(
-            "http://test2.ekstern-test.nspop.dk:8080/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4",
-            stsClient
-        );
-        log.info(cprClient.getPersonInformation("0101011234")
-            .getPersonInformationStructure().getRegularCPRPerson().getPersonNameForAddressingName());
-        log.info(cprClient.getPersonInformation("0101011235")
-            .getPersonInformationStructure().getRegularCPRPerson().getPersonNameForAddressingName());
+//        var cprClient = new CprClient(
+//            "http://test2.ekstern-test.nspop.dk:8080/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4",
+//            sosiClient
+//        );
+//        log.info(cprClient.getPersonInformation("0101011234")
+//            .getPersonInformationStructure().getRegularCPRPerson().getPersonNameForAddressingName());
+
+        var fmkClient = new FmkClient("http://localhost:8080/ws/", sosiClient);
+//        var fmkClient = new FmkClient("https://test2.fmk.netic.dk/fmk12/ws/MedicineCard", sosiClient);
+        log.info(fmkClient.getPrescriptions("1111111118").getPrescription().get(0).getDrug().getName());
     }
 }

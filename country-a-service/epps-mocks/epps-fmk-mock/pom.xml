@@ -54,6 +54,10 @@
 			<groupId>dk.nsp.epps</groupId>
 			<artifactId>epps-fmk-mock-data</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>dk.sosi.seal</groupId>
+			<artifactId>seal</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

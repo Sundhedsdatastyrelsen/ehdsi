@@ -9,6 +9,7 @@ import dk.nsp.epps.service.exception.CountryAException;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
 import freemarker.template.TemplateException;
+import jakarta.xml.bind.JAXBException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -66,7 +67,7 @@ public class PrescriptionService {
         }
     }
 
-    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) {
+    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException, IOException, InterruptedException {
         String cpr = PatientIdMapper.toCpr(patientId);
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptions(cpr);
@@ -74,7 +75,7 @@ public class PrescriptionService {
         return ePrescriptionMapper.mapMeta(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
     }
 
-    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter) {
+    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter) throws JAXBException, InterruptedException {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
             log.debug("Looking up info for {}", cpr);
