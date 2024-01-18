@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<e6:StartEffectuationResponse
+    xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01"
+    xmlns:e2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2"
+    xmlns:e6="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6">
+    <e6:PersonIdentifier source="CPR">1111111118</e6:PersonIdentifier>
+    <e6:Prescription>
+        <e6:Identifier>1341404071001001001</e6:Identifier>
+        <e6:AttachedToDrugMedicationIdentifier>13143641280998</e6:AttachedToDrugMedicationIdentifier>
+        <e6:CreatedFromDrugMedicationVersion>1341404071666006001</e6:CreatedFromDrugMedicationVersion>
+        <e6:OrderedEffectuationIdentifier>21297322</e6:OrderedEffectuationIdentifier>
+        <e6:AuthorisationDateTime>2012-03-29T09:30:47.0Z</e6:AuthorisationDateTime>
+        <e6:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>2Q5TK</AuthorisationIdentifier>
+                    <Name>Tess Christoffersen</Name>
+                    <SpecialityCode source="Medicinpriser" date="2013-11-18">PSYK</SpecialityCode>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Lægerne Vestergade</Name>
+                    <AddressLine>Vestergade 2</AddressLine>
+                    <AddressLine>8660 Skanderborg</AddressLine>
+                    <TelephoneNumber>86521348</TelephoneNumber>
+                    <EmailAddress>kontakt@laegernevestergade.dk</EmailAddress>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">66974</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2013-11-19T09:30:47.0Z</DateTime>
+        </e6:Created>
+        <e6:ValidFromDate>2013-11-19Z</e6:ValidFromDate>
+        <e6:ValidToDate>2015-11-19Z</e6:ValidToDate>
+        <e6:PackageRestriction>
+            <e2:PackageNumber source="Medicinpriser" date="2012-02-06">84194</e2:PackageNumber>
+            <e2:PackageQuantity>1</e2:PackageQuantity>
+        </e6:PackageRestriction>
+        <e6:Indication>
+            <Code source="Medicinpriser" date="2011-04-09">122</Code>
+            <Text>mod halsbetændelse</Text>
+        </e6:Indication>
+        <e6:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2012-08-06">J01CE02</Code>
+                <Text>Phenoxymethylpenicillin</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2012-08-06">28100902676</Identifier>
+            <Name>Primcillin</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2012-08-06">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>250.0</Value>
+                <UnitCode source="Medicinpriser" date="2012-08-06">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2012-08-06">250 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2012-08-06">Phenoxymethylpenicillinkalium
+                    </SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </e6:Drug>
+        <e6:DosageText>1 tablet morgen og aften ved måltid</e6:DosageText>
+        <e6:SubstitutionAllowed>true</e6:SubstitutionAllowed>
+        <e6:Status>åben</e6:Status>
+        <e6:Order>
+            <e2:Identifier>1341404071001002003</e2:Identifier>
+            <e2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>2Q5TK</AuthorisationIdentifier>
+                        <Name>Tess Christoffersen</Name>
+                        <SpecialityCode source="Medicinpriser" date="2014-11-18">PSYK</SpecialityCode>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Lægerne Vestergade</Name>
+                        <AddressLine>Vestergade 2</AddressLine>
+                        <AddressLine>8660 Skanderborg</AddressLine>
+                        <TelephoneNumber>86521348</TelephoneNumber>
+                        <EmailAddress>kontakt@laegernevestergade.dk</EmailAddress>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66974</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2014-11-19T09:30:47.0Z</DateTime>
+            </e2:Created>
+            <e2:OrderedAtPharmacy>
+                <Name>Skanderborg Apotek</Name>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+            </e2:OrderedAtPharmacy>
+            <e2:Status>Ekspedition påbegyndt</e2:Status>
+        </e6:Order>
+    </e6:Prescription>
+    <e6:StartEffectuationFailed>
+        <e2:PrescriptionIdentifier>1341404071001002001</e2:PrescriptionIdentifier>
+        <e2:ReasonCode>9876</e2:ReasonCode>
+        <e2:ReasonText>Ekspedition er påbegyndt på Århus Løve Apotek</e2:ReasonText>
+        <e2:PrescriptionStatus>åben</e2:PrescriptionStatus>
+        <e2:OrderStatus>Ekspedition påbegyndt</e2:OrderStatus>
+        <e2:InProgressAtPharmacy>
+            <Name>Århus Løve Apotek</Name>
+            <AddressLine>Store Torv 5</AddressLine>
+            <AddressLine>8000 Århus C</AddressLine>
+            <Type>Apotek</Type>
+            <Identifier source="EAN-Lokationsnummer">5790000170067</Identifier>
+        </e2:InProgressAtPharmacy>
+    </e6:StartEffectuationFailed>
+</e6:StartEffectuationResponse>

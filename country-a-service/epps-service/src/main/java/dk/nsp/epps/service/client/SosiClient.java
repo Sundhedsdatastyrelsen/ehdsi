@@ -1,7 +1,15 @@
 package dk.nsp.epps.service.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory;
+import dk.nsp.epps.Utils;
 import dk.sosi.seal.SOSIFactory;
-import dk.sosi.seal.model.*;
+import dk.sosi.seal.model.AuthenticationLevel;
+import dk.sosi.seal.model.CareProvider;
+import dk.sosi.seal.model.IDCard;
+import dk.sosi.seal.model.Message;
+import dk.sosi.seal.model.Reply;
+import dk.sosi.seal.model.SecurityTokenResponse;
+import dk.sosi.seal.model.SignatureUtil;
 import dk.sosi.seal.model.constants.SubjectIdentifierTypeValues;
 import dk.sosi.seal.pki.SOSITestFederation;
 import dk.sosi.seal.vault.CredentialPair;
@@ -165,6 +173,31 @@ public class SosiClient {
 
         var fmkClient = new FmkClient("http://localhost:8080/ws/", sosiClient);
 //        var fmkClient = new FmkClient("https://test2.fmk.netic.dk/fmk12/ws/MedicineCard", sosiClient);
-        log.info(fmkClient.getPrescriptions("1111111118").getPrescription().get(0).getDrug().getName());
+
+        var f2 = new ObjectFactory();
+        var f = new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
+
+        var getPrescriptionRequest = f.createGetPrescriptionRequestType();
+        getPrescriptionRequest.setPersonIdentifier(Utils.apply(f.createPersonIdentifierType(), pi -> {
+            pi.setSource("CPR");
+            pi.setValue("1111111118");
+        }));
+        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest);
+        var effectuationRequest = f.createStartEffectuationRequestType();
+        effectuationRequest.setPersonIdentifier(prescriptions.getPatient().getPerson().getPersonIdentifier());
+        var startEffectuation = fmkClient.startEffectuation(effectuationRequest);
+
+        var createdBy = f.createModificatorType(); // TODO
+        var personIdentifier = f.createPersonIdentifierType(); // TODO
+        var prescription = Utils.apply(f2.createCreatePharmacyEffectuationOnPrescriptionType(), x ->
+            x.setPrescriptionIdentifier(startEffectuation.getPrescription().get(0).getIdentifier())); // TODO
+        var request = f2.createCreatePharmacyEffectuationRequestType();
+        request.setCreatedBy(createdBy);
+        request.setPersonIdentifier(personIdentifier);
+        request.getPrescription().add(prescription);
+
+        var effectuation = fmkClient.createPharmacyEffectuation(request);
+
+        log.info("Foo: {}", effectuation.getEffectuation().get(0).getOrderIdentifier());
     }
 }

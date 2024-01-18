@@ -1,7 +1,9 @@
 package dk.nsp.epps.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.nsp.epps.Utils;
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.client.FmkClient;
@@ -69,8 +71,14 @@ public class PrescriptionService {
 
     public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException, IOException, InterruptedException {
         String cpr = PatientIdMapper.toCpr(patientId);
+        var f = new ObjectFactory();
+        var request = f.createGetPrescriptionRequestType();
+        request.setPersonIdentifier(Utils.apply(f.createPersonIdentifierType(), pi -> {
+            pi.setSource("CPR");
+            pi.setValue(cpr);
+        }));
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptions(cpr);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapMeta(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
     }
@@ -78,8 +86,14 @@ public class PrescriptionService {
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter) throws JAXBException, InterruptedException {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
+            var f = new ObjectFactory();
+            var request = f.createGetPrescriptionRequestType();
+            request.setPersonIdentifier(Utils.apply(f.createPersonIdentifierType(), pi -> {
+                pi.setSource("CPR");
+                pi.setValue(cpr);
+            }));
             log.debug("Looking up info for {}", cpr);
-            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptions(cpr);
+            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request);
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
             return ePrescriptionMapper.mapResponse(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
         } catch (IOException | TemplateException e) {

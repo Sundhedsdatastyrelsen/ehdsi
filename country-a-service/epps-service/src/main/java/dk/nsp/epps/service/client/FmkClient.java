@@ -1,8 +1,12 @@
 package dk.nsp.epps.service.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.PersonIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.StartEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.nsp.epps.Utils;
 import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.OrgUsingID;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
@@ -11,24 +15,28 @@ import dk.sosi.seal.model.Reply;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMResult;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.function.Consumer;
 
-@Slf4j
 @Component
 public class FmkClient {
-    private static final String NAMESPACE_URI = "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01";
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(FmkClient.class);
+
+    private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory fac =
+        new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
+
+    private static final dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory facE2 =
+        new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
+
     private final URI serviceUri;
     private final SosiClient sosiClient;
     private final JAXBContext jaxbContext;
@@ -38,6 +46,7 @@ public class FmkClient {
         this.sosiClient = sosiClient;
         this.jaxbContext = JAXBContext.newInstance(
             "dk.dkma.medicinecard.xml_schema._2015._06._01"
+                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
                 + ":dk.sdsd.dgws._2012._06"
         );
@@ -56,7 +65,7 @@ public class FmkClient {
         whitelistingHeader.setSystemVersion("0.1.0");
         whitelistingHeader.setOrgResponsibleName("Sundhedsdatastyrelsen");
         whitelistingHeader.setOrgUsingName("Sundhedsdatastyrelsen");
-        whitelistingHeader.setOrgUsingID(apply(new OrgUsingID(), orgUsingID -> {
+        whitelistingHeader.setOrgUsingID(Utils.apply(new OrgUsingID(), orgUsingID -> {
             orgUsingID.setNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER);
             // TODO: Don't use Region Hovedstaden's location number
             orgUsingID.setValue("5790000120512");
@@ -66,45 +75,62 @@ public class FmkClient {
         return factory.createWhitelistingHeader(whitelistingHeader);
     }
 
-    public GetPrescriptionResponseType getPrescriptions(String cpr) throws JAXBException, IOException, InterruptedException {
-        final var requestBody = getPrescriptionRequest(cpr);
-        final Reply response;
+    /**
+     * "Påbegynd ekspedition".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:pabegynd_ekspedition">FMK documentation.</a>
+     */
+    public StartEffectuationResponseType startEffectuation(StartEffectuationRequestType request)
+        throws JAXBException, IOException, InterruptedException {
+        return makeFmkRequest(
+            fac.createStartEffectuationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#StartEffectuation",
+            StartEffectuationResponseType.class
+        );
+    }
+
+    /**
+     * "Opret effektuering på recept".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:opret_effektuering">FMK documentation.</a>
+     */
+    public CreatePharmacyEffectuationResponseType createPharmacyEffectuation(CreatePharmacyEffectuationRequestType request)
+        throws JAXBException, IOException, InterruptedException {
+        return makeFmkRequest(
+            facE2.createCreatePharmacyEffectuationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePharmacyEffectuation",
+            CreatePharmacyEffectuationResponseType.class
+        );
+
+    }
+
+    /**
+     * "Hent recept".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_recept">FMK documentation.</a>
+     */
+    public GetPrescriptionResponseType getPrescription(GetPrescriptionRequestType request)
+        throws JAXBException, IOException, InterruptedException {
+        return makeFmkRequest(
+            fac.createGetPrescriptionRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
+            GetPrescriptionResponseType.class
+        );
+    }
+
+    private <RequestType, ResponseType> ResponseType makeFmkRequest(
+        JAXBElement<RequestType> request, String soapAction, Class<ResponseType> clazz)
+        throws JAXBException, IOException, InterruptedException {
+        final Reply reply;
         try {
-            log.info("Calling '{}' with a GetPrescriptionRequestType", serviceUri);
-            response = sosiClient.sendNspRequest(
+            log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
+            reply = sosiClient.sendNspRequest(
                 serviceUri,
-                toElement(requestBody),
-                "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
+                toElement(request),
+                soapAction,
                 List.of(toElement(getWhitelistingHeader()))
             );
         } catch (ServiceResponseException e) {
             throw new RuntimeException(e);
         }
-        final var jaxbResponse = jaxbContext.createUnmarshaller()
-            .unmarshal(response.getBody(), GetPrescriptionResponseType.class);
+        final var jaxbResponse = jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz);
         return jaxbResponse.getValue();
-    }
-
-    private JAXBElement<GetPrescriptionRequestType> getPrescriptionRequest(String cpr) {
-        return new JAXBElement<>(
-            new QName(NAMESPACE_URI, "GetPrescriptionRequest"),
-            GetPrescriptionRequestType.class,
-            apply(new GetPrescriptionRequestType(), request -> {
-                request.setPersonIdentifier(apply(new PersonIdentifierType(), id -> {
-                    id.setSource("CPR");
-                    id.setValue(cpr);
-                }));
-                request.getIdentifier().add(21298478L);
-                request.setIncludeEffectuations(true);
-            }));
-    }
-
-    /**
-     * Utility function to make it possible to in-line initialize builder-less nested classes.
-     * Basically a poor man's version of kotlin's apply method.
-     */
-    private <T> T apply(T value, Consumer<T> initializer) {
-        initializer.accept(value);
-        return value;
     }
 }
