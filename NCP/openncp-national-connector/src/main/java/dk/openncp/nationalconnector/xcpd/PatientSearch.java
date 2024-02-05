@@ -2,7 +2,9 @@ package dk.openncp.nationalconnector.xcpd;
 
 import dk.nsp.epps.ApiException;
 import dk.nsp.epps.api.model.Gender;
+import dk.nsp.epps.api.model.PostFindPatientsRequest;
 import dk.openncp.nationalconnector.CountryAService;
+import dk.openncp.nationalconnector.Utils;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
 import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
 import eu.epsos.protocolterminators.ws.server.exception.NIException;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import tr.com.srdc.epsos.data.model.PatientDemographics;
 import tr.com.srdc.epsos.data.model.PatientId;
+import tr.com.srdc.epsos.util.XMLUtil;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
@@ -109,13 +112,15 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         return result;
     }
 
-    static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds) throws NIException {
+    static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader) throws NIException {
         try {
+            final var request = new PostFindPatientsRequest()
+                    .soapHeader(Utils.elementToString(soapHeader))
+                    .patientIds(patientIds.stream()
+                            .map(pid -> pid.getRoot() + "^^^" + pid.getExtension())
+                            .collect(Collectors.toList()));
             logger.info("Retrieving patient demographics from Country A service...");
-            final var response = CountryAService.api().findPatients(patientIds.stream()
-                    .map(pid -> pid.getRoot() + "^^^" + pid.getExtension())
-                    .collect(Collectors.joining(","))
-            );
+            final var response = CountryAService.api().postFindPatients(request);
             logger.info("Successfully retrieved patient demographics from Country A service.");
             return response.getPatients().stream()
                     .map(PatientSearch::toEpsosPatient)
@@ -130,7 +135,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
 
     @Override
     public List<PatientDemographics> getPatientDemographics(List<PatientId> patientIds) throws NIException, InsufficientRightsException, MarshallingException {
-        return getPatientDemographicsFromCountryA(patientIds);
+        return getPatientDemographicsFromCountryA(patientIds, this.soapHeader);
     }
 
     @Override
@@ -141,10 +146,10 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     /**
      * For testing in IDE
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         try {
             var pid = toPatientId("DKCPR^^^1212121212");
-            var foo = getPatientDemographicsFromCountryA(List.of(new PatientId("DKCPR", "1212121234")));
+            var foo = getPatientDemographicsFromCountryA(List.of(new PatientId("DKCPR", "1212121234")), XMLUtil.parseContent("<SomeXml/>").getDocumentElement());
             return;
         } catch (NIException e) {
             throw new RuntimeException(e);

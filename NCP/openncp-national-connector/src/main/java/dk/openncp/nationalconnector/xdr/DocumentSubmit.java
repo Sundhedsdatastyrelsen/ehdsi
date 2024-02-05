@@ -2,7 +2,7 @@ package dk.openncp.nationalconnector.xdr;
 
 import dk.nsp.epps.ApiException;
 import dk.nsp.epps.api.model.ClassCode;
-import dk.nsp.epps.api.model.EpsosDocument;
+import dk.nsp.epps.api.model.SubmitDispensationRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
 import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
@@ -17,7 +17,6 @@ import fi.kela.se.epsos.data.model.EPSOSDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-
 
 public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmitInterface {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
@@ -56,10 +55,11 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
 
     public static void main(String[] args) {
         try {
-            var res = CountryAService.api().submitDispensationWithHttpInfo(new EpsosDocument()
+            var res = CountryAService.api().submitDispensationWithHttpInfo(new SubmitDispensationRequest()
                     .patientId("DKCPR^^^0101010101")
                     .classCode(ClassCode._60593_1)
-                    .document("<dummy/>"));
+                    .document("<dummy/>")
+                    .soapHeader("<Header/>"));
 
             res.getStatusCode();
 

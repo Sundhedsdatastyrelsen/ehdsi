@@ -1,7 +1,10 @@
 package dk.openncp.nationalconnector.xca;
 
 import dk.nsp.epps.ApiException;
+import dk.nsp.epps.api.model.PostFetchDocumentRequest;
+import dk.nsp.epps.api.model.PostFindEPrescriptionDocumentsRequest;
 import dk.openncp.nationalconnector.CountryAService;
+import dk.openncp.nationalconnector.Utils;
 import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
 import eu.epsos.protocolterminators.ws.server.exception.NIException;
 import eu.epsos.protocolterminators.ws.server.xca.DocumentSearchInterface;
@@ -38,17 +41,19 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
         return d == null ? null : Date.from(d.toInstant());
     }
 
-    static EPSOSDocument getDocumentFromCountryA(SearchCriteria searchCriteria) throws NIException {
+    static EPSOSDocument getDocumentFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
         try {
             logger.info("Retrieving document from Country A service...");
-            final var docs = CountryAService.api().getDocuments(
-                    searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID),
-                    searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID),
-                    searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID),
-                    parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)),
-                    parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)),
-                    parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER))
-            );
+            final var request = new PostFetchDocumentRequest()
+                    .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
+                    .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
+                    .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
+                    .maximumSize(parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                    .createdBefore(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                    .createdAfter(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                    .soapHeader(Utils.elementToString(soapHeader));
+
+            final var docs = CountryAService.api().postFetchDocument(request);
             if (docs.isEmpty()) {
                 logger.info("Empty response from Country A service.");
                 return null;
@@ -87,17 +92,18 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
         throw new UnsupportedOperationException();
     }
 
-    static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria) throws NIException {
+    static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
         try {
             logger.info("Querying Country A service for documents...");
-            final var result = CountryAService.api().findEPrescriptionDocuments(
-                    searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID),
-                    searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID),
-                    searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID),
-                    parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)),
-                    parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)),
-                    parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER))
-            );
+            final var request = new PostFindEPrescriptionDocumentsRequest()
+                    .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
+                    .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
+                    .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
+                    .maximumSize(parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                    .createdBefore(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                    .createdAfter(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                    .soapHeader(Utils.elementToString(soapHeader));
+            final var result = CountryAService.api().postFindEPrescriptionDocuments(request);
             logger.info("Got well-formed response from Country A service.");
             return result.stream()
                     .map(md -> DocumentFactory.createDocumentAssociation(
@@ -137,7 +143,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
     }
     @Override
     public List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentList(SearchCriteria searchCriteria) throws NIException, InsufficientRightsException {
-        return getEPDocumentListFromCountryA(searchCriteria);
+        return getEPDocumentListFromCountryA(searchCriteria, this.soapHeader);
     }
 
     @Override
@@ -162,7 +168,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
 
     @Override
     public EPSOSDocument getDocument(SearchCriteria searchCriteria) throws NIException, InsufficientRightsException {
-        return getDocumentFromCountryA(searchCriteria);
+        return getDocumentFromCountryA(searchCriteria, this.soapHeader);
     }
 
     @Override
