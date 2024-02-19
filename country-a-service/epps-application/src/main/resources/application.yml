@@ -13,12 +13,6 @@ spring:
 app:
   fmk.endpoint.url: ${FMK_ENDPOINT_URL}
   cpr.endpoint.url: ${CPR_ENDPOINT_URL}
-  sts:
-    endpoint.url: http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService
-    keystore:
-      path: ${STS_KEYSTORE_PATH}
-      password: ${STS_KEYSTORE_PASSWORD}
-      alias: ${STS_KEYSTORE_ALIAS}
 
 management:
   endpoint:

@@ -2,11 +2,12 @@ package dk.nsp.epps.service.client;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.Utils;
+import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.OrgUsingID;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
@@ -22,10 +23,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.dom.DOMResult;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @Component
 public class FmkClient {
@@ -37,16 +36,18 @@ public class FmkClient {
     private static final dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory facE2 =
         new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
 
+    private static final dk.dkma.medicinecard.xml_schema._2015._06._01.e5.ObjectFactory facE5 =
+        new dk.dkma.medicinecard.xml_schema._2015._06._01.e5.ObjectFactory();
+
     private final URI serviceUri;
-    private final SosiClient sosiClient;
     private final JAXBContext jaxbContext;
 
-    public FmkClient(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl, SosiClient sosiClient) throws URISyntaxException, JAXBException {
+    public FmkClient(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fmkEndpointUrl);
-        this.sosiClient = sosiClient;
         this.jaxbContext = JAXBContext.newInstance(
             "dk.dkma.medicinecard.xml_schema._2015._06._01"
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
+                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e5"
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
                 + ":dk.sdsd.dgws._2012._06"
         );
@@ -70,7 +71,8 @@ public class FmkClient {
             // TODO: Don't use Region Hovedstaden's location number
             orgUsingID.setValue("5790000120512");
         }));
-        whitelistingHeader.setRequestedRole("Farmaceut");
+        // https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:roller
+        whitelistingHeader.setRequestedRole("Læge");
         final var factory = new ObjectFactory();
         return factory.createWhitelistingHeader(whitelistingHeader);
     }
@@ -80,9 +82,9 @@ public class FmkClient {
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:pabegynd_ekspedition">FMK documentation.</a>
      */
     public StartEffectuationResponseType startEffectuation(StartEffectuationRequestType request)
-        throws JAXBException, IOException, InterruptedException {
+        throws JAXBException {
         return makeFmkRequest(
-            fac.createStartEffectuationRequest(request),
+            facE5.createStartEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#StartEffectuation",
             StartEffectuationResponseType.class
         );
@@ -93,7 +95,7 @@ public class FmkClient {
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:opret_effektuering">FMK documentation.</a>
      */
     public CreatePharmacyEffectuationResponseType createPharmacyEffectuation(CreatePharmacyEffectuationRequestType request)
-        throws JAXBException, IOException, InterruptedException {
+        throws JAXBException {
         return makeFmkRequest(
             facE2.createCreatePharmacyEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePharmacyEffectuation",
@@ -106,8 +108,7 @@ public class FmkClient {
      * "Hent recept".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_recept">FMK documentation.</a>
      */
-    public GetPrescriptionResponseType getPrescription(GetPrescriptionRequestType request)
-        throws JAXBException, IOException, InterruptedException {
+    public GetPrescriptionResponseType getPrescription(GetPrescriptionRequestType request) throws JAXBException {
         return makeFmkRequest(
             fac.createGetPrescriptionRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
@@ -116,21 +117,25 @@ public class FmkClient {
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
-        JAXBElement<RequestType> request, String soapAction, Class<ResponseType> clazz)
-        throws JAXBException, IOException, InterruptedException {
+        JAXBElement<RequestType> request,
+        String soapAction,
+        Class<ResponseType> clazz
+    ) throws JAXBException {
+        log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
         try {
-            log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-            reply = sosiClient.sendNspRequest(
+            //noinspection NonAsciiCharacters
+            reply = NspClient.request(
                 serviceUri,
                 toElement(request),
                 soapAction,
-                List.of(toElement(getWhitelistingHeader()))
+                EmployeeIdentities.lægeMargaretHamilton(),
+                toElement(getWhitelistingHeader())
             );
-        } catch (ServiceResponseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        final var jaxbResponse = jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz);
-        return jaxbResponse.getValue();
+        return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+
     }
 }

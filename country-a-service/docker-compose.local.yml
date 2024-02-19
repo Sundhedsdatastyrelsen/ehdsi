@@ -25,36 +25,34 @@ services:
       - "SPRING_DATASOURCE_USERNAME=epps"
       - "SPRING_DATASOURCE_PASSWORD=epps"
       - "CPR_ENDPOINT_URL=${CPR_ENDPOINT_URL}"
-      - "FMK_ENDPOINT_URL=http://epps-fmk-mock:8080/ws/"
-      - "STS_KEYSTORE_PATH=/epps-test-cert.p12"
-      - "STS_KEYSTORE_ALIAS=${STS_KEYSTORE_ALIAS}"
-      - "STS_KEYSTORE_PASSWORD=${STS_KEYSTORE_PASSWORD}"
+      - "FMK_ENDPOINT_URL=${FMK_ENDPOINT_URL}"
     volumes:
       - "./epps-test-cert.p12:/epps-test-cert.p12:ro"
     links:
       - mariadb-server:mariadb-server
-      - epps-fmk-mock:epps-fmk-mock
+      # - epps-fmk-mock:epps-fmk-mock
       # - epps-cpr-mock:epps-cpr-mock
     depends_on:
       - mariadb-server
     networks:
       - epps-backend
 
-  #
-  # fmk mock
-  #
-  epps-fmk-mock:
-    image: eppsregistry.azurecr.io/countrya-fmk-mock:latest
-    build:
-      dockerfile: epps-mocks/epps-fmk-mock/Dockerfile.build
-    restart: always
-    container_name: epps-fmk-mock
-    ports:
-      - "8081:8080"
-    environment:
-      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
-    networks:
-      - epps-backend
+  # #
+  # # fmk mock
+  # #
+  # # The FMK mock is disabled because we connect to the FMK test environment instead
+  # epps-fmk-mock:
+  #   image: eppsregistry.azurecr.io/countrya-fmk-mock:latest
+  #   build:
+  #     dockerfile: epps-mocks/epps-fmk-mock/Dockerfile.build
+  #   restart: always
+  #   container_name: epps-fmk-mock
+  #   ports:
+  #     - "8081:8080"
+  #   environment:
+  #     - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
+  #   networks:
+  #     - epps-backend
 
   # #
   # # CPR mock

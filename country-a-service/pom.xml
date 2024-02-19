@@ -116,11 +116,6 @@
 				<version>3.37.0</version>
 			</dependency>
 			<dependency><!-- seal -->
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.1.1</version>
-			</dependency>
-			<dependency><!-- seal -->
 				<groupId>org.apache.santuario</groupId>
 				<artifactId>xmlsec</artifactId>
 				<version>1.4.8</version>

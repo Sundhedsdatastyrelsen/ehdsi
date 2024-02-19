@@ -57,6 +57,12 @@
 		<dependency>
 			<groupId>dk.sosi.seal</groupId>
 			<artifactId>seal</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 	</dependencies>
 

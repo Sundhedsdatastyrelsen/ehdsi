@@ -37,9 +37,6 @@ The following command will build the code and run unit tests
 To run the Country A service (the "epps-application") we need to have some configuration in place.
 Look at `epps-application/src/main/resources/application.yml` for the application configuration.
 
-In order to authenticate with the NSP test services we need to have a keystore with certificate and private key.
-The `app.sts.keystore` configuration values must point to this keystore.
-
 ## Running this project locally / runLocal.sh
 
 ```runLocal.sh``` is a script that runs commands to help speed up the implementation and testing of services by running services
@@ -101,9 +98,8 @@ Initial deployment is done by
 
 1. Ensuring that the server has credentials to pull from Azure Container Registry.
 2. Copying `deploy/docker-compose.yml` to `country-a/docker-compose.yml` on the server.
-3. Locating and copying the secret keystore `epps-test-cert.p12` into `country-a/epps-test-cert.p12` on the server.
-4. Copying `.env.defaults` to `country-a/.env` on the server, and filling out `STS_KEYSTORE_PASSWORD` with the correct value.
-5. Performing `docker compose up -d` in the `country-a` directory.
+3. Copying `.env.defaults` to `country-a/.env` on the server, and filling out `STS_KEYSTORE_PASSWORD` with the correct value.
+4. Performing `docker compose up -d` in the `country-a` directory.
 
 
 The following commmands can be used to perform the steps:
