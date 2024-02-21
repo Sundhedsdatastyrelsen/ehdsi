@@ -6,6 +6,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.client.FmkClient;
+import dk.nsp.epps.service.client.Identities;
 import dk.nsp.epps.service.exception.CountryAException;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
@@ -75,7 +76,7 @@ public class PrescriptionService {
             .withIncludeAllPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapMeta(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
     }
@@ -88,7 +89,7 @@ public class PrescriptionService {
                 .withIncludeAllPrescriptions().end()
                 .build();
             log.debug("Looking up info for {}", cpr);
-            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request);
+            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
             return ePrescriptionMapper.mapResponse(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
         } catch (IOException | TemplateException e) {

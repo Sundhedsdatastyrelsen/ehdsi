@@ -11,16 +11,17 @@ paths:
 
   # 55
   /api/find-patients/:
-    get:
-      summary: return info about patients
-      operationId: findPatients
-      parameters:
-        - name: patientIds
-          in: query
-          schema:
-            type: string
-          required: true
-          description: comma-separated list of patientIds to find.
+    post:
+      summary: Return information about patients
+      operationId: postFindPatients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FindPatientsRequest'
+                - $ref: '#/components/schemas/SoapHeader'
       responses:
         200:
           description: Patient info
@@ -36,41 +37,20 @@ paths:
                 $ref: '#/components/schemas/Error'
 
   # 39
-  /api/documents/:
-    get:
+  /api/fetch-document/:
+    post:
       summary: |
         Retrieve a single document matching search criteria.
         Corresponds to XCA ITI-39 endpoint.
-      operationId: getDocuments
-      parameters:
-        - name: patientId
-          in: query
-          schema:
-            type: string
-          required: true
-        - name: repositoryId
-          in: query
-          schema:
-            type: string
-        - name: documentId
-          in: query
-          schema:
-            type: string
-        - name: maximumSize
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: createdBefore
-          in: query
-          schema:
-            type: string
-            format: date-time
-        - name: createdAfter
-          in: query
-          schema:
-            type: string
-            format: date-time
+      operationId: postFetchDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FetchDocumentRequest'
+                - $ref: '#/components/schemas/SoapHeader'
       responses:
         200:
           description: Documents
@@ -95,40 +75,19 @@ paths:
 
   # 38
   /api/find-eprescription-documents/:
-    get:
+    post:
       summary: |
         Search for ePrescriptions matching the given search criteria.
         Corresponds to XCA ITI-38 endpoint.
-      operationId: findEPrescriptionDocuments
-      parameters:
-        - name: patientId
-          in: query
-          schema:
-            type: string
-          required: true
-        - name: repositoryId
-          in: query
-          schema:
-            type: string
-        - name: documentId
-          in: query
-          schema:
-            type: string
-        - name: maximumSize
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: createdBefore
-          in: query
-          schema:
-            type: string
-            format: date-time
-        - name: createdAfter
-          in: query
-          schema:
-            type: string
-            format: date-time
+      operationId: postFindEPrescriptionDocuments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FindEprescriptionDocumentsRequest'
+                - $ref: '#/components/schemas/SoapHeader'
       responses:
         200:
           description: ePrescription document metadata matching criteria.
@@ -157,7 +116,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EpsosDocument'
+              allOf:
+                - $ref: '#/components/schemas/EpsosDocument'
+                - $ref: '#/components/schemas/SoapHeader'
       responses:
         204:
           description: Dispensation submitted successfully.
@@ -178,12 +139,15 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                disardDispenseDetails:
-                  $ref: '#/components/schemas/DiscardDispenseDetails'
-                dispensationToDiscard:
-                  $ref: '#/components/schemas/EpsosDocument'
+              allOf:
+                - $ref: '#/components/schemas/SoapHeader'
+                - type: object
+                  properties:
+                    disardDispenseDetails:
+                      $ref: '#/components/schemas/DiscardDispenseDetails'
+                    dispensationToDiscard:
+                      $ref: '#/components/schemas/EpsosDocument'
+
       responses:
         204:
           description: Dispensation discarded successfully.
@@ -194,10 +158,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-
-
 components:
   schemas:
+    SoapHeader:
+      type: object
+      properties:
+        soapHeader:
+          type: string
+          format: xml
+
+    FindPatientsRequest:
+      type: object
+      required:
+        - patientIds
+      properties:
+        patientIds:
+          type: array
+          items:
+            type: string
 
     FindPatientsResponse:
       description: Information about a patient.
@@ -214,6 +192,48 @@ components:
           type: array
           items:
             type: string
+
+    FetchDocumentRequest:
+      type: object
+      required:
+        - patientId
+      properties:
+        patientId:
+          type: string
+        repositoryId:
+          type: string
+        documentId:
+          type: string
+        maximumSize:
+          type: integer
+          format: int64
+        createdBefore:
+          type: string
+          format: date-time
+        createdAfter:
+          type: string
+          format: date-time
+
+    FindEprescriptionDocumentsRequest:
+      type: object
+      required:
+        - patientId
+      properties:
+        patientId:
+          type: string
+        repositoryId:
+          type: string
+        documentId:
+          type: string
+        maximumSize:
+          type: integer
+          format: int64
+        createdBefore:
+          type: string
+          format: date-time
+        createdAfter:
+          type: string
+          format: date-time
 
     PatientDemographics:
       description: Information about a patient.

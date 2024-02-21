@@ -7,7 +7,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequest
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.Utils;
-import dk.nsp.test.idp.EmployeeIdentities;
+import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.OrgUsingID;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
@@ -72,7 +72,8 @@ public class FmkClient {
             orgUsingID.setValue("5790000120512");
         }));
         // https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:roller
-        whitelistingHeader.setRequestedRole("Læge");
+//        whitelistingHeader.setRequestedRole("Læge");
+        whitelistingHeader.setRequestedRole("Apoteker");
         final var factory = new ObjectFactory();
         return factory.createWhitelistingHeader(whitelistingHeader);
     }
@@ -81,12 +82,13 @@ public class FmkClient {
      * "Påbegynd ekspedition".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:pabegynd_ekspedition">FMK documentation.</a>
      */
-    public StartEffectuationResponseType startEffectuation(StartEffectuationRequestType request)
+    public StartEffectuationResponseType startEffectuation(StartEffectuationRequestType request, Identity caller)
         throws JAXBException {
         return makeFmkRequest(
             facE5.createStartEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#StartEffectuation",
-            StartEffectuationResponseType.class
+            StartEffectuationResponseType.class,
+            caller
         );
     }
 
@@ -94,12 +96,13 @@ public class FmkClient {
      * "Opret effektuering på recept".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:opret_effektuering">FMK documentation.</a>
      */
-    public CreatePharmacyEffectuationResponseType createPharmacyEffectuation(CreatePharmacyEffectuationRequestType request)
+    public CreatePharmacyEffectuationResponseType createPharmacyEffectuation(CreatePharmacyEffectuationRequestType request, Identity caller)
         throws JAXBException {
         return makeFmkRequest(
             facE2.createCreatePharmacyEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePharmacyEffectuation",
-            CreatePharmacyEffectuationResponseType.class
+            CreatePharmacyEffectuationResponseType.class,
+            caller
         );
 
     }
@@ -108,28 +111,29 @@ public class FmkClient {
      * "Hent recept".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_recept">FMK documentation.</a>
      */
-    public GetPrescriptionResponseType getPrescription(GetPrescriptionRequestType request) throws JAXBException {
+    public GetPrescriptionResponseType getPrescription(GetPrescriptionRequestType request, Identity caller) throws JAXBException {
         return makeFmkRequest(
             fac.createGetPrescriptionRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
-            GetPrescriptionResponseType.class
+            GetPrescriptionResponseType.class,
+            caller
         );
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
         JAXBElement<RequestType> request,
         String soapAction,
-        Class<ResponseType> clazz
+        Class<ResponseType> clazz,
+        Identity caller
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
         try {
-            //noinspection NonAsciiCharacters
             reply = NspClient.request(
                 serviceUri,
                 toElement(request),
                 soapAction,
-                EmployeeIdentities.lægeMargaretHamilton(),
+                caller,
                 toElement(getWhitelistingHeader())
             );
         } catch (Exception e) {

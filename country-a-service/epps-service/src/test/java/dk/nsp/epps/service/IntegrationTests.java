@@ -8,7 +8,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.nsp.epps.service.client.CprClient;
 import dk.nsp.epps.service.client.FmkClient;
-import org.junit.Ignore;
+import dk.nsp.epps.service.client.Identities;
+import dk.nsp.test.idp.EmployeeIdentities;
+import dk.nsp.test.idp.OrganizationIdentities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -44,7 +46,19 @@ public class IntegrationTests {
             .withIncludeAllPrescriptions().end()
             .build();
 
-        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest);
+        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, EmployeeIdentities.lægeMargaretHamilton());
+        Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
+        Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
+    }
+
+    @Test
+    public void fmkGetPrescriptionAlternativeCaller() throws Exception {
+        var getPrescriptionRequest = GetPrescriptionRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
+            .withIncludeOpenPrescriptions().end()
+            .build();
+
+        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
         Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
     }
@@ -78,13 +92,13 @@ public class IntegrationTests {
 
     @Test
     public void fmkStartEffectuation() throws Exception {
-        var startEffectuation = fmkClient.startEffectuation(startEffectuationRequest());
+        var startEffectuation = fmkClient.startEffectuation(startEffectuationRequest(), Identities.apotekerChrisChristoffersen);
         Assertions.assertEquals("Primcillin", startEffectuation.getPrescription().get(0).getDrug().getName());
     }
 
     @Test
     public void fmkCreateEffectuation() throws Exception {
-        var startEffectuation = fmkClient.startEffectuation(startEffectuationRequest());
+        var startEffectuation = fmkClient.startEffectuation(startEffectuationRequest(), Identities.apotekerChrisChristoffersen);
 
         var request = CreatePharmacyEffectuationRequestType.builder()
             .withPersonIdentifier().end() // TODO
@@ -94,7 +108,7 @@ public class IntegrationTests {
                 .build())
             .build();
 
-        var effectuation = fmkClient.createPharmacyEffectuation(request);
+        var effectuation = fmkClient.createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
 
         Assertions.assertEquals(effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
                 1341404078102001010L);
@@ -102,7 +116,13 @@ public class IntegrationTests {
 
     @Test
     void cprGetPersonInformation() throws Exception {
-        var response = cprClient.getPersonInformation("0611809735");
+        var response = cprClient.getPersonInformation("0611809735", OrganizationIdentities.sundhedsdatastyrelsen());
+        Assertions.assertEquals("Charles Test Babbage",  response.getPersonInformationStructure()
+            .getRegularCPRPerson().getPersonNameForAddressingName());
+    }
+    @Test
+    void cprGetPersonInformationAlternativeCaller() throws Exception {
+        var response = cprClient.getPersonInformation("0611809735", Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Charles Test Babbage",  response.getPersonInformationStructure()
             .getRegularCPRPerson().getPersonNameForAddressingName());
     }

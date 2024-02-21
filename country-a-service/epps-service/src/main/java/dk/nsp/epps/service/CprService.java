@@ -5,6 +5,7 @@ import dk.nsp.epps.ncp.api.PatientDemographicsDto;
 import dk.nsp.epps.service.client.CprClient;
 import dk.nsp.epps.service.mapping.CrossGatewayPatientDiscoveryMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
+import dk.nsp.test.idp.OrganizationIdentities;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import oio.medcom.cprservice._1_0.GetPersonInformationOut;
@@ -27,7 +28,9 @@ public class CprService {
         log.info("Retrieving citizen(s): {}", String.join(",", patientIds));
         patientIds.forEach(patientId -> {
             try {
-                GetPersonInformationOut response = cprClient.getPersonInformation(PatientIdMapper.toCpr(patientId));
+                GetPersonInformationOut response = cprClient.getPersonInformation(
+                    PatientIdMapper.toCpr(patientId),
+                    OrganizationIdentities.sundhedsdatastyrelsen());
                 found.add(CrossGatewayPatientDiscoveryMapper.mapResponse(response));
             } catch (Exception e) {
                 log.warn(e.getMessage(), e);

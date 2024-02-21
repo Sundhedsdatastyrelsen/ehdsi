@@ -1,6 +1,6 @@
 package dk.nsp.epps.service.client;
 
-import dk.nsp.test.idp.OrganizationIdentities;
+import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -36,7 +36,10 @@ public class CprClient {
         return ((Document) res.getNode()).getDocumentElement();
     }
 
-    public GetPersonInformationOut getPersonInformation(String cpr) throws JAXBException {
+    /**
+     * Look up citizen demographics by CPR number.
+     */
+    public GetPersonInformationOut getPersonInformation(String cpr, Identity caller) throws JAXBException {
         final var requestBody = getPersonInformationIn(cpr);
         final Reply response;
         try {
@@ -45,7 +48,7 @@ public class CprClient {
                 serviceUri,
                 toElement(requestBody),
                 "http://rep.oio.dk/medcom.sundcom.dk/xml/wsdl/2007/06/28/getPersonInformation",
-                OrganizationIdentities.sundhedsdatastyrelsen()
+                caller
             );
         } catch (ServiceResponseException e) {
             if (e.getBody().contains("Ingen data fundet")) {

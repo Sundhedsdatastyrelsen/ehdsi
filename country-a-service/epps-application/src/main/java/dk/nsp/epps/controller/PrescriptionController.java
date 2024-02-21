@@ -2,48 +2,40 @@ package dk.nsp.epps.controller;
 
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
+import dk.nsp.epps.ncp.api.PostFetchDocumentRequestDto;
+import dk.nsp.epps.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import jakarta.validation.Valid;
 import jakarta.xml.bind.JAXBException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
 
-    @GetMapping(path = "/api/find-eprescription-documents/")
-    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
-        @Valid @RequestParam(value = "patientId", required = true) String patientId,
-        @Valid @RequestParam(value = "repositoryId", required = false) String repositoryId,
-        @Valid @RequestParam(value = "documentId", required = false) String documentId,
-        @Valid @RequestParam(value = "maximumSize", required = false) Long maximumSize,
-        @Valid @RequestParam(value = "createdBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdBefore,
-        @Valid @RequestParam(value = "createdAfter", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdAfter
-    ) throws JAXBException, IOException, InterruptedException {
-        var filter = new PrescriptionFilter(documentId, maximumSize, createdBefore, createdAfter);
-        return prescriptionService.findEPrescriptionDocuments(patientId, filter);
+    public PrescriptionController(PrescriptionService prescriptionService) {
+        this.prescriptionService = prescriptionService;
     }
 
-    @GetMapping(path = "/api/documents/")
-    public List<EpsosDocumentDto> getDocuments(
-        @Valid @RequestParam(value = "patientId", required = true) String patientId,
-        @Valid @RequestParam(value = "repositoryId", required = false) String repositoryId,
-        @Valid @RequestParam(value = "documentId", required = false) String documentId,
-        @Valid @RequestParam(value = "maximumSize", required = false) Long maximumSize,
-        @Valid @RequestParam(value = "createdBefore", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdBefore,
-        @Valid @RequestParam(value = "createdAfter", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime createdAfter
+    @PostMapping(path = "/api/find-eprescription-documents/")
+    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
+        @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
+    ) throws JAXBException, IOException, InterruptedException {
+        var filter = new PrescriptionFilter(params.getDocumentId(), params.getMaximumSize(), params.getCreatedBefore(), params.getCreatedAfter());
+        return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter);
+    }
+
+    @PostMapping(path = "/api/fetch-document/")
+    public List<EpsosDocumentDto> fetchDocument(
+        @Valid @RequestBody PostFetchDocumentRequestDto params
     ) throws JAXBException, InterruptedException {
-        var filter = new PrescriptionFilter(documentId, maximumSize, createdBefore, createdAfter);
-        return prescriptionService.getPrescriptions(patientId, filter);
+        var filter = new PrescriptionFilter(params.getDocumentId(), params.getMaximumSize(), params.getCreatedBefore(), params.getCreatedAfter());
+        return prescriptionService.getPrescriptions(params.getPatientId(), filter);
     }
 }

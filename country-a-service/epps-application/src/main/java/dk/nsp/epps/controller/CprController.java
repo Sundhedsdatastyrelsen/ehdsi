@@ -1,32 +1,25 @@
 package dk.nsp.epps.controller;
 
-
 import dk.nsp.epps.ncp.api.FindPatientsResponseDto;
+import dk.nsp.epps.ncp.api.PostFindPatientsRequestDto;
 import dk.nsp.epps.service.CprService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
-
 @RestController
-@RequiredArgsConstructor
 public class CprController {
     private final CprService cprService;
 
-    @GetMapping(path = "/api/find-patients/")
-    public FindPatientsResponseDto findPatients(
-        @NotNull @Valid @RequestParam(value = "patientIds", required = true) String patientIds
-    ) {
-        List<String> patientIdList = Arrays.stream(patientIds.split(","))
-            .map(String::trim)
-            .filter(s -> !s.isBlank())
-            .toList();
+    public CprController(CprService cprService) {
+        this.cprService = cprService;
+    }
 
-        return cprService.findPatients(patientIdList);
+    @PostMapping(path = "/api/find-patients/")
+    public FindPatientsResponseDto findPatients(
+        @Valid @RequestBody PostFindPatientsRequestDto params
+    ) {
+        return cprService.findPatients(params.getPatientIds());
     }
 }
