@@ -25,6 +25,9 @@ public class Identities {
             .at(URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI")))
         .build();
 
+    /**
+     * Chris Christoffersen, apoteker, CPR: 3001010033
+     */
     public static Identity apotekerChrisChristoffersen = employeeIdentity()
         .representing(employee()
             .identifiedBy(UUID.fromString("1fdff71e-2697-4f84-8611-e890a422cef8")))
