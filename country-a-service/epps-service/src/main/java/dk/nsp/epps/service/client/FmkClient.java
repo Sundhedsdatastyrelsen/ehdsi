@@ -6,10 +6,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
-import dk.nsp.epps.Utils;
 import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.dgws._2010._08.NameFormat;
-import dk.sdsd.dgws._2010._08.OrgUsingID;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
@@ -60,20 +58,17 @@ public class FmkClient {
     }
 
     private JAXBElement<WhitelistingHeader> getWhitelistingHeader() {
-        final var whitelistingHeader = new WhitelistingHeader();
-        whitelistingHeader.setSystemName("ePPS PoC");
-        whitelistingHeader.setSystemOwnerName("Sundhedsdatastyrelsen");
-        whitelistingHeader.setSystemVersion("0.1.0");
-        whitelistingHeader.setOrgResponsibleName("Sundhedsdatastyrelsen");
-        whitelistingHeader.setOrgUsingName("Sundhedsdatastyrelsen");
-        whitelistingHeader.setOrgUsingID(Utils.apply(new OrgUsingID(), orgUsingID -> {
-            orgUsingID.setNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER);
-            // TODO: Don't use Region Hovedstaden's location number
-            orgUsingID.setValue("5790000120512");
-        }));
-        // https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:roller
-//        whitelistingHeader.setRequestedRole("Læge");
-        whitelistingHeader.setRequestedRole("Apoteker");
+        final var whitelistingHeader = WhitelistingHeader.builder()
+            .withSystemName("ePPS PoC")
+            .withSystemOwnerName("Sundhedsdatastyrelsen")
+            .withSystemVersion("0.1.0")
+            .withOrgResponsibleName("Sundhedsdatastyrelsen")
+            .withOrgUsingName("Sundhedsdatastyrelsen")
+            .withOrgUsingID()
+            // TODO: Don't use Region Hovedstaden's location number:
+            .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
+            .withRequestedRole("Apoteker")
+            .build();
         final var factory = new ObjectFactory();
         return factory.createWhitelistingHeader(whitelistingHeader);
     }

@@ -78,7 +78,7 @@ public class PrescriptionService {
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
-        return ePrescriptionMapper.mapMeta(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
+        return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter) throws JAXBException, InterruptedException {
@@ -91,7 +91,7 @@ public class PrescriptionService {
             log.debug("Looking up info for {}", cpr);
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
-            return ePrescriptionMapper.mapResponse(PatientIdMapper.toPatientId(cpr), filter, fmkResponse);
+            return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
         } catch (IOException | TemplateException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }

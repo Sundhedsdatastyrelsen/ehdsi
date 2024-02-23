@@ -29,7 +29,7 @@ public class CrossGatewayPatientDiscoveryMapper {
         var country = postal != null ? postal.getCountryIdentificationCode() : null;
 
         var result = new PatientDemographicsDto(
-            info != null && info.getCurrentPersonCivilRegistrationIdentifier() != null ? List.of(PatientIdMapper.toPatientId(info.getCurrentPersonCivilRegistrationIdentifier())) : Collections.emptyList());
+            info != null && info.getCurrentPersonCivilRegistrationIdentifier() != null ? List.of(info.getCurrentPersonCivilRegistrationIdentifier()) : Collections.emptyList());
         result.setFamilyName(name != null ? name.getPersonSurnameName() : null);
         result.setGivenName(name != null ? name.getPersonGivenName() : null);
         result.setBirthDate(birthdate != null ? toLocalDate(birthdate.getBirthDate()) : null);
