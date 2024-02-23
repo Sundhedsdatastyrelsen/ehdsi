@@ -1,6 +1,7 @@
 package dk.openncp.nationalconnector.xcpd;
 
 import dk.nsp.epps.ApiException;
+import dk.nsp.epps.api.DefaultApi;
 import dk.nsp.epps.api.model.Gender;
 import dk.nsp.epps.api.model.PostFindPatientsRequest;
 import dk.openncp.nationalconnector.CountryAService;
@@ -11,7 +12,6 @@ import eu.epsos.protocolterminators.ws.server.exception.NIException;
 import eu.epsos.protocolterminators.ws.server.xcpd.PatientSearchInterfaceWithDemographics;
 import eu.europa.ec.sante.ehdsi.constant.error.OpenNCPErrorCode;
 import eu.europa.ec.sante.ehdsi.openncp.assertionvalidator.exceptions.InsufficientRightsException;
-import org.opensaml.core.xml.io.MarshallingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -79,7 +79,8 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         if (matcher.find()) {
             return new PatientId(matcher.group(1), matcher.group(2));
         }
-        throw new IllegalArgumentException();
+        // If the string does not contain three carets then we assume it is a CPR number
+        return new PatientId("DKCPR", id);
     }
 
     static PatientDemographics toEpsosPatient(dk.nsp.epps.api.model.PatientDemographics patient) {
@@ -112,15 +113,21 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         return result;
     }
 
-    static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader) throws NIException {
+    static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader, DefaultApi countryAApi) throws NIException {
         try {
+            // We only accept patient ids with root "DKCPR", otherwise we throw.
+            final var pidsValidInvalid = patientIds.stream().collect(Collectors.partitioningBy(pid -> "DKCPR".equals(pid.getRoot())));
+            if (!pidsValidInvalid.get(false).isEmpty()) {
+                throw new NIException(OpenNCPErrorCode.ERROR_PI_GENERIC, String.format(
+                        "Unknown patient identifier root(s): %s",
+                        pidsValidInvalid.get(false).stream().map(PatientId::getRoot).collect(Collectors.joining(","))));
+            }
+            final var cprNumbers = pidsValidInvalid.get(true).stream().map(PatientId::getExtension).collect(Collectors.toList());
             final var request = new PostFindPatientsRequest()
                     .soapHeader(Utils.elementToString(soapHeader))
-                    .patientIds(patientIds.stream()
-                            .map(pid -> pid.getRoot() + "^^^" + pid.getExtension())
-                            .collect(Collectors.toList()));
+                    .patientIds(cprNumbers);
             logger.info("Retrieving patient demographics from Country A service...");
-            final var response = CountryAService.api().postFindPatients(request);
+            final var response = countryAApi.postFindPatients(request);
             logger.info("Successfully retrieved patient demographics from Country A service.");
             return response.getPatients().stream()
                     .map(PatientSearch::toEpsosPatient)
@@ -134,8 +141,8 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     }
 
     @Override
-    public List<PatientDemographics> getPatientDemographics(List<PatientId> patientIds) throws NIException, InsufficientRightsException, MarshallingException {
-        return getPatientDemographicsFromCountryA(patientIds, this.soapHeader);
+    public List<PatientDemographics> getPatientDemographics(List<PatientId> patientIds) throws NIException {
+        return getPatientDemographicsFromCountryA(patientIds, this.soapHeader, CountryAService.api());
     }
 
     @Override
@@ -148,8 +155,10 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
      */
     public static void main(String[] args) throws Exception {
         try {
-            var pid = toPatientId("DKCPR^^^1212121212");
-            var foo = getPatientDemographicsFromCountryA(List.of(new PatientId("DKCPR", "1212121234")), XMLUtil.parseContent("<SomeXml/>").getDocumentElement());
+            var foo = getPatientDemographicsFromCountryA(
+                    List.of(new PatientId("DKCPR", "1111111118")),
+                    XMLUtil.parseContent("<SomeXml/>").getDocumentElement(),
+                    CountryAService.api());
             return;
         } catch (NIException e) {
             throw new RuntimeException(e);
