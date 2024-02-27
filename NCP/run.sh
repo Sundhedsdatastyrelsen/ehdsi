@@ -11,7 +11,7 @@ RUN_TSAM="true"
 LOAD_PROPERTIES="true"
 MARIADB_HOST="mariadb"
 MARIADB_PORT="3306"
-OPENNCP_VERSION="7.0.0"
+OPENNCP_VERSION="7.1.0"
 TLS_KEYSTORE_ALIAS=ncptestis
 TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/test-truststore.jks
 EOF

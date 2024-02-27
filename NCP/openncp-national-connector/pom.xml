@@ -7,12 +7,12 @@
     <parent>
         <groupId>eu.europa.ec.sante.ehdsi.openncp-protocol-terminators</groupId>
         <artifactId>openncp-ncp-server</artifactId>
-        <version>7.0.0</version>
+        <version>7.1.0</version>
     </parent>
 
     <groupId>dk.sds</groupId>
     <artifactId>openncp-national-connector</artifactId>
-    <version>7.0.0</version>
+    <version>7.1.0</version>
     <packaging>jar</packaging>
 
     <name>OpenNCP Denmark National Connector</name>
@@ -29,12 +29,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.14.2</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.14.2</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>

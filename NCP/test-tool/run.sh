@@ -37,6 +37,7 @@ clojure() {
            --volume "$SCRIPT_DIR":"$SCRIPT_DIR" \
            --volume "$M2_CACHE_VOLUME":"/root/.m2/repository" \
            --workdir "$SCRIPT_DIR" \
+           --entrypoint clojure \
            clojure:tools-deps-1.11.1.1429-bullseye-slim \
            "$@"
 }

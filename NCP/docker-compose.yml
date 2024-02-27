@@ -5,6 +5,7 @@ version: '3.5'
 #
 networks:
   ncp:
+    name: epps
 
 volumes:
   db-data:
@@ -114,7 +115,7 @@ services:
       - openncp-configuration-utility
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
-      NC_DK_COUNTRY_A_HOST: "http://host.docker.internal:8180"
+      NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
