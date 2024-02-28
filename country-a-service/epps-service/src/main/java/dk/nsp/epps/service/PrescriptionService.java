@@ -73,7 +73,7 @@ public class PrescriptionService {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeAllPrescriptions().end()
+            .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
@@ -86,7 +86,7 @@ public class PrescriptionService {
             String cpr = PatientIdMapper.toCpr(patientId);
             final var request = GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-                .withIncludeAllPrescriptions().end()
+                .withIncludeOpenPrescriptions().end()
                 .build();
             log.debug("Looking up info for {}", cpr);
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
