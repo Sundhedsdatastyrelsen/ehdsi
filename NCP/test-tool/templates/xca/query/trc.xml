@@ -16,7 +16,7 @@
   </saml:AuthnStatement>
   <saml:AttributeStatement>
     <saml:Attribute FriendlyName="XSPA subject" Name="urn:oasis:names:tc:xacml:1.0:resource:resource-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-      <saml:AttributeValue>DKCPR^^^0101010000</saml:AttributeValue>
+      <saml:AttributeValue>DKCPR^^^1111111118</saml:AttributeValue>
     </saml:Attribute>
     <saml:Attribute FriendlyName="XSPA Purpose of Use" Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
       <saml:AttributeValue>

@@ -17,7 +17,7 @@
       <ns2:AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
         <ns2:Slot name="$XDSDocumentEntryPatientId">
           <ns2:ValueList>
-            <ns2:Value>'DKCPR^^^0101010000'</ns2:Value>
+            <ns2:Value>'DKCPR^^^1111111118'</ns2:Value>
           </ns2:ValueList>
         </ns2:Slot>
         <ns2:Slot name="$XDSDocumentEntryStatus">
