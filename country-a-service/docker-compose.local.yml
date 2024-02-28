@@ -5,6 +5,9 @@ version: '3.5'
 #
 networks:
   epps-backend:
+    ## Uncomment the following lines to use same network as OpenNCP:
+    # name: epps
+    # external: true
 
 services:
   #
@@ -17,7 +20,7 @@ services:
     container_name: epps-country-a
     restart: on-failure:3
     ports:
-      - "8080:8080"
+      - "8180:8080"
     environment:
       - "JAVA_DEBUG=${JAVA_DEBUG:-}"
       - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
