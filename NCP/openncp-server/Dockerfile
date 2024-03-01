@@ -33,9 +33,31 @@ RUN sed -i \
 
 # Download JAR dependencies
 RUN cd webapps/openncp-ws-server/WEB-INF && \
-    download_maven_artifact org.slf4j slf4j-jdk14 1.7.36 && \
-    download_maven_artifact org.openapitools jackson-databind-nullable 0.2.6 && \
+    download_maven_artifact org.openapitools jackson-databind-nullable 0.2.6
+
+RUN download_maven_artifact org.slf4j slf4j-jdk14 1.7.36 && \
     download_maven_artifact org.mariadb.jdbc mariadb-java-client 3.2.0
+
+# Download "translations-and-mappings-ws" (introduced in 7.1.0)
+RUN download_maven_artifact \
+    eu.europa.ec.sante.ehdsi \
+    translations-and-mappings-ws \
+    ${openncp_version} \
+    war \
+    ${openncp_repo} \
+    webapps/translations-and-mappings-ws.war
+
+# Unpack the war to allow us to patch the internal configuration files
+RUN mkdir -p webapps/translations-and-mappings-ws && \
+    cd webapps/translations-and-mappings-ws && \
+    jar -xf ../translations-and-mappings-ws.war && \
+    rm ../translations-and-mappings-ws.war
+
+# SnakeYAML bug workaround mentioned in Slack:
+# https://openncp.slack.com/archives/C4QTX0BAT/p1707744795906019
+RUN sed -i \
+    "s/@project.version@-@timestamp@/'@project.version@-@timestamp@'/" \
+    webapps/translations-and-mappings-ws/WEB-INF/classes/application.yml
 
 # # Download mock services implementations
 # RUN download_maven_artifact \
