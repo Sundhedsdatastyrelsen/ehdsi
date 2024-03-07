@@ -64,8 +64,11 @@ services:
       dockerfile: ./openncp-configuration-utility/Dockerfile
       args:
         openncp_version: ${OPENNCP_VERSION}
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     container_name: openncp-configuration-utility
-    image: openncp-configuration-utility:${OPENNCP_VERSION}
+    image: eppsregistry.azurecr.io/openncp-configuration-utility:${OPENNCP_VERSION}
     volumes:
       - ./openncp-configuration:/opt/openncp-configuration/
     environment:
@@ -104,8 +107,11 @@ services:
       dockerfile: ./openncp-server/Dockerfile
       args:
         openncp_version: ${OPENNCP_VERSION}
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     container_name: openncp-server
-    image: openncp-server:${OPENNCP_VERSION}
+    image: eppsregistry.azurecr.io/openncp-server:${OPENNCP_VERSION}
     ports:
       - "6443:6443"
       - "8080:8080"
@@ -145,8 +151,11 @@ services:
       dockerfile: ./openncp-gateway/Dockerfile
       args:
         openncp_version: ${OPENNCP_VERSION}
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     container_name: openncp-gateway
-    image: openncp-gateway:${OPENNCP_VERSION}
+    image: eppsregistry.azurecr.io/openncp-gateway:${OPENNCP_VERSION}
     ports:
       - "8443:8443"
       - "8082:8082"
