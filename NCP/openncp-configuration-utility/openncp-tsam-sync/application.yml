@@ -1,22 +1,32 @@
 spring:
   profiles:
     active: mysql
-  datasource:
-    url: jdbc:mysql://${MARIADB_HOST}:${MARIADB_PORT}/ehealth_ltrdb?useSSL=false
-    username: ${MARIADB_USERNAME}
-    password: ${MARIADB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show_sql: false
 tsam-sync:
   database:
     backup: false
   pageable:
     default-page-size: 250
   cts:
-    url: https://webgate.training.ec.europa.eu/ehealth-term-server
+    url: ${CTS_URL}
     username: ${CTS_USERNAME}
     password: ${CTS_PASSWORD}
-  datasource-ehealth-properties:
-    url: jdbc:mysql://${MARIADB_HOST}:${MARIADB_PORT}/ehealth_properties?useSSL=false
+  datasource:
+    host: ${MARIADB_HOST}
+    port: ${MARIADB_PORT}
     username: ${MARIADB_USERNAME}
     password: ${MARIADB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    database: ehealth_ltrdb
+    dialect: org.hibernate.dialect.MySQL8Dialect
+    driver: com.mysql.cj.jdbc.Driver
+    timezone: Europe/Brussels
+  datasource-ehealth-properties:
+    host: ${MARIADB_HOST}
+    port: ${MARIADB_PORT}
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+    database: ehealth_properties
+    dialect: org.hibernate.dialect.MySQL8Dialect
+    driver: com.mysql.cj.jdbc.Driver
+    timezone: Europe/Brussels

@@ -73,6 +73,7 @@ services:
       - ./openncp-configuration:/opt/openncp-configuration/
     environment:
       RUN_TSAM: ${RUN_TSAM}
+      CTS_URL: ${CTS_URL}
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PORT: ${MARIADB_PORT}
       LOAD_PROPERTIES: ${LOAD_PROPERTIES}

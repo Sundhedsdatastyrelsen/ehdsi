@@ -14,6 +14,7 @@ MARIADB_PORT="3306"
 OPENNCP_VERSION="7.1.0"
 TLS_KEYSTORE_ALIAS=ncptestis
 TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/test-truststore.jks
+CTS_URL=https://webgate.training.ec.europa.eu/ehealth-term-server
 EOF
 )"
 

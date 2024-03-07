@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jre
+FROM eclipse-temurin:21-jre
 
 ARG openncp_version
 ARG openncp_repo="https://code.europa.eu/api/v4/projects/347/packages/maven/"
