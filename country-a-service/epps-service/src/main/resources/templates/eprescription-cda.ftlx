@@ -44,10 +44,12 @@
             <telecom nullFlavor="NI"/>
             <assignedPerson classCode="PSN" determinerCode="INSTANCE">
                 <name>
+<#if authorisedHealthcareProfessionalNames??>
 <#list authorisedHealthcareProfessionalNames.givenNames as givenName>
                     <given>${ givenName }</given>
 </#list>
                     <family>${ authorisedHealthcareProfessionalNames.surName }</family>
+</#if>
                 </name>
             </assignedPerson>
             <representedOrganization classCode="ORG" determinerCode="INSTANCE">
@@ -158,7 +160,7 @@
                                         </code>
                                         <name>${ prescription.drug.name }</name>
                                         <pharm:desc>${ prescription.dosageText }</pharm:desc>
-                                        <pharm:formCode code="11109000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2023-01-03" displayName="${ prescription.drug.name }">
+                                        <pharm:formCode code="11109000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2024-01-09" displayName="${ prescription.drug.name }">
                                             <pharm:translation xmlns:pharm="urn:hl7-org:v3" code="11109000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" displayName="${ prescription.drug.name }"/>
                                         </pharm:formCode>
                                         <pharm:asContent classCode="CONT">
@@ -175,7 +177,7 @@
                                         </pharm:asContent>
                                         <pharm:asSpecializedKind classCode="GRIC">
                                             <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
-                                                <pharm:code code="${ prescription.drug.ATC.code.value }" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2023-01" displayName="${ prescription.drug.ATC.text }">
+                                                <pharm:code code="${ prescription.drug.ATC.code.value }" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="${ prescription.drug.ATC.text }">
                                                     <pharm:translation xmlns:pharm="urn:hl7-org:v3" code="${ prescription.drug.ATC.code.value }" codeSystem="1.2.246.537.6.32" codeSystemName="ATC" codeSystemVersion="1.2.246.537.6.32.2007" displayName="${ prescription.drug.ATC.text }"/>
                                                 </pharm:code>
                                             </pharm:generalizedMaterialKind>
