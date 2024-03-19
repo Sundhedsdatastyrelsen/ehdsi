@@ -46,7 +46,7 @@ public class IntegrationTests {
     public void fmkGetPrescription() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
-            .withIncludeAllPrescriptions().end()
+            .withIncludeOpenPrescriptions().end()
             .build();
 
         var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
@@ -61,7 +61,7 @@ public class IntegrationTests {
             .withIncludeOpenPrescriptions().end()
             .build();
 
-        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
+        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
         Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
     }

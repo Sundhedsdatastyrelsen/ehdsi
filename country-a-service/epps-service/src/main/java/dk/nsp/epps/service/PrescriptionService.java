@@ -76,7 +76,7 @@ public class PrescriptionService {
             .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerJeppeMoeller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
     }
@@ -89,7 +89,7 @@ public class PrescriptionService {
                 .withIncludeOpenPrescriptions().end()
                 .build();
             log.debug("Looking up info for {}", cpr);
-            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerChrisChristoffersen);
+            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerJeppeMoeller);
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
             return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
         } catch (IOException | TemplateException e) {
