@@ -135,6 +135,5 @@ public class FmkClient {
             throw new RuntimeException(e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
-
     }
 }

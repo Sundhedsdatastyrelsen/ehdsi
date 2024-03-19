@@ -26,8 +26,8 @@ import java.util.Collection;
 public class IntegrationTests {
     /// Configuration:
     // Alternatives: "https://test2.fmk.netic.dk/fmk12/ws/MedicineCard", "http://localhost:8080/ws/"
-    private static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
-    private static final String cprEndpointUri =
+    static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
+    static final String cprEndpointUri =
         "http://test2.ekstern-test.nspop.dk:8080/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4";
 
     private static FmkClient fmkClient;
