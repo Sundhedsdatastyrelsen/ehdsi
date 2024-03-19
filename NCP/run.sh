@@ -13,6 +13,7 @@ MARIADB_HOST="mariadb"
 MARIADB_PORT="3306"
 OPENNCP_VERSION="7.1.0"
 TLS_KEYSTORE_ALIAS=ncptestis
+SEAL_KEYSTORE_ALIAS=ncptestis
 TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/test-truststore.jks
 CTS_URL=https://webgate.training.ec.europa.eu/ehealth-term-server
 EOF
@@ -48,6 +49,7 @@ initialize_secrets() {
   initialize_file "$SCRIPT_DIR/cts_username.txt" "ncpeh@dk"
   initialize_file "$SCRIPT_DIR/cts_password.txt" "<password for the central terminology service - ask someone>"
   initialize_file "$SCRIPT_DIR/tls_keystore_password.txt" "ncptestis"
+  initialize_file "$SCRIPT_DIR/seal_keystore_password.txt" "ncptestis"
   initialize_file "$SCRIPT_DIR/tls_truststore_password.txt" "changeit"
   initialize_file "$SCRIPT_DIR/.env" "${ENV_FILE_CONTENT}"
 }

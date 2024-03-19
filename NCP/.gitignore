@@ -16,5 +16,6 @@ target/
 /cts_username.txt
 /cts_password.txt
 /tls_keystore_password.txt
+/seal_keystore_password.txt
 /tls_truststore_password.txt
 hs_err_pid*

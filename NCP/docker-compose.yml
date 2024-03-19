@@ -23,6 +23,8 @@ secrets:
     file: cts_username.txt
   tls_keystore_password:
     file: tls_keystore_password.txt
+  seal_keystore_password:
+    file: seal_keystore_password.txt
   tls_truststore_password:
     file: tls_truststore_password.txt
 
@@ -82,8 +84,12 @@ services:
       CTS_PASSWORD_FILE: /run/secrets/cts_password
       CTS_USERNAME_FILE: /run/secrets/cts_username
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
-      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
+      # This also needs to be configured in openncp-configuration/ATNA_resources/ArrConnections.xml
+      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_TLS_TEST.jks
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
+      SEAL_KEYSTORE_ALIAS: ${SEAL_KEYSTORE_ALIAS}
+      SEAL_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_SEAL_TEST.jks
+      SEAL_KEYSTORE_PASSWORD_FILE: /run/secrets/seal_keystore_password
       TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
     depends_on:
@@ -97,6 +103,7 @@ services:
       - cts_password
       - cts_username
       - tls_keystore_password
+      - seal_keystore_password
       - tls_truststore_password
 
   #
@@ -128,7 +135,7 @@ services:
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
-      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
+      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_TLS_TEST.jks
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
       TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
@@ -141,6 +148,7 @@ services:
       - db_password
       - db_username
       - tls_keystore_password
+      - seal_keystore_password
       - tls_truststore_password
 
   #
@@ -172,7 +180,7 @@ services:
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
-      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/TLS-IS.jks
+      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_TLS_TEST.jks
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
     volumes:
       - ./openncp-configuration:/opt/openncp-configuration
