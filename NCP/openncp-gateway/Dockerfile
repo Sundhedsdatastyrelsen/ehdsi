@@ -1,7 +1,7 @@
 FROM node:16-buster as builder
 
 ARG openncp_version
-
+ARG VUE_APP_SERVER_URL="/openncp-gateway-backend"
 WORKDIR /usr/src/app
 
 # Download ehealth repo and extract only openncp-gateway-frontend.
