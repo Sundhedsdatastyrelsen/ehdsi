@@ -18,7 +18,7 @@
       <acceptAckCode code="AL"/>
       <receiver typeCode="RCV">
         <device classCode="DEV" determinerCode="INSTANCE">
-          <id root="2.16.17.710.860.1000.990.1"/>
+          <id root="2.16.17.710.802.1000.990.1"/>
           <asAgent classCode="AGNT">
             <representedOrganization classCode="ORG" determinerCode="INSTANCE">
               <id root="2.16.17.710.820.1000.990.1"/>
@@ -49,7 +49,8 @@
           <matchCriterionList/>
           <parameterList>
             <livingSubjectId>
-              <value extension="0101010000" root="DKCPR"/>
+              <!-- <value extension="0101010000" root="DKCPR"/> -->
+              <value extension="1111111118" root="DKCPR"/>
               <semanticsText/>
             </livingSubjectId>
           </parameterList>
