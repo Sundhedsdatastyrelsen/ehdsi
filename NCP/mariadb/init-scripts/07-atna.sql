@@ -42,8 +42,21 @@ CREATE TABLE IF NOT EXISTS objects_descriptions (ObjectEntity_id BIGINT NOT NULL
 ALTER TABLE objects_descriptions ADD PRIMARY KEY (ObjectEntity_id, objectDescriptions_id);
 CREATE TABLE IF NOT EXISTS objects_detail_types (ObjectEntity_id BIGINT NOT NULL, objectDetailTypes_id BIGINT NOT NULL, CONSTRAINT FKgimc70hjnuj9qkf3p0s0q3qmo FOREIGN KEY (objectDetailTypes_id) REFERENCES detail_types(id), CONSTRAINT FK4qbbl5uhnjqalam9hqtsckpgg FOREIGN KEY (ObjectEntity_id) REFERENCES objects(id), UNIQUE (objectDetailTypes_id));
 ALTER TABLE objects_detail_types ADD PRIMARY KEY (ObjectEntity_id, objectDetailTypes_id);
-CREATE TABLE IF NOT EXISTS participants_codes (ParticipantEntity_id BIGINT NOT NULL, participantTypeCodes_id BIGINT NOT NULL, CONSTRAINT FK6mo8s3p730mpu65trdu4akehf FOREIGN KEY (participantTypeCodes_id) REFERENCES codes(id), CONSTRAINT FKth6nbhfn1lbkvtr5m942q305v FOREIGN KEY (ParticipantEntity_id) REFERENCES participants(id), UNIQUE (participantTypeCodes_id));
-ALTER TABLE participants_codes ADD PRIMARY KEY (ParticipantEntity_id, participantTypeCodes_id);
+
+--- From Einar 2024-03-18:
+CREATE TABLE IF NOT EXISTS participants_codes (
+  ParticipantEntity_id bigint(20) NOT NULL,
+  participantTypeCodes_id bigint(20) NOT NULL,
+  PRIMARY KEY (ParticipantEntity_id,participantTypeCodes_id),
+  KEY FK6mo8s3p730mpu65trdu4akehf (participantTypeCodes_id),
+  CONSTRAINT FK6mo8s3p730mpu65trdu4akehf FOREIGN KEY (participantTypeCodes_id) REFERENCES codes (id),
+  CONSTRAINT FKth6nbhfn1lbkvtr5m942q305v FOREIGN KEY (ParticipantEntity_id) REFERENCES participants (id)
+);
+--- Instead of:
+-- CREATE TABLE IF NOT EXISTS participants_codes (ParticipantEntity_id BIGINT NOT NULL, participantTypeCodes_id BIGINT NOT NULL, CONSTRAINT FK6mo8s3p730mpu65trdu4akehf FOREIGN KEY (participantTypeCodes_id) REFERENCES codes(id), CONSTRAINT FKth6nbhfn1lbkvtr5m942q305v FOREIGN KEY (ParticipantEntity_id) REFERENCES participants(id), UNIQUE (participantTypeCodes_id));
+-- ALTER TABLE participants_codes ADD PRIMARY KEY (ParticipantEntity_id, participantTypeCodes_id);
+
+
 --  Changeset src/main/resources/openncp-atna/db.changelog.xml::2::subigje
 ALTER TABLE errors MODIFY payload LONGBLOB;
 ALTER TABLE errors MODIFY stackTrace LONGBLOB;
