@@ -114,7 +114,7 @@
             <component>
                 <section>
                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1"/>
-                    <id extension="1" root="1.2.246.556.12001.4.93.1.1.44103"/>
+                    <id extension="${ prescription.identifier }" root="1.2.246.556.12001.4.93.1.1.44103"/>
                     <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
                     <title>Prescriptions</title>
                     <text ID="eP_as_text">
@@ -136,33 +136,42 @@
                     </text>
                     <entry typeCode="COMP">
                         <substanceAdministration classCode="SBADM" moodCode="INT">
-                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
-                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7"/>
                             <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
-                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
-                            <id extension="1.1" root="1.2.246.556.12001.4.93.1.1.44103"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <!-- Følgende templateIds er ikke obligatoriske og måske gensidigt udelukkende.
+                                 Vi ved endnu ikke (2024-04-12) hvilke er relevante i vores tilfælde. -->
+                            <!-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7"/> -->
+                            <!-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/> -->
+                            <!-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.11"/> -->
+                            <!-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.9"/> -->
+                            <id extension="1.1" root="dk.sundhedsdata.fmk"/>
                             <text>
                                 <reference value="#eP_as_text"/>
                             </text>
                             <statusCode code="active"/>
+                            <!-- Vi har ikke disse oplysninger på recepten, de ligger på medicinkortet, som vi ikke har adgang til som apoteker (uden samtykke). -->
                             <effectiveTime nullFlavor="UNK" xsi:type="IVL_TS"/>
                             <effectiveTime nullFlavor="UNK" xsi:type="PIVL_TS"/>
-                            <doseQuantity nullFlavor="UNK"/>
+                            <!-- <doseQuantity nullFlavor="UNK"/> -->
                             <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
                                     <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
                                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
-                                        <code code="121277" codeSystem="1.2.246.537.6.55" codeSystemName="VNR" codeSystemVersion="2023.007" displayName="${ prescription.drug.name }">
+                                        <!-- TODO: should we have this?  We have ATC code, but that is explicitly forbidden at
+                                            https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.29-2022-09-12T124637.html -->
+                                        <!-- <code code="121277" codeSystem="1.2.246.537.6.55" codeSystemName="VNR" codeSystemVersion="2023.007" displayName="${ prescription.drug.name }">
                                             <originalText>
                                                 <reference value="#nameAsText"/>
                                             </originalText>
-                                        </code>
+                                        </code> -->
                                         <name>${ prescription.drug.name }</name>
-                                        <pharm:desc>${ prescription.dosageText }</pharm:desc>
-                                        <pharm:formCode code="11109000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2024-01-09" displayName="${ prescription.drug.name }">
-                                            <pharm:translation xmlns:pharm="urn:hl7-org:v3" code="11109000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" displayName="${ prescription.drug.name }"/>
-                                        </pharm:formCode>
+                                        <!-- TODO: OID for LMS codes -->
+                                        <pharm:formCode code="${ prescription.drug.form.code }" codeSystem="2.16.17.710.802.1000.990.1.22" codeSystemName="LMS22" codeSystemVersion="1" displayName="${ prescription.drug.form.text }"/>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="${ packageSizeEhdsiUnit }" value="${ prescription.packageRestriction.packageSize.value }" />
+                                        </pharm:asContent>
+                                        <!-- <#--
                                         <pharm:asContent classCode="CONT">
                                             <pharm:quantity unit="{dose}" value="${ drugStrength.value }">
 <#if prescription.drug.form?? && prescription.drug.form.text??>
@@ -175,6 +184,10 @@
                                                 <pharm:formCode nullFlavor="NI"/>
                                             </pharm:containerPackagedProduct>
                                         </pharm:asContent>
+                                    --> -->
+                                    <!-- Nåede HERTIL -->
+
+                                    <#--
                                         <pharm:asSpecializedKind classCode="GRIC">
                                             <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
                                                 <pharm:code code="${ prescription.drug.ATC.code.value }" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="${ prescription.drug.ATC.text }">
@@ -194,16 +207,18 @@
                                                 <pharm:name>${ prescription.drug.ATC.text }</pharm:name>
                                             </pharm:ingredientSubstance>
                                         </pharm:ingredient>
+                                    -->
                                     </manufacturedMaterial>
                                 </manufacturedProduct>
                             </consumable>
                             <entryRelationship typeCode="COMP">
                                 <supply classCode="SPLY" moodCode="RQO">
                                     <independentInd value="false"/>
+                                    <!-- Skal dette være PackageQuantity i stedet for prescription.order?size ? -->
                                     <quantity unit="1" value="${ prescription.order?size }"/>
                                 </supply>
                             </entryRelationship>
-<#if !prescription.substitutionAllowed>
+<#if prescription.substitutionAllowed>
                             <entryRelationship inversionInd="true" typeCode="SUBJ">
                                 <observation classCode="OBS" moodCode="EVN">
                                     <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="ActClass" displayName="Substitution"/>
@@ -211,7 +226,7 @@
                                 </observation>
                             </entryRelationship>
 </#if>
-                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                            <!-- <entryRelationship inversionInd="true" typeCode="SUBJ">
                                 <act classCode="ACT" moodCode="INT">
                                     <templateId root="2.16.840.1.113883.10.20.1.43"/>
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.13"/>
@@ -221,7 +236,7 @@
                                     </text>
                                     <statusCode code="completed"/>
                                 </act>
-                            </entryRelationship>
+                            </entryRelationship> -->
                             <entryRelationship inversionInd="true" typeCode="SUBJ">
                                 <act classCode="ACT" moodCode="INT">
                                     <templateId root="2.16.840.1.113883.10.20.1.49"/>

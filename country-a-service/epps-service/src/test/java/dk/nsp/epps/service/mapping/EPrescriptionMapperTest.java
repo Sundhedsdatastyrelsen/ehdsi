@@ -1,6 +1,7 @@
 package dk.nsp.epps.service.mapping;
 
 import dk.nsp.epps.mocks.fmk.data.FmkMockDataFactory;
+import dk.nsp.epps.service.FmkResponseStorage;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import freemarker.template.TemplateExceptionHandler;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +23,15 @@ public class EPrescriptionMapperTest {
         Assertions.assertEquals(1, result.size());
     }
 
+    @Test
+    void foo() throws Exception {
+        var prescriptions = FmkResponseStorage.storedPrescriptions("1111111118");
+        var noFilter = new PrescriptionFilter( null, null, null, null);
+        var result = mapper.mapResponse("1111111118", noFilter, prescriptions);
+        Assertions.assertEquals(1, result.size());
+
+    }
+
     private static freemarker.template.Configuration freemarkerCfg() {
         var cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
         cfg.setClassLoaderForTemplateLoading(EPrescriptionMapperTest.class.getClassLoader(), "/templates");
@@ -33,4 +43,6 @@ public class EPrescriptionMapperTest {
         cfg.setRecognizeStandardFileExtensions(true);
         return cfg;
     }
+
+
 }

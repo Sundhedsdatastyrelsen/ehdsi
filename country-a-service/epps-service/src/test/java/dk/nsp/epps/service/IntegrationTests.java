@@ -1,5 +1,6 @@
 package dk.nsp.epps.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
@@ -40,6 +41,18 @@ public class IntegrationTests {
     public static void setup() throws Exception {
         fmkClient = new FmkClient(fmkEndpointUri);
         cprClient = new CprClient(cprEndpointUri);
+    }
+
+    @Test
+    public void fmkGetMedicineCard() throws Exception {
+        var getMedicineCardRequest = GetMedicineCardRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
+            .withIncludePrescriptions(true)
+            .build();
+
+        var medicineCard = fmkClient.getMedicineCard(getMedicineCardRequest);
+        System.out.println(medicineCard.getMedicineCard().size());
+
     }
 
     @Test

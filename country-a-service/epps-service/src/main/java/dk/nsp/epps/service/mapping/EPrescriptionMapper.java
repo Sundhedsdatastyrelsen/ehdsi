@@ -9,6 +9,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorWithOptionalAuth
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PatientType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SimpleCPRPersonType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.ncp.api.ClassCodeDto;
@@ -160,7 +162,7 @@ public class EPrescriptionMapper {
     @lombok.Value
     public static class GetPrescriptionResponseModel {
         private final GetPrescriptionResponseType response;
-        private final PrescriptionType prescription;
+        PrescriptionType prescription;
 
         public String getEffectiveTime() {
             return DateTimeFormatter.ofPattern("YYYYMMddHHmmssZ").format(OffsetDateTime.now());
@@ -271,6 +273,24 @@ public class EPrescriptionMapper {
                         }
                     });
                     return builder.build();
+                })
+                .orElse(null);
+        }
+
+        /**
+         * Convert the FMK package size unit (LMS15) to eHDSIUnit
+         * TODO
+         *
+         * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/voc-1.3.6.1.4.1.12559.11.10.1.3.1.42.16-2023-05-02T180000.html">eHDSIUnit</a>
+         */
+        public String getPackageSizeEhdsiUnit() {
+            return Optional.of(prescription)
+                .map(PrescriptionType::getPackageRestriction)
+                .map(PackageRestrictionType::getPackageSize)
+                .map(PackageSizeType::getUnitCode)
+                .map(unitCode -> switch (unitCode.getValue()) {
+                    case "ST" -> "{#}";
+                    default -> throw new IllegalStateException("Unexpected value: " + unitCode);
                 })
                 .orElse(null);
         }
