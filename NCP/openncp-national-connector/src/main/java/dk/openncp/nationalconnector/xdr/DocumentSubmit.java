@@ -56,7 +56,7 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
     public static void main(String[] args) {
         try {
             var res = CountryAService.api().submitDispensationWithHttpInfo(new SubmitDispensationRequest()
-                    .patientId("DKCPR^^^0101010101")
+                    .patientId("0101010101")
                     .classCode(ClassCode._60593_1)
                     .document("<dummy/>")
                     .soapHeader("<Header/>"));

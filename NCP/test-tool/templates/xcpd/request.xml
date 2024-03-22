@@ -49,8 +49,8 @@
           <matchCriterionList/>
           <parameterList>
             <livingSubjectId>
-              <!-- <value extension="0101010000" root="DKCPR"/> -->
-              <value extension="1111111118" root="DKCPR"/>
+              <!-- <value extension="0101010000" root="2.16.17.710.802.1000.990.1.500"/> -->
+              <value extension="1111111118" root="2.16.17.710.802.1000.990.1.500"/>
               <semanticsText/>
             </livingSubjectId>
           </parameterList>

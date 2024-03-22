@@ -181,7 +181,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
      */
     public static void main(String[] args) throws NIException, InsufficientRightsException {
         var sc = new SearchCriteriaImpl();
-        sc.addPatientId("DKCPR^^^1234567890");
+        sc.addPatientId("1234567890");
 //        sc.add(SearchCriteria.Criteria.DOCUMENT_ID, "21298478");
         var ds = new DocumentSearch();
         var result = ds.getEPDocumentList(sc);
