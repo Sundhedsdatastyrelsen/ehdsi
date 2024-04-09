@@ -9,28 +9,28 @@
     </wsse:Security>
   </env:Header>
   <env:Body>
-    <ns4:AdhocQueryRequest
-        xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
-        xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
-        xmlns:ns6="urn:ihe:iti:xds-b:2007">
-      <ns4:ResponseOption returnComposedObjects="true" returnType="LeafClass"/>
-      <ns2:AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
-        <ns2:Slot name="$XDSDocumentEntryPatientId">
-          <ns2:ValueList>
-            <ns2:Value>'DKCPR^^^1111111118'</ns2:Value>
-          </ns2:ValueList>
-        </ns2:Slot>
-        <ns2:Slot name="$XDSDocumentEntryStatus">
-          <ns2:ValueList>
-            <ns2:Value>('urn:oasis:names:tc:ebxml-regrep:StatusType:')</ns2:Value>
-          </ns2:ValueList>
-        </ns2:Slot>
-        <ns2:Slot name="$XDSDocumentEntryClassCode">
-          <ns2:ValueList>
-            <ns2:Value>57833-6^^</ns2:Value>
-          </ns2:ValueList>
-        </ns2:Slot>
-      </ns2:AdhocQuery>
-    </ns4:AdhocQueryRequest>
+    <ns3:AdhocQueryRequest xmlns="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
+                           xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+                           xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+                           xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:ns5="urn:ihe:iti:xds-b:2007">
+      <ns3:ResponseOption returnComposedObjects="true" returnType="LeafClass" />
+      <AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
+        <Slot name="$XDSDocumentEntryPatientId">
+          <ValueList>
+            <Value>'1111111118^^^&amp;2.16.17.710.802.1000.990.1.500&amp;ISO'</Value>
+          </ValueList>
+        </Slot>
+        <Slot name="$XDSDocumentEntryStatus">
+          <ValueList>
+            <Value>('urn:oasis:names:tc:ebxml-regrep:StatusType:Approved')</Value>
+          </ValueList>
+        </Slot>
+        <Slot name="$XDSDocumentEntryClassCode">
+          <ValueList>
+            <Value>('57833-6^^2.16.840.1.113883.6.1')</Value>
+          </ValueList>
+        </Slot>
+      </AdhocQuery>
+    </ns3:AdhocQueryRequest>
   </env:Body>
 </env:Envelope>

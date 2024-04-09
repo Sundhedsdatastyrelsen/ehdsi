@@ -21,7 +21,7 @@
 <!-- For IHE Actor -->
 <Configuration>
    <SecureConnection name="arr-tls">
-      <HostName>127.0.0.1</HostName>
+      <HostName>0.0.0.0</HostName>
       <Port>2862</Port>
       <!-- Trust and Keystore -->
       <KeyStore>/opt/openncp-configuration/cert/DK_TLS_TEST.jks</KeyStore>
@@ -31,7 +31,7 @@
    </SecureConnection>
    <!-- use IP address instead of localhost for UDP -->
    <StandardConnection name="arr-udp">
-      <HostName>127.0.0.1</HostName>
+      <HostName>0.0.0.0</HostName>
       <Port>2861</Port>
    </StandardConnection>
 </Configuration>
