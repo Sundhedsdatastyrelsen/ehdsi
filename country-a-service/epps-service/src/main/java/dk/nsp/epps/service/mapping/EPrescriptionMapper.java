@@ -19,12 +19,10 @@ import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.exception.CountryAException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -39,14 +37,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class EPrescriptionMapper {
     private final freemarker.template.Configuration cfg;
     private Template template;
+    private String repositoryId;
 
-    @PostConstruct
-    public void initTemplate() throws IOException {
+    public EPrescriptionMapper(
+        freemarker.template.Configuration cfg,
+        @Value("${app.eprescription.repository.id}") String repositoryId
+    ) throws IOException {
+        this.cfg = cfg;
         template = cfg.getTemplate("eprescription-cda.ftlx");
+        this.repositoryId = repositoryId;
     }
 
     public List<EPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter, GetPrescriptionResponseType src) {
@@ -71,7 +73,7 @@ public class EPrescriptionMapper {
         meta.setFormat(DocumentFormatDto.XML);
         meta.setEffectiveTime(OffsetDateTime.now());
         meta.setClassCode(ClassCodeDto._57833_6);
-        meta.setRepositoryId(null);
+        meta.setRepositoryId(repositoryId);
         meta.setTitle(prescription.getDrug().getName());
         meta.setAuthor(Optional.ofNullable(model.getAuthorisedHealthcareProfessionalNames()).map(Names::fullName).orElse(null));
         meta.setLanguage(null);
@@ -105,19 +107,19 @@ public class EPrescriptionMapper {
             template.process(new GetPrescriptionResponseModel(src, prescription), document);
 
             return new EpsosDocumentDto(patientId, document.toString(), ClassCodeDto._57833_6);
-        } catch (TemplateException|IOException e) {
+        } catch (TemplateException | IOException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    @Value
+    @lombok.Value
     public static class AdministrativeGender {
         private final String code;
         private final String displayName;
         private final String translation;
     }
 
-    @Value
+    @lombok.Value
     @Builder
     public static class DrugStrength {
         private final String value;
@@ -155,7 +157,7 @@ public class EPrescriptionMapper {
         }
     }
 
-    @Value
+    @lombok.Value
     public static class GetPrescriptionResponseModel {
         private final GetPrescriptionResponseType response;
         private final PrescriptionType prescription;

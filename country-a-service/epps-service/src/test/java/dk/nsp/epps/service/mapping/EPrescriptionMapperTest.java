@@ -12,8 +12,7 @@ public class EPrescriptionMapperTest {
 
     @BeforeAll
     public static void setup() throws Exception {
-        mapper = new EPrescriptionMapper(freemarkerCfg());
-        mapper.initTemplate();
+        mapper = new EPrescriptionMapper(freemarkerCfg(), "repoid");
     }
 
     @Test
