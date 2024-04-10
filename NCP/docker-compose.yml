@@ -60,29 +60,27 @@ services:
       timeout: 5s
       retries: 3
 
-  openncp-configuration-utility:
+  #
+  # Configuration synchronizer.
+  # Watches OPENNCP_CONFIGURATION_FILE for changes and sends content to
+  # configuration database table.
+  #
+  configuration-synchronizer:
     build:
-      context: .
-      dockerfile: ./openncp-configuration-utility/Dockerfile
-      args:
-        openncp_version: ${OPENNCP_VERSION}
+      context: configuration-synchronizer
       platforms:
         - "linux/amd64"
         - "linux/arm64"
-    container_name: openncp-configuration-utility
-    image: eppsregistry.azurecr.io/openncp-configuration-utility:${OPENNCP_VERSION}
+    container_name: configuration-synchronizer
+    image: eppsregistry.azurecr.io/configuration-synchronizer:${OPENNCP_VERSION}
     volumes:
-      - ./openncp-configuration:/opt/openncp-configuration/
+      - ./openncp-configuration:/opt/openncp-configuration
     environment:
-      RUN_TSAM: ${RUN_TSAM}
-      CTS_URL: ${CTS_URL}
+      OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PORT: ${MARIADB_PORT}
-      LOAD_PROPERTIES: ${LOAD_PROPERTIES}
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       MARIADB_USERNAME_FILE: /run/secrets/db_username
-      CTS_PASSWORD_FILE: /run/secrets/cts_password
-      CTS_USERNAME_FILE: /run/secrets/cts_username
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
       # This also needs to be configured in openncp-configuration/ATNA_resources/ArrConnections.xml
       TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_TLS_TEST.jks
@@ -100,11 +98,45 @@ services:
     secrets:
       - db_password
       - db_username
-      - cts_password
-      - cts_username
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
+
+  #
+  # Download terminology database from CTS. Batch job.
+  # Usage: `docker compose run tsam-synchronizer`.
+  #
+  tsam-synchronizer:
+    profiles: ["initialization"] # prevents service from starting on `docker compose up`
+    build:
+      context: .
+      dockerfile: ./tsam-synchronizer/Dockerfile
+      args:
+        openncp_version: ${OPENNCP_VERSION}
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
+    image: eppsregistry.azurecr.io/tsam-synchronizer:${OPENNCP_VERSION}
+    volumes:
+      - ./openncp-configuration:/opt/openncp-configuration/
+    environment:
+      CTS_URL: ${CTS_URL}
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      MARIADB_USERNAME_FILE: /run/secrets/db_username
+      CTS_PASSWORD_FILE: /run/secrets/cts_password
+      CTS_USERNAME_FILE: /run/secrets/cts_username
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - ncp
+    secrets:
+      - db_password
+      - db_username
+      - cts_password
+      - cts_username
 
   #
   # NCP server / inbound protocol terminator
@@ -126,7 +158,7 @@ services:
       # - "5005:5005"
     depends_on:
       - mariadb
-      - openncp-configuration-utility
+      - configuration-synchronizer
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
@@ -172,7 +204,7 @@ services:
       # - "5006:5006"
     depends_on:
       - mariadb
-      - openncp-configuration-utility
+      - configuration-synchronizer
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
       MARIADB_HOST: ${MARIADB_HOST}

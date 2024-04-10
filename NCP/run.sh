@@ -7,8 +7,6 @@ set -o pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ENV_FILE_CONTENT="$(cat << EOF
-RUN_TSAM="true"
-LOAD_PROPERTIES="true"
 MARIADB_HOST="mariadb"
 MARIADB_PORT="3306"
 OPENNCP_VERSION="7.1.0"
@@ -29,6 +27,7 @@ USAGE=$(echo "Usage: $0 [options]";
         echo "  init          Initialize the project dir for running the NCP"
         echo "  up            Build and run the containers in the background"
         echo "  down          Stop the containers"
+        echo "  tsam-sync     Synchronize terminology database with CTS"
         echo "  clean         Clean up the containers and volumes (wipes database)"
         echo "  logs          Follow the stdout logs of the containers"
         echo "  -h, --help    Display this help message")
@@ -75,6 +74,10 @@ else
     up)
       init
       docker compose up --build --detach
+      ;;
+    tsam-sync)
+      init
+      docker compose run --build tsam-synchronizer
       ;;
     logs)
       docker compose logs --follow

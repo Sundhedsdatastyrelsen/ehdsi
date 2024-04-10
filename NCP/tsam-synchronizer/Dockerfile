@@ -30,9 +30,8 @@ RUN download_maven_artifact \
     jar \
     ${openncp_repo}
 
-COPY ./openncp-configuration-utility/application.yml .
-COPY ./openncp-configuration-utility/openncp-tsam-sync/application.yml ./openncp-tsam-sync/
-COPY ./openncp-configuration-utility/openncp-tsam-exporter/application.yml ./openncp-tsam-exporter/
-COPY --chmod=0755 ./openncp-configuration-utility/startup.sh .
+COPY ./tsam-synchronizer/openncp-tsam-sync/application.yml ./openncp-tsam-sync/
+COPY ./tsam-synchronizer/openncp-tsam-exporter/application.yml ./openncp-tsam-exporter/
+COPY ./tsam-synchronizer/run.sh .
 
-CMD /opt/openncp-configuration-utility/startup.sh
+CMD ["./run.sh"]
