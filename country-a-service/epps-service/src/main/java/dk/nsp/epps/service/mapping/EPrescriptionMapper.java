@@ -36,36 +36,39 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class EPrescriptionMapper {
-    private final freemarker.template.Configuration cfg;
-    private Template template;
-    private String repositoryId;
+    private final Template template;
+    private final String repositoryId;
 
     public EPrescriptionMapper(
         freemarker.template.Configuration cfg,
         @Value("${app.eprescription.repository.id}") String repositoryId
     ) throws IOException {
-        this.cfg = cfg;
         template = cfg.getTemplate("eprescription-cda.ftlx");
         this.repositoryId = repositoryId;
     }
 
-    public List<EPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter, GetPrescriptionResponseType src) {
+    public List<EPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter,
+                                                          GetPrescriptionResponseType src) {
         return filter.applyTo(src.getPrescription())
             .map(prescription -> mapMeta(patientId, src, prescription))
             .toList();
     }
 
-    public List<EpsosDocumentDto> mapResponse(String patientId, PrescriptionFilter filter, GetPrescriptionResponseType src) throws TemplateException, IOException {
+    public List<EpsosDocumentDto> mapResponse(String patientId, PrescriptionFilter filter,
+                                              GetPrescriptionResponseType src) throws TemplateException, IOException {
         return filter.applyTo(src.getPrescription())
             .map(prescription -> mapPrescription(patientId, src, prescription))
             .toList();
     }
 
-    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType src, PrescriptionType prescription) {
+    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType src,
+                                                     PrescriptionType prescription) {
         var model = new GetPrescriptionResponseModel(src, prescription);
         var drug = prescription.getDrug();
         var indication = prescription.getIndication();
@@ -103,7 +106,8 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType src, PrescriptionType prescription) {
+    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType src,
+                                             PrescriptionType prescription) {
         try {
             var document = new StringWriter();
             template.process(new GetPrescriptionResponseModel(src, prescription), document);
@@ -138,7 +142,8 @@ public class EPrescriptionMapper {
 
         /**
          * The case where the danish spec just provides a single string with the given- and surnames, but we need to
-         * fill out given and family tags. So we assume that the last name is the last thing in the string and all before
+         * fill out given and family tags. So we assume that the last name is the last thing in the string and all
+         * before
          * are given names.
          */
         public Names(String names) {
@@ -164,8 +169,35 @@ public class EPrescriptionMapper {
         private final GetPrescriptionResponseType response;
         PrescriptionType prescription;
 
+        public String getCdaInstanceId() {
+            return UUID.randomUUID().toString();
+        }
+
+        public String getPatientFullName() {
+            return Optional.of(response)
+                .map(GetPrescriptionResponseType::getPatient)
+                .map(PatientType::getPerson)
+                .map(SimpleCPRPersonType::getName)
+                .map(name -> {
+                    var fullName = name.getGivenName();
+                    fullName += name.getMiddleName();
+                    fullName += name.getSurname();
+                    return fullName;
+                })
+                .orElse(null);
+        }
+
+        public String getTitle() {
+            var fullName = getPatientFullName();
+            var id = prescription.getIdentifier();
+            return String.format(
+                "eHDSI ePrescription %s - %s",
+                fullName, id
+            );
+        }
+
         public String getEffectiveTime() {
-            return DateTimeFormatter.ofPattern("YYYYMMddHHmmssZ").format(OffsetDateTime.now());
+            return DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ").format(OffsetDateTime.now());
         }
 
         /**
@@ -277,6 +309,10 @@ public class EPrescriptionMapper {
                 .orElse(null);
         }
 
+        Map<String, String> lms15ToEhdsiUnit = Map.of(
+            "ST", "1"
+        );
+
         /**
          * Convert the FMK package size unit (LMS15) to eHDSIUnit
          * TODO
@@ -288,9 +324,12 @@ public class EPrescriptionMapper {
                 .map(PrescriptionType::getPackageRestriction)
                 .map(PackageRestrictionType::getPackageSize)
                 .map(PackageSizeType::getUnitCode)
-                .map(unitCode -> switch (unitCode.getValue()) {
-                    case "ST" -> "{#}";
-                    default -> throw new IllegalStateException("Unexpected value: " + unitCode);
+                .map(unitCode -> {
+                    var unit = lms15ToEhdsiUnit.get(unitCode);
+                    if (unit == null) {
+                        throw new IllegalStateException("Unexpected value: " + unitCode);
+                    }
+                    return unit;
                 })
                 .orElse(null);
         }
