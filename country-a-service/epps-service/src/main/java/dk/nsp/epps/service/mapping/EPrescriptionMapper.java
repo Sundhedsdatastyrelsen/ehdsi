@@ -28,10 +28,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -134,11 +136,54 @@ public class EPrescriptionMapper {
         private final String text;
     }
 
+    /**
+     * Values pertaining to the
+     * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-2.16.840.1.113883.3.1937.777.11.10.103-2020-10-07T082031.html">eHDSI Author Prescriber template</a>
+     */
+    @lombok.Value
+    public static class HealthcareProfessional {
+        String id;
+        /**
+         * Corresponds to "functionCode", should be from the
+         * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/voc-1.3.6.1.4.1.12559.11.10.1.3.1.42.1-DYNAMIC.html">eHDSIHealthcareProfessionalRole value set</a>.
+         */
+        HealthcareProfessionalRole role;
+        Names name;
+        Organisation organisation;
+    }
+
+    /**
+     * Corresponds to "functionCode", should be from the
+     * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/voc-1.3.6.1.4.1.12559.11.10.1.3.1.42.1-DYNAMIC.html">eHDSIHealthcareProfessionalRole value set</a>.
+     */
+    @lombok.Value
+    public static class HealthcareProfessionalRole {
+        String code;
+        String displayName;
+    }
+
+    @lombok.Value
+    public static class Organisation {
+        Identifier id;
+        String name;
+        String telephoneNumber;
+        List<String> addressLines;
+    }
+
+    /**
+     * A CDA identifier, see <a href="https://wiki.art-decor.org/index.php?title=DTr1_II.EPSOS">II.EPSOS</a>.
+     */
+    @lombok.Value
+    public static class Identifier {
+        String extension;
+        String root;
+    }
+
     @Getter
     @AllArgsConstructor
     public static class Names {
         private List<String> givenNames;
-        private String surName;
+        private String surname;
 
         /**
          * The case where the danish spec just provides a single string with the given- and surnames, but we need to
@@ -149,7 +194,7 @@ public class EPrescriptionMapper {
         public Names(String names) {
             String[] nameArr = names.split(" ");
             givenNames = List.of(Arrays.copyOfRange(nameArr, 0, nameArr.length - 1));
-            surName = nameArr[nameArr.length - 1];
+            surname = nameArr[nameArr.length - 1];
         }
 
         public String fullName() {
@@ -157,8 +202,8 @@ public class EPrescriptionMapper {
             if (givenNames != null) {
                 givenNames.forEach(name -> builder.append(" ").append(name));
             }
-            if (surName != null) {
-                builder.append(" ").append(surName);
+            if (surname != null) {
+                builder.append(" ").append(surname);
             }
             return builder.toString().trim();
         }
@@ -166,12 +211,21 @@ public class EPrescriptionMapper {
 
     @lombok.Value
     public static class GetPrescriptionResponseModel {
-        private final GetPrescriptionResponseType response;
+        GetPrescriptionResponseType response;
         PrescriptionType prescription;
 
-        public String getCdaInstanceId() {
-            return UUID.randomUUID().toString();
-        }
+        /**
+         * Unique ID identifying the CDA document (not the prescription itself).
+         */
+        String CdaInstanceId = UUID.randomUUID().toString();
+
+        /**
+         * See
+         * <a href="https://tracker.dksund.dk/confluence/display/ePPS/Nationale+OID%27er+anvendt+i+projektet">Confluence page on OIDs</a>.
+         */
+        Map<String, String> sourceOid = Map.of(
+            "Yder", "2.16.17.710.802.1000.990.1.40"
+        );
 
         public String getPatientFullName() {
             return Optional.of(response)
@@ -187,6 +241,37 @@ public class EPrescriptionMapper {
                 .orElse(null);
         }
 
+
+
+        public HealthcareProfessional getAuthor() {
+            // TODO: extract professional code from prescription?
+            var role = new HealthcareProfessionalRole("221", "Medical doctors");
+            var org = getOrganisation();
+            var orgRoot = sourceOid.get(org.getIdentifier().getSource());
+            if (orgRoot == null) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Unknown organisation id source: %s.  Valid sources are: %s",
+                        org.getIdentifier().getSource(),
+                        String.join(", ", sourceOid.keySet()))
+                );
+            }
+
+            var organisationId = new Identifier(org.getIdentifier().getValue(), orgRoot);
+
+            return new HealthcareProfessional(
+                getAuthorisedHealthcareProfessional().getAuthorisationIdentifier(),
+                role,
+                getAuthorisedHealthcareProfessionalNames(),
+                new Organisation(
+                    organisationId,
+                    org.getName(),
+                    org.getTelephoneNumber(),
+                    org.getAddressLine()
+                )
+            );
+        }
+
         public String getTitle() {
             var fullName = getPatientFullName();
             var id = prescription.getIdentifier();
@@ -196,8 +281,24 @@ public class EPrescriptionMapper {
             );
         }
 
+        public static String cdaOffsetDateTime(TemporalAccessor time) {
+            return DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ").format(time);
+        }
+
+        public static String cdaOffsetDateTime(XMLGregorianCalendar time) {
+            var zonedDateTime = time.toGregorianCalendar().toZonedDateTime();
+            return cdaOffsetDateTime(zonedDateTime);
+        }
+
+        /**
+         * "[...] the date and time at which this document was created as an electronic document."
+         */
         public String getEffectiveTime() {
-            return DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ").format(OffsetDateTime.now());
+            return cdaOffsetDateTime(OffsetDateTime.now());
+        }
+
+        public String getPrescriptionCreatedTime() {
+            return cdaOffsetDateTime(prescription.getCreated().getDateTime());
         }
 
         /**
@@ -249,6 +350,26 @@ public class EPrescriptionMapper {
                 .map(list -> list.get(0))
                 .map(PrescriptionType::getCreated)
                 .map(CreatedWithOptionalAuthorisationIdentifierType::getBy);
+        }
+
+        public AuthorisedHealthcareProfessionalType getAuthorisedHealthcareProfessional() {
+            return modificatorWithOptionalAuthorisationIdentifier()
+                .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
+                .flatMap(content -> content.stream()
+                    .filter(jaxb -> AuthorisedHealthcareProfessionalType.class.isAssignableFrom(jaxb.getDeclaredType()))
+                    .map(jaxb -> (AuthorisedHealthcareProfessionalType) jaxb.getValue())
+                    .findFirst())
+                .orElse(null);
+        }
+
+        public OrganisationType getOrganisation() {
+            return modificatorWithOptionalAuthorisationIdentifier()
+                .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
+                .flatMap(content -> content.stream()
+                    .filter(jaxb -> OrganisationType.class.isAssignableFrom(jaxb.getDeclaredType()))
+                    .map(jaxb -> (OrganisationType) jaxb.getValue())
+                    .findFirst())
+                .orElse(null);
         }
 
         public Names getAuthorisedHealthcareProfessionalNames() {

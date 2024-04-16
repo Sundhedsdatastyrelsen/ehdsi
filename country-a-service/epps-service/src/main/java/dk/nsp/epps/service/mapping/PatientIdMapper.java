@@ -16,10 +16,6 @@ import java.util.regex.Pattern;
 public final class PatientIdMapper {
     private static final Pattern patientIdPattern = Pattern.compile("(\\d{10})(?:\\^{3}.*)?");
 
-    private static final String PATIENTID_PREFIX = "DKCPR^^^";
-    private static final Pattern CPR_PATTERN_1 = Pattern.compile("^[0-9]{10}$");
-    private static final Pattern CPR_PATTERN_2 = Pattern.compile("^([0-9]{6})-([0-9]{4})$");
-
     private PatientIdMapper() {
     }
 
