@@ -1,9 +1,7 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.nsp.epps.mocks.fmk.data.FmkMockDataFactory;
 import dk.nsp.epps.service.FmkResponseStorage;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
-import freemarker.template.TemplateExceptionHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,36 +11,13 @@ public class EPrescriptionMapperTest {
 
     @BeforeAll
     public static void setup() throws Exception {
-        mapper = new EPrescriptionMapper(freemarkerCfg(), "repoid");
+        mapper = new EPrescriptionMapper("repoid");
     }
 
     @Test
     public void testExpectedNumberOfEpsosDocuments() throws Exception {
-        var response = FmkMockDataFactory.getPrescriptionResponse();
-        var result = mapper.mapResponse("DKCPR^^^1111111118", new PrescriptionFilter( null, null, null, null), response);
-        Assertions.assertEquals(1, result.size());
+        var response = FmkResponseStorage.storedPrescriptions("1111111118");
+        var result = mapper.mapResponse("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", new PrescriptionFilter( null, null, null, null), response);
+        Assertions.assertEquals(3, result.size());
     }
-
-    @Test
-    void foo() throws Exception {
-        var prescriptions = FmkResponseStorage.storedPrescriptions("1111111118");
-        var noFilter = new PrescriptionFilter( null, null, null, null);
-        var result = mapper.mapResponse("1111111118", noFilter, prescriptions);
-        Assertions.assertEquals(1, result.size());
-
-    }
-
-    private static freemarker.template.Configuration freemarkerCfg() {
-        var cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
-        cfg.setClassLoaderForTemplateLoading(EPrescriptionMapperTest.class.getClassLoader(), "/templates");
-        cfg.setDefaultEncoding("UTF-8");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        cfg.setLogTemplateExceptions(false);
-        cfg.setWrapUncheckedExceptions(true);
-        cfg.setFallbackOnNullLoopVariable(false);
-        cfg.setRecognizeStandardFileExtensions(true);
-        return cfg;
-    }
-
-
 }

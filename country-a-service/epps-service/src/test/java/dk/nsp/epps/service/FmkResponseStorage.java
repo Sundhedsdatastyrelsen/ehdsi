@@ -40,6 +40,7 @@ public class FmkResponseStorage {
     }
 
     private static final File storageDir = new File("epps-service/src/test/resources/fmk-responses");
+    private static final String resourceDir = "fmk-responses";
 
     static {
         assert storageDir.exists() || storageDir.mkdirs() : "error when creating dir: " + storageDir.getAbsolutePath();
@@ -74,16 +75,18 @@ public class FmkResponseStorage {
     }
 
     public static GetPrescriptionResponseType storedPrescriptions(String cpr) throws JAXBException {
-        var file = new File(storageDir, "get-prescription-" + cpr + ".xml");
-        return readPrescriptionsFromFile(file);
+        var name = "get-prescription-" + cpr + ".xml";
+        return readStoredPrescriptions(name);
     }
 
-    public static GetPrescriptionResponseType readPrescriptionsFromFile(File file) throws JAXBException {
+    public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName) throws JAXBException {
+        var url = FmkResponseStorage.class.getClassLoader()
+            .getResource(String.format("%s/%s", resourceDir, resourceName));
         var unmarshaller = jaxbContext.createUnmarshaller();
-        var result = (JAXBElement<?>)unmarshaller.unmarshal(file);
+        var result = (JAXBElement<?>) unmarshaller.unmarshal(url);
         var value = result.getValue();
         if (value instanceof GetPrescriptionResponseType) {
-            return (GetPrescriptionResponseType)value;
+            return (GetPrescriptionResponseType) value;
         }
         throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
     }
@@ -91,7 +94,7 @@ public class FmkResponseStorage {
     @Test
     void storePrescriptions() throws JAXBException {
         var cprs = List.of("1111111118", "0101010000");
-        for (var cpr: cprs) {
+        for (var cpr : cprs) {
             var f = new File(storageDir, "get-prescription-" + cpr + ".xml");
             serializeToFile(openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
@@ -101,7 +104,7 @@ public class FmkResponseStorage {
     @Test
     void validateStoredPrescriptions() throws JAXBException {
         var cprs = List.of("1111111118", "0101010000");
-        for (var cpr: cprs) {
+        for (var cpr : cprs) {
             var ps = storedPrescriptions(cpr);
             Assert.notNull(ps, "stored prescription is null");
         }

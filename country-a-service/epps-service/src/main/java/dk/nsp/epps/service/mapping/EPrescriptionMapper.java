@@ -1,6 +1,6 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatedWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthUnitCodeType;
@@ -47,11 +47,8 @@ public class EPrescriptionMapper {
     private final Template template;
     private final String repositoryId;
 
-    public EPrescriptionMapper(
-        freemarker.template.Configuration cfg,
-        @Value("${app.eprescription.repository.id}") String repositoryId
-    ) throws IOException {
-        template = cfg.getTemplate("eprescription-cda.ftlx");
+    public EPrescriptionMapper(@Value("${app.eprescription.repository.id}") String repositoryId) throws IOException {
+        template = FreemarkerConfiguration.config().getTemplate("eprescription-cda.ftlx");
         this.repositoryId = repositoryId;
     }
 
@@ -213,6 +210,7 @@ public class EPrescriptionMapper {
     public static class GetPrescriptionResponseModel {
         GetPrescriptionResponseType response;
         PrescriptionType prescription;
+        String cdaCreatedAtTime = cdaOffsetDateTime(OffsetDateTime.now());
 
         /**
          * Unique ID identifying the CDA document (not the prescription itself).
@@ -294,7 +292,16 @@ public class EPrescriptionMapper {
          * "[...] the date and time at which this document was created as an electronic document."
          */
         public String getEffectiveTime() {
-            return cdaOffsetDateTime(OffsetDateTime.now());
+            return cdaCreatedAtTime;
+        }
+
+        /**
+         * "Time of signing the document"
+         * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html">
+         *     ART-DECOR</a>
+         */
+        public String getSignatureTime() {
+            return cdaCreatedAtTime;
         }
 
         public String getPrescriptionCreatedTime() {
@@ -352,12 +359,12 @@ public class EPrescriptionMapper {
                 .map(CreatedWithOptionalAuthorisationIdentifierType::getBy);
         }
 
-        public AuthorisedHealthcareProfessionalType getAuthorisedHealthcareProfessional() {
+        public AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorisedHealthcareProfessional() {
             return modificatorWithOptionalAuthorisationIdentifier()
                 .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
                 .flatMap(content -> content.stream()
-                    .filter(jaxb -> AuthorisedHealthcareProfessionalType.class.isAssignableFrom(jaxb.getDeclaredType()))
-                    .map(jaxb -> (AuthorisedHealthcareProfessionalType) jaxb.getValue())
+                    .filter(jaxb -> AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType.class.isAssignableFrom(jaxb.getDeclaredType()))
+                    .map(jaxb -> (AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType) jaxb.getValue())
                     .findFirst())
                 .orElse(null);
         }
@@ -377,27 +384,13 @@ public class EPrescriptionMapper {
                 .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
                 .map(list ->
                     list.stream().filter(jaxb ->
-                            jaxb.getDeclaredType().isAssignableFrom(AuthorisedHealthcareProfessionalType.class)
+                            jaxb.getDeclaredType().isAssignableFrom(AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType.class)
                         )
                         .findFirst()
                         .orElse(null)
                 )
-                .map(xml -> (AuthorisedHealthcareProfessionalType) xml.getValue())
+                .map(xml -> (AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType) xml.getValue())
                 .map(ahp -> new Names(ahp.getName()))
-                .orElse(null);
-        }
-
-        public OrganisationType getRepresentedOrganization() {
-            return modificatorWithOptionalAuthorisationIdentifier()
-                .map(ModificatorWithOptionalAuthorisationIdentifierType::getContent)
-                .map(list ->
-                    list.stream().filter(jaxb ->
-                            jaxb.getDeclaredType().isAssignableFrom(OrganisationType.class)
-                        )
-                        .findFirst()
-                        .orElse(null)
-                )
-                .map(xml -> (OrganisationType) xml.getValue())
                 .orElse(null);
         }
 
@@ -446,7 +439,7 @@ public class EPrescriptionMapper {
                 .map(PackageRestrictionType::getPackageSize)
                 .map(PackageSizeType::getUnitCode)
                 .map(unitCode -> {
-                    var unit = lms15ToEhdsiUnit.get(unitCode);
+                    var unit = lms15ToEhdsiUnit.get(unitCode.getValue());
                     if (unit == null) {
                         throw new IllegalStateException("Unexpected value: " + unitCode);
                     }
