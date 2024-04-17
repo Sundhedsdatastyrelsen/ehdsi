@@ -72,7 +72,7 @@
             <representedOrganization classCode="ORG" determinerCode="INSTANCE">
                 <id extension="${ author.organisation.id.extension }" root="${ author.organisation.id.root }"/>
                 <name>${ author.organisation.name }</name>
-                <telecom use="WP" value="tel:>${ author.organisation.telephoneNumber }"/>
+                <telecom use="WP" value="tel:${ author.organisation.telephoneNumber }"/>
                 <addr>
 <#list author.organisation.addressLines as addressLine>
                     <streetAddressLine>${ addressLine}</streetAddressLine>
@@ -130,17 +130,19 @@
         </assignedEntity>
     </legalAuthenticator>
     <relatedDocument typeCode="XFRM">
-        <parentDocument nullValue="NI"/>
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id extension="${ prescription.identifier?c }" root="2.16.17.710.802.1000.990.1.10"/>
+        </parentDocument>
     </relatedDocument>
     <component>
         <structuredBody>
             <component>
                 <section>
                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1"/>
-                    <id extension="${ prescription.identifier }" root="2.16.17.710.802.1000.990.1.10"/>
+                    <id extension="${ prescription.identifier?c }" root="2.16.17.710.802.1000.990.1.10"/>
                     <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
                     <title>Prescriptions</title>
-                    <text ID="eP_as_text"> <!-- TODO review om vi bruger dette -->
+                    <text> <#-- TODO review -->
                         <paragraph>
                             <content>${ prescription.drug.name }</content>
                         </paragraph>
@@ -148,13 +150,7 @@
                             <content>${ prescription.indication.text }</content>
                         </paragraph>
                         <paragraph>
-                            <content ID="FINSTRUCT">Start of the medication use.</content>
-                        </paragraph>
-                        <paragraph>
-                            <content ID="PINSTRUCT">${ prescription.dosageText }</content>
-                        </paragraph>
-                        <paragraph>
-                            <content ID="nameAsText">${ prescription.drug.name }</content>
+                            <content>${ prescription.dosageText }</content>
                         </paragraph>
                     </text>
                     <entry typeCode="COMP">
@@ -184,9 +180,13 @@
                                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
                                         <name>${ prescription.drug.name }</name>
                                         <pharm:desc>${ drugStrength.text }</pharm:desc>
-                                        <pharm:formCode code="${ prescription.drug.form.code }" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" codeSystemVersion="1" displayName="${ prescription.drug.form.text }"/>
+                                        <pharm:formCode code="${ prescription.drug.form.code.value }" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" codeSystemVersion="1" displayName="${ prescription.drug.form.text }"/>
                                         <pharm:asContent classCode="CONT">
-                                            <pharm:quantity unit="${ packageSizeEhdsiUnit }" value="${ prescription.packageRestriction.packageSize.value }" />
+                                            <pharm:quantity unit="${ packageSizeEhdsiUnit }" value="${ prescription.packageRestriction.packageSize.value?c }" />
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:name>${ prescription.drug.name }</pharm:name>
+                                                <pharm:formCode code="${ prescription.drug.form.code.value }" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" codeSystemVersion="1" displayName="${ prescription.drug.form.text }"/>
+                                            </pharm:containerPackagedProduct>
                                         </pharm:asContent>
                                         <pharm:asSpecializedKind classCode="GRIC">
                                             <pharm:generalizedMaterialKind determinerCode="KIND" classCode="MMAT">

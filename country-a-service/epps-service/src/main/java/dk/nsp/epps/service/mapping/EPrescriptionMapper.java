@@ -38,9 +38,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class EPrescriptionMapper {
@@ -215,7 +218,7 @@ public class EPrescriptionMapper {
         /**
          * Unique ID identifying the CDA document (not the prescription itself).
          */
-        String CdaInstanceId = UUID.randomUUID().toString();
+        String CdaInstanceId = UUID.randomUUID().toString().toUpperCase(Locale.ROOT);
 
         /**
          * See
@@ -230,15 +233,11 @@ public class EPrescriptionMapper {
                 .map(GetPrescriptionResponseType::getPatient)
                 .map(PatientType::getPerson)
                 .map(SimpleCPRPersonType::getName)
-                .map(name -> {
-                    var fullName = name.getGivenName();
-                    fullName += name.getMiddleName();
-                    fullName += name.getSurname();
-                    return fullName;
-                })
+                .map(name -> Stream.of(name.getGivenName(), name.getMiddleName(), name.getSurname())
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.joining(" ")))
                 .orElse(null);
         }
-
 
 
         public HealthcareProfessional getAuthor() {
@@ -298,7 +297,7 @@ public class EPrescriptionMapper {
         /**
          * "Time of signing the document"
          * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html">
-         *     ART-DECOR</a>
+         * ART-DECOR</a>
          */
         public String getSignatureTime() {
             return cdaCreatedAtTime;
@@ -424,7 +423,8 @@ public class EPrescriptionMapper {
         }
 
         Map<String, String> lms15ToEhdsiUnit = Map.of(
-            "ST", "1"
+            "ST", "1",
+            "ML", "mL"
         );
 
         /**

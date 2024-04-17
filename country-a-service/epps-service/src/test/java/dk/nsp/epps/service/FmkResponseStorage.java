@@ -93,7 +93,7 @@ public class FmkResponseStorage {
 
     @Test
     void storePrescriptions() throws JAXBException {
-        var cprs = List.of("1111111118", "0101010000");
+        var cprs = List.of("1111111118", "0101010000", "0201909309");
         for (var cpr : cprs) {
             var f = new File(storageDir, "get-prescription-" + cpr + ".xml");
             serializeToFile(openPrescriptionsForCpr(cpr), f);

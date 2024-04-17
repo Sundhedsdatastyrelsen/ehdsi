@@ -18,10 +18,10 @@
         </Address>
     </ns4:Patient>
     <ns4:Prescription>
-        <ns4:Identifier>448212155418002</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>26829706</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1710512555310001001</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-03-15T14:22:35Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>450815819007002</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>27185114</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1713116218968001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-04-14T17:36:59Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
@@ -37,10 +37,10 @@
                     <Identifier source="Yder">76333</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-03-15T14:22:35Z</DateTime>
+            <DateTime>2024-04-14T17:36:59Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-03-15</ns4:ValidFromDate>
-        <ns4:ValidToDate>2024-04-20</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-04-14</ns4:ValidFromDate>
+        <ns4:ValidToDate>2024-05-20</ns4:ValidToDate>
         <ns4:PackageRestriction>
             <ns2:PackageNumber source="Medicinpriser" date="2009-02-23">159517</ns2:PackageNumber>
             <ns2:PackageSize>
@@ -82,7 +82,7 @@
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
         <ns4:Order>
-            <ns2:Identifier>448212155418202</ns2:Identifier>
+            <ns2:Identifier>450815819007202</ns2:Identifier>
             <ns2:Created>
                 <By>
                     <AuthorisedHealthcareProfessional>
@@ -98,7 +98,7 @@
                         <Identifier source="Yder">76333</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-03-15T14:22:35Z</DateTime>
+                <DateTime>2024-04-14T17:36:59Z</DateTime>
             </ns2:Created>
             <ns2:Modified>
                 <By>
@@ -115,7 +115,7 @@
                         <Identifier source="Yder">76333</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-03-15T14:22:35Z</DateTime>
+                <DateTime>2024-04-14T17:36:59Z</DateTime>
             </ns2:Modified>
             <ns2:OrderedAtPharmacy>
                 <Name>Humlebæk Apotek</Name>
@@ -129,141 +129,6 @@
             <ns2:DeliveryInstructionText>Afhentes sammen med øvrige varer</ns2:DeliveryInstructionText>
             <ns2:DeliveryInstructionText>og skal opbevares på køl</ns2:DeliveryInstructionText>
         </ns4:Order>
-        <ns4:Version>1405</ns4:Version>
-    </ns4:Prescription>
-    <ns4:Prescription>
-        <ns4:Identifier>448379010814002</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>26831797</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1710679410892001001</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-03-17T12:43:30Z</ns4:AuthorisationDateTime>
-        <ns4:Created>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>TLWJK</AuthorisationIdentifier>
-                    <Name>Thomassine Hansen</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Østerbro Fysioterapi</Name>
-                    <AddressLine>Serridslevvej 2 A,2</AddressLine>
-                    <AddressLine>2100 København Ø</AddressLine>
-                    <TelephoneNumber>35262510</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">500240</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2024-03-17T12:43:30Z</DateTime>
-        </ns4:Created>
-        <ns4:ValidFromDate>2024-03-17</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-03-17</ns4:ValidToDate>
-        <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-03-17">83644</ns2:PackageNumber>
-            <ns2:PackageSize>
-                <ns2:Value>300.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-03-17">ST</ns2:UnitCode>
-                <ns2:UnitText>stk.</ns2:UnitText>
-                <ns2:PackageSizeText>300 stk.</ns2:PackageSizeText>
-            </ns2:PackageSize>
-            <ns2:PackageQuantity>1</ns2:PackageQuantity>
-        </ns4:PackageRestriction>
-        <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-03-17">613</Code>
-            <Text>febernedsættende</Text>
-        </ns4:Indication>
-        <ns4:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2024-03-17">N02BE01</Code>
-                <Text>Paracetamol</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2024-03-17">28100636073</Identifier>
-            <Name>Panodil</Name>
-            <Form>
-                <Code source="Medicinpriser" date="2024-03-17">TABFILM</Code>
-                <Text>filmovertrukne tabletter</Text>
-            </Form>
-            <Strength>
-                <Value>500.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-03-17">MG</UnitCode>
-                <UnitText>mg</UnitText>
-                <Text source="Medicinpriser" date="2024-03-17">500 mg</Text>
-            </Strength>
-            <Substances>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-03-17">PARACETAMOL</SubstanceText>
-                </ActiveSubstance>
-            </Substances>
-        </ns4:Drug>
-        <ns4:DosageText>1 tablet TEST DET HER EN TEST</ns4:DosageText>
-        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
-        <ns4:Status>åben</ns4:Status>
-        <ns4:Version>29748</ns4:Version>
-    </ns4:Prescription>
-    <ns4:Prescription>
-        <ns4:Identifier>448379371071002</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>26831953</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1710679771229001002</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-03-17T12:49:31Z</ns4:AuthorisationDateTime>
-        <ns4:Created>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>TLWJK</AuthorisationIdentifier>
-                    <Name>Thomassine Hansen</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Østerbro Fysioterapi</Name>
-                    <AddressLine>Serridslevvej 2 A,2</AddressLine>
-                    <AddressLine>2100 København Ø</AddressLine>
-                    <TelephoneNumber>35262510</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">500240</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2024-03-17T12:49:31Z</DateTime>
-        </ns4:Created>
-        <ns4:ValidFromDate>2024-03-17</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-03-17</ns4:ValidToDate>
-        <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-03-17">162125</ns2:PackageNumber>
-            <ns2:PackageSize>
-                <ns2:Value>10.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-03-17">ST</ns2:UnitCode>
-                <ns2:UnitText>stk.</ns2:UnitText>
-                <ns2:PackageSizeText>10 stk.</ns2:PackageSizeText>
-            </ns2:PackageSize>
-            <ns2:PackageQuantity>1</ns2:PackageQuantity>
-            <ns2:IterationNumber>2</ns2:IterationNumber>
-            <ns2:IterationInterval>3</ns2:IterationInterval>
-            <ns2:IterationIntervalUnit>uger</ns2:IterationIntervalUnit>
-        </ns4:PackageRestriction>
-        <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-03-17">153</Code>
-            <Text>mod migræne</Text>
-        </ns4:Indication>
-        <ns4:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2024-03-17">N02BA51</Code>
-                <Text>Acetylsalicylsyre, komb. excl. psykoleptika</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2024-03-17">28101406790</Identifier>
-            <Name>Treo Citrus</Name>
-            <Form>
-                <Code source="Medicinpriser" date="2024-03-17">BRUTAB</Code>
-                <Text>brusetabletter</Text>
-            </Form>
-            <Strength>
-                <Text source="Medicinpriser" date="2024-03-17">500+50 mg</Text>
-            </Strength>
-            <Substances>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-03-17">ACETYLSALICYLSYRE</SubstanceText>
-                </ActiveSubstance>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-03-17">Caffein</SubstanceText>
-                </ActiveSubstance>
-            </Substances>
-        </ns4:Drug>
-        <ns4:DosageText>1 tablet TEST DET HER EN TEST</ns4:DosageText>
-        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
-        <ns4:Status>åben</ns4:Status>
-        <ns4:Version>20369</ns4:Version>
+        <ns4:Version>19611</ns4:Version>
     </ns4:Prescription>
 </ns4:GetPrescriptionResponse>
