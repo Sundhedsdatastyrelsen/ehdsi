@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 public class EPrescriptionMapperTest {
     private static EPrescriptionMapper mapper;
@@ -31,13 +34,31 @@ public class EPrescriptionMapperTest {
         var result = mapper.mapResponse("0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO", new PrescriptionFilter( null, null, null, null), response);
         Assertions.assertNotNull(result.getFirst());
 
-        // 1. Test if well-formed XML
+        var xmlString = result.getFirst().getDocument();
 
-        // 2. Test if valid against schema
+        // 1. Test if well-formed XML (can be parsed)
+        var documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Assertions.assertDoesNotThrow(() ->
+            documentBuilder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)))
+        );
+
+        // 2. Test if valid against HL7 CDA schema
+        var schemaUrl = this.getClass().getClassLoader().getResource("cda-schema/CDA_Pharma.xsd");
+        Assertions.assertNotNull(schemaUrl);
+        var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        var schema = schemaFactory.newSchema(schemaUrl);
+        var validator = schema.newValidator();
+        validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
 
         // 3. Test model/schematron via gazelle
+        // TODO?
 
-        Files.writeString(Path.of("temp/cda-eprescription1.xml"), result.getFirst().getDocument(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-
+//        // write to file for debugging:
+//         Files.writeString(
+//             Path.of("temp/cda-eprescription1.xml"),
+//             xmlString,
+//             StandardOpenOption.CREATE,
+//             StandardOpenOption.TRUNCATE_EXISTING
+//         );
     }
 }

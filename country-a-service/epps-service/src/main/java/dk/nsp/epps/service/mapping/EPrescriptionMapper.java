@@ -234,7 +234,7 @@ public class EPrescriptionMapper {
                 .map(PatientType::getPerson)
                 .map(SimpleCPRPersonType::getName)
                 .map(name -> Stream.of(name.getGivenName(), name.getMiddleName(), name.getSurname())
-                    .filter(s -> !s.isEmpty())
+                    .filter(s -> s != null && !s.isEmpty())
                     .collect(Collectors.joining(" ")))
                 .orElse(null);
         }
