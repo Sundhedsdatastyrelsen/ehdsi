@@ -21,10 +21,6 @@
 			<artifactId>epps-service</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>dk.nsp.epps</groupId>
-			<artifactId>epps-persistence</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
@@ -35,6 +31,10 @@
 				<exclusion><!-- By default spring-boot uses logback, but requirements are to use log4j -->
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-data-jpa</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

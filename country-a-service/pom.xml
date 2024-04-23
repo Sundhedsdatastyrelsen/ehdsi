@@ -18,7 +18,6 @@
 
 	<modules>
 		<module>epps-api</module>
-		<module>epps-persistence</module>
 		<module>epps-service</module>
 		<module>epps-application</module>
 		<module>epps-mocks</module>
@@ -70,11 +69,6 @@
 			<dependency>
 				<groupId>dk.nsp.epps</groupId>
 				<artifactId>epps-cpr-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>dk.nsp.epps</groupId>
-				<artifactId>epps-persistence</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

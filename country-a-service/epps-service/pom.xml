@@ -29,10 +29,6 @@
 			<artifactId>epps-cpr-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>dk.nsp.epps</groupId>
-			<artifactId>epps-persistence</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-parameter-names</artifactId>
 		</dependency>
@@ -56,11 +52,6 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
-        </dependency>
         <dependency>
             <groupId>dk.nsp.idp</groupId>
             <artifactId>nsp-test-idp</artifactId>
