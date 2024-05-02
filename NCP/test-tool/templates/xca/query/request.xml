@@ -17,7 +17,7 @@
       <AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
         <Slot name="$XDSDocumentEntryPatientId">
           <ValueList>
-            <Value>'1111111118^^^&amp;2.16.17.710.802.1000.990.1.500&amp;ISO'</Value>
+            <Value>'0201909309^^^&amp;2.16.17.710.802.1000.990.1.500&amp;ISO'</Value>
           </ValueList>
         </Slot>
         <Slot name="$XDSDocumentEntryStatus">

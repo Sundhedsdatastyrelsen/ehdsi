@@ -30,6 +30,8 @@ USAGE=$(echo "Usage: $0 [options]";
         echo "  tsam-sync     Synchronize terminology database with CTS"
         echo "  clean         Clean up the containers and volumes (wipes database)"
         echo "  logs          Follow the stdout logs of the containers"
+        echo "  build         Builds all images"
+        echo "  push          Push images to registry"
         echo "  -h, --help    Display this help message")
 
 initialize_file() {
@@ -81,6 +83,12 @@ else
       ;;
     logs)
       docker compose logs --follow
+      ;;
+    build)
+      docker compose --profile initialization build
+      ;;
+    push)
+      docker compose --profile initialization push
       ;;
     -h|--help)
       echo "$USAGE";

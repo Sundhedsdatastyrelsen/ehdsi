@@ -12,6 +12,9 @@
     </saml:AuthnContext>
   </saml:AuthnStatement>
   <saml:AttributeStatement>
+    <saml:Attribute FriendlyName="HCI Identifier" Name="urn:ihe:iti:xca:2010:homeCommunityId" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>2.16.17.710.860.1000.990.1</saml:AttributeValue>
+    </saml:Attribute>
     <saml:Attribute FriendlyName="XSPA Subject" Name="urn:oasis:names:tc:xspa:1.0:subject:subject-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
       <saml:AttributeValue>Dr. Doolittle</saml:AttributeValue>
     </saml:Attribute>
