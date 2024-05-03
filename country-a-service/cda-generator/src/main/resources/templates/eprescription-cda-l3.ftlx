@@ -1,0 +1,233 @@
+<#ftl output_format="XML">
+<#-- https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html -->
+<ClinicalDocument xmlns="urn:hl7-org:v3" classCode="DOCCLIN" moodCode="EVN" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.1"/>
+<#--
+    Unique identifier of this instance of the clinical document.
+    Following attributes can be used to uniquely identify the instance:
+
+    - @root: A unique identifier that guarantees the global uniqueness of the
+     instance identifier. The root alone may be the entire instance identifier.
+     Required if @nullFlavor is not present.
+    - @extension: An optional character string as a unique identifier within the
+     scope of the identifier root.
+
+    The @root attribute must be a UID. The allowable formats and values and
+    procedures of this data type are strictly controlled by HL7. At this time,
+    user-assigned identifiers may be certain character representations of ISO
+    Object Identifiers (OID) and DCE Universally Unique Identifiers (UUID).
+
+     - UUIDs SHALL be represented in the form XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX,
+      where each X is a character from the set [0-9a-zA-Z].
+     - OIDs SHALL be represented in dotted decimal notation, where each decimal
+      number is either 0, or starts with a nonzero digit. More formally, an OID
+      SHALL be in the form [0-2](\.(0|[1-9][0-9]*))*.
+-->
+    <id root="${ cdaInstanceId }"/>
+    <code code="57833-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ePrescription"/>
+    <title>${ title }</title>
+    <effectiveTime value="${ effectiveTime }"/>
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" displayName="normal"/>
+    <languageCode code="da-DK"/>
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="${ response.patient.person.personIdentifier.value }" root="2.16.17.710.802.1000.990.1.500"/>
+            <addr>
+                <streetAddressLine>
+                    ${ response.patient.address.streetName } ${ response.patient.address.streetBuildingIdentifier}
+                </streetAddressLine>
+                <city>${ response.patient.address.districtName }</city>
+                <postalCode>${ response.patient.address.postCodeIdentifier }</postalCode>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+<#list patientGivenNames as givenName>
+                    <given>${ givenName }</given>
+</#list>
+                    <family>${ response.patient.person.name.surname }</family>
+                </name>
+                <administrativeGenderCode code="${ administrativeGender.code }" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender" codeSystemVersion="913-20091020" displayName="${ administrativeGender.displayName }"/>
+                <birthTime value="${ patientBirthDate }"/>
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author>
+        <functionCode code="${ author.role.code }" displayName="${ author.role.displayName }" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" />
+        <time value="${ prescriptionCreatedTime }"/>
+        <assignedAuthor classCode="ASSIGNED">
+            <id extension="${ author.id }" root="2.16.17.710.802.1000.990.1.30"/>
+            <#-- TODO: Er det nødvendigt med addr og telecom?  -->
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <family>${ author.name.surname }</family>
+<#list author.name.givenNames as givenName>
+                    <given>${ givenName }</given>
+</#list>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id extension="${ author.organisation.id.extension }" root="${ author.organisation.id.root }"/>
+                <name>${ author.organisation.name }</name>
+                <telecom use="WP" value="tel:${ author.organisation.telephoneNumber }"/>
+                <addr>
+<#list author.organisation.addressLines as addressLine>
+                    <streetAddressLine>${ addressLine}</streetAddressLine>
+</#list>
+                    <country>DK</country>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+
+<#-- This elements represents the organization that is in charge of maintaining the document.
+     TODO: find ud af hvem der er "kustode". Er det SDS? -->
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.17.710.802.1000.990.1.1"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <#-- The person taking responsibility for the medical content of the document.
+    In Spain this is the regional authority in healthcare. This regional authority
+    healthcare organization will send this to the NCP. The definition of the legal
+    authenticator may vary accoriding to the rules set up in the framework agreement
+    particular to each state. It may be a person or a regional authority, or an NCP.
+
+    TODO: find ud af hvem der er legalAuthenticator. Er det SDS?
+    -->
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="${ signatureTime }"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id root="2.16.17.710.802.1000.990.1.1"/>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson nullFlavor="NI"/>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.17.710.802.1000.990.1.1"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id extension="${ prescription.identifier?c }" root="2.16.17.710.802.1000.990.1.10"/>
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody>
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1"/>
+                    <id extension="${ prescription.identifier?c }" root="2.16.17.710.802.1000.990.1.10"/>
+                    <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
+                    <title>Prescriptions</title>
+                    <text> <#-- TODO review -->
+                        <paragraph>
+                            <content>${ prescription.drug.name }</content>
+                        </paragraph>
+                        <paragraph>
+                            <content>${ prescription.indication.text }</content>
+                        </paragraph>
+                        <paragraph>
+                            <content>${ prescription.dosageText }</content>
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <#-- I Danmark er der én ordination per recept, derfor vil der altid være netop ét "entry"-element -->
+                        <substanceAdministration classCode="SBADM" moodCode="INT">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <#-- Følgende templateIds er ikke obligatoriske og måske gensidigt udelukkende.
+                                 Vi ved endnu ikke (2024-04-12) hvilke er relevante i vores tilfælde. -->
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7"/> -->
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/> -->
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.11"/> -->
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.9"/> -->
+
+                            <#-- Globalt unikt "prescription item id" - i vores tilfælde det samme som "prescription id",
+                                 da der er et 1-1 forhold. -->
+                            <id extension="${ prescription.identifier }" root="2.16.17.710.802.1000.990.1.10"/>
+                            <text>${ prescription.dosageText }</text>
+                            <statusCode code="active"/>
+                            <#-- Vi har ikke disse oplysninger på recepten, de ligger på medicinkortet, som vi ikke har adgang til som apoteker (uden samtykke). -->
+                            <effectiveTime nullFlavor="UNK"/>
+                            <effectiveTime nullFlavor="UNK"/>
+                            <consumable typeCode="CSM">
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                        <name>${ prescription.drug.name }</name>
+                                        <pharm:desc>${ drugStrength.text }</pharm:desc>
+                                        <pharm:formCode code="${ prescription.drug.form.code.value }" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" displayName="${ prescription.drug.form.text }"/>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="${ packageSizeEhdsiUnit }" value="${ prescription.packageRestriction.packageSize.value?c }" />
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:code code="${ prescription.packageRestriction.packageNumber.value }" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02"/>
+                                                <pharm:name>${ prescription.drug.name }</pharm:name>
+                                                <#-- Vi har ikke en kodet beskrivelse af pakkeformen - det nærmeste vi kommer er "PackageSizeText" som kommer fra LMS02 og er ustruktureret  -->
+                                                <pharm:formCode nullFlavor="UNK" />
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind determinerCode="KIND" classCode="MMAT">
+                                                <pharm:code code="${ prescription.drug.ATC.code.value }" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="${ prescription.drug.ATC.text }"/>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                    </manufacturedMaterial>
+                                </manufacturedProduct>
+                            </consumable>
+                            <entryRelationship typeCode="COMP">
+                                <supply classCode="SPLY" moodCode="RQO">
+                                    <independentInd value="false"/>
+                                    <quantity unit="1" value="${ prescription.packageRestriction.packageQuantity }"/>
+                                </supply>
+                            </entryRelationship>
+                            <#--
+                            If substitution is not allowed for a prescription, an entryRelationship must be provided to
+                            indicate this. This observation SHALL have :
+                            - The code element valorized with @code=‟SUBST' and @codeSystem='2.16.840.1.113883.5.6'
+                            - The value element valorized with concept 'N' from the eHDSISubstitutionCode Value Set
+                              (Value Set OID 1.3.6.1.4.1.12559.11.10.1.3.1.42.7).
+                            If this entryRelationship is not provided, or when it is provided where the value element
+                            contains any other concept from the eHDSISubstitutionCode Value Set, substitution of this
+                            prescription is allowed.
+
+                            https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.2-2023-07-03T135239.html
+                            -->
+<#if !prescription.substitutionAllowed>
+                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="ActClass" displayName="Substitution"/>
+                                    <value code="N" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.42.7" codeSystemName="eHDSISubstitutionCode" displayName="none" />
+                                </observation>
+                            </entryRelationship>
+</#if>
+                        </substanceAdministration>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>

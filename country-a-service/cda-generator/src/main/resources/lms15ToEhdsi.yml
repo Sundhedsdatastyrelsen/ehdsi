@@ -1,0 +1,105 @@
+# Mapping from LMS15 "package" (unit type 4) codes to eHDSI unit values.
+#
+# Codes and values are based on:
+# - eHDSIUnit and eHDSIQuantityUnit from MVC 7.2.0
+# - LMS15 codes from 20240503.
+
+# When ehdsi-unit is specified the mapping will result in
+#  <quantity value="n" unit="ehdsi-unit" />
+# and otherwise it will result in
+#  <quantity value="n" unit="1">
+#    <translation>
+#      <originalText>lms15-display-name</originalText>
+#    </translation>
+#  </quantity>
+
+# See:
+# https://art-decor.ehdsi.eu/html/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.29-2022-09-12T124637.html
+#
+#     3 possible uses for the @unit attribute are allowed:
+#
+#     1. The preferred situation where value of the unit attibute comes from the
+#     eHDSIUnit value set.
+#     2. A UCUM annotation can be used in the unit attribute. In the case of countable
+#     items, the content between curly brackets must be a concept from the
+#     eHDSIQuantityUnit value set.
+#     3. For countable units, the unit attribute can also be set to '1', and the
+#     translation element can be used to convey the type of content item.
+#
+#     If the @unit attribute is not provided, it is considered to have the default
+#     value '1'."
+
+"AM":
+  lms15-display-name: "ampuller"
+  ehdsi-unit: "{Ampoule}"
+"AS":
+  lms15-display-name: "amp.+solv."
+"BR":
+  lms15-display-name: "breve"
+  ehdsi-unit: "{Sachet}"
+"CK":
+  lms15-display-name: "cmx2"
+"CM":
+  lms15-display-name: "cm"
+  ehdsi-unit: "cm"
+"DO":
+  lms15-display-name: "doser"
+"DS":
+  lms15-display-name: "doser+solv."
+"DU":
+  lms15-display-name: "doser+utens."
+"ES":
+  lms15-display-name: "engangsspr."
+  ehdsi-unit: "{Syringe}"
+"FL":
+  lms15-display-name: "flasker"
+  ehdsi-unit: "{Bottle}"
+"G":
+  lms15-display-name: "g"
+  ehdsi-unit: "g"
+"HD":
+  lms15-display-name: "htgl+dil."
+"HS":
+  lms15-display-name: "htgl+solv."
+"HT":
+  lms15-display-name: "htgl"
+"IF":
+  lms15-display-name: "Inf.flaske"
+"IS":
+  lms15-display-name: "IE+solv."
+"IU":
+  lms15-display-name: "internationale enheder"
+  ehdsi-unit: "[IU]"
+"KG":
+  lms15-display-name: "kg"
+  ehdsi-unit: "kg"
+"LT":
+  lms15-display-name: "liter"
+  ehdsi-unit: "L"
+"MEQ":
+  lms15-display-name: "mEq"
+  ehdsi-unit: "meq"
+"MG":
+  lms15-display-name: "mg"
+  ehdsi-unit: "mg"
+"MGP":
+  lms15-display-name: "mg/pust"
+"ML":
+  lms15-display-name: "ml"
+  ehdsi-unit: "mL"
+"MT":
+  lms15-display-name: "meter"
+  ehdsi-unit: "m"
+"PK":
+  lms15-display-name: "pakninger"
+"PS":
+  lms15-display-name: "poser"
+  ehdsi-unit: "{Bag}"
+"SE":
+  lms15-display-name: "sæt"
+"ST":
+  lms15-display-name: "stk."
+"TL":
+  lms15-display-name: "tubuler"
+"UN":
+  lms15-display-name: "enheder"

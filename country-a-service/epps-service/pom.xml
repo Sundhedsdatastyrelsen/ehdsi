@@ -16,6 +16,10 @@
 	<description>ePrescriptionPoC - Service</description>
 
 	<dependencies>
+        <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>cda-generator</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>dk.nsp.epps</groupId>
 			<artifactId>epps-fmk-api</artifactId>

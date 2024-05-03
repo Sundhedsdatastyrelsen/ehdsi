@@ -21,7 +21,8 @@
 		<module>epps-service</module>
 		<module>epps-application</module>
 		<module>epps-mocks</module>
-	</modules>
+        <module>cda-generator</module>
+    </modules>
 
 	<properties>
 		<!-- Project configuration properties -->
@@ -86,6 +87,11 @@
 				<artifactId>epps-cpr-mock-data</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>dk.nsp.epps</groupId>
+                <artifactId>cda-generator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
 			<dependency>
 				<groupId>org.openapitools</groupId>
