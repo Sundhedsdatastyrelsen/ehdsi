@@ -27,15 +27,15 @@ public class PrescriptionController {
     public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) throws JAXBException, IOException, InterruptedException {
-        var filter = new PrescriptionFilter(params.getDocumentId(), params.getMaximumSize(), params.getCreatedBefore(), params.getCreatedAfter());
+        var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter);
     }
 
     @PostMapping(path = "/api/fetch-document/")
     public List<EpsosDocumentDto> fetchDocument(
         @Valid @RequestBody PostFetchDocumentRequestDto params
-    ) throws JAXBException, InterruptedException {
-        var filter = new PrescriptionFilter(params.getDocumentId(), params.getMaximumSize(), params.getCreatedBefore(), params.getCreatedAfter());
+    ) throws JAXBException {
+        var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.getPrescriptions(params.getPatientId(), filter);
     }
 }
