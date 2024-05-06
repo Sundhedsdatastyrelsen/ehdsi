@@ -1,4 +1,4 @@
-package dk.nsp.epps.service.client;
+package dk.nsp.epps.client;
 
 import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
@@ -50,11 +50,6 @@ public class CprClient {
                 "http://rep.oio.dk/medcom.sundcom.dk/xml/wsdl/2007/06/28/getPersonInformation",
                 caller
             );
-        } catch (ServiceResponseException e) {
-            if (e.getBody().contains("Ingen data fundet")) {
-                return null;
-            }
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

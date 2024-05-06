@@ -2,8 +2,8 @@ package dk.nsp.epps.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
-import dk.nsp.epps.service.client.FmkClient;
-import dk.nsp.epps.service.client.Identities;
+import dk.nsp.epps.client.FmkClient;
+import dk.nsp.epps.client.Identities;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;

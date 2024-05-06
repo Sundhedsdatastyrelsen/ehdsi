@@ -1,8 +1,8 @@
 package dk.nsp.epps.service;
 
+import dk.nsp.epps.client.CprClient;
 import dk.nsp.epps.ncp.api.FindPatientsResponseDto;
 import dk.nsp.epps.ncp.api.PatientDemographicsDto;
-import dk.nsp.epps.service.client.CprClient;
 import dk.nsp.epps.service.mapping.CrossGatewayPatientDiscoveryMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
 import dk.nsp.test.idp.OrganizationIdentities;

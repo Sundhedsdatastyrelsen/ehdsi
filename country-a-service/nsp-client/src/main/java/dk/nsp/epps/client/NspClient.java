@@ -1,4 +1,4 @@
-package dk.nsp.epps.service.client;
+package dk.nsp.epps.client;
 
 import dk.nsp.test.idp.NspSoapClient;
 import dk.nsp.test.idp.model.Identity;

@@ -22,6 +22,7 @@
 		<module>epps-application</module>
 		<module>epps-mocks</module>
         <module>cda-generator</module>
+        <module>nsp-client</module>
     </modules>
 
 	<properties>
@@ -90,6 +91,11 @@
             <dependency>
                 <groupId>dk.nsp.epps</groupId>
                 <artifactId>cda-generator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.nsp.epps</groupId>
+                <artifactId>nsp-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
