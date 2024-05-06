@@ -7,12 +7,14 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthUnitCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageSizeUnitCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PatientType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SimpleCPRPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sds.ncp.cda.EhdsiUnitMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -253,11 +255,6 @@ public class EPrescriptionL3 {
             .orElse(null);
     }
 
-    Map<String, String> lms15ToEhdsiUnit = Map.of(
-        "ST", "1",
-        "ML", "mL"
-    );
-
     @Getter
     @AllArgsConstructor
     public static class Names {
@@ -311,18 +308,13 @@ public class EPrescriptionL3 {
      *
      * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/voc-1.3.6.1.4.1.12559.11.10.1.3.1.42.16-2023-05-02T180000.html">eHDSIUnit</a>
      */
-    public String getPackageSizeEhdsiUnit() {
+    public EhdsiUnit getPackageSizeEhdsiUnit() {
         return Optional.of(prescription)
             .map(PrescriptionType::getPackageRestriction)
             .map(PackageRestrictionType::getPackageSize)
             .map(PackageSizeType::getUnitCode)
-            .map(unitCode -> {
-                var unit = lms15ToEhdsiUnit.get(unitCode.getValue());
-                if (unit == null) {
-                    throw new IllegalStateException("Unexpected value: " + unitCode);
-                }
-                return unit;
-            })
+            .map(PackageSizeUnitCodeType::getValue)
+            .map(EhdsiUnitMapper::fromLms)
             .orElse(null);
     }
 

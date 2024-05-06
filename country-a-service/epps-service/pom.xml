@@ -52,10 +52,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-		</dependency>
         <dependency>
             <groupId>dk.nsp.idp</groupId>
             <artifactId>nsp-test-idp</artifactId>

@@ -5,6 +5,8 @@ import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,10 +30,14 @@ public class EPrescriptionMapperTest {
         Assertions.assertEquals(1, result.size());
     }
 
-    @Test
-    public void testCdaValidity() throws Exception {
-        var response = FmkResponseStorage.storedPrescriptions("0201909309");
-        var result = mapper.mapResponse("0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO", new PrescriptionFilter( null, null, null, null), response);
+    @ParameterizedTest
+    @ValueSource(strings = {"1111111118", "0201909309"})
+    public void testCdaValidity(String cpr) throws Exception {
+        var response = FmkResponseStorage.storedPrescriptions(cpr);
+        var result = mapper.mapResponse(
+            cpr + "^^^&2.16.17.710.802.1000.990.1.500&ISO",
+            new PrescriptionFilter( null, null, null, null),
+            response);
         Assertions.assertNotNull(result.getFirst());
 
         var xmlString = result.getFirst().getDocument();
@@ -54,11 +60,11 @@ public class EPrescriptionMapperTest {
         // TODO?
 
 //        // write to file for debugging:
-//         Files.writeString(
-//             Path.of("temp/cda-eprescription1.xml"),
+//         java.nio.file.Files.writeString(
+//             java.nio.file.Path.of("temp/cda-eprescription1-" + cpr + ".xml"),
 //             xmlString,
-//             StandardOpenOption.CREATE,
-//             StandardOpenOption.TRUNCATE_EXISTING
+//             java.nio.file.StandardOpenOption.CREATE,
+//             java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 //         );
     }
 }

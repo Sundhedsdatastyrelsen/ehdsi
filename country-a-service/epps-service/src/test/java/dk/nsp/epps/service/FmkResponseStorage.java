@@ -48,6 +48,8 @@ public class FmkResponseStorage {
 
     private static FmkClient fmkClient;
 
+    public static List<String> testCprs = List.of("1111111118", "0101010000", "0201909309");
+
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -93,8 +95,7 @@ public class FmkResponseStorage {
 
     @Test
     void storePrescriptions() throws JAXBException {
-        var cprs = List.of("1111111118", "0101010000", "0201909309");
-        for (var cpr : cprs) {
+        for (var cpr : testCprs) {
             var f = new File(storageDir, "get-prescription-" + cpr + ".xml");
             serializeToFile(openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
@@ -103,8 +104,7 @@ public class FmkResponseStorage {
 
     @Test
     void validateStoredPrescriptions() throws JAXBException {
-        var cprs = List.of("1111111118", "0101010000");
-        for (var cpr : cprs) {
+        for (var cpr : testCprs) {
             var ps = storedPrescriptions(cpr);
             Assert.notNull(ps, "stored prescription is null");
         }

@@ -182,7 +182,17 @@
                                         <pharm:desc>${ drugStrength.text }</pharm:desc>
                                         <pharm:formCode code="${ prescription.drug.form.code.value }" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" displayName="${ prescription.drug.form.text }"/>
                                         <pharm:asContent classCode="CONT">
-                                            <pharm:quantity unit="${ packageSizeEhdsiUnit }" value="${ prescription.packageRestriction.packageSize.value?c }" />
+                                            <#if packageSizeEhdsiUnit.tag == "WithCode">
+                                                <pharm:quantity unit="${ packageSizeEhdsiUnit.code }" value="${ prescription.packageRestriction.packageSize.value?c }"/>
+                                            <#elseif packageSizeEhdsiUnit.tag == "WithTranslation">
+                                                <pharm:quantity unit="1" value="${ prescription.packageRestriction.packageSize.value?c }">
+                                                  <translation>
+                                                    <originalText>${ packageSizeEhdsiUnit.translation }</originalText>
+                                                  </translation>
+                                                </pharm:quantity>
+                                            <#else>
+                                              <#stop "Invalid packageSizeEhdsiUnit.tag">
+                                            </#if>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
                                                 <pharm:code code="${ prescription.packageRestriction.packageNumber.value }" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02"/>
                                                 <pharm:name>${ prescription.drug.name }</pharm:name>
