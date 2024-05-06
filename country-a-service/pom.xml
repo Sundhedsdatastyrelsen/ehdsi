@@ -23,6 +23,7 @@
 		<module>epps-mocks</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
+        <module>fmk-responses-for-test</module>
     </modules>
 
 	<properties>
@@ -96,6 +97,11 @@
             <dependency>
                 <groupId>dk.nsp.epps</groupId>
                 <artifactId>nsp-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.nsp.epps</groupId>
+                <artifactId>fmk-responses-for-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

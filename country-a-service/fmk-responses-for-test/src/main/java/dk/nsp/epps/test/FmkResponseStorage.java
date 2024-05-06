@@ -1,4 +1,4 @@
-package dk.nsp.epps.service;
+package dk.nsp.epps.test;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
@@ -8,10 +8,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 import java.io.File;
 import java.util.List;
@@ -20,7 +17,6 @@ import java.util.List;
  * These methods are concerned with retrieving and serializing responses (ePrescriptions) from FMK
  * so that they can be used as reliable test data for e.g. CDA generation.
  */
-@Disabled("To be executed on demand")
 public class FmkResponseStorage {
     static final JAXBContext jaxbContext;
 
@@ -39,24 +35,30 @@ public class FmkResponseStorage {
 
     }
 
-    private static final File storageDir = new File("epps-service/src/test/resources/fmk-responses");
+    private static final File storageDir = new File("fmk-responses-for-test/src/main/resources/fmk-responses");
     private static final String resourceDir = "fmk-responses";
 
     static {
-        assert storageDir.exists() || storageDir.mkdirs() : "error when creating dir: " + storageDir.getAbsolutePath();
+        if (!storageDir.exists()) {
+            if (!storageDir.mkdirs()) {
+                throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
+            }
+        }
     }
 
-    private static FmkClient fmkClient;
+    @NonNull private FmkClient fmkClient;
 
-    public static List<String> testCprs = List.of("1111111118", "0101010000", "0201909309");
+    private static List<String> testCprs = List.of("1111111118", "0101010000", "0201909309");
 
-
-    @BeforeAll
-    public static void setup() throws Exception {
-        fmkClient = new FmkClient(IntegrationTests.fmkEndpointUri);
+    public static List<String> testCprs() {
+        return testCprs;
     }
 
-    private <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
+    public FmkResponseStorage(@NonNull FmkClient fmkClient) {
+        this.fmkClient = fmkClient;
+    }
+
+    private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
         var marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(obj, f);
@@ -84,6 +86,9 @@ public class FmkResponseStorage {
     public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName) throws JAXBException {
         var url = FmkResponseStorage.class.getClassLoader()
             .getResource(String.format("%s/%s", resourceDir, resourceName));
+        if (url == null) {
+            throw new IllegalArgumentException("resourceName does not exist");
+        }
         var unmarshaller = jaxbContext.createUnmarshaller();
         var result = (JAXBElement<?>) unmarshaller.unmarshal(url);
         var value = result.getValue();
@@ -93,20 +98,16 @@ public class FmkResponseStorage {
         throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
     }
 
-    @Test
-    void storePrescriptions() throws JAXBException {
+    /**
+     * Download and replace the existing stored FMK responses.
+     */
+    public static void main(String[] args) throws Exception {
+        var fmkClient = new FmkClient("https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling");
+        var frs = new FmkResponseStorage(fmkClient);
         for (var cpr : testCprs) {
             var f = new File(storageDir, "get-prescription-" + cpr + ".xml");
-            serializeToFile(openPrescriptionsForCpr(cpr), f);
+            serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
-        }
-    }
-
-    @Test
-    void validateStoredPrescriptions() throws JAXBException {
-        for (var cpr : testCprs) {
-            var ps = storedPrescriptions(cpr);
-            Assert.notNull(ps, "stored prescription is null");
         }
     }
 }

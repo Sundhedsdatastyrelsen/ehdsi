@@ -18,10 +18,10 @@
         </Address>
     </ns4:Patient>
     <ns4:Prescription>
-        <ns4:Identifier>450815819007002</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>27185114</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1713116218968001002</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-04-14T17:36:59Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>452261641370102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>27377356</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1714562041363001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-05-01T11:14:01Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
@@ -37,10 +37,10 @@
                     <Identifier source="Yder">76333</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-04-14T17:36:59Z</DateTime>
+            <DateTime>2024-05-01T11:14:01Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-04-14</ns4:ValidFromDate>
-        <ns4:ValidToDate>2024-05-20</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-05-01</ns4:ValidFromDate>
+        <ns4:ValidToDate>2024-06-06</ns4:ValidToDate>
         <ns4:PackageRestriction>
             <ns2:PackageNumber source="Medicinpriser" date="2009-02-23">159517</ns2:PackageNumber>
             <ns2:PackageSize>
@@ -82,53 +82,59 @@
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
         <ns4:Order>
-            <ns2:Identifier>450815819007202</ns2:Identifier>
+            <ns2:Identifier>452688623787001</ns2:Identifier>
             <ns2:Created>
                 <By>
-                    <AuthorisedHealthcareProfessional>
-                        <AuthorisationIdentifier>12345</AuthorisationIdentifier>
-                        <Name>Helle Bonde</Name>
-                    </AuthorisedHealthcareProfessional>
+                    <Other>
+                        <Name>
+                            <GivenName>Chris</GivenName>
+                            <Surname>Christoffersen</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
                     <Organisation>
-                        <Name>Hansen og Junge</Name>
-                        <AddressLine>Vingårdsgade 9,3.</AddressLine>
-                        <AddressLine>9000</AddressLine>
-                        <TelephoneNumber>98120473</TelephoneNumber>
-                        <Type>Yder</Type>
-                        <Identifier source="Yder">76333</Identifier>
+                        <Name>Skanderborg Apotek</Name>
+                        <AddressLine>Adelgade 61</AddressLine>
+                        <AddressLine>8660 Skanderborg</AddressLine>
+                        <TelephoneNumber>87939000</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-04-14T17:36:59Z</DateTime>
+                <DateTime>2024-05-06T09:50:24Z</DateTime>
             </ns2:Created>
             <ns2:Modified>
                 <By>
-                    <AuthorisedHealthcareProfessional>
-                        <AuthorisationIdentifier>12345</AuthorisationIdentifier>
-                        <Name>Helle Bonde</Name>
-                    </AuthorisedHealthcareProfessional>
+                    <Other>
+                        <Name>
+                            <GivenName>Chris</GivenName>
+                            <Surname>Christoffersen</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
                     <Organisation>
-                        <Name>Hansen og Junge</Name>
-                        <AddressLine>Vingårdsgade 9,3.</AddressLine>
-                        <AddressLine>9000</AddressLine>
-                        <TelephoneNumber>98120473</TelephoneNumber>
-                        <Type>Yder</Type>
-                        <Identifier source="Yder">76333</Identifier>
+                        <Name>Skanderborg Apotek</Name>
+                        <AddressLine>Adelgade 61</AddressLine>
+                        <AddressLine>8660 Skanderborg</AddressLine>
+                        <TelephoneNumber>87939000</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-04-14T17:36:59Z</DateTime>
+                <DateTime>2024-05-06T09:50:24Z</DateTime>
             </ns2:Modified>
             <ns2:OrderedAtPharmacy>
-                <Name>Humlebæk Apotek</Name>
-                <AddressLine>Humlebæk Center 23</AddressLine>
-                <AddressLine>3050 Humlebæk</AddressLine>
-                <TelephoneNumber>49191979</TelephoneNumber>
+                <Name>Skanderborg Apotek</Name>
+                <AddressLine>Adelgade 61</AddressLine>
+                <AddressLine>8660 Skanderborg</AddressLine>
+                <TelephoneNumber>87939000</TelephoneNumber>
                 <Type>Apotek</Type>
-                <Identifier source="EAN-Lokationsnummer">5790000171545</Identifier>
+                <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
             </ns2:OrderedAtPharmacy>
-            <ns2:Status>Bestilt</ns2:Status>
+            <ns2:Status>Ekspedition påbegyndt</ns2:Status>
             <ns2:DeliveryInstructionText>Afhentes sammen med øvrige varer</ns2:DeliveryInstructionText>
             <ns2:DeliveryInstructionText>og skal opbevares på køl</ns2:DeliveryInstructionText>
         </ns4:Order>
-        <ns4:Version>19611</ns4:Version>
+        <ns4:Version>6588</ns4:Version>
     </ns4:Prescription>
 </ns4:GetPrescriptionResponse>

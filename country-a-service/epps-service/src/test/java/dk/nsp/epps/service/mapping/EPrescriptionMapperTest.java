@@ -1,7 +1,7 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.nsp.epps.service.FmkResponseStorage;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
+import dk.nsp.epps.test.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
