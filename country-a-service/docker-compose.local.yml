@@ -12,7 +12,7 @@ services:
   # epps-country-a service
   #
   epps-country-a:
-    image: eppsregistry.azurecr.io/countrya-poc
+    image: eppsregistry.azurecr.io/countrya-poc:latest
     build:
       dockerfile: epps-application/Dockerfile.build
     container_name: epps-country-a
@@ -22,19 +22,11 @@ services:
     environment:
       - "JAVA_DEBUG=${JAVA_DEBUG:-}"
       - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
-      - "SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb-server/epps"
-      - "SPRING_DATASOURCE_USERNAME=epps"
-      - "SPRING_DATASOURCE_PASSWORD=epps"
       - "CPR_ENDPOINT_URL=${CPR_ENDPOINT_URL}"
       - "FMK_ENDPOINT_URL=${FMK_ENDPOINT_URL}"
-    volumes:
-      - "./epps-test-cert.p12:/epps-test-cert.p12:ro"
-    links:
-      - mariadb-server:mariadb-server
+#    links:
       # - epps-fmk-mock:epps-fmk-mock
       # - epps-cpr-mock:epps-cpr-mock
-    depends_on:
-      - mariadb-server
     networks:
       - epps-backend
 
@@ -75,29 +67,3 @@ services:
   #     - ./epps-application/src/main/scripts/:/setup/:ro
   #   networks:
   #     - epps-backend
-
-  #
-  # Database
-  #
-  mariadb-server:
-    image: mariadb:11.1
-    restart: always
-    container_name: epps-country-a-db
-    ports:
-      - "3306:3306"
-    environment:
-      - "MARIADB_ROOT_PASSWORD=7b1c3deda5144f99a6973f462215b8cd"
-      - "MARIADB_USER=epps"
-      - "MARIADB_PASSWORD=epps"
-      - "MARIADB_DATABASE=epps"
-    volumes:
-      - type: volume
-        source: dbdata
-        target: /var/lib/mysql
-        read_only: false
-    networks:
-      - epps-backend
-
-volumes:
-  dbdata:
-    driver: local
