@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ism:searchFields xmlns:ism="http://ec.europa.eu/sante/ehncp/ism">
+   <ism:country code="FI" label="label.ism.addressCountry" friendlyName="Finland International Search Mask [PPT]">
+      <ism:patientSearch friendlyName="Patient Identity Trait" scope="ALL">
+         <ism:identifier type="NORMAL">
+            <ism:id domain="2.16.840.1.113883.2.7.2.2" label="label.ism.nationalSocialSecurityNumber" contextualDescription="nationalSocialSecurityNumber" format="\d{9}[0-9]"/>
+         </ism:identifier>
+      </ism:patientSearch>
+   </ism:country>
+</ism:searchFields>

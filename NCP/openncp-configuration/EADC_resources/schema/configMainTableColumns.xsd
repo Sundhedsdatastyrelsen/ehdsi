@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+    <!-- MainTableExtractionColumnName -->
+    <xs:simpleType name="SimpleType_MainTable_ExtractionColumnName">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Direction"/>
+            <xs:enumeration value="HomeISO"/>
+            <xs:enumeration value="HomeNCP_OID"/>
+            <xs:enumeration value="HomeHCID"/>
+            <xs:enumeration value="HomeHost"/>
+            <xs:enumeration value="HomeAddress"/>
+            <xs:enumeration value="SndISO"/>
+            <xs:enumeration value="SndNCP_OID"/>
+            <xs:enumeration value="SndHCID"/>
+            <xs:enumeration value="SndAddress"/>
+            <xs:enumeration value="SndHost"/>
+            <xs:enumeration value="SndMsgID"/>
+            <xs:enumeration value="ReceivingISO"/>
+            <xs:enumeration value="ReceivingNCP_OID"/>
+            <xs:enumeration value="ReceivingHost"/>
+            <xs:enumeration value="ReceivingAddr"/>
+            <xs:enumeration value="ReceivingMsgID"/>
+            <xs:enumeration value="TransactionCounter"/>
+            <xs:enumeration value="HumanRequestor"/>
+            <xs:enumeration value="UserId"/>
+            <xs:enumeration value="POC"/>
+            <xs:enumeration value="POC_ID"/>
+            <xs:enumeration value="AuthenticationLevel"/>
+            <xs:enumeration value="RequestAction"/>
+            <xs:enumeration value="ResponseAction"/>
+            <xs:enumeration value="ServiceType"/>
+            <xs:enumeration value="ServiceName"/>
+            <xs:enumeration value="StartTime"/>
+            <xs:enumeration value="EndTime"/>
+            <xs:enumeration value="Duration"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ism:searchFields xmlns="http://docs.oasis-open.org/bdxr/ns/SMP/2016/05"
+                  xmlns:ism="http://ec.europa.eu/sante/ehncp/ism"
+                  xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
+   <ism:country code="IS" friendlyName="Iceland" label="label.ism.addressCountry">
+      <ism:patientSearch friendlyName="Identification of Patient" scope="ALL">
+         <ism:identifier type="NORMAL">
+            <ism:id contextualDescription="nationalPersonIdentifier"
+                    domain="2.16.17.710.860.1000.990.1"
+                    format="^.{1,}$"
+                    label="label.ism.nationalPersonIdentifier"
+                    mandatory="true"/>
+         </ism:identifier>
+      </ism:patientSearch>
+   </ism:country>
+</ism:searchFields>

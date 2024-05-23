@@ -1,0 +1,1294 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Transaction xmlns:proxy="com:spirit:SpiritProxy" xmlns="com:spirit:SpiritProxy" xmlns:cda="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="com:spirit:SpiritProxy ..\schema\Transaction.xsd">
+	<!-- TransactionInfo ( Demo 1 ) -->
+	<!-- <TransactionInfo Direction="DUMMY_VALUE" HomeISO="DUMMY_VALUE" HomeNCP_OID="DUMMY_VALUE" HomeHCID="DUMMY_VALUE" HomeHost="DUMMY_VALUE" HomeAddress="DUMMY_VALUE" SndISO="DUMMY_VALUE" SndNCP_OID="DUMMY_VALUE" SndHCID="DUMMY_VALUE" SndAddress="DUMMY_VALUE" SndHost="DUMMY_VALUE" SndMsgID="DUMMY_VALUE" ReceivingISO="DUMMY_VALUE" ReceivingNCP_OID="DUMMY_VALUE" ReceivingHost="DUMMY_VALUE" receivingAddr="DUMMY_VALUE" ReceivingMsgID="DUMMY_VALUE" TransactionCounter="DUMMY_VALUE" HumanRequestor="DUMMY_VALUE" UserId="DUMMY_VALUE" POC="DUMMY_VALUE" POC_ID="DUMMY_VALUE" AuthentificationLevel="DUMMY_VALUE" RequestAction="DUMMY_VALUE" ResponseAction="DUMMY_VALUE" ServiceType="DUMMY_VALUE" ServiceName="DUMMY_VALUE" StartTime="DUMMY_VALUE" EndTime="DUMMY_VALUE" Duration="DUMMY_VALUE"/> -->
+	<!-- TransactionInfo ( Demo 2 )-->
+	<TransactionInfo Transaction_PK="DemoKeyValue007" Direction="DUMMY_VALUE" HomeISO="DUMMY_VALUE" HomeNCP_OID="DUMMY_VALUE" HomeHCID="DUMMY_VALUE" HomeHost="DUMMY_VALUE" HomeAddress="DUMMY_VALUE" SndISO="DUMMY_VALUE" SndNCP_OID="DUMMY_VALUE" SndHCID="DUMMY_VALUE" SndAddress="DUMMY_VALUE" SndHost="DUMMY_VALUE" SndMsgID="DUMMY_VALUE" ReceivingISO="DUMMY_VALUE" TransactionCounter="DUMMY_VALUE" HumanRequestor="DUMMY_VALUE" UserId="DUMMY_VALUE" POC="DUMMY_VALUE" POC_ID="DUMMY_VALUE" AuthentificationLevel="DUMMY_VALUE" RequestAction="DUMMY_VALUE" ResponseAction="DUMMY_VALUE" ServiceType="DUMMY_VALUE" ServiceName="DUMMY_VALUE" StartTime="DUMMY_VALUE" EndTime="DUMMY_VALUE" Duration="DUMMY_VALUE"/>
+	<!-- epSOS CDA Content -->
+	<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:cda="urn:hl7-org:v3" xmlns:epsos="urn:epsos-org:ep:medication" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+		<typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+		<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.1"/>
+		<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.3"/>
+		<id assigningAuthorityName="T.C. Sağlık Bakanlığı" displayable="true" extension="11489438-08ab-42c5-9c9e-17064c133456" root="2.16.840.1.113883.3.129.2.1.3"/>
+		<code code="60591-5" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Patient Summary">
+			<translation displayName="Hasta Özeti"/>
+		</code>
+		<title>epSOS Hasta Özeti</title>
+		<effectiveTime value="20110210"/>
+		<confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="HL7:Confidentiality" codeSystemVersion="June 2009" displayName="normal">
+			<translation code="1" codeSystem="2.16.840.1.113883.3.129.1.2.77" codeSystemName="Gizlilik Derecesi" displayName="Normal"/>
+		</confidentialityCode>
+		<languageCode code="tr-TR"/>
+		<setId assigningAuthorityName="T.C. Sağlık Bakanlığı" displayable="true" extension="5b50d046-b567-4fba-a365-60c220c9fae9" root="2.16.840.1.113883.3.129.2.1.3"/>
+		<versionNumber value="1"/>
+		<recordTarget>
+			<patientRole classCode="PAT">
+				<id assigningAuthorityName="T.C. NVI" displayable="true" extension="60355476400" root="2.16.17.710.813.1000.990.1"/>
+				<addr use="HP">
+					<country>TR</country>
+					<city>Ankara</city>
+					<postalCode>06520</postalCode>
+					<streetAddressLine>Çukurambar Mah. 1431. Cad. No:14/24</streetAddressLine>
+				</addr>
+				<telecom use="HP" value="tel:+903124567891"/>
+				<telecom use="WP" value="mailto:mustafa@srdc.com.tr"/>
+				<patient>
+					<name>
+						<family>Yüksel</family>
+						<given>Mustafa</given>
+					</name>
+					<administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="HL7:AdministrativeGender" codeSystemVersion="June 2009" displayName="männlich">
+						<translation displayName="Male">
+							<translation code="1" codeSystem="2.16.840.1.113883.3.129.1.2.21" codeSystemName="Cinsiyet" displayName="Erkek"/>
+						</translation>
+					</administrativeGenderCode>
+					<birthTime value="19840908"/>
+					<guardian classCode="GUARD">
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4"/>
+						<id assigningAuthorityName="T.C. NVI" displayable="true" extension="12345476400" root="2.16.840.1.113883.3.129.1.1.1"/>
+						<addr>
+							<country>TR</country>
+							<city>Ankara</city>
+							<postalCode>06520</postalCode>
+							<streetAddressLine>Çukurambar Mah. 1431. Cad. No:14/24</streetAddressLine>
+						</addr>
+						<telecom use="MC" value="tel:+903124567891"/>
+						<guardianPerson>
+							<name>
+								<family>Yüksel</family>
+								<given>Eda</given>
+							</name>
+						</guardianPerson>
+					</guardian>
+					<languageCommunication>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.1"/>
+						<languageCode code="tr-TR"/>
+					</languageCommunication>
+				</patient>
+			</patientRole>
+		</recordTarget>
+		<author>
+			<functionCode code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" codeSystemVersion="2008" displayName="Medical doctors">
+				<translation displayName="Tıbbi doktorlar"/>
+			</functionCode>
+			<time value="20110210"/>
+			<assignedAuthor classCode="ASSIGNED">
+				<id assigningAuthorityName="T.C. NVI" displayable="true" extension="76545476400" root="2.16.840.1.113883.3.129.1.1.1"/>
+				<addr>
+					<country>TR</country>
+					<city>Ankara</city>
+					<postalCode>06510</postalCode>
+					<streetAddressLine>Çankaya Merkez</streetAddressLine>
+				</addr>
+				<telecom use="MC" value="tel:+905328765432"/>
+				<telecom use="WP" value="mailto:ali.iyieder@saglik.gov.tr"/>
+				<assignedPerson>
+					<name>
+						<family>İyieder</family>
+						<given>Ali</given>
+					</name>
+				</assignedPerson>
+				<representedOrganization>
+					<id extension="5881" root="2.16.840.1.113883.3.129.1.1.6"/>
+					<name>T.C. Sağlık Bakanlığı</name>
+					<telecom use="WP" value="tel:+903125851900"/>
+					<addr>
+						<country>TR</country>
+						<city>Ankara</city>
+						<postalCode>06100</postalCode>
+						<streetAddressLine>Mithatpaşa Cad. No:3 Sıhhiye</streetAddressLine>
+					</addr>
+				</representedOrganization>
+			</assignedAuthor>
+		</author>
+		<custodian>
+			<assignedCustodian>
+				<representedCustodianOrganization>
+					<id extension="1231" root="2.16.840.1.113883.3.129.1.1.6"/>
+					<name>Ankara Atatürk Eğitim ve Araştırma Hastanesi</name>
+					<telecom use="WP" value="tel:+903122912525"/>
+					<addr>
+						<country>TR</country>
+						<city>Ankara</city>
+						<postalCode>06800</postalCode>
+						<streetAddressLine>Bilkent Yolu No: 3 Bilkent</streetAddressLine>
+					</addr>
+				</representedCustodianOrganization>
+			</assignedCustodian>
+		</custodian>
+		<legalAuthenticator>
+			<time value="201102101130"/>
+			<signatureCode code="S"/>
+			<assignedEntity>
+				<id assigningAuthorityName="T.C. NVI" displayable="true" extension="76545476400" root="2.16.840.1.113883.3.129.1.1.1"/>
+				<addr>
+					<country>TR</country>
+					<city>Ankara</city>
+					<postalCode>06510</postalCode>
+					<streetAddressLine>Çankaya Merkez</streetAddressLine>
+				</addr>
+				<telecom use="MC" value="tel:+905328765432"/>
+				<telecom use="WP" value="mailto:ali.iyieder@saglik.gov.tr"/>
+				<assignedPerson>
+					<name>
+						<family>İyieder</family>
+						<given>Ali</given>
+					</name>
+				</assignedPerson>
+				<representedOrganization>
+					<id extension="5881" root="2.16.840.1.113883.3.129.1.1.6"/>
+					<name>T.C. Sağlık Bakanlığı</name>
+					<telecom use="WP" value="tel:+903125851900"/>
+					<addr>
+						<country>TR</country>
+						<city>Ankara</city>
+						<postalCode>06100</postalCode>
+						<streetAddressLine>Mithatpaşa Cad. No:3 Sıhhiye</streetAddressLine>
+					</addr>
+				</representedOrganization>
+			</assignedEntity>
+		</legalAuthenticator>
+		<participant typeCode="IND">
+			<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4"/>
+			<functionCode code="PCP" codeSystem="2.16.840.1.113883.5.88" codeSystemName="HL7:ParticipationFunction" displayName="Primary Care Physician"/>
+			<associatedEntity classCode="PRS">
+				<addr>
+					<country>TR</country>
+					<city>Ankara</city>
+					<postalCode>06510</postalCode>
+					<streetAddressLine>Çankaya Merkez</streetAddressLine>
+				</addr>
+				<telecom use="MC" value="tel:+905328765432"/>
+				<telecom use="WP" value="mailto:ali.iyieder@saglik.gov.tr"/>
+				<associatedPerson>
+					<name>
+						<family>İyieder</family>
+						<given>Ali</given>
+					</name>
+				</associatedPerson>
+			</associatedEntity>
+		</participant>
+		<documentationOf>
+			<serviceEvent classCode="PCPR">
+				<effectiveTime>
+					<low value="20100210"/>
+					<high value="20110210"/>
+				</effectiveTime>
+				<performer typeCode="PRF">
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+					<functionCode code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" codeSystemVersion="2008" displayName="Medical doctors">
+						<translation displayName="Tıbbi doktorlar"/>
+					</functionCode>
+					<time>
+						<low value="20100210"/>
+						<high value="20110210"/>
+					</time>
+					<assignedEntity>
+						<id assigningAuthorityName="T.C. NVI" displayable="true" extension="76545476400" root="2.16.840.1.113883.3.129.1.1.1"/>
+						<addr>
+							<country>TR</country>
+							<city>Ankara</city>
+							<postalCode>06510</postalCode>
+							<streetAddressLine>Çankaya Merkez</streetAddressLine>
+						</addr>
+						<telecom use="MC" value="tel:+905328765432"/>
+						<telecom use="WP" value="mailto:ali.iyieder@saglik.gov.tr"/>
+						<assignedPerson>
+							<name>
+								<family>İyieder</family>
+								<given>Ali</given>
+							</name>
+						</assignedPerson>
+						<representedOrganization>
+							<id extension="5881" root="2.16.840.1.113883.3.129.1.1.6"/>
+							<name>T.C. Sağlık Bakanlığı</name>
+							<telecom use="MC" value="tel:+903125851900"/>
+							<addr>
+								<country>TR</country>
+								<city>Ankara</city>
+								<postalCode>06100</postalCode>
+								<streetAddressLine>Mithatpaşa Cad. No:3 Sıhhiye</streetAddressLine>
+							</addr>
+						</representedOrganization>
+					</assignedEntity>
+				</performer>
+			</serviceEvent>
+		</documentationOf>
+		<relatedDocument typeCode="XFRM">
+			<parentDocument classCode="DOCCLIN" moodCode="EVN">
+				<id extension="45879438-08ab-42c5-9c9e-17064c133456" root="2.16.840.1.113883.3.129.2.1.3"/>
+			</parentDocument>
+		</relatedDocument>
+		<component>
+			<structuredBody>
+				<component>
+					<section>
+						<templateId root="2.16.840.1.113883.10.20.1.8"/>
+						<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.3"/>
+						<id extension="388c478d-c649-4273-803f-51b3c383f6ac" root="2.16.840.1.113883.3.129.2.1.4"/>
+						<code code="10160-0" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Medikationsanamnese">
+							<translation displayName="History of medication use">
+								<translation displayName="İlaç Kullanım geçmişi"/>
+							</translation>
+						</code>
+						<title>İlaç Kullanım Geçmişi</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>İlaç</th>
+										<th>Etken madde</th>
+										<th>Kullanım sıklığı</th>
+										<th>Doz</th>
+										<th>İlaç Kullanım şekli</th>
+										<th>Başlangıç Tarihi</th>
+										<th>Bitiş Tarihi</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="medication1">
+										<td ID="medication1_name">Lansor</td>
+										<td ID="medication1_activeingredient">Lansoprazole, Etken madde oranı: 30mg / 30mg</td>
+										<td ID="medication1_frequency">Günde bir kez</td>
+										<td ID="medication1_dose">1 tablet</td>
+										<td ID="medication1_routecode">Oral kullanım</td>
+										<td ID="medication1_datefrom">28.06.2010</td>
+										<td ID="medication1_dateto">27.07.2010</td>
+										<td ID="medication1_description">Yemekten önce</td>
+									</tr>
+									<tr ID="medication2">
+										<td ID="medication2_name">Amoklavin</td>
+										<td ID="medication2_activeingredient">Amoxicillin, Etken madde oranı: 1000mg / 1200mg</td>
+										<td ID="medication2_frequency">Günde iki kez</td>
+										<td ID="medication2_dose">1 tablet</td>
+										<td ID="medication2_routecode">Oral kullanım</td>
+										<td ID="medication2_datefrom">28.06.2010</td>
+										<td ID="medication2_dateto">04.07.2010</td>
+										<td ID="medication2_description">12 saat periyoduna uyulmalı</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<substanceAdministration classCode="SBADM" moodCode="EVN">
+								<templateId root="2.16.840.1.113883.10.20.1.24"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7"/>
+								<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
+								<id root="56085580-3690-4a25-a131-7d6af4461ea9"/>
+								<text>
+									<reference value="#medication1"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime xsi:type="IVL_TS">
+									<low value="20100628"/>
+									<high value="20100727"/>
+								</effectiveTime>
+								<effectiveTime institutionSpecified="true" operator="A" xsi:type="PIVL_TS">
+									<period unit="d" value="1"/>
+								</effectiveTime>
+								<routeCode code="20053000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="EDQM" codeSystemVersion="2010" displayName="zum Einnehmen">
+									<translation displayName="Oral use">
+										<translation displayName="Oral kullanım"/>
+									</translation>
+								</routeCode>
+								<doseQuantity>
+									<low unit="1" value="1"/>
+									<high unit="1" value="1"/>
+								</doseQuantity>
+								<rateQuantity nullFlavor="NI"/>
+								<consumable>
+									<manufacturedProduct classCode="MANU">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+										<templateId root="2.16.840.1.113883.10.20.1.53"/>
+										<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+											<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
+											<epsos:id root="08e95272-9a54-423b-b79e-734293349d24"/>
+											<code code="8699536160085" codeSystem="2.16.840.1.113883.3.129.1.2.3" codeSystemName="İlaçlar" displayName="LANSOR MIKROPELLET KAPSÜL 30 MG 28 CAP">
+												<originalText>
+													<reference value="#medication1_name"/>
+												</originalText>
+											</code>
+											<name>Lansor</name>
+											<epsos:asContent classCode="CONT">
+												<epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+													<epsos:name>LANSOR MIKROPELLET KAPSÜL 30 MG 28 CAP</epsos:name>
+													<epsos:formCode code="30066000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="EDQM" codeSystemVersion="2010" displayName="Tablettenbehältnis">
+														<epsos:translation displayName="Tablet container">
+															<epsos:translation displayName="Tablet kutusu"/>
+														</epsos:translation>
+													</epsos:formCode>
+												</epsos:containerPackagedMedicine>
+											</epsos:asContent>
+											<epsos:ingredient classCode="ACTI">
+												<epsos:quantity>
+													<epsos:numerator unit="mg" value="30" xsi:type="epsos:PQ"/>
+													<epsos:denominator unit="mg" value="30" xsi:type="epsos:PQ"/>
+												</epsos:quantity>
+												<epsos:ingredient classCode="MMAT" determinerCode="KIND">
+													<epsos:code code="A02BC03" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="January 2010" displayName="Lansoprazol">
+														<epsos:translation displayName="lansoprazole"/>
+													</epsos:code>
+													<epsos:name>lansoprazole</epsos:name>
+												</epsos:ingredient>
+											</epsos:ingredient>
+										</manufacturedMaterial>
+									</manufacturedProduct>
+								</consumable>
+								<author>
+									<time value="201006271030"/>
+									<assignedAuthor>
+										<id extension="12345678901" root="2.16.840.1.113883.3.129.1.1.1"/>
+									</assignedAuthor>
+								</author>
+							</substanceAdministration>
+						</entry>
+						<entry>
+							<substanceAdministration classCode="SBADM" moodCode="EVN">
+								<templateId root="2.16.840.1.113883.10.20.1.24"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7"/>
+								<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
+								<id root="6d08e807-1ede-4bf8-8e86-8fea2f16dba0"/>
+								<text>
+									<reference value="#medication2"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime xsi:type="IVL_TS">
+									<low value="20100628"/>
+									<high value="20100704"/>
+								</effectiveTime>
+								<effectiveTime institutionSpecified="true" operator="A" xsi:type="PIVL_TS">
+									<period unit="h" value="12"/>
+								</effectiveTime>
+								<routeCode code="20053000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="EDQM" codeSystemVersion="2010" displayName="zum Einnehmen">
+									<translation displayName="Oral use">
+										<translation displayName="Oral kullanım"/>
+									</translation>
+								</routeCode>
+								<doseQuantity>
+									<low unit="1" value="1"/>
+									<high unit="1" value="1"/>
+								</doseQuantity>
+								<rateQuantity nullFlavor="NI"/>
+								<consumable>
+									<manufacturedProduct classCode="MANU">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+										<templateId root="2.16.840.1.113883.10.20.1.53"/>
+										<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+											<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
+											<epsos:id root="fd418b4f-e9f7-4181-b362-e3e5c9e2fd84"/>
+											<code code="8699525093189" codeSystem="2.16.840.1.113883.3.129.1.2.3" codeSystemName="İlaçlar" displayName="AMOKLAVİN BID FİLM TABLET 1000 MG 14 TB">
+												<originalText>
+													<reference value="#medication2_name"/>
+												</originalText>
+											</code>
+											<name>Amoklavin</name>
+											<epsos:asContent classCode="CONT">
+												<epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+													<epsos:name>AMOKLAVİN BID FİLM TABLET 1000 MG 14 TB</epsos:name>
+													<epsos:formCode code="30066000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="EDQM" codeSystemVersion="2010" displayName="Tablettenbehältnis">
+														<epsos:translation displayName="Tablet container">
+															<epsos:translation displayName="Tablet kutusu"/>
+														</epsos:translation>
+													</epsos:formCode>
+												</epsos:containerPackagedMedicine>
+											</epsos:asContent>
+											<epsos:ingredient classCode="ACTI">
+												<epsos:quantity>
+													<epsos:numerator unit="mg" value="1000" xsi:type="epsos:PQ"/>
+													<epsos:denominator unit="mg" value="1200" xsi:type="epsos:PQ"/>
+												</epsos:quantity>
+												<epsos:ingredient classCode="MMAT" determinerCode="KIND">
+													<epsos:code code="J01CA04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="January 2010" displayName="Amoxicillin">
+														<epsos:translation displayName="amoxicillin"/>
+													</epsos:code>
+													<epsos:name>amoxicillin</epsos:name>
+												</epsos:ingredient>
+											</epsos:ingredient>
+										</manufacturedMaterial>
+									</manufacturedProduct>
+								</consumable>
+								<author>
+									<time value="201006271030"/>
+									<assignedAuthor>
+										<id extension="12345678901" root="2.16.840.1.113883.3.129.1.1.1"/>
+									</assignedAuthor>
+								</author>
+							</substanceAdministration>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="2.16.840.1.113883.10.20.1.2"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.13"/>
+						<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Allergien, Nebenwirkungen, Warnhinweise">
+							<translation displayName="Allergies, adverse reactions, alerts">
+								<translation displayName="Alerjiler, ters tepkiler, alerjenler"/>
+							</translation>
+						</code>
+						<title>Alerjiler, Ters Tepkiler, Alerjenler</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Alerji türü</th>
+										<th>Alerjen</th>
+										<th>Tepki</th>
+										<th>Ciddiyet</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="allergy1">
+										<td ID="allergy1_type">Allergy to substance</td>
+										<td ID="allergy1_substance">Dust</td>
+										<td ID="allergy1_reaction">Eczema</td>
+										<td ID="allergy1_severity">Orta</td>
+									</tr>
+									<tr ID="allergy2">
+										<td ID="allergy2_type">Food allergy</td>
+										<td ID="allergy2_substance">Egg protein</td>
+										<td ID="allergy2_reaction">Weal</td>
+										<td ID="allergy2_severity">Düşük seviye</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<act classCode="ACT" moodCode="EVN">
+								<templateId root="2.16.840.1.113883.10.20.1.27"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.3"/>
+								<id nullFlavor="NA"/>
+								<code nullFlavor="NA"/>
+								<statusCode code="active"/>
+								<effectiveTime>
+									<low nullFlavor="NA"/>
+								</effectiveTime>
+								<entryRelationship inversionInd="false" typeCode="SUBJ">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="2.16.840.1.113883.10.20.1.18"/>
+										<templateId root="2.16.840.1.113883.10.20.1.28"/>
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6"/>
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+										<id root="557DE247-B7AD-D198-F4F9-3BA74A6E8AB6"/>
+										<code code="419199007" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Allergy to substance">
+											<originalText>
+												<reference value="#allergy1_type"/>
+											</originalText>
+											<translation displayName="Madde Alerjisi"/>
+										</code>
+										<text>
+											<reference value="#allergy1"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime>
+											<low nullFlavor="UNK"/>
+										</effectiveTime>
+										<value code="160244002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="No known allergies" xsi:type="CD">
+											<originalText>
+												<reference value="#allergy1"/>
+											</originalText>
+											<translation displayName="Bilinen alerji yok"/>
+										</value>
+										<participant typeCode="CSM">
+											<participantRole classCode="MANU">
+												<playingEntity classCode="MMAT">
+													<code code="33008008" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Dust">
+														<originalText>
+															<reference value="#allergy1_substance"/>
+														</originalText>
+														<translation displayName="Toz"/>
+													</code>
+													<name/>
+												</playingEntity>
+											</participantRole>
+										</participant>
+										<entryRelationship typeCode="MFST">
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6.1"/>
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.54"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+												<templateId root="2.16.840.1.113883.10.20.1.28"/>
+												<id root="557DE247-B7AD-D198-F4F9-3BA74A6E8AB7"/>
+												<code code="418799008" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Finding reported by subject or history provider">
+													<translation displayName="Bir kişi ya da hastanın geçmiş bilgileri tarafından bildirilen bulgu"/>
+												</code>
+												<text>
+													<reference value="#allergy1_reaction"/>
+												</text>
+												<statusCode code="completed"/>
+												<effectiveTime>
+													<low value="20010327"/>
+													<high nullFlavor="UNK"/>
+												</effectiveTime>
+												<value code="43116000" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Eczema" xsi:type="CD">
+													<originalText>
+														<reference value="#allergy1_reaction"/>
+													</originalText>
+													<translation displayName="Ekzama"/>
+												</value>
+											</observation>
+										</entryRelationship>
+										<entryRelationship inversionInd="true" typeCode="SUBJ">
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.55"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+												<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode" displayName="Severity"/>
+												<text>
+													<reference value="#allergy1_severity"/>
+												</text>
+												<statusCode code="completed"/>
+												<value code="6736007" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Moderate" xsi:type="CD">
+													<translation displayName="Orta"/>
+												</value>
+											</observation>
+										</entryRelationship>
+									</observation>
+								</entryRelationship>
+							</act>
+						</entry>
+						<entry>
+							<act classCode="ACT" moodCode="EVN">
+								<templateId root="2.16.840.1.113883.10.20.1.27"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.3"/>
+								<id nullFlavor="NA"/>
+								<code nullFlavor="NA"/>
+								<statusCode code="active"/>
+								<effectiveTime>
+									<low nullFlavor="NA"/>
+								</effectiveTime>
+								<entryRelationship inversionInd="false" typeCode="SUBJ">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="2.16.840.1.113883.10.20.1.18"/>
+										<templateId root="2.16.840.1.113883.10.20.1.28"/>
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6"/>
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+										<id root="559DE247-B7AD-D198-F4F9-3BA74A6E8AB6"/>
+										<code code="414285001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Food allergy">
+											<originalText>
+												<reference value="#allergy2_type"/>
+											</originalText>
+											<translation displayName="Gıda Alerjisi"/>
+										</code>
+										<text>
+											<reference value="#allergy2"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime>
+											<low nullFlavor="UNK"/>
+										</effectiveTime>
+										<value code="160244002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="No known allergies" xsi:type="CD">
+											<originalText>
+												<reference value="#allergy2"/>
+											</originalText>
+											<translation displayName="Bilinen alerji yok"/>
+										</value>
+										<participant typeCode="CSM">
+											<participantRole classCode="MANU">
+												<playingEntity classCode="MMAT">
+													<code code="303300008" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Egg protein">
+														<originalText>
+															<reference value="#allergy2_substance"/>
+														</originalText>
+														<translation displayName="Yumurta proteini"/>
+													</code>
+													<name/>
+												</playingEntity>
+											</participantRole>
+										</participant>
+										<entryRelationship typeCode="MFST">
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6.1"/>
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.54"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+												<templateId root="2.16.840.1.113883.10.20.1.28"/>
+												<id root="560DE247-B7AD-D198-F4F9-3BA74A6E8AB7"/>
+												<code code="418799008" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Finding reported by subject or history provider">
+													<translation displayName="Bir kişi ya da hastanın geçmiş bilgileri tarafından bildirilen bulgu"/>
+												</code>
+												<text>
+													<reference value="#allergy2_reaction"/>
+												</text>
+												<statusCode code="completed"/>
+												<effectiveTime>
+													<low value="20010327"/>
+													<high nullFlavor="UNK"/>
+												</effectiveTime>
+												<value code="247472004" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Weal" xsi:type="CD">
+													<originalText>
+														<reference value="#allergy2_reaction"/>
+													</originalText>
+													<translation displayName="Kızarıklık"/>
+												</value>
+											</observation>
+										</entryRelationship>
+										<entryRelationship inversionInd="true" typeCode="SUBJ">
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.55"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+												<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode" displayName="Severity"/>
+												<text>
+													<reference value="#allergy2_severity"/>
+												</text>
+												<statusCode code="completed"/>
+												<value code="349915008" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Low grade" xsi:type="CD">
+													<translation displayName="Düşük Seviye"/>
+												</value>
+											</observation>
+										</entryRelationship>
+									</observation>
+								</entryRelationship>
+							</act>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="2.16.840.1.113883.10.20.1.6"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.23"/>
+						<code code="11369-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Impfanamnese">
+							<translation displayName="History of immunization">
+								<translation displayName="Aşı geçmişi"/>
+							</translation>
+						</code>
+						<title>Aşı Geçmişi</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Adı</th>
+										<th>Tarih</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="immun1">
+										<td ID="immun1_name">Hepatitis B virus vaccine</td>
+										<td ID="immun1_date">24.03.2006</td>
+										<td ID="immun1_description">-</td>
+									</tr>
+									<tr ID="immun2">
+										<td ID="immun2_name">Influenza virus H5N1 vaccine</td>
+										<td ID="immun2_date">13.11.2009</td>
+										<td ID="immun2_description">-</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+								<templateId root="2.16.840.1.113883.10.20.1.24"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+								<templateId root="2.16.840.1.113883.3.88.11.83.13"/>
+								<id root="dfc252ed-6095-4143-8aa7-ade824dc9254"/>
+								<code code="IMMUNIZ" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode"/>
+								<text>
+									<reference value="#immun1"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime value="20060324"/>
+								<consumable typeCode="CSM">
+									<manufacturedProduct classCode="MANU">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+										<templateId root="2.16.840.1.113883.10.20.1.53"/>
+										<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+											<code code="34689006" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Hepatitis B virus vaccine">
+												<originalText>
+													<reference value="#immun1_name"/>
+												</originalText>
+												<translation displayName="Hepatit B virüsü aşısı"/>
+											</code>
+											<name/>
+										</manufacturedMaterial>
+									</manufacturedProduct>
+								</consumable>
+							</substanceAdministration>
+						</entry>
+						<entry>
+							<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+								<templateId root="2.16.840.1.113883.10.20.1.24"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+								<templateId root="2.16.840.1.113883.3.88.11.83.13"/>
+								<id root="45a4dc85-2b78-4173-84ee-5072ccf6fa8a"/>
+								<code code="IMMUNIZ" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode"/>
+								<text>
+									<reference value="#immun2"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime value="20091113"/>
+								<consumable typeCode="CSM">
+									<manufacturedProduct classCode="MANU">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+										<templateId root="2.16.840.1.113883.10.20.1.53"/>
+										<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+											<code code="427036009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Influenza virus H5N1 vaccine">
+												<originalText>
+													<reference value="#immun2_name"/>
+												</originalText>
+												<translation displayName="İnfluenza virüs H5N1 aşısı"/>
+											</code>
+											<name/>
+										</manufacturedMaterial>
+									</manufacturedProduct>
+								</consumable>
+							</substanceAdministration>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.6"/>
+						<templateId root="2.16.840.1.113883.10.20.1.11"/>
+						<code code="11450-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Medizinische Probleme">
+							<translation displayName="Problem list - Reported">
+								<translation displayName="Problem listesi"/>
+							</translation>
+						</code>
+						<title>Problem Listesi</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Teşhis</th>
+										<th>Problem</th>
+										<th>Ciddiyet</th>
+										<th>Başlangıç Tarihi</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="actprob1">
+										<td ID="actprob1_diagnosis">Gastritis und Duodenitis</td>
+										<td ID="actprob1_problem">Disease</td>
+										<td ID="actprob1_severity">Severe</td>
+										<td ID="actprob1_datefrom">25.11.2002</td>
+										<td ID="actprob1_description">Strese bağlı olarak sıkça tekrar ediyor</td>
+									</tr>
+									<tr ID="actprob2">
+										<td ID="actprob2_diagnosis">Reizdarmsyndrom</td>
+										<td ID="actprob2_problem">Disease</td>
+										<td ID="actprob2_severity">Moderate</td>
+										<td ID="actprob2_datefrom">14.03.2008</td>
+										<td ID="actprob2_description">Strese bağlı</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<act classCode="ACT" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+								<templateId root="2.16.840.1.113883.10.20.1.27"/>
+								<id root="9f08ca28-ff98-4127-8d17-2844168aa433"/>
+								<code nullFlavor="NA"/>
+								<text>
+									<reference value="#actprob1"/>
+								</text>
+								<statusCode code="active"/>
+								<effectiveTime>
+									<low value="20021125"/>
+								</effectiveTime>
+								<entryRelationship inversionInd="false" typeCode="SUBJ">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+										<templateId root="2.16.840.1.113883.10.20.1.28"/>
+										<id root="31becaec-deea-4369-871e-59e7c8e4db6c"/>
+										<code code="64572001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Disease">
+											<originalText>
+												<reference value="#actprob1_problem"/>
+											</originalText>
+											<translation displayName="Hastalık"/>
+										</code>
+										<text>
+											<reference value="#actprob1_description"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime>
+											<low value="20021125"/>
+										</effectiveTime>
+										<value code="K29" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.2" codeSystemName="ICD-10" codeSystemVersion="2008" displayName="Gastritis und Duodenitis" xsi:type="CD">
+											<originalText>
+												<reference value="#actprob1_diagnosis"/>
+											</originalText>
+											<translation displayName="Gastritis and duodenitis">
+												<translation displayName="Gastrit ve duodenit"/>
+											</translation>
+										</value>
+										<entryRelationship inversionInd="true" typeCode="SUBJ">
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.55"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+												<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode" displayName="Severity"/>
+												<text>
+													<reference value="#actprob1_severity"/>
+												</text>
+												<statusCode code="completed"/>
+												<value code="24484000" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Severe" xsi:type="CD">
+													<originalText>
+														<reference value="#actprob1_severity"/>
+													</originalText>
+													<translation displayName="Ciddi"/>
+												</value>
+											</observation>
+										</entryRelationship>
+									</observation>
+								</entryRelationship>
+							</act>
+						</entry>
+						<entry>
+							<act classCode="ACT" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+								<templateId root="2.16.840.1.113883.10.20.1.27"/>
+								<id root="2befc990-0524-42e3-a612-a18471003e52"/>
+								<code nullFlavor="NA"/>
+								<text>
+									<reference value="#actprob2"/>
+								</text>
+								<statusCode code="active"/>
+								<effectiveTime>
+									<low value="20080314"/>
+								</effectiveTime>
+								<entryRelationship inversionInd="false" typeCode="SUBJ">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+										<templateId root="2.16.840.1.113883.10.20.1.28"/>
+										<id root="6f8c114e-5ccb-483e-bea7-591e855238b3"/>
+										<code code="64572001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Disease">
+											<originalText>
+												<reference value="#actprob2_problem"/>
+											</originalText>
+											<translation displayName="Hastalık"/>
+										</code>
+										<text>
+											<reference value="#actprob2_description"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime>
+											<low value="20080314"/>
+										</effectiveTime>
+										<value code="K58" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.2" codeSystemName="ICD-10" codeSystemVersion="2008" displayName="Reizdarmsyndrom" xsi:type="CD">
+											<originalText>
+												<reference value="#actprob2_diagnosis"/>
+											</originalText>
+											<translation displayName="Irritable bowel syndrome">
+												<translation displayName="İrritabl barsak sendromu"/>
+											</translation>
+										</value>
+										<entryRelationship inversionInd="true" typeCode="SUBJ">
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.55"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+												<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode" displayName="Severity"/>
+												<text>
+													<reference value="#actprob2_severity"/>
+												</text>
+												<statusCode code="completed"/>
+												<value code="6736007" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Moderate" xsi:type="CD">
+													<originalText>
+														<reference value="#actprob2_severity"/>
+													</originalText>
+													<translation displayName="Orta"/>
+												</value>
+											</observation>
+										</entryRelationship>
+									</observation>
+								</entryRelationship>
+							</act>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.8"/>
+						<code code="11348-0" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Krankengeschichte">
+							<translation displayName="History of past illness">
+								<translation displayName="Geçmiş Hastalık bilgisi"/>
+							</translation>
+						</code>
+						<title>Geçmiş Hastalık Bilgisi</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Teşhis</th>
+										<th>Problem</th>
+										<th>Ciddiyet</th>
+										<th>Başlangıç Tarihi</th>
+										<th>Bitiş Tarihi</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="pastprob1">
+										<td ID="pastprob1_diagnosis">Asthma bronchiale</td>
+										<td ID="pastprob1_problem">Disease</td>
+										<td ID="pastprob1_severity">Mild</td>
+										<td ID="pastprob1_datefrom">01.06.1989</td>
+										<td ID="pastprob1_dateto">01.06.1991</td>
+										<td ID="pastprob1_description">-</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<act classCode="ACT" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+								<templateId root="2.16.840.1.113883.10.20.1.27"/>
+								<id root="8b02603d-cc5b-4837-b0a9-28fb8c4f07d9"/>
+								<code nullFlavor="NA"/>
+								<text>
+									<reference value="#pastprob1"/>
+								</text>
+								<statusCode code="active"/>
+								<effectiveTime>
+									<low value="19890601"/>
+									<high value="19910601"/>
+								</effectiveTime>
+								<entryRelationship inversionInd="false" typeCode="SUBJ">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+										<templateId root="2.16.840.1.113883.10.20.1.28"/>
+										<id root="b882b414-2083-4ab8-a917-f5514e469c6c"/>
+										<code code="64572001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Disease">
+											<originalText>
+												<reference value="#pastprob1_problem"/>
+											</originalText>
+											<translation displayName="Hastalık"/>
+										</code>
+										<text>
+											<reference value="#pastprob1_description"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime>
+											<low value="19890601"/>
+											<high value="19910601"/>
+										</effectiveTime>
+										<value code="J45" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.2" codeSystemName="ICD-10" codeSystemVersion="2008" displayName="Asthma bronchiale" xsi:type="CD">
+											<originalText>
+												<reference value="#pastprob1_diagnosis"/>
+											</originalText>
+											<translation displayName="Asthma">
+												<translation displayName="Astım"/>
+											</translation>
+										</value>
+										<entryRelationship inversionInd="true" typeCode="SUBJ">
+											<observation classCode="OBS" moodCode="EVN">
+												<templateId root="2.16.840.1.113883.10.20.1.55"/>
+												<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+												<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode" displayName="Severity"/>
+												<text>
+													<reference value="#pastprob1_severity"/>
+												</text>
+												<statusCode code="completed"/>
+												<value code="255604002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Mild" xsi:type="CD">
+													<originalText>
+														<reference value="#pastprob1_severity"/>
+													</originalText>
+													<translation displayName="Hafif"/>
+												</value>
+											</observation>
+										</entryRelationship>
+									</observation>
+								</entryRelationship>
+							</act>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.11"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.12"/>
+						<templateId root="2.16.840.1.113883.10.20.1.12"/>
+						<code code="47519-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Anamnese der Prozeduren und Operationen">
+							<translation displayName="History of Procedures ">
+								<translation displayName="Tedavi Geçmişi"/>
+							</translation>
+						</code>
+						<title>Tedavi Geçmişi</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Yapılmış/Yapılacak</th>
+										<th>Tedavi</th>
+										<th>Tarih</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="procedure1">
+										<td ID="procedure1_moodCode">Yapılmış</td>
+										<td ID="procedure1_code">Endoscopy</td>
+										<td ID="procedure1_date">14.11.2010</td>
+										<td ID="procedure1_description">Tam anesteziden sonra endoskopi yapıldı, H. pylori gözlemlendi</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<procedure classCode="PROC" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.19"/>
+								<templateId root="2.16.840.1.113883.10.20.1.29"/>
+								<id root="7f0078e2-bf98-427a-94f6-6502526225d8"/>
+								<code code="423827005" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Endoscopy">
+									<originalText>
+										<reference value="procedure1_code"/>
+									</originalText>
+									<translation displayName="Endoskopi"/>
+								</code>
+								<text>
+									<reference value="#procedure1_description"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime>
+									<low value="20101114"/>
+								</effectiveTime>
+							</procedure>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.4"/>
+						<templateId root="2.16.840.1.113883.10.20.1.7"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.5.3.5"/>
+						<code code="46264-8" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Medizinprodukteanamnese">
+							<translation displayName="History of medical device use">
+								<translation displayName="Tıbbi cihaz kullanım geçmişi"/>
+							</translation>
+						</code>
+						<title>Tıbbi Cihaz Kullanım Geçmişi</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Tıbbi cihaz</th>
+										<th>Başlangıç Tarihi</th>
+										<th>Bitiş Tarihi</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="meddevice1">
+										<td ID="meddevice1_name">Taşınır defibrilatör</td>
+										<td ID="meddevice1_datefrom">01.09.2007</td>
+										<td ID="meddevice1_dateto">Bugün</td>
+										<td ID="meddevice1_description">-</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<supply classCode="SPLY" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.5"/>
+								<id root="574f6d00-9775-4d57-b8f0-cce590549168"/>
+								<text>
+									<reference value="#meddevice1"/>
+								</text>
+								<effectiveTime value="20070901"/>
+								<participant typeCode="DEV">
+									<participantRole classCode="MANU">
+										<playingDevice classCode="DEV" determinerCode="INSTANCE">
+											<code code="72506001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Implantable defibrillator">
+												<translation displayName="Taşınır defibrilatör "/>
+											</code>
+										</playingDevice>
+									</participantRole>
+								</participant>
+							</supply>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="2.16.840.1.113883.10.20.1.15"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.16"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.16.1"/>
+						<code code="29762-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Sozialanamnese">
+							<translation displayName="Social history">
+								<translation displayName="Sosyal Geçmiş"/>
+							</translation>
+						</code>
+						<title>Sosyal Geçmiş</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Sosyal Geçmiş</th>
+										<th>Sıklık</th>
+										<th>Başlangıç Tarihi</th>
+										<th>Bitiş Tarihi</th>
+										<th>Açıklama</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="socialhist1">
+										<td ID="socialhist1_code">Tütün kullanımı ve maruz kalma</td>
+										<td ID="socialhist1_value">Günde 1 paket</td>
+										<td ID="socialhist1_datefrom">01.01.2000</td>
+										<td ID="socialhist1_dateto">01.07.2008</td>
+										<td ID="socialhist1_description">Hasta önceleri sigara kullanıyordu. Şimdi yaklaşık haftada bir nargile içiyor.</td>
+									</tr>
+									<tr ID="socialhist2">
+										<td ID="socialhist2_code">Alkol kullanımı</td>
+										<td ID="socialhist2_value">Haftada 8 içki</td>
+										<td ID="socialhist2_datefrom">01.04.2002</td>
+										<td ID="socialhist2_dateto">Bugün</td>
+										<td ID="socialhist2_description">Hasta alkol kullanıyor, ama alkolik değil.</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<observation classCode="OBS" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13"/>
+								<templateId root="2.16.840.1.113883.10.20.1.33"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13.4"/>
+								<id root="e351a8ff-3882-46ba-9e7f-5c18744d7e10"/>
+								<code code="229819007" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Tobacco use and exposure">
+									<translation displayName="Tütün kullanımı ve maruz kalma"/>
+								</code>
+								<text>
+									<reference value="#socialhist1"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime xsi:type="IVL_TS">
+									<low value="20000101"/>
+									<high value="20080701"/>
+								</effectiveTime>
+								<value unit="{pack}/d" value="1" xsi:type="PQ"/>
+							</observation>
+						</entry>
+						<entry>
+							<observation classCode="OBS" moodCode="EVN">
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13"/>
+								<templateId root="2.16.840.1.113883.10.20.1.33"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13.4"/>
+								<id root="64241dbb-bff5-4d8e-bf60-9a82af3e86f2"/>
+								<code code="160573003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="July 2009" displayName="Alcohol intake">
+									<translation displayName="Alkol Kullanımı"/>
+								</code>
+								<text>
+									<reference value="#socialhist2"/>
+								</text>
+								<statusCode code="completed"/>
+								<effectiveTime xsi:type="IVL_TS">
+									<low value="20020401"/>
+								</effectiveTime>
+								<value unit="{drink}/wk" value="8" xsi:type="PQ"/>
+							</observation>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="2.16.840.1.113883.10.20.1.16"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.25"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.5.3.2"/>
+						<code code="8716-3" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Vitalzeichen">
+							<translation displayName="Physical findings">
+								<translation displayName="Fiziksel bulgular"/>
+							</translation>
+						</code>
+						<title>Fiziksel Bulgular</title>
+						<text>
+							<table>
+								<thead>
+									<tr>
+										<th>Adı</th>
+										<th>Değer</th>
+										<th>Birim</th>
+										<th>Tarih</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ID="vitsig1">
+										<td ID="vitsig1_name">Intravasküler sistolik</td>
+										<td ID="vitsig1_value">115</td>
+										<td ID="vitsig1_unit">mm[Hg]</td>
+										<td ID="vitsig1_date">08.02.2011 14:51 +0200</td>
+									</tr>
+									<tr ID="vitsig2">
+										<td ID="vitsig2_name">Intravasküler diyastolik</td>
+										<td ID="vitsig2_value">70</td>
+										<td ID="vitsig2_unit">mm[Hg]</td>
+										<td ID="vitsig2_date">08.02.2011 14:51 +0200</td>
+									</tr>
+								</tbody>
+							</table>
+						</text>
+						<entry>
+							<organizer classCode="CLUSTER" moodCode="EVN">
+								<templateId root="2.16.840.1.113883.10.20.1.32"/>
+								<templateId root="2.16.840.1.113883.10.20.1.35"/>
+								<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13.1"/>
+								<id root="bbbd9e9f-0158-4378-9bad-aa1e4266ebe8"/>
+								<code code="46680005" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vital signs"/>
+								<statusCode code="completed"/>
+								<effectiveTime value="20110208145133+0200"/>
+								<component typeCode="COMP">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13"/>
+										<templateId root="2.16.840.1.113883.10.20.1.31"/>
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13.2"/>
+										<id root="2c549a49-ee49-401a-a26d-e585a00e0a13"/>
+										<code code="8480-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="systolisch (intravasal)">
+											<translation displayName="INTRAVASCULAR SYSTOLIC">
+												<translation displayName="Intravasküler Sistolik "/>
+											</translation>
+										</code>
+										<text>
+											<reference value="#vitsig1"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime value="20110208145133+0200"/>
+										<value unit="mm[Hg]" value="115" xsi:type="PQ"/>
+									</observation>
+								</component>
+								<component typeCode="COMP">
+									<observation classCode="OBS" moodCode="EVN">
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13"/>
+										<templateId root="2.16.840.1.113883.10.20.1.31"/>
+										<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.13.2"/>
+										<id root="d1a803d7-7f64-4d89-b781-41177a53ebcd"/>
+										<code code="8462-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="diastolisch (intravasal)">
+											<translation displayName="INTRAVASCULAR DIASTOLIC">
+												<translation displayName="Intravasküler Diastolik "/>
+											</translation>
+										</code>
+										<text>
+											<reference value="#vitsig2"/>
+										</text>
+										<statusCode code="completed"/>
+										<effectiveTime value="20110208145133+0200"/>
+										<value unit="mm[Hg]" value="70" xsi:type="PQ"/>
+									</observation>
+								</component>
+							</organizer>
+						</entry>
+					</section>
+				</component>
+				<component>
+					<section>
+						<templateId root="2.16.840.1.113883.10.20.1.10"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.31"/>
+						<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.9.50"/>
+						<code code="18776-5" codeSystem="2.16.840.1.113883.6.1" codeSystemName="epSOS LOINC" codeSystemVersion="June 2010" displayName="Behandlungsplan">
+							<translation displayName="Plan of treatment">
+								<translation displayName="Tedavi Planı"/>
+							</translation>
+						</code>
+						<title>Tedavi Planı</title>
+						<text>Hasta stresten uzak durmalı. Gastrik problemlerin çoğu stresten kaynaklanıyor.</text>
+					</section>
+				</component>
+			</structuredBody>
+		</component>
+	</ClinicalDocument>
+</Transaction>
