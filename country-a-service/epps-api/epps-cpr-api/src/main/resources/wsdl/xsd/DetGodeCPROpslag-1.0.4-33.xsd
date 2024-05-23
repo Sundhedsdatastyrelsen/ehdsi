@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:itst="http://rep.oio.dk/itst.dk/xml/schemas/2005/06/24/" xmlns:cpr2="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/09/01/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-19.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-17.xsd"/>
+    <xs:import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/09/01/" schemaLocation="./DetGodeCPROpslag-1.0.4-68.xsd"/>
+    <xs:import namespace="http://rep.oio.dk/itst.dk/xml/schemas/2005/06/24/" schemaLocation="./DetGodeCPROpslag-1.0.4-95.xsd"/>
+
+    <xs:element name="PersonAddressStructure" type="medcom:PersonAddressStructureType">
+        <xs:annotation>
+            <xs:documentation>Adresseoplysninger</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="PersonAddressStructureType"> 
+        <xs:annotation>
+            <xs:documentation>Postaddresse på en person i Danmark samt information vedr. adressebeskyttelse.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="itst:CareOfName" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Angiver om denne adresse er en C/O adresse</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:AddressComplete" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Adresse i danmark, med valgfrit husnummer</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="cpr2:PersonInformationProtectionStartDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Hvis dette felt forekommer er adressen beskyttet fra denne dato, ellers ingen beskyttelse.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="medcom:CountyCode"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/09/01/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/09/01/" elementFormDefault="qualified"> 
+
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-89.xsd"/>
+
+</xs:schema>

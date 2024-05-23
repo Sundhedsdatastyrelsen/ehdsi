@@ -1,0 +1,10 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+	<SOAP-ENV:Header/>
+	<SOAP-ENV:Body>
+		<ns2:GetPrescriptionRequest xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2">
+			<ns2:PersonIdentifier source="CPR">1111111118</ns2:PersonIdentifier>
+			<ns2:Identifier>21298478</ns2:Identifier>
+			<ns2:IncludeEffectuations>true</ns2:IncludeEffectuations>
+		</ns2:GetPrescriptionRequest>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

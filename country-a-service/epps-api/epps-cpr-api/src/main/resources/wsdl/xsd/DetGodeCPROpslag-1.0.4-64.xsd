@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" xmlns:itst="http://rep.oio.dk/itst.dk/xml/schemas/2005/02/22/" xmlns:dkcc="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2003/02/13/" xmlns:cpr-2="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/11/24/" targetNamespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" elementFormDefault="qualified">
+
+	<import namespace="http://rep.oio.dk/itst.dk/xml/schemas/2005/02/22/" schemaLocation="./DetGodeCPROpslag-1.0.4-92.xsd"/>
+	<import namespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2003/02/13/" schemaLocation="./DetGodeCPROpslag-1.0.4-80.xsd"/>
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/11/24/" schemaLocation="./DetGodeCPROpslag-1.0.4-61.xsd"/>
+
+	<include schemaLocation="./DetGodeCPROpslag-1.0.4-66.xsd"/>
+
+	<element name="RegularCPRPerson" type="cpr:RegularCPRPersonType"/>
+	<complexType name="RegularCPRPersonType">
+		<sequence>
+			<element ref="cpr:SimpleCPRPerson"/>
+			<element ref="itst:PersonNameForAddressingName"/>
+			<element ref="dkcc:PersonGenderCode"/>
+			<element ref="cpr-2:PersonInformationProtectionIndicator"/>
+			<element ref="cpr-2:PersonBirthDateStructure"/>
+			<element ref="cpr:PersonCivilRegistrationStatusStructure"/>
+		</sequence>
+	</complexType>
+</schema>

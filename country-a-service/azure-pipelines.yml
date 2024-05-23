@@ -1,0 +1,58 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+variables:
+- group: eppsregistry.azurecr.io
+
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: DownloadSecureFile@1
+  name: sds_deploy_sshkey
+  displayName: 'Download SSH Key'
+  inputs:
+    secureFile: 'sds_deploy_sshkey'
+
+- script: |
+    chmod go-rwx $(sds_deploy_sshkey.secureFilePath)
+  displayName: 'Fix permissions on SSH Key'
+
+- script: |
+    docker login -u PipelineToken -p $(dockerToken) eppsregistry.azurecr.io
+  displayName: 'Login to container registry'
+
+- script: |
+    docker build -f epps-application/Dockerfile.build -t eppsregistry.azurecr.io/countrya-poc .
+  displayName: 'Build docker image for the app'
+
+- script: |
+    docker build -f epps-mocks/epps-fmk-mock/Dockerfile.build -t eppsregistry.azurecr.io/countrya-fmk-mock .
+  displayName: 'Build docker image for fmk mock'
+
+- script: |
+    docker build -f epps-mocks/epps-cpr-mock/Dockerfile.build -t eppsregistry.azurecr.io/countrya-cpr-mock .
+  displayName: 'Build docker image for cpr mock'
+
+- script: |
+    docker push eppsregistry.azurecr.io/countrya-poc
+  displayName: 'Push docker image for the app to registry'
+
+- script: |
+    docker push eppsregistry.azurecr.io/countrya-fmk-mock
+  displayName: 'Push docker image for the fmk mock to registry'
+
+- script: |
+    docker push eppsregistry.azurecr.io/countrya-cpr-mock
+  displayName: 'Push docker image for the cpr mock to registry'
+
+- script: |
+    ssh -i $(sds_deploy_sshkey.secureFilePath) -o "StrictHostKeyChecking no" sdsdeploy@91.197.249.227 docker compose --file ./country-a/docker-compose.yml up -d watchtower
+  displayName: 'Redeploy on server'

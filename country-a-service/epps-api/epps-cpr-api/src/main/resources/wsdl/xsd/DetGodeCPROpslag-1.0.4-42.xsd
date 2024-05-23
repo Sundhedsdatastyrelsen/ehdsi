@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:cprnr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="./DetGodeCPROpslag-1.0.4-56.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-41.xsd"/>
+    
+    <xs:element name="PersonSpouseStructure" type="medcom:PersonSpouseStructureType">
+        <xs:annotation>
+            <xs:documentation>Ægtefælle.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="PersonSpouseStructureType"> 
+        <xs:annotation>
+            <xs:documentation>Oplysninger om ægtefælle.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="PersonSpouseIdentifier" type="cprnr:PersonCivilRegistrationIdentifierType">
+                <xs:annotation>
+                    <xs:documentation>CPR-nr. på ægtefælle.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PersonSpouseRelation" type="medcom:PersonSpouseRelationType">
+                <xs:annotation>
+                    <xs:documentation>Relation til ægtefælle.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

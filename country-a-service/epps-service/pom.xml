@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>dk.nsp.epps</groupId>
+		<artifactId>epps-root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<name>ePrescriptionPoC - Service</name>
+	<groupId>dk.nsp.epps</groupId>
+	<artifactId>epps-service</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<description>ePrescriptionPoC - Service</description>
+
+	<dependencies>
+        <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>nsp-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>cda-generator</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>dk.nsp.epps</groupId>
+			<artifactId>epps-ncp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-parameter-names</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>fmk-responses-for-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+	</dependencies>
+
+</project>

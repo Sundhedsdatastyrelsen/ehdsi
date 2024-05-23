@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:medcom="urn:oio:medcom:cprservice:1.0.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:oio:medcom:cprservice:1.0.4" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:element name="PersonWardRelation" type="medcom:PersonWardRelationType">
+        <xs:annotation>
+            <xs:documentation>Relation til myndlige/børn.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="PersonWardRelationType">
+        <xs:annotation>
+            <xs:documentation>Relation, der angiver om det er et barn eller en myndling.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="barn">
+                <xs:annotation>
+                    <xs:documentation>Den relaterede person er et barn.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="barn_uden">
+                <xs:annotation>
+                    <xs:documentation>Den relaterede person er et barn, man ikke har forældremyndighed over.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="myndling">
+                <xs:annotation>
+                    <xs:documentation>Den relaterede person er en myndling.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

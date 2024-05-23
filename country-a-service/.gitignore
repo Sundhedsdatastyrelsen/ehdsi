@@ -1,0 +1,40 @@
+# Macs
+.DS_Store
+
+# Maven
+target/
+**/*.versionsBackup
+.flattened-pom.xml
+
+# Gradle
+build/
+.gradle/
+
+# Localdev
+.deploy/
+
+# Eclipse/STS
+.classpath
+.project
+.settings/
+**/.factorypath
+**/.springBeans
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+.attach_pid*
+
+# VS Code
+.vscode/
+.sts4-cache/
+
+# vim
+*.swp
+
+# OpenAPI codegen
+_merged_spec.yaml
+
+# Environment
+.env

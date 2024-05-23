@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/11/24/" xmlns:dkcc="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/03/15/" targetNamespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/11/24/" elementFormDefault="qualified">
+
+    <xs:import namespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2005/03/15/" schemaLocation="./DetGodeCPROpslag-1.0.4-86.xsd"/>
+    
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-57.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-60.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-58.xsd"/>
+    <xs:include schemaLocation="./DetGodeCPROpslag-1.0.4-59.xsd"/>
+</xs:schema>

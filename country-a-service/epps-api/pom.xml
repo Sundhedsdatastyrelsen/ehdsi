@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>dk.nsp.epps</groupId>
+		<artifactId>epps-root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<name>ePrescriptionPoC - API Root</name>
+	<groupId>dk.nsp.epps</groupId>
+	<artifactId>epps-api-root</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<description>ePrescriptionPoC - API Root</description>
+
+	<modules>
+		<module>epps-ncp-api</module>
+		<module>epps-fmk-api</module>
+		<module>epps-cpr-api</module>
+	</modules>
+
+</project>

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns:itst="http://rep.oio.dk/itst.dk/xml/schemas/2006/01/17/" xmlns:dkcc="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2003/02/13/" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rep.oio.dk/itst.dk/xml/schemas/2006/01/17/" elementFormDefault="qualified">
+	<import namespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2003/02/13/" schemaLocation="./DetGodeCPROpslag-1.0.4-80.xsd"/>
+	<element name="PersonNameStructure" type="itst:PersonNameStructureType"/>
+	<complexType name="PersonNameStructureType">
+		<sequence>
+			<element ref="dkcc:PersonGivenName"/>
+			<element ref="dkcc:PersonMiddleName" minOccurs="0" maxOccurs="1"/>
+			<element ref="dkcc:PersonSurnameName"/>
+		</sequence>
+	</complexType>
+</schema>

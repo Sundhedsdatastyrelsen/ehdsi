@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns:itst="http://rep.oio.dk/itst.dk/xml/schemas/2005/06/24/" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rep.oio.dk/itst.dk/xml/schemas/2005/06/24/" elementFormDefault="qualified">
+	<!-- -->
+	<element name="StandardAddressIdentifier" type="itst:StandardAddressIdentifierType"/>
+	<!-- -->
+	<simpleType name="StandardAddressIdentifierType">
+		<restriction base="string">
+			<maxLength value="150"/>
+		</restriction>
+	</simpleType>
+</schema>

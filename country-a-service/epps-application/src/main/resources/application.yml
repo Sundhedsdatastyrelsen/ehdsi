@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: ePrescriptionPoC
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+  profiles:
+    group:
+      dev: default
+      prod: default
+
+app:
+  fmk.endpoint.url: ${FMK_ENDPOINT_URL}
+  cpr.endpoint.url: ${CPR_ENDPOINT_URL}
+  # The repository id needs to be globally unique.  For now, we use the DK home OID
+  eprescription.repository.id: 2.16.17.710.802.1000.990.1
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    diskspace:
+      enabled: false
+
+logging:
+  level:
+    root: info
+    org.springframework.web: info
+    dk.nsp.epps: debug

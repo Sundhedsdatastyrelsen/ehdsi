@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:GetPrescriptionResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns4:Patient>
+        <Person>
+            <Name>
+                <GivenName>Lene</GivenName>
+                <MiddleName>Johansson</MiddleName>
+                <Surname>Sørensen</Surname>
+            </Name>
+            <PersonIdentifier source="CPR">0101010000</PersonIdentifier>
+            <BirthDate>1901-01-01</BirthDate>
+            <Gender>female</Gender>
+        </Person>
+        <Address>
+            <StreetName>Weidekampsgade</StreetName>
+            <StreetBuildingIdentifier>40A</StreetBuildingIdentifier>
+            <PostCodeIdentifier>8860</PostCodeIdentifier>
+            <DistrictName>Ulstrup</DistrictName>
+        </Address>
+    </ns4:Patient>
+</ns4:GetPrescriptionResponse>

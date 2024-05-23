@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. --><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cvr="http://rep.oio.dk/cvr.dk/xml/schemas/2005/03/22/" elementFormDefault="qualified" targetNamespace="http://rep.oio.dk/cvr.dk/xml/schemas/2005/03/22/" version="1.1">
+    <element type="cvr:CVRnumberIdentifierType" name="CVRnumberIdentifier">
+        <annotation>
+            <documentation>Unique and generally usable identifier for all legal units included i CVR. </documentation>
+        </annotation>
+    </element>
+    <simpleType name="CVRnumberIdentifierType">
+        <restriction base="string">
+            <length value="8"/>
+        </restriction>
+    </simpleType>
+</schema>
