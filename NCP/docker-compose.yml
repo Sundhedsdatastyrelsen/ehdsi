@@ -25,8 +25,6 @@ secrets:
     file: seal_keystore_password.txt
   tls_truststore_password:
     file: tls_truststore_password.txt
-  tls_privatekey_password:
-    file: tls_privatekey_password.txt
 
 services:
   #
@@ -81,8 +79,7 @@ services:
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       MARIADB_USERNAME_FILE: /run/secrets/db_username
-      TLS_PRIVATEKEY_ALIAS: ${TLS_PRIVATEKEY_ALIAS}
-      TLS_PRIVATEKEY_PASSWORD_FILE: /run/secrets/tls_privatekey_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
       # This also needs to be configured in openncp-configuration/ATNA_resources/ArrConnections.xml
       TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
@@ -102,7 +99,6 @@ services:
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
-      - tls_privatekey_password
 
   #
   # Download terminology database from CTS. Batch job.
@@ -168,8 +164,7 @@ services:
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
-      TLS_PRIVATEKEY_ALIAS: ${TLS_PRIVATEKEY_ALIAS}
-      TLS_PRIVATEKEY_PASSWORD_FILE: /run/secrets/tls_privatekey_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
       TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
       TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
@@ -185,7 +180,6 @@ services:
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
-      - tls_privatekey_password
 
   #
   # Gateway, TRC-STS, OpenATNA
@@ -215,8 +209,7 @@ services:
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
-      TLS_PRIVATEKEY_ALIAS: ${TLS_PRIVATEKEY_ALIAS}
-      TLS_PRIVATEKEY_PASSWORD_FILE: /run/secrets/tls_privatekey_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
       TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
     volumes:
@@ -229,4 +222,3 @@ services:
       - db_password
       - db_username
       - tls_keystore_password
-      - tls_privatekey_password
