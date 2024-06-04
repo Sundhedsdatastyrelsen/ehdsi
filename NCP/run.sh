@@ -10,10 +10,10 @@ ENV_FILE_CONTENT="$(cat << EOF
 MARIADB_HOST="mariadb"
 MARIADB_PORT="3306"
 OPENNCP_VERSION="7.1.0"
-TLS_KEYSTORE_ALIAS=ncptestis
+TLS_KEYSTORE_ALIAS=test-standard
 SEAL_KEYSTORE_ALIAS=ncptestis
-TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/test-truststore.jks
-TLS_KEYSTORE_FILE=/opt/openncp-configuration/cert/test-keystore.jks
+TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/sds-test-truststore.jks
+TLS_KEYSTORE_FILE=/opt/openncp-configuration/cert/sds-test-keystore.jks
 CTS_URL=https://webgate.training.ec.europa.eu/ehealth-term-server
 EOF
 )"
