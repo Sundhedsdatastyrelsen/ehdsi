@@ -81,10 +81,10 @@ services:
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
       # This also needs to be configured in openncp-configuration/ATNA_resources/ArrConnections.xml
-      TLS_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_TLS_TEST.jks
+      TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
       SEAL_KEYSTORE_ALIAS: ${SEAL_KEYSTORE_ALIAS}
-      SEAL_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
+      SEAL_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_SEAL_TEST.jks
       SEAL_KEYSTORE_PASSWORD_FILE: /run/secrets/seal_keystore_password
       TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
