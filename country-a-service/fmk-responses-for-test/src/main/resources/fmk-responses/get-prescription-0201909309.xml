@@ -22,6 +22,7 @@
         <ns4:Identifier>450880683696001</ns4:Identifier>
         <ns4:AttachedToDrugMedicationIdentifier>27186215</ns4:AttachedToDrugMedicationIdentifier>
         <ns4:CreatedFromDrugMedicationVersion>1713181084067001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:DrugMedicationEnded>Behandling afsluttet</ns4:DrugMedicationEnded>
         <ns4:AuthorisationDateTime>2024-04-15T11:38:03Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>

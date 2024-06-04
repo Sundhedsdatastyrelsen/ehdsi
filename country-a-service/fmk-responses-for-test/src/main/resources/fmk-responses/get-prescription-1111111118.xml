@@ -18,10 +18,10 @@
         </Address>
     </ns4:Patient>
     <ns4:Prescription>
-        <ns4:Identifier>452261641370102</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>27377356</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1714562041363001002</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-05-01T11:14:01Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>454679936017101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>27829957</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1716980336686001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-05-29T10:58:56Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
@@ -37,10 +37,10 @@
                     <Identifier source="Yder">76333</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-05-01T11:14:01Z</DateTime>
+            <DateTime>2024-05-29T10:58:56Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-05-01</ns4:ValidFromDate>
-        <ns4:ValidToDate>2024-06-06</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-05-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2024-07-04</ns4:ValidToDate>
         <ns4:PackageRestriction>
             <ns2:PackageNumber source="Medicinpriser" date="2009-02-23">159517</ns2:PackageNumber>
             <ns2:PackageSize>
@@ -82,7 +82,7 @@
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
         <ns4:Order>
-            <ns2:Identifier>452688623787001</ns2:Identifier>
+            <ns2:Identifier>455185612440002</ns2:Identifier>
             <ns2:Created>
                 <By>
                     <Other>
@@ -101,7 +101,7 @@
                         <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-05-06T09:50:24Z</DateTime>
+                <DateTime>2024-06-04T07:26:53Z</DateTime>
             </ns2:Created>
             <ns2:Modified>
                 <By>
@@ -121,7 +121,7 @@
                         <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-05-06T09:50:24Z</DateTime>
+                <DateTime>2024-06-04T07:26:53Z</DateTime>
             </ns2:Modified>
             <ns2:OrderedAtPharmacy>
                 <Name>Skanderborg Apotek</Name>
@@ -135,6 +135,6 @@
             <ns2:DeliveryInstructionText>Afhentes sammen med øvrige varer</ns2:DeliveryInstructionText>
             <ns2:DeliveryInstructionText>og skal opbevares på køl</ns2:DeliveryInstructionText>
         </ns4:Order>
-        <ns4:Version>6588</ns4:Version>
+        <ns4:Version>24667</ns4:Version>
     </ns4:Prescription>
 </ns4:GetPrescriptionResponse>
