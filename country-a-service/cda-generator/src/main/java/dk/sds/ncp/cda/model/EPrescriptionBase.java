@@ -1,4 +1,4 @@
-﻿package dk.sds.ncp.cda.model;
+package dk.sds.ncp.cda.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
 
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Data
 public abstract class EPrescriptionBase {
     /**

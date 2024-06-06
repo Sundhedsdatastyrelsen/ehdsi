@@ -1,15 +1,17 @@
 package dk.sds.ncp.cda.model;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
 import java.util.Base64;
 
 @EqualsAndHashCode(callSuper = true)
-@Value
-@SuperBuilder
-@With
+@ToString(callSuper = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Getter
+@SuperBuilder(toBuilder = true)
 @SuppressWarnings("unused")
 public class EPrescriptionL3 extends EPrescriptionBase{
 
