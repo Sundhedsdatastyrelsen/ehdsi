@@ -20,19 +20,18 @@
 <!-- The Audit Record Repository Actor Server Connections -->
 <!-- For IHE Actor -->
 <Configuration>
-   <SecureConnection name="arr-tls">
-      <HostName>0.0.0.0</HostName>
-      <Port>2862</Port>
-      <!-- Trust and Keystore -->
-      <KeyStore>/opt/openncp-configuration/cert/DK_TLS_TEST.jks</KeyStore>
-      <KeyPass>dktest</KeyPass>
-      <TrustStore>/opt/openncp-configuration/cert/DK_TRUST_TEST.jks</TrustStore>
-      <TrustPass>dktest</TrustPass>
-   </SecureConnection>
-   <!-- use IP address instead of localhost for UDP -->
-   <StandardConnection name="arr-udp">
-      <HostName>0.0.0.0</HostName>
-      <Port>2861</Port>
-   </StandardConnection>
+  <SecureConnection name="arr-tls">
+    <HostName>0.0.0.0</HostName>
+    <Port>2862</Port>
+    <!-- Trust and Keystore -->
+    <KeyStore>/opt/openncp-configuration/cert/sds-test-keystore.jks</KeyStore>
+    <KeyPass>APQVk2dyWwCP0FzF7JiPfr8o</KeyPass>
+    <TrustStore>/opt/openncp-configuration/cert/sds-test-truststore.jks</TrustStore>
+    <TrustPass>Byrx4vLoM3ZWn3PKiL7BZRUY</TrustPass>
+  </SecureConnection>
+  <!-- use IP address instead of localhost for UDP -->
+  <StandardConnection name="arr-udp">
+    <HostName>0.0.0.0</HostName>
+    <Port>2861</Port>
+  </StandardConnection>
 </Configuration>
-
