@@ -42,8 +42,9 @@ public class EPrescriptionMapper {
             .toList();
     }
 
-    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
+    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, String cda) {
         try {
+            //TODO CFB: Add CDA to L3 (I think)
             var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
             var meta = new EPrescriptionDocumentMetadataDto(model.getPrescriptionId().getExtension());
             meta.setPatientId(patientId);
@@ -52,8 +53,8 @@ public class EPrescriptionMapper {
             meta.setAuthor(model.getAuthor().getName().getFullName());
             meta.setTitle(model.getTitle());
             meta.setDescription(model.getIndicationText());
-            meta.setSize(null);
-            meta.setHash(null);
+            meta.setSize((long) cda.length());
+            meta.setHash();
             return meta;
 
         } catch (MapperException e) {

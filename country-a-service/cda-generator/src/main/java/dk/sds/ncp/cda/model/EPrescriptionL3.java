@@ -1,28 +1,19 @@
 package dk.sds.ncp.cda.model;
 
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Value;
-import lombok.With;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
+import java.util.Base64;
 
+@EqualsAndHashCode(callSuper = true)
 @Value
-@Builder
+@SuperBuilder
 @With
 @SuppressWarnings("unused")
-public class EPrescriptionL3 {
-    /**
-     * Unique ID identifying the CDA document (not the prescription itself).
-     */
-    @NonNull CdaId documentId;
-    @NonNull String title;
-    /**
-     * "[...] the date and time at which this document was created as an electronic document."
-     */
-    @NonNull OffsetDateTime effectiveTime;
+public class EPrescriptionL3 extends EPrescriptionBase{
+
     @NonNull Patient patient;
-    @NonNull Author author;
     /**
      * "Time of signing the document"
      * <a href="https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html">
@@ -30,19 +21,22 @@ public class EPrescriptionL3 {
      */
     @NonNull OffsetDateTime signatureTime;
     @NonNull CdaId parentDocumentId;
-    @NonNull CdaId prescriptionId;
     @NonNull String entryText;
     @NonNull Product product;
     @NonNull Long packageQuantity;
     @NonNull Boolean substitutionAllowed;
     @NonNull String indicationText;
 
-    public String getEffectiveTime() {
-        return Utils.cdaDateTime(effectiveTime);
+    String cdaDocument; //TODO CFB Consider removal, I need to figure out if we want to have this as part of the EPrescription.
+
+    @Override
+    public String GetHash() {
+        return Utils.Md5Hash(cdaDocument);
     }
 
-    public OffsetDateTime getEffectiveTimeOffsetDateTime() {
-        return effectiveTime;
+    @Override
+    public Long GetSize() {
+        return (long) cdaDocument.length();
     }
 
     public String getSignatureTime() {
