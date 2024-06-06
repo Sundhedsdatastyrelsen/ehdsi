@@ -182,6 +182,45 @@ services:
       - tls_truststore_password
 
   #
+  # NCP client / outbound protocol terminator
+  #
+  openncp-client:
+    build:
+      context: ./
+      dockerfile: ./openncp-client/Dockerfile
+      args:
+        openncp_version: ${OPENNCP_VERSION}
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
+    container_name: openncp-client
+    image: eppsregistry.azurecr.io/openncp-client:${OPENNCP_VERSION}
+    ports:
+      - "7443:7443"
+      - "8081:8081"
+    depends_on:
+      - mariadb
+      - configuration-synchronizer
+    environment:
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_USERNAME_FILE: /run/secrets/db_username
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
+      TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
+      TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
+    volumes:
+      - ./openncp-configuration:/opt/openncp-configuration
+      - ./logs/openncp-client:/usr/local/tomcat/logs
+    networks:
+      - ncp
+    secrets:
+      - db_password
+      - db_username
+      - tls_keystore_password
+      - tls_truststore_password
+
+  #
   # Gateway, TRC-STS, OpenATNA
   #
   openncp-gateway:

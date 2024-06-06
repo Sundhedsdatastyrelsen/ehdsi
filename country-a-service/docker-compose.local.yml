@@ -4,8 +4,8 @@
 networks:
   epps-backend:
     ## Uncomment the following lines to use same network as OpenNCP:
-    # name: epps
-    # external: true
+    name: epps
+    external: true
 
 services:
   #

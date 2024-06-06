@@ -1,0 +1,17 @@
+# See: https://tomcat.apache.org/tomcat-7.0-doc/RUNNING.txt#:~:text=(3.4)
+
+export CATALINA_HOME=/usr/local/tomcat
+export CATALINA_BASE=/usr/local/tomcat
+
+MARIADB_USERNAME="$(cat "${MARIADB_USERNAME_FILE}")"
+MARIADB_PASSWORD="$(cat "${MARIADB_PASSWORD_FILE}")"
+TLS_KEYSTORE_PASSWORD="$(cat "${TLS_KEYSTORE_PASSWORD_FILE}")"
+
+# Used in server.xml:
+CATALINA_OPTS="$CATALINA_OPTS -Ddb.host=\"${MARIADB_HOST}\""
+CATALINA_OPTS="$CATALINA_OPTS -Ddb.port=\"${MARIADB_PORT}\""
+CATALINA_OPTS="$CATALINA_OPTS -Ddb.username=\"${MARIADB_USERNAME}\""
+CATALINA_OPTS="$CATALINA_OPTS -Ddb.password=\"${MARIADB_PASSWORD}\""
+CATALINA_OPTS="$CATALINA_OPTS -Dtls.keystore.alias=\"${TLS_KEYSTORE_ALIAS}\""
+CATALINA_OPTS="$CATALINA_OPTS -Dtls.keystore.file=\"${TLS_KEYSTORE_FILE}\""
+CATALINA_OPTS="$CATALINA_OPTS -Dtls.keystore.password=\"${TLS_KEYSTORE_PASSWORD}\""
