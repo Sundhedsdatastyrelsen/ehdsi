@@ -341,6 +341,9 @@ components:
     DocumentAssociationForEPrescriptionDocumentMetadata:
       type: object
       description: Document association for metadata for an ePrescription document (both L1 and L3).
+      required:
+        - level1
+        - level3
       properties:
         level3:
           $ref: '#/components/schemas/EPrescriptionDocumentMetadata'
