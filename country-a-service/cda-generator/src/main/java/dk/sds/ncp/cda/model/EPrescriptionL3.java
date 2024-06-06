@@ -27,7 +27,7 @@ public class EPrescriptionL3 extends EPrescriptionBase{
     @NonNull Boolean substitutionAllowed;
     @NonNull String indicationText;
 
-    String cdaDocument; //TODO CFB Consider removal, I need to figure out if we want to have this as part of the EPrescription.
+    @NonNull String cdaDocument;
 
     @Override
     public String GetHash() {

@@ -18,7 +18,10 @@ public class EPrescriptionL3Generator {
 
     public static String generate(GetPrescriptionResponseType response, int prescriptionIndex)
         throws TemplateException, IOException, MapperException {
-        var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex);
+
+        String cda = EPrescriptionL3Generator.generate(response, prescriptionIndex);
+
+        var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex, cda);
         return generate(dataModel);
     }
 }

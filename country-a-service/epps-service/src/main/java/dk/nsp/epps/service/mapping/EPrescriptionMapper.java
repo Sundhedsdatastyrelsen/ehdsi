@@ -42,10 +42,15 @@ public class EPrescriptionMapper {
             .toList();
     }
 
-    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, String cda) {
+    private EPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
         try {
-            //TODO CFB: Add CDA to L3 (I think)
-            var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
+            String cda = null;
+            try {
+                cda = EPrescriptionL3Generator.generate(response, prescriptionIndex);
+            } catch (TemplateException | IOException e) {
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+            }
+            var model = EPrescriptionL3Mapper.model(response, prescriptionIndex,cda);
             var meta = new EPrescriptionDocumentMetadataDto(model.getPrescriptionId().getExtension());
             meta.setPatientId(patientId);
             meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
@@ -53,8 +58,8 @@ public class EPrescriptionMapper {
             meta.setAuthor(model.getAuthor().getName().getFullName());
             meta.setTitle(model.getTitle());
             meta.setDescription(model.getIndicationText());
-            meta.setSize((long) cda.length());
-            meta.setHash();
+            meta.setSize(model.GetSize());
+            meta.setHash(model.GetHash());
             return meta;
 
         } catch (MapperException e) {
