@@ -96,7 +96,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EPrescriptionDocumentMetadata'
+                  $ref: '#/components/schemas/DocumentAssociationForEPrescriptionDocumentMetadata'
         400:
           description: 400 BadRequest
           content:
@@ -337,6 +337,16 @@ components:
           type: string
         confidentiality:
           $ref: '#/components/schemas/ConfidentialityMetadata'
+
+
+    DocumentAssociationForEPrescriptionDocumentMetadata:
+      type: object
+      description: Document association for metadata for an ePrescription document (both L1 and L3).
+      properties:
+        level3:
+          $ref: '#/components/schemas/EPrescriptionDocumentMetadata'
+        level1:
+          $ref: '#/components/schemas/EPrescriptionDocumentMetadata'
 
     EPrescriptionDocumentMetadata:
       description: Metadata for an ePrescription document.
