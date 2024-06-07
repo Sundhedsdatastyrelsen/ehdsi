@@ -1,9 +1,13 @@
 package dk.sds.ncp.cda.model;
 
+import dk.sds.ncp.cda.EPrescriptionL3Generator;
+import freemarker.template.TemplateException;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.experimental.SuperBuilder;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Base64;
 
@@ -28,17 +32,27 @@ public class EPrescriptionL3 extends EPrescriptionBase{
     @NonNull Long packageQuantity;
     @NonNull Boolean substitutionAllowed;
     @NonNull String indicationText;
+    @NonFinal String cda;
 
-    @NonNull String cdaDocument;
+    public String GetCda(){
+        if(cda == null){
+            try {
+                cda = EPrescriptionL3Generator.generate(this);
+            } catch (IOException | TemplateException e) {
+                throw new RuntimeException(String.format("Could not generate CDA for L3 EPrescription %s",this.documentId.getExtension()),e);
+            }
+        }
+        return cda;
+    }
 
     @Override
     public String GetHash() {
-        return Utils.Md5Hash(cdaDocument);
+        return Utils.Md5Hash(cda);
     }
 
     @Override
     public Long GetSize() {
-        return (long) cdaDocument.length();
+        return (long) cda.length();
     }
 
     public String getSignatureTime() {

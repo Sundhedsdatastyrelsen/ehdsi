@@ -16,7 +16,7 @@ class EPrescriptionL3MapperTest {
 
             String cda = EPrescriptionL3Generator.generate(response, 0);
 
-            return EPrescriptionL3Mapper.model(response, 0,cda);
+            return EPrescriptionL3Mapper.model(response, 0);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

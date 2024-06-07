@@ -29,7 +29,7 @@ public class EPrescriptionL3Mapper {
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, String cda) throws MapperException {
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex) throws MapperException {
         var prescription = response.getPrescription().get(prescriptionIndex);
 
         var prescriptionId = new CdaId(Oid.DK_FMK_PRESCRIPTION, Long.toString(prescription.getIdentifier()));
@@ -52,7 +52,6 @@ public class EPrescriptionL3Mapper {
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
-            .cdaDocument(cda)
             .build();
     }
 
