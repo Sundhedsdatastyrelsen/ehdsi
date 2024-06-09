@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
+import java.awt.*;
 import java.io.*;
 import java.util.Base64;
 import java.util.Objects;
@@ -135,10 +136,10 @@ public class EPrescriptionL1Generator {
 
     public String WriteAllReturnBase64(){
         InitializeDocument();
-        //WriteOrdination();
-        //WriteRecipient();
-        //WritePrescriptionId();
-        //WriteAuthor();
+        WriteOrdination();
+        WriteRecipient();
+        WritePrescriptionId();
+        WriteAuthor();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             pdfDocument.save(baos);
@@ -151,8 +152,9 @@ public class EPrescriptionL1Generator {
     }
 
     private void WriteTextAtCoordinates(String Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
-        PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage);
+        PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage, PDPageContentStream.AppendMode.APPEND,true);
         contentStream.beginText();
+        contentStream.setNonStrokingColor(Color.BLACK);
         contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER), 14);
         contentStream.newLineAtOffset(xCoordinate, yCoordinate);
         contentStream.showText(Text);

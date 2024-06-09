@@ -50,7 +50,7 @@ public class EPrescriptionMapper {
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var model = EPrescriptionL3Mapper.model(response, prescriptionIndex,cda);
+            var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
             var meta = new EPrescriptionDocumentMetadataDto(model.getPrescriptionId().getExtension());
             meta.setPatientId(patientId);
             meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());

@@ -48,12 +48,12 @@ public class EPrescriptionL3 extends EPrescriptionBase{
 
     @Override
     public String GetHash() {
-        return Utils.Md5Hash(cda);
+        return Utils.Md5Hash(GetCda());
     }
 
     @Override
     public Long GetSize() {
-        return (long) cda.length();
+        return (long) GetCda().length();
     }
 
     public String getSignatureTime() {
