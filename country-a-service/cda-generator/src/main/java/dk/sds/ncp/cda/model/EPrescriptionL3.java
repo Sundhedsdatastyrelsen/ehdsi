@@ -19,6 +19,8 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public class EPrescriptionL3 extends EPrescriptionBase{
 
+
+
     @NonNull Patient patient;
     /**
      * "Time of signing the document"
@@ -31,7 +33,6 @@ public class EPrescriptionL3 extends EPrescriptionBase{
     @NonNull Product product;
     @NonNull Long packageQuantity;
     @NonNull Boolean substitutionAllowed;
-    @NonNull String indicationText;
     @NonFinal String cda;
 
     public String GetCda(){

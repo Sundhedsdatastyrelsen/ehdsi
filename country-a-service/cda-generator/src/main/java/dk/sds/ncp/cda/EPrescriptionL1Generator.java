@@ -7,6 +7,10 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import java.io.*;
 import java.util.Base64;
@@ -24,7 +28,7 @@ public class EPrescriptionL1Generator {
     private PDPage pdfPage;
 
     public static String generate(EPrescriptionL3 dataModel) {
-        EPrescriptionL1Generator generator = new EPrescriptionL1Generator("SDS_ProtoRecept.pdf");
+        EPrescriptionL1Generator generator = new EPrescriptionL1Generator("pdfTemplates/SDS_ProtoRecept.pdf");
 
         //TODO CFB more extensive data here
         generator.author(dataModel.getAuthor().getName().getFullName());
@@ -88,13 +92,7 @@ public class EPrescriptionL1Generator {
     public EPrescriptionL1Generator WriteOrdination() {
         InitializeDocument();
         try {
-            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage);
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(60, 390);
-            contentStream.showText(Ordination);
-            contentStream.endText();
-            contentStream.close();
+            WriteTextAtCoordinates(Ordination,60,390,pdfDocument,pdfPage);
         } catch (IOException e) {
             CloseDocument();
             throw new RuntimeException(String.format("Error writing ordination to %s",baseFile.getAbsolutePath()),e);
@@ -105,13 +103,7 @@ public class EPrescriptionL1Generator {
     public EPrescriptionL1Generator WriteRecipient() {
         InitializeDocument();
         try {
-            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage);
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(50, 570);
-            contentStream.showText(Recipient);
-            contentStream.endText();
-            contentStream.close();
+            WriteTextAtCoordinates(Recipient,50,570,pdfDocument,pdfPage);
         } catch (IOException e) {
             CloseDocument();
             throw new RuntimeException(String.format("Error writing recipient to %s",baseFile.getAbsolutePath()),e);
@@ -122,13 +114,7 @@ public class EPrescriptionL1Generator {
     public EPrescriptionL1Generator WritePrescriptionId() {
         InitializeDocument();
         try {
-            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage);
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(410, 660);
-            contentStream.showText(PrescriptionId);
-            contentStream.endText();
-            contentStream.close();
+            WriteTextAtCoordinates(PrescriptionId, 410,660,pdfDocument,pdfPage);
         } catch (IOException e) {
             CloseDocument();
             throw new RuntimeException(String.format("Error writing prescription ID to %s",baseFile.getAbsolutePath()),e);
@@ -139,13 +125,7 @@ public class EPrescriptionL1Generator {
     public EPrescriptionL1Generator WriteAuthor() {
         InitializeDocument();
         try {
-            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage);
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(60, 730);
-            contentStream.showText(Author);
-            contentStream.endText();
-            contentStream.close();
+            WriteTextAtCoordinates(Author,60,730,pdfDocument,pdfPage);
         } catch (IOException e) {
             CloseDocument();
             throw new RuntimeException(String.format("Error writing author to %s",baseFile.getAbsolutePath()),e);
@@ -155,10 +135,10 @@ public class EPrescriptionL1Generator {
 
     public String WriteAllReturnBase64(){
         InitializeDocument();
-        WriteOrdination();
-        WriteRecipient();
-        WritePrescriptionId();
-        WriteAuthor();
+        //WriteOrdination();
+        //WriteRecipient();
+        //WritePrescriptionId();
+        //WriteAuthor();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             pdfDocument.save(baos);
@@ -168,6 +148,16 @@ public class EPrescriptionL1Generator {
         }
         CloseDocument();
         return Base64.getEncoder().encodeToString(baos.toByteArray());
+    }
+
+    private void WriteTextAtCoordinates(String Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
+        PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage);
+        contentStream.beginText();
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER), 14);
+        contentStream.newLineAtOffset(xCoordinate, yCoordinate);
+        contentStream.showText(Text);
+        contentStream.endText();
+        contentStream.close();
     }
 
 
