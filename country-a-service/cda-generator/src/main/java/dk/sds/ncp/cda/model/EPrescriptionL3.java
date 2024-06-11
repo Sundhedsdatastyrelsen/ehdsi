@@ -1,6 +1,7 @@
 package dk.sds.ncp.cda.model;
 
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
+import dk.sds.ncp.cda.Utils;
 import freemarker.template.TemplateException;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Base64;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -46,15 +46,6 @@ public class EPrescriptionL3 extends EPrescriptionBase{
         return cda;
     }
 
-    @Override
-    public String GetHash() {
-        return Utils.Md5Hash(GetCda());
-    }
-
-    @Override
-    public Long GetSize() {
-        return (long) GetCda().length();
-    }
 
     public String getSignatureTime() {
         return Utils.cdaDateTime(signatureTime);

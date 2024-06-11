@@ -1,9 +1,8 @@
 package dk.sds.ncp.cda.model;
 
-import lombok.Builder;
+import dk.sds.ncp.cda.Utils;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.With;
 import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
@@ -32,8 +31,5 @@ public abstract class EPrescriptionBase {
     public OffsetDateTime getEffectiveTimeOffsetDateTime() {
         return effectiveTime;
     }
-
-    public abstract String GetHash();
-    public abstract Long GetSize();
 
 }

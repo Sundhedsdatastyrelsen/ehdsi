@@ -1,70 +1,51 @@
 package dk.sds.ncp.cda;
 
 import dk.sds.ncp.cda.model.EPrescriptionL3;
-import freemarker.template.TemplateException;
-import lombok.Setter;
+import dk.sds.ncp.cda.model.PdfField;
+import lombok.Getter;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import java.awt.*;
 import java.io.*;
-import java.util.Base64;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 
 public class EPrescriptionL1Generator {
     private final File baseFile;
 
-    private String Author;
-    private String PrescriptionId;
-    private String Recipient;
-    private String Ordination;
+    @Getter
+    private final EPrescriptionL3 datamodel;
 
     private PDDocument pdfDocument;
     private PDPage pdfPage;
 
-    public static String generate(EPrescriptionL3 dataModel) {
-        EPrescriptionL1Generator generator = new EPrescriptionL1Generator("pdfTemplates/SDS_ProtoRecept.pdf");
+    private final List<PdfField> Fields = Arrays.asList(
+        new PdfField(50,445,() -> getDatamodel().getProduct().getName()),
+        new PdfField(50,610,() -> getDatamodel().getPatient().getName().getFullName()),
+        new PdfField(50,710,() -> getDatamodel().getAuthor().getName().getFullName()),
+        new PdfField(390,650,() -> String.format("ID: %s",getDatamodel().getPrescriptionId().getExtension()))
+    );
 
-        //TODO CFB more extensive data here
-        generator.author(dataModel.getAuthor().getName().getFullName());
-        generator.prescriptionId(dataModel.getPrescriptionId().getExtension());
-        generator.recipient(dataModel.getPatient().getName().getFullName());
-        generator.ordination(dataModel.getProduct().getName());
 
-        return generator.WriteAllReturnBase64();
-    }
-
-    public EPrescriptionL1Generator(String resourceName) {
+    public EPrescriptionL1Generator(EPrescriptionL3 dataModel) {
         //Load file from resources folder, based on the name input
+        String TEMPLATE = "pdfTemplates/Receptdesign.pdf";
         try {
-            baseFile = new File(Objects.requireNonNull(EPrescriptionL1Generator.class.getResource("/" + resourceName)).getFile());
+            baseFile = new File(Objects.requireNonNull(EPrescriptionL1Generator.class.getResource("/" + TEMPLATE)).getFile());
         } catch (NullPointerException e) {
-            throw new RuntimeException("Could not find resource: "+resourceName);
+            throw new RuntimeException("Could not find resource: "+ TEMPLATE);
         }
+
+        datamodel = dataModel;
     }
 
-    public EPrescriptionL1Generator author(String author) {
-        Author = author;
-        return this;
-    }
-
-    public EPrescriptionL1Generator prescriptionId(String prescriptionId) {
-        PrescriptionId = prescriptionId;
-        return this;
-    }
-    public EPrescriptionL1Generator recipient(String recipient) {
-        Recipient = recipient;
-        return this;
-    }
-    public EPrescriptionL1Generator ordination(String ordination) {
-        Ordination = ordination;
-        return this;
+    public String generate() {
+        return WriteAllReturnBase64();
     }
 
     private void InitializeDocument(){
@@ -90,43 +71,11 @@ public class EPrescriptionL1Generator {
         }
     }
 
-    public EPrescriptionL1Generator WriteOrdination() {
-        InitializeDocument();
-        try {
-            WriteTextAtCoordinates(Ordination,60,390,pdfDocument,pdfPage);
-        } catch (IOException e) {
-            CloseDocument();
-            throw new RuntimeException(String.format("Error writing ordination to %s",baseFile.getAbsolutePath()),e);
-        }
-        return this;
-    }
 
-    public EPrescriptionL1Generator WriteRecipient() {
+    private EPrescriptionL1Generator WriteField(PdfField field) {
         InitializeDocument();
         try {
-            WriteTextAtCoordinates(Recipient,50,570,pdfDocument,pdfPage);
-        } catch (IOException e) {
-            CloseDocument();
-            throw new RuntimeException(String.format("Error writing recipient to %s",baseFile.getAbsolutePath()),e);
-        }
-        return this;
-    }
-
-    public EPrescriptionL1Generator WritePrescriptionId() {
-        InitializeDocument();
-        try {
-            WriteTextAtCoordinates(PrescriptionId, 410,660,pdfDocument,pdfPage);
-        } catch (IOException e) {
-            CloseDocument();
-            throw new RuntimeException(String.format("Error writing prescription ID to %s",baseFile.getAbsolutePath()),e);
-        }
-        return this;
-    }
-
-    public EPrescriptionL1Generator WriteAuthor() {
-        InitializeDocument();
-        try {
-            WriteTextAtCoordinates(Author,60,730,pdfDocument,pdfPage);
+            WriteTextAtCoordinates(field.getContent().get(),field.getXCoordinate(),field.getYCoordinate(),pdfDocument,pdfPage);
         } catch (IOException e) {
             CloseDocument();
             throw new RuntimeException(String.format("Error writing author to %s",baseFile.getAbsolutePath()),e);
@@ -136,10 +85,9 @@ public class EPrescriptionL1Generator {
 
     public String WriteAllReturnBase64(){
         InitializeDocument();
-        WriteOrdination();
-        WriteRecipient();
-        WritePrescriptionId();
-        WriteAuthor();
+        for(PdfField field : Fields){
+            WriteField(field);
+        }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             pdfDocument.save(baos);

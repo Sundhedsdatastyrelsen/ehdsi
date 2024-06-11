@@ -5,6 +5,7 @@ import dk.nsp.epps.ncp.api.ClassCodeDto;
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
+import dk.nsp.epps.service.Utils;
 import dk.nsp.epps.service.exception.CountryAException;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.EPrescriptionL3Mapper;
@@ -58,8 +59,8 @@ public class EPrescriptionMapper {
             meta.setAuthor(model.getAuthor().getName().getFullName());
             meta.setTitle(model.getTitle());
             meta.setDescription(model.getIndicationText());
-            meta.setSize(model.GetSize());
-            meta.setHash(model.GetHash());
+            meta.setSize((long) cda.length());
+            meta.setHash(Utils.Md5Hash(cda));
             return meta;
 
         } catch (MapperException e) {

@@ -20,8 +20,4 @@ public class CountryAException extends RuntimeException {
     public CountryAException(HttpStatus httpStatus, Exception cause) {
         this(httpStatus, cause.getMessage(), cause);
     }
-
-    public HttpStatus getHttpStatus() {
-        return this.httpStatus;
-    }
 }

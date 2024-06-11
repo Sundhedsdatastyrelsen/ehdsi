@@ -13,7 +13,8 @@ public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws IOException {
         var model = EPrescriptionL3MapperTest.getModel();
-        var base64Pdf = EPrescriptionL1Generator.generate(model);
+        var l1Generator = new EPrescriptionL1Generator(model);
+        var base64Pdf = l1Generator.generate();
         Assertions.assertNotNull(base64Pdf);
 
         //Write test output files

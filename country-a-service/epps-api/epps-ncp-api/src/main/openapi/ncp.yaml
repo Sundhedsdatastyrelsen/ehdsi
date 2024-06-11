@@ -88,6 +88,7 @@ paths:
               allOf:
                 - $ref: '#/components/schemas/FindEprescriptionDocumentsRequest'
                 - $ref: '#/components/schemas/SoapHeader'
+              x-all-of-name: "FindEprescriptionDocumentsRequest"
       responses:
         200:
           description: ePrescription document metadata matching criteria.
