@@ -18,6 +18,8 @@ jobs:
       run: echo "TAG=$(date +%s)" >> "$GITHUB_ENV"
     - name: Build the Docker image
       run: docker build ./country-a-service/ --file ./country-a-service/epps-application/Dockerfile.build --tag epps:$TAG
+    - name: Create folder for exports
+      run: mkdir ./artifacts
     - name: Export the docker image
       run: docker image save -o ./artifacts/epps-$TAG.tar epps:$TAG
     - name: Upload a Build Artifact
