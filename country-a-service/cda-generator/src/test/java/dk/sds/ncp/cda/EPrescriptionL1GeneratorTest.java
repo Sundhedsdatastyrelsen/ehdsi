@@ -13,7 +13,8 @@ public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws IOException {
         var model = EPrescriptionL3MapperTest.getModel();
-        var l1Generator = new EPrescriptionL1Generator(model);
+        var pdfFields = EPrescriptionL1Mapper.Map(model);
+        var l1Generator = new EPrescriptionL1Generator(pdfFields);
         var base64Pdf = l1Generator.generate();
         Assertions.assertNotNull(base64Pdf);
 
@@ -26,5 +27,20 @@ public class EPrescriptionL1GeneratorTest {
             var bytes = Base64.getDecoder().decode(base64Pdf);
             fos.write(bytes);
         }
+    }
+
+    @Test
+    void sameFileDifferentGenerations() throws IOException {
+        var model = EPrescriptionL3MapperTest.getModel();
+        var pdfFields = EPrescriptionL1Mapper.Map(model);
+        var l1Generator = new EPrescriptionL1Generator(pdfFields);
+        var base64Pdf = l1Generator.generate();
+
+        var secondL1Generator = new EPrescriptionL1Generator(pdfFields);
+        var secondBase64Pdf = secondL1Generator.generate();
+
+        Assertions.assertNotNull(base64Pdf);
+        Assertions.assertNotNull(secondBase64Pdf);
+        Assertions.assertEquals(base64Pdf, secondBase64Pdf);
     }
 }

@@ -8,9 +8,9 @@ import java.util.function.Supplier;
 public class PdfField {
     private Integer xCoordinate;
     private Integer yCoordinate;
-    private Supplier<String> content;
+    private String[] content;
 
-    public PdfField(Integer xCoordinate, Integer yCoordinate, Supplier<String> content) {
+    public PdfField(Integer xCoordinate, Integer yCoordinate, String[] content) {
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
         this.content = content;
