@@ -30,7 +30,7 @@ public class EPrescriptionL1GeneratorTest {
     }
 
     @Test
-    void sameFileDifferentGenerations() throws IOException {
+    void sameFileDifferentGenerations() throws IOException, InterruptedException {
         var model = EPrescriptionL3MapperTest.getModel();
         var pdfFields = EPrescriptionL1Mapper.Map(model);
         var l1Generator = new EPrescriptionL1Generator(pdfFields);

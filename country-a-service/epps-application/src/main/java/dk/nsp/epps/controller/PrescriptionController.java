@@ -29,7 +29,7 @@ public class PrescriptionController {
     }
 
     @PostMapping(path = "/api/fetch-document/")
-    public List<DocumentAssociationForEPrescriptionDocumentsDto> fetchDocument(
+    public List<EpsosDocumentDto> fetchDocument(
         @Valid @RequestBody PostFetchDocumentRequestDto params
     ) throws JAXBException {
         var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());

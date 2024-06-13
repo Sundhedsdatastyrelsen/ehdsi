@@ -6,6 +6,7 @@ import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.Utils;
 import dk.nsp.epps.service.exception.CountryAException;
 import dk.sds.ncp.cda.*;
+import dk.sds.ncp.cda.model.DocumentLevel;
 import dk.sds.ncp.cda.model.EPrescriptionL3;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,14 +32,19 @@ public class EPrescriptionMapper {
             .toList();
     }
 
-    public List<DocumentAssociationForEPrescriptionDocumentsDto> mapResponse(
+    public List<EpsosDocumentDto> mapResponse(
         String patientId,
         PrescriptionFilter filter,
         GetPrescriptionResponseType src
     ) {
-        return filter.validPrescriptionIndexes(src.getPrescription())
-            .mapToObj(idx -> mapPrescription(patientId, src, idx))
-            .toList();
+        try {
+            var documentLevel = EPrescriptionDocumentIdMapper.ParseDocumentLevel(filter.documentId());
+            return filter.validPrescriptionIndexes(src.getPrescription())
+                .mapToObj(idx -> mapPrescription(patientId, src, idx, documentLevel))
+                .toList();
+        } catch (MapperException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
     }
 
     private DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
@@ -50,14 +56,14 @@ public class EPrescriptionMapper {
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var l3Meta = GenerateMeta(patientId, dataModel);
+            var l3Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.Level3DocumentId(dataModel.getPrescriptionId().getExtension()));
             l3Meta.setSize((long) cda.length());
             l3Meta.setHash(Utils.Md5Hash(cda));
 
             //Generate PDF to deliver metadata on it
             var pdfBase64 = new EPrescriptionL1Generator(EPrescriptionL1Mapper.Map(dataModel)).generate();
 
-            var l1Meta = GenerateMeta(patientId, dataModel);
+            var l1Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.Level1DocumentId(dataModel.getPrescriptionId().getExtension()));
             l1Meta.setSize((long) pdfBase64.length());
             l1Meta.setHash(Utils.Md5Hash(pdfBase64));
 
@@ -68,8 +74,8 @@ public class EPrescriptionMapper {
         }
     }
 
-    private EPrescriptionDocumentMetadataDto GenerateMeta(String patientId, EPrescriptionL3 model) {
-        var meta = new EPrescriptionDocumentMetadataDto(model.getPrescriptionId().getExtension()); //TODO  Should this be different for our L1 data?
+    private EPrescriptionDocumentMetadataDto GenerateMeta(String patientId, EPrescriptionL3 model, String documentId) {
+        var meta = new EPrescriptionDocumentMetadataDto(documentId);
         meta.setPatientId(patientId);
         meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
         meta.setRepositoryId(repositoryId);
@@ -79,18 +85,18 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private DocumentAssociationForEPrescriptionDocumentsDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
+    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, DocumentLevel documentLevel) {
         try {
             var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
-            var cda = EPrescriptionL3Generator.generate(model);
-            var level3Document = new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
+            if(DocumentLevel.LEVEL3.equals(documentLevel)) {
+                var cda = EPrescriptionL3Generator.generate(model);
+                return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
+            } else if (DocumentLevel.LEVEL1.equals(documentLevel)) {
+                var pdfBase64 = new EPrescriptionL1Generator(EPrescriptionL1Mapper.Map(model)).generate();
+                return new EpsosDocumentDto(patientId, pdfBase64, ClassCodeDto._57833_6);
+            }
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, String.format("Could not generate document of level %s",documentLevel));
 
-            var pdfBase64 = new EPrescriptionL1Generator(EPrescriptionL1Mapper.Map(model)).generate();
-            var level1Document = new EpsosDocumentDto(patientId, pdfBase64, ClassCodeDto._57833_6); //TODO Should this be the same ClassCode?
-
-
-
-            return new DocumentAssociationForEPrescriptionDocumentsDto(level3Document, level1Document);
         } catch (MapperException | TemplateException | IOException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }

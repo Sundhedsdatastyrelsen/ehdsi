@@ -59,7 +59,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentAssociationForEPrescriptionDocuments'
+                  $ref: '#/components/schemas/EpsosDocument'
         400:
           description: 400 BadRequest
           content:
@@ -338,18 +338,6 @@ components:
           type: string
         confidentiality:
           $ref: '#/components/schemas/ConfidentialityMetadata'
-
-    DocumentAssociationForEPrescriptionDocuments:
-      type: object
-      description: Document association for the data for an ePrescription document (both L1 and L3).
-      required:
-        - level1
-        - level3
-      properties:
-        level3:
-          $ref: '#/components/schemas/EpsosDocument'
-        level1:
-          $ref: '#/components/schemas/EpsosDocument'
 
     DocumentAssociationForEPrescriptionDocumentMetadata:
       type: object
