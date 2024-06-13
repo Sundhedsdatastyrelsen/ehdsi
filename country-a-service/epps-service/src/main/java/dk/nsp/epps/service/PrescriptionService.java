@@ -5,6 +5,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
+import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentsDto;
 import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
@@ -54,7 +56,7 @@ public class PrescriptionService {
         }
     }
 
-    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException, IOException, InterruptedException {
+    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException, IOException, InterruptedException {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
@@ -66,7 +68,7 @@ public class PrescriptionService {
         return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
     }
 
-    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter) throws JAXBException {
+    public List<DocumentAssociationForEPrescriptionDocumentsDto> getPrescriptions(String patientId, PrescriptionFilter filter) throws JAXBException {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
