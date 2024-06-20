@@ -4,7 +4,7 @@
 3AUHaur/htgl  aur/htgl                                           
 3AUMaur/ml    aur/ml                                             
 3BABMia. bakt.milliard bakterier                                 
-3BHSbeh.s‘t   behandlingss‘t                                     
+3BHSbeh.sï¿½t   behandlingssï¿½t                                     
 4BR breve     breve                                              
 4CK cmx2      cmx2                                               
 3CL celler    celler                                             
@@ -30,14 +30,14 @@
 3GL g/l       g/l                                                
 3GMLg/ml      g/ml                                               
 1H  time      timer                                              
-3HAEHAE       h‘magglutinationsenheder                           
+3HAEHAE       hï¿½magglutinationsenheder                           
 4HD htgl+dil. htgl+dil.                                          
-3HEPHEP       histamin‘kvivalenter, priktest                     
+3HEPHEP       histaminï¿½kvivalenter, priktest                     
 4HS htgl+solv htgl+solv.                                         
 4HT htgl      htgl                                               
 1I  minut     minut(ter)                                         
 4IF Infus.fl. Inf.flaske                                         
-3INSInit.s‘t  initials‘t                                         
+3INSInit.sï¿½t  initialsï¿½t                                         
 4IS IE+solv.  IE+solv.                                           
 3IU IE        internationale enheder                             
 4IU IE        internationale enheder                             
@@ -58,7 +58,7 @@
 1L  lang      lang tid, uspecificeret                            
 3LFMLf/ml     Lf/ml                                              
 4LT l         liter                                              
-1M  m†ned     m†ned(er)                                          
+1M  mï¿½ned     mï¿½ned(er)                                          
 3MB MBq       megabecquerel                                      
 3MBKMBq/kaps. megabecquerel/kapsel                               
 3MBMMBq/ml    megabecquerel/ml                                   
@@ -96,7 +96,7 @@
 3PFUpfu       plaque forming units                               
 4PK pakn.     pakninger                                          
 3PPMppm       parts pr. million                                  
-3PRSpr‘p.s‘t  pr‘parationss‘t                                    
+3PRSprï¿½p.sï¿½t  prï¿½parationssï¿½t                                    
 4PS poser     poser                                              
 3PV % w/v     % w/v                                              
 3PW % w/w     % w/w                                              
@@ -109,7 +109,7 @@
 3RGVmikg/htgl mikrogram/htgl                                     
 3RLMmikrol./mlmikroliter/ml                                      
 1S  sekund    sekund(er)                                         
-4SE s‘t       s‘t                                                
+4SE sï¿½t       sï¿½t                                                
 3SQ sq-E      standardized quantity units                        
 3SQMsq-E/ml   standardized quantity units/ml                     
 3SQVsq-E/htgl standardized quantity units/htgl                   
@@ -123,8 +123,8 @@
 4UN enh.      enheder                                            
 3VGMvkt.gen/mlvektorgenomer/ml                                   
 1W  uge       uger                                               
-3WV w/v       v‘gt/volumen                                       
+3WV w/v       vï¿½gt/volumen                                       
 1X  flere     flere opbevaringstider                             
 3XA a-XaIE    anti-XaIE                                          
 3XAMa-XaIE/ml anti-Xa international units/ml                     
-1Y  †r        †r                                                 
+1Y  ï¿½r        ï¿½r                                                 
