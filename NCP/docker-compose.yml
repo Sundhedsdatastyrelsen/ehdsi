@@ -58,6 +58,7 @@ services:
       timeout: 5s
       retries: 3
 
+
   #
   # Configuration synchronizer.
   # Watches OPENNCP_CONFIGURATION_FILE for changes and sends content to

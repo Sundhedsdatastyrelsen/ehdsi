@@ -1,2 +1,3 @@
 ﻿.idea/
 */temp/
+**/node_modules
