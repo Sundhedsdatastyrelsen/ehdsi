@@ -4,29 +4,41 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
-
+    
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build ./country-a-service/ --file ./country-a-service/epps-application/Dockerfile.build --tag epps:$GITHUB_SHA
-    - name: Create folder for exports
-      run: mkdir ./artifacts
-    - name: Export the docker image
-      run: docker image save -o ./artifacts/epps-$TAG.tar epps:$GITHUB_SHA
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.3.3
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3.2.0
       with:
-        # Artifact name
-        name: "epps"
-        # A file, directory or wildcard pattern that describes what to upload
-        path: ./artifacts/*
-        # The desired behavior if no files are found using the provided path.  
-        if-no-files-found: error 
-    
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+    - name: Build and push Docker image
+      id: push
+      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      with:
+        context: ./country-a-service/
+        file: ./country-a-service/epps-application/Dockerfile.build
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
