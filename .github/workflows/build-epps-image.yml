@@ -14,10 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set tag to epoch
-      run: echo "TAG=$(date +%s)" >> "$GITHUB_ENV"
     - name: Build the Docker image
-      run: docker build ./country-a-service/ --file ./country-a-service/epps-application/Dockerfile.build --tag epps:$TAG
+      run: docker build ./country-a-service/ --file ./country-a-service/epps-application/Dockerfile.build --tag epps:$GITHUB_SHA
     - name: Create folder for exports
       run: mkdir ./artifacts
     - name: Export the docker image
