@@ -19,7 +19,7 @@ jobs:
     - name: Create folder for exports
       run: mkdir ./artifacts
     - name: Export the docker image
-      run: docker image save -o ./artifacts/epps-$TAG.tar epps:$TAG
+      run: docker image save -o ./artifacts/epps-$TAG.tar epps:$GITHUB_SHA
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.3
       with:
