@@ -1,25 +1,10 @@
 FROM tomcat:9-jre11-temurin-jammy
 
-ARG openncp_version
-ARG openncp_repo="https://code.europa.eu/api/v4/projects/347/packages/maven/"
-
 RUN  apt-get update \
   && apt-get install -y wget \
   && apt-get install -y gettext \
   && apt-get install -y socat \
-  && rm -rf /var/lib/apt/lists/* 
-
-COPY ./common/bin/download_maven_artifact /usr/local/bin/download_maven_artifact
-
-# Download main artifact
-RUN download_maven_artifact \
-    eu.europa.ec.sante.ehdsi.openncp-protocol-terminators.ehealth-portal-backend \
-    ehealth-portal-backend \
-    ${openncp_version} \
-    war \
-    ${openncp_repo} \
-    webapps/ehealth-portal-backend.war
-
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/tomcat/webapps
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
