@@ -267,15 +267,12 @@ services:
   # OpenNCP Backend Portal (Node B)
   ehealth-portal-backend:
     build:
-      context: ./
-      dockerfile: ./ehealth-portal-backend/Dockerfile
-      args:
-        openncp_version: ${OPENNCP_VERSION}
+      context: ./ehealth-portal-backend
+      dockerfile: ./Dockerfile
       platforms:
         - "linux/amd64"
         - "linux/arm64"
     container_name: ehealth-portal-backend
-    env_file: ehealth.env
     ports:
       - "8092:8080"
       - "5443:8443"
