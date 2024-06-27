@@ -19,8 +19,8 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class EPrescriptionL1Generator {
     //Configuration
-    private final Integer FONT_SIZE = 14;
-    private final String TEMPLATE = "pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
+    private static final Integer FONT_SIZE = 14;
+    private static final String TEMPLATE = "pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
 
     //Internal tracking fields for the generator
     private final List<PdfField> Fields;
