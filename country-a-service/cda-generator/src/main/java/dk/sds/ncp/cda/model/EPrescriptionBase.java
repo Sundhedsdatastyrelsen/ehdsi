@@ -1,14 +1,17 @@
 package dk.sds.ncp.cda.model;
 
 import dk.sds.ncp.cda.Utils;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
 
 @SuperBuilder(toBuilder = true)
-@Data
+@Getter
+@ToString
+@EqualsAndHashCode
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public abstract class EPrescriptionBase {
     /**
      * Unique ID identifying the CDA document (not the prescription itself).

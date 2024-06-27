@@ -1,12 +1,12 @@
 package dk.sds.ncp.cda.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class PdfField {
-    private Integer xCoordinate;
-    private Integer yCoordinate;
-    private String[] content;
+    Integer xCoordinate;
+    Integer yCoordinate;
+    String[] content;
 
     public PdfField(Integer xCoordinate, Integer yCoordinate, String[] content) {
         this.xCoordinate = xCoordinate;
