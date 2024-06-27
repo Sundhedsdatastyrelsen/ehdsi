@@ -1,0 +1,15 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+  
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Compare API Definition files
+      run: cmp -s "./NCP/openncp-national-connector/src/main/resources/country-a-api.yml" "./country-a-service/epps-api/epps-ncp-api/src/main/openapi/ncp.yaml"
