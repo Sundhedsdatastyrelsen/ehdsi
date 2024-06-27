@@ -44,7 +44,7 @@ public class PrescriptionService {
 
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = toOffsetDateTime(prescription.getAuthorisationDateTime());
-            return (documentId == null || EPrescriptionDocumentIdMapper.PossibleIds(String.valueOf(prescription.getIdentifier())).contains(documentId))
+            return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier())).contains(documentId))
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }

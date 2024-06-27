@@ -37,7 +37,7 @@ public class EPrescriptionMapper {
         GetPrescriptionResponseType src
     ) {
         try {
-            var documentLevel = EPrescriptionDocumentIdMapper.ParseDocumentLevel(filter.documentId());
+            var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
             return filter.validPrescriptionIndexes(src.getPrescription())
                 .mapToObj(idx -> mapPrescription(patientId, src, idx, documentLevel))
                 .toList();
@@ -55,14 +55,14 @@ public class EPrescriptionMapper {
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var l3Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.Level3DocumentId(dataModel.getPrescriptionId().getExtension()));
+            var l3Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId().getExtension()));
             l3Meta.setSize((long) cda.length());
             l3Meta.setHash(Utils.Md5Hash(cda));
 
             //Generate PDF to deliver metadata on it
             var pdfBase64 = new EPrescriptionL1Generator(EPrescriptionL1Mapper.Map(dataModel)).generate();
 
-            var l1Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.Level1DocumentId(dataModel.getPrescriptionId().getExtension()));
+            var l1Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId().getExtension()));
             l1Meta.setSize((long) pdfBase64.length());
             l1Meta.setHash(Utils.Md5Hash(pdfBase64));
 

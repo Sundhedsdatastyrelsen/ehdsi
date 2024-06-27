@@ -36,10 +36,10 @@ public class EPrescriptionL1Generator {
     }
 
     public String generate() {
-        return WriteAllReturnBase64();
+        return writeAllReturnBase64();
     }
 
-    private void InitializeDocument(){
+    private void initializeDocument(){
         if(pdfDocument == null){
             try {
                 pdfDocument = Loader.loadPDF(baseFile);
@@ -52,7 +52,7 @@ public class EPrescriptionL1Generator {
         }
     }
 
-    private void CloseDocument(){
+    private void closeDocument(){
         if(pdfDocument != null){
             try {
                 pdfDocument.close();
@@ -63,34 +63,35 @@ public class EPrescriptionL1Generator {
     }
 
 
-    private EPrescriptionL1Generator WriteField(PdfField field) {
-        InitializeDocument();
+    private void writeField(PdfField field) {
+        if (pdfDocument == null || pdfPage == null) {
+            throw new RuntimeException("Error writing field, document not initialized");
+        }
         try {
-            WriteTextAtCoordinates(field.getContent(),field.getXCoordinate(),field.getYCoordinate(),pdfDocument,pdfPage);
+            writeTextAtCoordinates(field.getContent(),field.getXCoordinate(),field.getYCoordinate(),pdfDocument,pdfPage);
         } catch (IOException e) {
-            CloseDocument();
+            closeDocument();
             throw new RuntimeException(String.format("Error writing author to %s",baseFile.getAbsolutePath()),e);
         }
-        return this;
     }
 
-    public String WriteAllReturnBase64(){
-        InitializeDocument();
+    public String writeAllReturnBase64(){
+        initializeDocument();
         for(PdfField field : Fields){
-            WriteField(field);
+            writeField(field);
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             pdfDocument.save(baos);
         } catch (IOException e) {
-            CloseDocument();
+            closeDocument();
             throw new RuntimeException("Could not generate PDF document",e);
         }
-        CloseDocument();
+        closeDocument();
         return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
 
-    private void WriteTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
+    private void writeTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
         // For each line in the array, we print a new line, shifted one fontsize down
         for ( int lineNo = 0; lineNo < Text.length ; lineNo++) {
             PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage, PDPageContentStream.AppendMode.APPEND, true);
