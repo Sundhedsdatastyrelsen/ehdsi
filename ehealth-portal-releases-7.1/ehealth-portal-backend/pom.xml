@@ -60,14 +60,6 @@
             <url>https://code.europa.eu/api/v4/projects/347/packages/maven</url>
         </repository>
         <repository>
-            <id>CITnet-releases</id>
-            <url>https://citnet.tech.ec.europa.eu/CITnet/nexus/repository/sanco/</url>
-        </repository>
-        <repository>
-            <id>CITnet-snapshots</id>
-            <url>https://citnet.tech.ec.europa.eu/CITnet/nexus/repository/sanco-snapshots/</url>
-        </repository>
-        <repository>
             <id>cef-digital-releases</id>
             <url>https://ec.europa.eu/cefdigital/artifact/content/repositories/eHealth/</url>
         </repository>
@@ -86,6 +78,14 @@
         <repository>
             <id>cef-digital-third-party</id>
             <url>https://ec.europa.eu/cefdigital/artifact/content/repositories/ehealth-third-party/</url>
+        </repository>
+        <repository>
+            <id>CITnet-releases</id>
+            <url>https://citnet.tech.ec.europa.eu/CITnet/nexus/repository/sanco/</url>
+        </repository>
+        <repository>
+            <id>CITnet-snapshots</id>
+            <url>https://citnet.tech.ec.europa.eu/CITnet/nexus/repository/sanco-snapshots/</url>
         </repository>
     </repositories>
 
