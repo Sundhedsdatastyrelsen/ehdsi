@@ -1,9 +1,6 @@
 package dk.sds.ncp.cda;
 
-import dk.sds.ncp.cda.model.EPrescriptionL3;
 import dk.sds.ncp.cda.model.PdfField;
-import lombok.Getter;
-import lombok.With;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;

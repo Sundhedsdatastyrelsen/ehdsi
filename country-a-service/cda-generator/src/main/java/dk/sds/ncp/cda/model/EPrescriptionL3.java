@@ -1,14 +1,10 @@
 package dk.sds.ncp.cda.model;
 
-import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.Utils;
-import freemarker.template.TemplateException;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import lombok.experimental.SuperBuilder;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)

@@ -2,8 +2,6 @@ package dk.sds.ncp.cda.model;
 
 import lombok.Data;
 
-import java.util.function.Supplier;
-
 @Data
 public class PdfField {
     private Integer xCoordinate;

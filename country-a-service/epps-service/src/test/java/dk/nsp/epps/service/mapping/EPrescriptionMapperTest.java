@@ -11,7 +11,7 @@ public class EPrescriptionMapperTest {
     private static EPrescriptionMapper mapper;
 
     @BeforeAll
-    public static void setup() throws Exception {
+    public static void setup() {
         mapper = new EPrescriptionMapper("repoid");
     }
 

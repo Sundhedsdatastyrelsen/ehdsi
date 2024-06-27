@@ -3,9 +3,6 @@ package dk.nsp.epps.service;
 import lombok.SneakyThrows;
 
 import java.security.MessageDigest;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.Locale;
 
 public class Utils {
         //SneakyThrows is accepted, since the MD5 algorithm is assumed to always be present

@@ -2,12 +2,9 @@ package dk.sds.ncp.cda;
 
 import dk.nsp.epps.test.FmkResponseStorage;
 import dk.sds.ncp.cda.model.EPrescriptionL3;
-import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 class EPrescriptionL3MapperTest {
     static EPrescriptionL3 getModel() {
@@ -23,7 +20,7 @@ class EPrescriptionL3MapperTest {
     }
 
     @Test
-    void model() throws JAXBException {
+    void model()  {
            Assertions.assertNotNull(getModel());
     }
 
