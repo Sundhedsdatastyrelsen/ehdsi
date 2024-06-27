@@ -21,7 +21,6 @@ build/
 **/.springBeans
 
 # IntelliJ
-.idea/
 *.iml
 *.iws
 .attach_pid*
