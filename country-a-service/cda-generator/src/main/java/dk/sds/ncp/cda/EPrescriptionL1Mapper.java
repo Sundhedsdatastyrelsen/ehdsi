@@ -5,7 +5,6 @@ import dk.sds.ncp.cda.model.*;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class EPrescriptionL1Mapper {
@@ -16,48 +15,48 @@ public class EPrescriptionL1Mapper {
      * @return A list of PdfField objects, consisting of Coordinates and an array of strings intended as seperate lines for each string
      */
     public static List<PdfField> Map(EPrescriptionL3 dataModel) {
-        return Arrays.asList(
-            new PdfField(50, 445, GetProductLines(dataModel.getProduct())),
-            new PdfField(50, 610, GetPatientLines(dataModel.getPatient())),
-            new PdfField(50, 710, GetAuthorLines((dataModel.getAuthor()))),
+        return List.of(
+            new PdfField(50, 445, productLines(dataModel.getProduct())),
+            new PdfField(50, 610, patientLines(dataModel.getPatient())),
+            new PdfField(50, 710, authorLines((dataModel.getAuthor()))),
             new PdfField(390, 650, new String[]{String.format("ID: %s", dataModel.getPrescriptionId().getExtension())}),
-            new PdfField(50, 185, GetDateLine(dataModel.getEffectiveTimeOffsetDateTime()))
+            new PdfField(50, 185, dateLines(dataModel.getEffectiveTimeOffsetDateTime()))
         );
     }
 
-    private static String[] GetProductLines(Product product) {
+    private static String[] productLines(Product product) {
         return new String[]{product.getName(), product.getDescription()};
     }
 
-    private static String[] GetPatientLines(Patient patient) {
+    private static String[] patientLines(Patient patient) {
         List<String> patientLines = new ArrayList<String>();
-        AddToListIfNotNullOrEmpty(patientLines, patient.getName().getFullName());
+        addToListIfNotNullOrEmpty(patientLines, patient.getName().getFullName());
         for (String addressLine : patient.getAddress().getStreetAddressLines()) {
-            AddToListIfNotNullOrEmpty(patientLines, addressLine);
+            addToListIfNotNullOrEmpty(patientLines, addressLine);
         }
-        AddToListIfNotNullOrEmpty(patientLines, ConstructPostalCityLine(patient.getAddress().getPostalCode(), patient.getAddress().getCity()));
-        AddToListIfNotNullOrEmpty(patientLines, patient.getAddress().getCountryCode());
+        addToListIfNotNullOrEmpty(patientLines, constructPostalCityLine(patient.getAddress().getPostalCode(), patient.getAddress().getCity()));
+        addToListIfNotNullOrEmpty(patientLines, patient.getAddress().getCountryCode());
         return patientLines.toArray(new String[0]);
     }
 
-    private static String[] GetAuthorLines(Author author) {
+    private static String[] authorLines(Author author) {
         List<String> authorLines = new ArrayList<String>();
-        AddToListIfNotNullOrEmpty(authorLines, author.getName().getFullName());
-        AddToListIfNotNullOrEmpty(authorLines, author.getOrganization().getName());
+        addToListIfNotNullOrEmpty(authorLines, author.getName().getFullName());
+        addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getName());
         for (String addressLine : author.getOrganization().getAddress().getStreetAddressLines()) {
-            AddToListIfNotNullOrEmpty(authorLines, addressLine);
+            addToListIfNotNullOrEmpty(authorLines, addressLine);
         }
-        AddToListIfNotNullOrEmpty(authorLines, ConstructPostalCityLine(author.getOrganization().getAddress().getPostalCode(), author.getOrganization().getAddress().getCity()));
-        AddToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
+        addToListIfNotNullOrEmpty(authorLines, constructPostalCityLine(author.getOrganization().getAddress().getPostalCode(), author.getOrganization().getAddress().getCity()));
+        addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
         return authorLines.toArray(new String[0]);
     }
 
-    private static String[] GetDateLine(OffsetDateTime dateTime) {
+    private static String[] dateLines(OffsetDateTime dateTime) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return new String[]{fmt.format(dateTime)};
     }
 
-    private static String ConstructPostalCityLine(String PostalCode, String CityName) {
+    private static String constructPostalCityLine(String PostalCode, String CityName) {
         var finalLine = "";
         if (PostalCode != null && !PostalCode.isEmpty()) {
             finalLine += PostalCode + " ";
@@ -68,11 +67,9 @@ public class EPrescriptionL1Mapper {
         return finalLine.trim();
     }
 
-    private static void AddToListIfNotNullOrEmpty(List<String> list, String value) {
+    private static void addToListIfNotNullOrEmpty(List<String> list, String value) {
         if (value != null && !value.isEmpty()) {
             list.add(value);
         }
     }
-
-
 }
