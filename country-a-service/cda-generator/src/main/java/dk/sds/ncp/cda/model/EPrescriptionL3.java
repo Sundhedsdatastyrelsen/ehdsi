@@ -33,19 +33,6 @@ public class EPrescriptionL3 extends EPrescriptionBase{
     @NonNull Product product;
     @NonNull Long packageQuantity;
     @NonNull Boolean substitutionAllowed;
-    @NonFinal String cda;
-
-    public String GetCda(){
-        if(cda == null){
-            try {
-                cda = EPrescriptionL3Generator.generate(this);
-            } catch (IOException | TemplateException e) {
-                throw new RuntimeException(String.format("Could not generate CDA for L3 EPrescription %s",this.documentId.getExtension()),e);
-            }
-        }
-        return cda;
-    }
-
 
     public String getSignatureTime() {
         return Utils.cdaDateTime(signatureTime);
