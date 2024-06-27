@@ -35,8 +35,8 @@ public class EPrescriptionL1Generator {
         Fields = fields;
     }
 
-    public String generate() {
-        return writeAllReturnBase64();
+    public byte[] generate() {
+        return writeAll();
     }
 
     private void initializeDocument() {
@@ -75,7 +75,7 @@ public class EPrescriptionL1Generator {
         }
     }
 
-    public String writeAllReturnBase64() {
+    public byte[] writeAll() {
         initializeDocument();
         for (PdfField field : Fields) {
             writeField(field);
@@ -88,7 +88,7 @@ public class EPrescriptionL1Generator {
             throw new RuntimeException("Could not generate PDF document", e);
         }
         closeDocument();
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
+        return baos.toByteArray();
     }
 
     private void writeTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {

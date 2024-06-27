@@ -14,8 +14,8 @@ public class EPrescriptionL1GeneratorTest {
         var model = EPrescriptionL3MapperTest.getModel();
         var pdfFields = EPrescriptionL1Mapper.Map(model);
         var l1Generator = new EPrescriptionL1Generator(pdfFields);
-        var base64Pdf = l1Generator.generate();
-        Assertions.assertNotNull(base64Pdf);
+        var pdf = l1Generator.generate();
+        Assertions.assertNotNull(pdf);
 
         //Write test output files
         File directory = new File("temp/");
@@ -23,8 +23,7 @@ public class EPrescriptionL1GeneratorTest {
             directory.mkdirs();
         }
         try (FileOutputStream fos = new FileOutputStream("temp/pdflevel1-test.pdf")){
-            var bytes = Base64.getDecoder().decode(base64Pdf);
-            fos.write(bytes);
+            fos.write(pdf);
         }
     }
 
@@ -33,13 +32,13 @@ public class EPrescriptionL1GeneratorTest {
         var model = EPrescriptionL3MapperTest.getModel();
         var pdfFields = EPrescriptionL1Mapper.Map(model);
         var l1Generator = new EPrescriptionL1Generator(pdfFields);
-        var base64Pdf = l1Generator.generate();
+        var pdf = l1Generator.generate();
 
         var secondL1Generator = new EPrescriptionL1Generator(pdfFields);
-        var secondBase64Pdf = secondL1Generator.generate();
+        var secondPdf = secondL1Generator.generate();
 
-        Assertions.assertNotNull(base64Pdf);
-        Assertions.assertNotNull(secondBase64Pdf);
-        Assertions.assertEquals(base64Pdf, secondBase64Pdf);
+        Assertions.assertNotNull(pdf);
+        Assertions.assertNotNull(secondPdf);
+        Assertions.assertArrayEquals(pdf, secondPdf);
     }
 }
