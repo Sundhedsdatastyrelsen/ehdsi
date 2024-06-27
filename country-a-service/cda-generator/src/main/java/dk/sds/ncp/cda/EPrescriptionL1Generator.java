@@ -29,7 +29,7 @@ public class EPrescriptionL1Generator {
         try {
             baseFile = new File(Objects.requireNonNull(EPrescriptionL1Generator.class.getResource("/" + TEMPLATE)).getFile());
         } catch (NullPointerException e) {
-            throw new RuntimeException("Could not find resource: "+ TEMPLATE);
+            throw new RuntimeException("Could not find resource: " + TEMPLATE);
         }
 
         Fields = fields;
@@ -39,21 +39,21 @@ public class EPrescriptionL1Generator {
         return writeAllReturnBase64();
     }
 
-    private void initializeDocument(){
-        if(pdfDocument == null){
+    private void initializeDocument() {
+        if (pdfDocument == null) {
             try {
                 pdfDocument = Loader.loadPDF(baseFile);
             } catch (IOException e) {
-                throw new RuntimeException(String.format("Malformed of missing PDF file in %s",baseFile.getAbsolutePath()),e);
+                throw new RuntimeException(String.format("Malformed of missing PDF file in %s", baseFile.getAbsolutePath()), e);
             }
         }
-        if(pdfPage == null){
+        if (pdfPage == null) {
             pdfPage = pdfDocument.getPage(0);
         }
     }
 
-    private void closeDocument(){
-        if(pdfDocument != null){
+    private void closeDocument() {
+        if (pdfDocument != null) {
             try {
                 pdfDocument.close();
             } catch (IOException e) {
@@ -68,16 +68,16 @@ public class EPrescriptionL1Generator {
             throw new RuntimeException("Error writing field, document not initialized");
         }
         try {
-            writeTextAtCoordinates(field.getContent(),field.getXCoordinate(),field.getYCoordinate(),pdfDocument,pdfPage);
+            writeTextAtCoordinates(field.getContent(), field.getXCoordinate(), field.getYCoordinate(), pdfDocument, pdfPage);
         } catch (IOException e) {
             closeDocument();
-            throw new RuntimeException(String.format("Error writing author to %s",baseFile.getAbsolutePath()),e);
+            throw new RuntimeException(String.format("Error writing author to %s", baseFile.getAbsolutePath()), e);
         }
     }
 
-    public String writeAllReturnBase64(){
+    public String writeAllReturnBase64() {
         initializeDocument();
-        for(PdfField field : Fields){
+        for (PdfField field : Fields) {
             writeField(field);
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -85,7 +85,7 @@ public class EPrescriptionL1Generator {
             pdfDocument.save(baos);
         } catch (IOException e) {
             closeDocument();
-            throw new RuntimeException("Could not generate PDF document",e);
+            throw new RuntimeException("Could not generate PDF document", e);
         }
         closeDocument();
         return Base64.getEncoder().encodeToString(baos.toByteArray());
@@ -93,7 +93,7 @@ public class EPrescriptionL1Generator {
 
     private void writeTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
         // For each line in the array, we print a new line, shifted one fontsize down
-        for ( int lineNo = 0; lineNo < Text.length ; lineNo++) {
+        for (int lineNo = 0; lineNo < Text.length; lineNo++) {
             PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage, PDPageContentStream.AppendMode.APPEND, true);
             contentStream.beginText();
 
@@ -106,9 +106,4 @@ public class EPrescriptionL1Generator {
             contentStream.close();
         }
     }
-
-
-
-
-
 }
