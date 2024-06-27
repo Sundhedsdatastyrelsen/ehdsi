@@ -17,9 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -46,7 +44,7 @@ public class PrescriptionService {
 
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = toOffsetDateTime(prescription.getAuthorisationDateTime());
-            return (documentId == null || Arrays.asList(EPrescriptionDocumentIdMapper.PossibleIds(String.valueOf(prescription.getIdentifier()))).contains(documentId))
+            return (documentId == null || EPrescriptionDocumentIdMapper.PossibleIds(String.valueOf(prescription.getIdentifier())).contains(documentId))
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }

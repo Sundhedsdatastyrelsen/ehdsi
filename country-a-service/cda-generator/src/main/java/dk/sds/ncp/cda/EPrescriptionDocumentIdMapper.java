@@ -3,6 +3,10 @@ package dk.sds.ncp.cda;
 
 import dk.sds.ncp.cda.model.DocumentLevel;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /*
 A utility class for translating between internal document IDs, to externally facing L1 and L3 document IDs
  */
@@ -19,8 +23,8 @@ public class EPrescriptionDocumentIdMapper {
         return String.format("%s%s", documentId, level3Suffix); //Append "L3" for L3 documents
     }
 
-    public static String[] PossibleIds(String documentId) {
-        return new String[]{Level1DocumentId(documentId), Level3DocumentId(documentId)};
+    public static Set<String> PossibleIds(String documentId) {
+        return new HashSet<>(Arrays.asList(Level1DocumentId(documentId), Level3DocumentId(documentId)));
     }
 
     public static DocumentLevel ParseDocumentLevel(String documentId) throws MapperException {
