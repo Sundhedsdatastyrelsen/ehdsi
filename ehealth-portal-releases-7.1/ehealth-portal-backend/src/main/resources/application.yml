@@ -1,0 +1,15 @@
+logging:
+  level:
+    org.apache.axis2: info
+    com.zaxxer.hikari: warn
+    eu.europa.ec.sante.ehdsi: info
+    org.hibernate: warn
+spring:
+  jackson:
+    default-property-inclusion: non_empty
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true

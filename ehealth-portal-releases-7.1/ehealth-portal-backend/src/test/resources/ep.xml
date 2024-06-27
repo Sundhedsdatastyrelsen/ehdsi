@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" classCode="DOCCLIN" moodCode="EVN">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3" />
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.1" />
+    <id extension="3000" root="2.16.17.710.850.1000.990.1" />
+    <code code="57833-6" codeSystem="2.16.840.1.113883.6.1" displayName="Prescription for medication" />
+    <title>ePrescription (eHDSI/Finland)</title>
+    <effectiveTime value="20191122143500+0200" />
+    <confidentialityCode code="N" displayName="normal" codeSystem="2.16.840.1.113883.5.25" />
+    <languageCode code="fi-FI" />
+    <setId root="1.2.246.10.11535721.93.2009.15721892033029812" />
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="1-2345-W6" root="2.16.17.710.850.1000.990.1.1000" />
+            <addr>
+                <country>FI</country>
+            </addr>
+            <telecom nullFlavor="NI" />
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given qualifier="CL">Katriina</given>
+                    <given>Kastehelmi</given>
+                    <family>Kukko</family>
+                </name>
+                <administrativeGenderCode code="F" displayName="Female" codeSystem="2.16.840.1.113883.5.1" />
+                <birthTime value="20000101" />
+                <languageCommunication nullFlavor="NI" />
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author>
+        <functionCode code="221" displayName="Medical Doctors" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" />
+        <time value="20180831162454+0200" />
+        <assignedAuthor classCode="ASSIGNED">
+            <id extension="031807" root="1.2.246.537.25" />
+            <id extension="03498700164" root="1.2.246.537.26" />
+            <addr nullFlavor="NI" />
+            <telecom nullFlavor="UNK" />
+            <assignedPerson classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given>Vilhelmiina</given>
+                    <given>Adelmiina</given>
+                    <family>Heinänenä</family>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.246.10.10694480.10.1" />
+                <name>Vesanto</name>
+                <telecom use="WP" value="tel:+35850123123123123" />
+                <addr>
+                    <streetAddressLine>Hatanpäänvaltatie 1</streetAddressLine>
+                    <postalCode>12340</postalCode>
+                    <city>Testikaupunki</city>
+                    <state nullFlavor="UNK" />
+                    <country>FI</country>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+    <custodian>
+        <assignedCustodian>
+            <representedCustodianOrganization>
+                <id root="1.2.246.10.2462460.19.1" />
+                <name>Kansaneläkelaitos</name>
+                <telecom nullFlavor="NI" />
+                <addr>
+                    <postBox>PL 450</postBox>
+                    <postalCode>00101</postalCode>
+                    <city>Helsinki</city>
+                    <state nullFlavor="UNK" />
+                    <country>FI</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="20180831162454+0200" />
+        <signatureCode code="S" />
+        <assignedEntity classCode="ASSIGNED">
+            <id root="1.2.246.10.2462460.19.1" />
+            <addr nullFlavor="NI" />
+            <telecom nullFlavor="NI" />
+            <assignedPerson nullFlavor="NI" />
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.246.10.2462460.19.1" />
+                <name>Kansaneläkelaitos</name>
+                <telecom nullFlavor="NI" />
+                <addr use="PST">
+                    <postBox>P.O.B. 450</postBox>
+                    <city>Helsinki</city>
+                    <postalCode>00101</postalCode>
+                    <state nullFlavor="UNK" />
+                    <country>FI</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument>
+            <id root="1.2.246.10.11535721.93.2009.15721892033029812" />
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody>
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1" />
+                    <id extension="3000.1" root="2.16.17.710.850.1000.990.1" />
+                    <code code="57828-6" displayName="Prescriptions" codeSystem="2.16.840.1.113883.6.1" />
+                    <title>Prescriptions</title>
+                    <text ID="eP_as_text">
+                        <paragraph>
+                            <content>LANTUS</content>
+                        </paragraph>
+                        <paragraph>
+                            <content>Käytetään tarvittaessa</content>
+                        </paragraph>
+                        <paragraph>
+                            <content>LANTUS</content>
+                        </paragraph>
+                        <paragraph>
+                            <content ID="FINSTRUCT">Tähän viesti apteekille Permanent medication.</content>
+                        </paragraph>
+                        <paragraph>
+                            <content ID="PINSTRUCT">Diabeteksen hoitoon Käytetään tarvittaessa</content>
+                        </paragraph>
+                        <paragraph>
+                            <content ID="nameAsText">LANTUS</content>
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <substanceAdministration classCode="SBADM" moodCode="INT">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2" />
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7" />
+                            <templateId root="2.16.840.1.113883.10.20.1.24" />
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1" />
+                            <id extension="3000.1.1" root="2.16.17.710.850.1000.990.1" />
+                            <text>
+                                <reference value="#eP_as_text" />
+                            </text>
+                            <statusCode code="active" />
+                            <effectiveTime xsi:type="IVL_TS">
+                                <low value="20220706" />
+                                <high value="20220713" />
+                            </effectiveTime>
+                            <effectiveTime xsi:type="PIVL_TS" institutionSpecified="true">
+                                <period value="12" unit="h" />
+                            </effectiveTime>
+                            <routeCode code="20066000" displayName="Subcutaneous use" codeSystem="0.4.0.127.0.16.1.1.2.1" />
+                            <doseQuantity>
+                                <low value="3" unit="mL/d" />
+                                <high value="3" unit="mL/d" />
+                            </doseQuantity>
+                            <consumable typeCode="CSM">
+                                <manufacturedProduct>
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29" />
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30" />
+                                        <code codeSystem="1.2.3" code="MPID_LantusSolostar" displayName="MPID Lantus Solostar" />
+                                        <name>Lantus SoloStar</name>
+                                        <pharm:formCode code="50060300" displayName="Solution For injection in pre-filled syringe" codeSystem="0.4.0.127.0.16.1.1.2.1" />
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="mL" value="3" />
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:formCode code="30051000" displayName="Pre-filled syringe" codeSystem="0.4.0.127.0.16.1.1.2.1" />
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity xsi:type="PQ" unit="1" value="5" />
+                                                    <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                        <pharm:code codeSystem="1.2.3" code="PCID_Lantus_Solostar" displayName="PC ID Lantus Solostar" />
+                                                        <pharm:formCode code="30009000" displayName="Box" codeSystem="0.4.0.127.0.16.1.1.2.1" />
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GEN">
+                                            <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="PhPID_Identifier" codeSystem="1.999.999" displayName="Pharmaceutical Product Identifier" codeSystemName="PhPID Level 1"/>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator  xsi:type="PQ" value="100" unit="1" />
+                                                <denominator xsi:type="PQ" value="1" unit="mL" />
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="A10AE04" displayName="insulin glargine" codeSystem="2.16.840.1.113883.6.73"/>
+                                                <pharm:name>insulin glargine</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                    </manufacturedMaterial>
+                                </manufacturedProduct>
+                            </consumable>
+                            <entryRelationship typeCode="COMP">
+                                <supply classCode="SPLY" moodCode="RQO">
+                                    <independentInd value="false" />
+                                    <quantity unit="1" value="5" />
+                                </supply>
+                            </entryRelationship>
+                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" />
+                                    <value code="N" codeSystem="2.16.840.1.113883.5.1070" xsi:type="CE" />
+                                </observation>
+                            </entryRelationship>
+                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                <act classCode="ACT" moodCode="INT">
+                                    <templateId root="2.16.840.1.113883.10.20.1.43" />
+                                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3.1" />
+                                    <code code="FINSTRUCT" displayName="FINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode" />
+                                    <text>
+                                        <reference value="#FINSTRUCT" />
+                                    </text>
+                                    <statusCode code="completed" />
+                                </act>
+                            </entryRelationship>
+                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                <act classCode="ACT" moodCode="INT">
+                                    <templateId root="2.16.840.1.113883.10.20.1.49" />
+                                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3" />
+                                    <code code="PINSTRUCT" displayName="PINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode" />
+                                    <text>
+                                        <reference value="#PINSTRUCT" />
+                                    </text>
+                                    <statusCode code="completed" />
+                                </act>
+                            </entryRelationship>
+                        </substanceAdministration>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>
