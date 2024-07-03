@@ -20,26 +20,12 @@ import tr.com.srdc.epsos.util.XMLUtil;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DocumentSearch implements NationalConnectorInterface, DocumentSearchInterface {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
     private Element soapHeader;
-
-    static Long parseLong(String s) {
-        return s == null ? null : Long.parseLong(s);
-    }
-
-    static OffsetDateTime parseOffsetDateTime(String s) {
-        return s == null ? null : OffsetDateTime.parse(s);
-    }
-
-    static Date offsetDateTimeToDate(OffsetDateTime d) {
-        return d == null ? null : Date.from(d.toInstant());
-    }
 
     static EPSOSDocument getDocumentFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
         try {
@@ -48,9 +34,9 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                     .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
                     .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
                     .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
-                    .maximumSize(parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
-                    .createdBefore(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
-                    .createdAfter(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                    .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                    .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                    .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
                     .soapHeader(Utils.elementToString(soapHeader));
 
             final var docs = CountryAService.api().postFetchDocument(request);
@@ -99,9 +85,9 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                     .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
                     .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
                     .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
-                    .maximumSize(parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
-                    .createdBefore(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
-                    .createdAfter(parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                    .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                    .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                    .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
                     .soapHeader(Utils.elementToString(soapHeader));
             final var result = CountryAService.api().postFindEPrescriptionDocuments(request);
             logger.info("Got well-formed response from Country A service.");
@@ -110,7 +96,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                             DocumentFactory.createEPDocumentXML(
                                     md.getLevel3().getId(),
                                     md.getLevel3().getPatientId(),
-                                    offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
+                                    Utils.offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
                                     md.getLevel3().getRepositoryId(),
                                     md.getLevel3().getTitle(),
                                     md.getLevel3().getAuthor(),
@@ -121,7 +107,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                             DocumentFactory.createEPDocumentPDF(
                                     md.getLevel1().getId(),
                                     md.getLevel1().getPatientId(),
-                                    offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
+                                    Utils.offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
                                     md.getLevel1().getRepositoryId(),
                                     md.getLevel1().getTitle(),
                                     md.getLevel1().getAuthor(),

@@ -1,5 +1,6 @@
 package dk.openncp.nationalconnector;
 
+import dk.nsp.epps.api.model.ClassCode;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.OutputKeys;
@@ -9,6 +10,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 
 public class Utils {
     public static String elementToString(Element xml) {
@@ -22,5 +26,32 @@ public class Utils {
         } catch (TransformerException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ClassCode classCode(eu.europa.ec.sante.ehdsi.constant.ClassCode classCode) {
+        switch (classCode) {
+            case EP_CLASSCODE:
+                return ClassCode._57833_6;
+            case ED_CLASSCODE:
+                return ClassCode._60593_1;
+            default:
+                throw new IllegalArgumentException("Classcode not supported: " + classCode.getCode());
+        }
+    }
+
+    public static Date offsetDateTimeToDate(OffsetDateTime d) {
+        return d == null ? null : Date.from(d.toInstant());
+    }
+
+    public static OffsetDateTime dateToUtcOffsetDateTime(Date d) {
+        return d == null ? null : d.toInstant().atOffset(ZoneOffset.UTC);
+    }
+
+    public static Long parseLong(String s) {
+        return s == null ? null : Long.parseLong(s);
+    }
+
+    public static OffsetDateTime parseOffsetDateTime(String s) {
+        return s == null ? null : OffsetDateTime.parse(s);
     }
 }
