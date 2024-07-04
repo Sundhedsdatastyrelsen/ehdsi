@@ -316,3 +316,22 @@ services:
       - tls_truststore_password
     dns:
       - 8.8.8.8
+
+  # # OpenNCP Frontend Portal (Node B)
+  # # Portal Frontend
+  ehealth-portal-frontend:
+    container_name: ehealth-portal-frontend
+    build:
+      context: ./ehealth-portal-frontend
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
+      dockerfile: Dockerfile
+    ports:
+      - "8093:8080"
+    depends_on:
+      - ehealth-portal-backend
+    volumes:
+      - ./logs/ehealth-portal-frontend:/usr/local/tomcat/logs
+    networks:
+      - ncp
