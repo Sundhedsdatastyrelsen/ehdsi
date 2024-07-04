@@ -40,9 +40,8 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
         }
     }
 
-    @Override
-    public void cancelDispensation(DiscardDispenseDetails discardDispenseDetails, EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
-        var ddd = new dk.nsp.epps.api.model.DiscardDispenseDetails()
+    private static dk.nsp.epps.api.model.DiscardDispenseDetails apiModel(DiscardDispenseDetails discardDispenseDetails) {
+        return new dk.nsp.epps.api.model.DiscardDispenseDetails()
                 .discardId(discardDispenseDetails.getDiscardId())
                 .dispenseId(discardDispenseDetails.getDispenseId())
                 .discardDate(Utils.dateToUtcOffsetDateTime(discardDispenseDetails.getDiscardDate()))
@@ -52,17 +51,22 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
                 .healthCareProviderFacility(discardDispenseDetails.getHealthCareProviderFacility())
                 .healthCareProviderOrganizationId(discardDispenseDetails.getHealthCareProviderOrganizationId())
                 .healthCareProviderOrganization(discardDispenseDetails.getHealthCareProviderOrganization());
+    }
 
-        var dtd = new EpsosDocument()
+    private static EpsosDocument apiModel(EPSOSDocument epsosDocument) {
+        return new EpsosDocument()
                 .classCode(Utils.classCode(epsosDocument.getClassCode()))
                 .patientId(epsosDocument.getPatientId())
                 .document(Utils.elementToString(epsosDocument.getDocument().getDocumentElement()));
+    }
 
+    @Override
+    public void cancelDispensation(DiscardDispenseDetails discardDispenseDetails, EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
         try {
             CountryAService.api().disardDispensation(new DisardDispensationRequest()
                     .soapHeader(Utils.elementToString(soapHeader))
-                    .disardDispenseDetails(ddd)
-                    .dispensationToDiscard(dtd));
+                    .disardDispenseDetails(apiModel(discardDispenseDetails))
+                    .dispensationToDiscard(apiModel(epsosDocument)));
         } catch (ApiException e) {
             throw new NIException(OpenNCPErrorCode.ERROR_ED_DISCARD_FAILED, "Dispensation discard failed.");
         }
