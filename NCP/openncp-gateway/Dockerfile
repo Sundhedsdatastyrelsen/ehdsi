@@ -41,15 +41,15 @@ RUN download_maven_artifact \
     ${openncp_version} \
     war \
     ${openncp_repo} \
-    webapps/TRC-STS.war && \
-    download_maven_artifact \
+    webapps/TRC-STS.war
+RUN download_maven_artifact \
     eu.europa.ec.sante.ehdsi.openncp-openatna \
     openatna-web \
     ${openncp_version} \
     war \
     ${openncp_repo} \
-    webapps/openatna-web.war && \
-    download_maven_artifact \
+    webapps/openatna-web.war
+RUN download_maven_artifact \
     eu.europa.ec.sante.ehdsi \
     openncp-gateway-backend \
     ${openncp_version} \

@@ -7,9 +7,6 @@ RUN  apt-get update \
   && apt-get install -y maven \
   && rm -rf /var/lib/apt/lists/*
 
-COPY . .
-RUN mvn compile
-
 WORKDIR /usr/local/tomcat/webapps
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 
