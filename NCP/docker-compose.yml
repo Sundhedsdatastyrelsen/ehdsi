@@ -277,8 +277,8 @@ services:
       - "8092:8080"
       - "5443:8443"
     environment:
-      TLS_KEYSTORE_PWD: /run/secrets/tls_keystore_password
-      TLS_TRUSTSTORE_PWD: /run/secrets/tls_truststore_password
+      TLS_KEYSTORE_PWD_FILE: /run/secrets/tls_keystore_password
+      TLS_TRUSTSTORE_PWD_FILE: /run/secrets/tls_truststore_password
       TLS_KEYSTORE_PATH: /opt/openncp-configuration/cert/test-keystore.jks
       TLS_TRUSTSTORE_PATH: /opt/openncp-configuration/cert/test-truststore.jks
       TLS_KEY_ALIAS: tls
@@ -287,16 +287,16 @@ services:
       DB_ACTIVE_PROFILE: mysql # Unsure of the purpose of this variable
       CONNECTOR_PORT=: 443
       KEY_ALIAS: gazelle.ncp-sp.openncp.dg-sante.euk
-      KEYSTORE_PASSWORD: /run/secrets/tls_keystore_password #This is probably not intended to be the same as the TLS keystore, but we are reusing it as a MVP
-      TRUSTSTORE_PASSWORD: /run/secrets/tls_truststore_password #This is probably not intended to be the same as the TLS truststore, but we are reusing it as a MVP
+      KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password #This is probably not intended to be the same as the TLS keystore, but we are reusing it as a MVP
+      TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password #This is probably not intended to be the same as the TLS truststore, but we are reusing it as a MVP
       CLIENT_AUTH: false #This should be set to false as per the documentation (https://webgate.ec.europa.eu/fpfis/wikis/display/EHDSI/OpenNCP+Installation+Manual 2024-06-20, #3.2)
       DB_HOST: mariadb
       DB_INTERNAL_PORT: 3306  #Why does it need the internal port?
       DB_EXPOSED_PORT: 33306
       DB_ROOT_USER: root   #WHY DOES THIS NEED ROOT USER PRIVELEGES?
-      DB_ROOT_PASSWORD: /run/secrets/db_root_password
-      DB_USER: /run/secrets/db_username
-      DB_PASSWORD: /run/secrets/db_password
+      DB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      DB_USER_FILE: /run/secrets/db_username
+      DB_PASSWORD_FILE: /run/secrets/db_password
       DB_TYPE: mysql
     volumes:
       - ./logs/ehealth-portal-backend:/usr/local/tomcat/logs
