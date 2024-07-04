@@ -1,9 +1,5 @@
 #!/bin/sh
 
-echo "THIS IS SPARTA - $(cat "${DB_USER_FILE}")"
-
-
-
 DB_USER="$(cat "${DB_USER_FILE}")"
 DB_PASSWORD="$(cat "${DB_PASSWORD_FILE}")"
 TLS_KEYSTORE_PWD="$(cat "${TLS_KEYSTORE_PWD_FILE}")"

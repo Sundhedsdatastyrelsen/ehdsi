@@ -267,8 +267,8 @@ services:
   # OpenNCP Backend Portal (Node B)
   ehealth-portal-backend:
     build:
-      context: ./ehealth-portal-backend
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./ehealth-portal-backend/Dockerfile
       platforms:
         - "linux/amd64"
         - "linux/arm64"
