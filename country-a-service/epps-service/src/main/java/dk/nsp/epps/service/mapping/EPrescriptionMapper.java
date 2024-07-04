@@ -56,14 +56,14 @@ public class EPrescriptionMapper {
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var l3Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId().getExtension()));
+            var l3Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId().getExtension()));
             l3Meta.setSize((long) cda.length());
             l3Meta.setHash(Utils.md5Hash(cda));
 
             //Generate PDF to deliver metadata on it
-            var pdf = new EPrescriptionL1Generator(EPrescriptionL1Mapper.Map(dataModel)).generate();
+            var pdf = EPrescriptionL1Generator.generate(EPrescriptionL1Mapper.map(dataModel));
 
-            var l1Meta = GenerateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId().getExtension()));
+            var l1Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId().getExtension()));
             l1Meta.setSize((long) pdf.length);
             l1Meta.setHash(Utils.md5Hash(pdf));
 
@@ -74,7 +74,7 @@ public class EPrescriptionMapper {
         }
     }
 
-    private EPrescriptionDocumentMetadataDto GenerateMeta(String patientId, EPrescriptionL3 model, String documentId) {
+    private EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, String documentId) {
         var meta = new EPrescriptionDocumentMetadataDto(documentId);
         meta.setPatientId(patientId);
         meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
@@ -92,7 +92,7 @@ public class EPrescriptionMapper {
                 var cda = EPrescriptionL3Generator.generate(model);
                 return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
             } else if (DocumentLevel.LEVEL1.equals(documentLevel)) {
-                var pdf = new EPrescriptionL1Generator(EPrescriptionL1Mapper.Map(model)).generate();
+                var pdf = EPrescriptionL1Generator.generate(EPrescriptionL1Mapper.map(model));
                 var base64Pdf = Base64.getEncoder().encodeToString(pdf);
                 return new EpsosDocumentDto(patientId, base64Pdf, ClassCodeDto._57833_6);
             }

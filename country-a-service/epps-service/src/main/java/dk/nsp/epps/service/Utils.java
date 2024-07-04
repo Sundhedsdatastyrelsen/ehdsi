@@ -13,11 +13,7 @@ public class Utils {
     //SneakyThrows is accepted, since the MD5 algorithm is assumed to always be present
     @SneakyThrows
     public static String md5Hash(byte[] input) {
-        try {
-            var hash = MessageDigest.getInstance("MD5").digest(input);
-            return String.format("%032x", new BigInteger(1, hash));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        var hash = MessageDigest.getInstance("MD5").digest(input);
+        return String.format("%032x", new BigInteger(1, hash));
     }
 }

@@ -24,7 +24,7 @@ public class EPrescriptionDocumentIdMapper {
     }
 
     public static Set<String> possibleIds(String documentId) {
-        return new HashSet<>(Arrays.asList(level1DocumentId(documentId), level3DocumentId(documentId)));
+        return Set.of(level1DocumentId(documentId), level3DocumentId(documentId));
     }
 
     public static DocumentLevel parseDocumentLevel(String documentId) throws MapperException {

@@ -9,92 +9,78 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class EPrescriptionL1Generator {
     //Configuration
     private static final Integer FONT_SIZE = 14;
-    private static final String TEMPLATE = "pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
+    private static final String TEMPLATE = "/pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
 
-    //Internal tracking fields for the generator
-    private final List<PdfField> Fields;
-    private final File baseFile;
-    private PDDocument pdfDocument;
-    private PDPage pdfPage;
-
-    public EPrescriptionL1Generator(List<PdfField> fields) {
-        try {
-            baseFile = new File(Objects.requireNonNull(EPrescriptionL1Generator.class.getResource("/" + TEMPLATE)).getFile());
-        } catch (NullPointerException e) {
-            throw new RuntimeException("Could not find resource: " + TEMPLATE);
-        }
-
-        Fields = fields;
-    }
-
-    public byte[] generate() {
-        return writeAll();
-    }
-
-    private void initializeDocument() {
-        if (pdfDocument == null) {
-            try {
-                pdfDocument = Loader.loadPDF(baseFile);
-            } catch (IOException e) {
-                throw new RuntimeException(String.format("Malformed of missing PDF file in %s", baseFile.getAbsolutePath()), e);
+    private static PDDocument initializeDocument() {
+        try (var template = EPrescriptionL1Generator.class.getResourceAsStream(TEMPLATE)) {
+            if (template == null) {
+                throw new RuntimeException("Could not find resource: " + TEMPLATE);
             }
-        }
-        if (pdfPage == null) {
-            pdfPage = pdfDocument.getPage(0);
+            return Loader.loadPDF(template.readAllBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("Malformed or missing PDF template", e);
         }
     }
 
-    private void closeDocument() {
-        if (pdfDocument != null) {
-            try {
-                pdfDocument.close();
-            } catch (IOException e) {
-                //If we can't close the document, just don't do anything
+    public static byte[] generate(List<PdfField> fields) {
+        try (var pdfDocument = initializeDocument()) {
+            var pdfPage = pdfDocument.getPage(0);
+            for (PdfField field : fields) {
+                writeField(field, pdfPage, pdfDocument);
             }
+            return saveBytes(pdfDocument);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format(
+                "Malformed of missing PDF file in resources path '%s'",
+                TEMPLATE), e);
         }
     }
 
-
-    private void writeField(PdfField field) {
+    private static void writeField(PdfField field, PDPage pdfPage, PDDocument pdfDocument) {
         if (pdfDocument == null || pdfPage == null) {
             throw new RuntimeException("Error writing field, document not initialized");
         }
         try {
-            writeTextAtCoordinates(field.getContent(), field.getXCoordinate(), field.getYCoordinate(), pdfDocument, pdfPage);
+            writeTextAtCoordinates(
+                field.getContent(),
+                field.getXCoordinate(),
+                field.getYCoordinate(),
+                pdfDocument,
+                pdfPage);
         } catch (IOException e) {
-            closeDocument();
-            throw new RuntimeException(String.format("Error writing author to %s", baseFile.getAbsolutePath()), e);
+            throw new RuntimeException(String.format(
+                "Error writing field content %s to document",
+                String.join(";", field.getContent())), e);
         }
     }
 
-    public byte[] writeAll() {
-        initializeDocument();
-        for (PdfField field : Fields) {
-            writeField(field);
-        }
+    private static byte[] saveBytes(PDDocument pdfDocument) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             pdfDocument.save(baos);
         } catch (IOException e) {
-            closeDocument();
             throw new RuntimeException("Could not generate PDF document", e);
         }
-        closeDocument();
         return baos.toByteArray();
     }
 
-    private void writeTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
+    private static void writeTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
         // For each line in the array, we print a new line, shifted one fontsize down
         for (int lineNo = 0; lineNo < Text.length; lineNo++) {
-            PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, pdfPage, PDPageContentStream.AppendMode.APPEND, true);
+            PDPageContentStream contentStream = new PDPageContentStream(
+                pdfDocument,
+                pdfPage,
+                PDPageContentStream.AppendMode.APPEND,
+                true);
             contentStream.beginText();
 
             contentStream.setNonStrokingColor(Color.BLACK);

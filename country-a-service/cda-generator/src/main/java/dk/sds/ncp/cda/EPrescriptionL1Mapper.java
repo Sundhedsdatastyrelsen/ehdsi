@@ -14,7 +14,7 @@ public class EPrescriptionL1Mapper {
      * @param dataModel - A L3 Datamodel
      * @return A list of PdfField objects, consisting of Coordinates and an array of strings intended as seperate lines for each string
      */
-    public static List<PdfField> Map(EPrescriptionL3 dataModel) {
+    public static List<PdfField> map(EPrescriptionL3 dataModel) {
         return List.of(
             new PdfField(50, 445, productLines(dataModel.getProduct())),
             new PdfField(50, 610, patientLines(dataModel.getPatient())),

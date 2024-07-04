@@ -6,15 +6,13 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Base64;
 
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws IOException {
         var model = EPrescriptionL3MapperTest.getModel();
-        var pdfFields = EPrescriptionL1Mapper.Map(model);
-        var l1Generator = new EPrescriptionL1Generator(pdfFields);
-        var pdf = l1Generator.generate();
+        var pdfFields = EPrescriptionL1Mapper.map(model);
+        var pdf = EPrescriptionL1Generator.generate(pdfFields);
         Assertions.assertNotNull(pdf);
 
         //Write test output files
@@ -30,12 +28,10 @@ public class EPrescriptionL1GeneratorTest {
     @Test
     void sameFileDifferentGenerations() {
         var model = EPrescriptionL3MapperTest.getModel();
-        var pdfFields = EPrescriptionL1Mapper.Map(model);
-        var l1Generator = new EPrescriptionL1Generator(pdfFields);
-        var pdf = l1Generator.generate();
+        var pdfFields = EPrescriptionL1Mapper.map(model);
+        var pdf = EPrescriptionL1Generator.generate(pdfFields);
 
-        var secondL1Generator = new EPrescriptionL1Generator(pdfFields);
-        var secondPdf = secondL1Generator.generate();
+        var secondPdf = EPrescriptionL1Generator.generate(pdfFields);
 
         Assertions.assertNotNull(pdf);
         Assertions.assertNotNull(secondPdf);
