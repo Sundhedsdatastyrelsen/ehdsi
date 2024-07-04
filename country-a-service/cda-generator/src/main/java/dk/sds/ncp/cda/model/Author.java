@@ -1,5 +1,6 @@
 package dk.sds.ncp.cda.model;
 
+import dk.sds.ncp.cda.Utils;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;

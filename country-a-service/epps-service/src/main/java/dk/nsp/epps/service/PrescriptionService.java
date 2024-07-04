@@ -5,10 +5,11 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
-import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
+import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
+import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -44,7 +44,7 @@ public class PrescriptionService {
 
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = toOffsetDateTime(prescription.getAuthorisationDateTime());
-            return (documentId == null || documentId.equals(String.valueOf(prescription.getIdentifier())))
+            return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier())).contains(documentId))
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
@@ -54,7 +54,7 @@ public class PrescriptionService {
         }
     }
 
-    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException, IOException, InterruptedException {
+    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()

@@ -10,6 +10,9 @@ class EPrescriptionL3MapperTest {
     static EPrescriptionL3 getModel() {
         try {
             var response = FmkResponseStorage.storedPrescriptions(FmkResponseStorage.testCprs().get(2));
+
+            String cda = EPrescriptionL3Generator.generate(response, 0);
+
             return EPrescriptionL3Mapper.model(response, 0);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -17,7 +20,7 @@ class EPrescriptionL3MapperTest {
     }
 
     @Test
-    void model() throws JAXBException {
+    void model()  {
            Assertions.assertNotNull(getModel());
     }
 

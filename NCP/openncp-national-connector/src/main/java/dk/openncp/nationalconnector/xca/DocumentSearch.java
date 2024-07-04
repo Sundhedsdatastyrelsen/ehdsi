@@ -108,26 +108,26 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             return result.stream()
                     .map(md -> DocumentFactory.createDocumentAssociation(
                             DocumentFactory.createEPDocumentXML(
-                                    md.getId(),
-                                    md.getPatientId(),
-                                    offsetDateTimeToDate(md.getEffectiveTime()),
-                                    md.getRepositoryId(),
-                                    md.getTitle(),
-                                    md.getAuthor(),
-                                    md.getDescription(),
-                                    md.getSize(),
-                                    md.getHash()
+                                    md.getLevel3().getId(),
+                                    md.getLevel3().getPatientId(),
+                                    offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
+                                    md.getLevel3().getRepositoryId(),
+                                    md.getLevel3().getTitle(),
+                                    md.getLevel3().getAuthor(),
+                                    md.getLevel3().getDescription(),
+                                    md.getLevel3().getSize(),
+                                    md.getLevel3().getHash()
                             ),
                             DocumentFactory.createEPDocumentPDF(
-                                    md.getId(),
-                                    md.getPatientId(),
-                                    offsetDateTimeToDate(md.getEffectiveTime()),
-                                    md.getRepositoryId(),
-                                    md.getTitle(),
-                                    md.getAuthor(),
-                                    md.getDescription(),
-                                    md.getSize() == null ? 0 : md.getSize(),
-                                    md.getHash()
+                                    md.getLevel1().getId(),
+                                    md.getLevel1().getPatientId(),
+                                    offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
+                                    md.getLevel1().getRepositoryId(),
+                                    md.getLevel1().getTitle(),
+                                    md.getLevel1().getAuthor(),
+                                    md.getLevel1().getDescription(),
+                                    md.getLevel1().getSize() == null ? 0 : md.getLevel1().getSize(),
+                                    md.getLevel1().getHash()
                             )))
                     .collect(Collectors.toList());
         } catch (ApiException e) {

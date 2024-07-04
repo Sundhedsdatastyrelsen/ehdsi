@@ -1,9 +1,6 @@
 package dk.nsp.epps.controller;
 
-import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
-import dk.nsp.epps.ncp.api.EpsosDocumentDto;
-import dk.nsp.epps.ncp.api.PostFetchDocumentRequestDto;
-import dk.nsp.epps.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
+import dk.nsp.epps.ncp.api.*;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import jakarta.validation.Valid;
@@ -24,7 +21,7 @@ public class PrescriptionController {
     }
 
     @PostMapping(path = "/api/find-eprescription-documents/")
-    public List<EPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
+    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) throws JAXBException, IOException, InterruptedException {
         var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
