@@ -1,5 +1,6 @@
 package dk.nsp.epps.controller;
 
+import dk.nsp.epps.Utils;
 import dk.nsp.epps.ncp.api.*;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
@@ -8,6 +9,7 @@ import jakarta.xml.bind.JAXBException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,5 +36,19 @@ public class PrescriptionController {
     ) throws JAXBException {
         var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.getPrescriptions(params.getPatientId(), filter);
+    }
+
+    @PostMapping(path = "/api/edispensation/submit")
+    public void submitDispensation(
+        @Valid @RequestBody SubmitDispensationRequestDto request
+        ) throws SAXException {
+        prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()));
+    }
+
+    @PostMapping(path = "/api/edispensation/discard")
+    public void discardDispensation(
+        @Valid @RequestBody DisardDispensationRequestDto request
+        ) {
+        throw new UnsupportedOperationException("TODO");
     }
 }

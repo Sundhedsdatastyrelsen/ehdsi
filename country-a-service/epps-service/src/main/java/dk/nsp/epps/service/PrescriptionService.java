@@ -7,6 +7,8 @@ import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
 import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
+import dk.nsp.epps.service.exception.CountryAException;
+import dk.nsp.epps.service.mapping.DispensationMapper;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
 import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
@@ -14,7 +16,10 @@ import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.OffsetDateTime;
@@ -27,6 +32,7 @@ import java.util.stream.IntStream;
 public class PrescriptionService {
     private final FmkClient fmkClient;
     private final EPrescriptionMapper ePrescriptionMapper;
+    private final DispensationMapper dispensationMapper;
 
     public record PrescriptionFilter(
         String documentId,
@@ -76,5 +82,21 @@ public class PrescriptionService {
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerJeppeMoeller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+    }
+
+    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda) {
+        try {
+            fmkClient.startEffectuation(dispensationMapper.startEffectuationRequest(patientId, dispensationCda), Identities.apotekerJeppeMoeller);
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
+        }
+
+        try {
+            fmkClient.createPharmacyEffectuation(dispensationMapper.createPharmacyEffectuationRequest(patientId, dispensationCda), Identities.apotekerJeppeMoeller);
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
+        }
+
+        throw new UnsupportedOperationException("TODO");
     }
 }
