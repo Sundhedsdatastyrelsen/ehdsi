@@ -33,18 +33,40 @@ public final class Utils {
     }
 
     /**
+     * Read XML document from an input stream. Closes the input stream.
+     * @param xml The input stream containing well-formed XML
+     * @return The XML document corresponding to the input
+     */
+    public static Document readXmlDocument(InputStream xml) throws SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        try (xml) {
+            var db = dbf.newDocumentBuilder();
+            return db.parse(xml);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Read XML from an input stream. Closes the input stream.
      * @param xml The input stream containing well-formed XML
      * @return The XML element corresponding to the input
      */
     public static Element readXml(InputStream xml) throws IOException, SAXException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        try (var is = xml) {
-            var db = dbf.newDocumentBuilder();
-            Document doc = db.parse(is);
-            return doc.getDocumentElement();
-        } catch (ParserConfigurationException e) {
+        return readXmlDocument(xml).getDocumentElement();
+    }
+
+    /**
+     * Read XML from a string.
+     * @param xml The string containing well-formed XML
+     * @return The XML document corresponding to the input
+     */
+    public static Document readXmlDocument(String xml) throws SAXException {
+        try {
+            return readXmlDocument(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        } catch (IOException e) {
+            // shouldn't happen
             throw new RuntimeException(e);
         }
     }
