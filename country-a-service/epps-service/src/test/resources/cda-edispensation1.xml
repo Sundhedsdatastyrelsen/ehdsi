@@ -37,6 +37,7 @@
       <assignedPerson classCode="PSN" determinerCode="INSTANCE">
         <name>
           <family>Nyström</family>
+          <family>Karlsson</family>
           <given>Anders</given>
         </name>
       </assignedPerson>
@@ -44,6 +45,7 @@
         <id extension="3333-222" root="1.2.752.129.2.1.2.1"/>
         <name>epSOS Test</name>
         <telecom use="WP" value="tel:+46002000000"/>
+        <telecom use="HP" value="mailto:example@example.org"/>
         <addr>
           <streetAddressLine>Ringvägen 100</streetAddressLine>
           <city>Stockholm</city>
@@ -161,7 +163,7 @@
                     <epsos:id extension="549485" root="1.2.752.129.2.1.2.1"/>
                     <!--produktkod-->
                     <code code="549485" codeSystem="1.2.752.129.2.1.5.1" codeSystemName="Nordisk Produktkod" displayName="Panodil® Forte">
-                      
+
                     </code>
                     <!--Varunamn-->
                     <name>Panodil® Forte</name>
@@ -220,7 +222,7 @@
                   <templateId root="2.16.840.1.113883.10.20.1.24"/>
                   <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
                   <id extension="5.207420676" root="1.2.752.129.2.1.2.1"/>
-                  
+
                   <statusCode code="active"/>
                   <effectiveTime xsi:type="IVL_TS">
                     <low value="20120625"/>
@@ -235,7 +237,7 @@
                       <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
                         <code code="549485" codeSystem="1.2.752.129.2.1.5.1" codeSystemName="Nordisk Produktkod" displayName="Panodil® Forte">
-                          
+
                         </code>
                         <name>Panodil® Forte</name>
                         <epsos:formCode code="10221000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="EDQM" displayName="Filmdragerad tablett">
@@ -306,7 +308,7 @@
                       <templateId root="2.16.840.1.113883.10.20.1.49"/>
                       <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3"/>
                       <code code="PINSTRUCT" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
-                      
+
                       <statusCode code="completed"/>
                     </act>
                   </entryRelationship>
@@ -315,7 +317,7 @@
                       <templateId root="2.16.840.1.113883.10.20.1.43"/>
                       <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3.1"/>
                       <code code="FINSTRUCT" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
-                      
+
                       <statusCode code="completed"/>
                     </act>
                   </entryRelationship>
