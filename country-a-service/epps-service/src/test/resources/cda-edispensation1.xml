@@ -94,7 +94,7 @@
   <inFulfillmentOf>
     <order>
       <!--Från eP/entryRelationship substanceAdministration-Id-->
-      <id extension="5.207420676" root="1.2.752.129.2.1.2.1"/>
+      <id extension="1234567890" root="2.16.17.710.802.1000.990.1.10"/>
     </order>
   </inFulfillmentOf>
   <relatedDocument typeCode="XFRM">

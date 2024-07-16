@@ -1,7 +1,9 @@
 package dk.nsp.epps.service.mapping;
 
 import dk.nsp.epps.Utils;
+import dk.sds.ncp.cda.MapperException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -21,13 +23,14 @@ class DispensationMapperTest {
     }
 
     @Test
-    void startEffectuationRequest() {
+    void startEffectuationRequestTest() throws MapperException {
         var sut = new DispensationMapper();
         var cda = testDispensationCda();
         var req = sut.startEffectuationRequest("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", cda);
 
-        Assertions.fail("TODO");
         assertThat(req.getPrescription().size(), is(equalTo(1)));
+        assertThat(req.getPrescription().getFirst().getIdentifier(), is(equalTo(1234567890L)));
+        assertThat(req.getPersonIdentifier().getValue(), is(equalTo("1111111118")));
     }
 
     @Test
@@ -55,6 +58,8 @@ class DispensationMapperTest {
         var cda = testDispensationCda();
         var org = sut.authorOrganization(cda);
 
+        assertThat(org.getIdentifier().getSource(), is(equalTo("Udenlandsk")));
+        assertThat(org.getIdentifier().getValue(), is(equalTo("1.2.752.129.2.1.2.1.3333-222")));
         assertThat(org.getName(), is(equalTo("epSOS Test")));
         assertThat(org.getType(), is(equalTo("Apotek")));
         assertThat(org.getAddressLine(), is(equalTo(List.of("Ringvägen 100", "11860", "Stockholm", "SE"))));
@@ -63,7 +68,17 @@ class DispensationMapperTest {
     }
 
     @Test
-    void createPharmacyEffectuationRequest() {
+    void prescriptionTest() throws XPathExpressionException, MapperException {
+        var sut = new DispensationMapper();
+        var cda = testDispensationCda();
+        var p = sut.prescription(cda);
+
+        assertThat(p.getIdentifier(), is(equalTo(1234567890L)));
+    }
+
+    @Test
+    @Disabled
+    void createPharmacyEffectuationRequestTest() {
         Assertions.fail("TODO");
     }
 }

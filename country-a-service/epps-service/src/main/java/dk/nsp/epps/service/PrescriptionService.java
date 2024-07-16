@@ -12,6 +12,7 @@ import dk.nsp.epps.service.mapping.DispensationMapper;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
 import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
+import dk.sds.ncp.cda.MapperException;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.OffsetDateTime;
@@ -87,7 +87,7 @@ public class PrescriptionService {
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda) {
         try {
             fmkClient.startEffectuation(dispensationMapper.startEffectuationRequest(patientId, dispensationCda), Identities.apotekerJeppeMoeller);
-        } catch (JAXBException e) {
+        } catch (JAXBException | MapperException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
         }
 
