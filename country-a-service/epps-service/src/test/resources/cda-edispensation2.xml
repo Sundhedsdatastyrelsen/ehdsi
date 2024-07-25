@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?><ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:mif="urn:hl7-org:v3/mif" xmlns:sch="http://www.ascc.net/xml/schematron" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" classCode="DOCCLIN" moodCode="EVN" xsi:schemaLocation="urn:hl7-org:v3 CDASchema/CDA_extended.xsd">
+<typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.2"/>
+<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.1"/>
+<id assigningAuthorityName="ncp.dk" displayable="true" extension="epsosdk1366266636272" root="2.16.840.1.113883.2.24.2.30"/>
+<code code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="eDispensation">
+    <translation displayName="ePrescription"/>
+</code>
+<title>Medication dispensed</title>
+<effectiveTime value="20130418"/>
+<confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" displayName="normal"/>
+<languageCode code="da-DK"/>
+<setId assigningAuthorityName="ncp.dk" displayable="true" extension="2512484916.ep.52117505389" root="2.16.840.1.113883.2.24.2.30"/>
+<versionNumber value="1"/>
+<recordTarget>
+    <patientRole classCode="PAT">
+        <id assigningAuthorityName="cpr.dk" displayable="true" extension="2512484916" root="2.16.840.1.113883.2.24.4.3.2"/>
+        <addr use="HP">
+            <state nullFlavor="UNK"/>
+            <city>Århus C</city>
+            <country>DK</country>
+            <postalCode>8000</postalCode>
+            <streetAddressLine>Høegh-Guldbergs Gade 39, 1,-16</streetAddressLine>
+        </addr>
+        <telecom nullFlavor="NI"/>
+        <patient>
+            <name>
+                <family>Berggren</family>
+                <given>Nancy</given>
+            </name>
+            <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender" displayName="kvinde">
+                <translation displayName="Female"/>
+            </administrativeGenderCode>
+            <birthTime value="19481225"/>
+        </patient>
+    </patientRole>
+</recordTarget>
+<author>
+    <functionCode code="22" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Health professionals"/>
+    <time value="20130418"/>
+    <assignedAuthor>
+        <id extension="test1366266636272" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+        <telecom nullFlavor="NI"/>
+        <assignedPerson>
+            <name>
+                <family>Peter</family>
+                <given>Petersen</given>
+            </name>
+        </assignedPerson>
+        <representedOrganization>
+            <id extension="NSI" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+            <name>NSI</name>
+            <telecom nullFlavor="NI"/>
+            <addr>
+                <streetAddressLine>Artillerivej 5</streetAddressLine>
+                <city>Copenhagen S</city>
+                <state>Copenhagen</state>
+                <postalCode>2300</postalCode>
+                <country>DK</country>
+            </addr>
+        </representedOrganization>
+    </assignedAuthor>
+</author>
+<custodian>
+    <assignedCustodian>
+        <representedCustodianOrganization>
+            <id extension="5798000362734" root="2.16.840.1.113883.2.24.4.1.1"/>
+            <name>National Board of E-Health</name>
+            <telecom nullFlavor="NI"/>
+            <addr>
+                <state nullFlavor="UNK"/>
+                <city>Copenhagen S</city>
+                <country>DK</country>
+                <postalCode>2300</postalCode>
+                <streetAddressLine>Islands Brygge 39</streetAddressLine>
+            </addr>
+        </representedCustodianOrganization>
+    </assignedCustodian>
+</custodian>
+<legalAuthenticator contextControlCode="OP" typeCode="LA">
+    <time value="20130418"/>
+    <signatureCode code="S"/>
+    <assignedEntity>
+        <id extension="test1366266636274" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+        <telecom nullFlavor="NI"/>
+        <assignedPerson>
+            <name>
+                <family>Peter</family>
+                <given>Petersen</given>
+            </name>
+        </assignedPerson>
+        <representedOrganization>
+            <id extension="NSI" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+            <name>NSI</name>
+            <telecom nullFlavor="NI"/>
+            <addr>
+                <streetAddressLine>Artillerivej 5</streetAddressLine>
+                <city>Copenhagen S</city>
+                <state>Copenhagen</state>
+                <postalCode>2300</postalCode>
+                <country>DK</country>
+            </addr>
+        </representedOrganization>
+    </assignedEntity>
+</legalAuthenticator>
+<participant typeCode="IND">
+    <associatedEntity classCode="CAREGIVER">
+        <addr>
+            <state nullFlavor="UNK"/>
+            <streetAddressLine nullFlavor="NI"/>
+            <city nullFlavor="NI"/>
+            <postalCode nullFlavor="NI"/>
+            <country>DK</country>
+        </addr>
+        <telecom nullFlavor="NI"/>
+    </associatedEntity>
+</participant>
+
+<inFulfillmentOf>
+    <order>
+        <id extension="52117505389" root="2.16.840.1.113883.2.24.2.30.3.1.3.1"/>
+    </order>
+</inFulfillmentOf>
+<relatedDocument typeCode="XFRM">
+    <parentDocument>
+        <id extension="2512484916.pdf.ep.52117505389.52117505391:9" root="2.16.840.1.113883.2.24.2.30"/>
+    </parentDocument>
+</relatedDocument>
+<component contextConductionInd="true" typeCode="COMP">
+    <structuredBody classCode="DOCBODY" moodCode="EVN">
+        <component>
+            <section>
+                <templateId root="2.16.840.1.113883.10.20.1.8"/>
+                <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.2"/>
+                <id extension="52117505389" root="2.16.840.1.113883.2.24.2.30.3.1.3.1"/>
+                <code code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Medication dispensed"/>
+                <title>Medication dispensed</title>
+                <text>
+                    <table>
+                        <caption>Dispensed Items</caption>
+                        <thead>
+                            <tr styleCode="border-bottom: 2px solid black">
+                                <td>Identifier</td>
+                                <td>Name</td>
+                                <td>Strength</td>
+                                <td>Form</td>
+                                <td>Package</td>
+                                <td>Quantity</td>
+                                <td>Number of Packs</td>
+                                <td>Instructions</td>
+                                <td>Instructions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2.16.840.1.113883.2.24.2.30.3.1.3.1</td>
+                                <td ID="MATERIAL4">Panodil</td>
+                                <td>500 mg / 1</td>
+                                <td ID="DOSAGEFORMCODE_ORIGINALTEXT1">filmovertrukne tabletter</td>
+                                <td>96</td>
+                                <td/>
+                                <td>2</td>
+                                <td ID="NATIONALBRANDCODE_ORIGINALTEXT1"/>
+                                <td ID="FULLFILLMENT1">1 + 0 + 0 + 0 stk (mod smerter)</td>
+                                <td ID="INSTRUCTIONS2">1 + 0 + 0 + 0 stk (mod smerter)</td>
+                                <td ID="INDICATIONS5"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </text>
+                <entry>
+                    <supply classCode="SPLY" moodCode="EVN">
+                        <templateId root="2.16.840.1.113883.10.20.1.34"/>
+                        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.3"/>
+                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3"/>
+                        <id extension="2.16.840.1.113883.2.24.2.30.3.1.3.1" root="2.16.840.1.113883.2.19.40.5.410286.10.11"/>
+                        <quantity unit="1" value="2"/>
+                        <product>
+                            <manufacturedProduct xmlns:epsos="urn:epsos-org:ep:medication" classCode="MANU">
+                                <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+                                <templateId root="2.16.840.1.113883.10.20.1.53"/>
+                                <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                    <epsos:id root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3"/>
+                                    <code code="554840" codeSystem="2.16.17.710.802.1000.2.1000.0" codeSystemName="Danske Varenumre" displayName="DK Varenummer/PackageIdentifier (554840)">
+                                        <originalText>
+                                            <reference value="#NATIONALBRANDCODE_ORIGINALTEXT1"/>
+                                        </originalText>
+                                    </code>
+                                    <name>Panodil</name>
+                                    <epsos:desc>Panodil Importer: 'GSK Consumer Healthcare'</epsos:desc>
+                                    <epsos:formCode code="TABFILM" codeSystem="2.16.17.710.802.1000.2.1000.4" codeSystemName="Doseform - LMS22" displayName="filmovertrukne tabletter">
+                                        <epsos:originalText>
+                                            <epsos:reference value="#DOSAGEFORMCODE_ORIGINALTEXT1"/>
+                                        </epsos:originalText>
+                                    </epsos:formCode>
+                                    <epsos:asContent classCode="CONT">
+                                        <epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+                                            <epsos:formCode code="BLI" codeSystem="2.16.17.710.802.1000.2.1000.5" codeSystemName="Pakketyper - LMS14" displayName="Blister"/>
+                                            <epsos:capacityQuantity unit="1" value="96"/>
+                                        </epsos:containerPackagedMedicine>
+                                    </epsos:asContent>
+                                    <epsos:asSpecializedKind classCode="GRIC">
+                                        <epsos:generalizedMedicineClass classCode="MMAT">
+                                            <epsos:code nullFlavor="NA"/>
+                                            <epsos:name>Paracetamol</epsos:name>
+                                        </epsos:generalizedMedicineClass>
+                                    </epsos:asSpecializedKind>
+                                    <epsos:ingredient classCode="ACTI">
+                                        <epsos:quantity>
+                                            <epsos:numerator unit="mg" value="500" xsi:type="epsos:PQ"/>
+                                            <epsos:denominator unit="1" value="1" xsi:type="epsos:PQ"/>
+                                        </epsos:quantity>
+                                        <epsos:ingredient classCode="MMAT" determinerCode="KIND">
+                                            <epsos:code code="554840" codeSystem="2.16.17.710.802.1000.2.1000.1" codeSystemName="Danske Varenumre" displayName="Panodil-vnr-554840">
+                                                <epsos:translation displayName="Paracetamol"/>
+                                            </epsos:code>
+                                            <epsos:name>Paracetamol</epsos:name>
+                                        </epsos:ingredient>
+                                    </epsos:ingredient>
+                                </manufacturedMaterial>
+                            </manufacturedProduct>
+                        </product>
+                        <performer typeCode="PRF">
+                            <time value="20130418"/>
+                            <assignedEntity>
+                                <id extension="test1366266636305" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+                                <assignedPerson>
+                                    <name>
+                                        <family>Peter</family>
+                                        <given>Petersen</given>
+                                    </name>
+                                </assignedPerson>
+                                <representedOrganization>
+                                    <id extension="NSI" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+                                    <name>NSI</name>
+                                    <telecom nullFlavor="NI"/>
+                                    <addr>
+                                        <streetAddressLine>Artillerivej 5</streetAddressLine>
+                                        <city>Copenhagen S</city>
+                                        <state>Copenhagen</state>
+                                        <postalCode>2300</postalCode>
+                                        <country>DK</country>
+                                    </addr>
+                                </representedOrganization>
+                            </assignedEntity>
+                        </performer>
+                        <participant typeCode="PRF">
+                            <participantRole classCode="LIC">
+                                <id extension="fanta" root="cola"/>
+                                <scopingEntity>
+                                    <id extension="fanta" root="cola"/>
+                                    <desc>colafanta</desc>
+                                </scopingEntity>
+                            </participantRole>
+                        </participant>
+                        <entryRelationship typeCode="REFR">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
+                            <substanceAdministration classCode="SBADM" moodCode="INT">
+                                <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                                <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
+                                <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
+                                <id extension="2512484916.cda.ep.52117505389.52117505391:9" root="2.16.840.1.113883.2.24.2.30.3.1.3.1"/>
+
+                                <statusCode code="completed"/>
+                                <effectiveTime xsi:type="IVL_TS">
+                                    <low value="20130107"/>
+                                    <high value="20130107"/>
+                                </effectiveTime>
+                                <effectiveTime nullFlavor="NI" operator="A" xsi:type="PIVL_TS"/>
+                                <doseQuantity nullFlavor="NI"/>
+                                <consumable>
+                                    <manufacturedProduct xmlns:epsos="urn:epsos-org:ep:medication" classCode="MANU">
+                                        <templateId root="2.16.840.1.113883.10.20.1.53"/>
+                                        <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                            <epsos:id root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3"/>
+                                            <code code="554840" codeSystem="2.16.17.710.802.1000.2.1000.0" codeSystemName="Danske Varenumre" displayName="DK Varenummer/PackageIdentifier (554840)">
+                                                <originalText>
+                                                    <reference value="#NATIONALBRANDCODE_ORIGINALTEXT1"/>
+                                                </originalText>
+                                            </code>
+                                            <name>Panodil</name>
+                                            <epsos:desc>Panodil Importer: 'GSK Consumer Healthcare'</epsos:desc>
+                                            <epsos:formCode code="TABFILM" codeSystem="2.16.17.710.802.1000.2.1000.4" codeSystemName="Doseform - LMS22" displayName="filmovertrukne tabletter">
+                                                <epsos:originalText>
+                                                    <epsos:reference value="#DOSAGEFORMCODE_ORIGINALTEXT1"/>
+                                                </epsos:originalText>
+                                            </epsos:formCode>
+                                            <epsos:asContent classCode="CONT">
+                                                <epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+                                                    <epsos:formCode code="BLI" codeSystem="2.16.17.710.802.1000.2.1000.5" codeSystemName="Pakketyper - LMS14" displayName="Blister"/>
+                                                    <epsos:capacityQuantity unit="1" value="96"/>
+                                                </epsos:containerPackagedMedicine>
+                                            </epsos:asContent>
+                                            <epsos:asSpecializedKind classCode="GRIC">
+                                                <epsos:generalizedMedicineClass classCode="MMAT">
+                                                    <epsos:code nullFlavor="NA"/>
+                                                    <epsos:name>Paracetamol</epsos:name>
+                                                </epsos:generalizedMedicineClass>
+                                            </epsos:asSpecializedKind>
+                                            <epsos:ingredient classCode="ACTI">
+                                                <epsos:quantity>
+                                                    <epsos:numerator unit="mg" value="500" xsi:type="epsos:PQ"/>
+                                                    <epsos:denominator unit="1" value="1" xsi:type="epsos:PQ"/>
+                                                </epsos:quantity>
+                                                <epsos:ingredient classCode="MMAT" determinerCode="KIND">
+                                                    <epsos:code code="554840" codeSystem="2.16.17.710.802.1000.2.1000.1" codeSystemName="Danske Varenumre" displayName="Panodil-vnr-554840">
+                                                        <epsos:translation displayName="Paracetamol"/>
+                                                    </epsos:code>
+                                                    <epsos:name>Paracetamol</epsos:name>
+                                                </epsos:ingredient>
+                                            </epsos:ingredient>
+                                        </manufacturedMaterial>
+                                    </manufacturedProduct>
+                                </consumable>
+                                <author>
+                                    <functionCode code="22" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Health professionals"/>
+                                    <time value="20130418"/>
+                                    <assignedAuthor>
+                                        <id extension="test1366266636272" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+                                        <telecom nullFlavor="NI"/>
+                                        <assignedPerson>
+                                            <name>
+                                                <family>Peter</family>
+                                                <given>Petersen</given>
+                                            </name>
+                                        </assignedPerson>
+                                        <representedOrganization>
+                                            <id extension="NSI" root="1.3.6.1.4.1.19376.1.5.3.1.2.3"/>
+                                            <name>NSI</name>
+                                            <telecom nullFlavor="NI"/>
+                                            <addr>
+                                                <streetAddressLine>Artillerivej 5</streetAddressLine>
+                                                <city>Copenhagen S</city>
+                                                <state>Copenhagen</state>
+                                                <postalCode>2300</postalCode>
+                                                <country>DK</country>
+                                            </addr>
+                                        </representedOrganization>
+                                    </assignedAuthor>
+                                </author>
+                                <entryRelationship typeCode="COMP">
+                                    <supply classCode="SPLY" moodCode="RQO">
+                                        <independentInd value="false"/>
+                                        <quantity unit="1" value="2"/>
+                                    </supply>
+                                </entryRelationship>
+                                <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                    <observation classCode="OBS" moodCode="EVN">
+                                        <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="HL7 ActClass" displayName="Substitution"/>
+                                        <value code="G" codeSystem="2.16.840.1.113883.5.1070" codeSystemName="SubstanceAdminSubstitution" displayName="generisk" xsi:type="CE">
+                                            <translation displayName="generic"/>
+                                        </value>
+                                    </observation>
+                                </entryRelationship>
+                                <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                    <act classCode="ACT" moodCode="INT">
+                                        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3.1"/>
+                                        <templateId root="2.16.840.1.113883.10.20.1.43"/>
+                                        <code code="FINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+                                        <text>
+                                            <reference value="#FULLFILLMENT1"/>
+                                        </text>
+                                        <statusCode code="completed"/>
+                                    </act>
+                                </entryRelationship>
+                                <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                    <act classCode="ACT" moodCode="INT">
+                                        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3"/>
+                                        <templateId root="2.16.840.1.113883.10.20.1.49"/>
+                                        <code code="PINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+                                        <text>
+                                            <reference value="#INSTRUCTIONS2"/>
+                                        </text>
+                                        <statusCode code="completed"/>
+                                    </act>
+                                </entryRelationship>
+                                <entryRelationship inversionInd="true" typeCode="RSON">
+                                    <observation classCode="OBS" moodCode="EVN" negationInd="false">
+                                        <templateId root="2.16.840.1.113883.10.20.1.28"/>
+                                        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+                                        <id extension="0" root="2.16.840.1.113883.2.24.4.3.256"/>
+                                        <code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Finding"/>
+                                        <text>
+                                            <reference value="#INDICATIONS5"/>
+                                        </text>
+                                        <statusCode code="completed"/>
+                                        <effectiveTime xsi:type="IVL_TS">
+                                            <low value="20091107"/>
+                                            <high value="20091107"/>
+                                        </effectiveTime>
+                                        <value nullFlavor="OTH" xsi:type="CD">
+                                            <originalText>
+                                                <reference value="#INDICATIONS5"/>
+                                            </originalText>
+                                        </value>
+                                    </observation>
+                                </entryRelationship>
+                            </substanceAdministration>
+                        </entryRelationship>
+                    </supply>
+                </entry>
+            </section>
+        </component>
+    </structuredBody>
+</component>
+</ClinicalDocument>

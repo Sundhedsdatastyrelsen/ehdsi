@@ -4,6 +4,7 @@ import dk.nsp.epps.Utils;
 import dk.nsp.epps.ncp.api.*;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
+import dk.sds.ncp.cda.MapperException;
 import jakarta.validation.Valid;
 import jakarta.xml.bind.JAXBException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,7 +42,7 @@ public class PrescriptionController {
     @PostMapping(path = "/api/edispensation/submit")
     public void submitDispensation(
         @Valid @RequestBody SubmitDispensationRequestDto request
-        ) throws SAXException {
+        ) throws SAXException, MapperException {
         prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()));
     }
 

@@ -1,16 +1,17 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierPredefinedSourceType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.*;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.nsp.epps.service.Utils;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import lombok.NonNull;
 import org.apache.xml.dtm.ref.DTMNodeList;
+import org.slf4j.Logger;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -30,11 +31,13 @@ import java.util.stream.Stream;
  * Not threadsafe due to xpath, so construct a new instance for each thread.
  */
 public class DispensationMapper {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DispensationMapper.class);
+
     // ART DECOR template for eDispensation CDA:
     // https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-2.16.840.1.113883.3.1937.777.11.10.111-2020-10-07T094007.html
     // Example FMK request:
     /*
-    <StartEffectuationRequest>
+<StartEffectuationRequest>
     <PersonIdentifier source="CPR">1111111118</PersonIdentifier>
     <ModifiedBy>
         <Other>
@@ -66,6 +69,67 @@ public class DispensationMapper {
     </Prescription>
 </StartEffectuationRequest>
     */
+    /*
+<CreatePharmacyEffectuationRequest>
+    <PersonIdentifier source="CPR">1111111118</PersonIdentifier>
+    <CreatedBy>
+        <Other>
+            <Name>
+                <GivenName>Anne</GivenName>
+                <Surname>Andersen</Surname>
+            </Name>
+        </Other>
+        <Role>Apoteksansat</Role>
+        <Organisation>
+            <Name>Skanderborg Apotek</Name>
+            <AddressLine>Adelgade 27</AddressLine>
+            <AddressLine>8660 Skanderborg</AddressLine>
+            <Type>Apotek</Type>
+	    <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+        </Organisation>
+    </CreatedBy>
+    <Prescription>
+        <PrescriptionIdentifier>1341404071655002003</PrescriptionIdentifier>
+        <OrderIdentifier>1341404070747001001</OrderIdentifier>
+        <Effectuation>
+            <DateTime>2014-03-10T11:12:39Z</DateTime>
+            <PackageDispensed>
+                <PackageQuantity>1</PackageQuantity>
+                <PackageNumber source="Medicinpriser" date="2014-03-10">789</PackageNumber>
+                <PackageSize>
+                    <Value>40</Value>
+                    <UnitCode source="Medicinpriser" date="2014-03-10">stk</UnitCode>
+                    <UnitText>stk</UnitText>
+                </PackageSize>
+                <SubstitutedDrug>
+                    <Identifier source="Medicinpriser" date="2014-03-10">28101234504</Identifier>
+                    <Name>Eksemplificin</Name>
+                    <Form>
+                        <Code source="Medicinpriser" date="2014-03-10">TAB</Code>
+                        <Text>tabletter</Text>
+                    </Form>
+                    <Strength>
+                        <Value>50</Value>
+                        <UnitCode source="Medicinpriser" date="2014-03-10">MG</UnitCode>
+                        <UnitText>mg</UnitText>
+                    </Strength>
+                </SubstitutedDrug>
+            </PackageDispensed>
+            <ExpectedDeliveryDateTime>2014-03-10T14:00:00Z</ExpectedDeliveryDateTime>
+            <PharmacyComment>Oprettet i Betalingsservice</PharmacyComment>
+            <LabelText>1 tablet morgen, middag og aften mod smerter</LabelText>
+            <DeliverySite>
+                <Name>Ry Apoteksudsalg</Name>
+                <AddressLine>Siimtoften 2</AddressLine>
+                <AddressLine>8660 Ry</AddressLine>
+                <Type>Apotek</Type>
+	        <Identifier source="CVR-P">1008648049</Identifier>
+            </DeliverySite>
+        </Effectuation>
+        <Terminate>true</Terminate>
+    </Prescription>
+</CreatePharmacyEffectuationRequest>
+     */
     private static class XPaths {
         static final String authorFamilyName =
             "/hl7:ClinicalDocument/hl7:author/hl7:assignedAuthor/hl7:assignedPerson/hl7:name/hl7:family";
@@ -94,6 +158,14 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:author/hl7:assignedAuthor/hl7:representedOrganization/hl7:addr/hl7:country";
         static final String inFulfillmentOfId =
             "/hl7:ClinicalDocument/hl7:inFulfillmentOf/hl7:order/hl7:id";
+        static final String effectiveTime =
+            "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
+        static final String packageQuantity =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:quantity";
+        static final String manufacturedMaterialCode =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code";
+        static final String substitution =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
     }
 
     private final XPath xpath;
@@ -214,7 +286,7 @@ public class DispensationMapper {
         return authorOrganization(cda);
     }
 
-    private long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
+    public long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
         var id = evalNode(cda, XPaths.inFulfillmentOfId);
         var root = xpath.evaluate("@root", id);
         if (!Oid.DK_FMK_PRESCRIPTION.value.equals(root)) {
@@ -228,11 +300,79 @@ public class DispensationMapper {
         }
     }
 
-    StartEffectuationRequestType.Prescription prescription(Document cda) throws XPathExpressionException,
+    StartEffectuationRequestType.Prescription startEffectuationRequestPrescription(Document cda) throws XPathExpressionException,
         MapperException {
         return StartEffectuationRequestType.Prescription.builder()
             .withIdentifier(prescriptionId(cda))
             .build();
+    }
+
+    CreatePharmacyEffectuationOnPrescriptionType prescription(
+        Document cda,
+        @NonNull StartEffectuationResponseType startEffectuationResponse
+    ) throws XPathExpressionException, MapperException {
+        var order = startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst();
+        var packageRestriction = startEffectuationResponse.getPrescription().getFirst().getPackageRestriction();
+        var terminate = packageQuantity(cda) == packageRestriction.getPackageQuantity();
+        return CreatePharmacyEffectuationOnPrescriptionType.builder()
+            .withPrescriptionIdentifier(prescriptionId(cda))
+            .withOrderIdentifier(order.getIdentifier())
+            .withEffectuation(effectuation(cda, startEffectuationResponse))
+            .withTerminate(terminate)
+            .build();
+    }
+
+    Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
+        var node = evalNode(cda, XPaths.packageQuantity);
+        var unit = xpath.evaluate("@unit", node);
+        if (!"1".equals(unit)) {
+            throw new MapperException("Unsupported quantity unit: " + unit);
+        }
+        ;
+        return Integer.parseInt(xpath.evaluate("@value", node));
+    }
+
+    CreatePharmacyEffectuationType effectuation(
+        Document cda,
+        StartEffectuationResponseType startEffectuationResponse
+    ) throws XPathExpressionException, MapperException {
+        var effectiveTime = eval(cda, XPaths.effectiveTime);
+        var packageRestriction = startEffectuationResponse.getPrescription().getFirst().getPackageRestriction();
+
+        // how do we handle substitutions? for now, disallow
+        if (evalNode(cda, XPaths.substitution) != null) {
+            throw new MapperException("Substitutions are not supported.");
+        }
+        // verify that package number matches prescription
+        if (!packageRestriction.getPackageNumber().getValue().equals(packageNumber(cda))) {
+            throw new MapperException(String.format(
+                "Package number in dispensation (%s) does not match prescription (%s).",
+                packageNumber(cda),
+                packageRestriction.getPackageNumber().getValue()));
+        }
+
+        return CreatePharmacyEffectuationType.builder()
+            .withDateTime(Utils.parseEpsosTime(effectiveTime))
+            .withPackageDispensed()
+                .withPackageQuantity(packageQuantity(cda))
+                .withPackageNumber(packageRestriction.getPackageNumber())
+                .withPackageSize(packageRestriction.getPackageSize())
+            .end()
+            .build();
+    }
+
+    private String packageNumber(Document cda) throws XPathExpressionException {
+        var node = evalNode(cda, XPaths.manufacturedMaterialCode);
+        var codeSystem = xpath.evaluate("@codeSystem", node);
+        if (!Oid.DK_LMS02.value.equals(codeSystem)) {
+            // throw?
+            log.warn("Expected LMS02 ({}) code system, for {}. Got: {}",
+                Oid.DK_LMS02.value,
+                XPaths.manufacturedMaterialCode,
+                codeSystem
+            );
+        }
+        return xpath.evaluate("@code", node);
     }
 
     public StartEffectuationRequestType startEffectuationRequest(
@@ -249,17 +389,30 @@ public class DispensationMapper {
                     obf.createModificatorTypeOrganisation(authorOrganization(cda))
                 ).end()
                 .withOrderedAtPharmacy(orderedAtPharmacy(cda))
-                .withPrescription(prescription(cda))
+                .withPrescription(startEffectuationRequestPrescription(cda))
                 .build();
         } catch (XPathExpressionException e) {
-            throw new RuntimeException(e);
+            throw new MapperException(e.getMessage());
         }
     }
 
     public CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
         @NonNull String patientId,
-        @NonNull Document dispensationCda
-    ) {
-        throw new UnsupportedOperationException("TODO");
+        @NonNull Document cda,
+        @NonNull StartEffectuationResponseType startEffectuationResponse) throws MapperException {
+        var obf = new ObjectFactory();
+        try {
+            return CreatePharmacyEffectuationRequestType.builder()
+                .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
+                .withCreatedBy().withContent(
+                    obf.createModificatorTypeOther(authorPerson(cda)),
+                    obf.createModificatorTypeRole(authorRole(cda)),
+                    obf.createModificatorTypeOrganisation(authorOrganization(cda))
+                ).end()
+                .addPrescription(prescription(cda, startEffectuationResponse))
+                .build();
+        } catch (XPathExpressionException e) {
+            throw new MapperException(e.getMessage());
+        }
     }
 }
