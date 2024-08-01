@@ -3,6 +3,7 @@ package dk.nsp.epps.service;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
 import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
@@ -60,7 +61,10 @@ public class PrescriptionService {
         }
     }
 
-    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(String patientId, PrescriptionFilter filter) throws JAXBException {
+    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
+        String patientId,
+        PrescriptionFilter filter
+    ) throws JAXBException {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
@@ -84,19 +88,26 @@ public class PrescriptionService {
         return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
     }
 
-    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda) {
+    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda) throws MapperException {
+        StartEffectuationResponseType response;
         try {
-            fmkClient.startEffectuation(dispensationMapper.startEffectuationRequest(patientId, dispensationCda), Identities.apotekerJeppeMoeller);
-        } catch (JAXBException | MapperException e) {
+            response = fmkClient.startEffectuation(
+                dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
+                Identities.apotekerJeppeMoeller);
+        } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
         }
 
         try {
-            fmkClient.createPharmacyEffectuation(dispensationMapper.createPharmacyEffectuationRequest(patientId, dispensationCda), Identities.apotekerJeppeMoeller);
+            fmkClient.createPharmacyEffectuation(
+                dispensationMapper.createPharmacyEffectuationRequest(
+                    patientId,
+                    dispensationCda,
+                    response),
+                Identities.apotekerJeppeMoeller);
         } catch (JAXBException e) {
+            // TODO: Cancel effectuation flow
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
         }
-
-        throw new UnsupportedOperationException("TODO");
     }
 }
