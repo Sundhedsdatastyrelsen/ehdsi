@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${catalina.base}/logs/ehealth-portal.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_CLINICAL" class="ch.qos.logback.core.FileAppender">
+        <file>${catalina.base}/logs/ehealth-portal-clinical.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %cyan([%logger{36}]) %highlight(%-5level) %C{36}.%M\(%line\) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="LOGGER_CLINICAL" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE_CLINICAL"/>
+    </logger>
+
+    <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.hibernate.orm.deprecation" level="ERROR" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Spring Web Service Payload Logging - Uncomment to enable MessageTracing Request/Response-->
+    <!--<logger name="org.springframework.ws.client.MessageTracing" level="TRACE" additivity="false">-->
+    <!--<appender-ref ref="FILE_CLINICAL"/>-->
+    <!--</logger>-->
+    <!--<logger name="org.springframework.ws.server.MessageTracing" level="TRACE" additivity="false">-->
+    <!--<appender-ref ref="FILE_CLINICAL"/>-->
+    <!--</logger>-->
+    <!-- End Spring Web Service Logging-->
+
+    <logger name="eu.europa.ec.sante.ehdsi.portal" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="epsos.openncp.protocolterminator" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <root level="INFO">
+<!--        <appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

@@ -1,0 +1,27 @@
+# Ignore all project files from IntelliJ
+*.iml
+.idea/
+atlassian-ide-plugin.xml
+
+# Ignore all target directories
+target/
+dist/
+
+*.jks
+application-local.yml
+/openncp-gateway.iml
+/openncp-gateway-backend/openncp-gateway-backend.iml
+/package-lock.json
+.DS_Store
+.lsp
+.clj-kondo
+/ehealth-portal-frontend/server
+/ehealth-portal-frontend/node_modules
+/ehealth-portal-frontend/build
+/ehealth-portal-frontend/package-lock.json
+/server
+.tags
+.tags1
+/ehealth-portal-backend/src/main/resources/keystore.jks
+/ehealth-portal-frontend/.env.local
+/ehealth-portal-frontend/.env.development
