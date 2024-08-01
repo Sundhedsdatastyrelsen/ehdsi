@@ -42,5 +42,5 @@ networks:
     external: true
 volumes:
   tsam-exporter-data:
-    external: true
+    #external: true # Removed since it does not exist in our NCP
     name: tsam-exporter-data
