@@ -38,7 +38,7 @@ services:
       - ncp
 networks:
   ncp:
-    name: ncp
+    name: epps
     external: true
 volumes:
   tsam-exporter-data:
