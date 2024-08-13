@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchFields xmlns="http://ec.europa.eu/sante/ehncp/ism"
+              xmlns:patientSearch="http://ec.europa.eu/sante/ehncp/ism"
+              xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
+   <id domain="2.16.17.710.820.1000.990.1"
+       label="patient.data.unique.identifier"
+       max="9"
+       min="9"/>
+   <id domain="2.16.17.710.820.1000.990.1"
+       label="patient.prescription.unique.identifier"
+       max="19"
+       min="19"/>
+   <id domain="2.16.17.710.820.1000.990.1"
+       label="patient.dispensation.pin"
+       max="6"
+       min="6"/>
+      </searchFields>

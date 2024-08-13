@@ -1,0 +1,72 @@
+/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}ul{list-style:none;}button,input,select,textarea{margin:0;}html{box-sizing:border-box;}*,*::before,*::after{box-sizing:inherit;}img,video{max-width:100%;height:auto;}iframe{border:0;}table{border-collapse:collapse;border-spacing:0;}td,th{padding:0;}td:not([align]),th:not([align]){text-align:left;}
+
+
+
+:root {
+  --grey: #d5d1d1;
+  --grey-light: #FAF9F9;
+  --grey-dark: #6d7098;
+  --red: #ff1a4d;
+  --light-green: #f4f6f1;
+  --green: #7BB51D;
+  --very-light-blue: #99c4ff;
+  --light-blue: #3f8efc;
+  --blue: #2667ff;
+  --dark-blue: #1951d6;
+
+  --font-regular: Roboto, sans-serif;
+  --font-mono: Roboto Mono, monospace;
+  --font-error: Roboto Mono, monospace;
+  --font-heading: Montserrat, sans-serif;;
+}
+
+html, body, #app, .app-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: var(--grey-light);
+  color: #444;
+
+}
+
+* {
+	font-family: var(--font-regular);
+	font-weight: 300;
+}
+
+h1, h2, h3, h4, .title {
+  margin-bottom: 1rem;
+	font-family: var(--font-heading);
+	font-weight: 400;
+}
+
+h1 {
+  font-size: 2rem;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.15);
+}
+
+h2 {
+  font-size: 1.75rem;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.15);
+
+}
+
+h3 {
+  color: #000;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.15);
+}
+
+button {
+	border: none;
+	outline: none;
+}
+input[type=search] {
+
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid #ccc;ight-blue);
+  border-radius: 0.5rem;  border: 1px solid #ccc;
+  outline-color: var(--light-blue);m;
+}
