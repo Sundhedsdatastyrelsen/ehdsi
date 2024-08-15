@@ -10,7 +10,7 @@ services:
       - "5443:8443"
       - "5004:5004"
     volumes:
-      - ./openncp-configuration/cert:/opt/openncp-configuration/keystore
+      - ./openncp-configuration/cert:/opt/openncp-configuration/cert
       - tsam-exporter-data:/opt/openncp-configuration/EpsosRepository
     networks:
       - ncp
