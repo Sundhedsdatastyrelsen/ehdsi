@@ -3,15 +3,14 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <artifactId>ehealth-portal</artifactId>
-        <groupId>eu.europa.ec.sante.ehdsi</groupId>
-        <version>2.0.0</version>
-    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>eu.europa.ec.sante.ehdsi</groupId>
+    <version>2.0.0</version>
     <artifactId>ehealth-portal-backend</artifactId>
     <packaging>war</packaging>
+
 
     <scm>
         <connection>scm:git:https://citnet.tech.ec.europa.eu/CITnet/stash/scm/ehealth/ehealth-portal.git</connection>
@@ -36,6 +35,9 @@
     </distributionManagement>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>11</java.version>
+        <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <httpcore.version>4.4.15</httpcore.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
