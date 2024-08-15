@@ -1,7 +1,12 @@
 #!/bin/bash
 
 #Create user for running the system
-sudo adduser epps-server
+#
+# To recreate a broken user, run `sudo userdel sds-test-admin`
+sudo adduser --disabled-password --gecos "" sds-test-admin
+sudo usermod -aG sudo sds-test-admin
+sudo passwd -d sds-test-admin
+sudo su - sds-test-admin
 
 sudo apt-get update
 
@@ -17,9 +22,19 @@ echo \
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-sudo mkdir /var/ehdsi
-sudo chown /var/ehdsi epps-server
-
 read -sp 'API Token for Github login: ' passvar
 export GITHUB_PAT=${passvar}
+sudo git -C /var clone https://${GITHUB_PAT}@github.com/Sundhedsdatastyrelsen/ehdsi.git 
 
+sudo chown -R sds-test-admin /var/ehdsi
+
+read -sp 'CTS Password: ' ctspass
+echo ${ctspass} >> /var/ehdsi/NCP/cts_password.txt
+
+chmod +x /var/ehdsi/NCP/run.sh
+/var/ehdsi/NCP/run.sh init
+sudo /var/ehdsi/NCP/run.sh up
+
+cp /var/ehdsi/country-a-service/.env.defaults /var/ehdsi/country-a-service/.env
+export $(grep -v '^#' /var/ehdsi/country-a-service/.env | xargs -d '\n')
+sudo docker compose -f /var/ehdsi/country-a-service/docker-compose.local.yml up -d
