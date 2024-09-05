@@ -84,10 +84,14 @@ services:
       TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
       SEAL_KEYSTORE_ALIAS: ${SEAL_KEYSTORE_ALIAS}
-      SEAL_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_SEAL_TEST.jks
+      SEAL_KEYSTORE_FILE: /opt/openncp-configuration/cert/sds-test-seal.jks
       SEAL_KEYSTORE_PASSWORD_FILE: /run/secrets/seal_keystore_password
       TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
+      SC_KEYSTORE_PATH: /opt/openncp-configuration/cert/sds-test-seal.jks
+      SC_SMP_CLIENT_PRIVATEKEY_ALIAS: ${SEAL_KEYSTORE_ALIAS}
+      SC_KEYSTORE_PASSWORD_FILE: /run/secrets/seal_keystore_password #new
+      SC_SMP_CLIENT_PRIVATEKEY_PASSWORD_FILE: /run/secrets/seal_keystore_password #new
     depends_on:
       mariadb:
         condition: service_healthy
@@ -199,12 +203,12 @@ services:
       - "8443:8443"
       - "8082:8082"
       - "2861:2861"
-      # - "5006:5006"
+      - "5006:5006" #Java debug
     depends_on:
       - mariadb
       - configuration-synchronizer
     environment:
-      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n" #Java debug
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
@@ -222,3 +226,4 @@ services:
       - db_password
       - db_username
       - tls_keystore_password
+

@@ -63,6 +63,7 @@ COPY --from=builder /usr/src/app/dist webapps/openncp-gateway/
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 ENV LOGGING_LEVEL_ROOT=INFO
 
+#Not needed for docker compose
 EXPOSE 8082
 EXPOSE 8443
 EXPOSE 2862
