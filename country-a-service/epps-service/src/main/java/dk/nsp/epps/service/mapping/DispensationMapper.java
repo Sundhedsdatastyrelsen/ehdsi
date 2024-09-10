@@ -220,16 +220,18 @@ public class DispensationMapper {
             .withName()
             .withSurname(familyNames.getLast())
             .withGivenName(allButLastName).end()
+            .withPersonIdentifier().withSource("CPR").withValue("3001010033").end()
             .build();
     }
 
     String authorRole(Document cda) throws XPathExpressionException {
         var functionCode = eval(cda, XPaths.authorFunctionCode);
         var functionCodeSystem = eval(cda, XPaths.authorFunctionCodeSystem);
-        if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
-            return "Apoteksansat";
-        }
-        throw new IllegalArgumentException("Unexpected function code: " + functionCode);
+//        if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
+//            return "Apoteksansat";
+//        }
+        return "Apoteker";
+        //throw new IllegalArgumentException("Unexpected function code: " + functionCode);
     }
 
     private boolean notBlank(String s) {
@@ -237,17 +239,21 @@ public class DispensationMapper {
     }
 
     private OrganisationIdentifierType identifier(Node id) {
-        var attrs = id.getAttributes();
-        var root = attrs.getNamedItem("root");
-        var ext = attrs.getNamedItem("extension");
-        if (root == null) {
-            throw new IllegalArgumentException("Id nodes without root attributes are unsupported");
-        }
+//        var attrs = id.getAttributes();
+//        var root = attrs.getNamedItem("root");
+//        var ext = attrs.getNamedItem("extension");
+//        if (root == null) {
+//            throw new IllegalArgumentException("Id nodes without root attributes are unsupported");
+//        }
+//        return OrganisationIdentifierType.builder()
+//            .withSource(OrganisationIdentifierPredefinedSourceType.UDENLANDSK.value())
+//            .withValue(ext == null
+//                ? root.getTextContent()
+//                : String.format("%s.%s", root.getTextContent(), ext.getTextContent()))
+//            .build();
         return OrganisationIdentifierType.builder()
-            .withSource(OrganisationIdentifierPredefinedSourceType.UDENLANDSK.value())
-            .withValue(ext == null
-                ? root.getTextContent()
-                : String.format("%s.%s", root.getTextContent(), ext.getTextContent()))
+            .withSource(OrganisationIdentifierPredefinedSourceType.YDER.value())
+            .withValue("990027")
             .build();
     }
 
@@ -270,11 +276,18 @@ public class DispensationMapper {
             if (t.startsWith("mailto:")) email = t.substring(7);
         }
 
+//        var b = OrganisationType.builder()
+//            .withIdentifier(identifier(evalNode(cda, XPaths.authorOrgId)))
+//            .withName(eval(cda, XPaths.authorOrgName))
+//            .withType("Apotek") // TODO: How can we determine this?
+//            .addAddressLine(addressLines);
+
         var b = OrganisationType.builder()
-            .withIdentifier(identifier(evalNode(cda, XPaths.authorOrgId)))
-            .withName(eval(cda, XPaths.authorOrgName))
-            .withType("Apotek") // TODO: How can we determine this?
-            .addAddressLine(addressLines);
+            .withIdentifier(OrganisationIdentifierType.builder()
+                .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+                .withValue("5790000170609").build())
+            .withName("Ukendt")
+            .withType("Apotek");
 
         if (email != null) b.withEmailAddress(email);
         if (telephone != null) b.withTelephoneNumber(telephone);
