@@ -227,11 +227,13 @@ public class DispensationMapper {
     String authorRole(Document cda) throws XPathExpressionException {
         var functionCode = eval(cda, XPaths.authorFunctionCode);
         var functionCodeSystem = eval(cda, XPaths.authorFunctionCodeSystem);
-//        if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
-//            return "Apoteksansat";
-//        }
-        return "Apoteker";
-        //throw new IllegalArgumentException("Unexpected function code: " + functionCode);
+        if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
+            //This is the "official" translation of "Pharmacists" from ISCO.
+            // It has implications in FMK, who validates these
+            return "Apoteker";
+        }
+
+        throw new IllegalArgumentException("Unexpected function code: " + functionCode);
     }
 
     private boolean notBlank(String s) {
