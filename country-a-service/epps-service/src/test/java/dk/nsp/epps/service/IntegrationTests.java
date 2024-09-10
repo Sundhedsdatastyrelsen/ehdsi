@@ -8,14 +8,17 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.nsp.epps.Utils;
 import dk.nsp.epps.client.CprClient;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.service.mapping.DispensationMapper;
 import dk.nsp.test.idp.OrganizationIdentities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 
 import java.util.Collection;
 
@@ -166,5 +169,31 @@ public class IntegrationTests {
         var response = cprClient.getPersonInformation("0611809735", Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Charles Test Babbage", response.getPersonInformationStructure()
             .getRegularCPRPerson().getPersonNameForAddressingName());
+    }
+
+
+
+    @Test
+    public void fmkSubmitDispensation() throws Exception {
+        final var caller = Identities.apotekerChrisChristoffersen;
+
+        var dispensationMapper = new DispensationMapper();
+        //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
+        var effectuationRequest = dispensationMapper.startEffectuationRequest("0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO", testDispensationCda());
+
+
+
+        var startEffectuation = fmkClient.startEffectuation(effectuationRequest, caller);
+        Assertions.assertTrue(startEffectuation.getStartEffectuationFailed().isEmpty());
+        //Assertions.assertEquals("Cipramil", startEffectuation.getPrescription().get(0).getDrug().getName());
+
+    }
+
+    Document testDispensationCda() {
+        try (var is = this.getClass().getClassLoader().getResourceAsStream("dispensation2.xml")) {
+            return Utils.readXmlDocument(is);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
