@@ -239,8 +239,19 @@ public class DispensationMapper {
     private boolean notBlank(String s) {
         return s != null && !s.isBlank();
     }
-
+    /**
+     * TODO FMK Improvement
+     * FMK is supposed to support "Udenlandsk" OrganisationIdenfier, according to the documentation
+     * When called, it responds with an error that it is not supported yet
+     *
+     * Two options going forward:
+     * - FMK start supporting Udenlandsk, and we reimplement forwarding the identifier from Country-B
+     * - We agree with FMK to "proxy" all requests through another Organisation, like we do in the code right now.
+     *
+     * (2024/09/10)
+     */
     private OrganisationIdentifierType identifier(Node id) {
+
 //        var attrs = id.getAttributes();
 //        var root = attrs.getNamedItem("root");
 //        var ext = attrs.getNamedItem("extension");
@@ -254,8 +265,8 @@ public class DispensationMapper {
 //                : String.format("%s.%s", root.getTextContent(), ext.getTextContent()))
 //            .build();
         return OrganisationIdentifierType.builder()
-            .withSource(OrganisationIdentifierPredefinedSourceType.YDER.value())
-            .withValue("990027")
+            .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+            .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
             .build();
     }
 
@@ -278,18 +289,11 @@ public class DispensationMapper {
             if (t.startsWith("mailto:")) email = t.substring(7);
         }
 
-//        var b = OrganisationType.builder()
-//            .withIdentifier(identifier(evalNode(cda, XPaths.authorOrgId)))
-//            .withName(eval(cda, XPaths.authorOrgName))
-//            .withType("Apotek") // TODO: How can we determine this?
-//            .addAddressLine(addressLines);
-
         var b = OrganisationType.builder()
-            .withIdentifier(OrganisationIdentifierType.builder()
-                .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
-                .withValue("5790000170609").build())
-            .withName("Ukendt")
-            .withType("Apotek");
+            .withIdentifier(identifier(evalNode(cda, XPaths.authorOrgId)))
+            .withName(eval(cda, XPaths.authorOrgName))
+            .withType("Apotek") // TODO: How can we determine this?
+            .addAddressLine(addressLines);
 
         if (email != null) b.withEmailAddress(email);
         if (telephone != null) b.withTelephoneNumber(telephone);
