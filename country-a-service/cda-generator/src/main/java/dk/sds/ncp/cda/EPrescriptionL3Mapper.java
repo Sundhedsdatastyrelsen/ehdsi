@@ -132,13 +132,13 @@ public class EPrescriptionL3Mapper {
     private static Organization authorOrganization(PrescriptionType prescription) throws MapperException {
         var org = authorOrganizationXml(prescription);
 
-        if (!Objects.equals(org.getIdentifier().getSource(), "Yder")) {
-            throw new MapperException(
-                "Invalid organization identifier source, expected Yder got: "
-                + org.getIdentifier().getSource());
-        }
-
-        var id = new CdaId(Oid.DK_YDER, org.getIdentifier().getValue());
+        var id = new CdaId(switch(org.getIdentifier().getSource()) {
+            case "Yder" -> Oid.DK_YDER;
+            case "SOR" -> Oid.DK_SOR;
+            default -> throw new MapperException(
+                "Invalid organization identifier source, expected Yder or SOR got: "
+                    + org.getIdentifier().getSource());
+        }, org.getIdentifier().getValue());
 
         var streetAddressLines = new LinkedList<String>();
         String city = null, postalCode = null;

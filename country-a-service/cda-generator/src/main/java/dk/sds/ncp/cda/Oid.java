@@ -18,6 +18,10 @@ public enum Oid {
      */
     DK_YDER("2.16.17.710.802.1000.990.1.40"),
     /**
+     * Sundhedsvæsenets Organisationsregister (SOR)
+     */
+    DK_SOR("2.16.17.710.802.1000.990.1.50"),
+    /**
      * LMS02 - "Grunddata pakning"
      */
     DK_LMS02("2.16.17.710.802.1000.990.1.20.2"),
@@ -32,6 +36,7 @@ public enum Oid {
     ATC("2.16.840.1.113883.6.73"),
     ADMINISTRATIVE_GENDER("2.16.840.1.113883.5.1"),
     HEALTHCARE_PROFESSIONAL_ROLES("2.16.840.1.113883.2.9.6.2.7");
+
 
     public final String value;
 
