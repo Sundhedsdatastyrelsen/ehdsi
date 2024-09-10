@@ -247,7 +247,7 @@ root="${id.root}"<#rt>
                             <entryRelationship inversionInd="true" typeCode="SUBJ">
                                 <observation classCode="OBS" moodCode="EVN">
                                     <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="ActClass" displayName="Substitution"/>
-                                    <value code="N" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.42.7" codeSystemName="eHDSISubstitutionCode" displayName="none" />
+                                    <!--<value code="N" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.42.7" codeSystemName="eHDSISubstitutionCode" displayName="none" />-->
                                 </observation>
                             </entryRelationship>
 </#if>
