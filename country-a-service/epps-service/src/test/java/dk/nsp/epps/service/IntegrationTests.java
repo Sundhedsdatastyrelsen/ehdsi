@@ -181,7 +181,8 @@ public class IntegrationTests {
 
         var startEffectuationResponse = fmkClient.startEffectuation(effectuationRequest, caller);
         Assertions.assertTrue(startEffectuationResponse.getStartEffectuationFailed().isEmpty());
-        //TODO Assert required fields
+        Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst());
+        Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getPackageRestriction());
 
         var createPharmacyEffectuationResult = fmkClient.createPharmacyEffectuation(
             dispensationMapper.createPharmacyEffectuationRequest(
