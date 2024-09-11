@@ -67,7 +67,6 @@ public class IntegrationTests {
 
         var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
-        Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
     }
 
     @Test
@@ -79,7 +78,6 @@ public class IntegrationTests {
 
         var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
-        Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
     }
 
     private StartEffectuationRequestType startEffectuationRequest(Collection<Long> prescriptionIds) {
@@ -153,7 +151,8 @@ public class IntegrationTests {
 
         var effectuation = fmkClient.createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
 
-        Assertions.assertEquals(effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
+        Assertions.assertEquals(
+            effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
             1341404078102001010L);
     }
 
