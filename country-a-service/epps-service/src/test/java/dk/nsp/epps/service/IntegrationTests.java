@@ -11,7 +11,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.Utils;
 import dk.nsp.epps.client.CprClient;
 import dk.nsp.epps.client.FmkClient;
-import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.mapping.DispensationMapper;
 import dk.nsp.test.idp.OrganizationIdentities;
 import org.junit.jupiter.api.Assertions;
@@ -65,7 +65,7 @@ public class IntegrationTests {
             .withIncludeOpenPrescriptions().end()
             .build();
 
-        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
+        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, TestIdentities.apotekerChrisChristoffersen);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
     }
 
@@ -76,7 +76,7 @@ public class IntegrationTests {
             .withIncludeOpenPrescriptions().end()
             .build();
 
-        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerJeppeMoeller);
+        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
     }
 
@@ -108,7 +108,7 @@ public class IntegrationTests {
 
     @Test
     public void fmkStartEffectuation() throws Exception {
-        final var caller = Identities.apotekerChrisChristoffersen;
+        final var caller = TestIdentities.apotekerChrisChristoffersen;
         var prescriptions = fmkClient.getPrescription(
             GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
@@ -127,7 +127,7 @@ public class IntegrationTests {
 
     @Test
     public void fmkCreateEffectuation() throws Exception {
-        final var caller = Identities.apotekerChrisChristoffersen;
+        final var caller = TestIdentities.apotekerChrisChristoffersen;
         var prescriptions = fmkClient.getPrescription(
             GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
@@ -149,7 +149,7 @@ public class IntegrationTests {
                 .build())
             .build();
 
-        var effectuation = fmkClient.createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
+        var effectuation = fmkClient.createPharmacyEffectuation(request, TestIdentities.apotekerChrisChristoffersen);
 
         Assertions.assertEquals(
             effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
@@ -165,7 +165,7 @@ public class IntegrationTests {
 
     @Test
     void cprGetPersonInformationAlternativeCaller() throws Exception {
-        var response = cprClient.getPersonInformation("0611809735", Identities.apotekerJeppeMoeller);
+        var response = cprClient.getPersonInformation("0611809735", TestIdentities.apotekerJeppeMoeller);
         Assertions.assertEquals("Charles Test Babbage", response.getPersonInformationStructure()
             .getRegularCPRPerson().getPersonNameForAddressingName());
     }
@@ -173,7 +173,7 @@ public class IntegrationTests {
 
     @Test
     public void fmkSubmitDispensation() throws Exception {
-        final var caller = Identities.apotekerChrisChristoffersen;
+        final var caller = TestIdentities.apotekerChrisChristoffersen;
         var patientId = "0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO";
         var dispensationMapper = new DispensationMapper();
         //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
@@ -189,7 +189,7 @@ public class IntegrationTests {
                 patientId,
                 testDispensationCda(),
                 startEffectuationResponse),
-            Identities.apotekerChrisChristoffersen);
+            TestIdentities.apotekerChrisChristoffersen);
 
         Assertions.assertTrue(true);
     }

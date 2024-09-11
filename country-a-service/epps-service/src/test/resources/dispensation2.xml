@@ -3,10 +3,10 @@
   <hl7:realmCode code="EU" />
   <hl7:typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3" />
   <hl7:templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.2" />
-  <hl7:id root="1.2.3" extension="ucEhz77A8mk+jQR1" />
+  <hl7:id root="1.2.3" extension="wIn0UNs+hKNMzWK+" />
   <hl7:code code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Medication dispensed.extended Document" />
   <hl7:title>Medication dispensed</hl7:title>
-  <hl7:effectiveTime value="20240910142434+0200" />
+  <hl7:effectiveTime value="20240911134356+0200" />
   <hl7:confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" codeSystemVersion="913-20091020" displayName="normal" />
   <hl7:languageCode code="nl-BE" />
   <hl7:recordTarget contextControlCode="OP" typeCode="RCT">
@@ -31,7 +31,7 @@
   </hl7:recordTarget>
   <hl7:author typeCode="AUT" contextControlCode="OP">
     <hl7:functionCode code="2262" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Pharmacists" />
-    <hl7:time value="20240910142434+0200" />
+    <hl7:time value="20240911134356+0200" />
     <hl7:assignedAuthor classCode="ASSIGNED">
       <hl7:id root="1.2.3" extension="extension" />
       <hl7:addr>
@@ -74,7 +74,7 @@
     </hl7:assignedCustodian>
   </hl7:custodian>
   <hl7:legalAuthenticator>
-    <hl7:time value="20240910142434+0200" />
+    <hl7:time value="20240911134356+0200" />
     <hl7:signatureCode code="S" />
     <hl7:assignedEntity>
       <hl7:id root="1.2.3" />
@@ -106,7 +106,7 @@
   </hl7:legalAuthenticator>
   <hl7:inFulfillmentOf>
     <hl7:order moodCode="RQO">
-      <hl7:id extension="450950861411102" root="2.16.17.710.802.1000.990.1.10" />
+      <hl7:id extension="462617619087101" root="2.16.17.710.802.1000.990.1.10" />
     </hl7:order>
   </hl7:inFulfillmentOf>
   <hl7:component>
@@ -114,19 +114,18 @@
       <hl7:component typeCode="COMP">
         <hl7:section classCode="DOCSECT" moodCode="EVN">
           <hl7:templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.2" />
-          <hl7:id root="67B6AE41-2CBB-4202-82C3-18CB0E8CA849" />
+          <hl7:id root="90BFAE9A-1640-4E3D-9892-EE293CDAD1C0" />
           <hl7:code code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Medication dispensed" />
           <hl7:title>Dispensation: null</hl7:title>
           <hl7:text>
             <paragraph xmlns="urn:hl7-org:v3">
-              <content>Lantus</content>
+              <content>Paracetamol "Orifarm"</content>
             </paragraph>
             <paragraph xmlns="urn:hl7-org:v3">
-              <content>mod diabetes</content>
+              <content>mod smerter</content>
             </paragraph>
             <paragraph xmlns="urn:hl7-org:v3">
-              <content>1 enhed morgen, middag og nat.
-Bemærk: Indtage i højre lår</content>
+              <content>2 tabletter efter behov, højst 4 gange daglig</content>
             </paragraph>
           </hl7:text>
           <hl7:entry typeCode="COMP">
@@ -142,26 +141,30 @@ Bemærk: Indtage i højre lår</content>
                   <manufacturedMaterial xmlns="urn:hl7-org:v3" classCode="MMAT" determinerCode="KIND">
                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30" />
                     <name>test product</name>
-                    <pharm:desc xmlns:pharm="urn:hl7-org:pharm">100 Enheder/ml</pharm:desc>
-                    <pharm:formCode xmlns:pharm="urn:hl7-org:pharm" code="INJOCYL" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" displayName="injektionsvæske, opløsning i cylinderampul" />
+                    <pharm:desc xmlns:pharm="urn:hl7-org:pharm">500 mg</pharm:desc>
+                    <pharm:formCode xmlns:pharm="urn:hl7-org:pharm" code="TABFILM" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" displayName="filmovertrukne tabletter" />
                     <pharm:asContent xmlns:pharm="urn:hl7-org:pharm" classCode="CONT">
-                      <pharm:quantity unit="mL" value="1" />
+                      <pharm:quantity unit="1" value="1">
+                        <hl7:translation>
+                          <originalText>stk.</originalText>
+                        </hl7:translation>
+                      </pharm:quantity>
                       <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
-                        <pharm:code code="4746" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02" />
-                        <pharm:name>Lantus</pharm:name>
+                        <pharm:code code="492285" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02" />
+                        <pharm:name>Paracetamol "Orifarm"</pharm:name>
                         <pharm:formCode nullFlavor="UNK" />
                       </pharm:containerPackagedProduct>
                     </pharm:asContent>
                     <pharm:asSpecializedKind xmlns:pharm="urn:hl7-org:pharm" classCode="GRIC">
                       <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
-                        <pharm:code code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="Insulin glargin" />
+                        <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="Paracetamol" />
                       </pharm:generalizedMaterialKind>
                     </pharm:asSpecializedKind>
                   </manufacturedMaterial>
                 </hl7:manufacturedProduct>
               </hl7:product>
               <hl7:performer typeCode="PRF">
-                <hl7:time value="20240910142434+0200" />
+                <hl7:time value="20240911134356+0200" />
                 <hl7:assignedEntity>
                   <hl7:id root="root" extension="extension" />
                   <hl7:addr>
@@ -201,26 +204,30 @@ Bemærk: Indtage i højre lår</content>
               </hl7:participant>
               <hl7:entryRelationship typeCode="REFR">
                 <hl7:substanceAdministration classCode="SBADM" moodCode="INT">
-                  <hl7:id extension="450950861411102" root="2.16.17.710.802.1000.990.1.10" />
+                  <hl7:id extension="462617619087101" root="2.16.17.710.802.1000.990.1.10" />
                   <hl7:consumable>
                     <hl7:manufacturedProduct classCode="MANU">
                       <templateId xmlns="urn:hl7-org:v3" root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29" />
                       <manufacturedMaterial xmlns="urn:hl7-org:v3" classCode="MMAT" determinerCode="KIND">
                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30" />
-                        <name>Lantus</name>
-                        <pharm:desc xmlns:pharm="urn:hl7-org:pharm">100 Enheder/ml</pharm:desc>
-                        <pharm:formCode xmlns:pharm="urn:hl7-org:pharm" code="INJOCYL" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" displayName="injektionsvæske, opløsning i cylinderampul" />
+                        <name>Paracetamol "Orifarm"</name>
+                        <pharm:desc xmlns:pharm="urn:hl7-org:pharm">500 mg</pharm:desc>
+                        <pharm:formCode xmlns:pharm="urn:hl7-org:pharm" code="TABFILM" codeSystem="2.16.17.710.802.1000.990.1.20.22" codeSystemName="LMS22" displayName="filmovertrukne tabletter" />
                         <pharm:asContent xmlns:pharm="urn:hl7-org:pharm" classCode="CONT">
-                          <pharm:quantity unit="mL" value="15" />
+                          <pharm:quantity unit="1" value="350">
+                            <hl7:translation>
+                              <originalText>stk.</originalText>
+                            </hl7:translation>
+                          </pharm:quantity>
                           <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
-                            <pharm:code code="4746" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02" />
-                            <pharm:name>Lantus</pharm:name>
+                            <pharm:code code="492285" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02" />
+                            <pharm:name>Paracetamol "Orifarm"</pharm:name>
                             <pharm:formCode nullFlavor="UNK" />
                           </pharm:containerPackagedProduct>
                         </pharm:asContent>
                         <pharm:asSpecializedKind xmlns:pharm="urn:hl7-org:pharm" classCode="GRIC">
                           <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
-                            <pharm:code code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="Insulin glargin" />
+                            <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="Paracetamol" />
                           </pharm:generalizedMaterialKind>
                         </pharm:asSpecializedKind>
                       </manufacturedMaterial>

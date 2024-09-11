@@ -122,7 +122,7 @@ public class FmkClient {
             facE2.createGetMedicineCardRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
             GetMedicineCardResponseType.class,
-            Identities.apotekerChrisChristoffersen
+            TestIdentities.apotekerChrisChristoffersen
             );
     }
 

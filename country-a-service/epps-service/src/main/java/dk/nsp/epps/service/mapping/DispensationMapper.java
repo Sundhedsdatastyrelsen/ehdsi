@@ -6,6 +6,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.Utils;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
@@ -266,10 +267,7 @@ public class DispensationMapper {
 //                ? root.getTextContent()
 //                : String.format("%s.%s", root.getTextContent(), ext.getTextContent()))
 //            .build();
-        return OrganisationIdentifierType.builder()
-            .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
-            .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
-            .build();
+        return TestIdentities.skanderborgApotek;
     }
 
     OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
@@ -379,7 +377,7 @@ public class DispensationMapper {
             .withPackageNumber(packageRestriction.getPackageNumber())
             .withPackageSize(packageRestriction.getPackageSize())
             .end()
-            .withDeliverySite().withName("Ry Apoteksudsalg").withType("Apotek").withIdentifier().withSource("CVR-P").withValue("1008648049").end().end()
+            .withDeliverySite(TestIdentities.deliverySiteRyApotek)
             .build();
     }
 
