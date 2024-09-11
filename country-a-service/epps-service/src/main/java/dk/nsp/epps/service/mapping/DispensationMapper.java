@@ -163,7 +163,7 @@ public class DispensationMapper {
         static final String packageQuantity =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:quantity";
         static final String manufacturedMaterialCode =
-            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code";
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
         static final String substitution =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
     }
@@ -174,6 +174,7 @@ public class DispensationMapper {
         xpath = XPathFactory.newInstance().newXPath();
         var nsCtx = new SimpleNamespaceContext();
         nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
+        nsCtx.bindNamespaceUri("pharm","urn:hl7-org:pharm");
         xpath.setNamespaceContext(nsCtx);
     }
 
@@ -239,15 +240,16 @@ public class DispensationMapper {
     private boolean notBlank(String s) {
         return s != null && !s.isBlank();
     }
+
     /**
      * TODO FMK Improvement
      * FMK is supposed to support "Udenlandsk" OrganisationIdenfier, according to the documentation
      * When called, it responds with an error that it is not supported yet
-     *
+     * <p>
      * Two options going forward:
      * - FMK start supporting Udenlandsk, and we reimplement forwarding the identifier from Country-B
      * - We agree with FMK to "proxy" all requests through another Organisation, like we do in the code right now.
-     *
+     * <p>
      * (2024/09/10)
      */
     private OrganisationIdentifierType identifier(Node id) {
@@ -373,10 +375,11 @@ public class DispensationMapper {
         return CreatePharmacyEffectuationType.builder()
             .withDateTime(Utils.parseEpsosTime(effectiveTime))
             .withPackageDispensed()
-                .withPackageQuantity(packageQuantity(cda))
-                .withPackageNumber(packageRestriction.getPackageNumber())
-                .withPackageSize(packageRestriction.getPackageSize())
+            .withPackageQuantity(packageQuantity(cda))
+            .withPackageNumber(packageRestriction.getPackageNumber())
+            .withPackageSize(packageRestriction.getPackageSize())
             .end()
+            .withDeliverySite().withName("Ry Apoteksudsalg").withType("Apotek").withIdentifier().withSource("CVR-P").withValue("1008648049").end().end()
             .build();
     }
 
@@ -385,7 +388,8 @@ public class DispensationMapper {
         var codeSystem = xpath.evaluate("@codeSystem", node);
         if (!Oid.DK_LMS02.value.equals(codeSystem)) {
             // throw?
-            log.warn("Expected LMS02 ({}) code system, for {}. Got: {}",
+            log.warn(
+                "Expected LMS02 ({}) code system, for {}. Got: {}",
                 Oid.DK_LMS02.value,
                 XPaths.manufacturedMaterialCode,
                 codeSystem
