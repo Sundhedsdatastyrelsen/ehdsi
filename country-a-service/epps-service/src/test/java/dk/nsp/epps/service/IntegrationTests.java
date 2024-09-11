@@ -171,21 +171,26 @@ public class IntegrationTests {
     }
 
 
-
     @Test
     public void fmkSubmitDispensation() throws Exception {
         final var caller = Identities.apotekerChrisChristoffersen;
-
+        var patientId = "0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO";
         var dispensationMapper = new DispensationMapper();
         //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
-        var effectuationRequest = dispensationMapper.startEffectuationRequest("0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO", testDispensationCda());
+        var effectuationRequest = dispensationMapper.startEffectuationRequest(patientId, testDispensationCda());
 
+        var startEffectuationResponse = fmkClient.startEffectuation(effectuationRequest, caller);
+        Assertions.assertTrue(startEffectuationResponse.getStartEffectuationFailed().isEmpty());
+        //TODO Assert required fields
 
+        var createPharmacyEffectuationResult = fmkClient.createPharmacyEffectuation(
+            dispensationMapper.createPharmacyEffectuationRequest(
+                patientId,
+                testDispensationCda(),
+                startEffectuationResponse),
+            Identities.apotekerChrisChristoffersen);
 
-        var startEffectuation = fmkClient.startEffectuation(effectuationRequest, caller);
-        Assertions.assertTrue(startEffectuation.getStartEffectuationFailed().isEmpty());
-        //Assertions.assertEquals("Cipramil", startEffectuation.getPrescription().get(0).getDrug().getName());
-
+        Assertions.assertTrue(true);
     }
 
     Document testDispensationCda() {
