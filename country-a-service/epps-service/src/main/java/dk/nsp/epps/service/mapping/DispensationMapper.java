@@ -360,7 +360,7 @@ public class DispensationMapper {
 
         // how do we handle substitutions? for now, disallow
         if (evalNode(cda, XPaths.substitution) != null) {
-            throw new MapperException("Substitutions are not supported.");
+            log.warn("Substitutions are not supported. No conversion was made.");
         }
         // verify that package number matches prescription
         if (!packageRestriction.getPackageNumber().getValue().equals(packageNumber(cda))) {
@@ -418,7 +418,8 @@ public class DispensationMapper {
     public CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
-        @NonNull StartEffectuationResponseType startEffectuationResponse) throws MapperException {
+        @NonNull StartEffectuationResponseType startEffectuationResponse
+    ) throws MapperException {
         var obf = new ObjectFactory();
         try {
             return CreatePharmacyEffectuationRequestType.builder()
@@ -431,7 +432,7 @@ public class DispensationMapper {
                 .addPrescription(prescription(cda, startEffectuationResponse))
                 .build();
         } catch (XPathExpressionException e) {
-            throw new MapperException(e.getMessage());
+            throw new MapperException(e.getMessage(), e);
         }
     }
 }
