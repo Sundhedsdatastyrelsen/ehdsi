@@ -135,32 +135,38 @@ public class EPrescriptionL3Mapper {
         var id = new CdaId(switch(org.getIdentifier().getSource()) {
             case "Yder" -> Oid.DK_YDER;
             case "SOR" -> Oid.DK_SOR;
+            case "SKS" -> Oid.DK_ORG_SKS;
+            case "EAN-Lokationsnummer" -> Oid.DK_ORG_EAN;
+            case "CVR" -> Oid.DK_ORG_CVR;
+            case "CVR-P" -> Oid.DK_ORG_CVR_P;
+            case "Kommunekode" -> Oid.DK_ORG_KOMMUNEKODE;
+            case "Udenlandsk" -> Oid.DK_ORG_UDENLANDSK;
             default -> throw new MapperException(
-                "Invalid organization identifier source, expected Yder or SOR got: "
+                "Invalid organization identifier source! Unable to find OID for: "
                     + org.getIdentifier().getSource());
         }, org.getIdentifier().getValue());
-
-        var streetAddressLines = new LinkedList<String>();
-        String city = null, postalCode = null;
-        var postalCityPattern = Pattern.compile("(\\d{4}) (.+)");
-        for (var line : org.getAddressLine()) {
-            var m = postalCityPattern.matcher(line);
-            if (m.matches()) {
-                postalCode = m.group(1);
-                city = m.group(2);
-            } else {
-                streetAddressLines.add(line);
+        Address address = null;
+        if(!org.getAddressLine().isEmpty()){
+            var streetAddressLines = new LinkedList<String>();
+            String city = null, postalCode = null;
+            var postalCityPattern = Pattern.compile("(\\d{4}) (.+)");
+            for (var line : org.getAddressLine()) {
+                var m = postalCityPattern.matcher(line);
+                if (m.matches()) {
+                    postalCode = m.group(1);
+                    city = m.group(2);
+                } else {
+                    streetAddressLines.add(line);
+                }
             }
-        }
-        if (city == null || postalCode == null) {
-            throw new MapperException("Unable to extract postal code and city from author organization address");
+            address = new Address(streetAddressLines, city, postalCode, "DK");
         }
 
         return new Organization(
             id,
             org.getName(),
             org.getTelephoneNumber(),
-            new Address(streetAddressLines, city, postalCode, "DK"));
+            address);
     }
 
     private static Author author(PrescriptionType prescription) throws MapperException {

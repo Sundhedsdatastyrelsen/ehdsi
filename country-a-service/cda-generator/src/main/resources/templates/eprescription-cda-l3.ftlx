@@ -12,6 +12,20 @@ codeSystem="${value.codeSystem}"<#rt>
 root="${id.root}"<#rt>
 <#if id.extension??> extension="${id.extension}"</#if><#rt>
 </#macro>
+<#macro address value="__NULL__"><#rt>
+<#if value=="__NULL__"><#rt>
+<#return>
+<#else>
+<addr>
+    <#list value.streetAddressLines as addressLine>
+    <streetAddressLine>${ addressLine }</streetAddressLine>
+    </#list>
+    <#if value.city??><city>${ value.city }</city></#if><#rt>
+    <#if value.postalCode??><postalCode>${ value.postalCode }</postalCode></#if><#rt>
+    <#if value.countryCode??><country>${ value.countryCode }</country></#if><#rt>
+</addr>
+</#if><#rt>
+</#macro><#rt>
 
 
 <#-- https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html -->
@@ -48,13 +62,7 @@ root="${id.root}"<#rt>
     <recordTarget contextControlCode="OP" typeCode="RCT">
         <patientRole classCode="PAT">
             <id <@cdaIdAttrs patient.id/> />
-            <addr>
-                <#list patient.address.streetAddressLines as addressLine>
-                <streetAddressLine>${ addressLine }</streetAddressLine>
-                </#list>
-                <city>${ patient.address.city }</city>
-                <postalCode>${ patient.address.postalCode }</postalCode>
-            </addr>
+            <@address patient.address />
             <telecom nullFlavor="NI"/>
             <patient classCode="PSN" determinerCode="INSTANCE">
                 <name>
@@ -88,14 +96,7 @@ root="${id.root}"<#rt>
                 <id <@cdaIdAttrs author.organization.id />/>
                 <name>${ author.organization.name }</name>
                 <telecom use="WP" value="tel:${ author.organization.telephoneNumber }"/>
-                <addr>
-<#list author.organization.address.streetAddressLines as addressLine>
-                    <streetAddressLine>${ addressLine }</streetAddressLine>
-</#list>
-                    <city>${ author.organization.address.city }</city>
-                    <postalCode>${ author.organization.address.postalCode }</postalCode>
-                    <country>${ author.organization.address.countryCode }</country>
-                </addr>
+                <@address author.organization.address />
             </representedOrganization>
         </assignedAuthor>
     </author>
