@@ -33,11 +33,24 @@ public class Utils {
         // our example data has only local date, so we'll handle those too.
         if (ts.length() == 8) {
             var parsed = DateTimeFormatter.ofPattern("yyyyMMdd").parse(ts);
-            zdt = LocalDate.from(parsed).atStartOfDay(ZoneId.of("Z"));
+            return xmlGregorianCalendar(LocalDate.from(parsed));
         } else {
             var parsed = DateTimeFormatter.ofPattern("yyyyMMddHHmmssX").parse(ts);
-            zdt = ZonedDateTime.from(parsed);
+            return xmlGregorianCalendar(ZonedDateTime.from(parsed));
         }
+    }
+
+    /**
+     * Convert a ZonedDateTime to XMLGregorianCalendar.
+     */
+    public static XMLGregorianCalendar xmlGregorianCalendar(ZonedDateTime zdt) {
         return DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar(GregorianCalendar.from(zdt));
+    }
+
+    /**
+     * Convert a LocalDate to XMLGregorianCalendar.
+     */
+    public static XMLGregorianCalendar xmlGregorianCalendar(LocalDate date) {
+        return xmlGregorianCalendar(date.atStartOfDay(ZoneId.of("Z")));
     }
 }

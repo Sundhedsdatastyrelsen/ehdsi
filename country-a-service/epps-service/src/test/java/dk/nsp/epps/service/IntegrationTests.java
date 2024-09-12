@@ -11,7 +11,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.client.CprClient;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
+import dk.nsp.test.idp.EmployeeIdentities;
 import dk.nsp.test.idp.OrganizationIdentities;
+import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -50,9 +52,14 @@ public class IntegrationTests {
             .withIncludePrescriptions(true)
             .build();
 
-        var medicineCard = fmkClient.getMedicineCard(getMedicineCardRequest);
-        System.out.println(medicineCard.getMedicineCard().size());
-
+        var response = fmkClient.getMedicineCard(
+            getMedicineCardRequest,
+            EmployeeIdentities.lægeCharlesBabbage(),
+            PredefinedRequestedRole.LÆGE
+        );
+        Assertions.assertEquals(response.getMedicineCard().size(), 1);
+        var medicineCard = response.getMedicineCard().getFirst();
+        Assertions.assertNotNull(medicineCard.getVersion());
     }
 
     @Test
@@ -150,7 +157,8 @@ public class IntegrationTests {
 
         var effectuation = fmkClient.createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
 
-        Assertions.assertEquals(effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
+        Assertions.assertEquals(
+            effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
             1341404078102001010L);
     }
 
