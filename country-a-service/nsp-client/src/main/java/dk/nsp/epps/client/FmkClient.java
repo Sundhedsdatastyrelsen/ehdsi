@@ -130,12 +130,17 @@ public class FmkClient {
         );
     }
 
-    public CreateDrugMedicationResponseType createDrugMedication(CreateDrugMedicationRequestType request, Identity caller) throws JAXBException {
+    public CreateDrugMedicationResponseType createDrugMedication(
+        CreateDrugMedicationRequestType request,
+        Identity caller,
+        PredefinedRequestedRole requestedRole
+    ) throws JAXBException {
         return makeFmkRequest(
             facE2.createCreateDrugMedicationRequest(request),
-            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreateDrugMedication",
             CreateDrugMedicationResponseType.class,
-            caller
+            caller,
+            requestedRole
         );
     }
 

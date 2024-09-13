@@ -1,8 +1,16 @@
 package dk.nsp.epps.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructuresForRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PersonIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PredefinedOrganisationTypeType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
@@ -19,6 +27,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collection;
 
 /**
@@ -174,5 +184,87 @@ public class IntegrationTests {
         var response = cprClient.getPersonInformation("0611809735", Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Charles Test Babbage", response.getPersonInformationStructure()
             .getRegularCPRPerson().getPersonNameForAddressingName());
+    }
+
+    @Test
+    void createNewPrescription() throws Exception {
+        var cpr = "0201909309";
+
+        var personIdentifier = PersonIdentifierType.builder()
+            .withSource("CPR")
+            .withValue(cpr)
+            .build();
+
+        var medicineCard = fmkClient.getMedicineCard(
+            GetMedicineCardRequestType.builder()
+                .withPersonIdentifier(personIdentifier)
+                .withIncludePrescriptions(true)
+                .build(),
+            EmployeeIdentities.lægeCharlesBabbage(),
+            PredefinedRequestedRole.LÆGE
+        ).getMedicineCard().getFirst();
+        var request = CreateDrugMedicationRequestType.builder()
+            .withPersonIdentifier(personIdentifier)
+            .withMedicineCardVersion(medicineCard.getVersion())
+            .withCreatedBy(prescriptionCreatedBy())
+            .addDrugMedication(drugMedication())
+            .build();
+        var drugMedication = fmkClient.createDrugMedication(request, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+
+        Assertions.assertNotNull(drugMedication);
+    }
+
+    private ModificatorType prescriptionCreatedBy() {
+        var authorisedHCP = AuthorisedHealthcareProfessionalType.builder()
+            .withAuthorisationIdentifier(EmployeeIdentities.lægeCharlesBabbage().getEmployee().getAuthorizationCode())
+            .withName("Charles Babbage")
+            .build();
+        var org = OrganisationType.builder()
+            .withIdentifier().withSource("SKS").withValue("133016N").end()
+            .withType(PredefinedOrganisationTypeType.SYGEHUS.value())
+            .withName("Amager og Hvidovre Hospital,\nFamilieambulatorium, Rigshospitalet")
+            .build();
+        return ModificatorType.builder()
+            .withContent(
+                medCardFac.createAuthorisedHealthcareProfessional(authorisedHCP),
+                medCardFac.createOrganisation(org)
+            )
+            .build();
+    }
+
+    private CreateDrugMedicationType drugMedication() {
+        var dosageStructure = DosageStructuresForRequestType.builder()
+            .addStructureOrEmptyStructure(DosageStructureForRequestType.builder()
+                .withIterationInterval(1)
+                .withStartDate(Utils.xmlGregorianCalendar(LocalDate.now()))
+                .withDosageEndingUndetermined().end()
+                .addDay()
+                    .withNumber(1)
+                    .addDose().withQuantity(BigDecimal.valueOf(3)).end()
+                .end()
+                .build())
+            .build();
+
+        return CreateDrugMedicationType.builder()
+            .withBeginEndDate()
+                .withTreatmentStartDate(Utils.xmlGregorianCalendar(LocalDate.now()))
+                .withTreatmentEndingUndetermined().end()
+            .end()
+            .withIndication()
+                .withCode().withSource("Medicinpriser").withDate("2024-09-12").withValue(145).end()
+            .end()
+            .withRouteOfAdministration()
+                .withCode().withSource("Medicinpriser").withDate("2024-09-12").withValue("OR").end()
+            .end()
+            .withDrug()
+                .withIdentifier().withSource("Medicinpriser").withDate("2024-09-12").withValue(28103888005L).end()
+                .withName("Pinex")
+            .end()
+            .withDosage()
+                .withUnitText("tablet")
+                .withStructuresFixed(dosageStructure)
+            .end()
+            .withSubstitutionAllowed(true)
+            .build();
     }
 }
