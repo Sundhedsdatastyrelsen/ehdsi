@@ -13,6 +13,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequ
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 /**
@@ -167,9 +169,7 @@ public class IntegrationTests {
 
         var effectuation = fmkClient.createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
 
-        Assertions.assertEquals(
-            effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
-            1341404078102001010L);
+        Assertions.assertEquals(effectuation.getEffectuation().get(0).getEffectuationIdentifier(), 1341404078102001010L);
     }
 
     @Test
@@ -186,6 +186,13 @@ public class IntegrationTests {
             .getRegularCPRPerson().getPersonNameForAddressingName());
     }
 
+    /**
+     * Create a new prescription for tests in the FMK test environment.
+     * The process is:
+     *  - Get most recent medicine card version.
+     *  - Create "Drug Medication" (lægemiddelordination) on medicine card
+     *  - Create prescription on "Drug Medication"
+     */
     @Test
     void createNewPrescription() throws Exception {
         var cpr = "0201909309";
@@ -203,15 +210,58 @@ public class IntegrationTests {
             EmployeeIdentities.lægeCharlesBabbage(),
             PredefinedRequestedRole.LÆGE
         ).getMedicineCard().getFirst();
-        var request = CreateDrugMedicationRequestType.builder()
+        var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
             .withPersonIdentifier(personIdentifier)
             .withMedicineCardVersion(medicineCard.getVersion())
             .withCreatedBy(prescriptionCreatedBy())
             .addDrugMedication(drugMedication())
             .build();
-        var drugMedication = fmkClient.createDrugMedication(request, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+        var drugMedicationResponse = fmkClient.createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+        Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
 
-        Assertions.assertNotNull(drugMedication);
+        var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
+        var drugMedicationIdentifier = drugMedicationResponse.getDrugMedication().getFirst().getIdentifier();
+
+        var createPrescriptionRequest = CreatePrescriptionRequestType.builder()
+            .withPersonIdentifier(personIdentifier)
+            .withMedicineCardVersion(medicineCardVersion)
+            .withCreatedBy(prescriptionCreatedBy())
+            .addPrescription()
+            .withDrugMedicationIdentifier(drugMedicationIdentifier)
+            .withAuthorisationDateTime(Utils.xmlGregorianCalendar(ZonedDateTime.now()))
+            // System name is mandatory, but the value doesn't seem to be validated by FMK.
+            .withSystemName("NCP ePrescription test system")
+            .withValidFromDate(Utils.xmlGregorianCalendar(LocalDate.now()))
+            .withPackageRestriction()
+            .withPackageQuantity(1)
+            // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
+            .withPackageNumber().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue("056232").end()
+            .end()
+            // dosage text is mandatory but seems to be overridden by structured dosage info
+            .withDosageText("1 tablet 3 gange dagligt")
+            .end()
+            .build();
+
+        var createPrescriptionResponse = fmkClient.createPrescription(
+            createPrescriptionRequest,
+            EmployeeIdentities.lægeCharlesBabbage(),
+            PredefinedRequestedRole.LÆGE);
+        Assertions.assertNotNull(createPrescriptionResponse.getPrescription().getFirst());
+    }
+
+    private static final String medicinpriserSource = "Medicinpriser";
+    // This date was used during development because it worked.  It is unknown if it will keep working.
+    // Setting a date is mandatory.
+    private static final String medicinpriserDate = "2024-09-12";
+
+    private OrganisationType prescripingOrganisation() {
+        // The SKS number is checked by FMK. The name and telephone number are mandatory, but probably not validated.
+        return OrganisationType.builder()
+            .withIdentifier().withSource("SKS").withValue("133016N").end()
+            .withType(PredefinedOrganisationTypeType.SYGEHUS.value())
+            .withName("Amager og Hvidovre Hospital,\nFamilieambulatorium, Rigshospitalet")
+            .withTelephoneNumber("+4587654321")
+            .build();
     }
 
     private ModificatorType prescriptionCreatedBy() {
@@ -219,20 +269,16 @@ public class IntegrationTests {
             .withAuthorisationIdentifier(EmployeeIdentities.lægeCharlesBabbage().getEmployee().getAuthorizationCode())
             .withName("Charles Babbage")
             .build();
-        var org = OrganisationType.builder()
-            .withIdentifier().withSource("SKS").withValue("133016N").end()
-            .withType(PredefinedOrganisationTypeType.SYGEHUS.value())
-            .withName("Amager og Hvidovre Hospital,\nFamilieambulatorium, Rigshospitalet")
-            .build();
         return ModificatorType.builder()
             .withContent(
                 medCardFac.createAuthorisedHealthcareProfessional(authorisedHCP),
-                medCardFac.createOrganisation(org)
+                medCardFac.createOrganisation(prescripingOrganisation())
             )
             .build();
     }
 
     private CreateDrugMedicationType drugMedication() {
+        // "1 tablet 3 gange dagligt"
         var dosageStructure = DosageStructuresForRequestType.builder()
             .addStructureOrEmptyStructure(DosageStructureForRequestType.builder()
                 .withIterationInterval(1)
@@ -240,7 +286,9 @@ public class IntegrationTests {
                 .withDosageEndingUndetermined().end()
                 .addDay()
                     .withNumber(1)
-                    .addDose().withQuantity(BigDecimal.valueOf(3)).end()
+                    .addDose().withQuantity(BigDecimal.valueOf(1)).end()
+                    .addDose().withQuantity(BigDecimal.valueOf(1)).end()
+                    .addDose().withQuantity(BigDecimal.valueOf(1)).end()
                 .end()
                 .build())
             .build();
@@ -251,13 +299,16 @@ public class IntegrationTests {
                 .withTreatmentEndingUndetermined().end()
             .end()
             .withIndication()
-                .withCode().withSource("Medicinpriser").withDate("2024-09-12").withValue(145).end()
+                // 145 is LMS26 code for "mod smerter"
+                .withCode().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue(145).end()
             .end()
             .withRouteOfAdministration()
-                .withCode().withSource("Medicinpriser").withDate("2024-09-12").withValue("OR").end()
+                // OR is LMS11 code for "Oral Anvendelse"
+                .withCode().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue("OR").end()
             .end()
             .withDrug()
-                .withIdentifier().withSource("Medicinpriser").withDate("2024-09-12").withValue(28103888005L).end()
+                // 28103888005 is LMS01 code for "Pinex 500mg filmovertrukne tabletter"
+                .withIdentifier().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue(28103888005L).end()
                 .withName("Pinex")
             .end()
             .withDosage()
