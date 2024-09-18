@@ -17,7 +17,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionReques
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.nsp.epps.Utils;
 import dk.nsp.epps.client.CprClient;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.TestIdentities;
@@ -215,7 +214,7 @@ public class IntegrationTests {
 
     Document testDispensationCda() {
         try (var is = this.getClass().getClassLoader().getResourceAsStream("dispensation2.xml")) {
-            return Utils.readXmlDocument(is);
+            return dk.nsp.epps.Utils.readXmlDocument(is);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
