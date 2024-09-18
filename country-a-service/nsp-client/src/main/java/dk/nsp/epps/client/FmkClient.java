@@ -1,8 +1,14 @@
 package dk.nsp.epps.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.CreateDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
@@ -10,6 +16,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.dgws._2010._08.NameFormat;
+import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
@@ -59,8 +66,8 @@ public class FmkClient {
         return ((Document) res.getNode()).getDocumentElement();
     }
 
-    private JAXBElement<WhitelistingHeader> getWhitelistingHeader() {
-        final var whitelistingHeader = WhitelistingHeader.builder()
+    private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
+        final var header = WhitelistingHeader.builder()
             .withSystemName("ePPS PoC")
             .withSystemOwnerName("Sundhedsdatastyrelsen")
             .withSystemVersion("0.1.0")
@@ -69,10 +76,10 @@ public class FmkClient {
             .withOrgUsingID()
             // TODO: Don't use Region Hovedstaden's location number:
             .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
-            .withRequestedRole("Apoteker")
+            .withRequestedRole(requestedRole.value())
             .build();
-        final var factory = new ObjectFactory();
-        return factory.createWhitelistingHeader(whitelistingHeader);
+
+        return new ObjectFactory().createWhitelistingHeader(header);
     }
 
     /**
@@ -117,13 +124,52 @@ public class FmkClient {
         );
     }
 
-    public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request) throws JAXBException {
+    public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, Identity caller, PredefinedRequestedRole requestedRole) throws JAXBException {
         return makeFmkRequest(
             facE2.createGetMedicineCardRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
             GetMedicineCardResponseType.class,
-            TestIdentities.apotekerChrisChristoffersen
-            );
+            caller,
+            requestedRole
+        );
+    }
+
+    public GetDrugMedicationResponseType getDrugMedication(GetDrugMedicationRequestType request, Identity caller, PredefinedRequestedRole requestedRole) throws JAXBException {
+        return makeFmkRequest(
+            fac.createGetDrugMedicationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetDrugMedication",
+            GetDrugMedicationResponseType.class,
+            caller,
+            requestedRole
+        );
+    }
+
+    public CreateDrugMedicationResponseType createDrugMedication(
+        CreateDrugMedicationRequestType request,
+        Identity caller,
+        PredefinedRequestedRole requestedRole
+    ) throws JAXBException {
+        return makeFmkRequest(
+            facE2.createCreateDrugMedicationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreateDrugMedication",
+            CreateDrugMedicationResponseType.class,
+            caller,
+            requestedRole
+        );
+    }
+
+    public CreatePrescriptionResponseType createPrescription(
+        CreatePrescriptionRequestType request,
+        Identity caller,
+        PredefinedRequestedRole requestedRole
+    ) throws JAXBException {
+        return makeFmkRequest(
+            facE2.createCreatePrescriptionRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePrescription",
+            CreatePrescriptionResponseType.class,
+            caller,
+            requestedRole
+        );
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
@@ -131,6 +177,16 @@ public class FmkClient {
         String soapAction,
         Class<ResponseType> clazz,
         Identity caller
+    ) throws JAXBException {
+        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.APOTEKER);
+    }
+
+    private <RequestType, ResponseType> ResponseType makeFmkRequest(
+        JAXBElement<RequestType> request,
+        String soapAction,
+        Class<ResponseType> clazz,
+        Identity caller,
+        PredefinedRequestedRole requestedRole
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
@@ -140,7 +196,7 @@ public class FmkClient {
                 toElement(request),
                 soapAction,
                 caller,
-                toElement(getWhitelistingHeader())
+                toElement(getWhitelistingHeader(requestedRole))
             );
         } catch (Exception e) {
             throw new RuntimeException(e);
