@@ -23,7 +23,7 @@
 		<module>epps-mocks</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
-        <module>fmk-responses-for-test</module>
+        <module>testing-shared</module>
     </modules>
 
 	<properties>
@@ -101,7 +101,7 @@
             </dependency>
             <dependency>
                 <groupId>dk.nsp.epps</groupId>
-                <artifactId>fmk-responses-for-test</artifactId>
+                <artifactId>testing-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -110,6 +110,13 @@
 				<artifactId>jackson-databind-nullable</artifactId>
 				<version>0.2.6</version>
 			</dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+
 			<dependency>
 				<groupId>dk.sosi.seal</groupId>
 				<artifactId>seal</artifactId>

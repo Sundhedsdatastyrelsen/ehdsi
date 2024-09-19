@@ -8,12 +8,11 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.nsp.epps.client.CprClient;
-import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.testing.shared.Cpr;
+import dk.nsp.epps.testing.shared.Fmk;
 import dk.nsp.test.idp.OrganizationIdentities;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -25,23 +24,8 @@ import java.util.Collection;
  */
 @Disabled("Requires external dependencies")
 public class IntegrationTests {
-    /// Configuration:
-    // Alternatives: "https://test2.fmk.netic.dk/fmk12/ws/MedicineCard", "http://localhost:8080/ws/"
-    static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
-    static final String cprEndpointUri =
-        "http://test2.ekstern-test.nspop.dk:8080/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4";
-
-    private static FmkClient fmkClient;
-    private static CprClient cprClient;
-
     private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medCardFac =
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
-
-    @BeforeAll
-    public static void setup() throws Exception {
-        fmkClient = new FmkClient(fmkEndpointUri);
-        cprClient = new CprClient(cprEndpointUri);
-    }
 
     @Test
     public void fmkGetMedicineCard() throws Exception {
@@ -50,7 +34,7 @@ public class IntegrationTests {
             .withIncludePrescriptions(true)
             .build();
 
-        var medicineCard = fmkClient.getMedicineCard(getMedicineCardRequest);
+        var medicineCard = Fmk.apiClient().getMedicineCard(getMedicineCardRequest);
         System.out.println(medicineCard.getMedicineCard().size());
 
     }
@@ -62,9 +46,9 @@ public class IntegrationTests {
             .withIncludeOpenPrescriptions().end()
             .build();
 
-        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
+        var prescriptions = Fmk.apiClient().getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
-        Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
+        Assertions.assertEquals("Ipren", prescriptions.getPrescription().get(0).getDrug().getName());
     }
 
     @Test
@@ -74,7 +58,7 @@ public class IntegrationTests {
             .withIncludeOpenPrescriptions().end()
             .build();
 
-        var prescriptions = fmkClient.getPrescription(getPrescriptionRequest, Identities.apotekerJeppeMoeller);
+        var prescriptions = Fmk.apiClient().getPrescription(getPrescriptionRequest, Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
         Assertions.assertEquals("Cipramil", prescriptions.getPrescription().get(0).getDrug().getName());
     }
@@ -108,7 +92,7 @@ public class IntegrationTests {
     @Test
     public void fmkStartEffectuation() throws Exception {
         final var caller = Identities.apotekerChrisChristoffersen;
-        var prescriptions = fmkClient.getPrescription(
+        var prescriptions = Fmk.apiClient().getPrescription(
             GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
                 .withIncludeOpenPrescriptions().end()
@@ -119,7 +103,7 @@ public class IntegrationTests {
             .map(PrescriptionType::getIdentifier)
             .toList();
 
-        var startEffectuation = fmkClient.startEffectuation(startEffectuationRequest(prescription), caller);
+        var startEffectuation = Fmk.apiClient().startEffectuation(startEffectuationRequest(prescription), caller);
         Assertions.assertTrue(startEffectuation.getStartEffectuationFailed().isEmpty());
         Assertions.assertEquals("Cipramil", startEffectuation.getPrescription().get(0).getDrug().getName());
     }
@@ -127,7 +111,7 @@ public class IntegrationTests {
     @Test
     public void fmkCreateEffectuation() throws Exception {
         final var caller = Identities.apotekerChrisChristoffersen;
-        var prescriptions = fmkClient.getPrescription(
+        var prescriptions = Fmk.apiClient().getPrescription(
             GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue("1111111118").end()
                 .withIncludeOpenPrescriptions().end()
@@ -138,7 +122,7 @@ public class IntegrationTests {
             .map(PrescriptionType::getIdentifier)
             .toList();
 
-        var startEffectuation = fmkClient.startEffectuation(startEffectuationRequest(prescription), caller);
+        var startEffectuation = Fmk.apiClient().startEffectuation(startEffectuationRequest(prescription), caller);
 
         var request = CreatePharmacyEffectuationRequestType.builder()
             .withPersonIdentifier().end() // TODO
@@ -148,7 +132,7 @@ public class IntegrationTests {
                 .build())
             .build();
 
-        var effectuation = fmkClient.createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
+        var effectuation = Fmk.apiClient().createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
 
         Assertions.assertEquals(effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
             1341404078102001010L);
@@ -156,14 +140,14 @@ public class IntegrationTests {
 
     @Test
     void cprGetPersonInformation() throws Exception {
-        var response = cprClient.getPersonInformation("0611809735", OrganizationIdentities.sundhedsdatastyrelsen());
+        var response = Cpr.apiClient().getPersonInformation("0611809735", OrganizationIdentities.sundhedsdatastyrelsen());
         Assertions.assertEquals("Charles Test Babbage", response.getPersonInformationStructure()
             .getRegularCPRPerson().getPersonNameForAddressingName());
     }
 
     @Test
     void cprGetPersonInformationAlternativeCaller() throws Exception {
-        var response = cprClient.getPersonInformation("0611809735", Identities.apotekerJeppeMoeller);
+        var response = Cpr.apiClient().getPersonInformation("0611809735", Identities.apotekerJeppeMoeller);
         Assertions.assertEquals("Charles Test Babbage", response.getPersonInformationStructure()
             .getRegularCPRPerson().getPersonNameForAddressingName());
     }
