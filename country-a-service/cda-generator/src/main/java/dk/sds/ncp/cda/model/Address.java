@@ -6,7 +6,7 @@ import lombok.Value;
 @Value
 public class Address {
     @NonNull Iterable<String> streetAddressLines;
-    @NonNull String city;
-    @NonNull String postalCode;
+    String city;
+    String postalCode;
     String countryCode;
 }
