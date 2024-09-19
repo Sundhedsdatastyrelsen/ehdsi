@@ -25,6 +25,7 @@
         <module>nsp-client</module>
         <module>fmk-responses-for-test</module>
         <module>integration-tests</module>
+        <module>country-b-mock</module>
     </modules>
 
 	<properties>
@@ -296,6 +297,9 @@
 										<failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
 										<excludes>
 											<exclude>dk.nsp.epps:*</exclude>
+                                            <exclude>eu.europa.ec.sante.ehdsi:*</exclude>
+                                            <exclude>eu.europa.ec.sante.ehdsi.openncp-protocol-terminators:*</exclude>
+                                            <exclude>eu.europa.ec.sante.ehdsi.openncp-cdadisplaytool:*</exclude>
 										</excludes>
 									</requireReleaseDeps>
 									<requireUpperBoundDeps />

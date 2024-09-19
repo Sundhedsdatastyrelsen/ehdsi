@@ -14,6 +14,7 @@
         <module name="epps-cpr-mock" />
         <module name="epps-fmk-mock" />
         <module name="fmk-responses-for-test" />
+        <module name="country-b-mock" />
         <module name="epps-cpr-mock-data" />
         <module name="nsp-client" />
         <module name="epps-fmk-api" />
@@ -26,6 +27,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cda-generator" options="-parameters" />
+      <module name="country-b-mock" options="-parameters" />
       <module name="epps-application" options="-parameters" />
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
