@@ -12,7 +12,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
-import dk.nsp.epps.client.CprClient;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.mock.model.DispenseRequest;
@@ -24,7 +23,6 @@ import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.MapperException;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
-import eu.europa.ec.sante.ehdsi.openncp.configmanager.domain.Property;
 import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -57,26 +55,43 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
 
+@SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CoordinatedIntegrationTest
-{
+public class CoordinatedIntegrationTest {
     static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
-    static final String cprEndpointUri =
-        "http://test2.ekstern-test.nspop.dk:8080/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4";
+    //The source for creating prescriptions is always Medicinpriser
+    private static final String prescriptionStaticSource = "Medicinpriser";
+    // This date was used during development because it worked.  It is unknown if it will keep working.
+    // Setting a date is mandatory.
+    private static final String prescriptionStaticDate = "2024-09-12";
+
+
     private static final File storageDir = new File("src/test/resources/test-file-storage");
-    //private static final List<String> testCprs = List.of("1111111118", "0201909309");
-    private static final List<String> testCprs = List.of("0201909309");
-    private static String getFmkFileName(String cpr) {return "get-prescription-" + cpr + ".xml";}
-    private static String getCdaFileName(String cpr) {return "cda-" + cpr + ".xml";}
-    private static String getDispensationFileName(String cpr) {return "dispensation-" + cpr + ".xml";}
-    private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medCardFac =
+    private static final List<String> testCprs = List.of("1111111118", "0201909309");
+
+    //Filenames are generated based on CPR to ensure we have easy traceable and reproduceable results
+    private static String getFmkFileName(String cpr) {
+        return "get-prescription-" + cpr + ".xml";
+    }
+
+    private static String getCdaFileName(String cpr) {
+        return "cda-" + cpr + ".xml";
+    }
+
+    private static String getDispensationFileName(String cpr) {
+        return "dispensation-" + cpr + ".xml";
+    }
+
+    private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medicineCardFactory =
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
-    static final JAXBContext fmkJaxContext;
-    private static FmkClient fmkClient;
-    private static CprClient cprClient;
+
+
+    static final JAXBContext fmkJaxContext; //Initialized below
+    private static FmkClient fmkClient; //Initialized in the @BeforeAll method
 
     static {
         try {
+            //Create the XML context
             fmkJaxContext = JAXBContext.newInstance(
                 "dk.dkma.medicinecard.xml_schema._2015._06._01"
                     + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
@@ -90,23 +105,26 @@ public class CoordinatedIntegrationTest
     }
 
     @BeforeAll
-    static void ensureDirectoriesExist() throws JAXBException, URISyntaxException {
+    static void ensureDirectoriesExistAndInitializeFmkClient() throws JAXBException, URISyntaxException {
         if (!storageDir.exists()) {
             if (!storageDir.mkdirs()) {
                 throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
             }
         }
         fmkClient = new FmkClient(fmkEndpointUri);
-        cprClient = new CprClient(cprEndpointUri);
     }
 
+    /**
+     * We have experienced some problems running the test sequentially, maybe because the operation to write to disk is
+     * async, so the next method starts before the last one finishes. Thus we just wait a bit for the filesystem to finish
+     */
     @BeforeEach
     void waitForFilesystem() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(2000);
     }
 
+
     // This is from FMK Response Storage
-    //TODO Make it not generate the fmk-responses folder for no reason when loading the FmkResponseStorage Class
     @Test
     @Order(2)
     void getPrescriptionsFromFmk() throws JAXBException, URISyntaxException {
@@ -114,7 +132,7 @@ public class CoordinatedIntegrationTest
         var frs = new FmkResponseStorage(fmkClient);
         for (var cpr : testCprs) {
             var f = new File(storageDir, getFmkFileName(cpr));
-            serializeToFile(frs.openPrescriptionsForCpr(cpr), f, fmkJaxContext);
+            serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
         }
     }
@@ -128,7 +146,7 @@ public class CoordinatedIntegrationTest
             var response = readStoredPrescriptions(fmkResponseFile);
             var xmlString = EPrescriptionL3Generator.generate(response, 0);
             var cdaFile = new File(storageDir, getCdaFileName(cpr));
-            serializeToFile(xmlString.getBytes(StandardCharsets.UTF_8),cdaFile);
+            serializeToFile(xmlString.getBytes(StandardCharsets.UTF_8), cdaFile);
             System.out.println("Wrote CDAs to " + cdaFile.getAbsolutePath());
         }
     }
@@ -136,7 +154,7 @@ public class CoordinatedIntegrationTest
     //Country B Mock
     @Test
     @Order(4)
-    public void  testGenerateDispensation() throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    public void testGenerateDispensation() throws ParserConfigurationException, IOException, SAXException, JAXBException {
         for (var cpr : testCprs) {
             var epCda = new File(storageDir, getCdaFileName(cpr));
             try (var is = new FileInputStream(epCda)) {
@@ -158,7 +176,7 @@ public class CoordinatedIntegrationTest
                 dispenseRequest.setPackageSize(packageSize);
                 byte[] dispensationDocument = CDAUtil.generateDispensationDocument(dispenseRequest, epDocument, generateIdentifierExtension());
                 var dispensationFile = new File(storageDir, getDispensationFileName(cpr));
-                serializeToFile(dispensationDocument,dispensationFile);
+                serializeToFile(dispensationDocument, dispensationFile);
                 System.out.println("Wrote Dispensations to " + dispensationFile.getAbsolutePath());
             }
         }
@@ -198,15 +216,14 @@ public class CoordinatedIntegrationTest
         }
 
 
-
     }
 
     /**
      * Create a new prescription for tests in the FMK test environment.
      * The process is:
-     *  - Get most recent medicine card version.
-     *  - Create "Drug Medication" (lægemiddelordination) on medicine card
-     *  - Create prescription on "Drug Medication"
+     * - Get most recent medicine card version.
+     * - Create "Drug Medication" (lægemiddelordination) on medicine card
+     * - Create prescription on "Drug Medication"
      */
     @Test
     @Order(1)
@@ -251,7 +268,7 @@ public class CoordinatedIntegrationTest
             .withPackageRestriction()
             .withPackageQuantity(1)
             // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
-            .withPackageNumber().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue("056232").end()
+            .withPackageNumber().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue("056232").end()
             .end()
             // dosage text is mandatory but seems to be overridden by structured dosage info
             .withDosageText("1 tablet 3 gange dagligt")
@@ -266,7 +283,12 @@ public class CoordinatedIntegrationTest
     }
 
 
-
+    /**
+     * Used to read stored prescription responses from a file
+     *
+     * @param f the file to read
+     * @return A stored prescription response from FMK
+     */
     private static GetPrescriptionResponseType readStoredPrescriptions(File f) throws JAXBException {
         var unmarshaller = fmkJaxContext.createUnmarshaller();
         var result = (JAXBElement<?>) unmarshaller.unmarshal(f);
@@ -277,12 +299,24 @@ public class CoordinatedIntegrationTest
         throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
     }
 
-    private static <T> void serializeToFile(JAXBElement<T> obj, File f, JAXBContext context) throws JAXBException {
-        var marshaller = context.createMarshaller();
+    /**
+     * Serialize a JAXBElement to a file for storage
+     *
+     * @param obj The object to store
+     * @param f   The file (path) to store it at
+     */
+    private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
+        var marshaller = CoordinatedIntegrationTest.fmkJaxContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(obj, f);
     }
 
+    /**
+     * Serialize a stream of bytes to a file
+     *
+     * @param bytes The bytes to serialize
+     * @param file  The file (path) to serialize it to
+     */
     private static <T> void serializeToFile(byte[] bytes, File file) throws JAXBException, IOException {
         java.nio.file.Files.write(
             java.nio.file.Path.of(file.getAbsolutePath()),
@@ -292,8 +326,10 @@ public class CoordinatedIntegrationTest
         );
     }
 
+    /**
+     * Generate a random identifier string
+     */
     private String generateIdentifierExtension() {
-
         Random secureRandom = new SecureRandom();
         var bytes = new byte[16];
         secureRandom.nextBytes(bytes);
@@ -301,18 +337,9 @@ public class CoordinatedIntegrationTest
         return extension.substring(0, 16);
     }
 
-    private static Property createProperty(String key, String value) {
-        Property property = new Property();
-        property.setKey(key);
-        property.setValue(value);
-        return property;
-    }
-
-    private static final String medicinpriserSource = "Medicinpriser";
-    // This date was used during development because it worked.  It is unknown if it will keep working.
-    // Setting a date is mandatory.
-    private static final String medicinpriserDate = "2024-09-12";
-
+    /*
+    The following methods are used to populate the "creation of new prescriptions" models.
+     */
     private OrganisationType prescripingOrganisation() {
         // The SKS number is checked by FMK. The name and telephone number are mandatory, but probably not validated.
         return OrganisationType.builder()
@@ -330,8 +357,8 @@ public class CoordinatedIntegrationTest
             .build();
         return ModificatorType.builder()
             .withContent(
-                medCardFac.createAuthorisedHealthcareProfessional(authorisedHCP),
-                medCardFac.createOrganisation(prescripingOrganisation())
+                medicineCardFactory.createAuthorisedHealthcareProfessional(authorisedHCP),
+                medicineCardFactory.createOrganisation(prescripingOrganisation())
             )
             .build();
     }
@@ -359,15 +386,15 @@ public class CoordinatedIntegrationTest
             .end()
             .withIndication()
             // 145 is LMS26 code for "mod smerter"
-            .withCode().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue(145).end()
+            .withCode().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue(145).end()
             .end()
             .withRouteOfAdministration()
             // OR is LMS11 code for "Oral Anvendelse"
-            .withCode().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue("OR").end()
+            .withCode().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue("OR").end()
             .end()
             .withDrug()
             // 28103888005 is LMS01 code for "Pinex 500mg filmovertrukne tabletter"
-            .withIdentifier().withSource(medicinpriserSource).withDate(medicinpriserDate).withValue(28103888005L).end()
+            .withIdentifier().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue(28103888005L).end()
             .withName("Pinex")
             .end()
             .withDosage()

@@ -38,14 +38,6 @@ public class FmkResponseStorage {
     private static final File storageDir = new File("fmk-responses-for-test/src/main/resources/fmk-responses");
     private static final String resourceDir = "fmk-responses";
 
-    static {
-        if (!storageDir.exists()) {
-            if (!storageDir.mkdirs()) {
-                throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
-            }
-        }
-    }
-
     @NonNull private FmkClient fmkClient;
 
     private static List<String> testCprs = List.of("1111111118", "0101010000", "0201909309");
@@ -59,6 +51,11 @@ public class FmkResponseStorage {
     }
 
     private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
+        if (!storageDir.exists()) {
+            if (!storageDir.mkdirs()) {
+                throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
+            }
+        }
         var marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(obj, f);
