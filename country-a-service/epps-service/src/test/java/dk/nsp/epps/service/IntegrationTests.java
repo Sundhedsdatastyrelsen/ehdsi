@@ -191,6 +191,7 @@ public class IntegrationTests {
 
     @Test
     public void fmkSubmitDispensation() throws Exception {
+
         final var caller = TestIdentities.apotekerChrisChristoffersen;
         var patientId = "0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO";
         var dispensationMapper = new DispensationMapper();
@@ -209,7 +210,11 @@ public class IntegrationTests {
                 startEffectuationResponse),
             TestIdentities.apotekerChrisChristoffersen);
 
+
+
         Assertions.assertTrue(true);
+
+
     }
 
     Document testDispensationCda() {

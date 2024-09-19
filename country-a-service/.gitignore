@@ -42,4 +42,4 @@ _merged_spec.yaml
 .idea/
 
 #Integration test storage
-/integration-tests/src/test/resources/test-file-storage/
+**/test-file-storage/
