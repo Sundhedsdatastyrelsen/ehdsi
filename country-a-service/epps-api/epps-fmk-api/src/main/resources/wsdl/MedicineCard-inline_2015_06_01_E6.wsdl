@@ -7846,7 +7846,8 @@ Name of a village, city or subdivision of a city or district, which is determine
 				<!-- A convoluted construction for either AnyDay or one or more Day, or both, bot not neither -->
 				<xs:sequence>
 					<xs:element name="AnyDay" type="medicinecard20150601:DosageAnyDayType"/>
-					<xs:element maxOccurs="unbounded" minOccurs="0" name="Day" type="medicinecard20150601:DosageDayType"/>
+<!--                    Including the following line breaks the generated code for DosageStructureForRequestType: -->
+<!--                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Day" type="medicinecard20150601:DosageDayType"/>-->
 				</xs:sequence>
 				<xs:element maxOccurs="unbounded" name="Day" type="medicinecard20150601:DosageDayType"/>
 			</xs:choice>
