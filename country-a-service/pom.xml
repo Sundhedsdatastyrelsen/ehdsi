@@ -106,6 +106,12 @@
                 <artifactId>fmk-responses-for-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>dk.nsp.epps</groupId>
+                <artifactId>integration-tests</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
 
 			<dependency>
 				<groupId>org.openapitools</groupId>

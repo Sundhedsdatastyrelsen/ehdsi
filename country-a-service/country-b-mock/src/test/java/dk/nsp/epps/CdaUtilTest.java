@@ -19,35 +19,5 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 public class CdaUtilTest {
-    @Test
-    public void  testGenerateDispensation() throws ParserConfigurationException, IOException, SAXException {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("ep.xml");
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document epDocument = builder.parse(new InputSource(is));
-        DispenseRequest dispenseRequest = new DispenseRequest();
-        dispenseRequest.setCountryCode("EU");
-        dispenseRequest.setNumberOfPackage(1);
-        dispenseRequest.setPrescriptionId("prescriptionId");
-        dispenseRequest.setProductName("test product");
-        dispenseRequest.setSubstitution(true);
-        PackageSize packageSize = new PackageSize();
-        packageSize.setPackageSizeL1("1");
-        packageSize.setPackageSizeL2("2");
-        packageSize.setPackageSizeL3(null);
-        packageSize.setQuantity(null);
-        dispenseRequest.setPackageSize(packageSize);
-        byte[] dispensationDocument = CDAUtil.generateDispensationDocument(dispenseRequest, epDocument, generateIdentifierExtension());
-        Assertions.assertNotNull(dispensationDocument);
-    }
 
-    private String generateIdentifierExtension() {
-
-        Random secureRandom = new SecureRandom();
-        var bytes = new byte[16];
-        secureRandom.nextBytes(bytes);
-        var extension = Base64.encodeBase64String(bytes);
-        return extension.substring(0, 16);
-    }
 }

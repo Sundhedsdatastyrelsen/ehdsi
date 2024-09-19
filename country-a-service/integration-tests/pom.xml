@@ -27,5 +27,11 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>epps-service</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
