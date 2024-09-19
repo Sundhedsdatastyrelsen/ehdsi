@@ -7,12 +7,14 @@ import dk.nsp.epps.mock.util.cda.enums.Templates;
 import dk.nsp.epps.mock.util.cda.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
+import org.jdom2.Attribute;
 import org.jdom2.Namespace;
 import org.jdom2.filter.ElementFilter;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class CDABodyUtil {
@@ -36,8 +38,12 @@ public class CDABodyUtil {
 
         var root = ePDocument.getRootElement();
         var id = root.getChild("id", hl7Namespace);
-        Identifier identifier = new Identifier(id.getAttribute("root").getValue(),
-                StringUtils.isNotBlank(id.getAttribute("extension").getValue()) ? id.getAttribute("extension").getValue() : null);
+        Identifier identifier = new Identifier(
+            id.getAttribute("root").getValue(),
+            Optional.ofNullable(id.getAttribute("extension"))
+                .map(Attribute::getValue)
+                .filter(StringUtils::isNotBlank)
+                .orElse(null));
 
         CDAUtil.addId(hl7Namespace, identifier, section);
         addCode(hl7Namespace, section);

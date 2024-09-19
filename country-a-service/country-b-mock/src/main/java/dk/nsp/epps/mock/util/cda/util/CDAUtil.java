@@ -51,18 +51,18 @@ public class CDAUtil {
     private static final String LANGUAGE_CODE;
 
     static {
-        PHARMACIST_OID = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_PHARMACIST_OID");
-        CUSTODIAN_OID = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_CUSTODIAN_OID");
-        CUSTODIAN_NAME = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_CUSTODIAN_NAME");
-        NCP_COUNTRY = ConfigurationManagerFactory.getConfigurationManager().getProperty("ncp.country");
-        DISPENSATION_OID = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_DISPENSATION_OID");
-        LEGAL_AUTHENTICATOR_PERSON_OID = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_LEGAL_AUTHENTICATOR_PERSON_OID");
-        LEGAL_AUTHENTICATOR_FIRSTNAME = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_LEGAL_AUTHENTICATOR_FIRSTNAME");
-        LEGAL_AUTHENTICATOR_LASTNAME = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_LEGAL_AUTHENTICATOR_LASTNAME");
-        LEGAL_AUTHENTICATOR_ORG_OID = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_LEGAL_AUTHENTICATOR_ORG_OID");
-        LEGAL_AUTHENTICATOR_POSTAL_CODE = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_LEGAL_AUTHENTICATOR_POSTALCODE");
-        LEGAL_AUTHENTICATOR_CITY = ConfigurationManagerFactory.getConfigurationManager().getProperty("PORTAL_LEGAL_AUTHENTICATOR_CITY");
-        LANGUAGE_CODE = ConfigurationManagerFactory.getConfigurationManager().getProperty("LANGUAGE_CODE");
+        PHARMACIST_OID = "1.2.3";
+        CUSTODIAN_OID = "1.2.3";
+        CUSTODIAN_NAME = "Custodian Name";
+        NCP_COUNTRY = "BE";
+        DISPENSATION_OID = "1.2.3";
+        LEGAL_AUTHENTICATOR_PERSON_OID = "1.2.3";
+        LEGAL_AUTHENTICATOR_FIRSTNAME = "First name";
+        LEGAL_AUTHENTICATOR_LASTNAME = "Last name";
+        LEGAL_AUTHENTICATOR_ORG_OID = "1.2.3";
+        LEGAL_AUTHENTICATOR_POSTAL_CODE = "1000";
+        LEGAL_AUTHENTICATOR_CITY = "Brussels";
+        LANGUAGE_CODE =  "nl-BE";
 
     }
 

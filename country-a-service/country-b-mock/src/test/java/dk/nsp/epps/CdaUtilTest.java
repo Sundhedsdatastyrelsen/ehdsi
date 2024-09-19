@@ -2,6 +2,8 @@ package dk.nsp.epps;
 
 import dk.nsp.epps.mock.model.DispenseRequest;
 import dk.nsp.epps.mock.model.PackageSize;
+import dk.nsp.epps.mock.util.cda.util.CDAUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -13,6 +15,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
+import java.util.Random;
 
 public class CdaUtilTest {
     @Test
@@ -36,5 +40,14 @@ public class CdaUtilTest {
         dispenseRequest.setPackageSize(packageSize);
         byte[] dispensationDocument = CDAUtil.generateDispensationDocument(dispenseRequest, epDocument, generateIdentifierExtension());
         Assertions.assertNotNull(dispensationDocument);
+    }
+
+    private String generateIdentifierExtension() {
+
+        Random secureRandom = new SecureRandom();
+        var bytes = new byte[16];
+        secureRandom.nextBytes(bytes);
+        var extension = Base64.encodeBase64String(bytes);
+        return extension.substring(0, 16);
     }
 }

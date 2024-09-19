@@ -21,5 +21,11 @@
             <artifactId>fmk-responses-for-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>country-b-mock</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
