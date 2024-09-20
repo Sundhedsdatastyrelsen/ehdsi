@@ -24,6 +24,7 @@
         <module>cda-generator</module>
         <module>nsp-client</module>
         <module>testing-shared</module>
+        <module>testing-tools</module>
     </modules>
 
 	<properties>

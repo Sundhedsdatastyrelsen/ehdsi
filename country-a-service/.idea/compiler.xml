@@ -11,6 +11,7 @@
         <module name="epps-service" />
         <module name="epps-cpr-api" />
         <module name="epps-cpr-mock" />
+        <module name="testing-tools" />
         <module name="epps-fmk-mock" />
         <module name="epps-cpr-mock-data" />
         <module name="nsp-client" />
@@ -37,6 +38,7 @@
       <module name="fmk-responses-for-test" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
       <module name="testing-shared" options="-parameters" />
+      <module name="testing-tools" options="-parameters" />
     </option>
   </component>
 </project>
