@@ -13,7 +13,6 @@ import dk.nsp.epps.testing.shared.Cpr;
 import dk.nsp.epps.testing.shared.Fmk;
 import dk.nsp.test.idp.OrganizationIdentities;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -22,8 +21,7 @@ import java.util.Collection;
  * Integration tests for FMK and CPR.
  * To be run manually (for now) because they require external dependencies (including NSP STS).
  */
-@Disabled("Requires external dependencies")
-public class IntegrationTests {
+public class NspIntegrationsIT {
     private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medCardFac =
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
