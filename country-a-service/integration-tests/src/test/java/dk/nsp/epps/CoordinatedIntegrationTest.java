@@ -197,7 +197,7 @@ public class CoordinatedIntegrationTest {
             try (var is = new FileInputStream(dispensationFile)) {
                 var dispensationDocument = dk.nsp.epps.Utils.readXmlDocument(is);
                 final var caller = TestIdentities.apotekerChrisChristoffersen;
-                var patientId = cpr+"^^^&2.16.17.710.802.1000.990.1.500&ISO";
+                var patientId = cpr + "^^^&2.16.17.710.802.1000.990.1.500&ISO";
                 var dispensationMapper = new DispensationMapper();
                 //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
                 var effectuationRequest = dispensationMapper.startEffectuationRequest(patientId, dispensationDocument);
@@ -219,8 +219,6 @@ public class CoordinatedIntegrationTest {
                 throw new RuntimeException(e);
             }
         }
-
-
     }
 
     /**
