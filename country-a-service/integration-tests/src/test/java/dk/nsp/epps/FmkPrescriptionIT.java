@@ -57,7 +57,7 @@ import java.util.Random;
 
 @SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CoordinatedIntegrationTest {
+public class FmkPrescriptionIT {
     static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
     //The source for creating prescriptions is always Medicinpriser
     private static final String prescriptionStaticSource = "Medicinpriser";
@@ -310,7 +310,7 @@ public class CoordinatedIntegrationTest {
      * @param f   The file (path) to store it at
      */
     private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
-        var marshaller = CoordinatedIntegrationTest.fmkJaxContext.createMarshaller();
+        var marshaller = FmkPrescriptionIT.fmkJaxContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(obj, f);
     }
