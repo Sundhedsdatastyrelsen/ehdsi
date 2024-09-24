@@ -1,8 +1,7 @@
 package dk.sds.ncp.cda;
 
-import dk.nsp.epps.test.FmkResponseStorage;
+import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import dk.sds.ncp.cda.model.EPrescriptionL3;
-import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

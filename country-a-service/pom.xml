@@ -23,9 +23,9 @@
 		<module>epps-mocks</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
-        <module>fmk-responses-for-test</module>
         <module>integration-tests</module>
         <module>country-b-mock</module>
+        <module>testing-shared</module>
     </modules>
 
 	<properties>
@@ -105,12 +105,6 @@
                 <groupId>dk.nsp.epps</groupId>
                 <artifactId>fmk-responses-for-test</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dk.nsp.epps</groupId>
-                <artifactId>integration-tests</artifactId>
-                <version>${project.version}</version>
-                <scope>test</scope>
             </dependency>
 
 			<dependency>
@@ -303,9 +297,6 @@
 										<failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
 										<excludes>
 											<exclude>dk.nsp.epps:*</exclude>
-                                            <exclude>eu.europa.ec.sante.ehdsi:*</exclude>
-                                            <exclude>eu.europa.ec.sante.ehdsi.openncp-protocol-terminators:*</exclude>
-                                            <exclude>eu.europa.ec.sante.ehdsi.openncp-cdadisplaytool:*</exclude>
 										</excludes>
 									</requireReleaseDeps>
 									<requireUpperBoundDeps />
