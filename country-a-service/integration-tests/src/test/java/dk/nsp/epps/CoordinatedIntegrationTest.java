@@ -18,7 +18,7 @@ import dk.nsp.epps.mock.model.DispenseRequest;
 import dk.nsp.epps.mock.model.PackageSize;
 import dk.nsp.epps.mock.util.cda.util.CDAUtil;
 import dk.nsp.epps.service.mapping.DispensationMapper;
-import dk.nsp.epps.test.FmkResponseStorage;
+import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.MapperException;
@@ -68,6 +68,7 @@ public class CoordinatedIntegrationTest {
 
     private static final File storageDir = new File("src/test/resources/test-file-storage");
     private static final List<String> testCprs = List.of("1111111118", "0201909309");
+    //private static final List<String> testCprs = List.of("1111111118"); //TODO CRITICAL Have we frozen the prescription ID? We fail on the second CPR...
 
     //Filenames are generated based on CPR to ensure we have easy traceable and reproduceable results
     private static String getFmkFileName(String cpr) {
@@ -79,6 +80,10 @@ public class CoordinatedIntegrationTest {
     }
 
     private static String getDispensationFileName(String cpr) {
+        return "dispensation-" + cpr + ".xml";
+    }
+
+    private static String getStartEffectuationResponseFileName(String cpr) {
         return "dispensation-" + cpr + ".xml";
     }
 
@@ -192,13 +197,13 @@ public class CoordinatedIntegrationTest {
             try (var is = new FileInputStream(dispensationFile)) {
                 var dispensationDocument = dk.nsp.epps.Utils.readXmlDocument(is);
                 final var caller = TestIdentities.apotekerChrisChristoffersen;
-                var patientId = "0201909309^^^&2.16.17.710.802.1000.990.1.500&ISO";
+                var patientId = cpr+"^^^&2.16.17.710.802.1000.990.1.500&ISO";
                 var dispensationMapper = new DispensationMapper();
                 //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
                 var effectuationRequest = dispensationMapper.startEffectuationRequest(patientId, dispensationDocument);
 
                 var startEffectuationResponse = fmkClient.startEffectuation(effectuationRequest, caller);
-                Assertions.assertTrue(startEffectuationResponse.getStartEffectuationFailed().isEmpty());
+                Assertions.assertTrue(startEffectuationResponse.getStartEffectuationFailed().isEmpty(), () -> "Effectuation call failed with message: " + startEffectuationResponse.getStartEffectuationFailed().get(0).getReasonText());
                 Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst());
                 Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getPackageRestriction());
 
@@ -228,58 +233,59 @@ public class CoordinatedIntegrationTest {
     @Test
     @Order(1)
     void createNewPrescription() throws Exception {
-        var cpr = "0201909309";
+        for (var cpr : testCprs) {
 
-        var personIdentifier = PersonIdentifierType.builder()
-            .withSource("CPR")
-            .withValue(cpr)
-            .build();
+            var personIdentifier = PersonIdentifierType.builder()
+                .withSource("CPR")
+                .withValue(cpr)
+                .build();
 
-        var medicineCard = fmkClient.getMedicineCard(
-            GetMedicineCardRequestType.builder()
+            var medicineCard = fmkClient.getMedicineCard(
+                GetMedicineCardRequestType.builder()
+                    .withPersonIdentifier(personIdentifier)
+                    .withIncludePrescriptions(true)
+                    .build(),
+                EmployeeIdentities.lægeCharlesBabbage(),
+                PredefinedRequestedRole.LÆGE
+            ).getMedicineCard().getFirst();
+            var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
                 .withPersonIdentifier(personIdentifier)
-                .withIncludePrescriptions(true)
-                .build(),
-            EmployeeIdentities.lægeCharlesBabbage(),
-            PredefinedRequestedRole.LÆGE
-        ).getMedicineCard().getFirst();
-        var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
-            .withPersonIdentifier(personIdentifier)
-            .withMedicineCardVersion(medicineCard.getVersion())
-            .withCreatedBy(prescriptionCreatedBy())
-            .addDrugMedication(drugMedication())
-            .build();
-        var drugMedicationResponse = fmkClient.createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
-        Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
+                .withMedicineCardVersion(medicineCard.getVersion())
+                .withCreatedBy(prescriptionCreatedBy())
+                .addDrugMedication(drugMedication())
+                .build();
+            var drugMedicationResponse = fmkClient.createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+            Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
 
-        var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
-        var drugMedicationIdentifier = drugMedicationResponse.getDrugMedication().getFirst().getIdentifier();
+            var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
+            var drugMedicationIdentifier = drugMedicationResponse.getDrugMedication().getFirst().getIdentifier();
 
-        var createPrescriptionRequest = CreatePrescriptionRequestType.builder()
-            .withPersonIdentifier(personIdentifier)
-            .withMedicineCardVersion(medicineCardVersion)
-            .withCreatedBy(prescriptionCreatedBy())
-            .addPrescription()
-            .withDrugMedicationIdentifier(drugMedicationIdentifier)
-            .withAuthorisationDateTime(dk.nsp.epps.service.Utils.xmlGregorianCalendar(ZonedDateTime.now()))
-            // System name is mandatory, but the value doesn't seem to be validated by FMK.
-            .withSystemName("NCP ePrescription test system")
-            .withValidFromDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
-            .withPackageRestriction()
-            .withPackageQuantity(1)
-            // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
-            .withPackageNumber().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue("056232").end()
-            .end()
-            // dosage text is mandatory but seems to be overridden by structured dosage info
-            .withDosageText("1 tablet 3 gange dagligt")
-            .end()
-            .build();
+            var createPrescriptionRequest = CreatePrescriptionRequestType.builder()
+                .withPersonIdentifier(personIdentifier)
+                .withMedicineCardVersion(medicineCardVersion)
+                .withCreatedBy(prescriptionCreatedBy())
+                .addPrescription()
+                .withDrugMedicationIdentifier(drugMedicationIdentifier)
+                .withAuthorisationDateTime(dk.nsp.epps.service.Utils.xmlGregorianCalendar(ZonedDateTime.now()))
+                // System name is mandatory, but the value doesn't seem to be validated by FMK.
+                .withSystemName("NCP ePrescription test system")
+                .withValidFromDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
+                .withPackageRestriction()
+                .withPackageQuantity(1)
+                // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
+                .withPackageNumber().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue("056232").end()
+                .end()
+                // dosage text is mandatory but seems to be overridden by structured dosage info
+                .withDosageText("1 tablet 3 gange dagligt")
+                .end()
+                .build();
 
-        var createPrescriptionResponse = fmkClient.createPrescription(
-            createPrescriptionRequest,
-            EmployeeIdentities.lægeCharlesBabbage(),
-            PredefinedRequestedRole.LÆGE);
-        Assertions.assertNotNull(createPrescriptionResponse.getPrescription().getFirst());
+            var createPrescriptionResponse = fmkClient.createPrescription(
+                createPrescriptionRequest,
+                EmployeeIdentities.lægeCharlesBabbage(),
+                PredefinedRequestedRole.LÆGE);
+            Assertions.assertNotNull(createPrescriptionResponse.getPrescription().getFirst());
+        }
     }
 
 

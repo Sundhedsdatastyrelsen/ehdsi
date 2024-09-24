@@ -153,7 +153,7 @@ public class IntegrationTests {
                 .build())
             .build();
 
-        var effectuation = Fmk.apiClient().createPharmacyEffectuation(request, Identities.apotekerChrisChristoffersen);
+        var effectuation = Fmk.apiClient().createPharmacyEffectuation(request, TestIdentities.apotekerChrisChristoffersen);
 
         Assertions.assertEquals(
             effectuation.getEffectuation().get(0).getEffectuationIdentifier(),
@@ -184,12 +184,12 @@ public class IntegrationTests {
         //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
         var effectuationRequest = dispensationMapper.startEffectuationRequest(patientId, testDispensationCda());
 
-        var startEffectuationResponse = fmkClient.startEffectuation(effectuationRequest, caller);
+        var startEffectuationResponse = Fmk.apiClient().startEffectuation(effectuationRequest, caller);
         Assertions.assertTrue(startEffectuationResponse.getStartEffectuationFailed().isEmpty());
         Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst());
         Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getPackageRestriction());
 
-        var createPharmacyEffectuationResult = fmkClient.createPharmacyEffectuation(
+        var createPharmacyEffectuationResult = Fmk.apiClient().createPharmacyEffectuation(
             dispensationMapper.createPharmacyEffectuationRequest(
                 patientId,
                 testDispensationCda(),
@@ -227,7 +227,7 @@ public class IntegrationTests {
             .withValue(cpr)
             .build();
 
-        var medicineCard = fmkClient.getMedicineCard(
+        var medicineCard = Fmk.apiClient().getMedicineCard(
             GetMedicineCardRequestType.builder()
                 .withPersonIdentifier(personIdentifier)
                 .withIncludePrescriptions(true)
@@ -241,7 +241,7 @@ public class IntegrationTests {
             .withCreatedBy(prescriptionCreatedBy())
             .addDrugMedication(drugMedication())
             .build();
-        var drugMedicationResponse = fmkClient.createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+        var drugMedicationResponse = Fmk.apiClient().createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
         Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
 
         var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
@@ -267,7 +267,7 @@ public class IntegrationTests {
             .end()
             .build();
 
-        var createPrescriptionResponse = fmkClient.createPrescription(
+        var createPrescriptionResponse = Fmk.apiClient().createPrescription(
             createPrescriptionRequest,
             EmployeeIdentities.lægeCharlesBabbage(),
             PredefinedRequestedRole.LÆGE);
