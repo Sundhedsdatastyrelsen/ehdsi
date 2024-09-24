@@ -1,5 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--
+    ******************
+          README
+    ******************
+
+    This module is created by salvaging code from the official release-7.1 of the Country-B portal. This is done to use
+    the CDA generator for testing a prescription. This is not the way we want to do this, working theory is currently
+    to create a modified version of the portal directly, which can run from the commandline and do what we need it to.
+    Once this is accomplished, this module should be deleted. Do not waste time updating this module unless the above
+    solution is deemed infeasible.
+    -->
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>dk.nsp.epps</groupId>
