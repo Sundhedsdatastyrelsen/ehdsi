@@ -59,10 +59,11 @@ public class TestIdentities {
             .withValue("1008648049")
             .end()
             .build();
-    public static OrganisationIdentifierType skanderborgApotek = OrganisationIdentifierType.builder()
-                                                                                           .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
-                                                                                           .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
-                                                                                           .build();
+    public static OrganisationIdentifierType skanderborgApotek =
+        OrganisationIdentifierType.builder()
+                                  .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+                                  .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
+                                  .build();
 
 
 }

@@ -18,6 +18,7 @@ import dk.nsp.epps.mock.model.DispenseRequest;
 import dk.nsp.epps.mock.model.PackageSize;
 import dk.nsp.epps.mock.util.cda.util.CDAUtil;
 import dk.nsp.epps.service.mapping.DispensationMapper;
+import dk.nsp.epps.testing.shared.Fmk;
 import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
@@ -68,7 +69,6 @@ public class FmkPrescriptionIT {
 
     private static final File storageDir = new File("src/test/resources/test-file-storage");
     private static final List<String> testCprs = List.of("1111111118", "0201909309");
-    //private static final List<String> testCprs = List.of("1111111118"); //TODO CRITICAL Have we frozen the prescription ID? We fail on the second CPR...
 
     //Filenames are generated based on CPR to ensure we have easy traceable and reproduceable results
     private static String getFmkFileName(String cpr) {
@@ -92,7 +92,6 @@ public class FmkPrescriptionIT {
 
 
     static final JAXBContext fmkJaxContext; //Initialized below
-    private static FmkClient fmkClient; //Initialized in the @BeforeAll method
 
     static {
         try {
@@ -116,7 +115,6 @@ public class FmkPrescriptionIT {
                 throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
             }
         }
-        fmkClient = new FmkClient(fmkEndpointUri);
     }
 
     /**
@@ -133,8 +131,7 @@ public class FmkPrescriptionIT {
     @Test
     @Order(2)
     void getPrescriptionsFromFmk() throws JAXBException, URISyntaxException {
-        var fmkClient = new FmkClient("https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling");
-        var frs = new FmkResponseStorage(fmkClient);
+        var frs = new FmkResponseStorage(Fmk.apiClient());
         for (var cpr : testCprs) {
             var f = new File(storageDir, getFmkFileName(cpr));
             serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
@@ -202,12 +199,12 @@ public class FmkPrescriptionIT {
                 //       <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500" />
                 var effectuationRequest = dispensationMapper.startEffectuationRequest(patientId, dispensationDocument);
 
-                var startEffectuationResponse = fmkClient.startEffectuation(effectuationRequest, caller);
+                var startEffectuationResponse = Fmk.apiClient().startEffectuation(effectuationRequest, caller);
                 Assertions.assertTrue(startEffectuationResponse.getStartEffectuationFailed().isEmpty(), () -> "Effectuation call failed with message: " + startEffectuationResponse.getStartEffectuationFailed().get(0).getReasonText());
                 Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst());
                 Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getPackageRestriction());
 
-                var createPharmacyEffectuationResult = fmkClient.createPharmacyEffectuation(
+                var createPharmacyEffectuationResult = Fmk.apiClient().createPharmacyEffectuation(
                     dispensationMapper.createPharmacyEffectuationRequest(
                         patientId,
                         dispensationDocument,
@@ -238,7 +235,7 @@ public class FmkPrescriptionIT {
                 .withValue(cpr)
                 .build();
 
-            var medicineCard = fmkClient.getMedicineCard(
+            var medicineCard = Fmk.apiClient().getMedicineCard(
                 GetMedicineCardRequestType.builder()
                     .withPersonIdentifier(personIdentifier)
                     .withIncludePrescriptions(true)
@@ -252,7 +249,7 @@ public class FmkPrescriptionIT {
                 .withCreatedBy(prescriptionCreatedBy())
                 .addDrugMedication(drugMedication())
                 .build();
-            var drugMedicationResponse = fmkClient.createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+            var drugMedicationResponse = Fmk.apiClient().createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
             Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
 
             var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
@@ -278,7 +275,7 @@ public class FmkPrescriptionIT {
                 .end()
                 .build();
 
-            var createPrescriptionResponse = fmkClient.createPrescription(
+            var createPrescriptionResponse = Fmk.apiClient().createPrescription(
                 createPrescriptionRequest,
                 EmployeeIdentities.lægeCharlesBabbage(),
                 PredefinedRequestedRole.LÆGE);
