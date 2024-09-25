@@ -3,7 +3,7 @@ package dk.nsp.epps.testing.shared;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.nsp.epps.client.FmkClient;
-import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.client.TestIdentities;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -55,7 +55,7 @@ public class FmkResponseStorage {
         marshaller.marshal(obj, f);
     }
 
-    private JAXBElement<GetPrescriptionResponseType> openPrescriptionsForCpr(String cpr) throws JAXBException {
+    public JAXBElement<GetPrescriptionResponseType> openPrescriptionsForCpr(String cpr) throws JAXBException {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
@@ -63,7 +63,7 @@ public class FmkResponseStorage {
 
         GetPrescriptionResponseType prescriptions = fmkClient.getPrescription(
             getPrescriptionRequest,
-            Identities.apotekerChrisChristoffersen
+            TestIdentities.apotekerChrisChristoffersen
         );
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e6.ObjectFactory();
         return fac.createGetPrescriptionResponse(prescriptions);

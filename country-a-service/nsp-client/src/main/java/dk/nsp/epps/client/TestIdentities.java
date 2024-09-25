@@ -1,5 +1,8 @@
 package dk.nsp.epps.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierPredefinedSourceType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.nsp.test.idp.model.Identity;
 import dk.nsp.test.idp.vault.RemoteCredentialVault;
 
@@ -8,7 +11,7 @@ import java.util.UUID;
 
 import static dk.nsp.test.idp.builder.Builders.*;
 
-public class Identities {
+public class TestIdentities {
     public static Identity apotekerJeppeMoeller = employeeIdentity()
         .representing(employee()
             .identifiedBy(UUID.fromString("00798849-effe-4733-bcc4-670093830511")))
@@ -43,4 +46,24 @@ public class Identities {
         .using(securityTokenService()
             .at(URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI")))
         .build();
+
+    /**
+     * Delivery site - for effectuating a prescription
+     */
+    public static OrganisationType deliverySiteRyApotek =
+        new OrganisationType.Builder<>(null, null, false)
+            .withName("Ry Apoteksudsalg")
+            .withType("Apotek")
+            .withIdentifier()
+            .withSource("CVR-P")
+            .withValue("1008648049")
+            .end()
+            .build();
+    public static OrganisationIdentifierType skanderborgApotek =
+        OrganisationIdentifierType.builder()
+                                  .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+                                  .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
+                                  .build();
+
+
 }

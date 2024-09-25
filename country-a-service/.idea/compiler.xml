@@ -9,10 +9,12 @@
         <outputRelativeToContentRoot value="true" />
         <module name="epps-fmk-mock-data" />
         <module name="epps-service" />
+        <module name="integration-tests" />
         <module name="epps-cpr-api" />
         <module name="epps-cpr-mock" />
         <module name="testing-tools" />
         <module name="epps-fmk-mock" />
+        <module name="country-b-mock" />
         <module name="epps-cpr-mock-data" />
         <module name="nsp-client" />
         <module name="epps-fmk-api" />
@@ -22,10 +24,30 @@
         <module name="epps-ncp-api" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cda-generator" target="21" />
+      <module name="country-b-mock" target="21" />
+      <module name="epps-api-root" target="1.5" />
+      <module name="epps-application" target="21" />
+      <module name="epps-cpr-api" target="21" />
+      <module name="epps-cpr-mock" target="21" />
+      <module name="epps-cpr-mock-data" target="21" />
+      <module name="epps-fmk-api" target="21" />
+      <module name="epps-fmk-mock" target="21" />
+      <module name="epps-fmk-mock-data" target="21" />
+      <module name="epps-mocks-root" target="1.5" />
+      <module name="epps-ncp-api" target="21" />
+      <module name="epps-root" target="1.5" />
+      <module name="epps-service" target="21" />
+      <module name="fmk-responses-for-test" target="21" />
+      <module name="integration-tests" target="21" />
+      <module name="nsp-client" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cda-generator" options="-parameters" />
+      <module name="country-b-mock" options="-parameters" />
       <module name="epps-application" options="-parameters" />
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
@@ -36,6 +58,7 @@
       <module name="epps-ncp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />
       <module name="fmk-responses-for-test" options="-parameters" />
+      <module name="integration-tests" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
       <module name="testing-shared" options="-parameters" />
       <module name="testing-tools" options="-parameters" />

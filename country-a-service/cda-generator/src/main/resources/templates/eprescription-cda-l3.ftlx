@@ -12,6 +12,25 @@ codeSystem="${value.codeSystem}"<#rt>
 root="${id.root}"<#rt>
 <#if id.extension??> extension="${id.extension}"</#if><#rt>
 </#macro>
+<!--
+ The following macro uses the string "__NULL__" as a replacement for a pure null value
+ This is caused by the freemarker handling of null values as input to macros, and is chosen, since we do not expect
+ any of the actual values to match this string. Treat it is a null value, only one that can be a default for the macro"
+ -->
+<#macro address value="__NULL__"><#rt>
+<#if value=="__NULL__"><#rt>
+<#return>
+<#else>
+<addr>
+    <#list value.streetAddressLines as addressLine>
+    <streetAddressLine>${ addressLine }</streetAddressLine>
+    </#list>
+    <#if value.city??><city>${ value.city }</city></#if><#rt>
+    <#if value.postalCode??><postalCode>${ value.postalCode }</postalCode></#if><#rt>
+    <#if value.countryCode??><country>${ value.countryCode }</country></#if><#rt>
+</addr>
+</#if><#rt>
+</#macro><#rt>
 
 
 <#-- https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html -->
@@ -48,13 +67,7 @@ root="${id.root}"<#rt>
     <recordTarget contextControlCode="OP" typeCode="RCT">
         <patientRole classCode="PAT">
             <id <@cdaIdAttrs patient.id/> />
-            <addr>
-                <#list patient.address.streetAddressLines as addressLine>
-                <streetAddressLine>${ addressLine }</streetAddressLine>
-                </#list>
-                <city>${ patient.address.city }</city>
-                <postalCode>${ patient.address.postalCode }</postalCode>
-            </addr>
+            <@address patient.address />
             <telecom nullFlavor="NI"/>
             <patient classCode="PSN" determinerCode="INSTANCE">
                 <name>
@@ -88,14 +101,7 @@ root="${id.root}"<#rt>
                 <id <@cdaIdAttrs author.organization.id />/>
                 <name>${ author.organization.name }</name>
                 <telecom use="WP" value="tel:${ author.organization.telephoneNumber }"/>
-                <addr>
-<#list author.organization.address.streetAddressLines as addressLine>
-                    <streetAddressLine>${ addressLine }</streetAddressLine>
-</#list>
-                    <city>${ author.organization.address.city }</city>
-                    <postalCode>${ author.organization.address.postalCode }</postalCode>
-                    <country>${ author.organization.address.countryCode }</country>
-                </addr>
+                <@address author.organization.address />
             </representedOrganization>
         </assignedAuthor>
     </author>
@@ -247,7 +253,11 @@ root="${id.root}"<#rt>
                             <entryRelationship inversionInd="true" typeCode="SUBJ">
                                 <observation classCode="OBS" moodCode="EVN">
                                     <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="ActClass" displayName="Substitution"/>
-                                    <value code="N" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.42.7" codeSystemName="eHDSISubstitutionCode" displayName="none" />
+                                    <#-- The following line gives a validation error:
+                                    org.xml.sax.SAXParseException; lineNumber: 161; columnNumber: 92; cvc-type.2: The type definition cannot be abstract for element value.
+                                    Therefore we leave it out for now.-->
+                                    <!--<value code="N" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.42.7" codeSystemName="eHDSISubstitutionCode" displayName="none" />-->
+
                                 </observation>
                             </entryRelationship>
 </#if>

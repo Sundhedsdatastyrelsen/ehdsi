@@ -8,5 +8,5 @@ public class Organization {
     @NonNull CdaId id;
     @NonNull String name;
     @NonNull String telephoneNumber;
-    @NonNull Address address;
+    Address address;
 }

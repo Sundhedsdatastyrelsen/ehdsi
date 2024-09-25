@@ -43,11 +43,13 @@ public class EPrescriptionL1Mapper {
         List<String> authorLines = new ArrayList<String>();
         addToListIfNotNullOrEmpty(authorLines, author.getName().getFullName());
         addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getName());
-        for (String addressLine : author.getOrganization().getAddress().getStreetAddressLines()) {
-            addToListIfNotNullOrEmpty(authorLines, addressLine);
+        if(author.getOrganization().getAddress() != null) {
+            for (String addressLine : author.getOrganization().getAddress().getStreetAddressLines()) {
+                addToListIfNotNullOrEmpty(authorLines, addressLine);
+            }
+            addToListIfNotNullOrEmpty(authorLines, constructPostalCityLine(author.getOrganization().getAddress().getPostalCode(), author.getOrganization().getAddress().getCity()));
+            addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
         }
-        addToListIfNotNullOrEmpty(authorLines, constructPostalCityLine(author.getOrganization().getAddress().getPostalCode(), author.getOrganization().getAddress().getCity()));
-        addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
         return authorLines.toArray(new String[0]);
     }
 
