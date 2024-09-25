@@ -7,24 +7,30 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="epps-fmk-mock-data" />
+        <module name="epps-service" />
+        <module name="integration-tests" />
+        <module name="epps-cpr-api" />
         <module name="epps-cpr-mock" />
         <module name="epps-fmk-mock" />
-        <module name="fmk-responses-for-test" />
+        <module name="country-b-mock" />
         <module name="epps-cpr-mock-data" />
-        <module name="epps-fmk-mock-data" />
         <module name="nsp-client" />
-        <module name="epps-service" />
         <module name="epps-fmk-api" />
         <module name="epps-application" />
         <module name="cda-generator" />
-        <module name="epps-cpr-api" />
+        <module name="testing-shared" />
         <module name="epps-ncp-api" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fmk-responses-for-test" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cda-generator" options="-parameters" />
+      <module name="country-b-mock" options="-parameters" />
       <module name="epps-application" options="-parameters" />
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
@@ -35,7 +41,9 @@
       <module name="epps-ncp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />
       <module name="fmk-responses-for-test" options="-parameters" />
+      <module name="integration-tests" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
+      <module name="testing-shared" options="-parameters" />
     </option>
   </component>
 </project>

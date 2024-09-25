@@ -1,6 +1,6 @@
 package dk.sds.ncp.cda;
 
-import dk.nsp.epps.test.FmkResponseStorage;
+import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,13 +46,5 @@ class EPrescriptionL3GeneratorTest {
 
         // 3. Test model/schematron via gazelle
         // TODO?
-
-//        // write to file for debugging:
-//         java.nio.file.Files.writeString(
-//             java.nio.file.Path.of("temp/cda-eprescription1-" + cpr + ".xml"),
-//             xmlString,
-//             java.nio.file.StandardOpenOption.CREATE,
-//             java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-//         );
     }
 }

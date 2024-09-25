@@ -23,7 +23,9 @@
 		<module>epps-mocks</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
-        <module>fmk-responses-for-test</module>
+        <module>integration-tests</module>
+        <module>country-b-mock</module>
+        <module>testing-shared</module>
     </modules>
 
 	<properties>
@@ -64,6 +66,11 @@
 				<artifactId>epps-fmk-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>dk.nsp.epps</groupId>
+                <artifactId>testing-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>dk.nsp.epps</groupId>
 				<artifactId>epps-ncp-api</artifactId>

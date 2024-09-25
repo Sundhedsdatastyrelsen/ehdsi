@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>dk.nsp.epps</groupId>
-            <artifactId>fmk-responses-for-test</artifactId>
+            <artifactId>testing-shared</artifactId>
             <scope>test</scope>
         </dependency>
 	</dependencies>
