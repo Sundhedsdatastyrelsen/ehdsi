@@ -107,6 +107,11 @@
                 <artifactId>nsp-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>dk.nsp.epps</groupId>
+                <artifactId>integration-tests</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.openapitools</groupId>
 				<artifactId>jackson-databind-nullable</artifactId>

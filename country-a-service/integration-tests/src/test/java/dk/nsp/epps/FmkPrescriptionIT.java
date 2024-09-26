@@ -38,6 +38,9 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -57,7 +60,9 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
+import static dk.nsp.epps.testing.shared.FmkResponseStorage.serializeToFile;
 import static dk.nsp.epps.testing.shared.StaticFileNames.getCdaFileName;
 import static dk.nsp.epps.testing.shared.StaticFileNames.getDispensationFileName;
 import static dk.nsp.epps.testing.shared.StaticFileNames.getFmkFileName;
@@ -72,6 +77,21 @@ public class FmkPrescriptionIT {
     // This date was used during development because it worked.  It is unknown if it will keep working.
     // Setting a date is mandatory.
     private static final String prescriptionStaticDate = "2024-09-12";
+
+    public static Stream<Arguments> provideTestingInput(boolean preparedInput) {
+        return Stream.of(
+            Arguments.of("1111111118", preparedInput ? "prepared" : "integration","integration"),
+            Arguments.of("0201909309", preparedInput ? "prepared" : "integration","integration")
+        );
+    }
+
+    private static Stream<Arguments> providePreparedTestingInput(){
+        return provideTestingInput(true);
+    }
+
+    private static Stream<Arguments> provideIntegrationTestingInput(){
+        return provideTestingInput(false);
+    }
 
     private static final List<String> testCprs = List.of("1111111118", "0201909309");
     private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medicineCardFactory =
@@ -186,20 +206,11 @@ public class FmkPrescriptionIT {
 
 
     // Keep
-    @Test
+    @ParameterizedTest
+    @MethodSource("provideIntegrationTestingInput")
     @Order(2)
-    void getPrescriptionsFromFmk() throws JAXBException, URISyntaxException {
-        for (var cpr : testCprs) {
-            var f = new File(storageDir, getFmkFileName(cpr));
-            var response = getPrescriptionFromFmkForCpr(cpr);
-            serializeToFile(response,f);
-            System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
-        }
-    }
+    public void getPrescriptionsFromFmk(String cpr, String inputFileMark, String outputFileMark) throws JAXBException, URISyntaxException {
 
-    public JAXBElement<GetPrescriptionResponseType> getPrescriptionFromFmkForCpr(String cpr) throws JAXBException {
-        var frs = new FmkResponseStorage(Fmk.apiClient());
-        return frs.openPrescriptionsForCpr(cpr);
     }
 
     // Keep
@@ -310,33 +321,6 @@ public class FmkPrescriptionIT {
             return (GetPrescriptionResponseType) value;
         }
         throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
-    }
-
-    /**
-     * Serialize a JAXBElement to a file for storage
-     *
-     * @param obj The object to store
-     * @param f   The file (path) to store it at
-     */
-    private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
-        var marshaller = FmkPrescriptionIT.fmkJaxContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(obj, f);
-    }
-
-    /**
-     * Serialize a stream of bytes to a file
-     *
-     * @param bytes The bytes to serialize
-     * @param file  The file (path) to serialize it to
-     */
-    private static <T> void serializeToFile(byte[] bytes, File file) throws JAXBException, IOException {
-        java.nio.file.Files.write(
-            java.nio.file.Path.of(file.getAbsolutePath()),
-            bytes,
-            java.nio.file.StandardOpenOption.CREATE,
-            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-        );
     }
 
     /**

@@ -17,6 +17,10 @@
             <artifactId>testing-shared</artifactId>
         </dependency>
         <dependency>
+            <groupId>dk.nsp.epps</groupId>
+            <artifactId>integration-tests</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>

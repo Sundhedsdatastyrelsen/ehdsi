@@ -11,6 +11,7 @@ import jakarta.xml.bind.Marshaller;
 import lombok.NonNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -49,10 +50,25 @@ public class FmkResponseStorage {
         this.fmkClient = fmkClient;
     }
 
-    private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
+    public static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
         var marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(obj, f);
+    }
+
+        /**
+     * Serialize a stream of bytes to a file
+     *
+     * @param bytes The bytes to serialize
+     * @param file  The file (path) to serialize it to
+     */
+    public static <T> void serializeToFile(byte[] bytes, File file) throws JAXBException, IOException {
+        java.nio.file.Files.write(
+            java.nio.file.Path.of(file.getAbsolutePath()),
+            bytes,
+            java.nio.file.StandardOpenOption.CREATE,
+            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+        );
     }
 
     public JAXBElement<GetPrescriptionResponseType> openPrescriptionsForCpr(String cpr) throws JAXBException {

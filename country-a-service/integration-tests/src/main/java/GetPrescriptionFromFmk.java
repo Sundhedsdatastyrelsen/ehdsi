@@ -1,0 +1,20 @@
+import dk.nsp.epps.testing.shared.Fmk;
+import dk.nsp.epps.testing.shared.FmkResponseStorage;
+import jakarta.xml.bind.JAXBException;
+
+import java.io.File;
+import java.net.URISyntaxException;
+
+import static dk.nsp.epps.testing.shared.FmkResponseStorage.serializeToFile;
+import static dk.nsp.epps.testing.shared.StaticFileNames.getFmkFileName;
+import static dk.nsp.epps.testing.shared.StaticFileNames.storageDir;
+
+public class GetPrescriptionFromFmk {
+    public void getPrescriptionsFromFmkForCpr(String cpr, String inputFileMark, String outputFileMark) throws JAXBException, URISyntaxException {
+        var frs = new FmkResponseStorage(Fmk.apiClient());
+        var f = new File(storageDir, getFmkFileName(cpr,outputFileMark));
+        var response = frs.openPrescriptionsForCpr(cpr);
+        serializeToFile(response,f);
+        System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
+    }
+}
