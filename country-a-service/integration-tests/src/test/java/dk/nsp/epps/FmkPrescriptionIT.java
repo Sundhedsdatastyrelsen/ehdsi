@@ -3,7 +3,6 @@ package dk.nsp.epps;
 import dk.nsp.epps.testing.shared.TestingInput;
 import dk.sds.ncp.cda.MapperException;
 import freemarker.template.TemplateException;
-import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
@@ -26,10 +25,6 @@ import static dk.nsp.epps.integration.GenerateCdaDocument.generateCdaDocumentFor
 import static dk.nsp.epps.integration.GetPrescriptionFromFmk.getPrescriptionsFromFmkForCpr;
 import static dk.nsp.epps.integration.SubmitDispensationToFmk.createPharmacyEffectuation;
 import static dk.nsp.epps.integration.SubmitDispensationToFmk.startEffectuation;
-import static dk.nsp.epps.testing.shared.FmkResponseStorage.serializeToFile;
-import static dk.nsp.epps.testing.shared.TestingFileNames.getCdaFileName;
-import static dk.nsp.epps.testing.shared.TestingFileNames.getDispensationFileName;
-import static dk.nsp.epps.testing.shared.TestingFileNames.getFmkFileName;
 import static dk.nsp.epps.testing.shared.TestingFileNames.storageDir;
 
 @SuppressWarnings("NonAsciiCharacters")
