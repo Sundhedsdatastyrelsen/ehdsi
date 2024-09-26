@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [ "hbg/nightly-gh-action" ]
+  schedule:
+    - cron: "30 01 * * *"
 
 jobs:
   test-job:
@@ -18,5 +20,10 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: cd country-a-service && mvn --batch-mode --projects testing-tools --also-make package
-    - name: Run test job
-      run: java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar dk.nsp.epps.script.CreateFmkTestPrescription
+    - name: Create new prescriptions in FMK
+      run: java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar dk.nsp.epps.script.CreateNewPrescriptionUtil
+    - name: Get the prescriptions from FMK
+      run: java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar dk.nsp.epps.script.GetPrescriptionsFromFmkUtil
+    - name: Generate CDA Documentation
+      run: java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar dk.nsp.epps.script.GenerateCdaDocumentUtil
+    #Insert country-b part here
