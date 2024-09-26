@@ -25,23 +25,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="cda-generator" target="21" />
-      <module name="country-b-mock" target="21" />
-      <module name="epps-api-root" target="1.5" />
-      <module name="epps-application" target="21" />
-      <module name="epps-cpr-api" target="21" />
-      <module name="epps-cpr-mock" target="21" />
-      <module name="epps-cpr-mock-data" target="21" />
-      <module name="epps-fmk-api" target="21" />
-      <module name="epps-fmk-mock" target="21" />
-      <module name="epps-fmk-mock-data" target="21" />
-      <module name="epps-mocks-root" target="1.5" />
-      <module name="epps-ncp-api" target="21" />
-      <module name="epps-root" target="1.5" />
-      <module name="epps-service" target="21" />
       <module name="fmk-responses-for-test" target="21" />
-      <module name="integration-tests" target="21" />
-      <module name="nsp-client" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

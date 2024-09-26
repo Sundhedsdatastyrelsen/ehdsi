@@ -1,7 +1,7 @@
 package dk.nsp.epps.script;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.testing.shared.Fmk;
 
 public class CreateFmkTestPrescription {
@@ -11,7 +11,7 @@ public class CreateFmkTestPrescription {
             .withIncludeOpenPrescriptions().end()
             .build();
 
-        var prescriptions = Fmk.apiClient().getPrescription(getPrescriptionRequest, Identities.apotekerChrisChristoffersen);
+        var prescriptions = Fmk.apiClient().getPrescription(getPrescriptionRequest, TestIdentities.apotekerChrisChristoffersen);
         System.out.printf("%s %s%n",
             prescriptions.getPatient().getPerson().getName().getGivenName(),
             prescriptions.getPatient().getPerson().getName().getSurname());

@@ -1,6 +1,7 @@
 package dk.nsp.epps;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructuresForRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorType;
@@ -46,6 +47,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
@@ -55,6 +57,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
+
+import static dk.nsp.epps.testing.shared.StaticFileNames.getCdaFileName;
+import static dk.nsp.epps.testing.shared.StaticFileNames.getDispensationFileName;
+import static dk.nsp.epps.testing.shared.StaticFileNames.getFmkFileName;
+import static dk.nsp.epps.testing.shared.StaticFileNames.storageDir;
 
 @SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -66,27 +73,7 @@ public class FmkPrescriptionIT {
     // Setting a date is mandatory.
     private static final String prescriptionStaticDate = "2024-09-12";
 
-
-    private static final File storageDir = new File("src/test/resources/test-file-storage");
     private static final List<String> testCprs = List.of("1111111118", "0201909309");
-
-    //Filenames are generated based on CPR to ensure we have easy traceable and reproduceable results
-    private static String getFmkFileName(String cpr) {
-        return "get-prescription-" + cpr + ".xml";
-    }
-
-    private static String getCdaFileName(String cpr) {
-        return "cda-" + cpr + ".xml";
-    }
-
-    private static String getDispensationFileName(String cpr) {
-        return "dispensation-" + cpr + ".xml";
-    }
-
-    private static String getStartEffectuationResponseFileName(String cpr) {
-        return "dispensation-" + cpr + ".xml";
-    }
-
     private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medicineCardFactory =
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
@@ -126,20 +113,96 @@ public class FmkPrescriptionIT {
         Thread.sleep(2000);
     }
 
+    /**
+     * Create a new prescription for tests in the FMK test environment.
+     * The process is:
+     * - Get most recent medicine card version.
+     * - Create "Drug Medication" (lægemiddelordination) on medicine card
+     * - Create prescription on "Drug Medication"
+     */
+    //Slated for "scriptization"
+    @Test
+    @Order(1)
+    void createNewPrescription() throws Exception {
+        for (var cpr : testCprs) {
+            var response = createNewPrecriptionForCpr(cpr);
+            Assertions.assertNotNull(response.getPrescription().getFirst());
+        }
+    }
 
-    // This is from FMK Response Storage
+    public CreatePrescriptionResponseType createNewPrecriptionForCpr(String cpr) throws Exception {
+        var personIdentifier = PersonIdentifierType.builder()
+                                                   .withSource("CPR")
+                                                   .withValue(cpr)
+                                                   .build();
+
+        var medicineCard = Fmk.apiClient().getMedicineCard(
+            GetMedicineCardRequestType.builder()
+                                      .withPersonIdentifier(personIdentifier)
+                                      .withIncludePrescriptions(true)
+                                      .build(),
+            EmployeeIdentities.lægeCharlesBabbage(),
+            PredefinedRequestedRole.LÆGE
+        ).getMedicineCard().getFirst();
+        var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
+                                                                         .withPersonIdentifier(personIdentifier)
+                                                                         .withMedicineCardVersion(medicineCard.getVersion())
+                                                                         .withCreatedBy(prescriptionCreatedBy())
+                                                                         .addDrugMedication(drugMedication())
+                                                                         .build();
+        var drugMedicationResponse = Fmk.apiClient().createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+        Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
+
+        var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
+        var drugMedicationIdentifier = drugMedicationResponse.getDrugMedication().getFirst().getIdentifier();
+
+        var createPrescriptionRequest = CreatePrescriptionRequestType.builder()
+                                                                     .withPersonIdentifier(personIdentifier)
+                                                                     .withMedicineCardVersion(medicineCardVersion)
+                                                                     .withCreatedBy(prescriptionCreatedBy())
+                                                                     .addPrescription()
+                                                                     .withDrugMedicationIdentifier(drugMedicationIdentifier)
+                                                                     .withAuthorisationDateTime(dk.nsp.epps.service.Utils.xmlGregorianCalendar(ZonedDateTime.now()))
+                                                                     // System name is mandatory, but the value doesn't seem to be validated by FMK.
+                                                                     .withSystemName("NCP ePrescription test system")
+                                                                     .withValidFromDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
+                                                                     .withPackageRestriction()
+                                                                     .withPackageQuantity(1)
+                                                                     // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
+                                                                     .withPackageNumber().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue("056232").end()
+                                                                     .end()
+                                                                     // dosage text is mandatory but seems to be overridden by structured dosage info
+                                                                     .withDosageText("1 tablet 3 gange dagligt")
+                                                                     .end()
+                                                                     .build();
+
+        var createPrescriptionResponse = Fmk.apiClient().createPrescription(
+            createPrescriptionRequest,
+            EmployeeIdentities.lægeCharlesBabbage(),
+            PredefinedRequestedRole.LÆGE);
+
+        return createPrescriptionResponse;
+    }
+
+
+    // Keep
     @Test
     @Order(2)
     void getPrescriptionsFromFmk() throws JAXBException, URISyntaxException {
-        var frs = new FmkResponseStorage(Fmk.apiClient());
         for (var cpr : testCprs) {
             var f = new File(storageDir, getFmkFileName(cpr));
-            serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
+            var response = getPrescriptionFromFmkForCpr(cpr);
+            serializeToFile(response,f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
         }
     }
 
-    // This is from CDA Generator
+    public JAXBElement<GetPrescriptionResponseType> getPrescriptionFromFmkForCpr(String cpr) throws JAXBException {
+        var frs = new FmkResponseStorage(Fmk.apiClient());
+        return frs.openPrescriptionsForCpr(cpr);
+    }
+
+    // Keep
     @Test
     @Order(3)
     void generateCdaDocuments() throws JAXBException, TemplateException, MapperException, IOException {
@@ -153,39 +216,51 @@ public class FmkPrescriptionIT {
         }
     }
 
-    //Country B Mock
+    public void generateCdaDocumentForCpr(String cpr, File fmkResponse, File cdaOutputFile) throws JAXBException, TemplateException, MapperException, IOException {
+        var response = readStoredPrescriptions(fmkResponse);
+        var xmlString = EPrescriptionL3Generator.generate(response, 0);
+        serializeToFile(xmlString.getBytes(StandardCharsets.UTF_8), cdaOutputFile);
+    }
+
+    //Replace
     @Test
     @Order(4)
     public void testGenerateDispensation() throws ParserConfigurationException, IOException, SAXException, JAXBException {
         for (var cpr : testCprs) {
             var epCda = new File(storageDir, getCdaFileName(cpr));
-            try (var is = new FileInputStream(epCda)) {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(true);
-                DocumentBuilder builder = dbf.newDocumentBuilder();
-                Document epDocument = builder.parse(new InputSource(is));
-                DispenseRequest dispenseRequest = new DispenseRequest();
-                dispenseRequest.setCountryCode("EU");
-                dispenseRequest.setNumberOfPackage(1);
-                dispenseRequest.setPrescriptionId("prescriptionId");
-                dispenseRequest.setProductName("test product");
-                dispenseRequest.setSubstitution(true);
-                PackageSize packageSize = new PackageSize();
-                packageSize.setPackageSizeL1("1");
-                packageSize.setPackageSizeL2("2");
-                packageSize.setPackageSizeL3(null);
-                packageSize.setQuantity(null);
-                dispenseRequest.setPackageSize(packageSize);
-                byte[] dispensationDocument = CDAUtil.generateDispensationDocument(dispenseRequest, epDocument, generateIdentifierExtension());
-                var dispensationFile = new File(storageDir, getDispensationFileName(cpr));
-                serializeToFile(dispensationDocument, dispensationFile);
-                System.out.println("Wrote Dispensations to " + dispensationFile.getAbsolutePath());
-            }
+
+            byte[] dispensationDocument = generateTestDispensation(epCda);
+            var dispensationFile = new File(storageDir, getDispensationFileName(cpr));
+            serializeToFile(dispensationDocument, dispensationFile);
+            System.out.println("Wrote Dispensations to " + dispensationFile.getAbsolutePath());
+
+        }
+    }
+
+    public byte[] generateTestDispensation(File epCda) throws IOException, ParserConfigurationException, SAXException {
+        try (var is = new FileInputStream(epCda)) {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            Document epDocument = builder.parse(new InputSource(is));
+            DispenseRequest dispenseRequest = new DispenseRequest();
+            dispenseRequest.setCountryCode("EU");
+            dispenseRequest.setNumberOfPackage(1);
+            dispenseRequest.setPrescriptionId("prescriptionId");
+            dispenseRequest.setProductName("test product");
+            dispenseRequest.setSubstitution(true);
+            PackageSize packageSize = new PackageSize();
+            packageSize.setPackageSizeL1("1");
+            packageSize.setPackageSizeL2("2");
+            packageSize.setPackageSizeL3(null);
+            packageSize.setQuantity(null);
+            dispenseRequest.setPackageSize(packageSize);
+            return CDAUtil.generateDispensationDocument(dispenseRequest, epDocument, generateIdentifierExtension());
         }
     }
 
 
-    //Use dispensation
+    //Keep
     @Test
     @Order(5)
     public void fmkSubmitDispensation() throws Exception {
@@ -218,70 +293,7 @@ public class FmkPrescriptionIT {
         }
     }
 
-    /**
-     * Create a new prescription for tests in the FMK test environment.
-     * The process is:
-     * - Get most recent medicine card version.
-     * - Create "Drug Medication" (lægemiddelordination) on medicine card
-     * - Create prescription on "Drug Medication"
-     */
-    @Test
-    @Order(1)
-    void createNewPrescription() throws Exception {
-        for (var cpr : testCprs) {
 
-            var personIdentifier = PersonIdentifierType.builder()
-                .withSource("CPR")
-                .withValue(cpr)
-                .build();
-
-            var medicineCard = Fmk.apiClient().getMedicineCard(
-                GetMedicineCardRequestType.builder()
-                    .withPersonIdentifier(personIdentifier)
-                    .withIncludePrescriptions(true)
-                    .build(),
-                EmployeeIdentities.lægeCharlesBabbage(),
-                PredefinedRequestedRole.LÆGE
-            ).getMedicineCard().getFirst();
-            var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
-                .withPersonIdentifier(personIdentifier)
-                .withMedicineCardVersion(medicineCard.getVersion())
-                .withCreatedBy(prescriptionCreatedBy())
-                .addDrugMedication(drugMedication())
-                .build();
-            var drugMedicationResponse = Fmk.apiClient().createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
-            Assertions.assertEquals(1, drugMedicationResponse.getDrugMedication().size());
-
-            var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
-            var drugMedicationIdentifier = drugMedicationResponse.getDrugMedication().getFirst().getIdentifier();
-
-            var createPrescriptionRequest = CreatePrescriptionRequestType.builder()
-                .withPersonIdentifier(personIdentifier)
-                .withMedicineCardVersion(medicineCardVersion)
-                .withCreatedBy(prescriptionCreatedBy())
-                .addPrescription()
-                .withDrugMedicationIdentifier(drugMedicationIdentifier)
-                .withAuthorisationDateTime(dk.nsp.epps.service.Utils.xmlGregorianCalendar(ZonedDateTime.now()))
-                // System name is mandatory, but the value doesn't seem to be validated by FMK.
-                .withSystemName("NCP ePrescription test system")
-                .withValidFromDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
-                .withPackageRestriction()
-                .withPackageQuantity(1)
-                // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
-                .withPackageNumber().withSource(prescriptionStaticSource).withDate(prescriptionStaticDate).withValue("056232").end()
-                .end()
-                // dosage text is mandatory but seems to be overridden by structured dosage info
-                .withDosageText("1 tablet 3 gange dagligt")
-                .end()
-                .build();
-
-            var createPrescriptionResponse = Fmk.apiClient().createPrescription(
-                createPrescriptionRequest,
-                EmployeeIdentities.lægeCharlesBabbage(),
-                PredefinedRequestedRole.LÆGE);
-            Assertions.assertNotNull(createPrescriptionResponse.getPrescription().getFirst());
-        }
-    }
 
 
     /**
