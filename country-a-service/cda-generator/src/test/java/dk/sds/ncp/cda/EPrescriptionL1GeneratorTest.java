@@ -1,28 +1,26 @@
 package dk.sds.ncp.cda;
 
+import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class EPrescriptionL1GeneratorTest {
     @Test
-    void generateTest() throws IOException {
-        var model = EPrescriptionL3MapperTest.getModel();
-        var pdfFields = EPrescriptionL1Mapper.map(model);
-        var pdf = EPrescriptionL1Generator.generate(pdfFields);
+    void generateTest() throws Exception {
+        var cpr = "0201909309";
+        var fmkResponse = FmkResponseStorage.storedPrescriptions(cpr);
+        var modelL3 = EPrescriptionL3Mapper.model(fmkResponse, 0);
+        var modelL1 = EPrescriptionL1Mapper.map(modelL3);
+        var pdf = EPrescriptionL1Generator.generate(modelL1);
         Assertions.assertNotNull(pdf);
 
-        //Write test output files
-        File directory = new File("temp/");
-        if(!directory.exists()){
-            directory.mkdirs();
-        }
-        try (FileOutputStream fos = new FileOutputStream("temp/pdflevel1-test.pdf")){
-            fos.write(pdf);
-        }
+        // Write PDF to disk for debugging purposes
+//        java.nio.file.Files.write(
+//            java.nio.file.Path.of("temp/cda-eprescription-l1-" + cpr + ".pdf"),
+//            pdf,
+//            java.nio.file.StandardOpenOption.CREATE,
+//            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//        );
     }
 
     @Test
