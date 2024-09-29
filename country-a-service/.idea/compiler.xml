@@ -41,7 +41,6 @@
       <module name="epps-fmk-mock-data" options="-parameters" />
       <module name="epps-ncp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />
-      <module name="fmk-responses-for-test" options="-parameters" />
       <module name="integration-tests" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
       <module name="testing-shared" options="-parameters" />

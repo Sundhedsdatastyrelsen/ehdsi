@@ -1,17 +1,18 @@
-name: Docker Image CI
+name: Docker Image
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    
+    tags:
+  workflow_dispatch:
+
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  
+  REPO_NAME: ${{ github.repository }}
+
 jobs:
 
-  build:
+  build-country-a-service:
 
     runs-on: ubuntu-latest
     permissions:
@@ -21,7 +22,8 @@ jobs:
       id-token: write
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
     - name: Log in to the Container registry
       uses: docker/login-action@v3.2.0
       with:
@@ -30,15 +32,15 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Extract metadata (tags, labels) for Docker
       id: meta
-      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.REGISTRY }}/${{ env.REPO_NAME }}-country-a-service
     - name: Build and push Docker image
       id: push
-      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      uses: docker/build-push-action@v6
       with:
-        context: ./country-a-service/
-        file: ./country-a-service/epps-application/Dockerfile.build
+        context: "{{defaultContext}}:country-a-service"
+        file: "epps-application/Dockerfile.build"
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}

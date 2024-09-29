@@ -12,7 +12,7 @@ codeSystem="${value.codeSystem}"<#rt>
 root="${id.root}"<#rt>
 <#if id.extension??> extension="${id.extension}"</#if><#rt>
 </#macro>
-<!--
+<#--
  The following macro uses the string "__NULL__" as a replacement for a pure null value
  This is caused by the freemarker handling of null values as input to macros, and is chosen, since we do not expect
  any of the actual values to match this string. Treat it is a null value, only one that can be a default for the macro"

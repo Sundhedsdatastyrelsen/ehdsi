@@ -46,5 +46,13 @@ class EPrescriptionL3GeneratorTest {
 
         // 3. Test model/schematron via gazelle
         // TODO?
+
+        // write to file for debugging:
+//         java.nio.file.Files.writeString(
+//             java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml"),
+//             xmlString,
+//             java.nio.file.StandardOpenOption.CREATE,
+//             java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//         );
     }
 }
