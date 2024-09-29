@@ -9,8 +9,8 @@ import static dk.nsp.epps.integration.GetPrescriptionFromFmk.getPrescriptionsFro
 
 public class GetPrescriptionsFromFmkUtil {
     public static void main(String[] args) throws JAXBException, URISyntaxException {
-        for (String cpr : TestingInput.TestingCprs()) {
-            getPrescriptionsFromFmkForCpr(cpr, TestingInput.PreparedFilesMark());
+        for (String cpr : TestingInput.testingCprs()) {
+            getPrescriptionsFromFmkForCpr(cpr, TestingInput.preparedFilesMark());
         }
     }
 }

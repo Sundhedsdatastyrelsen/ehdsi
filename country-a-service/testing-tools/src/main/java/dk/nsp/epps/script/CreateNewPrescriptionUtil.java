@@ -6,7 +6,7 @@ import static dk.nsp.epps.integration.CreateNewPrescriptionInFmk.createNewPrecri
 
 public class CreateNewPrescriptionUtil {
     public static void main(String[] args) throws Exception {
-        for (var cpr : TestingInput.TestingCprs()) {
+        for (var cpr : TestingInput.testingCprs()) {
             createNewPrecriptionForCpr(cpr);
         }
     }

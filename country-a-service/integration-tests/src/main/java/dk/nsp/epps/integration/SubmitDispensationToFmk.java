@@ -10,14 +10,14 @@ import dk.nsp.test.idp.model.Identity;
 import java.io.File;
 import java.io.FileInputStream;
 
-import static dk.nsp.epps.testing.shared.TestingFileNames.getDispensationFileName;
+import static dk.nsp.epps.testing.shared.TestingFileNames.dispensationFileName;
 import static dk.nsp.epps.testing.shared.TestingFileNames.storageDir;
 
 public class SubmitDispensationToFmk {
     private static final Identity caller = TestIdentities.apotekerChrisChristoffersen;
 
     public static StartEffectuationResponseType startEffectuation(String cpr, String inputFileMark) throws Exception {
-        var dispensationFile = new File(storageDir, getDispensationFileName(cpr, inputFileMark));
+        var dispensationFile = new File(storageDir(), dispensationFileName(cpr, inputFileMark));
         try (var is = new FileInputStream(dispensationFile)) {
             var dispensationDocument = dk.nsp.epps.Utils.readXmlDocument(is);
             var patientId = cpr + "^^^&2.16.17.710.802.1000.990.1.500&ISO";
@@ -32,7 +32,7 @@ public class SubmitDispensationToFmk {
     }
 
     public static CreatePharmacyEffectuationResponseType createPharmacyEffectuation(String cpr, String inputFileMark, StartEffectuationResponseType startEffectuationResponse) throws Exception {
-        var dispensationFile = new File(storageDir, getDispensationFileName(cpr, inputFileMark));
+        var dispensationFile = new File(storageDir(), dispensationFileName(cpr, inputFileMark));
         try (var is = new FileInputStream(dispensationFile)) {
             var dispensationDocument = dk.nsp.epps.Utils.readXmlDocument(is);
             var patientId = cpr + "^^^&2.16.17.710.802.1000.990.1.500&ISO";

@@ -6,7 +6,6 @@ import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -25,7 +24,6 @@ import static dk.nsp.epps.integration.GenerateCdaDocument.generateCdaDocumentFor
 import static dk.nsp.epps.integration.GetPrescriptionFromFmk.getPrescriptionsFromFmkForCpr;
 import static dk.nsp.epps.integration.SubmitDispensationToFmk.createPharmacyEffectuation;
 import static dk.nsp.epps.integration.SubmitDispensationToFmk.startEffectuation;
-import static dk.nsp.epps.testing.shared.TestingFileNames.storageDir;
 
 @SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -37,8 +35,8 @@ public class FmkPrescriptionIT {
 
     public static Stream<Arguments> provideTestingInput(boolean preparedInput) {
         return Arrays
-            .stream(TestingInput.TestingCprs())
-            .map(cpr -> Arguments.of(cpr, preparedInput ? TestingInput.PreparedFilesMark() : internalFileMark, internalFileMark));
+            .stream(TestingInput.testingCprs())
+            .map(cpr -> Arguments.of(cpr, preparedInput ? TestingInput.preparedFilesMark() : internalFileMark, internalFileMark));
     }
 
     private static Stream<Arguments> providePreparedTestingInput() {
@@ -47,15 +45,6 @@ public class FmkPrescriptionIT {
 
     private static Stream<Arguments> provideIntegrationTestingInput() {
         return provideTestingInput(false);
-    }
-
-    @BeforeAll
-    static void ensureDirectoriesExistAndInitializeFmkClient() throws JAXBException, URISyntaxException {
-        if (!storageDir.exists()) {
-            if (!storageDir.mkdirs()) {
-                throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
-            }
-        }
     }
 
     /**

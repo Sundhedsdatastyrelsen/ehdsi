@@ -5,11 +5,11 @@ package dk.nsp.epps.testing.shared;
  * same way, both in the integration tests and in the integration test utilities.
  */
 public class TestingInput {
-    public static String[] TestingCprs() {
+    public static String[] testingCprs() {
         return new String[]{"1111111118", "0201909309"};
     }
 
-    public static String PreparedFilesMark() {
+    public static String preparedFilesMark() {
         return "prepared";
     }
 }

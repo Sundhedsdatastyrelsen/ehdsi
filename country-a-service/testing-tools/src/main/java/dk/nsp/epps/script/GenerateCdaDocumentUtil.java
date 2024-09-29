@@ -11,8 +11,8 @@ import static dk.nsp.epps.integration.GenerateCdaDocument.generateCdaDocumentFor
 
 public class GenerateCdaDocumentUtil {
     public static void main(String[] args) throws TemplateException, JAXBException, MapperException, IOException {
-        for (var cpr : TestingInput.TestingCprs()) {
-            generateCdaDocumentForCpr(cpr, TestingInput.PreparedFilesMark(), TestingInput.PreparedFilesMark());
+        for (var cpr : TestingInput.testingCprs()) {
+            generateCdaDocumentForCpr(cpr, TestingInput.preparedFilesMark(), TestingInput.preparedFilesMark());
         }
     }
 }
