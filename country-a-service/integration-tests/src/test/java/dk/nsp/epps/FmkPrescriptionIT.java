@@ -28,7 +28,6 @@ import static dk.nsp.epps.integration.SubmitDispensationToFmk.startEffectuation;
 @SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FmkPrescriptionIT {
-    static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
 
     //Name for internally handled state communication
     private static final String internalFileMark = "integration";

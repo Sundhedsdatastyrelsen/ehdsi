@@ -24,7 +24,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="country-b-mock" target="21" />
       <module name="fmk-responses-for-test" target="21" />
     </bytecodeTargetLevel>
   </component>
