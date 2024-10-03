@@ -13,10 +13,6 @@ import org.junit.jupiter.api.Test;
  * To be run manually (for now) because they require external dependencies (including NSP STS).
  */
 public class FmkInfoGetIT {
-    private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medCardFac =
-        new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
-
-
     @Test
     public void fmkGetPrescriptionAlternativeCaller() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType
@@ -55,6 +51,4 @@ public class FmkInfoGetIT {
             .getRegularCPRPerson()
             .getPersonNameForAddressingName());
     }
-
-
 }

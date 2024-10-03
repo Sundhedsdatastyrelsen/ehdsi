@@ -33,33 +33,34 @@ public class CreateNewPrescriptionInFmk {
 
     public static CreatePrescriptionResponseType createNewPrecriptionForCpr(String cpr) throws Exception {
         var personIdentifier = PersonIdentifierType.builder()
-                                                   .withSource("CPR")
-                                                   .withValue(cpr)
-                                                   .build();
+            .withSource("CPR")
+            .withValue(cpr)
+            .build();
 
         var medicineCard = Fmk.apiClient().getMedicineCard(
             GetMedicineCardRequestType.builder()
-                                      .withPersonIdentifier(personIdentifier)
-                                      .withIncludePrescriptions(true)
-                                      .build(),
+                .withPersonIdentifier(personIdentifier)
+                .withIncludePrescriptions(true)
+                .build(),
             EmployeeIdentities.lægeCharlesBabbage(),
             PredefinedRequestedRole.LÆGE
         ).getMedicineCard().getFirst();
         var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
-                                                                         .withPersonIdentifier(personIdentifier)
-                                                                         .withMedicineCardVersion(medicineCard.getVersion())
-                                                                         .withCreatedBy(prescriptionCreatedBy())
-                                                                         .addDrugMedication(drugMedication())
-                                                                         .build();
-        var drugMedicationResponse = Fmk
-            .apiClient()
-            .createDrugMedication(createDrugMedicationRequest, EmployeeIdentities.lægeCharlesBabbage(), PredefinedRequestedRole.LÆGE);
+            .withPersonIdentifier(personIdentifier)
+            .withMedicineCardVersion(medicineCard.getVersion())
+            .withCreatedBy(prescriptionCreatedBy())
+            .addDrugMedication(drugMedication())
+            .build();
+        var drugMedicationResponse = Fmk.apiClient()
+            .createDrugMedication(
+                createDrugMedicationRequest,
+                EmployeeIdentities.lægeCharlesBabbage(),
+                PredefinedRequestedRole.LÆGE);
 
         var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
         var drugMedicationIdentifier = drugMedicationResponse.getDrugMedication().getFirst().getIdentifier();
 
-        var createPrescriptionRequest = CreatePrescriptionRequestType
-            .builder()
+        var createPrescriptionRequest = CreatePrescriptionRequestType.builder()
             .withPersonIdentifier(personIdentifier)
             .withMedicineCardVersion(medicineCardVersion)
             .withCreatedBy(prescriptionCreatedBy())
@@ -97,48 +98,45 @@ public class CreateNewPrescriptionInFmk {
     private static OrganisationType prescripingOrganisation() {
         // The SKS number is checked by FMK. The name and telephone number are mandatory, but probably not validated.
         return OrganisationType.builder()
-                               .withIdentifier().withSource("SKS").withValue("133016N").end()
-                               .withType(PredefinedOrganisationTypeType.SYGEHUS.value())
-                               .withName("Amager og Hvidovre Hospital,\nFamilieambulatorium, Rigshospitalet")
-                               .withTelephoneNumber("+4587654321")
-                               .build();
+            .withIdentifier().withSource("SKS").withValue("133016N").end()
+            .withType(PredefinedOrganisationTypeType.SYGEHUS.value())
+            .withName("Amager og Hvidovre Hospital,\nFamilieambulatorium, Rigshospitalet")
+            .withTelephoneNumber("+4587654321")
+            .build();
     }
 
     private static ModificatorType prescriptionCreatedBy() {
         var authorisedHCP = AuthorisedHealthcareProfessionalType.builder()
-                                                                .withAuthorisationIdentifier(EmployeeIdentities
-                                                                    .lægeCharlesBabbage()
-                                                                    .getEmployee()
-                                                                    .getAuthorizationCode())
-                                                                .withName("Charles Babbage")
-                                                                .build();
+            .withAuthorisationIdentifier(EmployeeIdentities.lægeCharlesBabbage()
+                .getEmployee()
+                .getAuthorizationCode())
+            .withName("Charles Babbage")
+            .build();
         return ModificatorType.builder()
-                              .withContent(
-                                  medicineCardFactory.createAuthorisedHealthcareProfessional(authorisedHCP),
-                                  medicineCardFactory.createOrganisation(prescripingOrganisation())
-                              )
-                              .build();
+            .withContent(
+                medicineCardFactory.createAuthorisedHealthcareProfessional(authorisedHCP),
+                medicineCardFactory.createOrganisation(prescripingOrganisation())
+            )
+            .build();
     }
 
     private static CreateDrugMedicationType drugMedication() {
         // "1 tablet 3 gange dagligt"
         var dosageStructure = DosageStructuresForRequestType.builder()
-                                                            .addStructureOrEmptyStructure(DosageStructureForRequestType
-                                                                .builder()
-                                                                .withIterationInterval(1)
-                                                                .withStartDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
-                                                                .withDosageEndingUndetermined().end()
-                                                                .addDay()
-                                                                .withNumber(1)
-                                                                .addDose().withQuantity(BigDecimal.valueOf(1)).end()
-                                                                .addDose().withQuantity(BigDecimal.valueOf(1)).end()
-                                                                .addDose().withQuantity(BigDecimal.valueOf(1)).end()
-                                                                .end()
-                                                                .build())
-                                                            .build();
+            .addStructureOrEmptyStructure(DosageStructureForRequestType.builder()
+                .withIterationInterval(1)
+                .withStartDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
+                .withDosageEndingUndetermined().end()
+                .addDay()
+                .withNumber(1)
+                .addDose().withQuantity(BigDecimal.valueOf(1)).end()
+                .addDose().withQuantity(BigDecimal.valueOf(1)).end()
+                .addDose().withQuantity(BigDecimal.valueOf(1)).end()
+                .end()
+                .build())
+            .build();
 
-        return CreateDrugMedicationType
-            .builder()
+        return CreateDrugMedicationType.builder()
             .withBeginEndDate()
             .withTreatmentStartDate(dk.nsp.epps.service.Utils.xmlGregorianCalendar(LocalDate.now()))
             .withTreatmentEndingUndetermined()

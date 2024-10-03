@@ -2,8 +2,6 @@ name: Nightly integration test
 
 on:
   workflow_dispatch:
-  push: # temporary
-    branches: [ "hbg/nightly-gh-action" ]
   schedule:
     - cron: "30 01 * * *"
 

@@ -1,12 +1,16 @@
 package dk.nsp.epps;
 
+import dk.nsp.epps.integration.CreateNewPrescriptionInFmk;
+import dk.nsp.epps.integration.GenerateCdaDocument;
+import dk.nsp.epps.integration.GetPrescriptionFromFmk;
+import dk.nsp.epps.integration.SubmitDispensationToFmk;
 import dk.nsp.epps.testing.shared.TestingInput;
 import dk.sds.ncp.cda.MapperException;
 import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -19,12 +23,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static dk.nsp.epps.integration.CreateNewPrescriptionInFmk.createNewPrecriptionForCpr;
-import static dk.nsp.epps.integration.GenerateCdaDocument.generateCdaDocumentForCpr;
-import static dk.nsp.epps.integration.GetPrescriptionFromFmk.getPrescriptionsFromFmkForCpr;
-import static dk.nsp.epps.integration.SubmitDispensationToFmk.createPharmacyEffectuation;
-import static dk.nsp.epps.integration.SubmitDispensationToFmk.startEffectuation;
-
 @SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FmkPrescriptionIT {
@@ -35,7 +33,9 @@ public class FmkPrescriptionIT {
     public static Stream<Arguments> provideTestingInput(boolean preparedInput) {
         return Arrays
             .stream(TestingInput.testingCprs())
-            .map(cpr -> Arguments.of(cpr, preparedInput ? TestingInput.preparedFilesMark() : internalFileMark, internalFileMark));
+            .map(cpr -> Arguments.of(cpr, preparedInput
+                ? TestingInput.preparedFilesMark()
+                : internalFileMark, internalFileMark));
     }
 
     private static Stream<Arguments> providePreparedTestingInput() {
@@ -51,7 +51,7 @@ public class FmkPrescriptionIT {
      * async, so the next method starts before the last one finishes. Thus we just wait a bit for the filesystem to finish
      */
     @BeforeEach
-    void waitForFilesystem() throws InterruptedException {
+    public void waitForFilesystem() throws InterruptedException {
         Thread.sleep(2000);
     }
 
@@ -65,9 +65,9 @@ public class FmkPrescriptionIT {
     @ParameterizedTest
     @MethodSource("provideIntegrationTestingInput") //Method ignores both input and output file, so we can use either
     @Order(1)
-    @Ignore("Should not be run automatically")
+    @Disabled("Should not be run automatically")
     void createNewPrescription(String cpr, String inputFileMark, String outputFileMark) throws Exception {
-        var response = createNewPrecriptionForCpr(cpr);
+        var response = CreateNewPrescriptionInFmk.createNewPrecriptionForCpr(cpr);
         Assertions.assertNotNull(response.getPrescription().getFirst());
     }
 
@@ -77,7 +77,7 @@ public class FmkPrescriptionIT {
     @MethodSource("provideIntegrationTestingInput") //Input file is ignored, so either works
     @Order(2)
     public void getPrescriptionsFromFmk(String cpr, String inputFileMark, String outputFileMark) throws JAXBException, URISyntaxException {
-        getPrescriptionsFromFmkForCpr(cpr, outputFileMark);
+        GetPrescriptionFromFmk.getPrescriptionsFromFmkForCpr(cpr, outputFileMark);
     }
 
     // Keep
@@ -86,7 +86,7 @@ public class FmkPrescriptionIT {
     @MethodSource("providePreparedTestingInput")
     @Order(3)
     void generateCdaDocuments(String cpr, String inputFileMark, String outputFileMark) throws JAXBException, TemplateException, MapperException, IOException {
-        generateCdaDocumentForCpr(cpr, inputFileMark, outputFileMark);
+        GenerateCdaDocument.generateCdaDocumentForCpr(cpr, inputFileMark, outputFileMark);
     }
 
     /* COUNTRY B
@@ -142,9 +142,9 @@ public class FmkPrescriptionIT {
     //@MethodSource("provideIntegrationTestingInput") //Use this to run them all in sequence in here
     @MethodSource("providePreparedTestingInput")
     @Order(5)
-    @Ignore("Missing Country-B part")
+    @Disabled("Missing Country-B part")
     public void fmkSubmitDispensation(String cpr, String inputFileMark, String outputFileMark) throws Exception {
-        var startEffectuationResponse = startEffectuation(cpr, inputFileMark);
+        var startEffectuationResponse = SubmitDispensationToFmk.startEffectuation(cpr, inputFileMark);
         Assertions.assertTrue(startEffectuationResponse
             .getStartEffectuationFailed()
             .isEmpty(), () -> "Effectuation call failed with message: " + startEffectuationResponse
@@ -154,7 +154,10 @@ public class FmkPrescriptionIT {
         Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst());
         Assertions.assertNotNull(startEffectuationResponse.getPrescription().getFirst().getPackageRestriction());
 
-        var createPharmacyEffectuationResult = createPharmacyEffectuation(cpr, inputFileMark, startEffectuationResponse);
+        var createPharmacyEffectuationResult = SubmitDispensationToFmk.createPharmacyEffectuation(
+            cpr,
+            inputFileMark,
+            startEffectuationResponse);
         Assertions.assertFalse(createPharmacyEffectuationResult.getEffectuation().isEmpty());
     }
 }

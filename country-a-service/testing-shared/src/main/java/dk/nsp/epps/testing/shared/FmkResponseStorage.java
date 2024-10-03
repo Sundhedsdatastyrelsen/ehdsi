@@ -37,7 +37,6 @@ public class FmkResponseStorage {
     }
 
     private static final String resourceDir = "fmk-responses";
-    private static File storageDir = TestingFileNames.storageDir(resourceDir);
 
     @NonNull
     private final FmkClient fmkClient;
@@ -99,7 +98,7 @@ public class FmkResponseStorage {
 
     public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName) throws JAXBException {
         var url = FmkResponseStorage.class.getClassLoader()
-                                          .getResource(String.format("%s/%s", resourceDir, resourceName));
+            .getResource(String.format("%s/%s", resourceDir, resourceName));
         if (url == null) {
             throw new IllegalArgumentException("resourceName does not exist");
         }
@@ -128,7 +127,7 @@ public class FmkResponseStorage {
     public static void main(String[] args) throws Exception {
         var frs = new FmkResponseStorage(Fmk.apiClient());
         for (var cpr : testCprs) {
-            var f = new File(storageDir, "get-prescription-" + cpr + ".xml");
+            var f = new File(TestingFileNames.storageDir(resourceDir), "get-prescription-" + cpr + ".xml");
             serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
         }

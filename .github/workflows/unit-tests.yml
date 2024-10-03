@@ -4,7 +4,6 @@ on:
   pull_request:
 
 jobs:
-
   compare-openapi-files:
     runs-on: ubuntu-latest
     steps:
