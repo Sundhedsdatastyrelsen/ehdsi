@@ -87,6 +87,23 @@ jobs:
 
       - name: Upload Failsafe test reports (for debugging purposes)
         uses: actions/upload-artifact@v4
+        if: success() || failure() # always run even if the previous step fails
         with:
           name: failsafe-reports
           path: country-a-service/integration-tests/target/failsafe-reports
+
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          # Slack channel id, channel name, or user id to post message.
+          # See also: https://api.slack.com/methods/chat.postMessage#channels
+          # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+          channel-id: 'C07Q2AG46HL' # #github-actions-bot-test
+          # For posting a simple plain text message
+          slack-message: |
+            GitHub build result: ${{ job.status }}
+            ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
