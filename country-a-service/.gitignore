@@ -43,3 +43,4 @@ _merged_spec.yaml
 
 #Integration test storage
 **/test-file-storage/
+dependency-reduced-pom.xml

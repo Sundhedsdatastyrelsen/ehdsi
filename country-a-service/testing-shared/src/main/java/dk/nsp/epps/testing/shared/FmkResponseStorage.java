@@ -11,6 +11,7 @@ import jakarta.xml.bind.Marshaller;
 import lombok.NonNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -37,7 +38,8 @@ public class FmkResponseStorage {
 
     private static final String resourceDir = "fmk-responses";
 
-    @NonNull private final FmkClient fmkClient;
+    @NonNull
+    private final FmkClient fmkClient;
 
     private static final List<String> testCprs = List.of("1111111118", "0101010000", "0201909309");
 
@@ -49,16 +51,36 @@ public class FmkResponseStorage {
         this.fmkClient = fmkClient;
     }
 
-    private static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
+    public static <T> void serializeToFile(JAXBElement<T> obj, File f) throws JAXBException {
         var marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(obj, f);
     }
 
+    /**
+     * Serialize a stream of bytes to a file
+     *
+     * @param bytes The bytes to serialize
+     * @param file  The file (path) to serialize it to
+     */
+    public static <T> void serializeToFile(byte[] bytes, File file) throws JAXBException, IOException {
+        java.nio.file.Files.write(
+            java.nio.file.Path.of(file.getAbsolutePath()),
+            bytes,
+            java.nio.file.StandardOpenOption.CREATE,
+            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+        );
+    }
+
     public JAXBElement<GetPrescriptionResponseType> openPrescriptionsForCpr(String cpr) throws JAXBException {
-        var getPrescriptionRequest = GetPrescriptionRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeOpenPrescriptions().end()
+        var getPrescriptionRequest = GetPrescriptionRequestType
+            .builder()
+            .withPersonIdentifier()
+            .withSource("CPR")
+            .withValue(cpr)
+            .end()
+            .withIncludeOpenPrescriptions()
+            .end()
             .build();
 
         GetPrescriptionResponseType prescriptions = fmkClient.getPrescription(
@@ -89,14 +111,14 @@ public class FmkResponseStorage {
         throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
     }
 
-    private static File storageDir() {
-        final var storageDir = new File("testing-shared/src/main/resources/" + resourceDir);
-        if (!storageDir.exists()) {
-            if (!storageDir.mkdirs()) {
-                throw new RuntimeException("Could not create dir: " + storageDir.getAbsolutePath());
-            }
+    public static GetPrescriptionResponseType readStoredPrescriptions(File f) throws JAXBException {
+        var unmarshaller = jaxbContext.createUnmarshaller();
+        var result = (JAXBElement<?>) unmarshaller.unmarshal(f);
+        var value = result.getValue();
+        if (value instanceof GetPrescriptionResponseType) {
+            return (GetPrescriptionResponseType) value;
         }
-        return storageDir;
+        throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
     }
 
     /**
@@ -105,7 +127,7 @@ public class FmkResponseStorage {
     public static void main(String[] args) throws Exception {
         var frs = new FmkResponseStorage(Fmk.apiClient());
         for (var cpr : testCprs) {
-            var f = new File(storageDir(), "get-prescription-" + cpr + ".xml");
+            var f = new File(TestingFileNames.storageDir(resourceDir), "get-prescription-" + cpr + ".xml");
             serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
         }

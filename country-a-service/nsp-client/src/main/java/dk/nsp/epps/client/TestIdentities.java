@@ -51,7 +51,7 @@ public class TestIdentities {
      * Delivery site - for effectuating a prescription
      */
     public static OrganisationType deliverySiteRyApotek =
-        new OrganisationType.Builder<>(null, null, false)
+        OrganisationType.builder()
             .withName("Ry Apoteksudsalg")
             .withType("Apotek")
             .withIdentifier()
