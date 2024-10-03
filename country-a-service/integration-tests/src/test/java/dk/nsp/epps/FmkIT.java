@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FmkIT {
     /**
@@ -49,7 +48,7 @@ public class FmkIT {
 
         var prescriptions = Fmk.apiClient()
             .getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
-        assertEquals("Helle", prescriptions.getPatient().getPerson().getName().getGivenName());
+        assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
     }
 
     private static String patientId(String cpr) {
@@ -82,17 +81,17 @@ public class FmkIT {
 
 
     /**
-     * The dispensation test case is complex because
+     * The dispensation test case is complex because:
      * - There has to be a valid prescription in the test environment to dispense for.
      * - We need a valid eDispensation CDA input document which references the prescription.
      * So this test can only run if the prerequisite scripts have run, and an eDispensation CDA
-     * is available at ...TODO...
+     * is available at the path given by the system property eDispensationITPath.
      */
     @Test
     public void submitDispensationTest() throws Exception {
-        var eDispensationRawPath = System.getProperty("testing.edispensation.path");
+        var eDispensationRawPath = System.getProperty("eDispensationITPath");
         assertThat(
-            "Java system property testing.edispensation.path must be set",
+            "Java system property eDispensationITPath must be set",
             eDispensationRawPath,
             is(not(anyOf(nullValue(), blankString()))));
         var eDispensationPath = Path.of(eDispensationRawPath);

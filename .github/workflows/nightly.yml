@@ -69,4 +69,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ep-and-ed-files
-          path: country-a-service/testing-shared/src/main/resources/test-file-storage
+          path: input-files
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: maven
+
+      - name: Run integration tests
+        run: |
+          cd country-a-service
+          mvn --batch-mode --projects integration-tests --also-make \
+            verify -DskipITs=false -DskipUTs \
+            -DeDispensationITPath=input-files/edispensation-cda.xml
+
+      - name: Upload Failsafe test reports (for debugging purposes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: failsafe-reports
+          path: country-a-service/integration-tests/target/failsafe-reports
