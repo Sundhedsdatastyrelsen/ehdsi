@@ -55,5 +55,18 @@ jobs:
       - name: Upload eDispensation CDAs as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: output-files
+          name: ep-and-ed-files
           path: input-files
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: edispensation-generation
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download input files
+        uses: actions/download-artifact@v4
+        with:
+          name: ep-and-ed-files
+          path: country-a-service/testing-shared/src/main/resources/test-file-storage

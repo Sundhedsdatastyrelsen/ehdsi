@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("NonAsciiCharacters")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class FmkPrescriptionIT {
+public class FmkITOld {
 
     //Name for internally handled state communication
     private static final String internalFileMark = "integration";
