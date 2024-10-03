@@ -12,6 +12,8 @@ import lombok.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -126,8 +128,10 @@ public class FmkResponseStorage {
      */
     public static void main(String[] args) throws Exception {
         var frs = new FmkResponseStorage(Fmk.apiClient());
+        var dir = Files.createDirectories(
+            Path.of("testing-shared", "src", "main", "resources", resourceDir));
         for (var cpr : testCprs) {
-            var f = new File(TestingFileNames.storageDir(resourceDir), "get-prescription-" + cpr + ".xml");
+            var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
         }
