@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.xpath.XPathExpressionException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -101,7 +102,7 @@ public class PrescriptionService {
         }
 
         try {
-            var effectuationResponse = fmkClient.createPharmacyEffectuation(
+            fmkClient.createPharmacyEffectuation(
                 dispensationMapper.createPharmacyEffectuationRequest(
                     patientId,
                     dispensationCda,
@@ -113,7 +114,7 @@ public class PrescriptionService {
         }
     }
 
-    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard) throws JAXBException, MapperException {
+    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard) throws JAXBException, MapperException, XPathExpressionException {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()

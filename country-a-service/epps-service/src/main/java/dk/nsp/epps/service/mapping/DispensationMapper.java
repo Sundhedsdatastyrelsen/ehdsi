@@ -446,16 +446,11 @@ public class DispensationMapper {
         @NonNull String patientId,
         @NonNull Document cda,
         @NonNull GetPrescriptionResponseType prescriptionResponse //Requires a new GetPrescriptionResponse specifically created to get prescriptions to cancel effectuations of
-        ) throws MapperException {
+        ) throws MapperException, XPathExpressionException {
         var obf = new ObjectFactory();
 
-        var fmkPrescription = prescriptionResponse.getPrescription().stream().filter(p -> {
-            try {
-                return prescriptionId(cda) == p.getIdentifier();
-            } catch (XPathExpressionException | MapperException e) {
-                throw new RuntimeException(e);
-            }
-        }).findFirst();
+        var prescriptionId = prescriptionId(cda);
+        var fmkPrescription = prescriptionResponse.getPrescription().stream().filter(p -> p.getIdentifier() == prescriptionId).findFirst();
         if(fmkPrescription.isEmpty()){
             throw new MapperException("No prescription in list of prescriptions matches ID from discard dispensation");
         }
@@ -480,7 +475,7 @@ public class DispensationMapper {
                     obf.createModificatorTypeOrganisation(authorOrganization(cda))
                 ).end()
                 .addPrescription()
-                    .withIdentifier(prescriptionId(cda))
+                    .withIdentifier(prescriptionId)
                     .withOrder()
                         .withIdentifier(lastOrder.get().getIdentifier())
                         .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()

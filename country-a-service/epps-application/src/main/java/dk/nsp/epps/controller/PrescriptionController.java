@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class PrescriptionController {
     @PostMapping(path = "/api/edispensation/discard")
     public void discardDispensation(
         @Valid @RequestBody DisardDispensationRequestDto request
-        ) throws SAXException, JAXBException, MapperException {
+        ) throws SAXException, JAXBException, MapperException, XPathExpressionException {
         prescriptionService.undoDispensation(request.getDisardDispenseDetails().getPatientId(),Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()));
     }
 }
