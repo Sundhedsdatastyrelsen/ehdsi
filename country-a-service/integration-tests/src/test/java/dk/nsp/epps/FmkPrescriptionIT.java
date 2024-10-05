@@ -4,6 +4,7 @@ import dk.nsp.epps.integration.CreateNewPrescriptionInFmk;
 import dk.nsp.epps.integration.GenerateCdaDocument;
 import dk.nsp.epps.integration.GetPrescriptionFromFmk;
 import dk.nsp.epps.integration.SubmitDispensationToFmk;
+import dk.nsp.epps.integration.UndoEffectuationInFmk;
 import dk.nsp.epps.testing.shared.TestingInput;
 import dk.sds.ncp.cda.MapperException;
 import freemarker.template.TemplateException;
@@ -159,5 +160,15 @@ public class FmkPrescriptionIT {
             inputFileMark,
             startEffectuationResponse);
         Assertions.assertFalse(createPharmacyEffectuationResult.getEffectuation().isEmpty());
+    }
+
+    @ParameterizedTest
+    //@MethodSource("provideIntegrationTestingInput") //Use this to run them all in sequence in here
+    @MethodSource("providePreparedTestingInput")
+    @Order(6)
+    @Disabled("Missing Country-B part")
+    public void fmkUndoDispensation(String cpr, String inputFileMark, String outputFileMark) throws Exception {
+        var undoEffectuationResponse = UndoEffectuationInFmk.undoEffectuation(cpr, inputFileMark);
+        //No exceptions thrown means a success
     }
 }

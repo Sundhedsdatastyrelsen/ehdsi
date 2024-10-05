@@ -1,6 +1,8 @@
 package dk.nsp.epps.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.xpath.XPathExpressionException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -109,5 +112,26 @@ public class PrescriptionService {
             // TODO: Cancel effectuation flow
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
         }
+    }
+
+    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard) throws JAXBException, MapperException, XPathExpressionException {
+        String cpr = PatientIdMapper.toCpr(patientId);
+        final var request = GetPrescriptionRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIncludeOpenPrescriptions().end()
+            .withIncludeEffectuations(true)
+            .build();
+        log.debug("Looking up info for {}", cpr);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
+
+        UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId,cdaToDiscard,fmkResponse);
+        UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, TestIdentities.apotekerJeppeMoeller); //TODO Should we not use static identities here?
+
+        //Validate undone dispensation by getting the EffectuationId that has been undone
+        var effectuationWasCancelled = undoResponse.getPrescription().stream().flatMap(p -> p.getOrder().stream()).flatMap( o -> o.getEffectuation().stream()).count() == 1;
+        if(!effectuationWasCancelled){
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Error cancelling effectuation, nothing was cancelled");
+        }
+        return undoResponse;
     }
 }
