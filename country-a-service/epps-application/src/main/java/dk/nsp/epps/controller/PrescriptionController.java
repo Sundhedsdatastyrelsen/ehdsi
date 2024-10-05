@@ -49,7 +49,7 @@ public class PrescriptionController {
     @PostMapping(path = "/api/edispensation/discard")
     public void discardDispensation(
         @Valid @RequestBody DisardDispensationRequestDto request
-        ) {
-        throw new UnsupportedOperationException("TODO");
+        ) throws SAXException, JAXBException, MapperException {
+        prescriptionService.undoDispensation(request.getDisardDispenseDetails().getPatientId(),Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()));
     }
 }

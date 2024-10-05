@@ -1,6 +1,9 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.*;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
@@ -8,7 +11,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequest
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.TestIdentities;
-import dk.nsp.epps.ncp.api.DiscardDispenseDetailsDto;
 import dk.nsp.epps.service.Utils;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
@@ -440,17 +442,34 @@ public class DispensationMapper {
         }
     }
 
-    //TODO Need to make a search request first to include an answer here
     public dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType createUndoEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
-        @NonNull DiscardDispenseDetailsDto discardDetails,
-        @NonNull GetPrescriptionResponseType prescriptionResponse
+        @NonNull GetPrescriptionResponseType prescriptionResponse //Requires a new GetPrescriptionResponse specifically created to get prescriptions to cancel effectuations of
         ) throws MapperException {
         var obf = new ObjectFactory();
 
-        var orderId = prescriptionResponse.getPrescription().stream().findFirst(p -> p)
-
+        var fmkPrescription = prescriptionResponse.getPrescription().stream().filter(p -> {
+            try {
+                return prescriptionId(cda) == p.getIdentifier();
+            } catch (XPathExpressionException | MapperException e) {
+                throw new RuntimeException(e);
+            }
+        }).findFirst();
+        if(fmkPrescription.isEmpty()){
+            throw new MapperException("No prescription in list of prescriptions matches ID from discard dispensation");
+        }
+        var lastOrder = fmkPrescription.get()
+            .getOrder()
+            .stream()
+            .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
+        if(lastOrder.isEmpty()){
+            throw new MapperException("No orders found in list of prescription");
+        }
+        var lastEffectuation = lastOrder.get().getEffectuation();
+        if(lastEffectuation == null){
+            throw new MapperException("No effectuations found on last order");
+        }
 
         try {
             return dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType.builder()
@@ -463,7 +482,10 @@ public class DispensationMapper {
                 .addPrescription()
                     .withIdentifier(prescriptionId(cda))
                     .withOrder()
-                        .withIdentifier(0L).end().end()
+                        .withIdentifier(lastOrder.get().getIdentifier())
+                        .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()
+                        .end()
+                    .end()
                 .build();
         } catch (XPathExpressionException e) {
             throw new MapperException(e.getMessage());
