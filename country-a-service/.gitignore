@@ -37,3 +37,10 @@ _merged_spec.yaml
 
 # Environment
 .env
+
+#IntelliJ (add specific files explicitely by adding them to git
+.idea/
+
+#Integration test storage
+**/test-file-storage/
+dependency-reduced-pom.xml

@@ -6,7 +6,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.FmkClient;
-import dk.nsp.epps.client.Identities;
+import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.exception.CountryAException;
@@ -72,7 +72,7 @@ public class PrescriptionService {
             .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerJeppeMoeller);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
     }
@@ -84,7 +84,7 @@ public class PrescriptionService {
             .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, Identities.apotekerJeppeMoeller);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
     }
@@ -94,7 +94,7 @@ public class PrescriptionService {
         try {
             response = fmkClient.startEffectuation(
                 dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
-                Identities.apotekerJeppeMoeller);
+                TestIdentities.apotekerJeppeMoeller);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
         }
@@ -105,7 +105,7 @@ public class PrescriptionService {
                     patientId,
                     dispensationCda,
                     response),
-                Identities.apotekerJeppeMoeller);
+                TestIdentities.apotekerJeppeMoeller);
         } catch (JAXBException e) {
             // TODO: Cancel effectuation flow
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
