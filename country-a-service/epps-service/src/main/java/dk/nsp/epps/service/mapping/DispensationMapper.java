@@ -5,7 +5,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.nsp.epps.ncp.api.DiscardDispenseDetailsDto;
 import dk.nsp.epps.service.Utils;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
@@ -415,4 +417,36 @@ public class DispensationMapper {
             throw new MapperException(e.getMessage());
         }
     }
+
+    //TODO Need to make a search request first to include an answer here
+    public dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType createUndoEffectuationRequest(
+        @NonNull String patientId,
+        @NonNull Document cda,
+        @NonNull DiscardDispenseDetailsDto discardDetails,
+        @NonNull GetPrescriptionResponseType prescriptionResponse
+        ) throws MapperException {
+        var obf = new ObjectFactory();
+
+        var orderId = prescriptionResponse.getPrescription().stream().findFirst(p -> p)
+
+
+        try {
+            return dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType.builder()
+                .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
+                .withModifiedBy().withContent(
+                    obf.createModificatorTypeOther(authorPerson(cda)),
+                    obf.createModificatorTypeRole(authorRole(cda)),
+                    obf.createModificatorTypeOrganisation(authorOrganization(cda))
+                ).end()
+                .addPrescription()
+                    .withIdentifier(prescriptionId(cda))
+                    .withOrder()
+                        .withIdentifier(0L).end().end()
+                .build();
+        } catch (XPathExpressionException e) {
+            throw new MapperException(e.getMessage());
+        }
+    }
+
+
 }

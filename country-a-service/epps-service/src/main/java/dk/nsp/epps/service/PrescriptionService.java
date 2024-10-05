@@ -1,6 +1,7 @@
 package dk.nsp.epps.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -99,7 +100,7 @@ public class PrescriptionService {
         }
 
         try {
-            fmkClient.createPharmacyEffectuation(
+            var effectuationResponse = fmkClient.createPharmacyEffectuation(
                 dispensationMapper.createPharmacyEffectuationRequest(
                     patientId,
                     dispensationCda,
@@ -109,5 +110,9 @@ public class PrescriptionService {
             // TODO: Cancel effectuation flow
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
         }
+    }
+
+    public void undoDispensation(@NonNull String patientId, String prescriptionIdentifier, String orderIdentifier, String effectuationIdentifier){
+        UndoEffectuationRequestType
     }
 }
