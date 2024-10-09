@@ -17,6 +17,7 @@ import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xcpd.PatientSearchInterfaceWithDemographics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 
 import javax.annotation.Nullable;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Service
 public class PatientSearch implements NationalConnectorInterface, PatientSearchInterfaceWithDemographics {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
 

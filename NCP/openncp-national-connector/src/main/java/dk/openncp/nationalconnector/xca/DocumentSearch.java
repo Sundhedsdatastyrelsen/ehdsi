@@ -22,6 +22,7 @@ import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class DocumentSearch implements NationalConnectorInterface, DocumentSearchInterface {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
     private Element soapHeader;

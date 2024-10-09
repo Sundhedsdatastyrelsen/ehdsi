@@ -18,8 +18,10 @@ import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.DiscardDispenseDetai
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPSOSDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 
+@Service
 public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmitInterface {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
 
