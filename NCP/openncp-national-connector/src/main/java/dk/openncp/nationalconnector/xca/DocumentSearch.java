@@ -5,18 +5,25 @@ import dk.nsp.epps.api.model.PostFetchDocumentRequest;
 import dk.nsp.epps.api.model.PostFindEPrescriptionDocumentsRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.Utils;
-import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
-import eu.epsos.protocolterminators.ws.server.exception.NIException;
-import eu.epsos.protocolterminators.ws.server.xca.DocumentSearchInterface;
-import eu.europa.ec.sante.ehdsi.constant.ClassCode;
-import eu.europa.ec.sante.ehdsi.constant.error.OpenNCPErrorCode;
-import eu.europa.ec.sante.ehdsi.openncp.assertionvalidator.exceptions.InsufficientRightsException;
-import fi.kela.se.epsos.data.model.*;
+import eu.europa.ec.sante.openncp.common.ClassCode;
+import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
+import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
+import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentAssociation;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentFactory;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPSOSDocument;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.OrCDDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.PSDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteria;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteriaImpl;
+import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
+import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
+import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import tr.com.srdc.epsos.util.XMLUtil;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -49,7 +56,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             return DocumentFactory.createEPSOSDocument(
                     doc.getPatientId(),
                     ClassCode.getByCode(doc.getClassCode().getValue()),
-                    XMLUtil.parseContent(doc.getDocument())
+                    XmlUtil.parseContent(doc.getDocument())
             );
         } catch (ApiException e) {
             if (e.getCode() == 0) {
@@ -70,11 +77,6 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
 
     @Override
     public DocumentAssociation<PSDocumentMetaData> getPSDocumentList(SearchCriteria searchCriteria) throws NIException, InsufficientRightsException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DocumentAssociation<MroDocumentMetaData> getMroDocumentList(SearchCriteria searchCriteria) throws NIException, InsufficientRightsException {
         throw new UnsupportedOperationException();
     }
 
