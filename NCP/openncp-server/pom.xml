@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://maven.apache.org/POM/4.0.0
+          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Set your own groupId, artifactId, and version -->
+    <groupId>dk.sds</groupId>
+    <artifactId>openncp-server</artifactId>
+    <version>8.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>OpenNCP Denmark Application</name>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>eu.europa.ec.sante</groupId>
+            <artifactId>openncp-application-server</artifactId>
+            <version>8.0.1-SNAPSHOT</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sds</groupId>
+            <artifactId>openncp-national-connector</artifactId>
+            <version>8.0.1-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Build Configuration -->
+    <build>
+        <plugins>
+            <!-- Maven WAR Plugin to overlay the openncp-application-server WAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <!-- Overlay configuration -->
+                    <overlays>
+                        <overlay>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-server</artifactId>
+                            <type>war</type>
+                        </overlay>
+                    </overlays>
+
+                    <!-- Copy your own web resources if any -->
+<!--                    <webResources>-->
+<!--                        <resource>-->
+<!--                            <directory>src/main/webapp</directory>-->
+<!--                            <includes>-->
+<!--                                <include>**/*</include>-->
+<!--                            </includes>-->
+<!--                        </resource>-->
+<!--                    </webResources>-->
+
+                    <!-- Other configurations from your original WAR plugin -->
+                    <!-- You can include or exclude specific resources as needed -->
+                    <!-- Copy over any packaging excludes or includes -->
+<!--                    <packagingExcludes>-->
+<!--                        &lt;!&ndash; Exclude conflicting libraries if necessary &ndash;&gt;-->
+<!--                    </packagingExcludes>-->
+                </configuration>
+            </plugin>
+
+            <!-- Maven Dependency Plugin to unpack the national connector JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>unpack-national-connector</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>dk.sds</groupId>
+                                    <artifactId>openncp-national-connector</artifactId>
+                                    <version>8.0.1-SNAPSHOT</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Include other plugins from your original pom.xml if necessary -->
+            <!-- For example, Axis2 AAR Maven Plugin executions -->
+            <!-- Copy over any other build plugins and configurations -->
+        </plugins>
+    </build>
+</project>
