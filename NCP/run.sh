@@ -101,8 +101,8 @@ else
       source "$SCRIPT_DIR/.env"
       keystorePassword=$(<tls_keystore_password.txt)
       truststorePassword=$(<tls_truststore_password.txt)
-      xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyStore' -v "$TLS_KEYSTORE_FILE" ./openncp-configuration/ATNA_resources/ArrConnections.xml
-      xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustStore' -v "$TLS_TRUSTSTORE_FILE" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+      xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyStore' -v "$TLS_KEYSTORE_PATH" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+      xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustStore' -v "$TLS_TRUSTSTORE_PATH" ./openncp-configuration/ATNA_resources/ArrConnections.xml
       xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyPass' -v "$keystorePassword" ./openncp-configuration/ATNA_resources/ArrConnections.xml
       xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustPass' -v "$truststorePassword" ./openncp-configuration/ATNA_resources/ArrConnections.xml
       ;;
