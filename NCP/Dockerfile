@@ -136,14 +136,16 @@ COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/
 COPY openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY openncp-web-manager/openncp-web-manager-backend/config /usr/local/tomcat/conf/
 COPY openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
+COPY openncp-web-manager/openncp-web-manager-backend/run.sh /usr/local/tomcat/bin/
 
 COPY openncp-configuration/ $EPSOS_PROPS_PATH
 
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
+RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
 RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
 
-ENTRYPOINT ["tomcat-config-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 
 USER tomcat
 
@@ -194,3 +196,27 @@ COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp
 COPY /openncp-configuration-utility/* /usr/local/openncp-configuration-utility
 
 CMD ["java", "-jar", "openncp-configuration-utility.jar"]
+
+# Web Manager Frontend
+FROM node:14.21-alpine as web-manager-frontend
+
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+
+RUN npm install -g http-server
+
+WORKDIR /app
+
+COPY openncp-web-manager/openncp-web-manager-frontend/package*.json ./
+
+RUN npm install
+
+COPY openncp-web-manager/openncp-web-manager-frontend .
+
+ARG GATEWAY_BACKEND_URL
+RUN sed -i -e "/^VUE_APP_SERVER_URL/s/=.*$/=${GATEWAY_BACKEND_URL}/" .env.production
+RUN sed -i '/publicPath/d' vue.config.js
+
+RUN npm run build
+
+EXPOSE 8080
+CMD [ "http-server", "dist"]

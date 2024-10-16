@@ -312,8 +312,9 @@ services:
       openncp-web-manager-backend:
         condition: service_started
     build:
-      context: ../
-      dockerfile: openncp-docker/openncp-web-manager/openncp-web-manager-frontend/Dockerfile-web-manager-frontend
+      context: .
+      dockerfile: Dockerfile
+      target: web-manager-frontend
       args:
         GATEWAY_BACKEND_URL: ${GATEWAY_BACKEND_URL}
     ports:
