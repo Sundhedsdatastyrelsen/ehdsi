@@ -206,11 +206,11 @@ RUN npm install -g http-server
 
 WORKDIR /app
 
-COPY openncp-web-manager/openncp-web-manager-frontend/package*.json ./
+COPY --from=builder /usr/src/app/ehealth/openncp-web-manager/openncp-web-manager-frontend/package*.json ./
 
 RUN npm install
 
-COPY openncp-web-manager/openncp-web-manager-frontend .
+COPY --from=builder /usr/src/app/ehealth/openncp-web-manager/openncp-web-manager-frontend .
 
 ARG GATEWAY_BACKEND_URL
 RUN sed -i -e "/^VUE_APP_SERVER_URL/s/=.*$/=${GATEWAY_BACKEND_URL}/" .env.production
