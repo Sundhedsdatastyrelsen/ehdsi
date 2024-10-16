@@ -1,9 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:mysql://${MARIADB_HOST}:${MARIADB_PORT}/ehealth_ltrdb?useSSL=false&serverTimezone=UTC
-    username: ${MARIADB_USERNAME}
-    password: ${MARIADB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-openncp:
-  root:
-    path: /opt/openncp-configuration/
