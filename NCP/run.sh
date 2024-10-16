@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#Might be outdated since 8.0. TODO Needs updating
 set -o errexit
 set -o nounset
 set -o pipefail
