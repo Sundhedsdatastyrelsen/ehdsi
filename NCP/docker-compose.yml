@@ -119,6 +119,8 @@ services:
     secrets:
       - tls_keystore_password
       - tls_truststore_password
+      - db_username
+      - db_password
 
   tomcat_node_b:
     build:
@@ -159,6 +161,8 @@ services:
     secrets:
       - tls_keystore_password
       - tls_truststore_password
+      - db_username
+      - db_password
 
   openncp-openatna:
     container_name: openncp-openatna
@@ -195,6 +199,8 @@ services:
     secrets:
       - tls_keystore_password
       - tls_truststore_password
+      - db_username
+      - db_password
 
   openncp-trc-sts:
     container_name: openncp-trc-sts
@@ -230,6 +236,8 @@ services:
     secrets:
       - tls_keystore_password
       - tls_truststore_password
+      - db_username
+      - db_password
 
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
@@ -264,6 +272,8 @@ services:
     secrets:
       - tls_keystore_password
       - tls_truststore_password
+      - db_username
+      - db_password
 
   openncp-web-manager-backend:
     build:
@@ -306,6 +316,8 @@ services:
     secrets:
       - tls_keystore_password
       - tls_truststore_password
+      - db_username
+      - db_password
 
   openncp-web-manager-frontend:
     depends_on:
