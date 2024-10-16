@@ -48,7 +48,7 @@ public class ConfigurationSynchronizer {
 
     private static String connectionString() {
         return String.format(
-                "jdbc:mariadb://%s:%s/%s",
+                "jdbc:mariadb://%s:%s/%s?useSSL=false&allowPublicKeyRetrieval=true",
                 configuration.dbHost(),
                 configuration.dbPort(),
                 configuration.dbDatabase());
