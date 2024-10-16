@@ -89,14 +89,16 @@ COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/
 
 COPY ./openncp-trc-sts/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./openncp-trc-sts/config /usr/local/tomcat/conf/
+COPY ./openncp-trc-sts/run.sh /usr/local/tomcat/bin/
 
 COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
+RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
 RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
 
-ENTRYPOINT ["tomcat-config-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 
 USER tomcat
 
@@ -110,14 +112,16 @@ COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/
 
 COPY ./openncp-openatna/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./openncp-openatna/config /usr/local/tomcat/conf/
+COPY ./openncp-openatna/run.sh /usr/local/tomcat/bin/
 
 COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
+RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
 RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
 
-ENTRYPOINT ["tomcat-config-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 
 USER tomcat
 
