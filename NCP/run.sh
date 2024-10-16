@@ -6,18 +6,6 @@ set -o pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-ENV_FILE_CONTENT="$(cat << EOF
-MARIADB_HOST="mariadb"
-MARIADB_PORT="3306"
-OPENNCP_VERSION="7.1.0"
-TLS_KEYSTORE_ALIAS=test-standard
-SEAL_KEYSTORE_ALIAS=ncptestis
-TLS_TRUSTSTORE_FILE=/opt/openncp-configuration/cert/sds-test-truststore.jks
-TLS_KEYSTORE_FILE=/opt/openncp-configuration/cert/sds-test-keystore.jks
-CTS_URL=https://webgate.training.ec.europa.eu/ehealth-term-server
-EOF
-)"
-
 error_exit() {
   echo "$1" >&2
   exit 1
@@ -34,6 +22,7 @@ USAGE=$(echo "Usage: $0 [options]";
         echo "  build             Builds all images"
         echo "  push              Push images to registry"
         echo "  update-keystore   Update keystore paths from .env and password files"
+        echo "  grant-db          Grant all privileges to the database user (requires the db to run)"
         echo "  -h, --help        Display this help message")
 
 initialize_file() {
@@ -46,19 +35,45 @@ initialize_file() {
 }
 
 initialize_secrets() {
-  initialize_file "$SCRIPT_DIR/db_username.txt" "ncp"
-  initialize_file "$SCRIPT_DIR/db_password.txt" "myPassword"
-  initialize_file "$SCRIPT_DIR/db_root_password.txt" "s3cret"
-  initialize_file "$SCRIPT_DIR/cts_username.txt" "ncpeh@dk"
-  initialize_file "$SCRIPT_DIR/cts_password.txt" "<password for the central terminology service - ask someone>"
-  initialize_file "$SCRIPT_DIR/tls_keystore_password.txt" "APQVk2dyWwCP0FzF7JiPfr8o"
-  initialize_file "$SCRIPT_DIR/seal_keystore_password.txt" "ncptestis"
-  initialize_file "$SCRIPT_DIR/tls_truststore_password.txt" "Byrx4vLoM3ZWn3PKiL7BZRUY"
-  initialize_file "$SCRIPT_DIR/.env" "${ENV_FILE_CONTENT}"
+  local env_default_dir="$SCRIPT_DIR/env_default"
+  
+  if [ ! -d "$env_default_dir" ]; then
+    error_exit "env_default directory not found. Please ensure it exists in $SCRIPT_DIR"
+  fi
+
+  for file in "$env_default_dir"/*; do
+    if [ -f "$file" ]; then
+      local filename=$(basename "$file")
+      local target_file="$SCRIPT_DIR/$filename"
+      
+      if [ ! -f "$target_file" ]; then
+        echo "Initializing $filename..."
+        cp "$file" "$target_file"
+      fi
+    fi
+  done
 }
 
 init() {
   initialize_secrets
+}
+
+update_keystore() {
+  # Requires xmlstartlet command.
+  # Install using
+  # sudo apt install xmlstarlet (on linux)
+  init
+  source "$SCRIPT_DIR/.env"
+  keystorePassword=$(<tls_keystore_password.txt)
+  truststorePassword=$(<tls_truststore_password.txt)
+  xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyStore' -v "$TLS_KEYSTORE_PATH" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+  xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustStore' -v "$TLS_TRUSTSTORE_PATH" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+  xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyPass' -v "$keystorePassword" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+  xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustPass' -v "$truststorePassword" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+}
+
+grant_all_privileges() {
+  docker exec openncp_db mysql -u root -p$(<db_root_password.txt) -e "GRANT ALL PRIVILEGES ON *.* TO '$(<db_username.txt)'@'%';"
 }
 
 # Parse command-line options
@@ -77,6 +92,7 @@ else
       ;;
     up)
       init
+      update_keystore
       docker compose up --build --detach
       ;;
     tsam-sync)
@@ -93,17 +109,10 @@ else
       docker compose --profile initialization push
       ;;
     update-keystore)
-      # Requires xmlstartlet command.
-      # Install using
-      # sudo apt install xmlstarlet (on linux)
-      init
-      source "$SCRIPT_DIR/.env"
-      keystorePassword=$(<tls_keystore_password.txt)
-      truststorePassword=$(<tls_truststore_password.txt)
-      xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyStore' -v "$TLS_KEYSTORE_FILE" ./openncp-configuration/ATNA_resources/ArrConnections.xml
-      xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustStore' -v "$TLS_TRUSTSTORE_FILE" ./openncp-configuration/ATNA_resources/ArrConnections.xml
-      xmlstarlet ed -L -u '/Configuration/SecureConnection/KeyPass' -v "$keystorePassword" ./openncp-configuration/ATNA_resources/ArrConnections.xml
-      xmlstarlet ed -L -u '/Configuration/SecureConnection/TrustPass' -v "$truststorePassword" ./openncp-configuration/ATNA_resources/ArrConnections.xml
+      update_keystore
+      ;;
+    grant-db)
+      grant_all_privileges
       ;;
     -h|--help)
       echo "$USAGE";
