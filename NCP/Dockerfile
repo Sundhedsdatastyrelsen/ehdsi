@@ -29,7 +29,9 @@ WORKDIR /usr/local/openncp-tsam-exporter
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar /usr/local/openncp-tsam-exporter
 COPY /openncp-tsam-exporter/* /usr/local/openncp-tsam-exporter
 
-CMD ["java", "-jar", "openncp-tsamexporter.jar"]
+RUN chmod +x /usr/local/openncp-tsam-exporter/run.sh
+
+ENTRYPOINT ["/bin/sh", "-c", "/usr/local/openncp-tsam-exporter/run.sh && java -jar openncp-tsamexporter.jar"]
 
 # Node A
 FROM tomcat-base as node-a
