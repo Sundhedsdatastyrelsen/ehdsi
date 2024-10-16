@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:uuid="java:java.util.UUID" xmlns:xslo="http://www.w3.org/1999/XSL/TransformTemp" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:proxy="com:spirit:SpiritProxy" xmlns:cda="urn:hl7-org:v3" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xslo="http://www.w3.org/1999/XSL/TransformTemp" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:proxy="com:spirit:SpiritProxy" xmlns:cda="urn:hl7-org:v3">
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
 	<!-- -->
 	<xsl:preserve-space elements="xsl:text"/>
@@ -53,7 +53,9 @@
 	</xsl:function>
 	<!-- -->
 	<xsl:template match="/">
-		<xslo:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cda="urn:hl7-org:v3" xmlns:proxy="com:spirit:SpiritProxy" xmlns:epsos="urn:epsos-org:ep:medication" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+        <xslo:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                         xmlns:cda="urn:hl7-org:v3" xmlns:proxy="com:spirit:SpiritProxy"
+        >
 			<xslo:output method="text"/>
 			<!-- -->
 			<!-- Globally used Constants -->

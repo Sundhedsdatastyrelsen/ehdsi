@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Transaction xmlns:proxy="com:spirit:SpiritProxy" xmlns="com:spirit:SpiritProxy" xmlns:cda="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="com:spirit:SpiritProxy ..\schema\Transaction.xsd">
+<Transaction xmlns="com:spirit:SpiritProxy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="com:spirit:SpiritProxy ..\schema\Transaction.xsd">
 	<!-- TransactionInfo ( Demo 1 ) -->
 	<!-- <TransactionInfo Direction="DUMMY_VALUE" HomeISO="DUMMY_VALUE" HomeNCP_OID="DUMMY_VALUE" HomeHCID="DUMMY_VALUE" HomeHost="DUMMY_VALUE" HomeAddress="DUMMY_VALUE" SndISO="DUMMY_VALUE" SndNCP_OID="DUMMY_VALUE" SndHCID="DUMMY_VALUE" SndAddress="DUMMY_VALUE" SndHost="DUMMY_VALUE" SndMsgID="DUMMY_VALUE" ReceivingISO="DUMMY_VALUE" ReceivingNCP_OID="DUMMY_VALUE" ReceivingHost="DUMMY_VALUE" receivingAddr="DUMMY_VALUE" ReceivingMsgID="DUMMY_VALUE" TransactionCounter="DUMMY_VALUE" HumanRequestor="DUMMY_VALUE" UserId="DUMMY_VALUE" POC="DUMMY_VALUE" POC_ID="DUMMY_VALUE" AuthentificationLevel="DUMMY_VALUE" RequestAction="DUMMY_VALUE" ResponseAction="DUMMY_VALUE" ServiceType="DUMMY_VALUE" ServiceName="DUMMY_VALUE" StartTime="DUMMY_VALUE" EndTime="DUMMY_VALUE" Duration="DUMMY_VALUE"/> -->
 	<!-- TransactionInfo ( Demo 2 )-->
 	<TransactionInfo Transaction_PK="DemoKeyValue007" Direction="DUMMY_VALUE" HomeISO="DUMMY_VALUE" HomeNCP_OID="DUMMY_VALUE" HomeHCID="DUMMY_VALUE" HomeHost="DUMMY_VALUE" HomeAddress="DUMMY_VALUE" SndISO="DUMMY_VALUE" SndNCP_OID="DUMMY_VALUE" SndHCID="DUMMY_VALUE" SndAddress="DUMMY_VALUE" SndHost="DUMMY_VALUE" SndMsgID="DUMMY_VALUE" ReceivingISO="DUMMY_VALUE" TransactionCounter="DUMMY_VALUE" HumanRequestor="DUMMY_VALUE" UserId="DUMMY_VALUE" POC="DUMMY_VALUE" POC_ID="DUMMY_VALUE" AuthentificationLevel="DUMMY_VALUE" RequestAction="DUMMY_VALUE" ResponseAction="DUMMY_VALUE" ServiceType="DUMMY_VALUE" ServiceName="DUMMY_VALUE" StartTime="DUMMY_VALUE" EndTime="DUMMY_VALUE" Duration="DUMMY_VALUE"/>
 	<!-- epSOS CDA Content -->
-	<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:cda="urn:hl7-org:v3" xmlns:epsos="urn:epsos-org:ep:medication" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:epsos="urn:epsos-org:ep:medication" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		<typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
 		<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.1"/>
 		<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.3"/>

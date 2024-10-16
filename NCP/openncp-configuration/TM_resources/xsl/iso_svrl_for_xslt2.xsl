@@ -139,15 +139,13 @@
 -->
 
 <xsl:stylesheet
-   version="1.0"
-   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-   xmlns:axsl="http://www.w3.org/1999/XSL/TransformAlias"
-   xmlns:schold="http://www.ascc.net/xml/schematron" 
-   xmlns:iso="http://purl.oclc.org/dsdl/schematron"
-   xmlns:svrl="http://purl.oclc.org/dsdl/svrl" 
-   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-    
+        version="1.0"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:axsl="http://www.w3.org/1999/XSL/TransformAlias"
+        xmlns:schold="http://www.ascc.net/xml/schematron"
+        xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+
 >
 
 <!-- Select the import statement and adjust the path as 
