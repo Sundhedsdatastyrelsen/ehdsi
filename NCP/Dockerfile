@@ -66,14 +66,16 @@ COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/
 
 COPY ./ncp_b/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./ncp_b/config /usr/local/tomcat/conf/
+COPY ./ncp_b/run.sh /usr/local/tomcat/bin/
 
 COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
+RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
 RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
 
-ENTRYPOINT ["tomcat-config-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "/usr/local/tomcat/bin/tomcat-config-entrypoint.sh"]
 
 USER tomcat
 
