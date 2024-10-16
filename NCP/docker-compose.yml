@@ -46,7 +46,7 @@ services:
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", '-u', '${DB_ROOT_USER}', '-p${DB_ROOT_PASSWORD}' ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_ROOT_USER}", "--password=$$(cat $$MYSQL_ROOT_PASSWORD_FILE)" ]
       interval: 30s
       timeout: 10s
       retries: 3
