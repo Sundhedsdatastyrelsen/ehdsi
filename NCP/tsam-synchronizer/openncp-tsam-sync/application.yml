@@ -13,8 +13,8 @@ tsam-sync:
     username: ${CTS_USERNAME}
     password: ${CTS_PASSWORD}
   datasource:
-    host: ${MARIADB_HOST}
-    port: ${MARIADB_PORT}
+    host: ${DB_HOST}
+    port: ${DB_PORT}
     username: ${MARIADB_USERNAME}
     password: ${MARIADB_PASSWORD}
     database: ehealth_ltrdb
@@ -22,8 +22,8 @@ tsam-sync:
     driver: com.mysql.cj.jdbc.Driver
     timezone: Europe/Brussels
   datasource-ehealth-properties:
-    host: ${MARIADB_HOST}
-    port: ${MARIADB_PORT}
+    host: ${DB_HOST}
+    port: ${DB_PORT}
     username: ${MARIADB_USERNAME}
     password: ${MARIADB_PASSWORD}
     database: ehealth_properties

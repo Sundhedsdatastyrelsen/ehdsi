@@ -26,7 +26,8 @@ public class ConfigurationSynchronizer {
         var m = new HashMap<String, String>();
         try {
             var c = new PropertiesConfiguration(configFile);
-
+            // So that e.g. "ncp.countries=be,at,eu,hu,is,se" gets parsed correctly
+            c.setDelimiterParsingDisabled(true);
             c.setIncludesAllowed(true);
             c.getKeys().forEachRemaining(key -> {
                 var val = c.getString(key);

@@ -75,8 +75,8 @@ services:
       - ./openncp-configuration:/opt/openncp-configuration
     environment:
       OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
@@ -119,8 +119,8 @@ services:
       - ./openncp-configuration:/opt/openncp-configuration/
     environment:
       CTS_URL: ${CTS_URL}
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       CTS_PASSWORD_FILE: /run/secrets/cts_password
@@ -146,7 +146,7 @@ services:
       args:
         openncp_version: ${OPENNCP_VERSION}
       platforms:
-        - "linux/amd64"
+        # - "linux/amd64"
         - "linux/arm64"
     container_name: openncp-server
     image: eppsregistry.azurecr.io/openncp-server:${OPENNCP_VERSION}
@@ -160,8 +160,8 @@ services:
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
@@ -205,8 +205,8 @@ services:
       - configuration-synchronizer
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       MARIADB_USERNAME_FILE: /run/secrets/db_username
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}

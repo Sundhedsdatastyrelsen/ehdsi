@@ -5,7 +5,6 @@
           http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Set your own groupId, artifactId, and version -->
     <groupId>dk.sds</groupId>
     <artifactId>openncp-server</artifactId>
     <version>8.0.1-SNAPSHOT</version>
@@ -13,24 +12,29 @@
 
     <name>OpenNCP Denmark Application</name>
 
-    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>eu.europa.ec.sante</groupId>
             <artifactId>openncp-application-server</artifactId>
-            <version>8.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>dk.sds</groupId>
             <artifactId>openncp-national-connector</artifactId>
-            <version>8.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
 
-    <!-- Build Configuration -->
+    <repositories>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://code.europa.eu/api/v4/projects/347/packages/maven</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <!-- Maven WAR Plugin to overlay the openncp-application-server WAR -->
@@ -39,7 +43,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.2</version>
                 <configuration>
-                    <!-- Overlay configuration -->
                     <overlays>
                         <overlay>
                             <groupId>eu.europa.ec.sante</groupId>
@@ -95,10 +98,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Include other plugins from your original pom.xml if necessary -->
-            <!-- For example, Axis2 AAR Maven Plugin executions -->
-            <!-- Copy over any other build plugins and configurations -->
         </plugins>
     </build>
 </project>

@@ -20,9 +20,9 @@ public record Configuration(
 
     public static Configuration fromEnv() {
         return new Configuration(
-                envOrDefault("MARIADB_HOST", "localhost"),
+                envOrDefault("DB_HOST", "localhost"),
 
-                envOrDefault("MARIADB_PORT", "3306"),
+                envOrDefault("DB_PORT", "3306"),
                 "ehealth_properties",
                 env("MARIADB_USERNAME"),
                 env("MARIADB_PASSWORD"),

@@ -33,10 +33,10 @@
 (def db
   {:dbtype "mariadb"
    :dbname "ehealth_ltrdb"
-   :host (env "MARIADB_HOST" "mariadb")
+   :host (env "DB_HOST" "mariadb")
    :user (env "MARIADB_USERNAME")
    :password (env "MARIADB_PASSWORD")
-   :port (env "MARIADB_PORT" "3306")})
+   :port (env "DB_PORT" "3306")})
 
 ;;;; SQL functions
 
