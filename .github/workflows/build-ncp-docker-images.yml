@@ -22,7 +22,7 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.CR_PAT }}
+        password: ${{ secrets.NCP_CR_PAT }}
 
     - name: Build and push images
       run: |
