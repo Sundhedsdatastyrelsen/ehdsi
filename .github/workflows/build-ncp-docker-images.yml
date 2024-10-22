@@ -2,7 +2,7 @@ name: Build NCP Docker Images
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "cfb/docker-8-build-and-push" ]
   pull_request:
     branches: [ "main" ]
 
