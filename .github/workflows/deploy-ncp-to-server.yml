@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # Adjust as necessary
+      - cfb/docker-8-ncp-build-and-push
 
 jobs:
   deploy:
