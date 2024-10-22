@@ -1,10 +1,10 @@
 name: Deploy NCP with Docker Compose
 
 on:
-  push:
-    branches:
-      - main  # Adjust as necessary
-      - cfb/docker-8-ncp-build-and-push
+  workflow_run:
+    workflows: ["Build NCP Docker Images"]  
+    types:
+      - completed
 
 jobs:
   deploy:
