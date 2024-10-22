@@ -308,8 +308,6 @@ services:
     depends_on:
       openncp-web-manager-backend:
         condition: service_started
-    env_file:
-      - ./web-manager-frontend/.env
     ports:
       - "${NCP_WEB_MANAGER_FRONTEND_CONNECTOR_PORT}:8080"
     networks:
