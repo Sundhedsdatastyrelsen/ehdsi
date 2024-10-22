@@ -1,0 +1,41 @@
+name: Deploy NCP with Docker Compose
+
+on:
+  push:
+    branches:
+      - main  # Adjust as necessary
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            # 1. Clone or pull the latest changes from your repository
+            if [ -d "/path/to/your/repo" ]; then
+              cd /path/to/your/repo && git pull
+            else
+              git clone https://github.com/your-username/your-repo.git /path/to/your/repo
+            fi
+
+            cd /path/to/your/repo
+
+            # 2. Log in to GitHub Container Registry
+            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+            # 3. Pull the Docker images (if any are specified in the docker-compose.yml)
+            docker-compose pull
+
+            # 4. Deploy the services
+            docker-compose up -d --build
+          EOF
