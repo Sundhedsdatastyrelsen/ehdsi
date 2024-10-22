@@ -35,8 +35,8 @@ jobs:
             echo ${{ secrets.NCP_CR_PAT }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             # 3. Pull the Docker images (if any are specified in the docker-compose.yml)
-            docker compose pull 
+            IMAGE_TAG=${{ github.sha }} docker compose pull 
 
             # 4. Deploy the services
-            docker compose up -d 
+            IMAGE_TAG=${{ github.sha }} docker compose up -d 
           EOF
