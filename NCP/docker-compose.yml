@@ -1,3 +1,4 @@
+version: '3.8'
 #
 # Network definitions
 #
@@ -27,6 +28,9 @@ secrets:
     file: seal_keystore_password.txt
   tls_truststore_password:
     file: tls_truststore_password.txt
+
+x-common-variables: &common-variables
+  IMAGE_TAG: ${IMAGE_TAG:-latest}
 
 services:
   mysql:
