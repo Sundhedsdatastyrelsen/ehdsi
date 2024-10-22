@@ -41,7 +41,7 @@ initialize_secrets() {
     error_exit "env_default directory not found. Please ensure it exists in $SCRIPT_DIR"
   fi
 
-  for file in "$env_default_dir"/*; do
+  for file in "$env_default_dir"/{.,}*; do
     if [ -f "$file" ]; then
       local filename=$(basename "$file")
       local target_file="$SCRIPT_DIR/$filename"
