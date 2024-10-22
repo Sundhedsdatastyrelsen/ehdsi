@@ -1,4 +1,8 @@
-version: '3.8'
+# Remove the version tag
+
+x-common-variables: &common-variables
+  IMAGE_TAG: ${IMAGE_TAG:-latest}
+
 #
 # Network definitions
 #
@@ -28,9 +32,6 @@ secrets:
     file: seal_keystore_password.txt
   tls_truststore_password:
     file: tls_truststore_password.txt
-
-x-common-variables: &common-variables
-  IMAGE_TAG: ${IMAGE_TAG:-latest}
 
 services:
   mysql:
@@ -62,6 +63,7 @@ services:
       - db_root_password
 
   openncp-tsam-exporter:
+    <<: *common-variables
     container_name: "openncp-tsam-exporter"
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-tsam-exporter:${IMAGE_TAG}
     env_file: .env
@@ -84,6 +86,7 @@ services:
       - db_password
 
   tomcat_node_a:
+    <<: *common-variables
     container_name: "openncp-server"
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-node-a:${IMAGE_TAG}
     env_file:
@@ -121,6 +124,7 @@ services:
       - db_password
 
   tomcat_node_b:
+    <<: *common-variables
     container_name: "openncp-client"
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-node-b:${IMAGE_TAG}
     env_file:
@@ -160,6 +164,7 @@ services:
       - db_password
 
   openncp-openatna:
+    <<: *common-variables
     container_name: openncp-openatna
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-openatna:${IMAGE_TAG}
     env_file:
@@ -195,6 +200,7 @@ services:
       - db_password
 
   openncp-trc-sts:
+    <<: *common-variables
     container_name: openncp-trc-sts
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-trc-sts:${IMAGE_TAG}
     env_file:
@@ -229,6 +235,7 @@ services:
       - db_password
 
   openncp-translations-and-mappings:
+    <<: *common-variables
     container_name: openncp-translations-and-mappings
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-translations-and-mappings:${IMAGE_TAG}
     env_file:
@@ -262,6 +269,7 @@ services:
       - db_password
 
   openncp-web-manager-backend:
+    <<: *common-variables
     container_name: openncp-web-manager-backend
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-web-manager-backend:${IMAGE_TAG}
     env_file:
@@ -304,6 +312,7 @@ services:
       - db_password
 
   openncp-web-manager-frontend:
+    <<: *common-variables
     container_name: openncp-web-manager-frontend
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-web-manager-frontend:${IMAGE_TAG}
     depends_on:
@@ -317,6 +326,7 @@ services:
       - ncp
 
   configuration-synchronizer:
+    <<: *common-variables
     container_name: configuration-synchronizer
     image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-configuration-utility:${IMAGE_TAG}
     env_file: .env
