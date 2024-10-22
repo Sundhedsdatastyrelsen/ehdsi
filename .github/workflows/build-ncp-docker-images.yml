@@ -30,31 +30,31 @@ jobs:
         IMAGE_NAME=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp
 
         # Build and push for each target
-        docker build --target node-a -t $IMAGE_NAME-node-a:${{ github.sha }} .
+        docker build --target node-a -t $IMAGE_NAME-node-a:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-node-a:${{ github.sha }}
 
-        docker build --target node-b -t $IMAGE_NAME-node-b:${{ github.sha }} .
+        docker build --target node-b -t $IMAGE_NAME-node-b:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-node-b:${{ github.sha }}
 
-        docker build --target trc-sts -t $IMAGE_NAME-trc-sts:${{ github.sha }} .
+        docker build --target trc-sts -t $IMAGE_NAME-trc-sts:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-trc-sts:${{ github.sha }}
 
-        docker build --target openatna -t $IMAGE_NAME-openatna:${{ github.sha }} .
+        docker build --target openatna -t $IMAGE_NAME-openatna:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-openatna:${{ github.sha }}
 
-        docker build --target openatna -t $IMAGE_NAME-web-manager-backend:${{ github.sha }} .
+        docker build --target openatna -t $IMAGE_NAME-web-manager-backend:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-web-manager-backend:${{ github.sha }}
 
-        docker build --target openatna -t $IMAGE_NAME-translations-and-mappings:${{ github.sha }} .
+        docker build --target openatna -t $IMAGE_NAME-translations-and-mappings:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-translations-and-mappings:${{ github.sha }}
 
-        docker build --target openatna -t $IMAGE_NAME-tsam-sync:${{ github.sha }} .
+        docker build --target openatna -t $IMAGE_NAME-tsam-sync:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-tsam-sync:${{ github.sha }}
 
-        docker build --target openatna -t $IMAGE_NAME-configuration-utility:${{ github.sha }} .
+        docker build --target openatna -t $IMAGE_NAME-configuration-utility:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-configuration-utility:${{ github.sha }}
 
-        docker build --target openatna -t $IMAGE_NAME-web-manager-frontend:${{ github.sha }} .
+        docker build --target openatna -t $IMAGE_NAME-web-manager-frontend:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-web-manager-frontend:${{ github.sha }}
 
     - name: Log out from Docker Hub
