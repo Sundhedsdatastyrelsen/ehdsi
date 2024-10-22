@@ -62,7 +62,7 @@ services:
 
   openncp-tsam-exporter:
     container_name: "openncp-tsam-exporter"
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-tsam-exporter:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:${IMAGE_TAG}
     env_file: .env
     environment:
       DB_HOST: ${DB_HOST}
@@ -84,7 +84,7 @@ services:
 
   tomcat_node_a:
     container_name: "openncp-server"
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-node-a:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:${IMAGE_TAG}
     env_file:
       - ./ncp_a/ncpa.database.env
       - ./ncp_a/ncpa.env
@@ -121,7 +121,7 @@ services:
 
   tomcat_node_b:
     container_name: "openncp-client"
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-node-b:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:${IMAGE_TAG}
     env_file:
       - ./ncp_b/ncpb.database.env
       - ./ncp_b/ncpb.env
@@ -160,7 +160,7 @@ services:
 
   openncp-openatna:
     container_name: openncp-openatna
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-openatna:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:${IMAGE_TAG}
     env_file:
       - ./openncp-openatna/openatna.database.env
       - ./openncp-openatna/openatna.env
@@ -195,7 +195,7 @@ services:
 
   openncp-trc-sts:
     container_name: openncp-trc-sts
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-trc-sts:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:${IMAGE_TAG}
     env_file:
       - ./openncp-trc-sts/.database.env
       - ./openncp-trc-sts/.env
@@ -229,7 +229,7 @@ services:
 
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-translations-and-mappings:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:${IMAGE_TAG}
     env_file:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
       - ./openncp-translations-and-mappings/translations-and-mappings.env
@@ -262,7 +262,7 @@ services:
 
   openncp-web-manager-backend:
     container_name: openncp-web-manager-backend
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-web-manager-backend:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:${IMAGE_TAG}
     env_file:
       - ./openncp-web-manager/openncp-web-manager-backend/.database.env
       - ./openncp-web-manager/openncp-web-manager-backend/.env
@@ -304,7 +304,7 @@ services:
 
   openncp-web-manager-frontend:
     container_name: openncp-web-manager-frontend
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-web-manager-frontend:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-frontend:${IMAGE_TAG}
     depends_on:
       openncp-web-manager-backend:
         condition: service_started
@@ -315,7 +315,7 @@ services:
 
   configuration-synchronizer:
     container_name: configuration-synchronizer
-    image: ghcr.io/sundhedsdatastyrelsen/dk-ncp-configuration-utility:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
     env_file: .env
     volumes:
       - ./openncp-configuration:/opt/openncp-configuration
