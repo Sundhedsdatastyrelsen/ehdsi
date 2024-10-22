@@ -32,11 +32,11 @@ jobs:
             cd /var/ehdsi/NCP
 
             # 2. Log in to GitHub Container Registry
-            echo ${{ secrets.NCP_CR_PAT }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             # 3. Pull the Docker images (if any are specified in the docker-compose.yml)
-            IMAGE_TAG=${{ github.sha }} docker compose pull 
+            sudo IMAGE_TAG=${{ github.sha }} docker compose pull 
 
             # 4. Deploy the services
-            IMAGE_TAG=${{ github.sha }} docker compose up -d 
+            sudo IMAGE_TAG=${{ github.sha }} docker compose up -d 
           EOF
