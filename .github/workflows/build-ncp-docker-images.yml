@@ -27,7 +27,7 @@ jobs:
     - name: Build and push images
       run: |
         # Define the image name and registry
-        IMAGE_NAME=ghcr.io/${{ github.repository }}/dk-ncp
+        IMAGE_NAME=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp
 
         # Build and push for each target
         docker build --target node-a -t $IMAGE_NAME-node-a:${{ github.sha }} .
