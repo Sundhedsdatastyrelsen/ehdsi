@@ -2,7 +2,7 @@ name: Deploy NCP with Docker Compose
 
 on:
   workflow_run:
-    workflows: [Build NCP Docker Images]  
+    workflows: ["Build NCP Docker Images"]  
     types:
       - completed
 
