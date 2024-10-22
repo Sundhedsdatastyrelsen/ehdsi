@@ -16,26 +16,26 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEV_VM_USER }}@${{ secrets.DEV_VM_HOST }} << 'EOF'
             # 1. Clone or pull the latest changes from your repository
-            if [ -d "/path/to/your/repo" ]; then
-              cd /path/to/your/repo && git pull
+            if [ -d "/var/ehdsi" ]; then
+              cd /var/ehdsi && git pull
             else
-              git clone https://github.com/your-username/your-repo.git /path/to/your/repo
+              git clone https://github.com/Sundhedsdatastyrelsen/ehdsi.git /var/ehdsi
             fi
 
-            cd /path/to/your/repo
+            cd /var/ehdsi/NCP
 
             # 2. Log in to GitHub Container Registry
-            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            echo ${{ secrets.NCP_CR_PAT }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             # 3. Pull the Docker images (if any are specified in the docker-compose.yml)
-            docker-compose pull
+            docker-compose pull 
 
             # 4. Deploy the services
-            docker-compose up -d --build
+            docker-compose up -d 
           EOF
