@@ -57,5 +57,8 @@ jobs:
         docker build --target openatna -t $IMAGE_NAME-web-manager-frontend:${{ github.sha }} ./NCP
         docker push $IMAGE_NAME-web-manager-frontend:${{ github.sha }}
 
+        docker build --target openatna -t $IMAGE_NAME-tsam-exporter:${{ github.sha }} ./NCP
+        docker push $IMAGE_NAME-tsam-exporter:${{ github.sha }}
+
     - name: Log out from Docker Hub
       run: docker logout
