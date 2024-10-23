@@ -6,16 +6,12 @@ Currently included by POCD_MT000040_extPHARM.xsd, COCT_MT230100UV01_extPHARM.xsd
 
 History:
 2018.06.29 Giorgio Cangioli, first version based on the ELGA XML schema created by Tony Schaller, medshare GmbH, Switzerland
-
+2023.30.01 Giorgio Cangioli, fixed the error with the first annotation
 *******************************************************************************
 -->
 <xs:schema xmlns:hl7v3="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:ips="urn:hl7-org:ips" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:hl7-org:v3" elementFormDefault="qualified">
 	<xs:include schemaLocation="../coreschemas/datatypes.xsd">
-		<xs:annotation>
-			<xs:documentation>
-				The included coreschemas/datatypes-base.xsd has been modified to include the IPS extensions for coded elements (e.g. CD, CE,...)
-			</xs:documentation>
-		</xs:annotation>
+		<xs:annotation><xs:documentation>The included coreschemas/datatypes-base.xsd has been modified to include the Pharmacy / IPS extensions for coded elements (e.g. CD, CE,...)</xs:documentation></xs:annotation>
 	</xs:include>
 	<!-- this comes originally from infrastructureRoot.xsd of HL7 V3 Normative Edition 2010 -->
 	<xs:group name="InfrastructureRootElements">
