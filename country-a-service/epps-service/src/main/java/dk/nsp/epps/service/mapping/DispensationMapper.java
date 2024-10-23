@@ -1,10 +1,15 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.*;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.Utils;
@@ -175,7 +180,7 @@ public class DispensationMapper {
         xpath = XPathFactory.newInstance().newXPath();
         var nsCtx = new SimpleNamespaceContext();
         nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
-        nsCtx.bindNamespaceUri("pharm","urn:hl7-org:pharm");
+        nsCtx.bindNamespaceUri("pharm", "urn:hl7-org:pharm");
         xpath.setNamespaceContext(nsCtx);
     }
 
@@ -347,7 +352,6 @@ public class DispensationMapper {
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        ;
         return Integer.parseInt(xpath.evaluate("@value", node));
     }
 
@@ -437,4 +441,61 @@ public class DispensationMapper {
             throw new MapperException(e.getMessage(), e);
         }
     }
+
+
+    /***
+     * @param patientId PatientID (containing a CPR)
+     * @param cda CDA Document
+     * @param prescriptionResponse Requires a new GetPrescriptionResponse specifically created to get prescriptions to cancel effectuations of
+     * @throws MapperException
+     */
+    public UndoEffectuationRequestType createUndoEffectuationRequest(
+        @NonNull String patientId,
+        @NonNull Document cda,
+        @NonNull GetPrescriptionResponseType prescriptionResponse
+    ) throws MapperException {
+        var obf = new ObjectFactory();
+        try {
+            var prescriptionId = prescriptionId(cda);
+            var fmkPrescription = prescriptionResponse.getPrescription()
+                .stream()
+                .filter(p -> p.getIdentifier() == prescriptionId)
+                .findFirst();
+            if (fmkPrescription.isEmpty()) {
+                throw new MapperException("No prescription in list of prescriptions matches ID from discard dispensation");
+            }
+            var lastOrder = fmkPrescription.get()
+                .getOrder()
+                .stream()
+                .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
+            if (lastOrder.isEmpty()) {
+                throw new MapperException("No orders found in list of prescription");
+            }
+            var lastEffectuation = lastOrder.get().getEffectuation();
+            if (lastEffectuation == null) {
+                throw new MapperException("No effectuations found on last order");
+            }
+
+
+            return dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType.builder()
+                .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
+                .withModifiedBy().withContent(
+                    obf.createModificatorTypeOther(authorPerson(cda)),
+                    obf.createModificatorTypeRole(authorRole(cda)),
+                    obf.createModificatorTypeOrganisation(authorOrganization(cda))
+                ).end()
+                .addPrescription()
+                .withIdentifier(prescriptionId)
+                .withOrder()
+                .withIdentifier(lastOrder.get().getIdentifier())
+                .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()
+                .end()
+                .end()
+                .build();
+        } catch (XPathExpressionException e) {
+            throw new MapperException(e.getMessage());
+        }
+    }
+
+
 }

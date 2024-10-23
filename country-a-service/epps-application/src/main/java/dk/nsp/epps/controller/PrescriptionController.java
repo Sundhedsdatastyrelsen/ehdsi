@@ -1,7 +1,12 @@
 package dk.nsp.epps.controller;
 
 import dk.nsp.epps.Utils;
-import dk.nsp.epps.ncp.api.*;
+import dk.nsp.epps.ncp.api.DisardDispensationRequestDto;
+import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
+import dk.nsp.epps.ncp.api.EpsosDocumentDto;
+import dk.nsp.epps.ncp.api.PostFetchDocumentRequestDto;
+import dk.nsp.epps.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
+import dk.nsp.epps.ncp.api.SubmitDispensationRequestDto;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.sds.ncp.cda.MapperException;
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.util.List;
 
@@ -42,14 +48,15 @@ public class PrescriptionController {
     @PostMapping(path = "/api/edispensation/submit")
     public void submitDispensation(
         @Valid @RequestBody SubmitDispensationRequestDto request
-        ) throws SAXException, MapperException {
+    ) throws SAXException, MapperException {
         prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()));
     }
 
     @PostMapping(path = "/api/edispensation/discard")
     public void discardDispensation(
         @Valid @RequestBody DisardDispensationRequestDto request
-        ) {
-        throw new UnsupportedOperationException("TODO");
+    ) throws SAXException, JAXBException, MapperException, XPathExpressionException {
+        prescriptionService.undoDispensation(request.getDisardDispenseDetails()
+            .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()));
     }
 }

@@ -5,6 +5,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationR
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
@@ -12,6 +13,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationRespons
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.test.idp.model.Identity;
@@ -106,6 +108,21 @@ public class FmkClient {
             facE2.createCreatePharmacyEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePharmacyEffectuation",
             CreatePharmacyEffectuationResponseType.class,
+            caller
+        );
+
+    }
+
+    /**
+     * "Tilbagefør effektuering på recept".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:tilbagefor_effektuering_pa_recept">FMK documentation.</a>
+     */
+    public UndoEffectuationResponseType undoEffectuation(UndoEffectuationRequestType request, Identity caller)
+        throws JAXBException {
+        return makeFmkRequest(
+            facE5.createUndoEffectuationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5#UndoEffectuation",
+            UndoEffectuationResponseType.class,
             caller
         );
 
