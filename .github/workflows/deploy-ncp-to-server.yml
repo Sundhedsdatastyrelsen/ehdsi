@@ -35,8 +35,8 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # 3. Pull the Docker images (if any are specified in the docker-compose.yml)
-            sudo IMAGE_TAG=${{ github.sha }} docker compose pull 
+            IMAGE_TAG=${{ github.sha }} docker compose pull 
 
             # 4. Deploy the services
-            sudo IMAGE_TAG=${{ github.sha }} docker compose up -d 
+            IMAGE_TAG=${{ github.sha }} docker compose up -d 
           EOF
