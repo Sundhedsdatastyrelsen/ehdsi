@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.xpath.XPathExpressionException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -54,7 +53,8 @@ public class PrescriptionService {
 
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = toOffsetDateTime(prescription.getAuthorisationDateTime());
-            return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier())).contains(documentId))
+            return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier()))
+                .contains(documentId))
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
@@ -124,12 +124,16 @@ public class PrescriptionService {
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
 
-        UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId,cdaToDiscard,fmkResponse);
+        UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId, cdaToDiscard, fmkResponse);
         UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, TestIdentities.apotekerJeppeMoeller); //TODO We should probably not use static identities here
 
         //Validate undone dispensation by getting the EffectuationId that has been undone
-        var effectuationWasCancelled = undoResponse.getPrescription().stream().flatMap(p -> p.getOrder().stream()).flatMap( o -> o.getEffectuation().stream()).count() == 1;
-        if(!effectuationWasCancelled){
+        var effectuationWasCancelled = undoResponse.getPrescription()
+            .stream()
+            .flatMap(p -> p.getOrder().stream())
+            .flatMap(o -> o.getEffectuation().stream())
+            .count() == 1;
+        if (!effectuationWasCancelled) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Error cancelling effectuation, nothing was cancelled");
         }
         return undoResponse;

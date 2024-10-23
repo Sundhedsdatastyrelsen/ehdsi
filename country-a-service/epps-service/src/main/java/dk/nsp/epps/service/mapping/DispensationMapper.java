@@ -180,7 +180,7 @@ public class DispensationMapper {
         xpath = XPathFactory.newInstance().newXPath();
         var nsCtx = new SimpleNamespaceContext();
         nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
-        nsCtx.bindNamespaceUri("pharm","urn:hl7-org:pharm");
+        nsCtx.bindNamespaceUri("pharm", "urn:hl7-org:pharm");
         xpath.setNamespaceContext(nsCtx);
     }
 
@@ -352,7 +352,6 @@ public class DispensationMapper {
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        ;
         return Integer.parseInt(xpath.evaluate("@value", node));
     }
 
@@ -454,23 +453,26 @@ public class DispensationMapper {
         @NonNull String patientId,
         @NonNull Document cda,
         @NonNull GetPrescriptionResponseType prescriptionResponse
-        ) throws MapperException {
+    ) throws MapperException {
         var obf = new ObjectFactory();
         try {
             var prescriptionId = prescriptionId(cda);
-            var fmkPrescription = prescriptionResponse.getPrescription().stream().filter(p -> p.getIdentifier() == prescriptionId).findFirst();
-            if(fmkPrescription.isEmpty()){
+            var fmkPrescription = prescriptionResponse.getPrescription()
+                .stream()
+                .filter(p -> p.getIdentifier() == prescriptionId)
+                .findFirst();
+            if (fmkPrescription.isEmpty()) {
                 throw new MapperException("No prescription in list of prescriptions matches ID from discard dispensation");
             }
             var lastOrder = fmkPrescription.get()
                 .getOrder()
                 .stream()
                 .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
-            if(lastOrder.isEmpty()){
+            if (lastOrder.isEmpty()) {
                 throw new MapperException("No orders found in list of prescription");
             }
             var lastEffectuation = lastOrder.get().getEffectuation();
-            if(lastEffectuation == null){
+            if (lastEffectuation == null) {
                 throw new MapperException("No effectuations found on last order");
             }
 
@@ -483,12 +485,12 @@ public class DispensationMapper {
                     obf.createModificatorTypeOrganisation(authorOrganization(cda))
                 ).end()
                 .addPrescription()
-                    .withIdentifier(prescriptionId)
-                    .withOrder()
-                        .withIdentifier(lastOrder.get().getIdentifier())
-                        .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()
-                        .end()
-                    .end()
+                .withIdentifier(prescriptionId)
+                .withOrder()
+                .withIdentifier(lastOrder.get().getIdentifier())
+                .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()
+                .end()
+                .end()
                 .build();
         } catch (XPathExpressionException e) {
             throw new MapperException(e.getMessage());

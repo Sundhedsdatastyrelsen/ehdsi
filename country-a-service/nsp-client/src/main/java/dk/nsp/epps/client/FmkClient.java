@@ -112,6 +112,7 @@ public class FmkClient {
         );
 
     }
+
     /**
      * "Tilbagefør effektuering på recept".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:tilbagefor_effektuering_pa_recept">FMK documentation.</a>
