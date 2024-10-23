@@ -73,9 +73,9 @@ public class PrescriptionService {
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
-        log.debug("Looking up info for {}", cpr);
+        log.debug("undoDispensation: looking up prescription information");
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
-        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+        log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
         return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
     }
 
@@ -114,7 +114,7 @@ public class PrescriptionService {
         }
     }
 
-    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard) throws JAXBException, MapperException, XPathExpressionException {
+    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard) throws JAXBException, MapperException {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
@@ -125,7 +125,7 @@ public class PrescriptionService {
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
 
         UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId,cdaToDiscard,fmkResponse);
-        UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, TestIdentities.apotekerJeppeMoeller); //TODO Should we not use static identities here?
+        UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, TestIdentities.apotekerJeppeMoeller); //TODO We should probably not use static identities here
 
         //Validate undone dispensation by getting the EffectuationId that has been undone
         var effectuationWasCancelled = undoResponse.getPrescription().stream().flatMap(p -> p.getOrder().stream()).flatMap( o -> o.getEffectuation().stream()).count() == 1;

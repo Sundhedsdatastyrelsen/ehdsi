@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 public class UndoEffectuationInFmk {
-    private static final Identity caller = TestIdentities.apotekerChrisChristoffersen;
     public static UndoEffectuationResponseType undoEffectuation(String cpr, String inputFileMark) {
         var dispensationFile = new File(
             TestingFileNames.storageDir(),
