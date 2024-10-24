@@ -102,17 +102,12 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
         -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5006,server=y,suspend=n"
       JAVA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Dtls_key_alias=${TLS_KEY_ALIAS}
-        -Dtls_keystore_pwd_file=/run/secrets/tls_keystore_password
-        -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
-        -Dtls_truststore_pwd_file=/run/secrets/tls_truststore_password
-        -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
       LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -144,17 +139,12 @@ services:
         condition: service_healthy
     environment:
       CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
         -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5005,server=y,suspend=n"
       JAVA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Dtls_key_alias=${TLS_KEY_ALIAS}
-        -Dtls_keystore_pwd_file=/run/secrets/tls_keystore_password
-        -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
-        -Dtls_truststore_pwd_file=/run/secrets/tls_truststore_password
-        -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
       LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -183,16 +173,11 @@ services:
         condition: service_healthy
     environment:
       CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Dtls_key_alias=${TLS_KEY_ALIAS}
-        -Dtls_keystore_pwd_file=/run/secrets/tls_keystore_password
-        -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
-        -Dtls_truststore_pwd_file=/run/secrets/tls_truststore_password
-        -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
       LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -219,16 +204,11 @@ services:
         condition: service_healthy
     environment:
       CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
-        -Dtls_key_alias=${TLS_KEY_ALIAS}
-        -Dtls_keystore_pwd_file=/run/secrets/tls_keystore_password
-        -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
-        -Dtls_truststore_pwd_file=/run/secrets/tls_truststore_password
-        -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}
         -Dorg.apache.cxf.stax.allowInsecureParser=true"
       LOGGING_LEVEL_ROOT: DEBUG
     networks:
@@ -256,16 +236,11 @@ services:
         condition: service_healthy
     environment:
       CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Dtls_key_alias=${TLS_KEY_ALIAS}
-        -Dtls_keystore_pwd_file=/run/secrets/tls_keystore_password
-        -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
-        -Dtls_truststore_pwd_file=/run/secrets/tls_truststore_password
-        -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
       LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -299,17 +274,12 @@ services:
       SPRING_PROFILES_ACTIVE: production
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
       CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
         -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5002,server=y,suspend=n"
       JAVA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Dtls_key_alias=${TLS_KEY_ALIAS}
-        -Dtls_keystore_pwd_file=/run/secrets/tls_keystore_password
-        -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
-        -Dtls_truststore_pwd_file=/run/secrets/tls_truststore_password
-        -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
       LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp

@@ -24,10 +24,10 @@
     <HostName>openncp-openatna</HostName>
     <Port>2862</Port>
     <!-- Trust and Keystore -->
-    <KeyStore>/opt/openncp-configuration/keystore/dk-tls.jks</KeyStore>
-    <KeyPass>password</KeyPass>
-    <TrustStore>/opt/openncp-configuration/keystore/bootcamp-truststore.jks</TrustStore>
-    <TrustPass>changeit</TrustPass>
+    <KeyStore>${KEYSTORE_PATH}</KeyStore>
+    <KeyPass>${KEYSTORE_PASSWORD}</KeyPass>
+    <TrustStore>${TRUSTSTORE_PATH}</TrustStore>
+    <TrustPass>${TRUSTSTORE_PASSWORD}</TrustPass>
   </SecureConnection>
   <!-- use IP address instead of localhost for UDP -->
   <StandardConnection name="arr-udp">

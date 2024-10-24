@@ -32,6 +32,11 @@ RUN groupadd -g 10001 tomcat && \
     useradd -r -u 10001 -g tomcat tomcat
 
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
+COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
+COPY ./atna-resources/ /opt/atna-resources
+
+RUN chown -R tomcat:tomcat . $EPSOS_PROPS_PATH /opt/atna-resources
+
 
 # TSAM Exporter
 FROM eclipse-temurin:11-jre-jammy as tsam-exporter
@@ -61,9 +66,8 @@ COPY --from=builder \
 COPY ./ncp_a/config conf/
 COPY ./ncp_a/setenv.sh bin/setenv.sh
 COPY ./ncp_a/entrypoint.sh bin/
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 
-RUN chown -R tomcat:tomcat . $EPSOS_PROPS_PATH
+RUN chown -R tomcat:tomcat .
 
 # Make it possible to use environment variables in server.xml:
 RUN echo \
@@ -88,12 +92,10 @@ COPY ./ncp_b/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./ncp_b/config /usr/local/tomcat/conf/
 COPY ./ncp_b/run.sh /usr/local/tomcat/bin/
 
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
-
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
-RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
+RUN chown -R tomcat:tomcat .
 
 ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "/usr/local/tomcat/bin/tomcat-config-entrypoint.sh"]
 
@@ -111,12 +113,10 @@ COPY ./openncp-trc-sts/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./openncp-trc-sts/config /usr/local/tomcat/conf/
 COPY ./openncp-trc-sts/run.sh /usr/local/tomcat/bin/
 
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
-
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
-RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
+RUN chown -R tomcat:tomcat .
 
 ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 
@@ -134,12 +134,10 @@ COPY ./openncp-openatna/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./openncp-openatna/config /usr/local/tomcat/conf/
 COPY ./openncp-openatna/run.sh /usr/local/tomcat/bin/
 
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
-
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
-RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
+RUN chown -R tomcat:tomcat .
 
 ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 
@@ -158,12 +156,10 @@ COPY openncp-web-manager/openncp-web-manager-backend/config /usr/local/tomcat/co
 COPY openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
 COPY openncp-web-manager/openncp-web-manager-backend/run.sh /usr/local/tomcat/bin/
 
-COPY openncp-configuration/ $EPSOS_PROPS_PATH
-
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
-RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
+RUN chown -R tomcat:tomcat .
 
 ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 
@@ -181,12 +177,10 @@ COPY ./openncp-translations-and-mappings/tomcat-config-entrypoint.sh /usr/local/
 COPY ./openncp-translations-and-mappings/config /usr/local/tomcat/conf/
 COPY ./openncp-translations-and-mappings/run.sh /usr/local/tomcat/bin/
 
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
-
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 RUN chmod 777 /usr/local/tomcat/bin/run.sh
 
-RUN chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs $EPSOS_PROPS_PATH
+RUN chown -R tomcat:tomcat .
 
 ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
 

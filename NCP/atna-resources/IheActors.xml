@@ -21,7 +21,7 @@
 
 -->
 <!--Note: This file is the starting point of All the Actor configuration;
-	all other config files should be linked from here. -->
+    all other config files should be linked from here. -->
 
 <!--Each configuration file has a root Configuration tag-->
 <Configuration>
