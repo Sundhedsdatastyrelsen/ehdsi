@@ -21,7 +21,6 @@ USAGE=$(echo "Usage: $0 [options]";
         echo "  logs              Follow the stdout logs of the containers"
         echo "  build             Builds all images"
         echo "  push              Push images to registry"
-        echo "  grant-db          Grant all privileges to the database user (requires the db to run)"
         echo "  -h, --help        Display this help message")
 
 initialize_file() {
@@ -59,10 +58,6 @@ init() {
   initialize_secrets
 }
 
-grant_all_privileges() {
-  docker exec openncp_db mysql -u root -p"$(<db_root_password.txt)" -e "GRANT ALL PRIVILEGES ON *.* TO '$(<db_username.txt)'@'%';"
-}
-
 # Parse command-line options
 if [[ ! $# -gt 0 ]]; then
   error_exit "$USAGE"
@@ -93,9 +88,6 @@ else
       ;;
     push)
       docker compose --profile initialization push
-      ;;
-    grant-db)
-      grant_all_privileges
       ;;
     -h|--help)
       echo "$USAGE";

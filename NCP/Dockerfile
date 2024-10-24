@@ -64,7 +64,6 @@ COPY --from=builder \
 
 # COPY ./ncp_a/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./ncp_a/config conf/
-COPY ./ncp_a/setenv.sh bin/setenv.sh
 COPY ./ncp_a/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
