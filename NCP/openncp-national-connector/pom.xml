@@ -5,26 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>eu.europa.ec.sante.ehdsi.openncp-protocol-terminators</groupId>
-        <artifactId>openncp-ncp-server</artifactId>
-        <version>7.1.0</version>
+        <groupId>eu.europa.ec.sante</groupId>
+        <artifactId>openncp-application</artifactId>
+        <version>8.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>dk.sds</groupId>
     <artifactId>openncp-national-connector</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>OpenNCP Denmark National Connector</name>
 
     <dependencies>
         <dependency>
-            <groupId>eu.europa.ec.sante.ehdsi.openncp-protocol-terminators.openncp-ncp-server</groupId>
-            <artifactId>openncp-interface</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.sante.ehdsi</groupId>
-            <artifactId>openncp-util</artifactId>
+            <groupId>eu.europa.ec.sante</groupId>
+            <artifactId>openncp-core-server-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

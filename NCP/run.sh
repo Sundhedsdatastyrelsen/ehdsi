@@ -36,16 +36,18 @@ initialize_file() {
 
 initialize_secrets() {
   local env_default_dir="$SCRIPT_DIR/env_default"
-  
+
   if [ ! -d "$env_default_dir" ]; then
     error_exit "env_default directory not found. Please ensure it exists in $SCRIPT_DIR"
   fi
 
+  # Include dotfiles when globbing
+  shopt -s dotglob
   for file in "$env_default_dir"/*; do
     if [ -f "$file" ]; then
-      local filename=$(basename "$file")
+      local filename;
+      filename=$(basename "$file")
       local target_file="$SCRIPT_DIR/$filename"
-      
       if [ ! -f "$target_file" ]; then
         echo "Initializing $filename..."
         cp "$file" "$target_file"
@@ -73,7 +75,7 @@ update_keystore() {
 }
 
 grant_all_privileges() {
-  docker exec openncp_db mysql -u root -p$(<db_root_password.txt) -e "GRANT ALL PRIVILEGES ON *.* TO '$(<db_username.txt)'@'%';"
+  docker exec openncp_db mysql -u root -p"$(<db_root_password.txt)" -e "GRANT ALL PRIVILEGES ON *.* TO '$(<db_username.txt)'@'%';"
 }
 
 # Parse command-line options
@@ -82,7 +84,7 @@ if [[ ! $# -gt 0 ]]; then
 else
   case "$1" in
     init)
-      initialize_secrets
+      init
       ;;
     down)
       docker compose down --remove-orphans

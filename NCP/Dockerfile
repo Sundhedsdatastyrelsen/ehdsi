@@ -1,22 +1,35 @@
 FROM maven:3.9-eclipse-temurin-11 as builder
 
 ARG OPENNCP_BRANCH="releases/W8"
-# ARG OPENNCP_BRANCH="8.0.0"
 
 WORKDIR /usr/src/app
 
 RUN --mount=type=cache,target=/root/.m2 \
     git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
     cd ehealth && \
-    mvn -DskipTests package
+    mvn -DskipTests install
+
+COPY openncp-national-connector openncp-national-connector
+COPY ncp_a/pom.xml openncp-server/pom.xml
+
+RUN --mount=type=cache,target=/root/.m2 \
+    cd openncp-national-connector && \
+    mvn install && \
+    cd ../openncp-server && \
+    mvn install
 
 # Base Tomcat image for most services
 FROM tomcat:9-jdk11-temurin as tomcat-base
 
-RUN apt-get update && apt-get -qq -y install gettext socat
+RUN apt-get update \
+    && apt-get install -y \
+    gettext \
+    socat \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -g 2000 tomcat && \
-  useradd -r -u 2000 -g tomcat tomcat
+# https://github.com/hexops-graveyard/dockerfile#do-not-use-a-uid-below-10000
+RUN groupadd -g 10001 tomcat && \
+    useradd -r -u 10001 -g tomcat tomcat
 
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 
@@ -36,27 +49,34 @@ ENTRYPOINT ["/bin/sh", "-c", "/usr/local/openncp-tsam-exporter/run.sh && java -j
 # Node A
 FROM tomcat-base as node-a
 
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-ws-server.war /usr/local/tomcat/webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder \
+    /usr/src/app/openncp-server/target/openncp-server-*.war \
+    webapps/openncp-ws-server.war
 
-COPY ./ncp_a/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY ./ncp_a/config /usr/local/tomcat/conf/
-COPY ./ncp_a/run.sh /usr/local/tomcat/bin/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/target/classes/lib \
+    lib/
 
-COPY ./openncp-configuration-utility/ /opt/ehealth-openncp/openncp-configuration-utility/
+# COPY ./ncp_a/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
+COPY ./ncp_a/config conf/
+COPY ./ncp_a/setenv.sh bin/setenv.sh
+COPY ./ncp_a/entrypoint.sh bin/
 COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
-RUN chmod 777 -R /opt/ehealth-openncp/openncp-configuration-utility/
+RUN chown -R tomcat:tomcat . $EPSOS_PROPS_PATH
 
-RUN chown -R tomcat:tomcat /usr/local/tomcat/ $EPSOS_PROPS_PATH
+# Make it possible to use environment variables in server.xml:
+RUN echo \
+    "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" \
+    >> conf/catalina.properties
 
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "/usr/local/tomcat/bin/tomcat-config-entrypoint.sh"]
+# Take the logging down a notch by default
+ENV LOGGING_LEVEL_ROOT=INFO
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["catalina.sh", "run"]
 
 USER tomcat
-
-CMD ["catalina.sh", "run"]
 
 # Node B
 FROM tomcat-base as node-b
