@@ -15,5 +15,5 @@ envsubst \
     < /opt/atna-resources/ArrConnections.template.xml \
     > /opt/atna-resources/ArrConnections.xml
 
-# Execute the original command
+# Execute the next command in the chain
 exec "$@"

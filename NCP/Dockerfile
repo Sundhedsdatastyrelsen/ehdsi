@@ -100,22 +100,17 @@ CMD ["catalina.sh", "run"]
 # TRC-STS
 FROM tomcat-base as trc-sts
 
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/TRC-STS.war /usr/local/tomcat/webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/TRC-STS.war webapps/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
 
-COPY ./openncp-trc-sts/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY ./openncp-trc-sts/config /usr/local/tomcat/conf/
-COPY ./openncp-trc-sts/run.sh /usr/local/tomcat/bin/
-
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
+COPY ./openncp-trc-sts/config conf/
+COPY ./openncp-trc-sts/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
 
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
-
 USER tomcat
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # OpenATNA
