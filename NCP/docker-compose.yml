@@ -315,7 +315,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties
+      - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
     environment:
       OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
       MARIADB_HOST: ${DB_HOST}

@@ -25,9 +25,11 @@ public class ConfigurationSynchronizer {
         // We use Apache Commons Configuration to allow for interpolation (e.g. ${env:FOO_BAR})
         var m = new HashMap<String, String>();
         try {
-            var c = new PropertiesConfiguration(configFile);
-
+            var c = new PropertiesConfiguration();
+            // So that e.g. "ncp.countries=be,at,eu,hu,is,se" gets parsed correctly
+            c.setDelimiterParsingDisabled(true);
             c.setIncludesAllowed(true);
+            c.load(configFile);
             c.getKeys().forEachRemaining(key -> {
                 var val = c.getString(key);
                 if (val.contains("${")) {
