@@ -9,7 +9,7 @@
    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
- 
+
    <!-- Global JNDI resources Documentation at /docs/jndi-resources-howto.html -->
    <GlobalNamingResources>
       <!-- Editable user database that can also be used by
@@ -17,47 +17,47 @@
       -->
    <Resource name="UserDatabase" auth="Container" type="org.apache.catalina.UserDatabase" description="User database that can be updated and saved"
              factory="org.apache.catalina.users.MemoryUserDatabaseFactory" pathname="conf/tomcat-users.xml" />
- 
-      <!--Define hereafter your OpenNCP Connection Pools: jdbc/ConfMgr, jdbc/TSAM, jdbc/EADC, jdbc/LOGS -->    
+
+      <!--Define hereafter your OpenNCP Connection Pools: jdbc/ConfMgr, jdbc/TSAM, jdbc/EADC, jdbc/LOGS -->
       <Resource name="jdbc/ConfMgr" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
-                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
-                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
- 
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+
       <Resource name="jdbc/OPEN_ATNA" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
-                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
-                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
- 
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+
       <Resource name="jdbc/TSAM" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
-                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
-                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
- 
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+
       <Resource name="jdbc/EADC" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
-                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
-                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
    </GlobalNamingResources>
- 
+
    <!-- A "Service" is a collection of one or more "Connectors" that share
         a single "Container" Note:  A "Service" is not itself a "Container",
         so you may not define subcomponents such as "Valves" at this level.
         Documentation at /docs/config/service.html
    -->
    <Service name="Catalina">
-      <Connector port="$CONNECTOR_PORT" protocol="HTTP/1.1"
+      <Connector port="${CONNECTOR_PORT}" protocol="HTTP/1.1"
                  connectionTimeout="20000"
                  maxHttpHeaderSize="1048576"
-                 redirectPort="$CONNECTOR_SECURE_PORT" />
-      <Connector port="$CONNECTOR_SECURE_PORT" SSLEnabled="true" protocol="org.apache.coyote.http11.Http11NioProtocol"
+                 redirectPort="${CONNECTOR_SECURE_PORT}" />
+      <Connector port="${CONNECTOR_SECURE_PORT}" SSLEnabled="true" protocol="org.apache.coyote.http11.Http11NioProtocol"
                   maxThreads="150" scheme="https" secure="true"
                   clientAuth="false" sslProtocol="TLS"
-                  keyAlias="$KEY_ALIAS"
-                 keystoreFile="$KEYSTORE_PATH"
-                  keystorePass="$KEYSTORE_PASSWORD"
-                  truststoreFile="$TRUSTSTORE_PATH"
-                  truststorePass="$TRUSTSTORE_PASSWORD"
+                  keyAlias="${KEY_ALIAS}"
+                 keystoreFile="${KEYSTORE_PATH}"
+                  keystorePass="${KEYSTORE_PASSWORD}"
+                  truststoreFile="${TRUSTSTORE_PATH}"
+                  truststorePass="${TRUSTSTORE_PASSWORD}"
                   maxHttpHeaderSize="1048576"
                   URIEncoding="UTF-8"/>
       <!-- An Engine represents the entry point (within Catalina) that processes

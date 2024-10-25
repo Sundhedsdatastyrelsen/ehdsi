@@ -31,8 +31,7 @@ RUN apt-get update \
 RUN groupadd -g 10001 tomcat && \
     useradd -r -u 10001 -g tomcat tomcat
 
-ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
+COPY ./openncp-configuration/ /opt/openncp-configuration
 COPY ./atna-resources/ /opt/atna-resources
 
 # Make it possible to use environment variables in server.xml:
@@ -40,7 +39,7 @@ RUN echo \
     "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" \
     >> conf/catalina.properties
 
-RUN chown -R tomcat:tomcat . $EPSOS_PROPS_PATH /opt/atna-resources
+RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources
 
 
 # TSAM Exporter
@@ -121,44 +120,17 @@ CMD ["catalina.sh", "run"]
 # OpenATNA
 FROM tomcat-base as openatna
 
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openatna-web.war /usr/local/tomcat/webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openatna-web.war webapps/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
 
-COPY ./openncp-openatna/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY ./openncp-openatna/config /usr/local/tomcat/conf/
-COPY ./openncp-openatna/run.sh /usr/local/tomcat/bin/
-
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
+COPY ./openncp-openatna/config conf/
+COPY ./openncp-openatna/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
 
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
-
 USER tomcat
 
-CMD ["catalina.sh", "run"]
-
-# Web Manager Backend
-FROM tomcat-base as web-manager-backend
-
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war /usr/local/tomcat/webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
-
-COPY openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY openncp-web-manager/openncp-web-manager-backend/config /usr/local/tomcat/conf/
-COPY openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
-COPY openncp-web-manager/openncp-web-manager-backend/run.sh /usr/local/tomcat/bin/
-
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
-
-RUN chown -R tomcat:tomcat .
-
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
-
-USER tomcat
-
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # Translations and Mappings
@@ -185,25 +157,18 @@ CMD ["catalina.sh", "run"]
 # TSAM Sync
 FROM eclipse-temurin:11-jre-jammy as tsam-sync
 
-RUN apt-get update && apt-get -qq -y install default-mysql-client
+RUN apt-get update \
+    && apt-get install -y \
+    default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
-COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
+COPY ./openncp-configuration/ /opt/openncp-configuration
 
 WORKDIR /usr/local/openncp-tsam-sync
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsam-sync.jar /usr/local/openncp-tsam-sync
 COPY /openncp-tsam-sync/* /usr/local/openncp-tsam-sync
 
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
-
-# Configuration Utility
-FROM eclipse-temurin:11-jre-jammy as configuration-utility
-
-WORKDIR /usr/local/openncp-configuration-utility
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-configuration-utility.jar /usr/local/openncp-configuration-utility
-COPY /openncp-configuration-utility/* /usr/local/openncp-configuration-utility
-
-CMD ["java", "-jar", "openncp-configuration-utility.jar"]
 
 # Web Manager Frontend
 FROM node:14.21-alpine as web-manager-frontend
@@ -228,3 +193,25 @@ RUN npm run build
 
 EXPOSE 8080
 CMD [ "http-server", "dist"]
+
+# Web Manager Backend
+FROM tomcat-base as web-manager-backend
+
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war /usr/local/tomcat/webapps/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+
+COPY openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
+COPY openncp-web-manager/openncp-web-manager-backend/config /usr/local/tomcat/conf/
+COPY openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
+COPY openncp-web-manager/openncp-web-manager-backend/run.sh /usr/local/tomcat/bin/
+
+RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
+RUN chmod 777 /usr/local/tomcat/bin/run.sh
+
+RUN chown -R tomcat:tomcat .
+
+ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
+
+USER tomcat
+
+CMD ["catalina.sh", "run"]
