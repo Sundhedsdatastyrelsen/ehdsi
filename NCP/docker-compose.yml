@@ -109,7 +109,7 @@ services:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
-      LOGGING_LEVEL_ROOT: DEBUG
+      # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
     secrets:
@@ -146,7 +146,7 @@ services:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
-      LOGGING_LEVEL_ROOT: DEBUG
+      # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
     secrets:
@@ -179,7 +179,7 @@ services:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
-      LOGGING_LEVEL_ROOT: DEBUG
+      # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
     secrets:
@@ -211,7 +211,7 @@ services:
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
         -Dorg.apache.cxf.stax.allowInsecureParser=true"
-      LOGGING_LEVEL_ROOT: DEBUG
+      # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
     secrets:
@@ -242,7 +242,7 @@ services:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
-      LOGGING_LEVEL_ROOT: DEBUG
+      # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
     secrets:
@@ -281,7 +281,7 @@ services:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
-      LOGGING_LEVEL_ROOT: DEBUG
+      # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
     secrets:
