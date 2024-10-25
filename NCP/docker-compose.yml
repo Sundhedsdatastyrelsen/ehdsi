@@ -95,17 +95,17 @@ services:
     ports:
       - "${NCP_A_SERVER_CONNECTOR_PORT}:${NCP_A_SERVER_CONNECTOR_PORT}"
       - "${NCP_A_SERVER_CONNECTOR_SECURE_PORT}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
-      - 5006:5006
+      # - 5005:5005
     depends_on:
       mysql:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5006,server=y,suspend=n"
+        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -130,7 +130,7 @@ services:
     ports:
       - "${NCP_B_SERVER_CONNECTOR_PORT}:${NCP_B_SERVER_CONNECTOR_PORT}"
       - "${NCP_B_SERVER_CONNECTOR_SECURE_PORT}:${NCP_B_SERVER_CONNECTOR_SECURE_PORT}"
-      - 5005:5005
+      # - 5006:5006
     extra_hosts:
       - "host.docker.internal:host-gateway"
     dns:
@@ -139,10 +139,10 @@ services:
       mysql:
         condition: service_healthy
     environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5005,server=y,suspend=n"
+        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"

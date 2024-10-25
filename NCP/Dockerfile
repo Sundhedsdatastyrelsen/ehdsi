@@ -35,6 +35,11 @@ ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 COPY ./atna-resources/ /opt/atna-resources
 
+# Make it possible to use environment variables in server.xml:
+RUN echo \
+    "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" \
+    >> conf/catalina.properties
+
 RUN chown -R tomcat:tomcat . $EPSOS_PROPS_PATH /opt/atna-resources
 
 
@@ -68,11 +73,6 @@ COPY ./ncp_a/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
 
-# Make it possible to use environment variables in server.xml:
-RUN echo \
-    "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" \
-    >> conf/catalina.properties
-
 # Take the logging down a notch by default
 ENV LOGGING_LEVEL_ROOT=INFO
 
@@ -87,19 +87,14 @@ FROM tomcat-base as node-b
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-client-connector.war /usr/local/tomcat/webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
 
-COPY ./ncp_b/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY ./ncp_b/config /usr/local/tomcat/conf/
-COPY ./ncp_b/run.sh /usr/local/tomcat/bin/
-
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
+COPY ./ncp_b/config conf/
+COPY ./ncp_b/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
 
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "/usr/local/tomcat/bin/tomcat-config-entrypoint.sh"]
-
 USER tomcat
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # TRC-STS
