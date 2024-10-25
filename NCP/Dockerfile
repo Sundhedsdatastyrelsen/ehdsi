@@ -45,15 +45,14 @@ RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources
 # TSAM Exporter
 FROM eclipse-temurin:11-jre-jammy as tsam-exporter
 
-RUN apt-get update
-
 WORKDIR /usr/local/openncp-tsam-exporter
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar /usr/local/openncp-tsam-exporter
-COPY /openncp-tsam-exporter/* /usr/local/openncp-tsam-exporter
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar .
 
-RUN chmod +x /usr/local/openncp-tsam-exporter/run.sh
+COPY ./openncp-tsam-exporter/entrypoint.sh .
+COPY ./openncp-tsam-exporter/application.yml .
 
-ENTRYPOINT ["/bin/sh", "-c", "/usr/local/openncp-tsam-exporter/run.sh && java -jar openncp-tsamexporter.jar"]
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["java", "-jar", "openncp-tsamexporter.jar"]
 
 # Node A
 FROM tomcat-base as node-a

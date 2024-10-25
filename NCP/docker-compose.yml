@@ -8,7 +8,6 @@ networks:
 volumes:
   db-data:
   tsam-exporter-data:
-    name: tsam-exporter-data
 
 secrets:
   db_username:
@@ -58,8 +57,10 @@ services:
       - db_password
       - db_root_password
 
-  openncp-tsam-exporter:
-    container_name: "openncp-tsam-exporter"
+  # Usage: docker compose run tsam-exporter
+  tsam-exporter:
+    profiles: ["initialization"] # prevents service from starting on `docker compose up`
+    container_name: "tsam-exporter"
     env_file: .env
     environment:
       DB_HOST: ${DB_HOST}
