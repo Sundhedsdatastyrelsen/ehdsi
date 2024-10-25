@@ -243,10 +243,10 @@ services:
   openncp-web-manager:
     container_name: openncp-web-manager
     build:
-      target: web-manager-backend
+      target: web-manager
     env_file:
-      - ./openncp-web-manager/openncp-web-manager-backend/.database.env
-      - ./openncp-web-manager/openncp-web-manager-backend/.env
+      - ./openncp-web-manager/.database.env
+      - ./openncp-web-manager/.env
     ports:
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}"
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
