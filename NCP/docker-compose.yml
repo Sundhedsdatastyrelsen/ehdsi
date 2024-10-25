@@ -70,8 +70,6 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_ACTIVE_PROFILE: ${DB_ACTIVE_PROFILE}
     build:
-      context: .
-      dockerfile: Dockerfile
       target: tsam-exporter
     depends_on:
       mysql:
@@ -86,8 +84,6 @@ services:
 
   tomcat_node_a:
     build:
-      context: .
-      dockerfile: Dockerfile
       target: node-a
     container_name: "openncp-server"
     env_file:
@@ -121,8 +117,6 @@ services:
 
   tomcat_node_b:
     build:
-      context: .
-      dockerfile: Dockerfile
       target: node-b
     container_name: "openncp-client"
     env_file:
@@ -159,8 +153,6 @@ services:
   openncp-openatna:
     container_name: openncp-openatna
     build:
-      context: .
-      dockerfile: Dockerfile
       target: openatna
     env_file:
       - ./openncp-openatna/openatna.database.env
@@ -192,8 +184,6 @@ services:
   openncp-trc-sts:
     container_name: openncp-trc-sts
     build:
-      context: .
-      dockerfile: Dockerfile
       target: trc-sts
     env_file:
       - ./openncp-trc-sts/.database.env
@@ -224,8 +214,6 @@ services:
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
     build:
-      context: .
-      dockerfile: Dockerfile
       target: translations-and-mappings
     env_file:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
@@ -254,8 +242,6 @@ services:
 
   openncp-web-manager-backend:
     build:
-      context: .
-      dockerfile: Dockerfile
       target: web-manager-backend
     env_file:
       - ./openncp-web-manager/openncp-web-manager-backend/.database.env
@@ -296,8 +282,6 @@ services:
       openncp-web-manager-backend:
         condition: service_started
     build:
-      context: .
-      dockerfile: Dockerfile
       target: web-manager-frontend
       args:
         GATEWAY_BACKEND_URL: ${GATEWAY_BACKEND_URL}

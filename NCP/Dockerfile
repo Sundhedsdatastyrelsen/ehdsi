@@ -41,6 +41,8 @@ RUN echo \
 
 RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources
 
+# This env var needs to be present at runtime for the openncp containers to function
+ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 
 # TSAM Exporter
 FROM eclipse-temurin:11-jre-jammy as tsam-exporter
@@ -135,22 +137,17 @@ CMD ["catalina.sh", "run"]
 # Translations and Mappings
 FROM tomcat-base as translations-and-mappings
 
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/translations-and-mappings-ws.war /usr/local/tomcat/webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/translations-and-mappings-ws.war webapps/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
 
-COPY ./openncp-translations-and-mappings/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY ./openncp-translations-and-mappings/config /usr/local/tomcat/conf/
-COPY ./openncp-translations-and-mappings/run.sh /usr/local/tomcat/bin/
-
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
+COPY ./openncp-translations-and-mappings/config conf/
+COPY ./openncp-translations-and-mappings/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
 
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
-
 USER tomcat
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # TSAM Sync
