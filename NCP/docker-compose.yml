@@ -240,7 +240,8 @@ services:
       - db_username
       - db_password
 
-  openncp-web-manager-backend:
+  openncp-web-manager:
+    container_name: openncp-web-manager
     build:
       target: web-manager-backend
     env_file:
@@ -250,7 +251,6 @@ services:
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}"
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
       - "8000:8000"
-      - "5002:5002"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     dns:
@@ -263,8 +263,7 @@ services:
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5002,server=y,suspend=n"
+        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -276,19 +275,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-
-  openncp-web-manager-frontend:
-    depends_on:
-      openncp-web-manager-backend:
-        condition: service_started
-    build:
-      target: web-manager-frontend
-      args:
-        GATEWAY_BACKEND_URL: ${GATEWAY_BACKEND_URL}
-    ports:
-      - "${NCP_WEB_MANAGER_FRONTEND_CONNECTOR_PORT}:8080"
-    networks:
-      - ncp
 
   configuration-synchronizer:
     build:

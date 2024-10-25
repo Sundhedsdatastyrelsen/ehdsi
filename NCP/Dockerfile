@@ -162,11 +162,7 @@ COPY /openncp-tsam-sync/* /usr/local/openncp-tsam-sync
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
 
 # Web Manager Frontend
-FROM node:14.21-alpine as web-manager-frontend
-
-RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
-
-RUN npm install -g http-server
+FROM node:14.21-alpine as web-manager-frontend-builder
 
 WORKDIR /app
 
@@ -176,20 +172,18 @@ RUN npm install
 
 COPY --from=builder /usr/src/app/ehealth/openncp-web-manager/openncp-web-manager-frontend .
 
-ARG GATEWAY_BACKEND_URL
-RUN sed -i -e "/^VUE_APP_SERVER_URL/s/=.*$/=${GATEWAY_BACKEND_URL}/" .env.production
-RUN sed -i '/publicPath/d' vue.config.js
-
+ARG VUE_APP_SERVER_URL="/openncp-gateway-backend"
 RUN npm run build
 
-EXPOSE 8080
-CMD [ "http-server", "dist"]
+# EXPOSE 8080
+# CMD [ "http-server", "dist"]
 
 # Web Manager Backend
 FROM tomcat-base as web-manager-backend
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=web-manager-frontend-builder /app/dist webapps/openncp-web-manager
 
 COPY openncp-web-manager/openncp-web-manager-backend/config conf/
 COPY openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
