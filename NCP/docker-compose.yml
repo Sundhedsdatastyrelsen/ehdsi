@@ -1,3 +1,6 @@
+# Use by settings IMAGE_TAG in the environment or when running docker compose
+# e.g. IMAGE_TAG=latest docker compose up
+
 #
 # Network definitions
 #
@@ -61,6 +64,7 @@ services:
   tsam-exporter:
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     container_name: "tsam-exporter"
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:${IMAGE_TAG}
     env_file: .env
     environment:
       DB_HOST: ${DB_HOST}
@@ -86,6 +90,7 @@ services:
     build:
       target: node-a
     container_name: "openncp-server"
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:${IMAGE_TAG}
     env_file:
       - ./ncp_a/ncpa.database.env
       - ./ncp_a/ncpa.env
@@ -119,6 +124,7 @@ services:
     build:
       target: node-b
     container_name: "openncp-client"
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:${IMAGE_TAG}
     env_file:
       - ./ncp_b/ncpb.database.env
       - ./ncp_b/ncpb.env
@@ -154,6 +160,7 @@ services:
     container_name: openncp-openatna
     build:
       target: openatna
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:${IMAGE_TAG}
     env_file:
       - ./openncp-openatna/openatna.database.env
       - ./openncp-openatna/openatna.env
@@ -185,6 +192,7 @@ services:
     container_name: openncp-trc-sts
     build:
       target: trc-sts
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:${IMAGE_TAG}
     env_file:
       - ./openncp-trc-sts/.database.env
       - ./openncp-trc-sts/.env
@@ -215,6 +223,7 @@ services:
     container_name: openncp-translations-and-mappings
     build:
       target: translations-and-mappings
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:${IMAGE_TAG}
     env_file:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
       - ./openncp-translations-and-mappings/translations-and-mappings.env
@@ -244,6 +253,7 @@ services:
     container_name: openncp-web-manager
     build:
       target: web-manager
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:${IMAGE_TAG}
     env_file:
       - ./openncp-web-manager/.database.env
       - ./openncp-web-manager/.env
@@ -279,12 +289,9 @@ services:
   configuration-synchronizer:
     build:
       context: configuration-synchronizer
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     container_name: configuration-synchronizer
-    env_file:
-      - .env
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
+    env_file: .env
     volumes:
       - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
     environment:

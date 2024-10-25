@@ -39,9 +39,7 @@ initialize_secrets() {
     error_exit "env_default directory not found. Please ensure it exists in $SCRIPT_DIR"
   fi
 
-  # Include dotfiles when globbing
-  shopt -s dotglob
-  for file in "$env_default_dir"/*; do
+  for file in "$env_default_dir"/{.,}*; do
     if [ -f "$file" ]; then
       local filename;
       filename=$(basename "$file")
