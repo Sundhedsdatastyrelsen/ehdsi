@@ -188,21 +188,16 @@ CMD [ "http-server", "dist"]
 # Web Manager Backend
 FROM tomcat-base as web-manager-backend
 
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war /usr/local/tomcat/webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war webapps/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
 
-COPY openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
-COPY openncp-web-manager/openncp-web-manager-backend/config /usr/local/tomcat/conf/
+COPY openncp-web-manager/openncp-web-manager-backend/config conf/
 COPY openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
-COPY openncp-web-manager/openncp-web-manager-backend/run.sh /usr/local/tomcat/bin/
-
-RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
-RUN chmod 777 /usr/local/tomcat/bin/run.sh
+COPY openncp-web-manager/openncp-web-manager-backend/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
 
-ENTRYPOINT ["/usr/local/tomcat/bin/run.sh", "tomcat-config-entrypoint.sh"]
-
 USER tomcat
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
