@@ -2,7 +2,7 @@ name: Build NCP Docker Images
 
 on:
   push:
-    branches: [ "main", "cfb/docker-8"]
+    branches: [ "main", "cfb/docker-8", "hbg/wave-8-nc"]
   pull_request:
     branches: [ "main" ]
 
@@ -24,41 +24,21 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and push images
-      run: |
-        # Define the image name and registry
-        IMAGE_NAME=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp
+    # The "docker compose build" command fail due to unresolved environment
+    # variables unless we provide a ".env" file with some values, even though we
+    # only need the environment variables at runtime and not for building.
+    - name: Set default env vars for Docker Compose
+      run: cp NCP/env_default/.env NCP/.env
 
-        # Build and push for each target
-        docker build --target node-a -t $IMAGE_NAME-node-a:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-node-a:${{ github.sha }}
+    - name: Build images
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: cd NCP && docker compose build --quiet
 
-        docker build --target node-b -t $IMAGE_NAME-node-b:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-node-b:${{ github.sha }}
-
-        docker build --target trc-sts -t $IMAGE_NAME-trc-sts:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-trc-sts:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-openatna:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-openatna:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-web-manager-backend:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-web-manager-backend:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-translations-and-mappings:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-translations-and-mappings:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-tsam-sync:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-tsam-sync:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-configuration-utility:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-configuration-utility:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-web-manager-frontend:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-web-manager-frontend:${{ github.sha }}
-
-        docker build --target openatna -t $IMAGE_NAME-tsam-exporter:${{ github.sha }} ./NCP
-        docker push $IMAGE_NAME-tsam-exporter:${{ github.sha }}
+    - name: Push images
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: cd NCP && docker compose push
 
     - name: Log out from Docker Hub
       run: docker logout

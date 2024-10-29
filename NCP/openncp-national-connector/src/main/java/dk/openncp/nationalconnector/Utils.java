@@ -28,7 +28,7 @@ public class Utils {
         }
     }
 
-    public static ClassCode classCode(eu.europa.ec.sante.ehdsi.constant.ClassCode classCode) {
+    public static ClassCode classCode(eu.europa.ec.sante.openncp.common.ClassCode classCode) {
         switch (classCode) {
             case EP_CLASSCODE:
                 return ClassCode._57833_6;

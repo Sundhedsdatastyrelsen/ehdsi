@@ -7,17 +7,18 @@ import dk.nsp.epps.api.model.PostFindPatientsRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.Utils;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
-import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
-import eu.epsos.protocolterminators.ws.server.exception.NIException;
-import eu.epsos.protocolterminators.ws.server.xcpd.PatientSearchInterfaceWithDemographics;
-import eu.europa.ec.sante.ehdsi.constant.error.OpenNCPErrorCode;
-import eu.europa.ec.sante.ehdsi.openncp.assertionvalidator.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
+import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
+import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.PatientDemographics;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.PatientId;
+import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
+import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
+import eu.europa.ec.sante.openncp.core.server.api.ihe.xcpd.PatientSearchInterfaceWithDemographics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
-import tr.com.srdc.epsos.data.model.PatientDemographics;
-import tr.com.srdc.epsos.data.model.PatientId;
-import tr.com.srdc.epsos.util.XMLUtil;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Service
 public class PatientSearch implements NationalConnectorInterface, PatientSearchInterfaceWithDemographics {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
 
@@ -157,7 +159,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         try {
             var foo = getPatientDemographicsFromCountryA(
                     List.of(new PatientId("2.16.17.710.802.1000.990.1.500", "1111111118")),
-                    XMLUtil.parseContent("<SomeXml/>").getDocumentElement(),
+                    XmlUtil.parseContent("<SomeXml/>").getDocumentElement(),
                     CountryAService.api());
             return;
         } catch (NIException e) {
