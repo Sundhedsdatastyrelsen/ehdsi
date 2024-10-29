@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 public class DenmarkDispatchingService implements DispatchingService {
     @Override
     public <T extends IBaseResource> T dispatchSearch(EuRequestDetails euRequestDetails, String s) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public <T extends IBaseResource> T dispatchRead(EuRequestDetails euRequestDetails, String s) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

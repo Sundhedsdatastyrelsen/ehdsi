@@ -61,6 +61,7 @@ services:
       - db_root_password
 
   # Usage: docker compose run tsam-exporter
+  # Run this to generate language files for the CDA display tool.
   tsam-exporter:
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     container_name: "tsam-exporter"

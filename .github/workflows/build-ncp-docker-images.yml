@@ -24,6 +24,9 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    # The "docker compose build" command fail due to unresolved environment
+    # variables unless we provide a ".env" file with some values, even though we
+    # only need the environment variables at runtime and not for building.
     - name: Set default env vars for Docker Compose
       run: cp NCP/env_default/.env NCP/.env
 

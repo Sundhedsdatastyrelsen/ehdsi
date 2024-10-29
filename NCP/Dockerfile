@@ -76,10 +76,9 @@ RUN chown -R tomcat:tomcat .
 # Take the logging down a notch by default
 ENV LOGGING_LEVEL_ROOT=INFO
 
+USER tomcat
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
-
-USER tomcat
 
 # Node B
 FROM tomcat-base as node-b
@@ -93,7 +92,6 @@ COPY ./ncp_b/entrypoint.sh bin/
 RUN chown -R tomcat:tomcat .
 
 USER tomcat
-
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
@@ -109,7 +107,6 @@ COPY ./openncp-trc-sts/entrypoint.sh bin/
 RUN chown -R tomcat:tomcat .
 
 USER tomcat
-
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
@@ -125,7 +122,6 @@ COPY ./openncp-openatna/entrypoint.sh bin/
 RUN chown -R tomcat:tomcat .
 
 USER tomcat
-
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
@@ -141,7 +137,6 @@ COPY ./openncp-translations-and-mappings/entrypoint.sh bin/
 RUN chown -R tomcat:tomcat .
 
 USER tomcat
-
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
@@ -189,6 +184,5 @@ COPY openncp-web-manager/entrypoint.sh bin/
 RUN chown -R tomcat:tomcat .
 
 USER tomcat
-
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
