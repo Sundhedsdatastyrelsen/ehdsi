@@ -14,22 +14,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ModuleConfiguration {
     @Bean
-    public DispatchingService dispatchingService() {
+    public DispatchingService dispatchingServiceDk() {
         return new DenmarkDispatchingService();
     }
 
     @Bean
-    public DocumentSearchInterface documentSearch() {
+    public DocumentSearchInterface documentSearchDk() {
         return new DocumentSearch();
     }
 
     @Bean
-    public PatientSearchInterface patientSearch() {
+    public PatientSearchInterface patientSearchDk() {
         return new PatientSearch();
     }
 
     @Bean
-    public DocumentSubmitInterface documentSubmit() {
+    public DocumentSubmitInterface documentSubmitDk() {
         return new DocumentSubmit();
     }
 }
