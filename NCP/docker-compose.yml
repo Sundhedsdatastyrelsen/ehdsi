@@ -76,6 +76,8 @@ services:
       DB_ACTIVE_PROFILE: ${DB_ACTIVE_PROFILE}
     build:
       target: tsam-exporter
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     depends_on:
       mysql:
         condition: service_healthy
@@ -104,6 +106,8 @@ services:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       CATALINA_OPTS: "
@@ -133,6 +137,8 @@ services:
       - "${NCP_B_SERVER_CONNECTOR_PORT}:${NCP_B_SERVER_CONNECTOR_PORT}"
       - "${NCP_B_SERVER_CONNECTOR_SECURE_PORT}:${NCP_B_SERVER_CONNECTOR_SECURE_PORT}"
       # - 5006:5006
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     extra_hosts:
       - "host.docker.internal:host-gateway"
     dns:
@@ -170,6 +176,8 @@ services:
       - "${NCP_OPENATNA_CONNECTOR_SECURE_PORT}:${NCP_OPENATNA_CONNECTOR_SECURE_PORT}"
       - "2861:2861/udp"
       - "2862:2862"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     depends_on:
       mysql:
         condition: service_healthy
@@ -200,6 +208,8 @@ services:
     ports:
       - "${NCP_TRC_STS_CONNECTOR_PORT}:${NCP_TRC_STS_CONNECTOR_PORT}"
       - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     depends_on:
       mysql:
         condition: service_healthy
@@ -231,6 +241,8 @@ services:
     ports:
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}"
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     depends_on:
       mysql:
         condition: service_healthy
@@ -262,6 +274,8 @@ services:
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}"
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
       - "8000:8000"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
     extra_hosts:
       - "host.docker.internal:host-gateway"
     dns:
@@ -295,6 +309,7 @@ services:
     env_file: .env
     volumes:
       - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
+      - ./keystore:/opt/openncp-configuration/keystore
     environment:
       OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
       MARIADB_HOST: ${DB_HOST}
