@@ -31,7 +31,7 @@
     <dependencyManagement>
         <dependencies>
             <!-- To avoid a problem similar to this: https://stackoverflow.com/questions/55406438
-             we pin the spring-ws to something never so that we get a newer spring-webmvc. -->
+             we pin the spring-ws-core to a newer version than ehdsi/ehealth -->
             <dependency>
                 <groupId>org.springframework.ws</groupId>
                 <artifactId>spring-ws-core</artifactId>
