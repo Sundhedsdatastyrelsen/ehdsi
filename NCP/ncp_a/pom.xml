@@ -28,6 +28,18 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- To avoid a problem similar to this: https://stackoverflow.com/questions/55406438
+             we pin the spring-ws to something never so that we get a newer spring-webmvc. -->
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-core</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <repositories>
         <repository>
             <id>gitlab-maven</id>
