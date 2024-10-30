@@ -78,11 +78,10 @@ services:
       target: tsam-exporter
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - tsam-exporter-data:/opt/openncp-configuration/EpsosRepository
     depends_on:
       mysql:
         condition: service_healthy
-    volumes:
-      - tsam-exporter-data:/opt/openncp-configuration/EpsosRepository
     networks:
       - ncp
     secrets:
