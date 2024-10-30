@@ -2,9 +2,7 @@ name: Build NCP Docker Images
 
 on:
   push:
-    branches: [ "main", "cfb/docker-8", "hbg/wave-8-nc"]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "cfb/docker-8"]
 
 jobs:
   build-and-push:
