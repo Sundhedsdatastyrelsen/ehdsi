@@ -1,9 +1,4 @@
-# ehdsi
+# NCPeH implementation for Denmark
 
-## Test server setup
-Make sure that the user that is running the docker containers has access to the docker socket.
-
-```bash
-sudo usermod -aG docker $USER
-```
-
+- [NCP](./NCP) contains the OpenNCP setup
+- [country-a-service](./country-a-service) contains the national infrastructure integration service for NCP-A.
