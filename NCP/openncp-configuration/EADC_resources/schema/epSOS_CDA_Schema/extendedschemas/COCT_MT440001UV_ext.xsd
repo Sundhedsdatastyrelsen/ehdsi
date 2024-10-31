@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ex="urn:hl7-org/v3-example"
-   xmlns="urn:epsos-org:ep:medication" xmlns:hl7v3="urn:hl7-org:v3" 
-   targetNamespace="urn:epsos-org:ep:medication"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:epsos-org:ep:medication" xmlns:hl7v3="urn:hl7-org:v3"
+           targetNamespace="urn:epsos-org:ep:medication"
            elementFormDefault="qualified"><!--
 *****************************************************************************************************************
 * XML schema for message type COCT_MT440001UV.

@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://maven.apache.org/POM/4.0.0
+          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dk.sds</groupId>
+    <artifactId>openncp-server</artifactId>
+    <version>8.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>OpenNCP Denmark Application</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>eu.europa.ec.sante</groupId>
+            <artifactId>openncp-application-server</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sds</groupId>
+            <artifactId>openncp-national-connector</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- To avoid a problem similar to this: https://stackoverflow.com/questions/55406438
+             we pin the spring-ws-core to a newer version than ehdsi/ehealth -->
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-core</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://code.europa.eu/api/v4/projects/347/packages/maven</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <!-- Maven WAR Plugin to overlay the openncp-application-server WAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-server</artifactId>
+                            <type>war</type>
+                        </overlay>
+                    </overlays>
+
+                    <!-- Copy your own web resources if any -->
+<!--                    <webResources>-->
+<!--                        <resource>-->
+<!--                            <directory>src/main/webapp</directory>-->
+<!--                            <includes>-->
+<!--                                <include>**/*</include>-->
+<!--                            </includes>-->
+<!--                        </resource>-->
+<!--                    </webResources>-->
+
+                    <!-- Other configurations from your original WAR plugin -->
+                    <!-- You can include or exclude specific resources as needed -->
+                    <!-- Copy over any packaging excludes or includes -->
+<!--                    <packagingExcludes>-->
+<!--                        &lt;!&ndash; Exclude conflicting libraries if necessary &ndash;&gt;-->
+<!--                    </packagingExcludes>-->
+                </configuration>
+            </plugin>
+
+            <!-- Maven Dependency Plugin to unpack the national connector JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>unpack-national-connector</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>dk.sds</groupId>
+                                    <artifactId>openncp-national-connector</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>**/*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

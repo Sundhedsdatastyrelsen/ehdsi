@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xs:schema targetNamespace="urn:hl7-org:v3" xmlns:mif="urn:hl7-org:v3/mif" xmlns="urn:hl7-org:v3" xmlns:epsos="urn:epsos-org:ep:medication"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema targetNamespace="urn:hl7-org:v3" xmlns="urn:hl7-org:v3" xmlns:epsos="urn:epsos-org:ep:medication"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 	<!--
 *****************************************************************************************************************
 * XML schema for message type POCD_MT000040.

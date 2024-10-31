@@ -102,22 +102,20 @@
 	3. This notice may not be removed or altered from any source distribution.
 -->
 <xslt:stylesheet version="1.0"
-	xmlns:xslt="http://www.w3.org/1999/XSL/Transform"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:iso="http://purl.oclc.org/dsdl/schematron"
-	xmlns:nvdl="http://purl.oclc.org/dsdl/nvdl"
-	xmlns:xhtml="http://www.w3.org/1999/xhtml"
-	xmlns:schold="http://www.ascc.net/xml/schematron"
-	xmlns:crdl="http://purl.oclc.org/dsdl/crepdl/ns/structure/1.0"
-	xmlns:xi="http://www.w3.org/2001/XInclude"
-	xmlns:dtll="http://www.jenitennison.com/datatypes"
-	xmlns:dsdl="http://www.schematron.com/namespace/dsdl"
-	xmlns:relax="http://relaxng.org/ns/structure/1.0"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
-	
-	
-     xmlns:sch-check="http://www.schematron.com/namespace/sch-check" 
-	>
+                 xmlns:xslt="http://www.w3.org/1999/XSL/Transform"
+                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                 xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                 xmlns:schold="http://www.ascc.net/xml/schematron"
+                 xmlns:crdl="http://purl.oclc.org/dsdl/crepdl/ns/structure/1.0"
+                 xmlns:xi="http://www.w3.org/2001/XInclude"
+                 xmlns:dtll="http://www.jenitennison.com/datatypes"
+                 xmlns:dsdl="http://www.schematron.com/namespace/dsdl"
+                 xmlns:relax="http://relaxng.org/ns/structure/1.0"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+
+
+>
 	<!-- Note: The URL for the dsdl namespace is not official -->
 
 

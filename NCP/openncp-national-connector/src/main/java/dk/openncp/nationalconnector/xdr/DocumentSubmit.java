@@ -1,5 +1,6 @@
 package dk.openncp.nationalconnector.xdr;
 
+
 import dk.nsp.epps.ApiException;
 import dk.nsp.epps.api.model.ClassCode;
 import dk.nsp.epps.api.model.DisardDispensationRequest;
@@ -8,20 +9,19 @@ import dk.nsp.epps.api.model.SubmitDispensationRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.Utils;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
-import eu.epsos.protocolterminators.ws.server.common.NationalConnectorInterface;
-import eu.epsos.protocolterminators.ws.server.exception.NIException;
-import eu.epsos.protocolterminators.ws.server.xdr.DocumentProcessingException;
-import eu.epsos.protocolterminators.ws.server.xdr.DocumentSubmitInterface;
-import eu.europa.ec.sante.ehdsi.constant.error.OpenNCPErrorCode;
-import eu.europa.ec.sante.ehdsi.openncp.assertionvalidator.exceptions.InsufficientRightsException;
-import eu.europa.ec.sante.ehdsi.openncp.model.DiscardDispenseDetails;
-import fi.kela.se.epsos.data.model.ConsentDocumentMetaData;
-import fi.kela.se.epsos.data.model.DocumentAssociation;
-import fi.kela.se.epsos.data.model.EPSOSDocument;
+import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
+import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
+import eu.europa.ec.sante.openncp.core.server.api.ihe.xdr.DocumentSubmitInterface;
+import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
+import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.DiscardDispenseDetails;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPSOSDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 
+@Service
 public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmitInterface {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
 
@@ -70,21 +70,6 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
         } catch (ApiException e) {
             throw new NIException(OpenNCPErrorCode.ERROR_ED_DISCARD_FAILED, "Dispensation discard failed.");
         }
-    }
-
-    @Override
-    public void submitPatientConsent(EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void cancelConsent(DocumentAssociation<ConsentDocumentMetaData> documentAssociation) throws NIException, InsufficientRightsException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void submitHCER(EPSOSDocument epsosDocument) throws DocumentProcessingException {
-        throw new UnsupportedOperationException();
     }
 
     @Override

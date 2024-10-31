@@ -1,3 +1,6 @@
+# Use by settings IMAGE_TAG in the environment or when running docker compose
+# e.g. IMAGE_TAG=latest docker compose up
+
 #
 # Network definitions
 #
@@ -7,6 +10,7 @@ networks:
 
 volumes:
   db-data:
+  tsam-exporter-data:
 
 secrets:
   db_username:
@@ -27,198 +31,301 @@ secrets:
     file: tls_truststore_password.txt
 
 services:
-  #
-  # Database
-  #
-  mariadb:
-    image: mariadb:11.1
-    restart: on-failure
-    container_name: openncp-database
+  mysql:
+    container_name: openncp_db
+    hostname: ${DB_HOST}
+    image: mysql:9
     ports:
-      - "33306:3306"
-    environment:
-      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
-      MARIADB_USER_FILE: /run/secrets/db_username
-      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      - ${DB_EXPOSED_PORT}:${DB_INTERNAL_PORT}
     volumes:
-      - ./mariadb/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-      - ./mariadb/init-scripts:/docker-entrypoint-initdb.d-original:ro
       - db-data:/var/lib/mysql
-      - ./logs/mysql:/var/log/mysql
+      - ./mysql/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+      - ./mysql/initdb:/docker-entrypoint-initdb.d-original:ro
     entrypoint: /usr/local/bin/entrypoint.sh
+    environment:
+      MYSQL_ROOT_USER: ${DB_ROOT_USER}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_USER_FILE: /run/secrets/db_username
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_ROOT_USER}", "--password=$$(cat $$MYSQL_ROOT_PASSWORD_FILE)" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ncp
     secrets:
       - db_username
       - db_password
       - db_root_password
+
+  # Usage: docker compose run tsam-exporter
+  # Run this to generate language files for the CDA display tool.
+  tsam-exporter:
+    profiles: ["initialization"] # prevents service from starting on `docker compose up`
+    container_name: "tsam-exporter"
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:${IMAGE_TAG}
+    env_file: .env
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_INTERNAL_PORT: ${DB_INTERNAL_PORT}
+      DB_USER_FILE: /run/secrets/db_username
+      DRIVER_CLASS_NAME: ${DRIVER_CLASS_NAME}
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_ACTIVE_PROFILE: ${DB_ACTIVE_PROFILE}
+    build:
+      target: tsam-exporter
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+      - tsam-exporter-data:/opt/openncp-configuration/EpsosRepository
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - ncp
-    healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    secrets:
+      - db_username
+      - db_password
 
-  #
-  # Configuration synchronizer.
-  # Watches OPENNCP_CONFIGURATION_FILE for changes and sends content to
-  # configuration database table.
-  #
+  tomcat_node_a:
+    build:
+      target: node-a
+    container_name: "openncp-server"
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:${IMAGE_TAG}
+    env_file:
+      - ./ncp_a/ncpa.database.env
+      - ./ncp_a/ncpa.env
+    ports:
+      - "${NCP_A_SERVER_CONNECTOR_PORT}:${NCP_A_SERVER_CONNECTOR_PORT}"
+      - "${NCP_A_SERVER_CONNECTOR_SECURE_PORT}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
+      # - 5005:5005
+    depends_on:
+      mysql:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+    environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+      CATALINA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      JAVA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      # LOGGING_LEVEL_ROOT: DEBUG
+    networks:
+      - ncp
+    secrets:
+      - tls_keystore_password
+      - tls_truststore_password
+      - db_username
+      - db_password
+
+  tomcat_node_b:
+    build:
+      target: node-b
+    container_name: "openncp-client"
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:${IMAGE_TAG}
+    env_file:
+      - ./ncp_b/ncpb.database.env
+      - ./ncp_b/ncpb.env
+    ports:
+      - "${NCP_B_SERVER_CONNECTOR_PORT}:${NCP_B_SERVER_CONNECTOR_PORT}"
+      - "${NCP_B_SERVER_CONNECTOR_SECURE_PORT}:${NCP_B_SERVER_CONNECTOR_SECURE_PORT}"
+      # - 5006:5006
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    dns:
+      - 8.8.8.8
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
+      CATALINA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      JAVA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      # LOGGING_LEVEL_ROOT: DEBUG
+    networks:
+      - ncp
+    secrets:
+      - tls_keystore_password
+      - tls_truststore_password
+      - db_username
+      - db_password
+
+  openncp-openatna:
+    container_name: openncp-openatna
+    build:
+      target: openatna
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:${IMAGE_TAG}
+    env_file:
+      - ./openncp-openatna/openatna.database.env
+      - ./openncp-openatna/openatna.env
+    ports:
+      - "${NCP_OPENATNA_CONNECTOR_PORT}:${NCP_OPENATNA_CONNECTOR_PORT}"
+      - "${NCP_OPENATNA_CONNECTOR_SECURE_PORT}:${NCP_OPENATNA_CONNECTOR_SECURE_PORT}"
+      - "2861:2861/udp"
+      - "2862:2862"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      CATALINA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      JAVA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      # LOGGING_LEVEL_ROOT: DEBUG
+    networks:
+      - ncp
+    secrets:
+      - tls_keystore_password
+      - tls_truststore_password
+      - db_username
+      - db_password
+
+  openncp-trc-sts:
+    container_name: openncp-trc-sts
+    build:
+      target: trc-sts
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:${IMAGE_TAG}
+    env_file:
+      - ./openncp-trc-sts/.database.env
+      - ./openncp-trc-sts/.env
+    ports:
+      - "${NCP_TRC_STS_CONNECTOR_PORT}:${NCP_TRC_STS_CONNECTOR_PORT}"
+      - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      CATALINA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      JAVA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8
+        -Dorg.apache.cxf.stax.allowInsecureParser=true"
+      # LOGGING_LEVEL_ROOT: DEBUG
+    networks:
+      - ncp
+    secrets:
+      - tls_keystore_password
+      - tls_truststore_password
+      - db_username
+      - db_password
+
+  openncp-translations-and-mappings:
+    container_name: openncp-translations-and-mappings
+    build:
+      target: translations-and-mappings
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:${IMAGE_TAG}
+    env_file:
+      - ./openncp-translations-and-mappings/translations-and-mappings.database.env
+      - ./openncp-translations-and-mappings/translations-and-mappings.env
+    ports:
+      - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}"
+      - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      CATALINA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      JAVA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      # LOGGING_LEVEL_ROOT: DEBUG
+    networks:
+      - ncp
+    secrets:
+      - tls_keystore_password
+      - tls_truststore_password
+      - db_username
+      - db_password
+
+  openncp-web-manager:
+    container_name: openncp-web-manager
+    build:
+      target: web-manager
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:${IMAGE_TAG}
+    env_file:
+      - ./openncp-web-manager/.database.env
+      - ./openncp-web-manager/.env
+    ports:
+      - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}"
+      - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
+      - "8000:8000"
+    volumes:
+      - ./keystore:/opt/openncp-configuration/keystore
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    dns:
+      - 8.8.8.8
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
+      CATALINA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      JAVA_OPTS: "
+        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
+        -Dfile.encoding=UTF-8"
+      # LOGGING_LEVEL_ROOT: DEBUG
+    networks:
+      - ncp
+    secrets:
+      - tls_keystore_password
+      - tls_truststore_password
+      - db_username
+      - db_password
+
   configuration-synchronizer:
     build:
       context: configuration-synchronizer
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     container_name: configuration-synchronizer
-    image: eppsregistry.azurecr.io/configuration-synchronizer:${OPENNCP_VERSION}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
+    env_file: .env
     volumes:
-      - ./openncp-configuration:/opt/openncp-configuration
+      - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
+      - ./keystore:/opt/openncp-configuration/keystore
     environment:
       OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_HOST: ${DB_HOST}
+      MARIADB_PORT: ${DB_INTERNAL_PORT}
       MARIADB_PASSWORD_FILE: /run/secrets/db_password
       MARIADB_USERNAME_FILE: /run/secrets/db_username
-      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
-      # This also needs to be configured in openncp-configuration/ATNA_resources/ArrConnections.xml
-      TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
-      SEAL_KEYSTORE_ALIAS: ${SEAL_KEYSTORE_ALIAS}
-      SEAL_KEYSTORE_FILE: /opt/openncp-configuration/cert/DK_SEAL_TEST.jks
       SEAL_KEYSTORE_PASSWORD_FILE: /run/secrets/seal_keystore_password
-      TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
     depends_on:
-      mariadb:
+      mysql:
         condition: service_healthy
     networks:
       - ncp
     secrets:
-      - db_password
       - db_username
+      - db_password
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
-
-  #
-  # Download terminology database from CTS. Batch job.
-  # Usage: `docker compose run tsam-synchronizer`.
-  #
-  tsam-synchronizer:
-    profiles: ["initialization"] # prevents service from starting on `docker compose up`
-    build:
-      context: .
-      dockerfile: ./tsam-synchronizer/Dockerfile
-      args:
-        openncp_version: ${OPENNCP_VERSION}
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
-    image: eppsregistry.azurecr.io/tsam-synchronizer:${OPENNCP_VERSION}
-    volumes:
-      - ./openncp-configuration:/opt/openncp-configuration/
-    environment:
-      CTS_URL: ${CTS_URL}
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
-      MARIADB_PASSWORD_FILE: /run/secrets/db_password
-      MARIADB_USERNAME_FILE: /run/secrets/db_username
-      CTS_PASSWORD_FILE: /run/secrets/cts_password
-      CTS_USERNAME_FILE: /run/secrets/cts_username
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    networks:
-      - ncp
-    secrets:
-      - db_password
-      - db_username
-      - cts_password
-      - cts_username
-
-  #
-  # NCP server / inbound protocol terminator
-  #
-  openncp-server:
-    build:
-      context: ./
-      dockerfile: ./openncp-server/Dockerfile
-      args:
-        openncp_version: ${OPENNCP_VERSION}
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
-    container_name: openncp-server
-    image: eppsregistry.azurecr.io/openncp-server:${OPENNCP_VERSION}
-    ports:
-      - "6443:6443"
-      - "8080:8080"
-      # - "5005:5005"
-    depends_on:
-      - mariadb
-      - configuration-synchronizer
-    environment:
-      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
-      NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
-      MARIADB_USERNAME_FILE: /run/secrets/db_username
-      MARIADB_PASSWORD_FILE: /run/secrets/db_password
-      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
-      TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
-      TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
-      TLS_TRUSTSTORE_FILE: ${TLS_TRUSTSTORE_FILE}
-      TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
-    volumes:
-      - ./openncp-configuration:/opt/openncp-configuration
-      - ./logs/openncp-server:/usr/local/tomcat/logs
-    networks:
-      - ncp
-    secrets:
-      - db_password
-      - db_username
-      - tls_keystore_password
-      - seal_keystore_password
-      - tls_truststore_password
-
-  #
-  # Gateway, TRC-STS, OpenATNA
-  #
-  openncp-gateway:
-    build:
-      context: ./
-      dockerfile: ./openncp-gateway/Dockerfile
-      args:
-        openncp_version: ${OPENNCP_VERSION}
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
-    container_name: openncp-gateway
-    image: eppsregistry.azurecr.io/openncp-gateway:${OPENNCP_VERSION}
-    ports:
-      - "8443:8443"
-      - "8082:8082"
-      - "2861:2861"
-      # - "5006:5006"
-    depends_on:
-      - mariadb
-      - configuration-synchronizer
-    environment:
-      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PORT: ${MARIADB_PORT}
-      MARIADB_USERNAME_FILE: /run/secrets/db_username
-      MARIADB_PASSWORD_FILE: /run/secrets/db_password
-      TLS_KEYSTORE_ALIAS: ${TLS_KEYSTORE_ALIAS}
-      TLS_KEYSTORE_FILE: ${TLS_KEYSTORE_FILE}
-      TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
-    volumes:
-      - ./openncp-configuration:/opt/openncp-configuration
-      - ./logs/openncp-gateway:/usr/local/tomcat/logs
-      - ./logs/validation/gateway:/opt/openncp-configuration/validation
-    networks:
-      - ncp
-    secrets:
-      - db_password
-      - db_username
-      - tls_keystore_password

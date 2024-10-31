@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<searchFields xmlns="http://ec.europa.eu/sante/ehncp/ism"
-              xmlns:patientSearch="http://ec.europa.eu/sante/ehncp/ism"
-              xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
-   <id domain="2.16.17.710.815.1000.990.1"
-       label="ID Card Number"
-       max="11"
-       min="11"/>
-      </searchFields>

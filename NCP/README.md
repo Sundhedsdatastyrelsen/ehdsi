@@ -2,6 +2,8 @@
 
 Deployment of OpenNCP for Denmark.
 
+The Danish OpenNCP setup includes a thin [national connector](./openncp-national-connector) which forwards requests to a separate country-a-service via HTTP REST.
+
 # Getting Started
 
 Dependencies:
