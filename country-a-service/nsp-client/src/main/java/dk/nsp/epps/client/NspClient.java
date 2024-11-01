@@ -26,7 +26,7 @@ public class NspClient {
      * Send a SOAP request to an NSP service.
      */
     public static Reply request(URI uri, Element soapBody, String soapAction, Identity caller, Element... extraHeaders) throws Exception {
-        try (var client = NspSoapClient.builder().withLogger(log::info).build();
+        try (var client = NspSoapClient.builder().withLogger(log::debug).build();
              var response = client.request(uri, soapAction)
                  .as(caller)
                  .execute(soapBody, extraHeaders)) {

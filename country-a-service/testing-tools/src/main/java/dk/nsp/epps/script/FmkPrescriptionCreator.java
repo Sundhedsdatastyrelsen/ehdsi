@@ -1,4 +1,4 @@
-package dk.nsp.epps.integration;
+package dk.nsp.epps.script;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public class CreateNewPrescriptionInFmk {
+public class FmkPrescriptionCreator {
     //The source for creating prescriptions is always Medicinpriser
     private static final String prescriptionStaticSource = "Medicinpriser";
     // This date was used during development because it worked.  It is unknown if it will keep working.
@@ -29,7 +29,6 @@ public class CreateNewPrescriptionInFmk {
 
     private static final dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory medicineCardFactory =
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
-
 
     public static CreatePrescriptionResponseType createNewPrecriptionForCpr(String cpr) throws Exception {
         var personIdentifier = PersonIdentifierType.builder()
@@ -173,5 +172,14 @@ public class CreateNewPrescriptionInFmk {
             .end()
             .withSubstitutionAllowed(true)
             .build();
+    }
+
+    public static void main(String[] args) throws Exception {
+        var input = Fmk.cprKarl;
+        if (args.length > 0) {
+            input = args[0];
+        }
+
+        createNewPrecriptionForCpr(input);
     }
 }
