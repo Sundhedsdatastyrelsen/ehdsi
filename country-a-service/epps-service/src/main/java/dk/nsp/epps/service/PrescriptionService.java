@@ -123,10 +123,10 @@ public class PrescriptionService {
             .withIncludeEffectuations(true)
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller,true);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptionWithConsent(request, caller);
 
         UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId, cdaToDiscard, fmkResponse);
-        UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, caller); //TODO We should probably not use static identities here
+        UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, caller);
 
         //Validate undone dispensation by getting the EffectuationId that has been undone
         var effectuationWasCancelled = undoResponse.getPrescription()
