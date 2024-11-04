@@ -68,12 +68,8 @@ services:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:${IMAGE_TAG}
     env_file: .env
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_INTERNAL_PORT: ${DB_INTERNAL_PORT}
       DB_USER_FILE: /run/secrets/db_username
-      DRIVER_CLASS_NAME: ${DRIVER_CLASS_NAME}
       DB_PASSWORD_FILE: /run/secrets/db_password
-      DB_ACTIVE_PROFILE: ${DB_ACTIVE_PROFILE}
     build:
       target: tsam-exporter
     volumes:
@@ -87,6 +83,22 @@ services:
     secrets:
       - db_username
       - db_password
+
+  # Usage: docker compose run tsam-synchronizer
+  # Run this to synchronize the local terminology database with
+  # the Central Terminology Service
+  tsam-synchronizer:
+    profiles: ["initialization"] # prevents service from starting on `docker compose up`
+    build:
+      target: "tsam-synchronizer"
+    env_file: .env
+    networks:
+      - ncp
+    secrets:
+      - db_username
+      - db_password
+      - cts_username
+      - cts_password
 
   tomcat_node_a:
     build:

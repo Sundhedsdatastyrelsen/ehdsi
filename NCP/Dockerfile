@@ -141,19 +141,19 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # TSAM Sync
-FROM eclipse-temurin:11-jre-jammy as tsam-sync
+FROM eclipse-temurin:11-jre-jammy as tsam-synchronizer
 
 RUN apt-get update \
     && apt-get install -y \
     default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./openncp-configuration/ /opt/openncp-configuration
-
 WORKDIR /usr/local/openncp-tsam-sync
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsam-sync.jar /usr/local/openncp-tsam-sync
-COPY /openncp-tsam-sync/* /usr/local/openncp-tsam-sync
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsam-sync.jar .
+COPY ./tsam-synchronizer/application.yml .
+COPY ./tsam-synchronizer/entrypoint.sh /usr/local/bin/
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
 
 # Web Manager Frontend
