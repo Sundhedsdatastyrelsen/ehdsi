@@ -118,11 +118,11 @@ public class PrescriptionService {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeOpenPrescriptions().end()
+            .withIncludeAllPrescriptions().end()
             .withIncludeEffectuations(true)
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, TestIdentities.apotekerJeppeMoeller,true);
 
         UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId, cdaToDiscard, fmkResponse);
         UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, TestIdentities.apotekerJeppeMoeller); //TODO We should probably not use static identities here
