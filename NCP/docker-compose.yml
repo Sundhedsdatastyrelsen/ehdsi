@@ -109,8 +109,8 @@ services:
       - ./ncp_a/ncpa.database.env
       - ./ncp_a/ncpa.env
     ports:
-      - "${NCP_A_SERVER_CONNECTOR_PORT}:${NCP_A_SERVER_CONNECTOR_PORT}"
-      - "${NCP_A_SERVER_CONNECTOR_SECURE_PORT}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
+      - "${NCP_A_SERVER_CONNECTOR_PORT_EXTERNAL}:${NCP_A_SERVER_CONNECTOR_PORT}"
+      - "${NCP_A_SERVER_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
       # - 5005:5005
     depends_on:
       mysql:
@@ -145,8 +145,8 @@ services:
       - ./ncp_b/ncpb.database.env
       - ./ncp_b/ncpb.env
     ports:
-      - "${NCP_B_SERVER_CONNECTOR_PORT}:${NCP_B_SERVER_CONNECTOR_PORT}"
-      - "${NCP_B_SERVER_CONNECTOR_SECURE_PORT}:${NCP_B_SERVER_CONNECTOR_SECURE_PORT}"
+      - "${NCP_B_SERVER_CONNECTOR_PORT_EXTERNAL}:${NCP_B_SERVER_CONNECTOR_PORT}"
+      - "${NCP_B_SERVER_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_B_SERVER_CONNECTOR_SECURE_PORT}"
       # - 5006:5006
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
@@ -183,8 +183,8 @@ services:
       - ./openncp-openatna/openatna.database.env
       - ./openncp-openatna/openatna.env
     ports:
-      - "${NCP_OPENATNA_CONNECTOR_PORT}:${NCP_OPENATNA_CONNECTOR_PORT}"
-      - "${NCP_OPENATNA_CONNECTOR_SECURE_PORT}:${NCP_OPENATNA_CONNECTOR_SECURE_PORT}"
+      - "${NCP_OPENATNA_CONNECTOR_PORT_EXTERNAL}:${NCP_OPENATNA_CONNECTOR_PORT}"
+      - "${NCP_OPENATNA_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_OPENATNA_CONNECTOR_SECURE_PORT}"
       - "2861:2861/udp"
       - "2862:2862"
     volumes:
@@ -217,8 +217,8 @@ services:
       - ./openncp-trc-sts/.database.env
       - ./openncp-trc-sts/.env
     ports:
-      - "${NCP_TRC_STS_CONNECTOR_PORT}:${NCP_TRC_STS_CONNECTOR_PORT}"
-      - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
+      - "${NCP_TRC_STS_CONNECTOR_PORT_EXTERNAL}:${NCP_TRC_STS_CONNECTOR_PORT}"
+      - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
     depends_on:
@@ -250,8 +250,8 @@ services:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
       - ./openncp-translations-and-mappings/translations-and-mappings.env
     ports:
-      - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}"
-      - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
+      - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}"
+      - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
     depends_on:
@@ -282,8 +282,8 @@ services:
       - ./openncp-web-manager/.database.env
       - ./openncp-web-manager/.env
     ports:
-      - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}"
-      - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
+      - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT_EXTERNAL}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_PORT}"
+      - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
       - "8000:8000"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
