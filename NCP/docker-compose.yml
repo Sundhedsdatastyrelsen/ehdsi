@@ -88,6 +88,7 @@ services:
   # Run this to synchronize the local terminology database with
   # the Central Terminology Service
   tsam-synchronizer:
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:${IMAGE_TAG}
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     build:
       target: "tsam-synchronizer"
@@ -152,8 +153,6 @@ services:
       - ./keystore:/opt/openncp-configuration/keystore
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    dns:
-      - 8.8.8.8
     depends_on:
       mysql:
         condition: service_healthy
@@ -289,8 +288,6 @@ services:
       - ./keystore:/opt/openncp-configuration/keystore
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    dns:
-      - 8.8.8.8
     depends_on:
       mysql:
         condition: service_healthy
