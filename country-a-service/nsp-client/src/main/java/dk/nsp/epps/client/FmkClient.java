@@ -1,5 +1,6 @@
 package dk.nsp.epps.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ConsentHeaderType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreateDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
@@ -84,6 +85,15 @@ public class FmkClient {
         return new ObjectFactory().createWhitelistingHeader(header);
     }
 
+    private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {
+        final var consentHeader = ConsentHeaderType.builder().addConsent().withSource("User").withConsentType("MedicineReviewConsent").withContent("MedicineCard").end().build();
+
+        var objectFactory = new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
+
+        return objectFactory.createConsentHeader(consentHeader);
+    }
+
+
     /**
      * "Påbegynd ekspedition".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:pabegynd_ekspedition">FMK documentation.</a>
@@ -94,7 +104,8 @@ public class FmkClient {
             facE5.createStartEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#StartEffectuation",
             StartEffectuationResponseType.class,
-            caller
+            caller,
+            false
         );
     }
 
@@ -108,7 +119,8 @@ public class FmkClient {
             facE2.createCreatePharmacyEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePharmacyEffectuation",
             CreatePharmacyEffectuationResponseType.class,
-            caller
+            caller,
+            false
         );
 
     }
@@ -123,7 +135,8 @@ public class FmkClient {
             facE5.createUndoEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5#UndoEffectuation",
             UndoEffectuationResponseType.class,
-            caller
+            caller,
+            false
         );
 
     }
@@ -137,7 +150,22 @@ public class FmkClient {
             fac.createGetPrescriptionRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
             GetPrescriptionResponseType.class,
-            caller
+            caller,
+            false
+        );
+    }
+
+    /**
+     * "Hent recept".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_recept">FMK documentation.</a>
+     */
+    public GetPrescriptionResponseType getPrescriptionWithConsent(GetPrescriptionRequestType request, Identity caller) throws JAXBException {
+        return makeFmkRequest(
+            fac.createGetPrescriptionRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
+            GetPrescriptionResponseType.class,
+            caller,
+            true
         );
     }
 
@@ -147,7 +175,8 @@ public class FmkClient {
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
             GetMedicineCardResponseType.class,
             caller,
-            requestedRole
+            requestedRole,
+            false
         );
     }
 
@@ -157,7 +186,8 @@ public class FmkClient {
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetDrugMedication",
             GetDrugMedicationResponseType.class,
             caller,
-            requestedRole
+            requestedRole,
+            false
         );
     }
 
@@ -171,7 +201,8 @@ public class FmkClient {
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreateDrugMedication",
             CreateDrugMedicationResponseType.class,
             caller,
-            requestedRole
+            requestedRole,
+            false
         );
     }
 
@@ -185,7 +216,8 @@ public class FmkClient {
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePrescription",
             CreatePrescriptionResponseType.class,
             caller,
-            requestedRole
+            requestedRole,
+            false
         );
     }
 
@@ -193,9 +225,10 @@ public class FmkClient {
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
-        Identity caller
+        Identity caller,
+        Boolean requiresMedicineCardConsent
     ) throws JAXBException {
-        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.APOTEKER);
+        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.APOTEKER, requiresMedicineCardConsent);
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
@@ -203,17 +236,24 @@ public class FmkClient {
         String soapAction,
         Class<ResponseType> clazz,
         Identity caller,
-        PredefinedRequestedRole requestedRole
+        PredefinedRequestedRole requestedRole,
+        Boolean requiresMedicineCardConsent
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
+        Element[] extraHeaders;
+        if(requiresMedicineCardConsent){
+            extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole)), toElement(getMedicineReviewConsent())};
+        } else {
+            extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole))};
+        }
         try {
             reply = NspClient.request(
                 serviceUri,
                 toElement(request),
                 soapAction,
                 caller,
-                toElement(getWhitelistingHeader(requestedRole))
+                extraHeaders
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

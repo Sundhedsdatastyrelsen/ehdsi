@@ -239,6 +239,10 @@ public class DispensationMapper {
             // It has implications in FMK, who validates these
             return "Apoteker";
         }
+        if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)){
+            //This is the translation of "Medical Doctor"
+            return "Læge";
+        }
 
         throw new IllegalArgumentException("Unexpected function code: " + functionCode);
     }

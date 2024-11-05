@@ -1,6 +1,7 @@
 package dk.nsp.epps.controller;
 
 import dk.nsp.epps.Utils;
+import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.ncp.api.DisardDispensationRequestDto;
 import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
@@ -34,7 +35,7 @@ public class PrescriptionController {
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) throws JAXBException, IOException, InterruptedException {
         var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
-        return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter);
+        return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
     }
 
     @PostMapping(path = "/api/fetch-document/")
@@ -42,14 +43,14 @@ public class PrescriptionController {
         @Valid @RequestBody PostFetchDocumentRequestDto params
     ) throws JAXBException {
         var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
-        return prescriptionService.getPrescriptions(params.getPatientId(), filter);
+        return prescriptionService.getPrescriptions(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
     }
 
     @PostMapping(path = "/api/edispensation/submit")
     public void submitDispensation(
         @Valid @RequestBody SubmitDispensationRequestDto request
     ) throws SAXException, MapperException {
-        prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()));
+        prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()), TestIdentities.apotekerChrisChristoffersen);
     }
 
     @PostMapping(path = "/api/edispensation/discard")
@@ -57,6 +58,6 @@ public class PrescriptionController {
         @Valid @RequestBody DisardDispensationRequestDto request
     ) throws SAXException, JAXBException, MapperException, XPathExpressionException {
         prescriptionService.undoDispensation(request.getDisardDispenseDetails()
-            .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()));
+            .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()), TestIdentities.apotekerChrisChristoffersen);
     }
 }
