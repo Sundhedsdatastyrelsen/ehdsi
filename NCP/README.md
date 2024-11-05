@@ -15,6 +15,11 @@ and place it in `cts_password.txt`.
 
 Run `./run.sh up` to start the system.
 
+## URL
+This is a list of URLs that are used in the NCP setup:
+- http://192.168.104.80:8097/openncp-gateway-backend/
+- http://192.168.104.80:8097/openncp-web-manager/#/login
+
 # Tests
 
 The `test-tool` directory contains scripts for querying the SOAP endpoints, and a request builder tool for building valid SOAP request bodies with signed SAML2.0 assertions.
