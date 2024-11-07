@@ -52,8 +52,16 @@ initialize_secrets() {
   done
 }
 
+# These directories will be mounted on the containers, and
+ensure_evidence_dirs_writable() {
+  local evidence_dir="$SCRIPT_DIR/evidence"
+  chmod go+w "$evidence_dir/obligations"
+  chmod go+w "$evidence_dir/validation"
+}
+
 init() {
   initialize_secrets
+  ensure_evidence_dirs_writable
 }
 
 # Parse command-line options
