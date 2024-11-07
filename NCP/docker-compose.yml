@@ -120,6 +120,8 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       CATALINA_OPTS: "
@@ -151,6 +153,8 @@ services:
       # - 5006:5006
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -188,6 +192,8 @@ services:
       - "2862:2862"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     depends_on:
       mysql:
         condition: service_healthy
@@ -220,6 +226,8 @@ services:
       - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     depends_on:
       mysql:
         condition: service_healthy
@@ -253,6 +261,8 @@ services:
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     depends_on:
       mysql:
         condition: service_healthy
@@ -286,6 +296,8 @@ services:
       - "8000:8000"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
