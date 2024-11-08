@@ -76,7 +76,7 @@ public class FmkIT {
     private static UndoEffectuationResponseType undoEffectuation(Document eDispensation, String cpr)
         throws JAXBException, MapperException {
         var patientId = cpr + "^^^&2.16.17.710.802.1000.990.1.500&ISO";
-        var service = new PrescriptionService(Fmk.apiClient(), new EPrescriptionMapper(""), new DispensationMapper());
+        var service = new PrescriptionService(Fmk.apiClient(), new EPrescriptionMapper(""));
         return service.undoDispensation(patientId, eDispensation, TestIdentities.apotekerChrisChristoffersen);
     }
 

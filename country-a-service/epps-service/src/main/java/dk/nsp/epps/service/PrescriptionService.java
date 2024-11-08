@@ -35,7 +35,6 @@ import java.util.stream.IntStream;
 public class PrescriptionService {
     private final FmkClient fmkClient;
     private final EPrescriptionMapper ePrescriptionMapper;
-    private final DispensationMapper dispensationMapper;
 
     public record PrescriptionFilter(
         String documentId,
@@ -94,6 +93,7 @@ public class PrescriptionService {
 
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) throws MapperException {
         StartEffectuationResponseType response;
+        var dispensationMapper = new DispensationMapper();
         try {
             response = fmkClient.startEffectuation(
                 dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
@@ -125,6 +125,7 @@ public class PrescriptionService {
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescriptionWithConsent(request, caller);
 
+        var dispensationMapper = new DispensationMapper();
         UndoEffectuationRequestType undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId, cdaToDiscard, fmkResponse);
         UndoEffectuationResponseType undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, caller);
 
