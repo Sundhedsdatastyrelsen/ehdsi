@@ -7,12 +7,12 @@
     <parent>
         <groupId>eu.europa.ec.sante</groupId>
         <artifactId>openncp-application</artifactId>
-        <version>8.0.1-SNAPSHOT</version>
+        <version>8.0.1</version>
     </parent>
 
     <groupId>dk.sds</groupId>
     <artifactId>openncp-national-connector</artifactId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.1</version>
     <packaging>jar</packaging>
 
     <name>OpenNCP Denmark National Connector</name>

@@ -88,6 +88,7 @@ services:
   # Run this to synchronize the local terminology database with
   # the Central Terminology Service
   tsam-synchronizer:
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:${IMAGE_TAG}
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     build:
       target: "tsam-synchronizer"
@@ -119,6 +120,8 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       CATALINA_OPTS: "
@@ -150,10 +153,10 @@ services:
       # - 5006:5006
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    dns:
-      - 8.8.8.8
     depends_on:
       mysql:
         condition: service_healthy
@@ -189,6 +192,8 @@ services:
       - "2862:2862"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     depends_on:
       mysql:
         condition: service_healthy
@@ -221,6 +226,8 @@ services:
       - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     depends_on:
       mysql:
         condition: service_healthy
@@ -254,6 +261,8 @@ services:
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     depends_on:
       mysql:
         condition: service_healthy
@@ -287,10 +296,10 @@ services:
       - "8000:8000"
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    dns:
-      - 8.8.8.8
     depends_on:
       mysql:
         condition: service_healthy
