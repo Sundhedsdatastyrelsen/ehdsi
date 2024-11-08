@@ -1,6 +1,6 @@
 FROM maven:3.9-eclipse-temurin-11 as builder
 
-ARG OPENNCP_BRANCH="releases/W8"
+ARG OPENNCP_BRANCH="8.0.1"
 
 WORKDIR /usr/src/app
 
