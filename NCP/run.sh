@@ -52,7 +52,8 @@ initialize_secrets() {
   done
 }
 
-# These directories will be mounted on the containers, and
+# These directories will be mounted on the containers, and needs to be writable
+# by the container user.
 ensure_evidence_dirs_writable() {
   local evidence_dir="$SCRIPT_DIR/evidence"
   chmod go+w "$evidence_dir/obligations"
