@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ism:searchFields xmlns="http://docs.oasis-open.org/bdxr/ns/SMP/2016/05"
+   xmlns:ism="http://ec.europa.eu/sante/ehncp/ism"
+   xmlns:ns2="http://www.w3.org/2000/09/xmldsig#"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://ec.europa.eu/sante/ehncp/ism ehdsi-ism-2020.xsd">
+   <ism:country code="DK" label="label.ism.addressCountry">
+      <ism:patientSearch friendlyName="Patient Identity Trait" scope="ALL">
+         <ism:identifier type="NORMAL">
+            <ism:id contextualDescription="nationalIdentityCardNumber"
+               domain="2.16.17.710.802.1000.990.1.500"
+               format="[0-9]{10}"
+               label="label.ism.nationalIdentityCardNumber"
+               mandatory="true" />
+         </ism:identifier>
+      </ism:patientSearch>
+   </ism:country>
+</ism:searchFields>
