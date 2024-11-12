@@ -69,3 +69,37 @@ Restart the service.
 In IntelliJ, open the project that you are running in the container (e.g. the ehealth project: https://code.europa.eu/ehdsi/ehealth) and open Run > Edit Configurations...
 Add a new "Remote JVM Debug configuration" and ensure that host and port are correct.
 You should now be able to start the debugger and add breakpoints.
+
+
+# SMP Data
+(To check that the services exist on the current testa server, use the local url http://{{IP}}:8090 and add ?wsdl to see that it is running correctly)
+## Request of Data Query
+- Endpoint: https://ncp-ppt.dk.ehealth.testa.eu/openncp-ws-server/services/XCA_Service
+- Description: XCA Service - Request of Data Query
+- Technical Contact Url: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+- Technical Information URL: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+
+## Request of Data Retrieve
+- Endpoint: https://ncp-ppt.dk.ehealth.testa.eu/openncp-ws-server/services/XCA_Service
+- Description: XCA Service - Request of Data Retrieve
+- Technical Contact Url: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+- Technical Information URL: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+
+## Patient Identification and Authentication
+- Endpoint: https://ncp-ppt.dk.ehealth.testa.eu/openncp-ws-server/services/XCPD_Service
+- Description: XCPD Service - Patient Identification and Authentication
+- Technical Contact Url: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+- Technical Information URL: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+
+## Provisioning of Data - Provide
+- Endpoint: https://ncp-ppt.dk.ehealth.testa.eu/openncp-ws-server/services/XDR_Service
+- Description: XDR Service - Provisioning of Data - Provide
+- Technical Contact Url: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+- Technical Information URL: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+
+## International Search Mask
+- Description: International Search Mask
+- Technical Contact Url: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+- Technical Information URL: [sundhedsdatastyrelsen.dk](https://sundhedsdatastyrelsen.dk)
+- Extension: InternationalSearch_DK file from SMP-files folder
+
