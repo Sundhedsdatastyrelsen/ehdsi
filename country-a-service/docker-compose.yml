@@ -3,9 +3,9 @@
 #
 networks:
   epps-backend:
-    ## Uncomment the following lines to use same network as OpenNCP:
-    # name: epps
-    # external: true
+    # Uncomment the following lines to use same network as OpenNCP:
+    name: epps
+    external: true
 
 services:
   #
@@ -19,11 +19,12 @@ services:
     restart: on-failure:3
     ports:
       - "8180:8080"
+      # - "5008:5008"
     environment:
-      - "JAVA_DEBUG=${JAVA_DEBUG:-}"
-      - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
-      - "CPR_ENDPOINT_URL=${CPR_ENDPOINT_URL}"
-      - "FMK_ENDPOINT_URL=${FMK_ENDPOINT_URL}"
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-dev}"
+      CPR_ENDPOINT_URL: "${CPR_ENDPOINT_URL}"
+      FMK_ENDPOINT_URL: "${FMK_ENDPOINT_URL}"
 #    links:
       # - epps-fmk-mock:epps-fmk-mock
       # - epps-cpr-mock:epps-cpr-mock
