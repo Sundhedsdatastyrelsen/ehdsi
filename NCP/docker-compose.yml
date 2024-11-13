@@ -11,6 +11,8 @@ networks:
 volumes:
   db-data:
   tsam-exporter-data:
+  portainer_data:
+    external: false
 
 secrets:
   db_username:
@@ -350,3 +352,16 @@ services:
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      - "${PORTAINER_PORT}:${PORTAINER_EXTERNAL_PORT}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # To manage Docker
+      - portainer_data:/data # Persistent storage for Portainer
+    networks:
+      - ncp
+
+
