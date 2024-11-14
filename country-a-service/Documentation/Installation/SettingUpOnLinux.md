@@ -59,6 +59,6 @@ Before we run the first time, there are some bookkeeping to do.
 - Navigate to the folder with the docker-compose file in it
 - Run the following in bash
 ```bash
-sudo docker compose -f docker-compose.local.yml up
+sudo docker compose up
 ```
 It should now start up and run on http://localhost:8180
