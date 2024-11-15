@@ -1,7 +1,10 @@
 package dk.nsp.epps.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -88,6 +91,14 @@ public class PrescriptionService {
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+
+        var prescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription())
+            .mapToObj(idx -> fmkResponse.getPrescription().get(idx))
+            .toList();
+
+        var drugMedicationIds = prescriptions.stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
+
+        var drugMedications = getDrugMedication(patientId,drugMedicationIds,caller);
         return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
     }
 
@@ -139,5 +150,22 @@ public class PrescriptionService {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Error cancelling effectuation, nothing was cancelled");
         }
         return undoResponse;
+    }
+
+    public List<DrugMedicationType> getDrugMedication(String patientId, List<Long> drugMedicationId, Identity caller) throws JAXBException {
+        String cpr = PatientIdMapper.toCpr(patientId);
+
+        var drugMedicationRequest = GetDrugMedicationRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIdentifier(drugMedicationId)
+            .withIncludePrescriptions(false)
+            .withIncludeEffectuations(false)
+            .build();
+
+        log.debug("Looking up DrugMedication  info for {}", cpr);
+        GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
+        log.debug("Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
+            .size(), drugMedicationId);
+        return fmkResponse.getDrugMedication();
     }
 }
