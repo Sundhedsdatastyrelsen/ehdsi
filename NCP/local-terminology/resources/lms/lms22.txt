@@ -126,6 +126,7 @@ GORENSBgranulat til oral enterosuspension i brev                                
 GRA    granulat                                                                                            A
 GRADV  granulat til anvendelse i drikkevand                                                                A
 GRAEN  granulat i enkeltdosisbeholder                                                                      A
+GRAKAPOgranulat i kapsler til †bning                                                                       A
 GRAMIK granulat til mikstur                                                                                I
 GRAMOD granulat med modificeret udl›sning                                                                  A
 GRAMORSgranulat med modificeret udl›sning til oral suspension                                              A
@@ -318,6 +319,7 @@ INKONC injektions- og infusionskoncentrat                                       
 INPULKOpulver til koncentrat til injektions-/infusionsv‘ske, opl›sning                                     A
 INPULSOpulver og solvens til injektions- /infusionsv‘ske, opl›sning                                        A
 INPULVOpulver til injektions-/infusionsv‘ske, opl›sning                                                    A
+INPUNEBpulver til injektions-/infusionsv‘ske, opl›sning  eller pulver til opl›sning til nebulisator        A
 INPUVOOpulver til injektions-/infusionsv‘ske, opl›sning eller oral opl›sning                               A
 INPVVEOpulver til injektions-/infusionsv‘ske, opl›sning eller til intravesikal opl›sning                   A
 INRVSKOinjektions-/infusions-/rektalv‘ske, opl›sning                                                       A
@@ -451,6 +453,9 @@ MIMPPSMpulver, solvens og matrix til matrix til implantation                    
 MTXIMPLmatrix til implantation                                                                             A
 MUHUCREmundhulecreme                                                                                       A
 MUHUDRBmundhuledr†ber                                                                                      A
+MUHUDREmundhuledr†ber, emulsion                                                                            A
+MUHUDROmundhuledr†ber, opl›sning                                                                           A
+MUHUDRSmundhuledr†ber, suspension                                                                          A
 MUHUGELmundhulegel                                                                                         A
 MUHUKAPmundhulekapsler                                                                                     A
 MUHUPASmundhulepasta                                                                                       A

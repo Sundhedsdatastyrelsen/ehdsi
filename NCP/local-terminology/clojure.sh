@@ -2,7 +2,8 @@
 
 ## Running clojure using docker.
 ## This is mostly equivalent to running the "clojure" CLI command locally,
-## if that is installed.  The command runs in the epps
+## if that is installed.  The command runs in the epps network to be able to
+## reach the database instance.
 
 set -o errexit
 set -o nounset
