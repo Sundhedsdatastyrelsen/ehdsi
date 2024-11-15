@@ -56,7 +56,7 @@
                   keyAlias="${KEY_ALIAS}"
                   keystoreFile="${KEYSTORE_PATH}"
                   keystorePass="${KEYSTORE_PASSWORD}"
-                  truststoreFile="/opt/openncp-configuration/keystore/eu-truststore.jks"
+                  truststoreFile="${TRUSTSTORE_PATH}"
                   truststorePass="${TRUSTSTORE_PASSWORD}"
                   maxHttpHeaderSize="1048576"
                   URIEncoding="UTF-8"/>
