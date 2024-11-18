@@ -1,35 +1,35 @@
-0012.0 LMS-TAKST                               20240503                0133LMS.ZIP     202418
+0012.0 LMS-TAKST                               20241115                0133LMS.ZIP     202446
 01025000550001000021900125000000020650000000000
-10Grunddata l組emiddel          LMS01.txt   0108256
-10Grunddata pakning             LMS02.txt   0112348
-10Grunddata priser              LMS03.txt   0112348
-10Generel substitution          LMS04.txt   0106877
-10HF/HX-substitution            LMS05.txt   0100362
-10Tilskudsgrupper               LMS07.txt   0104661
-10Firmaliste                    LMS09.txt   0100792
-10Udg�ede navne                 LMS10.txt   0104893
+10Grunddata l組emiddel          LMS01.txt   0108432
+10Grunddata pakning             LMS02.txt   0112612
+10Grunddata priser              LMS03.txt   0112612
+10Generel substitution          LMS04.txt   0106967
+10HF/HX-substitution            LMS05.txt   0100370
+10Tilskudsgrupper               LMS07.txt   0104772
+10Firmaliste                    LMS09.txt   0100806
+10Udg�ede navne                 LMS10.txt   0105174
 10Administrationsvej            LMS11.txt   0100103
-10ATC-kode-tekst                LMS12.txt   0114665
+10ATC-kode-tekst                LMS12.txt   0114731
 10Beregningsregler              LMS13.txt   0100004
 10Emballage                     LMS14.txt   0100057
 10Enheder                       LMS15.txt   0100130
 10Sygesikringstilskud           LMS16.txt   0100009
-10Klausulering                  LMS17.txt   0100179
+10Klausulering                  LMS17.txt   0100189
 10Udleveringsbestemmelser       LMS18.txt   0100026
 10Speciale                      LMS19.txt   0100067
 10Opbevaringsbetingelser        LMS20.txt   0100014
-10L組emiddelnavne               LMS21.txt   0108256
-10L組emiddelform-betegnelser    LMS22.txt   0100837
+10L組emiddelnavne               LMS21.txt   0108432
+10L組emiddelform-betegnelser    LMS22.txt   0100842
 10Tilskudsintervaller           LMS23.txt   0100023
-10Dosisdispensering             LMS24.txt   0103926
-10Indikationskode               LMS25.txt   0134923
-10Indikation                    LMS26.txt   0101096
-10Doseringskode                 LMS27.txt   0137411
-10Dosering                      LMS28.txt   0101452
+10Dosisdispensering             LMS24.txt   0103941
+10Indikationskode               LMS25.txt   0136850
+10Indikation                    LMS26.txt   0101128
+10Doseringskode                 LMS27.txt   0138852
+10Dosering                      LMS28.txt   0101454
 10Rekommandationer              LMS29.txt   0100000
-10Indholdsstoffer               LMS30.txt   0116681
-10Enhedspriser                  LMS31.txt   0112348
-10Pakningskombinationer         LMS32.txt   0116091
+10Indholdsstoffer               LMS30.txt   0117013
+10Enhedspriser                  LMS31.txt   0112612
+10Pakningskombinationer         LMS32.txt   0117729
 10Patenterede indikationer      LMS34.txt   0100000
-10Advarselstekst til patenter   LMS35.txt   0100001
+10Advarselstekst til patenter   LMS35.txt   0100002
 10Systemfil                     system.txt  0100035
