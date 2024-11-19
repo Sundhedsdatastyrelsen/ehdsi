@@ -41,7 +41,7 @@ public class EPrescriptionL3Mapper {
             .title(String.format(
                 "eHDSI ePrescription %s - %s",
                 patient(response).getName().getFullName(), prescription.getIdentifier()))
-            .effectiveTime(OffsetDateTime.now())
+            .effectiveTime(OffsetDateTime.now()) //TODO CFB: set effective time from prescription or ordination
             .patient(patient(response))
             .author(author(prescription))
             .signatureTime(OffsetDateTime.now())
