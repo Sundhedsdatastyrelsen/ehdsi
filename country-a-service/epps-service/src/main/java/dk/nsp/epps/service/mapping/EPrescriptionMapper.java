@@ -1,15 +1,23 @@
 package dk.nsp.epps.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
-import dk.nsp.epps.ncp.api.*;
+import dk.nsp.epps.ncp.api.ClassCodeDto;
+import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
+import dk.nsp.epps.ncp.api.EPrescriptionDocumentMetadataDto;
+import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.Utils;
 import dk.nsp.epps.service.exception.CountryAException;
-import dk.sds.ncp.cda.*;
+import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
+import dk.sds.ncp.cda.EPrescriptionL1Mapper;
+import dk.sds.ncp.cda.EPrescriptionL3Generator;
+import dk.sds.ncp.cda.EPrescriptionL3Mapper;
+import dk.sds.ncp.cda.EPrescriptionL1Generator;
+import dk.sds.ncp.cda.MapperException;
+import dk.sds.ncp.cda.Oid;
 import dk.sds.ncp.cda.model.DocumentLevel;
 import dk.sds.ncp.cda.model.EPrescriptionL3;
 import freemarker.template.TemplateException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +27,8 @@ import java.util.List;
 
 @Component
 public class EPrescriptionMapper {
-    private final String repositoryId;
 
-    public EPrescriptionMapper(@Value("${app.eprescription.repository.id}") String repositoryId) {
-        this.repositoryId = repositoryId;
+    public EPrescriptionMapper() {
     }
 
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter,
@@ -78,7 +84,7 @@ public class EPrescriptionMapper {
         var meta = new EPrescriptionDocumentMetadataDto(documentId);
         meta.setPatientId(patientId);
         meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
-        meta.setRepositoryId(repositoryId);
+        meta.setRepositoryId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value);
         meta.setAuthor(model.getAuthor().getName().getFullName());
         meta.setTitle(model.getTitle());
         meta.setDescription(model.getIndicationText());
