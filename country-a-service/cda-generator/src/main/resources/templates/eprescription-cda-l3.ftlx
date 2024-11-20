@@ -194,7 +194,10 @@ root="${id.root}"<#rt>
                             <text>${ entryText }</text>
                             <statusCode code="active"/>
                             <#-- Vi har ikke disse oplysninger på recepten, de ligger på medicinkortet, som vi ikke har adgang til som apoteker (uden samtykke). -->
-                            <effectiveTime nullFlavor="UNK"/>
+                            <effectiveTime xsi:type="IVL_TS">
+                                <low nullFlavor="UNK" />
+                                <high nullFlavor="UNK" />
+                            </effectiveTime>
                             <effectiveTime nullFlavor="UNK"/>
                             <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
