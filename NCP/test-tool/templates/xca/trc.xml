@@ -15,7 +15,7 @@
     </saml:AuthnContext>
   </saml:AuthnStatement>
   <saml:AttributeStatement>
-    <saml:Attribute FriendlyName="XSPA subject" Name="urn:oasis:names:tc:xacml:1.0:resource:resource-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+    <saml:Attribute FriendlyName="XSPA subject" Name="urn:oasis:names:tc:xspa:1.0:subject:subject-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
       <saml:AttributeValue>0201909309^^^&amp;2.16.17.710.802.1000.990.1.500&amp;ISO</saml:AttributeValue>
     </saml:Attribute>
     <saml:Attribute FriendlyName="XSPA Purpose of Use" Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">

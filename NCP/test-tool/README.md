@@ -7,8 +7,9 @@ The requests need to contain various SAML 2.0 assertions with limited lifetimes,
 The tool needs a certificate and a private key for signing the SAML assertions.
 For the requests to work against an OpenNCP server then that server needs to trust the certificate, i.e., it must be added to the relevant truststore.
 
-The repo contains the self-signed certificate `client-dk.crt` and its private key `client-dk.key`.
-This certificate is put in `openncp-configuration/cert/test-truststore.jks` so it can be used if this is the truststore used by the server.
+The repo contains the self-signed certificate `testcert`.
+This certificate is put in `keystore/dev-truststore.jks` so it can be used if this is the truststore used by the server.
+Obviously this is *not* the truststore that will be used in prod.
 
 ## Dependencies
 

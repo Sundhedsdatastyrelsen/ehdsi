@@ -31,14 +31,21 @@
                (format "Environment variable %s is required but not set" v))))))
 
 (def db
-  {:dbtype "mariadb"
+  {:dbtype "mysql"
    :dbname "ehealth_ltrdb"
-   :host (env "MARIADB_HOST" "mariadb")
-   :user (env "MARIADB_USERNAME")
-   :password (env "MARIADB_PASSWORD")
-   :port (env "MARIADB_PORT" "3306")})
+   :host (env "DB_HOST" "mysql")
+   :user (env "DB_USERNAME")
+   :password (env "DB_PASSWORD")
+   :port (env "DB_PORT" "3306")})
 
 ;;;; SQL functions
+
+(defn test-db-conn [conn]
+  (jdbc/execute! conn ["SELECT oid, name FROM code_system"]))
+
+(comment
+  (test-db-conn db)
+  )
 
 (defn insert-code-system [code-system conn]
   (let [q "INSERT INTO code_system (oid, name) VALUES (?, ?)"
@@ -46,7 +53,8 @@
                                [q (:oid code-system) (:name code-system)]
                                {:return-keys true
                                 :builder-fn result-set/as-unqualified-maps})]
-    (assoc code-system :code_system/id (:insert_id res))))
+    ;; mysql returns the key as "GENERATED_KEY" while mariadb calls it "inserted_id"
+    (assoc code-system :code_system/id (:GENERATED_KEY res))))
 
 (comment
   (jdbc/with-transaction [conn db {:rollback-only true}]
@@ -71,7 +79,8 @@
                                 (:code_system/id code-system)]
                                {:return-keys true
                                 :builder-fn result-set/as-unqualified-maps})]
-    (assoc code-system :code_system_version/id (:insert_id res))))
+    ;; mysql returns the key as "GENERATED_KEY" while mariadb calls it "inserted_id"
+    (assoc code-system :code_system_version/id (:GENERATED_KEY res))))
 
 (defn upsert-code-system-version [code-system conn]
   (let [q (str "SELECT id FROM code_system_version"
@@ -147,16 +156,18 @@
         transcoding (:transcoding code-system)
         stats (atom {})]
     (doseq [[source-code target] transcoding
-            :let [{source-id :csc/id} (jdbc/execute-one! conn [q1 source-code csv])
+            :let [;; Note: mariadb returns the value with the alias'ed table name
+                  ;; csc while mysql uses the full table name code_system_concept
+                  {source-id :code_system_concept/id} (jdbc/execute-one! conn [q1 source-code csv])
                   delete-res (jdbc/execute-one! conn [delete source-id])
                   _ (swap! stats update :delete-transcoding-count (fnil + 0)
                            (:next.jdbc/update-count delete-res))
-                  {target-id :csc/id} (jdbc/execute-one!
-                                       conn
-                                       [q2
-                                        (:code target)
-                                        (:code-system-version target)
-                                        (:code-system target)])
+                  {target-id :code_system_concept/id} (jdbc/execute-one!
+                                                       conn
+                                                       [q2
+                                                        (:code target)
+                                                        (:code-system-version target)
+                                                        (:code-system target)])
                   insert-res (jdbc/execute-one! conn [insert source-id target-id])
                   _ (swap! stats update :insert-transcoding-count (fnil + 0)
                            (:next.jdbc/update-count insert-res))]])
@@ -245,13 +256,13 @@
 
 ;;; Downloading LMS files:
 
-(def ftp-credentials {:username (env "MEDICINPRISER_FTP_USERNAME")
-                      :password (env "MEDICINPRISER_FTP_PASSWORD")})
+(def ftp-credentials (delay {:username (env "MEDICINPRISER_FTP_USERNAME")
+                             :password (env "MEDICINPRISER_FTP_PASSWORD")}))
 
 (defn download-newest-lms-files [& _]
   (ftp/with-ftp [client "ftp://ftp.medicinpriser.dk"
-                 :username (:username ftp-credentials)
-                 :password (:password ftp-credentials)
+                 :username (:username @ftp-credentials)
+                 :password (:password @ftp-credentials)
                  :file-type :binary]
     (ftp/client-cd client "LMS/NYESTE")
     (doseq [f ["system.txt" "lms15.txt" "lms22.txt"]
