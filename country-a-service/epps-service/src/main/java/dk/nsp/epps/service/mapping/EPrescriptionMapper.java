@@ -9,10 +9,11 @@ import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.Utils;
 import dk.nsp.epps.service.exception.CountryAException;
 import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
-import dk.sds.ncp.cda.EPrescriptionPdfGenerator;
-import dk.sds.ncp.cda.EPrescriptionPdfMapper;
+import dk.sds.ncp.cda.EPrescriptionL1Generator;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.EPrescriptionL3Mapper;
+import dk.sds.ncp.cda.EPrescriptionPdfGenerator;
+import dk.sds.ncp.cda.EPrescriptionPdfMapper;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import dk.sds.ncp.cda.model.DocumentLevel;
@@ -21,7 +22,6 @@ import freemarker.template.TemplateException;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 public class EPrescriptionMapper {
@@ -91,17 +91,11 @@ public class EPrescriptionMapper {
 
     private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, DocumentLevel documentLevel) {
         try {
-            var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
-            if(DocumentLevel.LEVEL3.equals(documentLevel)) {
-                var cda = EPrescriptionL3Generator.generate(model);
-                return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
-            } else if (DocumentLevel.LEVEL1.equals(documentLevel)) {
-                var pdf = EPrescriptionPdfGenerator.generate(EPrescriptionPdfMapper.map(model));
-                var base64Pdf = Base64.getEncoder().encodeToString(pdf);
-                return new EpsosDocumentDto(patientId, base64Pdf, ClassCodeDto._57833_6);
-            }
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, String.format("Could not generate document of level %s",documentLevel));
-
+            String cda = switch (documentLevel) {
+                case LEVEL3 -> EPrescriptionL3Generator.generate(response, prescriptionIndex);
+                case LEVEL1 -> EPrescriptionL1Generator.generate(response, prescriptionIndex);
+            };
+            return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
         } catch (MapperException | TemplateException | IOException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }

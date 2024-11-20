@@ -1,15 +1,16 @@
 package dk.sds.ncp.cda.model;
 
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.Value;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Getter
-@SuperBuilder(toBuilder = true)
-public class EPrescriptionL1 extends EPrescriptionBase {
+@Value
+@Builder
+public class EPrescriptionL1 {
     @NonNull String base64EncodedDocument;
+    /**
+     * The underlying structured document
+     */
+    @NonNull EPrescriptionL3 l3;
 }
