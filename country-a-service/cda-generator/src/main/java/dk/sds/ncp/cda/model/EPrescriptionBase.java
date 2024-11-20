@@ -24,6 +24,13 @@ public abstract class EPrescriptionBase {
      * "[...] the date and time at which this document was created as an electronic document."
      */
     @NonNull OffsetDateTime effectiveTime;
+
+    /**
+     * "the start and stop time of the medication regimen or the length of the medication regimen"
+     */
+    OffsetDateTime medicationOrderStartTime;
+    OffsetDateTime medicationOrderEndTime;
+
     @NonNull Author author;
 
     @NonNull String indicationText;

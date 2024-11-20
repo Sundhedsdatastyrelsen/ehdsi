@@ -1,5 +1,6 @@
 package dk.nsp.epps.service.mapping;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.nsp.epps.ncp.api.*;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
@@ -35,12 +36,13 @@ public class EPrescriptionMapper {
     public List<EpsosDocumentDto> mapResponse(
         String patientId,
         PrescriptionFilter filter,
-        GetPrescriptionResponseType src
+        GetPrescriptionResponseType src,
+        GetDrugMedicationResponseType drugMedicationResponse
     ) {
         try {
             var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
             return filter.validPrescriptionIndexes(src.getPrescription())
-                .mapToObj(idx -> mapPrescription(patientId, src, idx, documentLevel))
+                .mapToObj(idx -> mapPrescription(patientId, src, drugMedicationResponse, idx, documentLevel))
                 .toList();
         } catch (MapperException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
@@ -85,9 +87,9 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, DocumentLevel documentLevel) {
+    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType drugMedicationResponse, int prescriptionIndex, DocumentLevel documentLevel) {
         try {
-            var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
+            var model = EPrescriptionL3Mapper.model(response, drugMedicationResponse, prescriptionIndex);
             if(DocumentLevel.LEVEL3.equals(documentLevel)) {
                 var cda = EPrescriptionL3Generator.generate(model);
                 return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);

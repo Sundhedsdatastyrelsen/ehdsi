@@ -3,6 +3,7 @@ package dk.sds.ncp.cda;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sds.ncp.cda.model.Address;
@@ -29,19 +30,20 @@ public class EPrescriptionL3Mapper {
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex) throws MapperException {
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, GetDrugMedicationResponseType drugMedicationResponse, int prescriptionIndex) throws MapperException {
         var prescription = response.getPrescription().get(prescriptionIndex);
+        var medication = drugMedicationResponse.getDrugMedication().stream().filter(dm -> prescription.getAttachedToDrugMedicationIdentifier().equals(dm.getIdentifier())).findAny();
 
         var prescriptionId = new CdaId(Oid.DK_FMK_PRESCRIPTION, Long.toString(prescription.getIdentifier()));
 
         var i = prescription.getIndication();
         var indicationText = i.getFreeText() != null ? i.getFreeText() : i.getText();
-        return EPrescriptionL3.builder()
+        var prescriptionBuilder =  EPrescriptionL3.builder()
             .documentId(new CdaId(UUID.randomUUID()))
             .title(String.format(
                 "eHDSI ePrescription %s - %s",
                 patient(response).getName().getFullName(), prescription.getIdentifier()))
-            .effectiveTime(OffsetDateTime.now()) //TODO CFB: Also set the other effective times from ordination. Consider naming them more appropriately.
+            .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))
             .author(author(prescription))
             .signatureTime(OffsetDateTime.now())
@@ -51,8 +53,15 @@ public class EPrescriptionL3Mapper {
             .product(product(prescription))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
-            .indicationText(indicationText)
-            .build();
+            .indicationText(indicationText);
+
+        medication.ifPresent(drugMedicationType -> prescriptionBuilder
+            .medicationOrderStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                .getTreatmentStartDate()))
+            .medicationOrderEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                .getTreatmentEndDate())));
+
+        return prescriptionBuilder.build();
     }
 
     private static Product product(PrescriptionType prescription) throws MapperException {

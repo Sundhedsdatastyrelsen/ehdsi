@@ -99,7 +99,7 @@ public class PrescriptionService {
         var drugMedicationIds = prescriptions.stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
 
         var drugMedications = getDrugMedication(patientId,drugMedicationIds,caller);
-        return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+        return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications);
     }
 
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) throws MapperException {
@@ -152,7 +152,7 @@ public class PrescriptionService {
         return undoResponse;
     }
 
-    public List<DrugMedicationType> getDrugMedication(String patientId, List<Long> drugMedicationId, Identity caller) throws JAXBException {
+    public GetDrugMedicationResponseType getDrugMedication(String patientId, List<Long> drugMedicationId, Identity caller) throws JAXBException {
         String cpr = PatientIdMapper.toCpr(patientId);
 
         var drugMedicationRequest = GetDrugMedicationRequestType.builder()
@@ -166,6 +166,6 @@ public class PrescriptionService {
         GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
         log.debug("Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
             .size(), drugMedicationId);
-        return fmkResponse.getDrugMedication();
+        return fmkResponse;
     }
 }
