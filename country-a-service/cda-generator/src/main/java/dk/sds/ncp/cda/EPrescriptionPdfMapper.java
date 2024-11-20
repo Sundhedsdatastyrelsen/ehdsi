@@ -1,27 +1,32 @@
 package dk.sds.ncp.cda;
 
-import dk.sds.ncp.cda.model.*;
+import dk.sds.ncp.cda.model.Author;
+import dk.sds.ncp.cda.model.EPrescriptionL3;
+import dk.sds.ncp.cda.model.EPrescriptionPdf;
+import dk.sds.ncp.cda.model.Patient;
+import dk.sds.ncp.cda.model.PdfField;
+import dk.sds.ncp.cda.model.Product;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EPrescriptionL1Mapper {
+public class EPrescriptionPdfMapper {
     /**
      * Map a L3 model to a L1 Model, consisting of PDF Fields to be written on a PDF page
      *
      * @param dataModel - A L3 Datamodel
      * @return A list of PdfField objects, consisting of Coordinates and an array of strings intended as seperate lines for each string
      */
-    public static List<PdfField> map(EPrescriptionL3 dataModel) {
-        return List.of(
+    public static EPrescriptionPdf map(EPrescriptionL3 dataModel) {
+        return new EPrescriptionPdf(List.of(
             new PdfField(50, 445, productLines(dataModel.getProduct())),
             new PdfField(50, 610, patientLines(dataModel.getPatient())),
             new PdfField(50, 710, authorLines((dataModel.getAuthor()))),
             new PdfField(390, 650, new String[]{String.format("ID: %s", dataModel.getPrescriptionId().getExtension())}),
             new PdfField(50, 185, dateLines(dataModel.getEffectiveTimeOffsetDateTime()))
-        );
+        ));
     }
 
     private static String[] productLines(Product product) {
@@ -34,7 +39,9 @@ public class EPrescriptionL1Mapper {
         for (String addressLine : patient.getAddress().getStreetAddressLines()) {
             addToListIfNotNullOrEmpty(patientLines, addressLine);
         }
-        addToListIfNotNullOrEmpty(patientLines, constructPostalCityLine(patient.getAddress().getPostalCode(), patient.getAddress().getCity()));
+        addToListIfNotNullOrEmpty(patientLines, constructPostalCityLine(
+            patient.getAddress().getPostalCode(),
+            patient.getAddress().getCity()));
         addToListIfNotNullOrEmpty(patientLines, patient.getAddress().getCountryCode());
         return patientLines.toArray(new String[0]);
     }
@@ -43,11 +50,13 @@ public class EPrescriptionL1Mapper {
         List<String> authorLines = new ArrayList<String>();
         addToListIfNotNullOrEmpty(authorLines, author.getName().getFullName());
         addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getName());
-        if(author.getOrganization().getAddress() != null) {
+        if (author.getOrganization().getAddress() != null) {
             for (String addressLine : author.getOrganization().getAddress().getStreetAddressLines()) {
                 addToListIfNotNullOrEmpty(authorLines, addressLine);
             }
-            addToListIfNotNullOrEmpty(authorLines, constructPostalCityLine(author.getOrganization().getAddress().getPostalCode(), author.getOrganization().getAddress().getCity()));
+            addToListIfNotNullOrEmpty(authorLines, constructPostalCityLine(
+                author.getOrganization().getAddress().getPostalCode(),
+                author.getOrganization().getAddress().getCity()));
             addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
         }
         return authorLines.toArray(new String[0]);

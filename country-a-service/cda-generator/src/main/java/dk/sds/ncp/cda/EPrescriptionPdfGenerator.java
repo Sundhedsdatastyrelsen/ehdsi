@@ -1,5 +1,6 @@
 package dk.sds.ncp.cda;
 
+import dk.sds.ncp.cda.model.EPrescriptionPdf;
 import dk.sds.ncp.cda.model.PdfField;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -11,14 +12,13 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 
-public class EPrescriptionL1Generator {
+public class EPrescriptionPdfGenerator {
     private static final Integer FONT_SIZE = 14;
     private static final String TEMPLATE = "/pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
 
     private static PDDocument initializeDocument() {
-        try (var template = EPrescriptionL1Generator.class.getResourceAsStream(TEMPLATE)) {
+        try (var template = EPrescriptionPdfGenerator.class.getResourceAsStream(TEMPLATE)) {
             if (template == null) {
                 throw new RuntimeException("Could not find resource: " + TEMPLATE);
             }
@@ -28,10 +28,10 @@ public class EPrescriptionL1Generator {
         }
     }
 
-    public static byte[] generate(List<PdfField> fields) {
+    public static byte[] generate(EPrescriptionPdf pdfModel) {
         try (var pdfDocument = initializeDocument()) {
             var pdfPage = pdfDocument.getPage(0);
-            for (PdfField field : fields) {
+            for (PdfField field : pdfModel.getFields()) {
                 writeField(field, pdfPage, pdfDocument);
             }
             return saveBytes(pdfDocument);

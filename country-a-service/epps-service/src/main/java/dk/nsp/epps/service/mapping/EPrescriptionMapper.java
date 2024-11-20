@@ -9,8 +9,8 @@ import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.Utils;
 import dk.nsp.epps.service.exception.CountryAException;
 import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
-import dk.sds.ncp.cda.EPrescriptionL1Generator;
-import dk.sds.ncp.cda.EPrescriptionL1Mapper;
+import dk.sds.ncp.cda.EPrescriptionPdfGenerator;
+import dk.sds.ncp.cda.EPrescriptionPdfMapper;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.EPrescriptionL3Mapper;
 import dk.sds.ncp.cda.MapperException;
@@ -65,7 +65,7 @@ public class EPrescriptionMapper {
             l3Meta.setHash(Utils.md5Hash(cda));
 
             //Generate PDF to deliver metadata on it
-            var pdf = EPrescriptionL1Generator.generate(EPrescriptionL1Mapper.map(dataModel));
+            var pdf = EPrescriptionPdfGenerator.generate(EPrescriptionPdfMapper.map(dataModel));
 
             var l1Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId().getExtension()));
             l1Meta.setSize((long) pdf.length);
@@ -96,7 +96,7 @@ public class EPrescriptionMapper {
                 var cda = EPrescriptionL3Generator.generate(model);
                 return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
             } else if (DocumentLevel.LEVEL1.equals(documentLevel)) {
-                var pdf = EPrescriptionL1Generator.generate(EPrescriptionL1Mapper.map(model));
+                var pdf = EPrescriptionPdfGenerator.generate(EPrescriptionPdfMapper.map(model));
                 var base64Pdf = Base64.getEncoder().encodeToString(pdf);
                 return new EpsosDocumentDto(patientId, base64Pdf, ClassCodeDto._57833_6);
             }
