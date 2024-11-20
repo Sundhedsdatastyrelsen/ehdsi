@@ -20,7 +20,9 @@ public class EPrescriptionMapperTest {
         var response = FmkResponseStorage.storedPrescriptions("1111111118");
         var documentId = EPrescriptionDocumentIdMapper.level3DocumentId(String.valueOf(response.getPrescription().getFirst().getIdentifier()));
         var prescriptionFilter = new PrescriptionFilter(documentId,null,null);
-        var result = mapper.mapResponse("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", prescriptionFilter, response);
-        Assertions.assertEquals(1, result.size());
+        //TODO Need to generate a drugMedicationResponse we can also load here
+        //var result = mapper.mapResponse("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", prescriptionFilter, response);
+        //Assertions.assertEquals(1, result.size());
+        Assertions.assertTrue(false); //Failing on purpose to highlight the TODO
     }
 }
