@@ -9,36 +9,34 @@ import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.Utils;
 import dk.nsp.epps.service.exception.CountryAException;
 import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
+import dk.sds.ncp.cda.EPrescriptionL1Generator;
 import dk.sds.ncp.cda.EPrescriptionL1Mapper;
 import dk.sds.ncp.cda.EPrescriptionL3Generator;
 import dk.sds.ncp.cda.EPrescriptionL3Mapper;
-import dk.sds.ncp.cda.EPrescriptionL1Generator;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import dk.sds.ncp.cda.model.DocumentLevel;
 import dk.sds.ncp.cda.model.EPrescriptionL3;
 import freemarker.template.TemplateException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
-@Component
 public class EPrescriptionMapper {
 
-    public EPrescriptionMapper() {
+    private EPrescriptionMapper() {
     }
 
-    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter,
+    public static List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter,
                                                           GetPrescriptionResponseType src) {
         return filter.validPrescriptionIndexes(src.getPrescription())
             .mapToObj(idx -> mapMeta(patientId, src, idx))
             .toList();
     }
 
-    public List<EpsosDocumentDto> mapResponse(
+    public static List<EpsosDocumentDto> mapResponse(
         String patientId,
         PrescriptionFilter filter,
         GetPrescriptionResponseType src
@@ -53,7 +51,7 @@ public class EPrescriptionMapper {
         }
     }
 
-    private DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
+    private static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
         try {
             final String cda;
             var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex);
@@ -80,7 +78,7 @@ public class EPrescriptionMapper {
         }
     }
 
-    private EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, String documentId) {
+    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, String documentId) {
         var meta = new EPrescriptionDocumentMetadataDto(documentId);
         meta.setPatientId(patientId);
         meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
@@ -91,7 +89,7 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, DocumentLevel documentLevel) {
+    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, DocumentLevel documentLevel) {
         try {
             var model = EPrescriptionL3Mapper.model(response, prescriptionIndex);
             if(DocumentLevel.LEVEL3.equals(documentLevel)) {

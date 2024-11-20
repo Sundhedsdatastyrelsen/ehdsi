@@ -9,11 +9,10 @@ import org.junit.jupiter.api.Test;
 public class EPrescriptionMapperTest {
     @Test
     public void testExpectedNumberOfEpsosDocuments() throws Exception {
-        var mapper = new EPrescriptionMapper();
         var response = FmkResponseStorage.storedPrescriptions("1111111118");
         var documentId = EPrescriptionDocumentIdMapper.level3DocumentId(String.valueOf(response.getPrescription().getFirst().getIdentifier()));
         var prescriptionFilter = new PrescriptionFilter(documentId,null,null);
-        var result = mapper.mapResponse("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", prescriptionFilter, response);
+        var result = EPrescriptionMapper.mapResponse("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", prescriptionFilter, response);
         Assertions.assertEquals(1, result.size());
     }
 }

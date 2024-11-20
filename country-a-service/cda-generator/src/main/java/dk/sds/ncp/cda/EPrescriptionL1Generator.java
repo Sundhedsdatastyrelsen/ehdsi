@@ -10,13 +10,10 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 public class EPrescriptionL1Generator {
-    //Configuration
     private static final Integer FONT_SIZE = 14;
     private static final String TEMPLATE = "/pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
 

@@ -11,6 +11,5 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder(toBuilder = true)
 public class EPrescriptionL1 extends EPrescriptionBase {
-
     @NonNull String base64EncodedDocument;
 }
