@@ -37,6 +37,19 @@
                 <artifactId>spring-ws-core</artifactId>
                 <version>3.1.8</version>
             </dependency>
+            <!-- We encountered an error in the classpath on a specific server, which seems to evaluate to a different
+            version of the commons-lang package. Even when running the same docker image on other servers, we didn't
+            get the same error. We never found the problem, but we solved it by forcing the version of commons-lang. -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.17.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>1.12.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
