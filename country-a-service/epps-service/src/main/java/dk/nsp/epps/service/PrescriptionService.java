@@ -3,7 +3,6 @@ package dk.nsp.epps.service;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
@@ -83,14 +82,9 @@ public class PrescriptionService {
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) throws JAXBException {
+
         String cpr = PatientIdMapper.toCpr(patientId);
-        final var request = GetPrescriptionRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeOpenPrescriptions().end()
-            .build();
-        log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+        var fmkResponse = getPrescriptionResponse(cpr, caller);
 
         var prescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription())
             .mapToObj(idx -> fmkResponse.getPrescription().get(idx))
@@ -98,7 +92,7 @@ public class PrescriptionService {
 
         var drugMedicationIds = prescriptions.stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
 
-        var drugMedications = getDrugMedication(patientId,drugMedicationIds,caller);
+        var drugMedications = getDrugMedicationResponse(cpr,drugMedicationIds,caller);
         return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications);
     }
 
@@ -152,9 +146,7 @@ public class PrescriptionService {
         return undoResponse;
     }
 
-    public GetDrugMedicationResponseType getDrugMedication(String patientId, List<Long> drugMedicationId, Identity caller) throws JAXBException {
-        String cpr = PatientIdMapper.toCpr(patientId);
-
+    public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, Identity caller) throws JAXBException {
         var drugMedicationRequest = GetDrugMedicationRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIdentifier(drugMedicationId)
@@ -166,6 +158,17 @@ public class PrescriptionService {
         GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
         log.debug("Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
             .size(), drugMedicationId);
+        return fmkResponse;
+    }
+
+    public GetPrescriptionResponseType getPrescriptionResponse(String cpr, Identity caller) throws JAXBException {
+        final var request = GetPrescriptionRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIncludeOpenPrescriptions().end()
+            .build();
+        log.debug("Looking up info for {}", cpr);
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
+        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return fmkResponse;
     }
 }

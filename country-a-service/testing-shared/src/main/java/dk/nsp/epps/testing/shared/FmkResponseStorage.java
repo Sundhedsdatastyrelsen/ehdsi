@@ -1,9 +1,13 @@
 package dk.nsp.epps.testing.shared;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.client.TestIdentities;
+import dk.nsp.test.idp.model.Identity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -74,23 +78,43 @@ public class FmkResponseStorage {
         );
     }
 
-    public JAXBElement<GetPrescriptionResponseType> openPrescriptionsForCpr(String cpr) throws JAXBException {
-        var getPrescriptionRequest = GetPrescriptionRequestType
-            .builder()
-            .withPersonIdentifier()
-            .withSource("CPR")
-            .withValue(cpr)
-            .end()
-            .withIncludeOpenPrescriptions()
-            .end()
+    /***
+     * Copied wholesale from PrescriptionService
+     * Not referenced to avoid dependency problems. Should probably be fixed, but this was way easier.
+     */
+    public GetPrescriptionResponseType getPrescriptionResponse(String cpr, Identity caller) throws JAXBException {
+        final var request = GetPrescriptionRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIncludeOpenPrescriptions().end()
+            .build();
+        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
+        return fmkResponse;
+    }
+
+    /***
+     * Copied wholesale from PrescriptionService
+     * Not referenced to avoid dependency problems. Should probably be fixed, but this was way easier.
+     */
+    public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, Identity caller) throws JAXBException {
+        var drugMedicationRequest = GetDrugMedicationRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIdentifier(drugMedicationId)
+            .withIncludePrescriptions(false)
+            .withIncludeEffectuations(false)
             .build();
 
-        GetPrescriptionResponseType prescriptions = fmkClient.getPrescription(
-            getPrescriptionRequest,
-            TestIdentities.apotekerChrisChristoffersen
-        );
+        GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
+        return fmkResponse;
+    }
+
+    public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response) throws JAXBException {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e6.ObjectFactory();
-        return fac.createGetPrescriptionResponse(prescriptions);
+        return fac.createGetPrescriptionResponse(response);
+    }
+
+    public JAXBElement<GetDrugMedicationResponseType> createXmlFromDrugMedication(GetDrugMedicationResponseType response) throws JAXBException {
+        var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
+        return fac.createGetDrugMedicationResponse(response);
     }
 
     public static GetPrescriptionResponseType storedPrescriptions(String cpr) throws JAXBException {
@@ -132,8 +156,15 @@ public class FmkResponseStorage {
             Path.of("testing-shared", "src", "main", "resources", resourceDir));
         for (var cpr : testCprs) {
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
-            serializeToFile(frs.openPrescriptionsForCpr(cpr), f);
+            var prescriptions = frs.getPrescriptionResponse(cpr, TestIdentities.apotekerChrisChristoffersen);
+            serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
             System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
+
+            var dmf = dir.resolve("drug-medication-" + cpr + ".xml").toFile();
+            var medicationIds = prescriptions.getPrescription().stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
+            var drugMedications = frs.getDrugMedicationResponse(cpr,medicationIds,TestIdentities.apotekerChrisChristoffersen);
+            serializeToFile(frs.createXmlFromDrugMedication(drugMedications), dmf);
+            System.out.println("Wrote drug-medications to " + dmf.getAbsolutePath());
         }
     }
 }

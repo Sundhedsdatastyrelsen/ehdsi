@@ -1,5 +1,6 @@
 package dk.nsp.epps.script;
 
+import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.testing.shared.Fmk;
 import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import jakarta.xml.bind.JAXBException;
@@ -20,10 +21,11 @@ public class FmkPrescriptionCollector {
         }
 
         var frs = new FmkResponseStorage(Fmk.apiClient());
-        var response = frs.openPrescriptionsForCpr(input);
+        var response = frs.getPrescriptionResponse(input, TestIdentities.apotekerChrisChristoffersen);
+        var xml = frs.createXmlFromPrescription(response);
         var f = Path.of(output);
         Files.createDirectories(f.getParent());
-        FmkResponseStorage.serializeToFile(response, f.toFile());
+        FmkResponseStorage.serializeToFile(xml, f.toFile());
         System.out.println("Wrote prescriptions to " + f.toAbsolutePath());
     }
 }
