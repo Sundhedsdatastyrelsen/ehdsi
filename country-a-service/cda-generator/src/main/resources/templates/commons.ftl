@@ -18,7 +18,7 @@ root="${id.root}"<#rt>
  -->
 <#macro address value="__NULL__"><#rt>
 <#if value=="__NULL__"><#rt>
-<#return>
+<addr nullFlavor="NI" />
 <#else>
 <addr>
     <#list value.streetAddressLines as addressLine>

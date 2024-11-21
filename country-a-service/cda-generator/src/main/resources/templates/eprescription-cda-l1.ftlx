@@ -99,7 +99,7 @@
     </relatedDocument>
 
     <component>
-        <nonXMLBody>
+        <nonXMLBody classCode="DOCBODY" moodCode="EVN">
             <text mediaType="application/pdf" representation="B64">${ base64EncodedDocument }</text>
         </nonXMLBody>
     </component>
