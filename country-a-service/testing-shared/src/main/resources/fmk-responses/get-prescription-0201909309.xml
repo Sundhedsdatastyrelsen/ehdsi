@@ -19,15 +19,15 @@
         </Address>
     </ns4:Patient>
     <ns4:Prescription>
-        <ns4:Identifier>463234272033101</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>29892849</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1725534672401001001</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-09-05T11:11:12Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>465339231276101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30500512</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1727639631312001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-09-29T19:53:52Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>PTRWQ</AuthorisationIdentifier>
-                    <Name>Igor Ingvardsen</Name>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
@@ -36,242 +36,3790 @@
                     <Identifier source="SKS">133016N</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-09-05T11:11:12Z</DateTime>
+            <DateTime>2024-09-29T19:53:52Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-09-05</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-09-05</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-09-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-09-29</ns4:ValidToDate>
         <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-09-05">56232</ns2:PackageNumber>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
             <ns2:PackageSize>
                 <ns2:Value>100.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-09-05">ST</ns2:UnitCode>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
                 <ns2:UnitText>stk.</ns2:UnitText>
                 <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
             </ns2:PackageSize>
             <ns2:PackageQuantity>1</ns2:PackageQuantity>
         </ns4:PackageRestriction>
         <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-09-05">145</Code>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
             <Text>mod smerter</Text>
         </ns4:Indication>
         <ns4:Drug>
             <ATC>
-                <Code source="Medicinpriser" date="2024-09-05">N02BE01</Code>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
                 <Text>Paracetamol</Text>
             </ATC>
-            <Identifier source="Medicinpriser" date="2024-09-05">28103888005</Identifier>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
             <Name>Pinex</Name>
             <Form>
-                <Code source="Medicinpriser" date="2024-09-05">TABFILM</Code>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
                 <Text>filmovertrukne tabletter</Text>
             </Form>
             <Strength>
                 <Value>500.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-09-05">MG</UnitCode>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
                 <UnitText>mg</UnitText>
-                <Text source="Medicinpriser" date="2024-09-05">500 mg</Text>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-09-05">PARACETAMOL</SubstanceText>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
                 </ActiveSubstance>
             </Substances>
         </ns4:Drug>
         <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
-        <ns4:Version>21613</ns4:Version>
+        <ns4:Order>
+            <ns2:Identifier>469854459679001</ns2:Identifier>
+            <ns2:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>Skanderborg Apotek</Name>
+                        <AddressLine>Adelgade 61</AddressLine>
+                        <AddressLine>8660 Skanderborg</AddressLine>
+                        <TelephoneNumber>87939080</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2024-11-06T02:03:35Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>name</Name>
+                        <AddressLine>streetAddressLine</AddressLine>
+                        <AddressLine>postalCode</AddressLine>
+                        <AddressLine>city</AddressLine>
+                        <AddressLine>country</AddressLine>
+                        <TelephoneNumber>123456789</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2024-11-21T02:07:40Z</DateTime>
+            </ns2:Modified>
+            <ns2:OrderedAtPharmacy>
+                <Name>Skanderborg Apotek</Name>
+                <AddressLine>Adelgade 61</AddressLine>
+                <AddressLine>8660 Skanderborg</AddressLine>
+                <TelephoneNumber>87939080</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+            </ns2:OrderedAtPharmacy>
+            <ns2:Status>Bestilt</ns2:Status>
+        </ns4:Order>
+        <ns4:Version>2382</ns4:Version>
     </ns4:Prescription>
     <ns4:Prescription>
-        <ns4:Identifier>463234536203101</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>29892850</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1725534936617001001</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-09-05T11:15:36Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>465422702424102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30510688</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1727723101760001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-09-30T19:05:02Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>PTRWQ</AuthorisationIdentifier>
-                    <Name>Igor Ingvardsen</Name>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
-                    <TelephoneNumber>87654321</TelephoneNumber>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
                     <Type>Sygehus</Type>
                     <Identifier source="SKS">133016N</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-09-05T11:15:36Z</DateTime>
+            <DateTime>2024-09-30T19:05:02Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-09-05</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-09-05</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-09-30</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-09-30</ns4:ValidToDate>
         <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-09-05">56232</ns2:PackageNumber>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
             <ns2:PackageSize>
                 <ns2:Value>100.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-09-05">ST</ns2:UnitCode>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
                 <ns2:UnitText>stk.</ns2:UnitText>
                 <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
             </ns2:PackageSize>
             <ns2:PackageQuantity>1</ns2:PackageQuantity>
         </ns4:PackageRestriction>
         <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-09-05">145</Code>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
             <Text>mod smerter</Text>
         </ns4:Indication>
         <ns4:Drug>
             <ATC>
-                <Code source="Medicinpriser" date="2024-09-05">N02BE01</Code>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
                 <Text>Paracetamol</Text>
             </ATC>
-            <Identifier source="Medicinpriser" date="2024-09-05">28103888005</Identifier>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
             <Name>Pinex</Name>
             <Form>
-                <Code source="Medicinpriser" date="2024-09-05">TABFILM</Code>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
                 <Text>filmovertrukne tabletter</Text>
             </Form>
             <Strength>
                 <Value>500.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-09-05">MG</UnitCode>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
                 <UnitText>mg</UnitText>
-                <Text source="Medicinpriser" date="2024-09-05">500 mg</Text>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-09-05">PARACETAMOL</SubstanceText>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
                 </ActiveSubstance>
             </Substances>
         </ns4:Drug>
         <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
-        <ns4:Version>21546</ns4:Version>
+        <ns4:Version>26294</ns4:Version>
     </ns4:Prescription>
     <ns4:Prescription>
-        <ns4:Identifier>463236803901102</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>29893112</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1725537204287001002</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-09-05T11:53:24Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>465423503636101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30510689</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1727723903296001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-09-30T19:18:24Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>PTRWQ</AuthorisationIdentifier>
-                    <Name>Igor Ingvardsen</Name>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
-                    <TelephoneNumber>87654321</TelephoneNumber>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
                     <Type>Sygehus</Type>
                     <Identifier source="SKS">133016N</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-09-05T11:53:24Z</DateTime>
+            <DateTime>2024-09-30T19:18:24Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-09-05</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-09-05</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-09-30</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-09-30</ns4:ValidToDate>
         <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-09-05">56232</ns2:PackageNumber>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
             <ns2:PackageSize>
                 <ns2:Value>100.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-09-05">ST</ns2:UnitCode>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
                 <ns2:UnitText>stk.</ns2:UnitText>
                 <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
             </ns2:PackageSize>
             <ns2:PackageQuantity>1</ns2:PackageQuantity>
         </ns4:PackageRestriction>
         <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-09-05">145</Code>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
             <Text>mod smerter</Text>
         </ns4:Indication>
         <ns4:Drug>
             <ATC>
-                <Code source="Medicinpriser" date="2024-09-05">N02BE01</Code>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
                 <Text>Paracetamol</Text>
             </ATC>
-            <Identifier source="Medicinpriser" date="2024-09-05">28103888005</Identifier>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
             <Name>Pinex</Name>
             <Form>
-                <Code source="Medicinpriser" date="2024-09-05">TABFILM</Code>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
                 <Text>filmovertrukne tabletter</Text>
             </Form>
             <Strength>
                 <Value>500.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-09-05">MG</UnitCode>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
                 <UnitText>mg</UnitText>
-                <Text source="Medicinpriser" date="2024-09-05">500 mg</Text>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-09-05">PARACETAMOL</SubstanceText>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
                 </ActiveSubstance>
             </Substances>
         </ns4:Drug>
         <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
-        <ns4:Version>25722</ns4:Version>
+        <ns4:Version>16400</ns4:Version>
     </ns4:Prescription>
     <ns4:Prescription>
-        <ns4:Identifier>463744749915101</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>30043109</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1726045150299001002</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-09-11T08:59:10Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>465667236021102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30632736</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1727967635686001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-03T15:00:36Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>PTRWQ</AuthorisationIdentifier>
-                    <Name>Igor Ingvardsen</Name>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
-                    <TelephoneNumber>87654321</TelephoneNumber>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
                     <Type>Sygehus</Type>
                     <Identifier source="SKS">133016N</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-09-11T08:59:10Z</DateTime>
+            <DateTime>2024-10-03T15:00:36Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-09-11</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-09-11</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-10-03</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-03</ns4:ValidToDate>
         <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-09-11">56232</ns2:PackageNumber>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
             <ns2:PackageSize>
                 <ns2:Value>100.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-09-11">ST</ns2:UnitCode>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
                 <ns2:UnitText>stk.</ns2:UnitText>
                 <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
             </ns2:PackageSize>
             <ns2:PackageQuantity>1</ns2:PackageQuantity>
         </ns4:PackageRestriction>
         <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-09-11">145</Code>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
             <Text>mod smerter</Text>
         </ns4:Indication>
         <ns4:Drug>
             <ATC>
-                <Code source="Medicinpriser" date="2024-09-11">N02BE01</Code>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
                 <Text>Paracetamol</Text>
             </ATC>
-            <Identifier source="Medicinpriser" date="2024-09-11">28103888005</Identifier>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
             <Name>Pinex</Name>
             <Form>
-                <Code source="Medicinpriser" date="2024-09-11">TABFILM</Code>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
                 <Text>filmovertrukne tabletter</Text>
             </Form>
             <Strength>
                 <Value>500.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-09-11">MG</UnitCode>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
                 <UnitText>mg</UnitText>
-                <Text source="Medicinpriser" date="2024-09-11">500 mg</Text>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-09-11">PARACETAMOL</SubstanceText>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
                 </ActiveSubstance>
             </Substances>
         </ns4:Drug>
         <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
-        <ns4:Version>27615</ns4:Version>
+        <ns4:Version>32735</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>465668632384101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30632551</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1727969031255001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-03T15:23:52Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-03T15:23:52Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-03</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-03</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>7507</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>465669215702102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30632737</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1727969615695001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-03T15:33:36Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-03T15:33:36Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-03</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-03</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>16949</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>465880125069102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30677769</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1728180524885001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-06T02:08:45Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-06T02:08:45Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-06</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-06</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>23845</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>465966394027102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30679133</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1728266793172001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-07T02:06:34Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-07T02:06:34Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-07</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-07</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>15505</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>466139055808101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30760935</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1728439455671001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-09T02:04:16Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-09T02:04:16Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-09</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-09</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>16399</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>466484892116101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30889032</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1728785291824001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-13T02:08:12Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-13T02:08:12Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-13</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-13</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange dagligt</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>18231</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>466571168937101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30889849</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1728871568608001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-14T02:06:09Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-14T02:06:09Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-14</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-14</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>11423</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>466657565092101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30931532</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1728957963106001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-15T02:06:04Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-15T02:06:04Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-15</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-15</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>28204</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>466743936888101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>30973799</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729044336667001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-16T02:05:37Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-16T02:05:37Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-16</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-16</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>9543</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467003034762101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31100108</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729303433901001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-19T02:03:55Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-19T02:03:55Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-19</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-19</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>7939</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467175963561101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31102760</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729476363136001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-21T02:06:04Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-21T02:06:04Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-21</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-21</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>13827</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467348650014102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31193195</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729649048970001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-23T02:04:09Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-23T02:04:09Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-23</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-23</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>27332</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467435076317102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31240308</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729735475113001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-24T02:04:36Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-24T02:04:36Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-24</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-24</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>23606</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467521493674102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31286604</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729821892930001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-25T02:04:53Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-25T02:04:53Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-25</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-25</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>20427</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467608030268101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31332983</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729908172971001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-26T02:02:53Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-26T02:02:53Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-26</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-26</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>5697</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467694490062101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31334243</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729994889549001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-27T02:08:10Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-27T02:08:10Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-27</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-27</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>3350</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467780819389102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31335091</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730081218659001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-28T02:06:59Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-28T02:06:59Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-28</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-28</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>8983</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467827613305102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31380070</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730128012003001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-28T15:06:53Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-28T15:06:53Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-28</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-28</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>296</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467828847608102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31380071</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730129246447001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-28T15:27:27Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-28T15:27:27Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-28</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-28</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>8265</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467847954532102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31380079</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730148354026001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-28T20:45:54Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-28T20:45:54Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-28</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-28</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>25323</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467849908049101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31379993</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730150306954001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-28T21:18:28Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-28T21:18:28Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-28</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-28</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>22739</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467867147468101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31382198</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730167546728001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-29T02:05:47Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-29T02:05:47Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-29</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>750</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>467953505119102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31428745</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730253904173001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-30T02:05:05Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-30T02:05:05Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-30</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-30</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>24094</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468039951033101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31476029</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730340351044001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-10-31T02:05:51Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-31T02:05:51Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-10-31</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-10-31</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>9572</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468126619028102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31524578</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730427017982001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-01T02:10:19Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-01T02:10:19Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-01</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-01</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>30517</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468212604424102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31571937</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730513003530001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-02T02:03:24Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-02T02:03:24Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-02</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-02</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>19041</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468299308115102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31573321</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730599707158001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-03T02:08:27Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-03T02:08:27Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-03</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-03</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>16790</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468366367134101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31573368</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730666767790001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-03T20:46:08Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-03T20:46:08Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-03</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-03</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>21108</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468385563945101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31574431</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730685963112001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T02:06:03Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T02:06:03Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>8349</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468416981020102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31620895</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730717381088001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T10:49:41Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T10:49:41Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>25646</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468417587674102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31621014</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730717987864001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T10:59:48Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T10:59:48Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>17482</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468417774334101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31620896</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730718174048001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T11:02:54Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T11:02:54Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>10792</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468417971780102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31621015</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730718371924001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T11:06:12Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T11:06:12Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>25485</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468426971898102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31621426</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730727371987001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T13:36:12Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T13:36:12Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>16769</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468427198976101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31621216</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730727598526001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T13:39:58Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T13:39:58Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>2225</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468427380784102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31621427</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730727780956001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-04T13:43:01Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-04T13:43:01Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Order>
+            <ns2:Identifier>469882460223002</ns2:Identifier>
+            <ns2:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>Jaroslav</GivenName>
+                            <Surname>Krotký</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>Skanderborg Apotek</Name>
+                        <AddressLine>Adelgade 61</AddressLine>
+                        <AddressLine>8660 Skanderborg</AddressLine>
+                        <TelephoneNumber>87939080</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2024-11-21T09:54:13Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>Jaroslav</GivenName>
+                            <Surname>Krotký</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>NCP-B-CZ Portal</Name>
+                        <AddressLine>CZ</AddressLine>
+                        <TelephoneNumber>+420724650193</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2024-11-21T09:54:20Z</DateTime>
+            </ns2:Modified>
+            <ns2:OrderedAtPharmacy>
+                <Name>Skanderborg Apotek</Name>
+                <AddressLine>Adelgade 61</AddressLine>
+                <AddressLine>8660 Skanderborg</AddressLine>
+                <TelephoneNumber>87939080</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+            </ns2:OrderedAtPharmacy>
+            <ns2:Status>Bestilt</ns2:Status>
+        </ns4:Order>
+        <ns4:Version>17855</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468471806873101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31623139</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730772206382001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-05T02:03:27Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-05T02:03:27Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-05</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-05</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>5437</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468558180951101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31672212</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730858580742001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-06T02:03:01Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-06T02:03:01Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-06</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-06</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>29857</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468644573384101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31722206</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1730944973127001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-07T02:02:54Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-07T02:02:54Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-07</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-07</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>32555</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468731007612102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31771554</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731031406717001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-08T02:03:27Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-08T02:03:27Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-08</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-08</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>28388</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468817266398101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31821156</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731117665948001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-09T02:01:07Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-09T02:01:07Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-09</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-09</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>4182</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468903966041101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31822563</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731204365539001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-10T02:06:06Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-10T02:06:06Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-10</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-10</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>5125</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>468990254934102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31823603</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731290654185001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-11T02:04:14Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-11T02:04:14Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-11</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-11</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>26577</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469076526958001</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31873045</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731376926793001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-12T02:02:07Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-12T02:02:07Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-12</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-12</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>32101</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469163031527101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31921649</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731463431487001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-13T02:03:52Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-13T02:03:52Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-13</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-13</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>8892</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469249456838102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31971704</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731549856284001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-14T02:04:17Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-14T02:04:17Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-14</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-14</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>32704</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469336071981101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32021323</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731636471617001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-15T02:07:52Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-15T02:07:52Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-15</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-15</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>14381</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469422386267101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32070734</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731722785800001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-16T02:06:26Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-16T02:06:26Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-16</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-16</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>2343</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469509062504101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32071167</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731809462236001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-17T02:11:03Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-17T02:11:03Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-17</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-17</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Order>
+            <ns2:Identifier>469882921301001</ns2:Identifier>
+            <ns2:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>Jaroslav</GivenName>
+                            <Surname>Krotký</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>Skanderborg Apotek</Name>
+                        <AddressLine>Adelgade 61</AddressLine>
+                        <AddressLine>8660 Skanderborg</AddressLine>
+                        <TelephoneNumber>87939080</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2024-11-21T10:01:54Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>Jaroslav</GivenName>
+                            <Surname>Krotký</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>NCP-B-CZ Portal</Name>
+                        <AddressLine>CZ</AddressLine>
+                        <TelephoneNumber>+420724650193</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2024-11-21T10:02:02Z</DateTime>
+            </ns2:Modified>
+            <ns2:OrderedAtPharmacy>
+                <Name>Skanderborg Apotek</Name>
+                <AddressLine>Adelgade 61</AddressLine>
+                <AddressLine>8660 Skanderborg</AddressLine>
+                <TelephoneNumber>87939080</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+            </ns2:OrderedAtPharmacy>
+            <ns2:Status>Bestilt</ns2:Status>
+        </ns4:Order>
+        <ns4:Version>12829</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469595377319101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32071728</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731895776537001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-18T02:09:37Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-18T02:09:37Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-18</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-18</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>31604</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469681661797101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32121677</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1731982061459001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-19T02:07:42Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-19T02:07:42Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-19</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-19</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>32672</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469768014258101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32172482</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1732068414169001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-20T02:06:55Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-20T02:06:55Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-20</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-20</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>8670</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>469854419288102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32223830</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1732154818470001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-11-21T02:06:59Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-11-21T02:06:59Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-11-21</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-11-21</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-09-12">56232</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-09-12">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>32218</ns4:Version>
     </ns4:Prescription>
 </ns4:GetPrescriptionResponse>

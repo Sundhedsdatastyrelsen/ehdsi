@@ -18,124 +18,118 @@
         </Address>
     </ns4:Patient>
     <ns4:Prescription>
-        <ns4:Identifier>459262485460102</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>28822429</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1721562871718001001</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2024-07-21T11:54:45Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>467382425725101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>31237517</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1729682826306001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:DrugMedicationEnded>Behandling afsluttet</ns4:DrugMedicationEnded>
+        <ns4:AuthorisationDateTime>2024-10-23T11:27:06Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>TLWJK</AuthorisationIdentifier>
-                    <Name>Thomassine Hansen</Name>
+                    <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                    <Name>Helle Bonde</Name>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
-                    <Name>Østerbro Fysioterapi</Name>
-                    <AddressLine>Serridslevvej 2 A,2</AddressLine>
-                    <AddressLine>2100 København Ø</AddressLine>
-                    <TelephoneNumber>35262510</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">500240</Identifier>
+                    <Name>Midtbylægerne Aalborg</Name>
+                    <AddressLine>Vingårdsgade 9</AddressLine>
+                    <AddressLine>9000 Aalborg</AddressLine>
+                    <TelephoneNumber>98120473</TelephoneNumber>
+                    <Type>almen lægepraksis</Type>
+                    <Identifier source="SOR">21921000016006</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2024-07-21T11:54:45Z</DateTime>
+            <DateTime>2024-10-23T11:27:06Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2024-07-21</ns4:ValidFromDate>
-        <ns4:ValidToDate>2026-07-21</ns4:ValidToDate>
+        <ns4:ValidFromDate>2024-10-23</ns4:ValidFromDate>
+        <ns4:ValidToDate>2024-11-28</ns4:ValidToDate>
         <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2024-07-21">184963</ns2:PackageNumber>
+            <ns2:PackageNumber source="Medicinpriser" date="2009-02-23">159517</ns2:PackageNumber>
             <ns2:PackageSize>
-                <ns2:Value>20.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2024-07-21">ST</ns2:UnitCode>
+                <ns2:Value>56.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2009-02-23">ST</ns2:UnitCode>
                 <ns2:UnitText>stk.</ns2:UnitText>
-                <ns2:PackageSizeText>20 stk. (blister)</ns2:PackageSizeText>
+                <ns2:PackageSizeText>56 stk. (blister)</ns2:PackageSizeText>
             </ns2:PackageSize>
             <ns2:PackageQuantity>1</ns2:PackageQuantity>
-            <ns2:IterationNumber>3</ns2:IterationNumber>
-            <ns2:IterationInterval>14</ns2:IterationInterval>
-            <ns2:IterationIntervalUnit>dage</ns2:IterationIntervalUnit>
         </ns4:PackageRestriction>
         <ns4:Indication>
-            <Code source="Medicinpriser" date="2024-07-21">143</Code>
-            <Text>mod muskelsmerter</Text>
+            <Code source="Medicinpriser" date="2009-02-23">168</Code>
+            <Text>mod depression</Text>
         </ns4:Indication>
         <ns4:Drug>
             <ATC>
-                <Code source="Medicinpriser" date="2024-07-21">M01AE01</Code>
-                <Text>Ibuprofen</Text>
+                <Code source="Medicinpriser" date="2009-02-23">N06AB04</Code>
+                <Text>Citalopram</Text>
             </ATC>
-            <Identifier source="Medicinpriser" date="2024-07-21">28101344588</Identifier>
-            <Name>Ipren</Name>
+            <Identifier source="Medicinpriser" date="2009-02-23">28101324988</Identifier>
+            <Name>Cipramil</Name>
             <Form>
-                <Code source="Medicinpriser" date="2024-07-21">TABFILM</Code>
+                <Code source="Medicinpriser" date="2009-02-23">TABFILM</Code>
                 <Text>filmovertrukne tabletter</Text>
             </Form>
             <Strength>
-                <Value>200.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-07-21">MG</UnitCode>
+                <Value>20.0</Value>
+                <UnitCode source="Medicinpriser" date="2009-02-23">MG</UnitCode>
                 <UnitText>mg</UnitText>
-                <Text source="Medicinpriser" date="2024-07-21">200 mg</Text>
+                <Text source="Medicinpriser" date="2009-02-23">20 mg</Text>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-07-21">IBUPROFEN</SubstanceText>
+                    <SubstanceText source="Medicinpriser" date="2009-02-23">CITALOPRAMHYDROBROMID</SubstanceText>
                 </ActiveSubstance>
             </Substances>
         </ns4:Drug>
-        <ns4:DosageText>Dosering i henhold til ordinationen.</ns4:DosageText>
+        <ns4:DosageText>1+0+0+1 tablet</ns4:DosageText>
         <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
         <ns4:Order>
-            <ns2:Identifier>463667466298002</ns2:Identifier>
+            <ns2:Identifier>467382425725201</ns2:Identifier>
             <ns2:Created>
                 <By>
-                    <Other>
-                        <Name>
-                            <GivenName>Chris</GivenName>
-                            <Surname>Christoffersen</Surname>
-                        </Name>
-                    </Other>
-                    <Role>Apoteker</Role>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                        <Name>Helle Bonde</Name>
+                    </AuthorisedHealthcareProfessional>
                     <Organisation>
-                        <Name>Skanderborg Apotek</Name>
-                        <AddressLine>Adelgade 61</AddressLine>
-                        <AddressLine>8660 Skanderborg</AddressLine>
-                        <TelephoneNumber>87939080</TelephoneNumber>
-                        <Type>Apotek</Type>
-                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                        <Name>Midtbylægerne Aalborg</Name>
+                        <AddressLine>Vingårdsgade 9</AddressLine>
+                        <AddressLine>9000</AddressLine>
+                        <TelephoneNumber>98120473</TelephoneNumber>
+                        <Type>almen lægepraksis</Type>
+                        <Identifier source="SOR">21921000016006</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-09-10T11:31:06Z</DateTime>
+                <DateTime>2024-10-23T11:27:06Z</DateTime>
             </ns2:Created>
             <ns2:Modified>
                 <By>
-                    <Other>
-                        <Name>
-                            <GivenName>Chris</GivenName>
-                            <Surname>Christoffersen</Surname>
-                        </Name>
-                    </Other>
-                    <Role>Apoteker</Role>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                        <Name>Helle Bonde</Name>
+                    </AuthorisedHealthcareProfessional>
                     <Organisation>
-                        <Name>Skanderborg Apotek</Name>
-                        <AddressLine>Adelgade 61</AddressLine>
-                        <AddressLine>8660 Skanderborg</AddressLine>
-                        <TelephoneNumber>87939080</TelephoneNumber>
-                        <Type>Apotek</Type>
-                        <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                        <Name>Midtbylægerne Aalborg</Name>
+                        <AddressLine>Vingårdsgade 9</AddressLine>
+                        <AddressLine>9000</AddressLine>
+                        <TelephoneNumber>98120473</TelephoneNumber>
+                        <Type>almen lægepraksis</Type>
+                        <Identifier source="SOR">21921000016006</Identifier>
                     </Organisation>
                 </By>
-                <DateTime>2024-09-10T11:31:06Z</DateTime>
+                <DateTime>2024-10-23T11:27:06Z</DateTime>
             </ns2:Modified>
             <ns2:OrderedAtPharmacy>
-                <Name>Skanderborg Apotek</Name>
-                <AddressLine>Adelgade 61</AddressLine>
-                <AddressLine>8660 Skanderborg</AddressLine>
-                <TelephoneNumber>87939080</TelephoneNumber>
+                <Name>Humlebæk Apotek</Name>
+                <AddressLine>Humlebæk Center 23</AddressLine>
+                <AddressLine>3050 Humlebæk</AddressLine>
+                <TelephoneNumber>49191979</TelephoneNumber>
                 <Type>Apotek</Type>
-                <Identifier source="EAN-Lokationsnummer">5790000170609</Identifier>
+                <Identifier source="EAN-Lokationsnummer">5790000171545</Identifier>
             </ns2:OrderedAtPharmacy>
-            <ns2:Status>Ekspedition påbegyndt</ns2:Status>
+            <ns2:Status>Bestilt</ns2:Status>
+            <ns2:DeliveryInstructionText>Afhentes sammen med øvrige varer</ns2:DeliveryInstructionText>
+            <ns2:DeliveryInstructionText>og skal opbevares på køl</ns2:DeliveryInstructionText>
         </ns4:Order>
-        <ns4:Version>6735</ns4:Version>
+        <ns4:Version>26376</ns4:Version>
     </ns4:Prescription>
 </ns4:GetPrescriptionResponse>

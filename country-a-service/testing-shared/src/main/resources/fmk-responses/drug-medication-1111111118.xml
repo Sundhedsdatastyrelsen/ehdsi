@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:GetDrugMedicationResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns2:PersonIdentifier source="CPR">1111111118</ns2:PersonIdentifier>
+    <ns2:DrugMedication>
+        <ns2:Identifier>31237517</ns2:Identifier>
+        <ns2:Version>1729682826306001002</ns2:Version>
+        <ns2:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                    <Name>Helle Bonde</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Midtbylægerne Aalborg</Name>
+                    <AddressLine>Vingårdsgade 9</AddressLine>
+                    <AddressLine>9000 Aalborg</AddressLine>
+                    <TelephoneNumber>98120473</TelephoneNumber>
+                    <EmailAddress>Midtbylaegerneaalborg@gmail.com</EmailAddress>
+                    <Type>almen lægepraksis</Type>
+                    <Identifier source="SOR">21921000016006</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-23T11:27:06Z</DateTime>
+        </ns2:Created>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                    <Name>Helle Bonde</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Midtbylægerne Aalborg</Name>
+                    <AddressLine>Vingårdsgade 9</AddressLine>
+                    <AddressLine>9000 Aalborg</AddressLine>
+                    <TelephoneNumber>98120473</TelephoneNumber>
+                    <EmailAddress>Midtbylaegerneaalborg@gmail.com</EmailAddress>
+                    <Type>almen lægepraksis</Type>
+                    <Identifier source="SOR">21921000016006</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-10-23T11:27:06Z</DateTime>
+        </ns2:Modified>
+        <ns2:Type>Lægeordineret</ns2:Type>
+        <ns2:BeginEndDate>
+            <CreatedDateTime>2024-10-23T11:27:06Z</CreatedDateTime>
+            <TreatmentStartDate>2009-05-06</TreatmentStartDate>
+            <TreatmentEndDate>2024-10-29</TreatmentEndDate>
+        </ns2:BeginEndDate>
+        <ns2:Indication>
+            <Code source="Medicinpriser" date="2009-05-06">168</Code>
+            <Text>mod depression</Text>
+        </ns2:Indication>
+        <ns2:RouteOfAdministration>
+            <Code source="Medicinpriser" date="2009-05-06">OR</Code>
+            <Text>Oral anvendelse</Text>
+        </ns2:RouteOfAdministration>
+        <ns2:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2009-05-06">N06AB04</Code>
+                <Text>Citalopram</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2009-05-06">28101324988</Identifier>
+            <Name>Cipramil</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2009-05-06">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>20.0</Value>
+                <UnitCode source="Medicinpriser" date="2009-05-06">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2009-05-06">20 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2009-05-06">CITALOPRAMHYDROBROMID</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns2:Drug>
+        <ns2:Dosage>
+            <ns2:UnitTexts>
+                <ns2:Singular>tablet</ns2:Singular>
+                <ns2:Plural>tabletter</ns2:Plural>
+            </ns2:UnitTexts>
+            <ns2:StructuresFixed>
+                <Structure>
+                    <IterationInterval>1</IterationInterval>
+                    <StartDate>2009-05-06</StartDate>
+                    <EndDate>2024-10-28</EndDate>
+                    <Day>
+                        <Number>1</Number>
+                        <Dose>
+                            <Time>night</Time>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                    </Day>
+                    <DosageTranslation>
+                        <ShortText>1 tablet nat</ShortText>
+                        <LongText>Dosering fra d. 6. maj 2009 til d. 28. okt. 2024:
+1 tablet hver nat</LongText>
+                    </DosageTranslation>
+                </Structure>
+                <DosageTranslationCombined>
+                    <ShortText>1 tablet nat</ShortText>
+                    <LongText>Dosering fra d. 6. maj 2009 til d. 28. okt. 2024:
+1 tablet hver nat</LongText>
+                </DosageTranslationCombined>
+            </ns2:StructuresFixed>
+            <ns2:Type>fast</ns2:Type>
+        </ns2:Dosage>
+        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+    </ns2:DrugMedication>
+</ns2:GetDrugMedicationResponse>
