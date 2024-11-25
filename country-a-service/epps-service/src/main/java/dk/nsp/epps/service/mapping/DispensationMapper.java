@@ -203,7 +203,10 @@ public class DispensationMapper {
         var l = nodeList.getLength();
         var result = new ArrayList<String>();
         for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i).getAttributes().getNamedItem(attrName).getTextContent());
+            var item = nodeList.item(i).getAttributes().getNamedItem(attrName);
+            if(item != null){
+                result.add(item.getTextContent());
+            }
         }
         return Collections.unmodifiableList(result);
     }
