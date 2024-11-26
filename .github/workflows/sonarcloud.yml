@@ -3,6 +3,7 @@ name: SonarCloud Analysis
 on:
   push:
     branches:
+      - main
       - feature/sonar-config
   pull_request:
     types:
@@ -34,6 +35,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build with Maven
+        working-directory: country-a-service
         run: mvn clean verify -DskipTests=false -DskipITs=false
 
       - name: SonarCloud Scan
