@@ -1,38 +1,5 @@
 <#ftl output_format="XML">
-<#-- Macro for filling out attributes for a coded CDA value -->
-<#macro cdaCodeAttrs value><#rt>
-code="${value.code}" <#rt>
-codeSystem="${value.codeSystem}"<#rt>
-<#if value.displayName??> displayName="${value.displayName}"</#if><#rt>
-<#if value.codeSystemName??> codeSystemName="${value.codeSystemName}"</#if><#rt>
-<#if value.codeSystemVersion??> codeSystemVersion="${value.codeSystemVersion}"</#if><#rt>
-</#macro>
-<#-- Macro for filling out attributes for a CDA identifier -->
-<#macro cdaIdAttrs id><#rt>
-root="${id.root}"<#rt>
-<#if id.extension??> extension="${id.extension}"</#if><#rt>
-</#macro>
-<#--
- The following macro uses the string "__NULL__" as a replacement for a pure null value
- This is caused by the freemarker handling of null values as input to macros, and is chosen, since we do not expect
- any of the actual values to match this string. Treat it is a null value, only one that can be a default for the macro"
- -->
-<#macro address value="__NULL__"><#rt>
-<#if value=="__NULL__"><#rt>
-<addr nullFlavor="NI" />
-<#else>
-<addr>
-    <#list value.streetAddressLines as addressLine>
-    <streetAddressLine>${ addressLine }</streetAddressLine>
-    </#list>
-    <#if value.city??><city>${ value.city }</city></#if><#rt>
-    <#if value.postalCode??><postalCode>${ value.postalCode }</postalCode></#if><#rt>
-    <#if value.countryCode??><country>${ value.countryCode }</country></#if><#rt>
-</addr>
-</#if><#rt>
-</#macro><#rt>
-
-
+<#import "commons.ftl" as common>
 <#-- https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html -->
 <ClinicalDocument xmlns="urn:hl7-org:v3" classCode="DOCCLIN" moodCode="EVN" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
@@ -58,7 +25,7 @@ root="${id.root}"<#rt>
       number is either 0, or starts with a nonzero digit. More formally, an OID
       SHALL be in the form [0-2](\.(0|[1-9][0-9]*))*.
 -->
-    <id <@cdaIdAttrs documentId /> />
+    <id <@common.cdaIdAttrs documentId /> />
     <code code="57833-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ePrescription"/>
     <title>${ title }</title>
     <effectiveTime value="${ effectiveTime }"/>
@@ -66,8 +33,8 @@ root="${id.root}"<#rt>
     <languageCode code="da-DK"/>
     <recordTarget contextControlCode="OP" typeCode="RCT">
         <patientRole classCode="PAT">
-            <id <@cdaIdAttrs patient.id/> />
-            <@address patient.address />
+            <id <@common.cdaIdAttrs patient.id/> />
+            <@common.address patient.address />
             <telecom nullFlavor="NI"/>
             <patient classCode="PSN" determinerCode="INSTANCE">
                 <name>
@@ -76,16 +43,16 @@ root="${id.root}"<#rt>
 </#list>
                     <family>${ patient.name.family }</family>
                 </name>
-                <administrativeGenderCode <@cdaCodeAttrs patient.genderCode /> />
+                <administrativeGenderCode <@common.cdaCodeAttrs patient.genderCode /> />
                 <birthTime value="${ patient.birthTime }"/>
             </patient>
         </patientRole>
     </recordTarget>
     <author>
-        <functionCode <@cdaCodeAttrs author.functionCode /> />
+        <functionCode <@common.cdaCodeAttrs author.functionCode /> />
         <time value="${ author.time }"/>
         <assignedAuthor classCode="ASSIGNED">
-            <id <@cdaIdAttrs author.id /> />
+            <id <@common.cdaIdAttrs author.id /> />
             <#-- TODO: Er det nødvendigt med addr og telecom?  -->
             <addr nullFlavor="NI"/>
             <telecom nullFlavor="NI"/>
@@ -98,10 +65,10 @@ root="${id.root}"<#rt>
                 </name>
             </assignedPerson>
             <representedOrganization classCode="ORG" determinerCode="INSTANCE">
-                <id <@cdaIdAttrs author.organization.id />/>
+                <id <@common.cdaIdAttrs author.organization.id />/>
                 <name>${ author.organization.name }</name>
                 <telecom use="WP" value="tel:${ author.organization.telephoneNumber }"/>
-                <@address author.organization.address />
+                <@common.address author.organization.address />
             </representedOrganization>
         </assignedAuthor>
     </author>
@@ -154,7 +121,7 @@ root="${id.root}"<#rt>
     </legalAuthenticator>
     <relatedDocument typeCode="XFRM">
         <parentDocument classCode="DOCCLIN" moodCode="EVN">
-            <id <@cdaIdAttrs parentDocumentId />/>
+            <id <@common.cdaIdAttrs parentDocumentId />/>
         </parentDocument>
     </relatedDocument>
     <component>
@@ -162,7 +129,7 @@ root="${id.root}"<#rt>
             <component>
                 <section>
                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1"/>
-                    <id <@cdaIdAttrs prescriptionId />/>
+                    <id <@common.cdaIdAttrs prescriptionId />/>
                     <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
                     <title>Prescriptions</title>
                     <text> <#-- TODO review -->
@@ -190,7 +157,7 @@ root="${id.root}"<#rt>
 
                             <#-- Globalt unikt "prescription item id" - i vores tilfælde det samme som "prescription id",
                                  da der er et 1-1 forhold. -->
-                            <id <@cdaIdAttrs prescriptionId />/>
+                            <id <@common.cdaIdAttrs prescriptionId />/>
                             <text>${ entryText }</text>
                             <statusCode code="active"/>
                             <#-- Vi har ikke disse oplysninger på recepten, de ligger på medicinkortet, som vi ikke har adgang til som apoteker (uden samtykke). -->
@@ -208,7 +175,7 @@ root="${id.root}"<#rt>
                                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
                                         <name>${ product.name }</name>
                                         <pharm:desc>${ product.description }</pharm:desc>
-                                        <pharm:formCode <@cdaCodeAttrs product.formCode />/>
+                                        <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
                                         <pharm:asContent classCode="CONT">
                                             <#if product.size.unit.tag == "WithCode">
                                                 <pharm:quantity unit="${ product.size.unit.code }" value="${ product.size.value }"/>
@@ -222,7 +189,7 @@ root="${id.root}"<#rt>
                                               <#stop "Invalid product.size.unit.tag">
                                             </#if>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
-                                                <pharm:code <@cdaCodeAttrs product.packageCode/> />
+                                                <pharm:code <@common.cdaCodeAttrs product.packageCode/> />
                                                 <pharm:name>${ product.name }</pharm:name>
                                                 <#-- Vi har ikke en kodet beskrivelse af pakkeformen - det nærmeste vi kommer er "PackageSizeText" som kommer fra LMS02 og er ustruktureret  -->
                                                 <pharm:formCode nullFlavor="UNK" />
@@ -230,7 +197,7 @@ root="${id.root}"<#rt>
                                         </pharm:asContent>
                                         <pharm:asSpecializedKind classCode="GRIC">
                                             <pharm:generalizedMaterialKind determinerCode="KIND" classCode="MMAT">
-                                                <pharm:code <@cdaCodeAttrs product.atcCode /> />
+                                                <pharm:code <@common.cdaCodeAttrs product.atcCode /> />
                                             </pharm:generalizedMaterialKind>
                                         </pharm:asSpecializedKind>
                                     </manufacturedMaterial>
