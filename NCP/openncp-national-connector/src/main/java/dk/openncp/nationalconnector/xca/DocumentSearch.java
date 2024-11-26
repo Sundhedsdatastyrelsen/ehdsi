@@ -64,7 +64,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             if (e.getCode() == 0) {
                 throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with Country A service");
             } else if (e.getCode() == 400) {
-                return null;
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format("Country A service failed request with error: %s",e.getResponseBody()));
             } else {
                 throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format("Bad response from Country A service, status: %s, body: %s",
                         e.getCode(),

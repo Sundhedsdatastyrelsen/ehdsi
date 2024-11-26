@@ -136,7 +136,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
                     .collect(Collectors.toList());
         } catch (ApiException e) {
             throw new NIException(OpenNCPErrorCode.ERROR_PI_GENERIC, e.getCode() > 0
-                    ? "Bad response from Country A service"
+                    ? String.format("Bad response from Country A service. Error: %s",e.getResponseBody())
                     : "Missing response from Country A service"
             );
         }
