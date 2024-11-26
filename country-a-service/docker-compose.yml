@@ -16,7 +16,7 @@ services:
     build:
       dockerfile: epps-application/Dockerfile.build
     container_name: epps-country-a
-    restart: on-failure:3
+    restart: unless-stopped
     ports:
       - "8180:8080"
       # - "5008:5008"
