@@ -30,7 +30,8 @@ class DispensationMapperTest {
 
     static Stream<Arguments> testDispensationCdas() {
         return Stream.of(
-            Arguments.of("dispensation2.xml") //Our own constructed test dispensation
+            Arguments.of("dispensation2.xml"), //Our own constructed test dispensation
+            Arguments.of("CzRequest1.xml") // One of the requests the CZ team sent us during the Fall 2024 test
         );
     }
 
