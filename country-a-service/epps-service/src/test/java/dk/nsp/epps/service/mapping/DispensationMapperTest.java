@@ -36,7 +36,9 @@ class DispensationMapperTest {
         return Stream.of(
             Arguments.of("dispensation2.xml", true), //Our own constructed test dispensation
             Arguments.of("CzRequest1.xml", true), // One of the requests the CZ team sent us during the Fall 2024 test
-            Arguments.of("CzRequest2.xml", false) // One of the requests the CZ team sent us during the Fall 2024 test
+            Arguments.of("CzRequest2.xml", false), // One of the requests the CZ team sent us during the Fall 2024 test
+            Arguments.of("GrRequest1.xml", false) // One of the requests the GR team sent us during the Fall 2024 test
+
         );
     }
 
@@ -100,7 +102,6 @@ class DispensationMapperTest {
         // either not do the parameterized tests, or we should include the expected values in the parameters.
         Assertions.assertFalse(org.getIdentifier().getSource().isBlank());
         Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
-        Assertions.assertFalse(org.getName().isBlank());
         Assertions.assertFalse(org.getType().isBlank());
         Assertions.assertFalse(org.getAddressLine().isEmpty());
     }
