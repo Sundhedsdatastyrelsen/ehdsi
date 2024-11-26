@@ -11,9 +11,7 @@ import dk.nsp.epps.ncp.api.SubmitDispensationRequestDto;
 import dk.nsp.epps.service.PrescriptionService;
 import dk.nsp.epps.service.PrescriptionService.PrescriptionFilter;
 import dk.nsp.epps.service.exception.DataRequirementException;
-import dk.sds.ncp.cda.MapperException;
 import jakarta.validation.Valid;
-import jakarta.xml.bind.JAXBException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,9 +57,13 @@ public class PrescriptionController {
     @PostMapping(path = "/api/edispensation/discard")
     public void discardDispensation(
         @Valid @RequestBody DisardDispensationRequestDto request
-    ) throws SAXException, JAXBException, MapperException {
-        prescriptionService.undoDispensation(request.getDisardDispenseDetails()
-            .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
-            .getDocument()), TestIdentities.apotekerChrisChristoffersen);
+    ) {
+        try {
+            prescriptionService.undoDispensation(request.getDisardDispenseDetails()
+                .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
+                .getDocument()), TestIdentities.apotekerChrisChristoffersen);
+        } catch (SAXException e) {
+            throw new DataRequirementException("Could not read XML document in request");
+        }
     }
 }
