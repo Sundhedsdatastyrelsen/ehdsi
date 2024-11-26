@@ -35,7 +35,6 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class PrescriptionService {
     private final FmkClient fmkClient;
-    private final EPrescriptionMapper ePrescriptionMapper;
 
     public record PrescriptionFilter(
         String documentId,
@@ -78,10 +77,11 @@ public class PrescriptionService {
         try {
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
             log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
-            return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
+            return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve list of prescriptions from FMK");
         }
+
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
@@ -91,10 +91,11 @@ public class PrescriptionService {
             .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
+
         try {
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
-            return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }

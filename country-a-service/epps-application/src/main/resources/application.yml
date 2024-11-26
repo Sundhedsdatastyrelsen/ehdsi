@@ -14,8 +14,6 @@ spring:
 app:
   fmk.endpoint.url: ${FMK_ENDPOINT_URL}
   cpr.endpoint.url: ${CPR_ENDPOINT_URL}
-  # The repository id needs to be globally unique.  For now, we use the DK home OID
-  eprescription.repository.id: 2.16.17.710.802.1000.990.1
 
 management:
   endpoint:
