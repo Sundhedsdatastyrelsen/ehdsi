@@ -278,7 +278,6 @@
 							<id>jacoco-initialize</id>
 							<goals>
 								<goal>prepare-agent</goal>
-								<goal>report</goal>
 								<!-- <goal>check</goal> -->
 							</goals>
 							<!--
@@ -302,6 +301,13 @@
 								</rules>
 							</configuration>
 							-->
+						</execution>
+						<execution>
+							<id>report</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
 						</execution>
 					</executions>
 				</plugin>
