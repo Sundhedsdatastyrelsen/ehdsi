@@ -16,7 +16,10 @@ public class CountryAExceptionHandler {
     @ExceptionHandler(CountryAException.class)
     public ResponseEntity<ErrorDto> handleException(CountryAException e) {
         HttpStatus httpStatus = e.getHttpStatus();
-        var details = new ErrorDto(httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+        //CFB: I'm not sure we want to expose our internal error messages to the OpenNCP error. We should probably just
+        // give them some idea that we failed, and a id or timestamp they can give us, and we can look in the code for.
+        var details = new ErrorDto(httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass()
+            .getSimpleName());
 
         if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
             log.error("{}: {} - Returning {}", e.getClass().getSimpleName(), e.getMessage(), httpStatus, e);

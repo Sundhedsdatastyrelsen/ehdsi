@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -33,7 +32,7 @@ public class PrescriptionController {
     @PostMapping(path = "/api/find-eprescription-documents/")
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
-    ) throws JAXBException, IOException, InterruptedException {
+    ) {
         var filter = new PrescriptionFilter(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
     }
@@ -58,6 +57,7 @@ public class PrescriptionController {
         @Valid @RequestBody DisardDispensationRequestDto request
     ) throws SAXException, JAXBException, MapperException, XPathExpressionException {
         prescriptionService.undoDispensation(request.getDisardDispenseDetails()
-            .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()), TestIdentities.apotekerChrisChristoffersen);
+            .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
+            .getDocument()), TestIdentities.apotekerChrisChristoffersen);
     }
 }

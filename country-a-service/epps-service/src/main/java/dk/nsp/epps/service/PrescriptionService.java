@@ -67,16 +67,20 @@ public class PrescriptionService {
         String patientId,
         PrescriptionFilter filter,
         Identity caller
-    ) throws JAXBException {
+    ) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("undoDispensation: looking up prescription information");
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-        log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
-        return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
+        try {
+            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
+            log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
+            return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
+        }
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) throws JAXBException {
