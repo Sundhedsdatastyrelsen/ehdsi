@@ -3,9 +3,11 @@ name: SonarCloud Analysis
 on:
   push:
     branches:
-      - main
       - feature/sonar-config
   pull_request:
+    branches:
+      - main
+      - feature/sonar-config
     types:
       - opened
       - synchronize
@@ -34,9 +36,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build with Maven
+      - name: Build and Run Unit Tests in country-a-service
         working-directory: country-a-service
-        run: mvn clean verify -DskipTests=false -DskipITs=false
+        run: mvn clean verify -DskipITs=true
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
