@@ -9,18 +9,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.xpath.XPathExpressionException;
-import java.time.ZonedDateTime;
-import java.util.GregorianCalendar;
-import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
 
 class DispensationMapperTest {
     Document testDispensationCda() {
+        //Todo CFB: Add more dispensation files to test
         try (var is = this.getClass().getClassLoader().getResourceAsStream("dispensation2.xml")) {
             return Utils.readXmlDocument(is);
         } catch (Exception e) {
