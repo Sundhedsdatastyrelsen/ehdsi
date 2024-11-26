@@ -13,6 +13,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.Utils;
+import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import lombok.NonNull;
@@ -393,18 +394,22 @@ public class DispensationMapper {
     }
 
     String packageNumber(Document cda) throws XPathExpressionException {
-        var node = evalNode(cda, XPaths.manufacturedMaterialCode);
-        var codeSystem = xpath.evaluate("@codeSystem", node);
-        if (!Oid.DK_LMS02.value.equals(codeSystem)) {
-            // throw?
-            log.warn(
-                "Expected LMS02 ({}) code system, for {}. Got: {}",
-                Oid.DK_LMS02.value,
-                XPaths.manufacturedMaterialCode,
-                codeSystem
-            );
+        try {
+            var node = evalNode(cda, XPaths.manufacturedMaterialCode);
+            var codeSystem = xpath.evaluate("@codeSystem", node);
+            if (!Oid.DK_LMS02.value.equals(codeSystem)) {
+                // throw?
+                log.warn(
+                    "Expected LMS02 ({}) code system, for {}. Got: {}",
+                    Oid.DK_LMS02.value,
+                    XPaths.manufacturedMaterialCode,
+                    codeSystem
+                );
+            }
+            return xpath.evaluate("@code", node);
+        } catch (XPathExpressionException e) {
+            throw new DataRequirementException(String.format("Could not find find data at path: %s", XPaths.manufacturedMaterialCode));
         }
-        return xpath.evaluate("@code", node);
     }
 
     public StartEffectuationRequestType startEffectuationRequest(
