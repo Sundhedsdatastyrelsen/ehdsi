@@ -34,7 +34,6 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class PrescriptionService {
     private final FmkClient fmkClient;
-    private final EPrescriptionMapper ePrescriptionMapper;
 
     public record PrescriptionFilter(
         String documentId,
@@ -76,7 +75,7 @@ public class PrescriptionService {
         log.debug("undoDispensation: looking up prescription information");
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
         log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
-        return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
+        return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) throws JAXBException {
@@ -88,7 +87,7 @@ public class PrescriptionService {
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
-        return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+        return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
     }
 
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) throws MapperException {
