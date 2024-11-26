@@ -137,7 +137,7 @@ public class DispensationMapper {
     </Prescription>
 </CreatePharmacyEffectuationRequest>
      */
-    private static class XPaths {
+    static class XPaths {
         static final String authorFamilyName =
             "/hl7:ClinicalDocument/hl7:author/hl7:assignedAuthor/hl7:assignedPerson/hl7:name/hl7:family";
         static final String authorGivenName =
