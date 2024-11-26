@@ -204,7 +204,7 @@ public class DispensationMapper {
         var result = new ArrayList<String>();
         for (var i = 0; i < l; i++) {
             var item = nodeList.item(i).getAttributes().getNamedItem(attrName);
-            if(item != null){
+            if (item != null) {
                 result.add(item.getTextContent());
             }
         }
@@ -242,7 +242,7 @@ public class DispensationMapper {
             // It has implications in FMK, who validates these
             return "Apoteker";
         }
-        if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)){
+        if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             //This is the translation of "Medical Doctor"
             return "Læge";
         }
