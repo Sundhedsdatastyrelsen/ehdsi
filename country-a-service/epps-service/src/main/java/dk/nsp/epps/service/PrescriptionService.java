@@ -10,6 +10,7 @@ import dk.nsp.epps.client.FmkClient;
 import dk.nsp.epps.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.nsp.epps.ncp.api.EpsosDocumentDto;
 import dk.nsp.epps.service.exception.CountryAException;
+import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.nsp.epps.service.mapping.DispensationMapper;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
@@ -79,23 +80,28 @@ public class PrescriptionService {
             log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
             return ePrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
         } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve list of prescriptions from FMK");
         }
     }
 
-    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) throws JAXBException {
+    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
         log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
-        return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+        try {
+            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
+            log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+            return ePrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
+        }
+
     }
 
-    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) throws MapperException {
+    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) {
         StartEffectuationResponseType response;
         var dispensationMapper = new DispensationMapper();
         try {
@@ -104,6 +110,8 @@ public class PrescriptionService {
                 caller);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
+        } catch (MapperException e) {
+            throw new DataRequirementException(String.format("Could not start dispensation flow due to mapper error: %s", e.getMessage()), e);
         }
 
         try {
@@ -114,8 +122,12 @@ public class PrescriptionService {
                     response),
                 caller);
         } catch (JAXBException e) {
-            // TODO: Cancel effectuation flow
+            // TODO: Cancel effectuation flow. (CFB 26/11/2024: Is this really necessary? We haven't done it, at it
+            //  does not seem to block anything. We should enquire at FMK as to what happens if we just begin the
+            //  effectuation, but never actually effectuate.)
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
+        } catch (MapperException e) {
+            throw new DataRequirementException(String.format("Could not create dispensation request due to mapper error: %s", e.getMessage()), e);
         }
     }
 
