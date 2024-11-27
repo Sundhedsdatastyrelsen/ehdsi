@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ePrescriptionPoC
+    name: NCPeH-DK-national-connector-service
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration

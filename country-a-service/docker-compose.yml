@@ -12,9 +12,8 @@ services:
   # epps-country-a service
   #
   epps-country-a:
-    image: eppsregistry.azurecr.io/countrya-poc:latest
-    build:
-      dockerfile: epps-application/Dockerfile.build
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/countrya:latest
+    build: .
     container_name: epps-country-a
     restart: unless-stopped
     ports:
@@ -28,6 +27,8 @@ services:
 #    links:
       # - epps-fmk-mock:epps-fmk-mock
       # - epps-cpr-mock:epps-cpr-mock
+    volumes:
+      - ./config:/app/config:ro
     networks:
       - epps-backend
 
