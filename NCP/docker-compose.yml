@@ -108,6 +108,7 @@ services:
       target: node-a
     container_name: "openncp-server"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./ncp_a/ncpa.database.env
       - ./ncp_a/ncpa.env
@@ -147,6 +148,7 @@ services:
       target: node-b
     container_name: "openncp-client"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./ncp_b/ncpb.database.env
       - ./ncp_b/ncpb.env
@@ -185,6 +187,7 @@ services:
     build:
       target: openatna
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-openatna/openatna.database.env
       - ./openncp-openatna/openatna.env
@@ -221,6 +224,7 @@ services:
     build:
       target: trc-sts
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-trc-sts/.database.env
       - ./openncp-trc-sts/.env
@@ -256,6 +260,7 @@ services:
     build:
       target: translations-and-mappings
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
       - ./openncp-translations-and-mappings/translations-and-mappings.env
@@ -290,6 +295,7 @@ services:
     build:
       target: web-manager
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-web-manager/.database.env
       - ./openncp-web-manager/.env
@@ -329,6 +335,7 @@ services:
       context: configuration-synchronizer
     container_name: configuration-synchronizer
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
+    restart: unless-stopped
     env_file: .env
     volumes:
       - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
@@ -359,6 +366,7 @@ services:
   portainer:
     profiles: ["portainer"]
     image: portainer/portainer-ce:latest
+    restart: unless-stopped
     container_name: portainer
     ports:
       - "${PORTAINER_PORT}:${PORTAINER_EXTERNAL_PORT}"
