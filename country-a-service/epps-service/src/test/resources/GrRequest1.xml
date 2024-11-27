@@ -51,7 +51,7 @@
                 <state nullFlavor="UNK"/>
                 <country>GR</country>
             </addr>
-            <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+            <telecom use="WP" value="mailto:invalid@email.test"/>
             <assignedPerson>
                 <name>
                     <family>pharmacist</family>
@@ -62,7 +62,7 @@
                 <id extension="f-907fa46f-0a97-4e8b-b2ce-023f1cd2a8eb-dcoun_tst1"
                     root="2.16.840.1.113883.2.25.3.4.1.4.2.1"/>
                 <name nullFlavor="UNK"/>
-                <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+                <telecom use="WP" value="mailto:invalid@email.test"/>
                 <addr>
                     <streetAddressLine nullFlavor="UNK"/>
                     <city nullFlavor="UNK"/>
@@ -227,7 +227,7 @@
                                         <state nullFlavor="UNK"/>
                                         <country>GR</country>
                                     </addr>
-                                    <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+                                    <telecom use="WP" value="mailto:invalid@email.test"/>
                                     <assignedPerson>
                                         <name>
                                             <family>pharmacist</family>
@@ -238,7 +238,7 @@
                                         <id extension="f-907fa46f-0a97-4e8b-b2ce-023f1cd2a8eb-dcoun_tst1"
                                             root="2.16.840.1.113883.2.25.3.4.1.4.2.9.1"/>
                                         <name nullFlavor="UNK"/>
-                                        <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+                                        <telecom use="WP" value="mailto:invalid@email.test"/>
                                         <addr>
                                             <streetAddressLine nullFlavor="UNK"/>
                                             <city nullFlavor="UNK"/>

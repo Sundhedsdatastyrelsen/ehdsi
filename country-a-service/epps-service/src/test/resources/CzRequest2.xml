@@ -80,7 +80,7 @@
             <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
                 <id extension="00023817" root="1.3.154"/>
                 <name>Státní ústav pro kontrolu léčiv</name>
-                <telecom use="WP" value="mailto:posta@sukl.cz"/>
+                <telecom use="WP" value="mailto:invalid@email.test"/>
                 <addr>
                     <country>CZ</country>
                     <postalCode>10041</postalCode>
