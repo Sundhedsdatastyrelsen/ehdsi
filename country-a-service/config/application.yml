@@ -1,15 +1,12 @@
 spring:
   application:
     name: NCPeH-DK-national-connector-service
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
-  profiles:
-    group:
-      dev: default
-      prod: default
+  datasource:
+    url: jdbc:sqlite:data/db.sqlite
+    driver-class-name: org.sqlite.JDBC
+  flyway:
+    enabled: true
+    locations: "classpath:db/migration"
 
 app:
   fmk.endpoint.url: ${FMK_ENDPOINT_URL}

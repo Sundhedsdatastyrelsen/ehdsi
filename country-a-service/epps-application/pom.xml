@@ -67,9 +67,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<skip>false</skip>
-					<profiles>
-						<profile>dev,localdb</profile>
-					</profiles>
+                    <workingDirectory>..</workingDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
