@@ -3,11 +3,10 @@ name: SonarCloud Analysis
 on:
   push:
     branches:
-      - feature/sonar-config
+      - main
   pull_request:
     branches:
       - main
-      - feature/sonar-config
     types:
       - opened
       - synchronize
