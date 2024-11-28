@@ -112,7 +112,7 @@ public class PrescriptionService {
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
         } catch (MapperException e) {
-            throw new DataRequirementException(String.format("Could not start dispensation flow due to mapper error: %s", e.getMessage()), e);
+            throw new DataRequirementException(String.format("Error mapping dispensation to request: %s", e.getMessage()), e);
         }
 
         try {
@@ -128,7 +128,7 @@ public class PrescriptionService {
             //  effectuation, but never actually effectuate.)
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
         } catch (MapperException e) {
-            throw new DataRequirementException(String.format("Could not create dispensation request due to mapper error: %s", e.getMessage()), e);
+            throw new DataRequirementException(String.format("Error mapping dispensation to request: %s", e.getMessage()), e);
         }
     }
 
@@ -153,7 +153,7 @@ public class PrescriptionService {
             var dispensationMapper = new DispensationMapper();
             undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId, cdaToDiscard, fmkResponse);
         } catch (MapperException e) {
-            throw new DataRequirementException(String.format("Could not create undo effectuation request due to mapper error: %s", e.getMessage()), e);
+            throw new DataRequirementException(String.format("Error mapping dispensation to request: %s", e.getMessage()), e);
         }
 
         UndoEffectuationResponseType undoResponse;

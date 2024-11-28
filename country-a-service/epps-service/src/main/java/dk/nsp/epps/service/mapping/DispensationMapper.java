@@ -13,12 +13,14 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.Utils;
+import dk.nsp.epps.service.exception.CountryAException;
 import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import lombok.NonNull;
 import org.apache.xml.dtm.ref.DTMNodeList;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -474,18 +476,18 @@ public class DispensationMapper {
                 .filter(p -> p.getIdentifier() == prescriptionId)
                 .findFirst();
             if (fmkPrescription.isEmpty()) {
-                throw new MapperException("No prescription in list of prescriptions matches ID from discard dispensation");
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,"Could not find prescription to discard in system");
             }
             var lastOrder = fmkPrescription.get()
                 .getOrder()
                 .stream()
                 .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
             if (lastOrder.isEmpty()) {
-                throw new MapperException("No orders found in list of prescription");
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,"Could not find order to discard on prescription in system");
             }
             var lastEffectuation = lastOrder.get().getEffectuation();
             if (lastEffectuation == null) {
-                throw new MapperException("No effectuations found on last order");
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,"Could not find effectuation to discard on prescription in system");
             }
 
 
