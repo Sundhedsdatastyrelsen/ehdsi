@@ -144,7 +144,6 @@
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>3.47.0.0</version>
-                <scope>runtime</scope>
             </dependency>
 
 			<!-- Solve convergence errors -->
