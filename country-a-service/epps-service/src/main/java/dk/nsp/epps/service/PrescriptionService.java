@@ -1,8 +1,8 @@
 package dk.nsp.epps.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -14,6 +14,8 @@ import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.nsp.epps.service.mapping.DispensationMapper;
 import dk.nsp.epps.service.mapping.EPrescriptionMapper;
 import dk.nsp.epps.service.mapping.PatientIdMapper;
+import dk.nsp.epps.service.undo.UndoDispensationRepository;
+import dk.nsp.epps.service.undo.UndoDispensationRow;
 import dk.nsp.test.idp.model.Identity;
 import dk.sds.ncp.cda.EPrescriptionDocumentIdMapper;
 import dk.sds.ncp.cda.MapperException;
@@ -36,6 +38,7 @@ import java.util.stream.IntStream;
 public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping dispensation to request: %s";
     private final FmkClient fmkClient;
+    private final UndoDispensationRepository undoDispensationRepository;
 
     public record PrescriptionFilter(
         String documentId,
@@ -107,6 +110,7 @@ public class PrescriptionService {
         StartEffectuationResponseType response;
         var dispensationMapper = new DispensationMapper();
         try {
+            log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
                 dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
                 caller);
@@ -116,8 +120,10 @@ public class PrescriptionService {
             throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
         }
 
+        CreatePharmacyEffectuationResponseType effectuationResponse;
         try {
-            fmkClient.createPharmacyEffectuation(
+            log.info("Create FMK pharmacy effectuation");
+            effectuationResponse = fmkClient.createPharmacyEffectuation(
                 dispensationMapper.createPharmacyEffectuationRequest(
                     patientId,
                     dispensationCda,
@@ -128,47 +134,57 @@ public class PrescriptionService {
         } catch (MapperException e) {
             throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
         }
+
+        var eDispensationCdaId = dispensationMapper.cdaId(dispensationCda);
+        for (var effectuation : effectuationResponse.getEffectuation()) {
+            // There should only be one in our case, but FMK supports multiple effectuations per request
+            log.info("Store effectuation undo information");
+            try {
+                undoDispensationRepository.insert(UndoDispensationRow.fromCdaId(
+                    eDispensationCdaId,
+                    effectuation.getEffectuationIdentifier(),
+                    effectuation.getOrderIdentifier()
+                ));
+            } catch (Throwable e) {
+                // We should not fail the submitDispensation request here because of a database error,
+                // because the dispensation has been recorded in FMK at this point.
+                log.error("Storing undo information for dispensation failed", e);
+            }
+        }
     }
 
-    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) {
-        String cpr = PatientIdMapper.toCpr(patientId);
-        final var request = GetPrescriptionRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeAllPrescriptions().end()
-            .withIncludeEffectuations(true)
-            .build();
+    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) throws JAXBException, MapperException {
+        var dispensationMapper = new DispensationMapper();
+        var eDispensationCdaId = dispensationMapper.cdaId(cdaToDiscard);
+        var undoInfo = undoDispensationRepository.findByCdaId(eDispensationCdaId);
 
-        GetPrescriptionResponseType fmkResponse;
-        log.debug("Looking up info for {}", cpr);
-        try {
-            fmkResponse = fmkClient.getPrescriptionWithConsent(request, caller);
-        } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "GetPrescriptionWithConsent failed", e);
+        if (undoInfo == null) {
+            throw new CountryAException(HttpStatus.NOT_FOUND, "No undo information found for given eDispensation CDA id");
         }
 
-        UndoEffectuationRequestType undoEffectuationRequest;
-        try {
-            var dispensationMapper = new DispensationMapper();
-            undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(patientId, cdaToDiscard, fmkResponse);
-        } catch (MapperException e) {
-            throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
-        }
+        var undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(
+            patientId,
+            cdaToDiscard,
+            undoInfo.orderId(),
+            undoInfo.effectuationId()
+        );
+        log.info("Requesting effectuation undo");
+        var undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, caller);
 
-        UndoEffectuationResponseType undoResponse;
-        try {
-            undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, caller);
-        } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "UndoEffectuation call to FMK failed", e);
-        }
-
-        //Validate undone dispensation by getting the EffectuationId that has been undone
-        var effectuationWasCancelled = undoResponse.getPrescription()
+        var cancelledEffectuationCount = undoResponse.getPrescription()
             .stream()
             .flatMap(p -> p.getOrder().stream())
-            .flatMap(o -> o.getEffectuation().stream())
-            .count() == 1;
-        if (!effectuationWasCancelled) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Error cancelling effectuation, nothing was cancelled");
+            .mapToLong(o -> o.getEffectuation().size())
+            .sum();
+        if (cancelledEffectuationCount < 1) {
+            throw new CountryAException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error cancelling effectuation, nothing was cancelled");
+        }
+        if (cancelledEffectuationCount > 1) {
+            log.error(
+                "More than one ({}) FMK effectuations was cancelled where it should be exactly one",
+                cancelledEffectuationCount);
         }
         return undoResponse;
     }
