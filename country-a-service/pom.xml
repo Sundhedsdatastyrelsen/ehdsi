@@ -20,7 +20,6 @@
 		<module>epps-api</module>
 		<module>epps-service</module>
 		<module>epps-application</module>
-		<module>epps-mocks</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
         <module>integration-tests</module>
