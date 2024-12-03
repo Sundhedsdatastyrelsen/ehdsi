@@ -38,13 +38,12 @@ public final class Utils {
      * @return The XML document corresponding to the input
      */
     public static Document readXmlDocument(InputStream xml) throws SAXException, IOException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
+        var dbf = DocumentBuilderFactory.newDefaultNSInstance();
         try (xml) {
             var db = dbf.newDocumentBuilder();
             return db.parse(xml);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Could not create XML parser", e);
         }
     }
 

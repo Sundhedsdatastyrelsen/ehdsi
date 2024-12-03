@@ -30,7 +30,7 @@ public class EPrescriptionL1GeneratorTest {
         var xmlString = EPrescriptionL1Generator.generate(prescription, 0);
 
         // 1. Test if well-formed XML (can be parsed)
-        var documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
         Assertions.assertDoesNotThrow(() ->
             documentBuilder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)))
         );
