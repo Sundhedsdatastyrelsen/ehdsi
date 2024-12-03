@@ -1,0 +1,22 @@
+# Maven target directory
+/target/
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+
+# Eclipse files
+.project
+.classpath
+.settings/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# SQLite database file
+src/main/resources/db/optout.db
+
+# OS-specific files
+.DS_Store
+Thumbs.db
