@@ -7,6 +7,7 @@ import dk.nsp.epps.Utils;
 import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.sds.ncp.cda.MapperException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +22,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class DispensationMapperTest {
     Document testDispensationCda(String xmlFileName) {
-        //Todo CFB: Add more dispensation files to test
         try (var is = this.getClass().getClassLoader().getResourceAsStream(xmlFileName)) {
             return Utils.readXmlDocument(is);
         } catch (Exception e) {
@@ -44,7 +44,7 @@ class DispensationMapperTest {
         );
     }
 
-    StartEffectuationResponseType testStartEffectuationResponse(Document cda) throws XPathExpressionException {
+    StartEffectuationResponseType testStartEffectuationResponse(Document cda) {
         String packageNumber = new DispensationMapper().packageNumber(cda);
         var packageRestriction = PackageRestrictionType.builder()
             .withPackageNumber().withSource("Medicinpriser").withValue(packageNumber).withDate("20240725").end()
@@ -70,31 +70,42 @@ class DispensationMapperTest {
         assertThat(req.getPersonIdentifier().getValue(), is(equalTo("1111111118")));
     }
 
-    @ParameterizedTest
-    @MethodSource("testDispensationCdas")
-    void authorPersonTest(String xmlFileName, String mappingErrorMessageExpected) throws XPathExpressionException {
+    @Test
+    void authorPersonTest() throws XPathExpressionException {
+        var xmlFileName = "CzRequest1.xml";
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         var person = sut.authorPerson(cda);
 
         Assertions.assertNotNull(person.getPersonIdentifier());
+        Assertions.assertEquals("CPR", person.getPersonIdentifier().getSource());
+        Assertions.assertEquals("3001010033", person.getPersonIdentifier().getValue());
+
         Assertions.assertFalse(person.getName().getGivenName().isBlank());
+        Assertions.assertEquals("TOMÁŠ", person.getName().getGivenName());
+
         Assertions.assertFalse(person.getName().getSurname().isBlank());
+        Assertions.assertEquals("HRABÁČEK", person.getName().getSurname());
+
+        Assertions.assertNull(person.getName().getMiddleName());
     }
 
-    @ParameterizedTest
-    @MethodSource("testDispensationCdas")
-    void authorRoleTest(String xmlFileName, String mappingErrorMessageExpected) throws XPathExpressionException {
+    @Test
+    void authorRoleTest() throws XPathExpressionException {
+        var xmlFileName = "CzRequest1.xml";
+
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         var role = sut.authorRole(cda);
 
         Assertions.assertFalse(role.isBlank());
+        Assertions.assertEquals("Apoteker", role);
     }
 
-    @ParameterizedTest
-    @MethodSource("testDispensationCdas")
-    void authorOrganizationTest(String xmlFileName, String mappingErrorMessageExpected) throws XPathExpressionException {
+    @Test
+    void authorOrganizationTest() throws XPathExpressionException {
+        var xmlFileName = "CzRequest1.xml";
+
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         var org = sut.authorOrganization(cda);
@@ -106,56 +117,77 @@ class DispensationMapperTest {
         Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
         Assertions.assertFalse(org.getType().isBlank());
         Assertions.assertFalse(org.getAddressLine().isEmpty());
+
+        // Assertions
+        Assertions.assertEquals("EAN-Lokationsnummer", org.getIdentifier().getSource(), "Source does not match");
+        Assertions.assertEquals("5790000170609", org.getIdentifier().getValue(), "Value does not match");
+        Assertions.assertEquals("Apotek", org.getType(), "Type does not match");
+        Assertions.assertEquals("NCP-B-CZ Portal", org.getName(), "Name does not match");
+        Assertions.assertEquals("invalid@email.test", org.getEmailAddress(), "Email does not match");
+        Assertions.assertNull(org.getTelephoneNumber(), "TelephoneNumber should be null");
+        Assertions.assertEquals(2, org.getAddressLine().size(), "AddressLine size does not match");
+        Assertions.assertEquals("", org.getAddressLine().get(0), "AddressLine[0] does not match");
+        Assertions.assertEquals("CZ", org.getAddressLine().get(1), "AddressLine[1] does not match");
     }
 
-    @ParameterizedTest
-    @MethodSource("testDispensationCdas")
-    void startEffectuationRequestPrescriptionTest(String xmlFileName, String mappingErrorMessageExpected) throws XPathExpressionException, MapperException {
+    @Test
+    void startEffectuationRequestPrescriptionTest() throws XPathExpressionException, MapperException {
+        var xmlFileName = "CzRequest1.xml";
+
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         var p = sut.startEffectuationRequestPrescription(cda);
 
-        Assertions.assertTrue(p.getIdentifier() > 0L);
+        Assertions.assertEquals(469854419288102L, p.getIdentifier());
     }
 
-    @ParameterizedTest
-    @MethodSource("testDispensationCdas")
-    void effectuationTest(String xmlFileName, String mappingErrorMessageExpected) throws Exception {
+    @Test
+    void effectuationTest() throws Exception {
+        var xmlFileName = "CzRequest1.xml";
+
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        if (mappingErrorMessageExpected != null) {
-            var exception = Assertions.assertThrows(DataRequirementException.class, () -> testStartEffectuationResponse(cda));
-            Assertions.assertEquals(exception.getMessage(), mappingErrorMessageExpected);
-            return;
-        }
 
         var startEffectuationResponse = testStartEffectuationResponse(cda);
 
         var e = sut.effectuation(cda, startEffectuationResponse);
 
         Assertions.assertTrue(e.getDateTime().isValid());
+
+        Assertions.assertEquals(2024, e.getDateTime().getYear());
+        Assertions.assertEquals(11, e.getDateTime().getMonth());
+        Assertions.assertEquals(25, e.getDateTime().getDay());
+        Assertions.assertEquals(14, e.getDateTime().getHour());
+        Assertions.assertEquals(48, e.getDateTime().getMinute());
+        Assertions.assertEquals(4, e.getDateTime().getSecond());
+
         var packageDispensed = e.getPackageDispensed();
         Assertions.assertTrue(packageDispensed.getPackageQuantity() > 0);
-        assertThat(packageDispensed.getPackageNumber().getSource(), is(equalTo("Medicinpriser")));
-        Assertions.assertFalse(packageDispensed.getPackageNumber().getValue().isBlank());
+        Assertions.assertEquals(1, packageDispensed.getPackageQuantity());
+
+        Assertions.assertEquals("56232", packageDispensed.getPackageNumber().getValue());
+        Assertions.assertEquals("20240725", packageDispensed.getPackageNumber().getDate());
+        Assertions.assertEquals("Medicinpriser", packageDispensed.getPackageNumber().getSource());
 
     }
 
-    @ParameterizedTest
-    @MethodSource("testDispensationCdas")
-    void packageQuantityTest(String xmlFileName, String mappingErrorMessageExpected) throws Exception {
+    @Test
+    void packageQuantityTest() throws Exception {
+
+        var xmlFileName = "CzRequest1.xml";
+
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
 
         var q = sut.packageQuantity(cda);
 
-        Assertions.assertTrue(q > 0);
+        Assertions.assertEquals(1, q);
     }
 
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void createPharmacyEffectuationRequestTest(String xmlFileName, String mappingErrorMessageExpected) throws MapperException, XPathExpressionException {
-        var sut = new DispensationMapper(); //TODO why is this called sut?
+        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         if (mappingErrorMessageExpected != null) {
             var exception = Assertions.assertThrows(DataRequirementException.class, () -> testStartEffectuationResponse(cda));
