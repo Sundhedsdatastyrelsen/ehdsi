@@ -21,14 +21,17 @@ public class CountryAExceptionHandler {
 
         var errorUuid = UUID.randomUUID();
 
-        var details = new ErrorDto(httpStatus.name(), String.format("Error id: %s",errorUuid));
+        var details = new ErrorDto(httpStatus.name(), String.format("Error id: %s", errorUuid));
 
         if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
-            log.error("{}: {} - (Error id: {}) - Returning {}", e.getClass().getSimpleName(), e.getMessage(), errorUuid, httpStatus, e);
+            log.error("{}: {} - (Error id: {}) - Returning {}", e.getClass()
+                .getSimpleName(), e.getMessage(), errorUuid, httpStatus, e);
         } else if (httpStatus.is5xxServerError()) {
-            log.warn("{}: {} - (Error id: {}) - Returning {}", e.getClass().getSimpleName(), e.getMessage(), errorUuid, httpStatus);
+            log.warn("{}: {} - (Error id: {}) - Returning {}", e.getClass()
+                .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
         } else {
-            log.info("{}: {} - (Error id: {}) - Returning {}", e.getClass().getSimpleName(), e.getMessage(), errorUuid, httpStatus);
+            log.info("{}: {} - (Error id: {}) - Returning {}", e.getClass()
+                .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
         }
 
         return ResponseEntity.status(httpStatus).body(details);

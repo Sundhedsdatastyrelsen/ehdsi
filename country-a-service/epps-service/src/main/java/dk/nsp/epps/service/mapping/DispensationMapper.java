@@ -395,7 +395,7 @@ public class DispensationMapper {
             .build();
     }
 
-    String packageNumber(Document cda) throws XPathExpressionException {
+    String packageNumber(Document cda) {
         try {
             var node = evalNode(cda, XPaths.manufacturedMaterialCode);
             var codeSystem = xpath.evaluate("@codeSystem", node);

@@ -75,7 +75,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                 ));
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document recieved was invalid XML");
+            throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document received was invalid XML");
         }
     }
 
