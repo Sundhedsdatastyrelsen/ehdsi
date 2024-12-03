@@ -10,7 +10,9 @@ import org.sqlite.SQLiteErrorCode;
 import org.sqlite.SQLiteException;
 
 import javax.sql.DataSource;
+import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 @Repository
 public class UndoDispensationRepository {
@@ -93,6 +95,22 @@ public class UndoDispensationRepository {
                 String.format("No dispensation found with CDA ID hash '%s'", cdaIdHash),
                 1);
         }
+    }
+
+    /**
+     * Delete all rows with timestamp older than the given timestamp.
+     *
+     * @param timestamp The timestamp to delete rows older than
+     * @return The number of rows deleted
+     */
+    public long deleteOlderThan(Instant timestamp) {
+        String sql = "DELETE FROM undo_dispensation WHERE timestamp < ?";
+        // sqlite stores timestamps as strings in the format 'yyyy-MM-dd HH:mm:ss'
+        // see https://www.sqlite.org/lang_createtable.html, so for the comparison
+        // to work, we need to format the timestamp in the same way
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedTimestamp = timestamp.atOffset(ZoneOffset.UTC).toLocalDateTime().format(formatter);
+        return jdbcTemplate.update(sql, formattedTimestamp);
     }
 
     private final RowMapper<UndoDispensationRow> rowMapper = (rs, _rowNo) ->

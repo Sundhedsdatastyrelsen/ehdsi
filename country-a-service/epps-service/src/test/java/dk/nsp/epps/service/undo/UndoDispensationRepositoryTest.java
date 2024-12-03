@@ -181,4 +181,52 @@ class UndoDispensationRepositoryTest {
         assertThat(found.orderId(), equalTo(Long.MAX_VALUE));
         assertThat(found.effectuationId(), equalTo(Long.MAX_VALUE));
     }
+
+    @Test
+    void testDeleteOlderThan() {
+        // Given
+        var dispensation1 = UndoDispensationRow.fromCdaId("test-cda-id-1", 123L, 456L);
+        var dispensation2 = UndoDispensationRow.fromCdaId("test-cda-id-2", 789L, 101112L);
+        repository.insert(dispensation1);
+        repository.insert(dispensation2);
+
+        // Let's ensure the records are actually inserted
+        var found1 = repository.findByCdaId("test-cda-id-1");
+        var found2 = repository.findByCdaId("test-cda-id-2");
+        assertThat(found1, notNullValue());
+        assertThat(found2, notNullValue());
+
+        // When - delete records older than 1 second from now
+        var futureTimestamp = Instant.now().plusSeconds(1);
+        var deletedCount = repository.deleteOlderThan(futureTimestamp);
+
+        // Then
+        assertThat(deletedCount, is(2L));
+        assertThat(repository.findByCdaId("test-cda-id-1"), nullValue());
+        assertThat(repository.findByCdaId("test-cda-id-2"), nullValue());
+    }
+
+    @Test
+    void testDeleteOlderThanNoMatches() {
+        // Given
+        var dispensation = UndoDispensationRow.fromCdaId("test-cda-id", 123L, 456L);
+        repository.insert(dispensation);
+
+        // When - delete records older than 10 seconds ago (should find none)
+        var pastTimestamp = Instant.now().minusSeconds(10);
+        var deletedCount = repository.deleteOlderThan(pastTimestamp);
+
+        // Then
+        assertThat(deletedCount, is(0L));
+        assertThat(repository.findByCdaId("test-cda-id"), notNullValue());
+    }
+
+    @Test
+    void testDeleteOlderThanEmptyTable() {
+        // When
+        var deletedCount = repository.deleteOlderThan(Instant.now());
+
+        // Then
+        assertThat(deletedCount, is(0L));
+    }
 }
