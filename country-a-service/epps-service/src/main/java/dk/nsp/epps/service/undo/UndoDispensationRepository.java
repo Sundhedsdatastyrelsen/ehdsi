@@ -108,7 +108,7 @@ public class UndoDispensationRepository {
         // sqlite stores timestamps as strings in the format 'yyyy-MM-dd HH:mm:ss'
         // see https://www.sqlite.org/lang_createtable.html, so for the comparison
         // to work, we need to format the timestamp in the same way
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedTimestamp = timestamp.atOffset(ZoneOffset.UTC).toLocalDateTime().format(formatter);
         return jdbcTemplate.update(sql, formattedTimestamp);
     }
