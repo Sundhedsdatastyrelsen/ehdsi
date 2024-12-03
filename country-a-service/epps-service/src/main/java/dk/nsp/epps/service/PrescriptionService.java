@@ -186,6 +186,8 @@ public class PrescriptionService {
                 "More than one ({}) FMK effectuations was cancelled where it should be exactly one",
                 cancelledEffectuationCount);
         }
+        log.info("Undo effectuation successful, removing undo information");
+        undoDispensationRepository.deleteByCdaId(eDispensationCdaId);
         return undoResponse;
     }
 }
