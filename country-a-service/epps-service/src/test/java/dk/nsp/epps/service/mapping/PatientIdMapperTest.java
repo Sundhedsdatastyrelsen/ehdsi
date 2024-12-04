@@ -1,6 +1,6 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.nsp.epps.service.exception.CountryAException;
+import dk.nsp.epps.service.exception.DataRequirementException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,8 +14,8 @@ public class PatientIdMapperTest {
 
     @Test
     public void malformedIds() {
-        Assert.assertThrows(CountryAException.class, () -> PatientIdMapper.toCpr("123"));
-        Assert.assertThrows(CountryAException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa"));
-        Assert.assertThrows(CountryAException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa^^^123"));
+        Assert.assertThrows(DataRequirementException.class, () -> PatientIdMapper.toCpr("123"));
+        Assert.assertThrows(DataRequirementException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa"));
+        Assert.assertThrows(DataRequirementException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa^^^123"));
     }
 }

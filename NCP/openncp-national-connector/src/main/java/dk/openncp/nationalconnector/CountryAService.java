@@ -18,12 +18,12 @@ public class CountryAService {
         try {
             final var uri = new URI(countryAHost);
             api = new DefaultApi(new ApiClient()
-                    .setScheme(uri.getScheme())
-                    .setHost(uri.getHost())
-                    .setPort(uri.getPort())
+                .setScheme(uri.getScheme())
+                .setHost(uri.getHost())
+                .setPort(uri.getPort())
             );
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Country A host (environment variable NC_DK_COUNTRY_A_HOST) is not a valid URI");
+            throw new IllegalArgumentException("Environment variable NC_DK_COUNTRY_A_HOST is not a valid URI");
         }
     }
 

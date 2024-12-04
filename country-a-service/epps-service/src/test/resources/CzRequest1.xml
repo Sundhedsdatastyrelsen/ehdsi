@@ -1,0 +1,326 @@
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.2"/>
+    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.1"/>
+    <id extension="e39f4f42-97f2-4468-a57f-d5607b4d95e5" root="2.16.17.710.804.1000.990.1"/>
+    <code code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59"
+          displayName="Medication dispensed.extended Document">
+        <translation code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+                     displayName="eDispensation"/>
+    </code>
+    <title>Medication dispensed</title>
+    <effectiveTime value="20241125144804+0000"/>
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality"
+                         codeSystemVersion="913-20091020" displayName="normal"/>
+    <languageCode code="cs-CZ"/>
+    <setId nullFlavor="NI"/>
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500"/>
+            <addr>
+                <streetAddressLine>Nørre Allé 143</streetAddressLine>
+                <city>Øduvík</city>
+                <postalCode>0645</postalCode>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given>Karl</given>
+                    <given>Læge</given>
+                    <family>ePPS</family>
+                </name>
+                <administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1"
+                                          codeSystemName="AdministrativeGender" codeSystemVersion="913-20091020"
+                                          displayName="Male">
+                    <translation code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender"
+                                 displayName="Muž">
+                        <translation code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender"
+                                     displayName="Male"/>
+                    </translation>
+                </administrativeGenderCode>
+                <birthTime value="19900102"/>
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author typeCode="AUT">
+        <functionCode code="2262" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO"
+                      codeSystemVersion="2008" displayName="Pharmacists"/>
+        <time value="20241125144804+0000"/>
+        <assignedAuthor classCode="ASSIGNED">
+            <id extension="1.3.154.12345678" root="2.16.17.710.804.1000.990.1"/>
+            <addr>
+                <streetAddressLine nullFlavor="NI"/>
+                <city nullFlavor="NI"/>
+                <state nullFlavor="NI"/>
+                <postalCode nullFlavor="NI"/>
+                <country>CZ</country>
+            </addr>
+            <telecom use="WP" value="mailto:invalid@email.test"/>
+            <assignedPerson classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <family>HRABÁČEK</family>
+                    <given>TOMÁŠ</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization>
+                <id extension="12345678" root="1.3.154"/>
+                <name>NCP-B-CZ Portal</name>
+                <telecom use="WP" value="mailto:invalid@email.test"/>
+                <addr>
+                    <streetAddressLine nullFlavor="NI"/>
+                    <city nullFlavor="NI"/>
+                    <state nullFlavor="NI"/>
+                    <postalCode nullFlavor="NI"/>
+                    <country>CZ</country>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.17.710.804.1000.990.1"/>
+                <name>Country Custodian Name</name>
+                <telecom nullFlavor="NI"/>
+                <addr>
+                    <country>CZ</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="20241125144804+0000"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id root="2.16.17.710.804.1000.990.1"/>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson>
+                <name>
+                    <family>Petr</family>
+                    <given>Vopršál</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.17.710.804.1000.990.1"/>
+                <name>NCP Portál - testování přeshraničního výdeje</name>
+                <telecom nullFlavor="NI"/>
+                <addr use="PST">
+                    <streetAddressLine>N/A</streetAddressLine>
+                    <city>City</city>
+                    <postalCode>N/A</postalCode>
+                    <state nullFlavor="UNK"/>
+                    <country>CZ</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <inFulfillmentOf>
+        <order moodCode="RQO">
+            <id extension="469854419288102" root="2.16.17.710.802.1000.990.1.10"/>
+        </order>
+    </inFulfillmentOf>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN">
+            <id extension="469854419288102" root="2.16.17.710.802.1000.990.1.10"/>
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody>
+            <component>
+                <section>
+                    <templateId root="2.16.840.1.113883.10.20.1.8"/>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.2"/>
+                    <id extension="D-469854419288102" root="2.16.17.710.804.1000.990.1"/>
+                    <code code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+                          codeSystemVersion="2.59" displayName="Medication dispensed.brief Document">
+                        <translation code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+                                     displayName="Medication dispensed"/>
+                    </code>
+                    <title>Dispensation: D-469854419288102</title>
+                    <text>
+                        <paragraph>
+                            <content>Pinex</content>
+                        </paragraph>
+                        <paragraph>
+                            <content>mod smerter</content>
+                        </paragraph>
+                        <paragraph>
+                            <content>1 tablet 3 gange daglig</content>
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <supply classCode="SPLY" moodCode="EVN">
+                            <templateId root="2.16.840.1.113883.10.20.1.34"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.3"/>
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3"/>
+                            <id extension="469854419288102" root="2.16.17.710.804.1000.990.1"/>
+                            <quantity unit="1" value="1"/>
+                            <product>
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                        <name>Pinex</name>
+                                        <pharm:desc>500 mg</pharm:desc>
+                                        <pharm:formCode code="10714000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                        codeSystemName="EDQM" codeSystemVersion="2024-01-09"
+                                                        displayName="Ear tampon">
+                                            <pharm:translation xmlns:pharm="urn:hl7-org:v3" code="10714000"
+                                                               codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM"
+                                                               displayName="Ušní tampon">
+                                                <pharm:translation code="10714000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                                   codeSystemName="EDQM" displayName="Ear tampon">
+                                                    <pharm:translation code="TABFILM"
+                                                                       codeSystem="2.16.17.710.802.1000.990.1.20.22"
+                                                                       codeSystemName="LMS22"
+                                                                       displayName="filmovertrukne tabletter"/>
+                                                </pharm:translation>
+                                            </pharm:translation>
+                                        </pharm:formCode>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="1" value="100">
+                                                <translation>
+                                                    <originalText>stk.</originalText>
+                                                </translation>
+                                            </pharm:quantity>
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:code code="56232" codeSystem="2.16.17.710.802.1000.990.1.20.2"
+                                                            codeSystemName="LMS02"/>
+                                                <pharm:name>Pinex</pharm:name>
+                                                <pharm:formCode nullFlavor="UNK"/>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73"
+                                                            codeSystemName="Anatomical Therapeutic Chemical"
+                                                            codeSystemVersion="2024-01" displayName="paracetamol">
+                                                    <pharm:translation xmlns:pharm="urn:hl7-org:v3" code="N02BE01"
+                                                                       codeSystem="2.16.840.1.113883.6.73"
+                                                                       codeSystemName="Anatomical Therapeutic Chemical"
+                                                                       displayName="Paracetamol"/>
+                                                </pharm:code>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                    </manufacturedMaterial>
+                                </manufacturedProduct>
+                            </product>
+                            <performer typeCode="PRF">
+                                <time value="20241125144804+0000"/>
+                                <assignedEntity>
+                                    <id extension="1.3.154.12345678" root="2.16.17.710.804.1000.990.1"/>
+                                    <addr>
+                                        <streetAddressLine nullFlavor="NI"/>
+                                        <city nullFlavor="NI"/>
+                                        <state nullFlavor="NI"/>
+                                        <postalCode nullFlavor="NI"/>
+                                        <country>CZ</country>
+                                    </addr>
+                                    <telecom use="WP" value="mailto:invalid@email.test"/>
+                                    <assignedPerson>
+                                        <name>
+                                            <family>HRABÁČEK</family>
+                                            <given>TOMÁŠ</given>
+                                        </name>
+                                    </assignedPerson>
+                                    <representedOrganization>
+                                        <id extension="12345678" root="1.3.154"/>
+                                        <name>NCP-B-CZ Portal</name>
+                                        <telecom use="WP" value="mailto:invalid@email.test"/>
+                                        <addr>
+                                            <streetAddressLine nullFlavor="NI"/>
+                                            <city nullFlavor="NI"/>
+                                            <state nullFlavor="NI"/>
+                                            <postalCode nullFlavor="NI"/>
+                                            <country>CZ</country>
+                                        </addr>
+                                    </representedOrganization>
+                                </assignedEntity>
+                            </performer>
+                            <participant contextControlCode="OP" typeCode="PRF">
+                                <participantRole classCode="LIC">
+                                    <id nullFlavor="NI"/>
+                                    <scopingEntity classCode="ORG">
+                                        <id nullFlavor="NI"/>
+                                    </scopingEntity>
+                                </participantRole>
+                            </participant>
+                            <entryRelationship typeCode="REFR">
+                                <substanceAdministration classCode="SBADM" moodCode="INT">
+                                    <id extension="469854419288102" root="2.16.17.710.802.1000.990.1.10"/>
+                                    <text>1 tablet 3 gange daglig</text>
+                                    <statusCode code="active"/>
+                                    <effectiveTime xsi:type="IVL_TS">
+                                        <low nullFlavor="UNK"/>
+                                        <high nullFlavor="UNK"/>
+                                    </effectiveTime>
+                                    <effectiveTime nullFlavor="UNK"/>
+                                    <consumable typeCode="CSM">
+                                        <manufacturedProduct classCode="MANU">
+                                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                            <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                                <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                                <name>Pinex</name>
+                                                <pharm:desc>500 mg</pharm:desc>
+                                                <pharm:formCode code="10714000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                                codeSystemName="EDQM" codeSystemVersion="2024-01-09"
+                                                                displayName="Ušní tampon">
+                                                    <pharm:translation xmlns:pharm="urn:hl7-org:v3" code="10714000"
+                                                                       codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                                       codeSystemName="EDQM" displayName="Ear tampon">
+                                                        <pharm:translation code="TABFILM"
+                                                                           codeSystem="2.16.17.710.802.1000.990.1.20.22"
+                                                                           codeSystemName="LMS22"
+                                                                           displayName="filmovertrukne tabletter"/>
+                                                    </pharm:translation>
+                                                </pharm:formCode>
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="1" value="100">
+                                                        <translation>
+                                                            <originalText>stk.</originalText>
+                                                        </translation>
+                                                    </pharm:quantity>
+                                                    <pharm:containerPackagedProduct classCode="CONT"
+                                                                                    determinerCode="KIND">
+                                                        <pharm:code code="56232"
+                                                                    codeSystem="2.16.17.710.802.1000.990.1.20.2"
+                                                                    codeSystemName="LMS02"/>
+                                                        <pharm:name>Pinex</pharm:name>
+                                                        <pharm:formCode nullFlavor="UNK"/>
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                                <pharm:asSpecializedKind classCode="GRIC">
+                                                    <pharm:generalizedMaterialKind classCode="MMAT"
+                                                                                   determinerCode="KIND">
+                                                        <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73"
+                                                                    codeSystemName="Anatomical Therapeutic Chemical"
+                                                                    codeSystemVersion="2024-01"
+                                                                    displayName="paracetamol">
+                                                            <pharm:translation xmlns:pharm="urn:hl7-org:v3"
+                                                                               code="N02BE01"
+                                                                               codeSystem="2.16.840.1.113883.6.73"
+                                                                               codeSystemName="Anatomical Therapeutic Chemical"
+                                                                               displayName="Paracetamol"/>
+                                                        </pharm:code>
+                                                    </pharm:generalizedMaterialKind>
+                                                </pharm:asSpecializedKind>
+                                            </manufacturedMaterial>
+                                        </manufacturedProduct>
+                                    </consumable>
+                                    <entryRelationship typeCode="COMP">
+                                        <supply classCode="SPLY" moodCode="RQO">
+                                            <independentInd value="false"/>
+                                            <quantity unit="1" value="1"/>
+                                        </supply>
+                                    </entryRelationship>
+                                </substanceAdministration>
+                            </entryRelationship>
+                        </supply>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>
