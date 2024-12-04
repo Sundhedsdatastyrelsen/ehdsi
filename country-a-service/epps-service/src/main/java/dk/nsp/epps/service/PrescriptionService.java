@@ -2,7 +2,6 @@ package dk.nsp.epps.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -145,7 +144,7 @@ public class PrescriptionService {
                     effectuation.getEffectuationIdentifier(),
                     effectuation.getOrderIdentifier()
                 ));
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 // We should not fail the submitDispensation request here because of a database error,
                 // because the dispensation has been recorded in FMK at this point.
                 log.error("Storing undo information for dispensation failed", e);
@@ -153,7 +152,7 @@ public class PrescriptionService {
         }
     }
 
-    public UndoEffectuationResponseType undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) throws JAXBException, MapperException {
+    public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) throws JAXBException, MapperException {
         var dispensationMapper = new DispensationMapper();
         var eDispensationCdaId = dispensationMapper.cdaId(cdaToDiscard);
         var undoInfo = undoDispensationRepository.findByCdaId(eDispensationCdaId);
@@ -188,6 +187,5 @@ public class PrescriptionService {
         }
         log.info("Undo effectuation successful, removing undo information");
         undoDispensationRepository.deleteByCdaId(eDispensationCdaId);
-        return undoResponse;
     }
 }

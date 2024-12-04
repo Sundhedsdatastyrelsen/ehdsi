@@ -37,9 +37,8 @@ public class UndoDispensationRepository {
         try {
             jdbcTemplate.update(sql, dispensation.cdaIdHash(), dispensation.orderId(), dispensation.effectuationId());
         } catch (UncategorizedSQLException e) {
-            var sqlEx = e.getSQLException();
-            if (sqlEx instanceof SQLiteException
-                && ((SQLiteException) sqlEx).getResultCode().equals(SQLiteErrorCode.SQLITE_CONSTRAINT_PRIMARYKEY)) {
+            if (e.getSQLException() instanceof SQLiteException sqlEx
+                && SQLiteErrorCode.SQLITE_CONSTRAINT_PRIMARYKEY.equals(sqlEx.getResultCode())) {
                 throw new DuplicateKeyException("Primary key constraint violation", sqlEx);
             }
             throw e;
@@ -113,7 +112,7 @@ public class UndoDispensationRepository {
         return jdbcTemplate.update(sql, formattedTimestamp);
     }
 
-    private final RowMapper<UndoDispensationRow> rowMapper = (rs, _rowNo) ->
+    private final RowMapper<UndoDispensationRow> rowMapper = (rs, rowNumber) ->
         new UndoDispensationRow(
             rs.getString("cda_id_hash"),
             rs.getLong("effectuation_id"),
