@@ -22,5 +22,6 @@ services:
       FMK_ENDPOINT_URL: "${FMK_ENDPOINT_URL}"
     volumes:
       - ./config:/app/config:ro
+      - ./data:/app/data
     networks:
       - epps-backend

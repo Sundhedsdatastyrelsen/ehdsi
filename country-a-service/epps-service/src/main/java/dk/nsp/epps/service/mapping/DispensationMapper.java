@@ -9,18 +9,15 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.Utils;
-import dk.nsp.epps.service.exception.CountryAException;
 import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import lombok.NonNull;
 import org.apache.xml.dtm.ref.DTMNodeList;
 import org.slf4j.Logger;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -179,6 +176,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
         static final String substitution =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
+        static final String cdaId =
+            "/hl7:ClinicalDocument/hl7:id";
     }
 
     private final XPath xpath;
@@ -418,6 +417,19 @@ public class DispensationMapper {
         }
     }
 
+    public String cdaId(Document cda) throws MapperException {
+        try {
+            var node = evalNode(cda, XPaths.cdaId);
+            var root = xpath.evaluate("@root", node);
+            var ext = xpath.evaluate("@extension", node);
+            return ext == null
+                ? root
+                : root + "^^^" + ext;
+        } catch (XPathExpressionException e) {
+            throw new MapperException(e.getMessage());
+        }
+    }
+
     public StartEffectuationRequestType startEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda
@@ -460,40 +472,15 @@ public class DispensationMapper {
         }
     }
 
-
-    /***
-     * @param patientId PatientID (containing a CPR)
-     * @param cda CDA Document
-     * @param prescriptionResponse Requires a new GetPrescriptionResponse specifically created to get prescriptions to cancel effectuations of
-     * @throws MapperException
-     */
     public UndoEffectuationRequestType createUndoEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
-        @NonNull GetPrescriptionResponseType prescriptionResponse
+        long orderId,
+        long effectuationId
     ) throws MapperException {
         var obf = new ObjectFactory();
         try {
             var prescriptionId = prescriptionId(cda);
-            var fmkPrescription = prescriptionResponse.getPrescription()
-                .stream()
-                .filter(p -> p.getIdentifier() == prescriptionId)
-                .findFirst();
-            if (fmkPrescription.isEmpty()) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find prescription to discard in system");
-            }
-            var lastOrder = fmkPrescription.get()
-                .getOrder()
-                .stream()
-                .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
-            if (lastOrder.isEmpty()) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find order to discard on prescription in system");
-            }
-            var lastEffectuation = lastOrder.get().getEffectuation();
-            if (lastEffectuation == null) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find effectuation to discard on prescription in system");
-            }
-
 
             return dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
@@ -505,8 +492,8 @@ public class DispensationMapper {
                 .addPrescription()
                 .withIdentifier(prescriptionId)
                 .withOrder()
-                .withIdentifier(lastOrder.get().getIdentifier())
-                .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()
+                .withIdentifier(orderId)
+                .withEffectuation().withIdentifier(effectuationId).end()
                 .end()
                 .end()
                 .build();
@@ -514,6 +501,4 @@ public class DispensationMapper {
             throw new MapperException(e.getMessage());
         }
     }
-
-
 }

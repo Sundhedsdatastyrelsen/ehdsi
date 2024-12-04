@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.4.0</version>
 		<relativePath/>
 	</parent>
 
@@ -134,6 +134,17 @@
 				<artifactId>seal</artifactId>
 				<version>2.6.25</version>
 			</dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>11.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>3.47.0.0</version>
+            </dependency>
 
 			<!-- Solve convergence errors -->
 			<dependency>
