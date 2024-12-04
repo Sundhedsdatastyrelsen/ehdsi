@@ -61,6 +61,10 @@ services:
       - db_username
       - db_password
       - db_root_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   # Usage: docker compose run tsam-exporter
   # Run this to generate language files for the CDA display tool.
@@ -102,6 +106,10 @@ services:
       - db_password
       - cts_username
       - cts_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   tomcat_node_a:
     build:
@@ -128,9 +136,6 @@ services:
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -142,6 +147,10 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   tomcat_node_b:
     build:
@@ -167,9 +176,6 @@ services:
         condition: service_healthy
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -181,6 +187,10 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-openatna:
     container_name: openncp-openatna
@@ -204,9 +214,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -218,6 +225,10 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-trc-sts:
     container_name: openncp-trc-sts
@@ -239,9 +250,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -254,6 +262,10 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
@@ -275,9 +287,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -289,6 +298,10 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-web-manager:
     container_name: openncp-web-manager
@@ -315,9 +328,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: production
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -329,6 +339,10 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   configuration-synchronizer:
     build:
@@ -360,6 +374,10 @@ services:
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   # Convenience tool for managing docker containers.
   # To enable: Add COMPOSE_PROFILES=portainer to .env
