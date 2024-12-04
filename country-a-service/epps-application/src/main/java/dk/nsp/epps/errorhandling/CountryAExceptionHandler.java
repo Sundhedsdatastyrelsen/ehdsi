@@ -15,7 +15,7 @@ import java.util.UUID;
 @Order(1)
 @RestControllerAdvice
 public class CountryAExceptionHandler {
-    private final static String PROTOTYPE_ERROR_MESSAGE = "{}: {} - (Error id: {}) - Returning {}";
+    private static final String PROTOTYPE_ERROR_MESSAGE = "{}: {} - (Error id: {}) - Returning {}";
 
     @ExceptionHandler(CountryAException.class)
     public ResponseEntity<ErrorDto> handleException(CountryAException e) {

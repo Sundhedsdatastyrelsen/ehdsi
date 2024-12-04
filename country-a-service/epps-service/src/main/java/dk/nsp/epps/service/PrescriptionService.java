@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class PrescriptionService {
-    private final static String MAPPING_ERROR_MESSAGE = "Error mapping dispensation to request: %s";
+    private static final String MAPPING_ERROR_MESSAGE = "Error mapping dispensation to request: %s";
     private final FmkClient fmkClient;
 
     public record PrescriptionFilter(
