@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     container_name: portainer
     ports:
-      - "${PORTAINER_PORT}:${PORTAINER_EXTERNAL_PORT}"
+      - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # To manage Docker
       - portainer_data:/data # Persistent storage for Portainer
