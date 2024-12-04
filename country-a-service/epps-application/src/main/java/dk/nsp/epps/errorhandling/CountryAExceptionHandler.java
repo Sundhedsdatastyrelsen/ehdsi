@@ -15,6 +15,8 @@ import java.util.UUID;
 @Order(1)
 @RestControllerAdvice
 public class CountryAExceptionHandler {
+    private final static String PROTOTYPE_ERROR_MESSAGE = "{}: {} - (Error id: {}) - Returning {}";
+
     @ExceptionHandler(CountryAException.class)
     public ResponseEntity<ErrorDto> handleException(CountryAException e) {
         HttpStatus httpStatus = e.getHttpStatus();
@@ -24,13 +26,13 @@ public class CountryAExceptionHandler {
         var details = new ErrorDto(httpStatus.name(), String.format("Error id: %s", errorUuid));
 
         if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
-            log.error("{}: {} - (Error id: {}) - Returning {}", e.getClass()
+            log.error(PROTOTYPE_ERROR_MESSAGE, e.getClass()
                 .getSimpleName(), e.getMessage(), errorUuid, httpStatus, e);
         } else if (httpStatus.is5xxServerError()) {
-            log.warn("{}: {} - (Error id: {}) - Returning {}", e.getClass()
+            log.warn(PROTOTYPE_ERROR_MESSAGE, e.getClass()
                 .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
         } else {
-            log.info("{}: {} - (Error id: {}) - Returning {}", e.getClass()
+            log.info(PROTOTYPE_ERROR_MESSAGE, e.getClass()
                 .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
         }
 

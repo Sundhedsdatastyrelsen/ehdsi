@@ -109,10 +109,7 @@ class DispensationMapperTest {
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         var org = sut.authorOrganization(cda);
-
-        //TODO Revisit these, they will probably not always be blank. Do we need to validate this? As long as the
-        // mapper succeeds, the test is functional. If we want to test values mapped correctly, we should probably
-        // either not do the parameterized tests, or we should include the expected values in the parameters.
+        
         Assertions.assertFalse(org.getIdentifier().getSource().isBlank());
         Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
         Assertions.assertFalse(org.getType().isBlank());

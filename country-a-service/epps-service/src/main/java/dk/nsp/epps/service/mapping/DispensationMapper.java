@@ -140,6 +140,10 @@ public class DispensationMapper {
 </CreatePharmacyEffectuationRequest>
      */
     static class XPaths {
+        private XPaths() {
+            throw new IllegalStateException("Static utility class should not be instantiated");
+        }
+
         static final String authorFamilyName =
             "/hl7:ClinicalDocument/hl7:author/hl7:assignedAuthor/hl7:assignedPerson/hl7:name/hl7:family";
         static final String authorGivenName =
@@ -476,18 +480,18 @@ public class DispensationMapper {
                 .filter(p -> p.getIdentifier() == prescriptionId)
                 .findFirst();
             if (fmkPrescription.isEmpty()) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,"Could not find prescription to discard in system");
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find prescription to discard in system");
             }
             var lastOrder = fmkPrescription.get()
                 .getOrder()
                 .stream()
                 .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
             if (lastOrder.isEmpty()) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,"Could not find order to discard on prescription in system");
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find order to discard on prescription in system");
             }
             var lastEffectuation = lastOrder.get().getEffectuation();
             if (lastEffectuation == null) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,"Could not find effectuation to discard on prescription in system");
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find effectuation to discard on prescription in system");
             }
 
 
