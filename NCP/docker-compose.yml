@@ -89,10 +89,6 @@ services:
     secrets:
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   # Usage: docker compose run tsam-synchronizer
   # Run this to synchronize the local terminology database with
@@ -347,9 +343,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: production
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
