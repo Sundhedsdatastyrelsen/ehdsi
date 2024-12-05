@@ -1,4 +1,4 @@
-name: Unit tests and Sonarcloud analysisa
+name: Unit tests and Sonarcloud analysis
 
 on:
   push:
