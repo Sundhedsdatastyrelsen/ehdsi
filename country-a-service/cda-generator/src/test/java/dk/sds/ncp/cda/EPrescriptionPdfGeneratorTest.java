@@ -4,7 +4,7 @@ import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class EPrescriptionPdfGeneratorTest {
+class EPrescriptionPdfGeneratorTest {
     @Test
     void generateTest() throws Exception {
         var cpr = "0201909309";

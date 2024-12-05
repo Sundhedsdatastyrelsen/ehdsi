@@ -3,6 +3,7 @@ package dk.sds.ncp.cda;
 import dk.sds.ncp.cda.model.EPrescriptionPdf;
 import dk.sds.ncp.cda.model.PdfField;
 import lombok.NonNull;
+import org.apache.commons.text.WordUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -58,7 +59,8 @@ public class EPrescriptionPdfGenerator {
             stream.setNonStrokingColor(Color.BLACK);
             stream.setFont(FONT, FONT_SIZE);
             stream.newLineAtOffset(field.x(), field.y());
-            for (var line : field.text().lines().toList()) {
+            var text = WordUtils.wrap(field.text(), field.wrapLength(), "\n", true);
+            for (var line : text.lines().toList()) {
                 stream.showText(line);
                 stream.newLineAtOffset(0, -FONT_SIZE);
             }
