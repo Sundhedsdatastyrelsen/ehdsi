@@ -2,10 +2,12 @@ package dk.sds.ncp.cda;
 
 import dk.sds.ncp.cda.model.EPrescriptionPdf;
 import dk.sds.ncp.cda.model.PdfField;
+import lombok.NonNull;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
@@ -14,17 +16,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class EPrescriptionPdfGenerator {
+    private static final PDFont FONT = new PDType1Font(Standard14Fonts.FontName.COURIER);
     private static final Integer FONT_SIZE = 14;
-    private static final String TEMPLATE = "/pdfTemplates/Receptdesign.pdf"; //Load file from resources folder, based on the name input
+    private static final String TEMPLATE = "/pdfTemplates/Receptdesign.pdf";
+
+    private EPrescriptionPdfGenerator() {}
 
     private static PDDocument initializeDocument() {
         try (var template = EPrescriptionPdfGenerator.class.getResourceAsStream(TEMPLATE)) {
             if (template == null) {
-                throw new RuntimeException("Could not find resource: " + TEMPLATE);
+                throw new IllegalStateException("Could not find resource: " + TEMPLATE);
             }
             return Loader.loadPDF(template.readAllBytes());
         } catch (IOException e) {
-            throw new RuntimeException("Malformed or missing PDF template", e);
+            throw new IllegalStateException("Malformed or missing PDF template", e);
         }
     }
 
@@ -36,27 +41,30 @@ public class EPrescriptionPdfGenerator {
             }
             return saveBytes(pdfDocument);
         } catch (IOException e) {
-            throw new RuntimeException(String.format(
+            throw new IllegalStateException(String.format(
                 "Malformed of missing PDF file in resources path '%s'",
                 TEMPLATE), e);
         }
     }
 
-    private static void writeField(PdfField field, PDPage pdfPage, PDDocument pdfDocument) {
-        if (pdfDocument == null || pdfPage == null) {
-            throw new RuntimeException("Error writing field, document not initialized");
-        }
-        try {
-            writeTextAtCoordinates(
-                field.getContent(),
-                field.getXCoordinate(),
-                field.getYCoordinate(),
+    private static void writeField(@NonNull PdfField field, @NonNull PDPage pdfPage, PDDocument pdfDocument) {
+        try (var stream = new PDPageContentStream(
                 pdfDocument,
-                pdfPage);
+                pdfPage,
+                PDPageContentStream.AppendMode.APPEND,
+                true
+        )) {
+            stream.beginText();
+            stream.setNonStrokingColor(Color.BLACK);
+            stream.setFont(FONT, FONT_SIZE);
+            stream.newLineAtOffset(field.x(), field.y());
+            for (var line : field.text().lines().toList()) {
+                stream.showText(line);
+                stream.newLineAtOffset(0, -FONT_SIZE);
+            }
+            stream.endText();
         } catch (IOException e) {
-            throw new RuntimeException(String.format(
-                "Error writing field content %s to document",
-                String.join(";", field.getContent())), e);
+            throw new IllegalStateException("Error writing field content to document", e);
         }
     }
 
@@ -65,28 +73,9 @@ public class EPrescriptionPdfGenerator {
         try {
             pdfDocument.save(baos);
         } catch (IOException e) {
-            throw new RuntimeException("Could not generate PDF document", e);
+            throw new IllegalStateException("Could not generate PDF document", e);
         }
         return baos.toByteArray();
     }
 
-    private static void writeTextAtCoordinates(String[] Text, Integer xCoordinate, Integer yCoordinate, PDDocument pdfDocument, PDPage pdfPage) throws IOException {
-        // For each line in the array, we print a new line, shifted one fontsize down
-        for (int lineNo = 0; lineNo < Text.length; lineNo++) {
-            PDPageContentStream contentStream = new PDPageContentStream(
-                pdfDocument,
-                pdfPage,
-                PDPageContentStream.AppendMode.APPEND,
-                true);
-            contentStream.beginText();
-
-            contentStream.setNonStrokingColor(Color.BLACK);
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER), FONT_SIZE);
-            contentStream.newLineAtOffset(xCoordinate, yCoordinate - FONT_SIZE * lineNo);
-            contentStream.showText(Text[lineNo]);
-
-            contentStream.endText();
-            contentStream.close();
-        }
-    }
 }

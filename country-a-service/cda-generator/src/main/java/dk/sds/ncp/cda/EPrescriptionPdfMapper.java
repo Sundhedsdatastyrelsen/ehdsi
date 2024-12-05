@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EPrescriptionPdfMapper {
+    private EPrescriptionPdfMapper() {}
+
     /**
      * Map a L3 model to a L1 Model, consisting of PDF Fields to be written on a PDF page
      *
@@ -21,20 +23,20 @@ public class EPrescriptionPdfMapper {
      */
     public static EPrescriptionPdf map(EPrescriptionL3 dataModel) {
         return new EPrescriptionPdf(List.of(
-            new PdfField(50, 445, productLines(dataModel.getProduct())),
-            new PdfField(50, 610, patientLines(dataModel.getPatient())),
-            new PdfField(50, 710, authorLines((dataModel.getAuthor()))),
-            new PdfField(390, 650, new String[]{String.format("ID: %s", dataModel.getPrescriptionId().getExtension())}),
-            new PdfField(50, 185, dateLines(dataModel.getEffectiveTimeOffsetDateTime()))
+            PdfField.ofLines(50, 445, productLines(dataModel.getProduct()), 40),
+            PdfField.ofLines(50, 610, patientLines(dataModel.getPatient()), 40),
+            PdfField.ofLines(50, 710, authorLines((dataModel.getAuthor())), 40),
+            PdfField.ofLines(390, 650, List.of(String.format("ID: %s", dataModel.getPrescriptionId().getExtension())), 40),
+            PdfField.ofLines(50, 185, dateLines(dataModel.getEffectiveTimeOffsetDateTime()), 40)
         ));
     }
 
-    private static String[] productLines(Product product) {
-        return new String[]{product.getName(), product.getDescription()};
+    private static List<String> productLines(Product product) {
+        return List.of(product.getName(), product.getDescription());
     }
 
-    private static String[] patientLines(Patient patient) {
-        List<String> patientLines = new ArrayList<String>();
+    private static List<String> patientLines(Patient patient) {
+        var patientLines = new ArrayList<String>();
         addToListIfNotNullOrEmpty(patientLines, patient.getName().getFullName());
         for (String addressLine : patient.getAddress().getStreetAddressLines()) {
             addToListIfNotNullOrEmpty(patientLines, addressLine);
@@ -43,11 +45,11 @@ public class EPrescriptionPdfMapper {
             patient.getAddress().getPostalCode(),
             patient.getAddress().getCity()));
         addToListIfNotNullOrEmpty(patientLines, patient.getAddress().getCountryCode());
-        return patientLines.toArray(new String[0]);
+        return patientLines;
     }
 
-    private static String[] authorLines(Author author) {
-        List<String> authorLines = new ArrayList<String>();
+    private static List<String> authorLines(Author author) {
+        var authorLines = new ArrayList<String>();
         addToListIfNotNullOrEmpty(authorLines, author.getName().getFullName());
         addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getName());
         if (author.getOrganization().getAddress() != null) {
@@ -59,21 +61,21 @@ public class EPrescriptionPdfMapper {
                 author.getOrganization().getAddress().getCity()));
             addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
         }
-        return authorLines.toArray(new String[0]);
+        return authorLines;
     }
 
-    private static String[] dateLines(OffsetDateTime dateTime) {
+    private static List<String> dateLines(OffsetDateTime dateTime) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return new String[]{fmt.format(dateTime)};
+        return List.of(fmt.format(dateTime));
     }
 
-    private static String constructPostalCityLine(String PostalCode, String CityName) {
+    private static String constructPostalCityLine(String postalCode, String cityName) {
         var finalLine = "";
-        if (PostalCode != null && !PostalCode.isEmpty()) {
-            finalLine += PostalCode + " ";
+        if (postalCode != null && !postalCode.isEmpty()) {
+            finalLine += postalCode + " ";
         }
-        if (CityName != null && !CityName.isEmpty()) {
-            finalLine += CityName;
+        if (cityName != null && !cityName.isEmpty()) {
+            finalLine += cityName;
         }
         return finalLine.trim();
     }

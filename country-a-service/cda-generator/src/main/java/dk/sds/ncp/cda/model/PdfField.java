@@ -1,16 +1,13 @@
 package dk.sds.ncp.cda.model;
 
-import lombok.Value;
+import java.util.List;
 
-@Value
-public class PdfField {
-    Integer xCoordinate;
-    Integer yCoordinate;
-    String[] content;
-
-    public PdfField(Integer xCoordinate, Integer yCoordinate, String[] content) {
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
-        this.content = content;
+public record PdfField(
+    long x,
+    long y,
+    String text
+) {
+    public static PdfField ofLines(long x, long y, List<String> lines, long wrapAt) {
+        return new PdfField(x, y, String.join("\n", lines));
     }
 }
