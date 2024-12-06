@@ -23,11 +23,11 @@ public class EPrescriptionPdfMapper {
      */
     public static EPrescriptionPdf map(EPrescriptionL3 dataModel) {
         return new EPrescriptionPdf(List.of(
-            PdfField.ofLines(50, 445, productLines(dataModel.getProduct()), 40),
-            PdfField.ofLines(50, 610, patientLines(dataModel.getPatient()), 40),
-            PdfField.ofLines(50, 710, authorLines((dataModel.getAuthor())), 40),
-            PdfField.ofLines(390, 650, List.of(String.format("ID: %s", dataModel.getPrescriptionId().getExtension())), 40),
-            PdfField.ofLines(50, 185, dateLines(dataModel.getEffectiveTimeOffsetDateTime()), 40)
+            new PdfField(50, 445, productLines(dataModel.getProduct()), 60),
+            new PdfField(50, 610, patientLines(dataModel.getPatient()), 60),
+            new PdfField(50, 710, authorLines((dataModel.getAuthor())), 40),
+            new PdfField(390, 650, List.of(String.format("ID: %s", dataModel.getPrescriptionId().getExtension())), 40),
+            new PdfField(50, 185, dateLines(dataModel.getEffectiveTimeOffsetDateTime()), 40)
         ));
     }
 

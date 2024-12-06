@@ -12,7 +12,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -21,7 +21,8 @@ public class EPrescriptionPdfGenerator {
     private static final Integer FONT_SIZE = 14;
     private static final String TEMPLATE = "/pdfTemplates/Receptdesign.pdf";
 
-    private EPrescriptionPdfGenerator() {}
+    private EPrescriptionPdfGenerator() {
+    }
 
     private static PDDocument initializeDocument() {
         try (var template = EPrescriptionPdfGenerator.class.getResourceAsStream(TEMPLATE)) {
@@ -50,17 +51,20 @@ public class EPrescriptionPdfGenerator {
 
     private static void writeField(@NonNull PdfField field, @NonNull PDPage pdfPage, PDDocument pdfDocument) {
         try (var stream = new PDPageContentStream(
-                pdfDocument,
-                pdfPage,
-                PDPageContentStream.AppendMode.APPEND,
-                true
+            pdfDocument,
+            pdfPage,
+            PDPageContentStream.AppendMode.APPEND,
+            true
         )) {
             stream.beginText();
             stream.setNonStrokingColor(Color.BLACK);
             stream.setFont(FONT, FONT_SIZE);
             stream.newLineAtOffset(field.x(), field.y());
-            var text = WordUtils.wrap(field.text(), field.wrapLength(), "\n", true);
-            for (var line : text.lines().toList()) {
+            var lines = field.lines().stream()
+                // wrap long lines, breaking up very long words if necessary
+                .flatMap(l -> WordUtils.wrap(l, field.wrapLength(), "\n", true).lines())
+                .toList();
+            for (var line : lines) {
                 stream.showText(line);
                 stream.newLineAtOffset(0, -FONT_SIZE);
             }

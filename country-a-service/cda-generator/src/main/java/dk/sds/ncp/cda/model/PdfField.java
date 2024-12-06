@@ -2,13 +2,18 @@ package dk.sds.ncp.cda.model;
 
 import java.util.List;
 
+/**
+ * A text field to be printed on the ePrescription PDF.
+ *
+ * @param x          starting coordinate
+ * @param y          starting coordinate
+ * @param lines      list of text lines
+ * @param wrapLength maximum line length
+ */
 public record PdfField(
     long x,
     long y,
-    String text,
+    List<String> lines,
     int wrapLength
 ) {
-    public static PdfField ofLines(long x, long y, List<String> lines, int wrapLength) {
-        return new PdfField(x, y, String.join("\n", lines), wrapLength);
-    }
 }
