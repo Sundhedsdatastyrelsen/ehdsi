@@ -15,6 +15,7 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 public class EPrescriptionPdfGenerator {
     private static final PDFont FONT = new PDType1Font(Standard14Fonts.FontName.COURIER);
@@ -62,7 +63,11 @@ public class EPrescriptionPdfGenerator {
             stream.newLineAtOffset(field.x(), field.y());
             var lines = field.lines().stream()
                 // wrap long lines, breaking up very long words if necessary
-                .flatMap(l -> WordUtils.wrap(l, field.wrapLength(), "\n", true).lines())
+                .flatMap(l ->
+                    l == null || l.isEmpty()
+                        ? Stream.of("")
+                        : WordUtils.wrap(l, field.wrapLength(), "\n", true).lines()
+                )
                 .toList();
             for (var line : lines) {
                 stream.showText(line);

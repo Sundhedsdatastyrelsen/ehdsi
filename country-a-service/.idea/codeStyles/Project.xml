@@ -3,6 +3,9 @@
     <JavaCodeStyleSettings>
       <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
       <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
+      <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+        <value />
+      </option>
     </JavaCodeStyleSettings>
     <codeStyleSettings language="JAVA">
       <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
