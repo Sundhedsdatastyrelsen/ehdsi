@@ -1,0 +1,12 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: dk.sundhedsdatastyrelsen.ChangePackage
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: dk.nsp.epps
+      newPackageName: dk.sundhedsdatastyrelsen.ncpeh
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: dk.sds.ncp
+      newPackageName: dk.sundhedsdatastyrelsen.ncpeh
+      recursive: true

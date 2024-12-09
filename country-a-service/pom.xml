@@ -204,6 +204,17 @@
 
 	<build>
 		<plugins>
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.46.1</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>dk.sundhedsdatastyrelsen.ChangePackage</recipe>
+                    </activeRecipes>
+                </configuration>
+            </plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
