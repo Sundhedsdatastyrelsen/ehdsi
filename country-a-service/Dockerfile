@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -B clean package
 # Finished backend image
 FROM eclipse-temurin:21-jre
 
-# Attempt to fix "Using fallback font LiberationSans for base font Courier" warning
+# Fix "Using fallback font LiberationSans for base font Courier" warning
 RUN apt-get update \
     && apt-get install -y \
     ttf-mscorefonts-installer \
