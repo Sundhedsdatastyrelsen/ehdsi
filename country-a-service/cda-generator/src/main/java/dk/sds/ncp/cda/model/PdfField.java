@@ -1,16 +1,19 @@
 package dk.sds.ncp.cda.model;
 
-import lombok.Value;
+import java.util.List;
 
-@Value
-public class PdfField {
-    Integer xCoordinate;
-    Integer yCoordinate;
-    String[] content;
-
-    public PdfField(Integer xCoordinate, Integer yCoordinate, String[] content) {
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
-        this.content = content;
-    }
+/**
+ * A text field to be printed on the ePrescription PDF.
+ *
+ * @param x          starting coordinate
+ * @param y          starting coordinate
+ * @param lines      list of text lines
+ * @param wrapLength maximum line length
+ */
+public record PdfField(
+    long x,
+    long y,
+    List<String> lines,
+    int wrapLength
+) {
 }

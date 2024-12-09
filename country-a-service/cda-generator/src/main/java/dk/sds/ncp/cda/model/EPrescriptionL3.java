@@ -50,4 +50,8 @@ public class EPrescriptionL3 {
     public String getPackageQuantity() {
         return Long.toString(packageQuantity);
     }
+
+    public long getPackageQuantityLong() {
+        return packageQuantity;
+    }
 }

@@ -10,6 +10,15 @@ RUN --mount=type=cache,target=/root/.m2 mvn -B clean package
 # Finished backend image
 FROM eclipse-temurin:21-jre
 
+# Fix "Using fallback font LiberationSans for base font Courier" warning
+RUN apt-get update \
+    && apt-get install -y \
+    ttf-mscorefonts-installer \
+    && rm -rf /var/lib/apt/lists/*
+
+# refresh system font cache
+RUN fc-cache -f -v
+
 # https://github.com/hexops-graveyard/dockerfile#do-not-use-a-uid-below-10000
 RUN groupadd -g 10001 app && \
     useradd -r -u 10001 -g app app
