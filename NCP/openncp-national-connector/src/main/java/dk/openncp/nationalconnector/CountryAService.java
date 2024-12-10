@@ -1,7 +1,7 @@
 package dk.openncp.nationalconnector;
 
-import dk.nsp.epps.ApiClient;
-import dk.nsp.epps.api.DefaultApi;
+import dk.sundhedsdatastyrelsen.ncpeh.ApiClient;
+import dk.sundhedsdatastyrelsen.ncpeh.api.DefaultApi;
 
 import java.net.URI;
 import java.net.URISyntaxException;

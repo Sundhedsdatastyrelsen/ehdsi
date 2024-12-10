@@ -2,22 +2,22 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>dk.nsp.epps</groupId>
+		<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 		<artifactId>epps-root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>ePrescriptionPoC - SpringBoot Application</name>
-	<groupId>dk.nsp.epps</groupId>
+	<name>NCPeH DK integration service - SpringBoot Application</name>
+	<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 	<artifactId>epps-application</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<description>ePrescriptionPoC - SpringBoot App</description>
+	<description>NCPeH DK integration service - SpringBoot App</description>
 
 	<dependencies>
 		<dependency>
-			<groupId>dk.nsp.epps</groupId>
+			<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 			<artifactId>epps-service</artifactId>
 		</dependency>
 		<dependency>
@@ -83,7 +83,7 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>dk.nsp.epps</groupId>
+									<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 									<artifactId>epps-application</artifactId>
 									<version>${project.version}</version>
 									<outputDirectory>${project.build.directory}</outputDirectory>
