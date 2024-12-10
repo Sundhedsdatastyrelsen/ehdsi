@@ -2,18 +2,18 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>dk.nsp.epps</groupId>
+		<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 		<artifactId>epps-root</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>ePrescriptionPoC - API Root</name>
-	<groupId>dk.nsp.epps</groupId>
+	<name>NCPeH DK integration service - API Root</name>
+	<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 	<artifactId>epps-api-root</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<description>ePrescriptionPoC - API Root</description>
+	<description>NCPeH DK integration service - API Root</description>
 
 	<modules>
 		<module>epps-ncp-api</module>
