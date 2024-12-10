@@ -1,8 +1,8 @@
 package dk.openncp.nationalconnector.xca;
 
-import dk.nsp.epps.ApiException;
-import dk.nsp.epps.api.model.PostFetchDocumentRequest;
-import dk.nsp.epps.api.model.PostFindEPrescriptionDocumentsRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindEPrescriptionDocumentsRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.Utils;
 import eu.europa.ec.sante.openncp.common.ClassCode;

@@ -8,13 +8,13 @@
 		<relativePath/>
 	</parent>
 
-	<name>ePrescriptionPoC: Root/Super POM</name>
-	<groupId>dk.nsp.epps</groupId>
+	<name>NCPeH DK integration service</name>
+	<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 	<artifactId>epps-root</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<description>ePrescriptionPoC: Root/Super POM</description>
+	<description>NCPeH DK integration service</description>
 
 	<modules>
 		<module>epps-api</module>
@@ -68,52 +68,52 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>dk.nsp.epps</groupId>
+				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 				<artifactId>epps-fmk-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
             <dependency>
-                <groupId>dk.nsp.epps</groupId>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>testing-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
 			<dependency>
-				<groupId>dk.nsp.epps</groupId>
+				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 				<artifactId>epps-ncp-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>dk.nsp.epps</groupId>
+				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 				<artifactId>epps-cpr-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>dk.nsp.epps</groupId>
+				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 				<artifactId>epps-service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>dk.nsp.epps</groupId>
+				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 				<artifactId>epps-fmk-mock-data</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>dk.nsp.epps</groupId>
+				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
 				<artifactId>epps-cpr-mock-data</artifactId>
 				<version>${project.version}</version>
 			</dependency>
             <dependency>
-                <groupId>dk.nsp.epps</groupId>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>cda-generator</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>dk.nsp.epps</groupId>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>nsp-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>dk.nsp.epps</groupId>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>integration-tests</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -204,6 +204,17 @@
 
 	<build>
 		<plugins>
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.46.1</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>dk.sundhedsdatastyrelsen.ChangePackage</recipe>
+                    </activeRecipes>
+                </configuration>
+            </plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -347,7 +358,7 @@
 									<requireReleaseDeps>
 										<failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
 										<excludes>
-											<exclude>dk.nsp.epps:*</exclude>
+											<exclude>dk.sundhedsdatastyrelsen.ncpeh:*</exclude>
 										</excludes>
 									</requireReleaseDeps>
 									<requireUpperBoundDeps />
