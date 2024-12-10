@@ -26,4 +26,4 @@ logging:
   level:
     root: info
     org.springframework.web: info
-    dk.nsp.epps: info
+    dk.sundhedsdatastyrelsen.ncpeh: info
