@@ -1,6 +1,6 @@
 package dk.openncp.nationalconnector;
 
-import dk.nsp.epps.api.model.ClassCode;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.ClassCode;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.OutputKeys;

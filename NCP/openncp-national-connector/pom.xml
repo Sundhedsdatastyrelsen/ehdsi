@@ -61,6 +61,16 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.46.1</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>dk.sundhedsdatastyrelsen.ChangePackage</recipe>
+                    </activeRecipes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>6.5.0</version>
@@ -77,8 +87,8 @@
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <library>native</library>
-                                <apiPackage>dk.nsp.epps.api</apiPackage>
-                                <modelPackage>dk.nsp.epps.api.model</modelPackage>
+                                <apiPackage>dk.sundhedsdatastyrelsen.ncpeh.api</apiPackage>
+                                <modelPackage>dk.sundhedsdatastyrelsen.ncpeh.api.model</modelPackage>
                             </configOptions>
                         </configuration>
                     </execution>

@@ -1,11 +1,11 @@
 package dk.openncp.nationalconnector.xdr;
 
 
-import dk.nsp.epps.ApiException;
-import dk.nsp.epps.api.model.ClassCode;
-import dk.nsp.epps.api.model.DisardDispensationRequest;
-import dk.nsp.epps.api.model.EpsosDocument;
-import dk.nsp.epps.api.model.SubmitDispensationRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.ClassCode;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.DisardDispensationRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.EpsosDocument;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.SubmitDispensationRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.Utils;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
@@ -40,8 +40,8 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
         }
     }
 
-    private static dk.nsp.epps.api.model.DiscardDispenseDetails apiModel(DiscardDispenseDetails discardDispenseDetails) {
-        return new dk.nsp.epps.api.model.DiscardDispenseDetails()
+    private static dk.sundhedsdatastyrelsen.ncpeh.api.model.DiscardDispenseDetails apiModel(DiscardDispenseDetails discardDispenseDetails) {
+        return new dk.sundhedsdatastyrelsen.ncpeh.api.model.DiscardDispenseDetails()
                 .discardId(discardDispenseDetails.getDiscardId())
                 .dispenseId(discardDispenseDetails.getDispenseId())
                 .discardDate(Utils.dateToUtcOffsetDateTime(discardDispenseDetails.getDiscardDate()))

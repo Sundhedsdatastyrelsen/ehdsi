@@ -25,18 +25,18 @@ jobs:
       - name: Create a new prescription in FMK
         run: |
           java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
-          dk.nsp.epps.script.FmkPrescriptionCreator \
+          dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator \
           0201909309
       - name: Get the prescription from FMK
         run: |
           java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
-          dk.nsp.epps.script.FmkPrescriptionCollector \
+          dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCollector \
           0201909309 \
           target/test-files/get-prescription.xml
       - name: Generate ePrescription document
         run: |
           java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
-          dk.nsp.epps.script.ePrescriptionCdaGenerator \
+          dk.sundhedsdatastyrelsen.ncpeh.script.ePrescriptionCdaGenerator \
           target/test-files/get-prescription.xml \
           target/test-files/eprescription-cda.xml
 

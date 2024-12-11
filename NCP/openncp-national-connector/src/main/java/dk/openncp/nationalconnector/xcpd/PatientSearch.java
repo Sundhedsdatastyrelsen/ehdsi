@@ -1,9 +1,9 @@
 package dk.openncp.nationalconnector.xcpd;
 
-import dk.nsp.epps.ApiException;
-import dk.nsp.epps.api.DefaultApi;
-import dk.nsp.epps.api.model.Gender;
-import dk.nsp.epps.api.model.PostFindPatientsRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
+import dk.sundhedsdatastyrelsen.ncpeh.api.DefaultApi;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.Gender;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientsRequest;
 import dk.openncp.nationalconnector.CountryAService;
 import dk.openncp.nationalconnector.Utils;
 import dk.openncp.nationalconnector.xca.DocumentSearch;
@@ -85,7 +85,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         return new PatientId("2.16.17.710.802.1000.990.1.500", id);
     }
 
-    static PatientDemographics toEpsosPatient(dk.nsp.epps.api.model.PatientDemographics patient) {
+    static PatientDemographics toEpsosPatient(dk.sundhedsdatastyrelsen.ncpeh.api.model.PatientDemographics patient) {
         final var result = new PatientDemographics();
         final var patientId = toPatientId(patient.getIdList().get(0));
         result.setId(patientId.getExtension());
