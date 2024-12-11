@@ -96,10 +96,10 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, DocumentLevel documentLevel) {
+    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response,GetDrugMedicationResponseType medicationResponseType, int prescriptionIndex, DocumentLevel documentLevel) {
         try {
             String cda = switch (documentLevel) {
-                case LEVEL3 -> EPrescriptionL3Generator.generate(response, prescriptionIndex);
+                case LEVEL3 -> EPrescriptionL3Generator.generate(response, medicationResponseType, prescriptionIndex);
                 case LEVEL1 -> EPrescriptionL1Generator.generate(response, prescriptionIndex);
             };
             return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);

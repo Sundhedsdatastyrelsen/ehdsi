@@ -64,11 +64,13 @@ public class EPrescriptionL3Mapper {
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText);
 
-        medication.ifPresent(drugMedicationType -> prescriptionBuilder
+        //TODO add extra fields
+
+        /*medication.ifPresent(drugMedicationType -> prescriptionBuilder
             .medicationOrderStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                 .getTreatmentStartDate()))
             .medicationOrderEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentEndDate())));
+                .getTreatmentEndDate())));*/
 
         return prescriptionBuilder.build();
     }

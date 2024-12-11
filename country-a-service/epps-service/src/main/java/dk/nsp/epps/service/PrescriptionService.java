@@ -112,7 +112,7 @@ public class PrescriptionService {
 
             var drugMedications = getDrugMedicationResponse(cpr,drugMedicationIds,caller);
 
-            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse);
+            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }

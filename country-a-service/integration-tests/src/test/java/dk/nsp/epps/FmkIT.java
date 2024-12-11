@@ -23,11 +23,18 @@ import static org.hamcrest.io.FileMatchers.aReadableFile;
 public class FmkIT {
     @Test
     public void getPrescriptionTest() throws Exception {
-        var service = new PrescriptionService(Fmk.apiClient(),new EPrescriptionMapper("repoID"));
+        var getPrescriptionRequest = GetPrescriptionRequestType.builder()
+            .withPersonIdentifier()
+            .withSource("CPR")
+            .withValue(Fmk.cprHelleReadOnly)
+            .end()
+            .withIncludeOpenPrescriptions()
+            .end()
+            .build();
 
-        var prescriptions = service.getPrescriptions(Fmk.cprKarl, PrescriptionService.PrescriptionFilter.none(),TestIdentities.apotekerJeppeMoeller);
-
-        assertThat(prescriptions, is(notNullValue()));
+        var prescriptions = Fmk.apiClient()
+            .getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
+        assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
     }
 
     private static String patientId(String cpr) {
