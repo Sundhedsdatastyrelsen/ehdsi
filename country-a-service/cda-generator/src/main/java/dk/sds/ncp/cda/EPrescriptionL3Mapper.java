@@ -3,6 +3,7 @@ package dk.sds.ncp.cda;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -23,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -30,15 +32,22 @@ public class EPrescriptionL3Mapper {
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, GetDrugMedicationResponseType drugMedicationResponse, int prescriptionIndex) throws MapperException {
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, Optional<GetDrugMedicationResponseType> drugMedicationResponse, int prescriptionIndex) throws MapperException {
         var prescription = response.getPrescription().get(prescriptionIndex);
-        var medication = drugMedicationResponse.getDrugMedication().stream().filter(dm -> prescription.getAttachedToDrugMedicationIdentifier().equals(dm.getIdentifier())).findAny();
+        Optional<DrugMedicationType> medication = Optional.empty();
+        if (drugMedicationResponse.isPresent()) {
+            medication = drugMedicationResponse.get().getDrugMedication()
+                .stream()
+                .filter(dm -> prescription.getAttachedToDrugMedicationIdentifier().equals(dm.getIdentifier()))
+                .findAny();
+        }
+
 
         var prescriptionId = new CdaId(Oid.DK_FMK_PRESCRIPTION, Long.toString(prescription.getIdentifier()));
 
         var i = prescription.getIndication();
         var indicationText = i.getFreeText() != null ? i.getFreeText() : i.getText();
-        var prescriptionBuilder =  EPrescriptionL3.builder()
+        var prescriptionBuilder = EPrescriptionL3.builder()
             .documentId(new CdaId(UUID.randomUUID()))
             .title(String.format(
                 "eHDSI ePrescription %s - %s",
@@ -141,7 +150,7 @@ public class EPrescriptionL3Mapper {
     private static Organization authorOrganization(PrescriptionType prescription) throws MapperException {
         var org = authorOrganizationXml(prescription);
 
-        var id = new CdaId(switch(org.getIdentifier().getSource()) {
+        var id = new CdaId(switch (org.getIdentifier().getSource()) {
             case "Yder" -> Oid.DK_YDER;
             case "SOR" -> Oid.DK_SOR;
             case "SKS" -> Oid.DK_ORG_SKS;
@@ -155,7 +164,7 @@ public class EPrescriptionL3Mapper {
                     + org.getIdentifier().getSource());
         }, org.getIdentifier().getValue());
         Address address = null;
-        if(!org.getAddressLine().isEmpty()){
+        if (!org.getAddressLine().isEmpty()) {
             var streetAddressLines = new LinkedList<String>();
             String city = null, postalCode = null;
             var postalCityPattern = Pattern.compile("(\\d{4}) (.+)");
@@ -219,7 +228,7 @@ public class EPrescriptionL3Mapper {
             .getContent()
             .stream()
             .filter(jaxb -> OrganisationType.class.isAssignableFrom(jaxb.getDeclaredType()))
-            .map(jaxb -> (OrganisationType)jaxb.getValue())
+            .map(jaxb -> (OrganisationType) jaxb.getValue())
             .findFirst()
             .orElseThrow(() -> new MapperException("Cannot find prescription creator organization"));
     }

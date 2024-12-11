@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class EPrescriptionMapper {
@@ -26,8 +27,10 @@ public class EPrescriptionMapper {
         this.repositoryId = repositoryId;
     }
 
-    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(String patientId, PrescriptionFilter filter,
-                                                          GetPrescriptionResponseType src) {
+    public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(
+        String patientId, PrescriptionFilter filter,
+        GetPrescriptionResponseType src
+    ) {
         return filter.validPrescriptionIndexes(src.getPrescription())
             .mapToObj(idx -> mapMeta(patientId, src, idx))
             .toList();
@@ -52,20 +55,22 @@ public class EPrescriptionMapper {
     private DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
         try {
             final String cda;
-            var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex);
+            var dataModel = EPrescriptionL3Mapper.model(response, Optional.empty(), prescriptionIndex);
             try {
                 cda = EPrescriptionL3Generator.generate(dataModel);
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var l3Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId().getExtension()));
+            var l3Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId()
+                .getExtension()));
             l3Meta.setSize((long) cda.length());
             l3Meta.setHash(Utils.md5Hash(cda));
 
             //Generate PDF to deliver metadata on it
             var pdf = EPrescriptionL1Generator.generate(EPrescriptionL1Mapper.map(dataModel));
 
-            var l1Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId().getExtension()));
+            var l1Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId()
+                .getExtension()));
             l1Meta.setSize((long) pdf.length);
             l1Meta.setHash(Utils.md5Hash(pdf));
 
@@ -89,8 +94,8 @@ public class EPrescriptionMapper {
 
     private EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType drugMedicationResponse, int prescriptionIndex, DocumentLevel documentLevel) {
         try {
-            var model = EPrescriptionL3Mapper.model(response, drugMedicationResponse, prescriptionIndex);
-            if(DocumentLevel.LEVEL3.equals(documentLevel)) {
+            var model = EPrescriptionL3Mapper.model(response, Optional.of(drugMedicationResponse), prescriptionIndex);
+            if (DocumentLevel.LEVEL3.equals(documentLevel)) {
                 var cda = EPrescriptionL3Generator.generate(model);
                 return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
             } else if (DocumentLevel.LEVEL1.equals(documentLevel)) {
@@ -98,7 +103,7 @@ public class EPrescriptionMapper {
                 var base64Pdf = Base64.getEncoder().encodeToString(pdf);
                 return new EpsosDocumentDto(patientId, base64Pdf, ClassCodeDto._57833_6);
             }
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, String.format("Could not generate document of level %s",documentLevel));
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, String.format("Could not generate document of level %s", documentLevel));
 
         } catch (MapperException | TemplateException | IOException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);

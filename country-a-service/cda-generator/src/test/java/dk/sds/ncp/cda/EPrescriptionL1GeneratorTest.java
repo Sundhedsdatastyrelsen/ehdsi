@@ -4,12 +4,14 @@ import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws Exception {
         var cpr = "0201909309";
         var fmkResponse = FmkResponseStorage.storedPrescriptions(cpr);
-        var modelL3 = EPrescriptionL3Mapper.model(fmkResponse, 0);
+        var modelL3 = EPrescriptionL3Mapper.model(fmkResponse, Optional.empty(), 0); //TODO should probably also test with a drug medication response
         var modelL1 = EPrescriptionL1Mapper.map(modelL3);
         var pdf = EPrescriptionL1Generator.generate(modelL1);
         Assertions.assertNotNull(pdf);

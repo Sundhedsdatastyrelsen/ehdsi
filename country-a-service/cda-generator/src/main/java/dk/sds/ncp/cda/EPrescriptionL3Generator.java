@@ -1,11 +1,13 @@
 package dk.sds.ncp.cda;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.sds.ncp.cda.model.EPrescriptionL3;
 import freemarker.template.TemplateException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Optional;
 
 public class EPrescriptionL3Generator {
 
@@ -16,9 +18,9 @@ public class EPrescriptionL3Generator {
         return writer.toString();
     }
 
-    public static String generate(GetPrescriptionResponseType response, int prescriptionIndex)
+    public static String generate(GetPrescriptionResponseType response, GetDrugMedicationResponseType drugMedication, int prescriptionIndex)
         throws TemplateException, IOException, MapperException {
-        var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex);
+        var dataModel = EPrescriptionL3Mapper.model(response, Optional.of(drugMedication), prescriptionIndex);
         return generate(dataModel);
     }
 }

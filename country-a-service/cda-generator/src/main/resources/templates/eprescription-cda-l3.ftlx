@@ -71,9 +71,9 @@ root="${id.root}"<#rt>
             <telecom nullFlavor="NI"/>
             <patient classCode="PSN" determinerCode="INSTANCE">
                 <name>
-<#list patient.name.givens as given>
-                    <given>${ given }</given>
-</#list>
+                    <#list patient.name.givens as given>
+                                        <given>${ given }</given>
+                    </#list>
                     <family>${ patient.name.family }</family>
                 </name>
                 <administrativeGenderCode <@cdaCodeAttrs patient.genderCode /> />

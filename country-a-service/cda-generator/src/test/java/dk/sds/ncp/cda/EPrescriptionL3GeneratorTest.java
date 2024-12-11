@@ -14,6 +14,7 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 class EPrescriptionL3GeneratorTest {
     @Test
@@ -28,7 +29,7 @@ class EPrescriptionL3GeneratorTest {
     @ValueSource(strings = {"1111111118", "0201909309"})
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
-        var xmlString = EPrescriptionL3Generator.generate(prescription, 0);
+        var xmlString = EPrescriptionL3Generator.generate(prescription, null, 0); //TODO Needs a DrugMedication response
 
         // 1. Test if well-formed XML (can be parsed)
         var documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
