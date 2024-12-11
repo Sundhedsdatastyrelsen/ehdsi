@@ -1,7 +1,6 @@
 package dk.nsp.epps.service.mapping;
 
-import dk.nsp.epps.service.exception.CountryAException;
-import org.springframework.http.HttpStatus;
+import dk.nsp.epps.service.exception.DataRequirementException;
 
 import java.util.regex.Pattern;
 
@@ -30,7 +29,7 @@ public final class PatientIdMapper {
 
         var matcher = patientIdPattern.matcher(patientId);
         if (!matcher.matches()) {
-            throw new CountryAException(HttpStatus.BAD_REQUEST, "'" + patientId + "' doesn't match any of the expected patterns");
+            throw new DataRequirementException("'" + patientId + "' doesn't match any of the expected patterns");
         }
         return matcher.group(1);
     }

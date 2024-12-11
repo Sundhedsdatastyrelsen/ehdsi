@@ -49,7 +49,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     public String getPatientId(String s) throws NIException, InsufficientRightsException {
         return null;
     }
-
+    
     static PatientDemographics.Gender toEpsosGender(@Nullable Gender gender) {
         if (gender == null) {
             return null;
@@ -71,7 +71,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
      * Inherently unsafe, we don't know if everyone agrees on offset.
      */
     static Date localDateToUtilDate(LocalDate date) {
-        if(date == null) return null;
+        if (date == null) return null;
         return Date.from(date.atStartOfDay(ZoneId.of("UTC")).toInstant());
     }
 
@@ -103,14 +103,14 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
                 result.setEmail(patient.getEmail());
             }
         } catch (ParseException e) {
-            logger.warn("Unable to parse email value returned from Country A service");
+            logger.warn("Unable to parse email value in response");
         }
         try {
             if (patient.getTelephone() != null) {
                 result.setTelephone(patient.getTelephone());
             }
         } catch (ParseException e) {
-            logger.warn("Unable to parse telephone number returned from Country A service");
+            logger.warn("Unable to parse telephone number in response");
         }
         return result;
     }
@@ -118,26 +118,27 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader, DefaultApi countryAApi) throws NIException {
         try {
             // We only accept patient ids with root "2.16.17.710.802.1000.990.1.500", otherwise we throw.
-            final var pidsValidInvalid = patientIds.stream().collect(Collectors.partitioningBy(pid -> "2.16.17.710.802.1000.990.1.500".equals(pid.getRoot())));
+            final var pidsValidInvalid = patientIds.stream().collect(Collectors.partitioningBy(pid -> "2.16.17.710.802.1000.990.1.500".equals(
+                pid.getRoot())));
             if (!pidsValidInvalid.get(false).isEmpty()) {
                 throw new NIException(OpenNCPErrorCode.ERROR_PI_GENERIC, String.format(
-                        "Unknown patient identifier root(s): %s",
-                        pidsValidInvalid.get(false).stream().map(PatientId::getRoot).collect(Collectors.joining(","))));
+                    "Unknown patient identifier root(s): %s",
+                    pidsValidInvalid.get(false).stream().map(PatientId::getRoot).collect(Collectors.joining(","))));
             }
             final var cprNumbers = pidsValidInvalid.get(true).stream().map(PatientId::getExtension).collect(Collectors.toList());
             final var request = new PostFindPatientsRequest()
-                    .soapHeader(Utils.elementToString(soapHeader))
-                    .patientIds(cprNumbers);
+                .soapHeader(Utils.elementToString(soapHeader))
+                .patientIds(cprNumbers);
             logger.info("Retrieving patient demographics from Country A service...");
             final var response = countryAApi.postFindPatients(request);
             logger.info("Successfully retrieved patient demographics from Country A service.");
             return response.getPatients().stream()
-                    .map(PatientSearch::toEpsosPatient)
-                    .collect(Collectors.toList());
+                .map(PatientSearch::toEpsosPatient)
+                .collect(Collectors.toList());
         } catch (ApiException e) {
             throw new NIException(OpenNCPErrorCode.ERROR_PI_GENERIC, e.getCode() > 0
-                    ? "Bad response from Country A service"
-                    : "Missing response from Country A service"
+                ? String.format("Error, status: %s body: %s", e.getCode(), e.getResponseBody())
+                : "Missing response from service"
             );
         }
     }
@@ -158,9 +159,9 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     public static void main(String[] args) throws Exception {
         try {
             var foo = getPatientDemographicsFromCountryA(
-                    List.of(new PatientId("2.16.17.710.802.1000.990.1.500", "1111111118")),
-                    XmlUtil.parseContent("<SomeXml/>").getDocumentElement(),
-                    CountryAService.api());
+                List.of(new PatientId("2.16.17.710.802.1000.990.1.500", "1111111118")),
+                XmlUtil.parseContent("<SomeXml/>").getDocumentElement(),
+                CountryAService.api());
             return;
         } catch (NIException e) {
             throw new RuntimeException(e);

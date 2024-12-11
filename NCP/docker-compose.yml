@@ -61,6 +61,10 @@ services:
       - db_username
       - db_password
       - db_root_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   # Usage: docker compose run tsam-exporter
   # Run this to generate language files for the CDA display tool.
@@ -102,12 +106,17 @@ services:
       - db_password
       - cts_username
       - cts_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   tomcat_node_a:
     build:
       target: node-a
     container_name: "openncp-server"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./ncp_a/ncpa.database.env
       - ./ncp_a/ncpa.env
@@ -127,9 +136,6 @@ services:
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -141,12 +147,17 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   tomcat_node_b:
     build:
       target: node-b
     container_name: "openncp-client"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./ncp_b/ncpb.database.env
       - ./ncp_b/ncpb.env
@@ -165,9 +176,6 @@ services:
         condition: service_healthy
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -179,12 +187,17 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-openatna:
     container_name: openncp-openatna
     build:
       target: openatna
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-openatna/openatna.database.env
       - ./openncp-openatna/openatna.env
@@ -201,9 +214,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -215,12 +225,17 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-trc-sts:
     container_name: openncp-trc-sts
     build:
       target: trc-sts
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-trc-sts/.database.env
       - ./openncp-trc-sts/.env
@@ -235,9 +250,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -250,12 +262,17 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
     build:
       target: translations-and-mappings
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
       - ./openncp-translations-and-mappings/translations-and-mappings.env
@@ -270,9 +287,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -284,12 +298,17 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   openncp-web-manager:
     container_name: openncp-web-manager
     build:
       target: web-manager
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:${IMAGE_TAG}
+    restart: unless-stopped
     env_file:
       - ./openncp-web-manager/.database.env
       - ./openncp-web-manager/.env
@@ -309,9 +328,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: production
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
-      CATALINA_OPTS: "
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
@@ -323,12 +339,17 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   configuration-synchronizer:
     build:
       context: configuration-synchronizer
     container_name: configuration-synchronizer
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
+    restart: unless-stopped
     env_file: .env
     volumes:
       - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
@@ -353,12 +374,17 @@ services:
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
+    deploy:
+      resources:
+        limits:
+          memory: 500M
 
   # Convenience tool for managing docker containers.
   # To enable: Add COMPOSE_PROFILES=portainer to .env
   portainer:
     profiles: ["portainer"]
     image: portainer/portainer-ce:latest
+    restart: unless-stopped
     container_name: portainer
     ports:
       - "${PORTAINER_PORT}:${PORTAINER_EXTERNAL_PORT}"

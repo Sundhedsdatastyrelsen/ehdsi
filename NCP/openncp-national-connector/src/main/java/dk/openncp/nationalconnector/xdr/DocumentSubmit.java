@@ -36,7 +36,7 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
                     .classCode(Utils.classCode(epsosDocument.getClassCode()))
                     .document(Utils.elementToString(epsosDocument.getDocument().getDocumentElement())));
         } catch (ApiException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_ED_GENERIC, "Dispensation failed.");
+            throw new NIException(OpenNCPErrorCode.ERROR_ED_GENERIC, String.format("Dispensation failed with error: %s",e.getResponseBody()));
         }
     }
 
@@ -68,7 +68,7 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
                     .disardDispenseDetails(apiModel(discardDispenseDetails))
                     .dispensationToDiscard(apiModel(epsosDocument)));
         } catch (ApiException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_ED_DISCARD_FAILED, "Dispensation discard failed.");
+            throw new NIException(OpenNCPErrorCode.ERROR_ED_DISCARD_FAILED, String.format("Dispensation discard failed with error: %s",e.getResponseBody()));
         }
     }
 

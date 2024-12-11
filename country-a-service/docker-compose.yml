@@ -3,20 +3,15 @@
 #
 networks:
   epps-backend:
-    # Uncomment the following lines to use same network as OpenNCP:
     name: epps
     external: true
 
 services:
-  #
-  # epps-country-a service
-  #
   epps-country-a:
-    image: eppsregistry.azurecr.io/countrya-poc:latest
-    build:
-      dockerfile: epps-application/Dockerfile.build
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/countrya:latest
+    build: .
     container_name: epps-country-a
-    restart: on-failure:3
+    restart: unless-stopped
     ports:
       - "8180:8080"
       # - "5008:5008"
@@ -25,46 +20,8 @@ services:
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-dev}"
       CPR_ENDPOINT_URL: "${CPR_ENDPOINT_URL}"
       FMK_ENDPOINT_URL: "${FMK_ENDPOINT_URL}"
-#    links:
-      # - epps-fmk-mock:epps-fmk-mock
-      # - epps-cpr-mock:epps-cpr-mock
+    volumes:
+      - ./config:/app/config:ro
+      - ./data:/app/data
     networks:
       - epps-backend
-
-  # #
-  # # fmk mock
-  # #
-  # # The FMK mock is disabled because we connect to the FMK test environment instead
-  # epps-fmk-mock:
-  #   image: eppsregistry.azurecr.io/countrya-fmk-mock:latest
-  #   build:
-  #     dockerfile: epps-mocks/epps-fmk-mock/Dockerfile.build
-  #   restart: always
-  #   container_name: epps-fmk-mock
-  #   ports:
-  #     - "8081:8080"
-  #   environment:
-  #     - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
-  #   networks:
-  #     - epps-backend
-
-  # #
-  # # CPR mock
-  # #
-  # # The CPR mock is disabled because we connect to the NSP CPR test service instead
-  # epps-cpr-mock:
-  #   image: eclipse-temurin:21-jre
-  #   restart: always
-  #   command: sh /setup/run-in-container.sh /code/epps-cpr-mock.jar
-  #   container_name: epps-cpr-mock
-  #   ports:
-  #     - "4002:4000"
-  #     - "8082:8080"
-  #   environment:
-  #     - "JAVA_DEBUG=${JAVA_DEBUG:-}"
-  #     - "SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}"
-  #   volumes:
-  #     - ./epps-mocks/epps-cpr-mock/target/epps-cpr-mock.jar:/code/epps-cpr-mock.jar:ro
-  #     - ./epps-application/src/main/scripts/:/setup/:ro
-  #   networks:
-  #     - epps-backend

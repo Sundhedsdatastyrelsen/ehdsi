@@ -9,10 +9,10 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.epps.client.TestIdentities;
 import dk.nsp.epps.service.Utils;
+import dk.nsp.epps.service.exception.DataRequirementException;
 import dk.sds.ncp.cda.MapperException;
 import dk.sds.ncp.cda.Oid;
 import lombok.NonNull;
@@ -136,7 +136,11 @@ public class DispensationMapper {
     </Prescription>
 </CreatePharmacyEffectuationRequest>
      */
-    private static class XPaths {
+    static class XPaths {
+        private XPaths() {
+            throw new IllegalStateException("Static utility class should not be instantiated");
+        }
+
         static final String authorFamilyName =
             "/hl7:ClinicalDocument/hl7:author/hl7:assignedAuthor/hl7:assignedPerson/hl7:name/hl7:family";
         static final String authorGivenName =
@@ -172,6 +176,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
         static final String substitution =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
+        static final String cdaId =
+            "/hl7:ClinicalDocument/hl7:id";
     }
 
     private final XPath xpath;
@@ -203,7 +209,10 @@ public class DispensationMapper {
         var l = nodeList.getLength();
         var result = new ArrayList<String>();
         for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i).getAttributes().getNamedItem(attrName).getTextContent());
+            var item = nodeList.item(i).getAttributes().getNamedItem(attrName);
+            if (item != null) {
+                result.add(item.getTextContent());
+            }
         }
         return Collections.unmodifiableList(result);
     }
@@ -239,7 +248,7 @@ public class DispensationMapper {
             // It has implications in FMK, who validates these
             return "Apoteker";
         }
-        if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)){
+        if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             //This is the translation of "Medical Doctor"
             return "Læge";
         }
@@ -389,19 +398,36 @@ public class DispensationMapper {
             .build();
     }
 
-    String packageNumber(Document cda) throws XPathExpressionException {
-        var node = evalNode(cda, XPaths.manufacturedMaterialCode);
-        var codeSystem = xpath.evaluate("@codeSystem", node);
-        if (!Oid.DK_LMS02.value.equals(codeSystem)) {
-            // throw?
-            log.warn(
-                "Expected LMS02 ({}) code system, for {}. Got: {}",
-                Oid.DK_LMS02.value,
-                XPaths.manufacturedMaterialCode,
-                codeSystem
-            );
+    String packageNumber(Document cda) {
+        try {
+            var node = evalNode(cda, XPaths.manufacturedMaterialCode);
+            var codeSystem = xpath.evaluate("@codeSystem", node);
+            if (!Oid.DK_LMS02.value.equals(codeSystem)) {
+                // throw?
+                log.warn(
+                    "Expected LMS02 ({}) code system, for {}. Got: {}",
+                    Oid.DK_LMS02.value,
+                    XPaths.manufacturedMaterialCode,
+                    codeSystem
+                );
+            }
+            return xpath.evaluate("@code", node);
+        } catch (XPathExpressionException e) {
+            throw new DataRequirementException(String.format("Could not find find data at path: %s", XPaths.manufacturedMaterialCode));
         }
-        return xpath.evaluate("@code", node);
+    }
+
+    public String cdaId(Document cda) throws MapperException {
+        try {
+            var node = evalNode(cda, XPaths.cdaId);
+            var root = xpath.evaluate("@root", node);
+            var ext = xpath.evaluate("@extension", node);
+            return ext == null
+                ? root
+                : root + "^^^" + ext;
+        } catch (XPathExpressionException e) {
+            throw new MapperException(e.getMessage());
+        }
     }
 
     public StartEffectuationRequestType startEffectuationRequest(
@@ -446,40 +472,15 @@ public class DispensationMapper {
         }
     }
 
-
-    /***
-     * @param patientId PatientID (containing a CPR)
-     * @param cda CDA Document
-     * @param prescriptionResponse Requires a new GetPrescriptionResponse specifically created to get prescriptions to cancel effectuations of
-     * @throws MapperException
-     */
     public UndoEffectuationRequestType createUndoEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
-        @NonNull GetPrescriptionResponseType prescriptionResponse
+        long orderId,
+        long effectuationId
     ) throws MapperException {
         var obf = new ObjectFactory();
         try {
             var prescriptionId = prescriptionId(cda);
-            var fmkPrescription = prescriptionResponse.getPrescription()
-                .stream()
-                .filter(p -> p.getIdentifier() == prescriptionId)
-                .findFirst();
-            if (fmkPrescription.isEmpty()) {
-                throw new MapperException("No prescription in list of prescriptions matches ID from discard dispensation");
-            }
-            var lastOrder = fmkPrescription.get()
-                .getOrder()
-                .stream()
-                .max((o1, o2) -> o1.getCreated().getDateTime().compare(o2.getCreated().getDateTime()));
-            if (lastOrder.isEmpty()) {
-                throw new MapperException("No orders found in list of prescription");
-            }
-            var lastEffectuation = lastOrder.get().getEffectuation();
-            if (lastEffectuation == null) {
-                throw new MapperException("No effectuations found on last order");
-            }
-
 
             return dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
@@ -491,8 +492,8 @@ public class DispensationMapper {
                 .addPrescription()
                 .withIdentifier(prescriptionId)
                 .withOrder()
-                .withIdentifier(lastOrder.get().getIdentifier())
-                .withEffectuation().withIdentifier(lastEffectuation.getIdentifier()).end()
+                .withIdentifier(orderId)
+                .withEffectuation().withIdentifier(effectuationId).end()
                 .end()
                 .end()
                 .build();
@@ -500,6 +501,4 @@ public class DispensationMapper {
             throw new MapperException(e.getMessage());
         }
     }
-
-
 }

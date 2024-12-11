@@ -9,21 +9,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.UUID;
+
 @Slf4j
 @Order(1)
 @RestControllerAdvice
 public class CountryAExceptionHandler {
+    private static final String PROTOTYPE_ERROR_MESSAGE = "{}: {} - (Error id: {}) - Returning {}";
+
     @ExceptionHandler(CountryAException.class)
     public ResponseEntity<ErrorDto> handleException(CountryAException e) {
         HttpStatus httpStatus = e.getHttpStatus();
-        var details = new ErrorDto(httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+
+        var errorUuid = UUID.randomUUID();
+
+        var details = new ErrorDto(httpStatus.name(), String.format("Error id: %s", errorUuid));
 
         if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
-            log.error("{}: {} - Returning {}", e.getClass().getSimpleName(), e.getMessage(), httpStatus, e);
+            log.error(PROTOTYPE_ERROR_MESSAGE, e.getClass()
+                .getSimpleName(), e.getMessage(), errorUuid, httpStatus, e);
         } else if (httpStatus.is5xxServerError()) {
-            log.warn("{}: {} - Returning {}", e.getClass().getSimpleName(), e.getMessage(), httpStatus);
+            log.warn(PROTOTYPE_ERROR_MESSAGE, e.getClass()
+                .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
         } else {
-            log.info("{}: {} - Returning {}", e.getClass().getSimpleName(), e.getMessage(), httpStatus);
+            log.info(PROTOTYPE_ERROR_MESSAGE, e.getClass()
+                .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
         }
 
         return ResponseEntity.status(httpStatus).body(details);

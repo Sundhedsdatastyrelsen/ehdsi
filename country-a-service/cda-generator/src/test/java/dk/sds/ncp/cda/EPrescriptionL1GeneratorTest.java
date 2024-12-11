@@ -3,38 +3,57 @@ package dk.sds.ncp.cda;
 import dk.nsp.epps.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import java.util.Optional;
 
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws Exception {
-        var cpr = "0201909309";
-        var fmkResponse = FmkResponseStorage.storedPrescriptions(cpr);
-        var modelL3 = EPrescriptionL3Mapper.model(fmkResponse, Optional.empty(), 0); //TODO should probably also test with a drug medication response
-        var modelL1 = EPrescriptionL1Mapper.map(modelL3);
-        var pdf = EPrescriptionL1Generator.generate(modelL1);
-        Assertions.assertNotNull(pdf);
-
-        // Write PDF to disk for debugging purposes
-//        java.nio.file.Files.write(
-//            java.nio.file.Path.of("temp/cda-eprescription-l1-" + cpr + ".pdf"),
-//            pdf,
-//            java.nio.file.StandardOpenOption.CREATE,
-//            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-//        );
+        var l3model = EPrescriptionL3MapperTest.getModel();
+        var model = EPrescriptionL1Mapper.model(l3model);
+        var cda = EPrescriptionL1Generator.generate(model);
+//        System.out.println(cda);
+        Assertions.assertNotNull(cda);
     }
 
-    @Test
-    void sameFileDifferentGenerations() {
-        var model = EPrescriptionL3MapperTest.getModel();
-        var pdfFields = EPrescriptionL1Mapper.map(model);
-        var pdf = EPrescriptionL1Generator.generate(pdfFields);
+    @ParameterizedTest
+    @ValueSource(strings = {"1111111118", "0201909309"})
+    public void testCdaValidity(String cpr) throws Exception {
+        var prescription = FmkResponseStorage.storedPrescriptions(cpr);
+        var xmlString = EPrescriptionL1Generator.generate(prescription, 0);
 
-        var secondPdf = EPrescriptionL1Generator.generate(pdfFields);
+        // 1. Test if well-formed XML (can be parsed)
+        var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
+        Assertions.assertDoesNotThrow(() ->
+            documentBuilder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)))
+        );
 
-        Assertions.assertNotNull(pdf);
-        Assertions.assertNotNull(secondPdf);
-        Assertions.assertArrayEquals(pdf, secondPdf);
+        // 2. Test if valid against HL7 CDA schema
+        var schemaUrl = this.getClass().getClassLoader().getResource("cda-schema/CDA_Pharma.xsd");
+        Assertions.assertNotNull(schemaUrl);
+        var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        var schema = schemaFactory.newSchema(schemaUrl);
+        var validator = schema.newValidator();
+        validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
+
+        // 3. Test model/schematron via gazelle
+        // TODO?
+
+        // write to file for debugging:
+//         java.nio.file.Files.writeString(
+//             java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml"),
+//             xmlString,
+//             java.nio.file.StandardOpenOption.CREATE,
+//             java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//         );
     }
 }

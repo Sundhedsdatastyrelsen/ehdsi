@@ -2,6 +2,10 @@ package dk.sds.ncp.cda;
 
 public enum Oid {
     /**
+     * EPrescription document repository id. For now, we use the DK home OID.
+     */
+    DK_EPRESCRIPTION_REPOSITORY_ID("2.16.17.710.802.1000.990.1"),
+    /**
      * Danish CPR numbers
      */
     DK_CPR("2.16.17.710.802.1000.990.1.500"),

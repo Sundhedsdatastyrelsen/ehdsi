@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.5</version>
+		<version>3.4.0</version>
 		<relativePath/>
 	</parent>
 
@@ -20,7 +20,6 @@
 		<module>epps-api</module>
 		<module>epps-service</module>
 		<module>epps-application</module>
-		<module>epps-mocks</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
         <module>integration-tests</module>
@@ -39,6 +38,8 @@
         <!-- To run the tests anyway: mvn verify -DskipITs=false -->
         <skipITs>true</skipITs>
         <skipUTs>false</skipUTs>
+        <sonar.organization>sundhedsdatastyrelsen</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<!-- Dependencies that all projects get -->
@@ -132,7 +133,24 @@
 				<groupId>dk.sosi.seal</groupId>
 				<artifactId>seal</artifactId>
 				<version>2.6.25</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>11.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>3.47.0.0</version>
+            </dependency>
 
 			<!-- Solve convergence errors -->
 			<dependency>
@@ -272,13 +290,12 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.10</version>
+					<version>0.8.12</version>
 					<executions>
 						<execution>
 							<id>jacoco-initialize</id>
 							<goals>
 								<goal>prepare-agent</goal>
-								<goal>report</goal>
 								<!-- <goal>check</goal> -->
 							</goals>
 							<!--
@@ -302,6 +319,13 @@
 								</rules>
 							</configuration>
 							-->
+						</execution>
+						<execution>
+							<id>report</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
 						</execution>
 					</executions>
 				</plugin>

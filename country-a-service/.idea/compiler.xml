@@ -7,14 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="epps-fmk-mock-data" />
         <module name="epps-service" />
         <module name="integration-tests" />
         <module name="epps-cpr-api" />
-        <module name="epps-cpr-mock" />
         <module name="testing-tools" />
-        <module name="epps-fmk-mock" />
-        <module name="epps-cpr-mock-data" />
         <module name="nsp-client" />
         <module name="epps-fmk-api" />
         <module name="epps-application" />

@@ -40,13 +40,13 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
         try {
             logger.info("Retrieving document from Country A service...");
             final var request = new PostFetchDocumentRequest()
-                    .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
-                    .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
-                    .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
-                    .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
-                    .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
-                    .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
-                    .soapHeader(Utils.elementToString(soapHeader));
+                .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
+                .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
+                .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
+                .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                .soapHeader(Utils.elementToString(soapHeader));
 
             final var docs = CountryAService.api().postFetchDocument(request);
             if (docs.isEmpty()) {
@@ -56,25 +56,27 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             logger.info("Successfully retrieved document from Country A service.");
             final var doc = docs.get(0);
             return DocumentFactory.createEPSOSDocument(
-                    doc.getPatientId(),
-                    ClassCode.getByCode(doc.getClassCode().getValue()),
-                    XmlUtil.parseContent(doc.getDocument())
+                doc.getPatientId(),
+                ClassCode.getByCode(doc.getClassCode().getValue()),
+                XmlUtil.parseContent(doc.getDocument())
             );
         } catch (ApiException e) {
             if (e.getCode() == 0) {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with Country A service");
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
             } else if (e.getCode() == 400) {
-                return null;
+                throw new NIException(
+                    OpenNCPErrorCode.ERROR_GENERIC,
+                    String.format("Bad Request: %s", e.getResponseBody()));
             } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format("Bad response from Country A service, status: %s, body: %s",
-                        e.getCode(),
-                        e.getResponseBody()
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
+                    "Error:, status: %s, body: %s",
+                    e.getCode(),
+                    e.getResponseBody()
                 ));
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document from Country A service is invalid XML");
+            throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document received was invalid XML");
         }
-
     }
 
     @Override
@@ -86,51 +88,53 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
         try {
             logger.info("Querying Country A service for documents...");
             final var request = new PostFindEPrescriptionDocumentsRequest()
-                    .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
-                    .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
-                    .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
-                    .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
-                    .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
-                    .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
-                    .soapHeader(Utils.elementToString(soapHeader));
+                .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
+                .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
+                .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
+                .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                .soapHeader(Utils.elementToString(soapHeader));
             final var result = CountryAService.api().postFindEPrescriptionDocuments(request);
             logger.info("Got well-formed response from Country A service.");
             return result.stream()
-                    .map(md -> DocumentFactory.createDocumentAssociation(
-                            DocumentFactory.createEPDocumentXML(
-                                    md.getLevel3().getId(),
-                                    md.getLevel3().getPatientId(),
-                                    Utils.offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
-                                    md.getLevel3().getRepositoryId(),
-                                    md.getLevel3().getTitle(),
-                                    md.getLevel3().getAuthor(),
-                                    md.getLevel3().getDescription(),
-                                    md.getLevel3().getSize(),
-                                    md.getLevel3().getHash()
-                            ),
-                            DocumentFactory.createEPDocumentPDF(
-                                    md.getLevel1().getId(),
-                                    md.getLevel1().getPatientId(),
-                                    Utils.offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
-                                    md.getLevel1().getRepositoryId(),
-                                    md.getLevel1().getTitle(),
-                                    md.getLevel1().getAuthor(),
-                                    md.getLevel1().getDescription(),
-                                    md.getLevel1().getSize() == null ? 0 : md.getLevel1().getSize(),
-                                    md.getLevel1().getHash()
-                            )))
-                    .collect(Collectors.toList());
+                .map(md -> DocumentFactory.createDocumentAssociation(
+                    DocumentFactory.createEPDocumentXML(
+                        md.getLevel3().getId(),
+                        md.getLevel3().getPatientId(),
+                        Utils.offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
+                        md.getLevel3().getRepositoryId(),
+                        md.getLevel3().getTitle(),
+                        md.getLevel3().getAuthor(),
+                        md.getLevel3().getDescription(),
+                        md.getLevel3().getSize(),
+                        md.getLevel3().getHash()
+                    ),
+                    DocumentFactory.createEPDocumentPDF(
+                        md.getLevel1().getId(),
+                        md.getLevel1().getPatientId(),
+                        Utils.offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
+                        md.getLevel1().getRepositoryId(),
+                        md.getLevel1().getTitle(),
+                        md.getLevel1().getAuthor(),
+                        md.getLevel1().getDescription(),
+                        md.getLevel1().getSize() == null ? 0 : md.getLevel1().getSize(),
+                        md.getLevel1().getHash()
+                    )))
+                .collect(Collectors.toList());
         } catch (ApiException e) {
             if (e.getCode() == 0) {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with Country A service");
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
             } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format("Bad response from Country A service, status: %s, body: %s",
-                        e.getCode(),
-                        e.getResponseBody()
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
+                    "Error, status: %s, body: %s",
+                    e.getCode(),
+                    e.getResponseBody()
                 ));
             }
         }
     }
+
     @Override
     public List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentList(SearchCriteria searchCriteria) throws NIException, InsufficientRightsException {
         return getEPDocumentListFromCountryA(searchCriteria, this.soapHeader);

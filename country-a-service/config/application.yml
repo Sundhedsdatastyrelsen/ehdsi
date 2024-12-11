@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: NCPeH-DK-national-connector-service
+  datasource:
+    url: jdbc:sqlite:data/db.sqlite
+    driver-class-name: org.sqlite.JDBC
+  flyway:
+    enabled: true
+    locations: "classpath:db/migration"
+
+app:
+  fmk.endpoint.url: ${FMK_ENDPOINT_URL}
+  cpr.endpoint.url: ${CPR_ENDPOINT_URL}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    diskspace:
+      enabled: false
+
+logging:
+  level:
+    root: info
+    org.springframework.web: info
+    dk.nsp.epps: info
