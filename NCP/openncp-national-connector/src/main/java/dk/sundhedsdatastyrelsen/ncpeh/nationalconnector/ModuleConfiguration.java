@@ -1,9 +1,9 @@
-package dk.openncp.nationalconnector;
+package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector;
 
-import dk.openncp.nationalconnector.fhir.DenmarkDispatchingService;
-import dk.openncp.nationalconnector.xca.DocumentSearch;
-import dk.openncp.nationalconnector.xcpd.PatientSearch;
-import dk.openncp.nationalconnector.xdr.DocumentSubmit;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.fhir.DenmarkDispatchingService;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xcpd.PatientSearch;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xdr.DocumentSubmit;
 import eu.europa.ec.sante.openncp.core.common.fhir.services.DispatchingService;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xcpd.PatientSearchInterface;

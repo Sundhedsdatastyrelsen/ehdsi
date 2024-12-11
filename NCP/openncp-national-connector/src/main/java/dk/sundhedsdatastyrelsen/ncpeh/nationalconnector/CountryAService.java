@@ -1,4 +1,4 @@
-package dk.openncp.nationalconnector;
+package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiClient;
 import dk.sundhedsdatastyrelsen.ncpeh.api.DefaultApi;

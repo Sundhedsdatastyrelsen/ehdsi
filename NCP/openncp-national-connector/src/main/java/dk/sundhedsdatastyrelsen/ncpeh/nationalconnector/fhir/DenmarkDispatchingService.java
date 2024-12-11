@@ -1,4 +1,4 @@
-package dk.openncp.nationalconnector.fhir;
+package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.fhir;
 
 import eu.europa.ec.sante.openncp.core.common.fhir.context.EuRequestDetails;
 import eu.europa.ec.sante.openncp.core.common.fhir.services.DispatchingService;
