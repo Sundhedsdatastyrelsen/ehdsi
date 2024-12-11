@@ -27,7 +27,7 @@ public class ePrescriptionCdaGenerator {
 
         var response = FmkResponseStorage.readStoredPrescriptions(fmkResponse.toFile());
         System.out.println("Reading FMK prescription from " + fmkResponse.toAbsolutePath());
-        var xmlString = EPrescriptionL3Generator.generate(response, 0);
+        var xmlString = EPrescriptionL3Generator.generate(response, null, 0); //Update with medication
 
         var ePCda = Path.of(output);
         Files.createDirectories(ePCda.getParent());
