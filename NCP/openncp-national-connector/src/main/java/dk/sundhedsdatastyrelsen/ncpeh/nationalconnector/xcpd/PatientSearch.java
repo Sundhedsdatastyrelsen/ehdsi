@@ -1,12 +1,12 @@
-package dk.openncp.nationalconnector.xcpd;
+package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xcpd;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
 import dk.sundhedsdatastyrelsen.ncpeh.api.DefaultApi;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.Gender;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientsRequest;
-import dk.openncp.nationalconnector.CountryAService;
-import dk.openncp.nationalconnector.Utils;
-import dk.openncp.nationalconnector.xca.DocumentSearch;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
 import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
@@ -49,7 +49,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     public String getPatientId(String s) throws NIException, InsufficientRightsException {
         return null;
     }
-    
+
     static PatientDemographics.Gender toEpsosGender(@Nullable Gender gender) {
         if (gender == null) {
             return null;

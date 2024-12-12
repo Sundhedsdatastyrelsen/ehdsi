@@ -1,4 +1,4 @@
-package dk.openncp.nationalconnector.xdr;
+package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xdr;
 
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
@@ -6,9 +6,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.api.model.ClassCode;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.DisardDispensationRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.EpsosDocument;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.SubmitDispensationRequest;
-import dk.openncp.nationalconnector.CountryAService;
-import dk.openncp.nationalconnector.Utils;
-import dk.openncp.nationalconnector.xca.DocumentSearch;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xdr.DocumentSubmitInterface;
