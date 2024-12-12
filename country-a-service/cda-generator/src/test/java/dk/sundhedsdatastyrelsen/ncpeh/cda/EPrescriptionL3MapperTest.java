@@ -11,8 +11,9 @@ class EPrescriptionL3MapperTest {
     static EPrescriptionL3 getModel() {
         try {
             var response = FmkResponseStorage.storedPrescriptions(FmkResponseStorage.testCprs().get(2));
+            var medicationResponse = FmkResponseStorage.storedDrugMedications(FmkResponseStorage.testCprs().get(2));
 
-            return EPrescriptionL3Mapper.model(response, Optional.empty(), 0);
+            return EPrescriptionL3Mapper.model(response, 0, medicationResponse);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -28,6 +29,15 @@ class EPrescriptionL3MapperTest {
         var model = getModel();
         Assertions.assertNotNull(model.getEntryText());
     }
+
+    @Test
+    void getMedicationStartDate() {
+
+        var model = getModel();
+        Assertions.assertNotNull(model.getMedicationStartTime());
+    }
+
+
 
     /// etc....
 }

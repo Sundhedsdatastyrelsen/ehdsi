@@ -72,6 +72,21 @@ public class EPrescriptionL3 {
     public String getPackageQuantity() {
         return Long.toString(packageQuantity);
     }
+    public String getMedicationStartTime()
+    {
+        if (medicationStartTime != null) {
+            return Utils.cdaDate(medicationStartTime);
+        }
+        return "";
+    }
+
+    public String getMedicationEndTime()
+    {
+        if (medicationEndTime != null) {
+            return Utils.cdaDate(medicationEndTime);
+        }
+        return "";
+    }
 
     public long getPackageQuantityLong() {
         return packageQuantity;

@@ -122,6 +122,11 @@ public class FmkResponseStorage {
         return readStoredPrescriptions(name);
     }
 
+    public static GetDrugMedicationResponseType storedDrugMedications(String cpr) throws JAXBException {
+        var name = "drug-medication-" + cpr + ".xml";
+        return readStoredMedication(name);
+    }
+
     public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName) throws JAXBException {
         var url = FmkResponseStorage.class.getClassLoader()
             .getResource(String.format("%s/%s", resourceDir, resourceName));
@@ -135,6 +140,21 @@ public class FmkResponseStorage {
             return (GetPrescriptionResponseType) value;
         }
         throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
+    }
+
+    public static GetDrugMedicationResponseType readStoredMedication(String resourceName) throws JAXBException {
+        var url = FmkResponseStorage.class.getClassLoader()
+            .getResource(String.format("%s/%s", resourceDir, resourceName));
+        if (url == null) {
+            throw new IllegalArgumentException("resourceName does not exist");
+        }
+        var unmarshaller = jaxbContext.createUnmarshaller();
+        var result = (JAXBElement<?>) unmarshaller.unmarshal(url);
+        var value = result.getValue();
+        if (value instanceof GetDrugMedicationResponseType) {
+            return (GetDrugMedicationResponseType) value;
+        }
+        throw new RuntimeException("File does not contain GetDrugMedicationResponseType data");
     }
 
     public static GetPrescriptionResponseType readStoredPrescriptions(File f) throws JAXBException {

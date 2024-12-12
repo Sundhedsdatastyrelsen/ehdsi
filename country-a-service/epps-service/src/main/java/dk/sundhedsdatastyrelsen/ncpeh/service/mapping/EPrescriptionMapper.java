@@ -57,7 +57,7 @@ public class EPrescriptionMapper {
     private static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
         try {
             final String cda;
-            var dataModel = EPrescriptionL3Mapper.model(response, Optional.empty(), prescriptionIndex);
+            var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex);
             try {
                 cda = EPrescriptionL3Generator.generate(dataModel);
             } catch (TemplateException | IOException e) {

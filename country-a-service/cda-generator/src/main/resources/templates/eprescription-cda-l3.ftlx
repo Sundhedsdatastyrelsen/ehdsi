@@ -164,8 +164,8 @@
                             <#-- Indfør data fra ordination hvis det er der -->
                             <#-- This is the only way to express a nullFlavor for this effectiveTime which will validate in the Gazelle validator -->
                             <effectiveTime xsi:type="IVL_TS">
-                                <low nullFlavor="UNK" />
-                                <high nullFlavor="UNK" />
+                                <@common.valueOrNullField medicationStartTime "low" />
+                                <@common.valueOrNullField medicationEndTime "high" />
                             </effectiveTime>
                             <effectiveTime nullFlavor="UNK"/>
                             <consumable typeCode="CSM">

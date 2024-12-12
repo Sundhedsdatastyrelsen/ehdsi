@@ -32,11 +32,18 @@ public class EPrescriptionL3Mapper {
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, Optional<GetDrugMedicationResponseType> drugMedicationResponse, int prescriptionIndex) throws MapperException {
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex) throws MapperException {
+        return model(response,prescriptionIndex,null);
+    }
+
+    /**
+     * Map a prescription response from FMK to a CDA data model.
+     */
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, GetDrugMedicationResponseType drugMedicationResponse) throws MapperException {
         var prescription = response.getPrescription().get(prescriptionIndex);
         Optional<DrugMedicationType> medication = Optional.empty();
-        if (drugMedicationResponse.isPresent()) {
-            medication = drugMedicationResponse.get().getDrugMedication()
+        if (drugMedicationResponse != null) {
+            medication = drugMedicationResponse.getDrugMedication()
                 .stream()
                 .filter(dm -> prescription.getAttachedToDrugMedicationIdentifier().equals(dm.getIdentifier()))
                 .findAny();
@@ -64,13 +71,12 @@ public class EPrescriptionL3Mapper {
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText);
 
-        //TODO add extra fields
 
-        /*medication.ifPresent(drugMedicationType -> prescriptionBuilder
-            .medicationOrderStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+        medication.ifPresent(drugMedicationType -> prescriptionBuilder
+            .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                 .getTreatmentStartDate()))
-            .medicationOrderEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentEndDate())));*/
+            .medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                .getTreatmentEndDate())));
 
         return prescriptionBuilder.build();
     }
