@@ -151,8 +151,18 @@ public class FmkResponseStorage {
         var unmarshaller = jaxbContext.createUnmarshaller();
         var result = (JAXBElement<?>) unmarshaller.unmarshal(url);
         var value = result.getValue();
-        if (value instanceof GetDrugMedicationResponseType) {
-            return (GetDrugMedicationResponseType) value;
+        if (value instanceof GetDrugMedicationResponseType getDrugMedicationResponseType) {
+            return getDrugMedicationResponseType;
+        }
+        throw new RuntimeException("File does not contain GetDrugMedicationResponseType data");
+    }
+
+    public static GetDrugMedicationResponseType readStoredMedication(File f) throws JAXBException {
+        var unmarshaller = jaxbContext.createUnmarshaller();
+        var result = (JAXBElement<?>) unmarshaller.unmarshal(f);
+        var value = result.getValue();
+        if (value instanceof GetDrugMedicationResponseType getDrugMedicationResponseType) {
+            return getDrugMedicationResponseType;
         }
         throw new RuntimeException("File does not contain GetDrugMedicationResponseType data");
     }
