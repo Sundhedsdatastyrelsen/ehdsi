@@ -161,8 +161,8 @@
                             <text>${ entryText }</text>
                             <statusCode code="active"/>
                             <effectiveTime xsi:type="IVL_TS">
-                                <@common.valueOrNullField medicationStartTime "low" />
-                                <@common.valueOrNullField medicationEndTime "high" />
+                                <@common.valueOrNullField "low" medicationStartTime  />
+                                <@common.valueOrNullField "high" medicationEndTime  />
                             </effectiveTime>
                             <effectiveTime nullFlavor="UNK"/>
                             <consumable typeCode="CSM">
