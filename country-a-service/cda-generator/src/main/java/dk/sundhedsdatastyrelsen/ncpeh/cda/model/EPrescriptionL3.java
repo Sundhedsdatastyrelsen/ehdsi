@@ -77,7 +77,7 @@ public class EPrescriptionL3 {
         if (medicationStartTime != null) {
             return Utils.cdaDate(medicationStartTime);
         }
-        return "";
+        return null;
     }
 
     public String getMedicationEndTime()
@@ -85,7 +85,7 @@ public class EPrescriptionL3 {
         if (medicationEndTime != null) {
             return Utils.cdaDate(medicationEndTime);
         }
-        return "";
+        return null;
     }
 
     public long getPackageQuantityLong() {

@@ -14,6 +14,8 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 
 class EPrescriptionL3GeneratorTest {
@@ -46,17 +48,21 @@ class EPrescriptionL3GeneratorTest {
         var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         var schema = schemaFactory.newSchema(schemaUrl);
         var validator = schema.newValidator();
+
+
         validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
 
         // 3. Test model/schematron via gazelle
         // TODO?
 
-        // write to file for debugging:
-//         java.nio.file.Files.writeString(
-//             java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml"),
-//             xmlString,
-//             java.nio.file.StandardOpenOption.CREATE,
-//             java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-//         );
+//        //write to file for debugging:
+//        Path debugFilePath = Path.of("temp/cda-eprescription-" + cpr + ".xml");
+//        Files.createDirectories(debugFilePath.getParent());
+//        java.nio.file.Files.writeString(
+//            debugFilePath,
+//            xmlString,
+//            java.nio.file.StandardOpenOption.CREATE,
+//            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//        );
     }
 }
