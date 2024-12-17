@@ -40,8 +40,11 @@ public class EPrescriptionL3 {
     OffsetDateTime medicationEndTime;
 
     /**
-     *
+     * The element specifies the route of administration using the EDQM route of administration vocabulary. A code must
+     * be specified if the route is known, and the displayName attribute should be specified. If the route is unknown,
+     * this element shall not be sent.
      */
+    CdaCode administrationRoute;
 
     @NonNull Author author;
 

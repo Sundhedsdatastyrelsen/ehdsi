@@ -71,12 +71,23 @@ public class EPrescriptionL3Mapper {
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText);
 
+        if(medication.isPresent()){
+            var drugMedicationType = medication.get();
+            prescriptionBuilder.medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                .getTreatmentStartDate()));
+            prescriptionBuilder.medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                .getTreatmentEndDate()));
 
-        medication.ifPresent(drugMedicationType -> prescriptionBuilder
-            .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentStartDate()))
-            .medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentEndDate())));
+            var administrationRoute = drugMedicationType.getRouteOfAdministration();
+            if(administrationRoute != null){
+                var administrationRouteCdaCode = CdaCode.builder()
+                                                        .codeSystem(Oid.DK_LMS11)
+                                                        .codeSystemName("LMS11")
+                                                        .code(administrationRoute.getCode().getValue())
+                                                        .build();
+                prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
+            }
+        }
 
         return prescriptionBuilder.build();
     }

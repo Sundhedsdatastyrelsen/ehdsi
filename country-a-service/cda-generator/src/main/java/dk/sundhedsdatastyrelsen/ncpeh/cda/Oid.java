@@ -35,6 +35,11 @@ public enum Oid {
     DK_LMS22("2.16.17.710.802.1000.990.1.20.22"),
 
     /**
+     * LMS11 - "Administrationsvej"
+     */
+    DK_LMS11("2.16.17.710.802.1000.990.1.20.11"),
+
+    /**
      * Anatomical Therapeutic Chemical
      */
     ATC("2.16.840.1.113883.6.73"),
