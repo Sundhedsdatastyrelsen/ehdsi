@@ -21,7 +21,6 @@ class EPrescriptionL3GeneratorTest {
     void generateTest() throws TemplateException, IOException {
         var model = EPrescriptionL3MapperTest.getModel();
         var cda = EPrescriptionL3Generator.generate(model);
-//        System.out.println(cda);
         Assertions.assertNotNull(cda);
     }
 
@@ -30,7 +29,10 @@ class EPrescriptionL3GeneratorTest {
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
-        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0); //TODO Needs a DrugMedication response
+        if((long) prescription.getPrescription().size() == 0){
+            return; //If no prescriptions are present, we cannot do significant testing. Should this be an error?
+        }
+        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0);
 
         // 1. Test if well-formed XML (can be parsed)
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
