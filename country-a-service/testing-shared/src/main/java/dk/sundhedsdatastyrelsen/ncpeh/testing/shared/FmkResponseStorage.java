@@ -84,7 +84,7 @@ public class FmkResponseStorage {
      * @param bytes The bytes to serialize
      * @param file  The file (path) to serialize it to
      */
-    public static <T> void serializeToFile(byte[] bytes, File file) throws IOException {
+    public static void serializeToFile(byte[] bytes, File file) throws IOException {
         java.nio.file.Files.write(
             java.nio.file.Path.of(file.getAbsolutePath()),
             bytes,
