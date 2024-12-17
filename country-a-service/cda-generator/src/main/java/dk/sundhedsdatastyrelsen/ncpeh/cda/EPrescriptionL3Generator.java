@@ -7,7 +7,6 @@ import freemarker.template.TemplateException;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Optional;
 
 public class EPrescriptionL3Generator {
     public static String generate(EPrescriptionL3 dataModel) throws IOException, TemplateException {

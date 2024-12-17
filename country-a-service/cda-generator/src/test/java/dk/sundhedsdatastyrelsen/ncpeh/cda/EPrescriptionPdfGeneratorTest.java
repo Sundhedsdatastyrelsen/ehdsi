@@ -4,8 +4,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 class EPrescriptionPdfGeneratorTest {
     @Test
     void generateTest() throws Exception {

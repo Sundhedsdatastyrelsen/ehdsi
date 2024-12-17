@@ -5,8 +5,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 class EPrescriptionL3MapperTest {
     static EPrescriptionL3 getModel() {
         try {

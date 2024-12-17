@@ -19,13 +19,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * These methods are concerned with retrieving and serializing responses (ePrescriptions) from FMK
  * so that they can be used as reliable test data for e.g. CDA generation.
  */
 public class FmkResponseStorage {
+    private static final Logger logger = Logger.getLogger(FmkResponseStorage.class.getName());
+    static {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SimpleFormatter());
+        handler.setLevel(Level.INFO);
+
+        logger.addHandler(handler);
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.INFO);
+    }
     private static final JAXBContext jaxbContext;
+
 
     static {
         try {
@@ -69,7 +84,7 @@ public class FmkResponseStorage {
      * @param bytes The bytes to serialize
      * @param file  The file (path) to serialize it to
      */
-    public static <T> void serializeToFile(byte[] bytes, File file) throws JAXBException, IOException {
+    public static <T> void serializeToFile(byte[] bytes, File file) throws IOException {
         java.nio.file.Files.write(
             java.nio.file.Path.of(file.getAbsolutePath()),
             bytes,
@@ -87,8 +102,7 @@ public class FmkResponseStorage {
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-        return fmkResponse;
+        return fmkClient.getPrescription(request, caller);
     }
 
     /***
@@ -103,16 +117,15 @@ public class FmkResponseStorage {
             .withIncludeEffectuations(false)
             .build();
 
-        GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
-        return fmkResponse;
+        return fmkClient.getDrugMedication(drugMedicationRequest, caller);
     }
 
-    public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response) throws JAXBException {
+    public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response)  {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e6.ObjectFactory();
         return fac.createGetPrescriptionResponse(response);
     }
 
-    public JAXBElement<GetDrugMedicationResponseType> createXmlFromDrugMedication(GetDrugMedicationResponseType response) throws JAXBException {
+    public JAXBElement<GetDrugMedicationResponseType> createXmlFromDrugMedication(GetDrugMedicationResponseType response)  {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
         return fac.createGetDrugMedicationResponse(response);
     }
@@ -136,10 +149,10 @@ public class FmkResponseStorage {
         var unmarshaller = jaxbContext.createUnmarshaller();
         var result = (JAXBElement<?>) unmarshaller.unmarshal(url);
         var value = result.getValue();
-        if (value instanceof GetPrescriptionResponseType) {
-            return (GetPrescriptionResponseType) value;
+        if (value instanceof GetPrescriptionResponseType getPrescriptionResponseType) {
+            return getPrescriptionResponseType;
         }
-        throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
+        throw new TestDataException("File does not contain GetPrescriptionResponseType data");
     }
 
     public static GetDrugMedicationResponseType readStoredMedication(String resourceName) throws JAXBException {
@@ -154,7 +167,7 @@ public class FmkResponseStorage {
         if (value instanceof GetDrugMedicationResponseType getDrugMedicationResponseType) {
             return getDrugMedicationResponseType;
         }
-        throw new RuntimeException("File does not contain GetDrugMedicationResponseType data");
+        throw new TestDataException("File does not contain GetDrugMedicationResponseType data");
     }
 
     public static GetDrugMedicationResponseType readStoredMedication(File f) throws JAXBException {
@@ -164,17 +177,17 @@ public class FmkResponseStorage {
         if (value instanceof GetDrugMedicationResponseType getDrugMedicationResponseType) {
             return getDrugMedicationResponseType;
         }
-        throw new RuntimeException("File does not contain GetDrugMedicationResponseType data");
+        throw new TestDataException("File does not contain GetDrugMedicationResponseType data");
     }
 
     public static GetPrescriptionResponseType readStoredPrescriptions(File f) throws JAXBException {
         var unmarshaller = jaxbContext.createUnmarshaller();
         var result = (JAXBElement<?>) unmarshaller.unmarshal(f);
         var value = result.getValue();
-        if (value instanceof GetPrescriptionResponseType) {
-            return (GetPrescriptionResponseType) value;
+        if (value instanceof GetPrescriptionResponseType getPrescriptionResponseType) {
+            return getPrescriptionResponseType;
         }
-        throw new RuntimeException("File does not contain GetPrescriptionResponseType data");
+        throw new TestDataException("File does not contain GetPrescriptionResponseType data");
     }
 
     /**
@@ -188,13 +201,13 @@ public class FmkResponseStorage {
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             var prescriptions = frs.getPrescriptionResponse(cpr, TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
-            System.out.println("Wrote prescriptions to " + f.getAbsolutePath());
+            logger.log(Level.INFO,"Wrote prescriptions to {0}", f.getAbsolutePath());
 
             var dmf = dir.resolve("drug-medication-" + cpr + ".xml").toFile();
             var medicationIds = prescriptions.getPrescription().stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
             var drugMedications = frs.getDrugMedicationResponse(cpr,medicationIds,TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromDrugMedication(drugMedications), dmf);
-            System.out.println("Wrote drug-medications to " + dmf.getAbsolutePath());
+            logger.log(Level.INFO,"Wrote drug-medications to {0}",dmf.getAbsolutePath());
         }
     }
 }

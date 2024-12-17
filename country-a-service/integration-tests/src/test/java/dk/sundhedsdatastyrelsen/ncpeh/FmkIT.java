@@ -22,14 +22,14 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 public class FmkIT {
-    private final static PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(),undoDispensationRepository());
+    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(),undoDispensationRepository());
 
     /**
      * This test simply checks that we can connect and get an answer on the data.
      * @throws Exception
      */
     @Test
-    public void getPrescriptionAndMedicationTest() throws Exception {
+    void getPrescriptionAndMedicationTest() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
             .withPersonIdentifier()
             .withSource("CPR")
@@ -54,7 +54,7 @@ public class FmkIT {
     }
 
     @Test
-    public void getValidDrugMedications() throws Exception {
+    void getValidDrugMedications() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
             .withPersonIdentifier()
             .withSource("CPR")
