@@ -30,6 +30,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class FmkResponseStorage {
     private static final Logger logger = Logger.getLogger(FmkResponseStorage.class.getName());
+
     static {
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter());
@@ -39,6 +40,7 @@ public class FmkResponseStorage {
         logger.setUseParentHandlers(false);
         logger.setLevel(Level.INFO);
     }
+
     private static final JAXBContext jaxbContext;
 
 
@@ -120,12 +122,12 @@ public class FmkResponseStorage {
         return fmkClient.getDrugMedication(drugMedicationRequest, caller);
     }
 
-    public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response)  {
+    public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response) {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e6.ObjectFactory();
         return fac.createGetPrescriptionResponse(response);
     }
 
-    public JAXBElement<GetDrugMedicationResponseType> createXmlFromDrugMedication(GetDrugMedicationResponseType response)  {
+    public JAXBElement<GetDrugMedicationResponseType> createXmlFromDrugMedication(GetDrugMedicationResponseType response) {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
         return fac.createGetDrugMedicationResponse(response);
     }
@@ -152,7 +154,7 @@ public class FmkResponseStorage {
         if (value instanceof GetPrescriptionResponseType getPrescriptionResponseType) {
             return getPrescriptionResponseType;
         }
-        throw new TestDataException("File does not contain GetPrescriptionResponseType data");
+        throw new IllegalStateException("File does not contain GetPrescriptionResponseType data");
     }
 
     public static GetDrugMedicationResponseType readStoredMedication(String resourceName) throws JAXBException {
@@ -167,7 +169,7 @@ public class FmkResponseStorage {
         if (value instanceof GetDrugMedicationResponseType getDrugMedicationResponseType) {
             return getDrugMedicationResponseType;
         }
-        throw new TestDataException("File does not contain GetDrugMedicationResponseType data");
+        throw new IllegalStateException("File does not contain GetDrugMedicationResponseType data");
     }
 
     public static GetDrugMedicationResponseType readStoredMedication(File f) throws JAXBException {
@@ -177,7 +179,7 @@ public class FmkResponseStorage {
         if (value instanceof GetDrugMedicationResponseType getDrugMedicationResponseType) {
             return getDrugMedicationResponseType;
         }
-        throw new TestDataException("File does not contain GetDrugMedicationResponseType data");
+        throw new IllegalStateException("File does not contain GetDrugMedicationResponseType data");
     }
 
     public static GetPrescriptionResponseType readStoredPrescriptions(File f) throws JAXBException {
@@ -187,7 +189,7 @@ public class FmkResponseStorage {
         if (value instanceof GetPrescriptionResponseType getPrescriptionResponseType) {
             return getPrescriptionResponseType;
         }
-        throw new TestDataException("File does not contain GetPrescriptionResponseType data");
+        throw new IllegalStateException("File does not contain GetPrescriptionResponseType data");
     }
 
     /**
@@ -201,13 +203,16 @@ public class FmkResponseStorage {
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             var prescriptions = frs.getPrescriptionResponse(cpr, TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
-            logger.log(Level.INFO,"Wrote prescriptions to {0}", f.getAbsolutePath());
+            logger.log(Level.INFO, "Wrote prescriptions to {0}", f.getAbsolutePath());
 
             var dmf = dir.resolve("drug-medication-" + cpr + ".xml").toFile();
-            var medicationIds = prescriptions.getPrescription().stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
-            var drugMedications = frs.getDrugMedicationResponse(cpr,medicationIds,TestIdentities.apotekerChrisChristoffersen);
+            var medicationIds = prescriptions.getPrescription()
+                .stream()
+                .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
+                .toList();
+            var drugMedications = frs.getDrugMedicationResponse(cpr, medicationIds, TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromDrugMedication(drugMedications), dmf);
-            logger.log(Level.INFO,"Wrote drug-medications to {0}",dmf.getAbsolutePath());
+            logger.log(Level.INFO, "Wrote drug-medications to {0}", dmf.getAbsolutePath());
         }
     }
 }
