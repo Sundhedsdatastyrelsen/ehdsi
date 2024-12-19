@@ -24,13 +24,11 @@ class EPrescriptionL3GeneratorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1111111118", "0201909309"})
+    @ValueSource(strings = {"0201909309"})
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
-        if ((long) prescription.getPrescription().size() == 0) {
-            return; //If no prescriptions are present, we cannot do significant testing. Should this be an error?
-        }
+        Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0);
 
         // 1. Test if well-formed XML (can be parsed)
