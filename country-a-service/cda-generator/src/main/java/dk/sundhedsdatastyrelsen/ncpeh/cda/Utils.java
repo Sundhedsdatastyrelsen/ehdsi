@@ -1,7 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import lombok.NonNull;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,7 +24,10 @@ public class Utils {
     /**
      * Convert XMLGregorianCalendar to OffsetDateTime
      */
-    public static OffsetDateTime convertToOffsetDateTime(@NonNull XMLGregorianCalendar xml) {
-        return xml.toGregorianCalendar().toZonedDateTime().toOffsetDateTime();
+    public static OffsetDateTime convertToOffsetDateTime(XMLGregorianCalendar gregorianCalendar) {
+        if (gregorianCalendar == null) {
+            return null; // Handle null input gracefully
+        }
+        return gregorianCalendar.toGregorianCalendar().toZonedDateTime().toOffsetDateTime();
     }
 }
