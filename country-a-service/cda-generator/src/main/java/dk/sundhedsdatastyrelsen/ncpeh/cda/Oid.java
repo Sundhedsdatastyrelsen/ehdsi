@@ -30,9 +30,14 @@ public enum Oid {
      */
     DK_LMS02("2.16.17.710.802.1000.990.1.20.2"),
     /**
+     * LMS11 - "Administrationsvej"
+     */
+    DK_LMS11("2.16.17.710.802.1000.990.1.20.11"),
+    /**
      * LMS22 - "Lægemiddelform-betegnelser"
      */
     DK_LMS22("2.16.17.710.802.1000.990.1.20.22"),
+
 
     /**
      * Anatomical Therapeutic Chemical
@@ -50,7 +55,7 @@ public enum Oid {
 
     public final String value;
 
-    Oid(String value)  {
+    Oid(String value) {
         this.value = value;
     }
 }

@@ -157,6 +157,20 @@ public class FmkClient {
 
     /**
      * "Hent recept".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_laegemiddelordination">FMK documentation.</a>
+     */
+    public GetDrugMedicationResponseType getDrugMedication(GetDrugMedicationRequestType request, Identity caller) throws JAXBException {
+        return makeFmkRequest(
+            fac.createGetDrugMedicationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetDrugMedication",
+            GetDrugMedicationResponseType.class,
+            caller,
+            false
+        );
+    }
+
+    /**
+     * "Hent recept".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_recept">FMK documentation.</a>
      */
     public GetPrescriptionResponseType getPrescriptionWithConsent(GetPrescriptionRequestType request, Identity caller) throws JAXBException {

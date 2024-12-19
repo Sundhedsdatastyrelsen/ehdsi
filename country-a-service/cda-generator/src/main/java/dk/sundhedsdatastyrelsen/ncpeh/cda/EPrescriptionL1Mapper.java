@@ -5,10 +5,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL1;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 
 import java.util.Base64;
+import java.util.Optional;
 
 public class EPrescriptionL1Mapper {
     public static EPrescriptionL1 model(GetPrescriptionResponseType response, int prescriptionIndex) throws MapperException {
-        return model(EPrescriptionL3Mapper.model(response, prescriptionIndex));
+        return model(EPrescriptionL3Mapper.model(response, prescriptionIndex)); //Should this also have the medication? Probably
     }
 
     public static EPrescriptionL1 model(EPrescriptionL3 l3Model) throws MapperException {

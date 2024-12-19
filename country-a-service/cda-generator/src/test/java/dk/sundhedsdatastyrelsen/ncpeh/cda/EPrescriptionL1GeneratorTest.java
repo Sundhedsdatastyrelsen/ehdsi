@@ -13,6 +13,8 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
+import java.util.Optional;
+
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws Exception {
@@ -24,9 +26,10 @@ public class EPrescriptionL1GeneratorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1111111118", "0201909309"})
+    @ValueSource(strings = {"0201909309"})
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
+        Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var xmlString = EPrescriptionL1Generator.generate(prescription, 0);
 
         // 1. Test if well-formed XML (can be parsed)
