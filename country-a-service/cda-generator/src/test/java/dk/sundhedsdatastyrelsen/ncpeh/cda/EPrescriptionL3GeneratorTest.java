@@ -14,9 +14,6 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
 
 class EPrescriptionL3GeneratorTest {
     @Test
@@ -31,7 +28,7 @@ class EPrescriptionL3GeneratorTest {
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
-        if((long) prescription.getPrescription().size() == 0){
+        if ((long) prescription.getPrescription().size() == 0) {
             return; //If no prescriptions are present, we cannot do significant testing. Should this be an error?
         }
         var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0);
@@ -56,8 +53,8 @@ class EPrescriptionL3GeneratorTest {
         // TODO?
 
 //        //write to file for debugging:
-//        Path debugFilePath = Path.of("temp/cda-eprescription-" + cpr + ".xml");
-//        Files.createDirectories(debugFilePath.getParent());
+//        java.nio.file.Path debugFilePath = java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml");
+//        java.nio.file.Files.createDirectories(debugFilePath.getParent());
 //        java.nio.file.Files.writeString(
 //            debugFilePath,
 //            xmlString,
