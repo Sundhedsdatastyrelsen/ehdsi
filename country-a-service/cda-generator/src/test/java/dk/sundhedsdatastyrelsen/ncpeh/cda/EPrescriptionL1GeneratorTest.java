@@ -29,7 +29,7 @@ public class EPrescriptionL1GeneratorTest {
     @ValueSource(strings = {"1111111118", "0201909309"})
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
-        if((long) prescription.getPrescription().size() == 0){
+        if (prescription.getPrescription().isEmpty()) {
             return; //should this be an error? If there are no prescriptions on the person, we cannot run any significant testing
         }
         var xmlString = EPrescriptionL1Generator.generate(prescription, 0);
