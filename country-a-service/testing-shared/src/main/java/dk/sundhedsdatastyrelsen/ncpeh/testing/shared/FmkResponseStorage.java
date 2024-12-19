@@ -19,28 +19,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * These methods are concerned with retrieving and serializing responses (ePrescriptions) from FMK
  * so that they can be used as reliable test data for e.g. CDA generation.
  */
 public class FmkResponseStorage {
-    private static final Logger logger = Logger.getLogger(FmkResponseStorage.class.getName());
-
-    static {
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new SimpleFormatter());
-        handler.setLevel(Level.INFO);
-
-        logger.addHandler(handler);
-        logger.setUseParentHandlers(false);
-        logger.setLevel(Level.INFO);
-    }
-
+    private static final Logger logger = LoggerFactory.getLogger(FmkResponseStorage.class);
     private static final JAXBContext jaxbContext;
 
 
@@ -203,7 +191,7 @@ public class FmkResponseStorage {
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             var prescriptions = frs.getPrescriptionResponse(cpr, TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
-            logger.log(Level.INFO, "Wrote prescriptions to {0}", f.getAbsolutePath());
+            logger.info("Wrote prescriptions to {}", f.getAbsolutePath());
 
             var dmf = dir.resolve("drug-medication-" + cpr + ".xml").toFile();
             var medicationIds = prescriptions.getPrescription()
@@ -212,7 +200,7 @@ public class FmkResponseStorage {
                 .toList();
             var drugMedications = frs.getDrugMedicationResponse(cpr, medicationIds, TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromDrugMedication(drugMedications), dmf);
-            logger.log(Level.INFO, "Wrote drug-medications to {0}", dmf.getAbsolutePath());
+            logger.info("Wrote drug-medications to {}", dmf.getAbsolutePath());
         }
     }
 }
