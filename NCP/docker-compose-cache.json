@@ -1,0 +1,103 @@
+{
+    "target": {
+        "dk-ncp-tsam-exporter": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-tsam-synchronizer": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-node-a": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-node-b": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-openatna": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-trc-sts": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-translations-and-mappings": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-web-manager-backend": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        },
+        "dk-ncp-configuration-utility": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        }
+    }
+}

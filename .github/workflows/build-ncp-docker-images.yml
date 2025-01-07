@@ -1,8 +1,12 @@
-name: Build NCP Docker Images
+name: NCP Docker Images
 
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'NCP/**'
+    tags:
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -28,15 +32,12 @@ jobs:
     - name: Set default env vars for Docker Compose
       run: cp NCP/env_default/.env NCP/.env
 
-    - name: Build images
+    - name: Build and push with SHA tag
       env:
         IMAGE_TAG: ${{ github.sha }}
-      run: cd NCP && docker compose build --quiet
+      run: cd NCP && docker buildx bake --file docker-compose.yml --file docker-compose-cache.json --push
 
-    - name: Push images
+    - name: Build and push with latest tag
       env:
-        IMAGE_TAG: ${{ github.sha }}
-      run: cd NCP && docker compose push
-
-    - name: Log out from Docker Hub
-      run: docker logout
+        IMAGE_TAG: latest
+      run: cd NCP && docker buildx bake --file docker-compose.yml --file docker-compose-cache.json --push
