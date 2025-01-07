@@ -8,7 +8,7 @@ networks:
 
 services:
   epps-country-a:
-    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/countrya:latest
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest
     build: .
     container_name: epps-country-a
     restart: unless-stopped
