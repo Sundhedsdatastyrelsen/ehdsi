@@ -1,6 +1,6 @@
 {
     "target": {
-        "dk-ncp-tsam-exporter": {
+        "tsam-exporter": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:cache"
             ],
@@ -11,7 +11,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-tsam-synchronizer": {
+        "tsam-synchronizer": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:cache"
             ],
@@ -22,7 +22,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-node-a": {
+        "tomcat_node_a": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:cache"
             ],
@@ -33,7 +33,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-node-b": {
+        "tomcat_node_b": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:cache"
             ],
@@ -44,7 +44,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-openatna": {
+        "openncp-openatna": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:cache"
             ],
@@ -55,7 +55,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-trc-sts": {
+        "openncp-trc-sts": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:cache"
             ],
@@ -66,7 +66,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-translations-and-mappings": {
+        "openncp-translations-and-mappings": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:cache"
             ],
@@ -77,7 +77,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-web-manager-backend": {
+        "openncp-web-manager": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:cache"
             ],
@@ -88,7 +88,7 @@
                 "type=docker"
             ]
         },
-        "dk-ncp-configuration-utility": {
+        "configuration-synchronizer": {
             "cache-from": [
                 "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:cache"
             ],
