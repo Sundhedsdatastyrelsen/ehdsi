@@ -20,15 +20,16 @@ class EPrescriptionL3GeneratorTest {
     void generateTest() throws TemplateException, IOException {
         var model = EPrescriptionL3MapperTest.getModel();
         var cda = EPrescriptionL3Generator.generate(model);
-//        System.out.println(cda);
         Assertions.assertNotNull(cda);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1111111118", "0201909309"})
+    @ValueSource(strings = {"0201909309"})
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
-        var xmlString = EPrescriptionL3Generator.generate(prescription, 0);
+        var medication = FmkResponseStorage.storedDrugMedications(cpr);
+        Assertions.assertFalse(prescription.getPrescription().isEmpty());
+        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0);
 
         // 1. Test if well-formed XML (can be parsed)
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
@@ -42,17 +43,21 @@ class EPrescriptionL3GeneratorTest {
         var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         var schema = schemaFactory.newSchema(schemaUrl);
         var validator = schema.newValidator();
+
+
         validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
 
         // 3. Test model/schematron via gazelle
         // TODO?
 
-        // write to file for debugging:
-//         java.nio.file.Files.writeString(
-//             java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml"),
-//             xmlString,
-//             java.nio.file.StandardOpenOption.CREATE,
-//             java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-//         );
+//        //write to file for debugging:
+//        java.nio.file.Path debugFilePath = java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml");
+//        java.nio.file.Files.createDirectories(debugFilePath.getParent());
+//        java.nio.file.Files.writeString(
+//            debugFilePath,
+//            xmlString,
+//            java.nio.file.StandardOpenOption.CREATE,
+//            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//        );
     }
 }

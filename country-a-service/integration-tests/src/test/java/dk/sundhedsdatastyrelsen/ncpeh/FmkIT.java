@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
@@ -21,8 +22,15 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 public class FmkIT {
+    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository());
+
+    /**
+     * This test simply checks that we can connect and get an answer on the data.
+     *
+     * @throws Exception
+     */
     @Test
-    public void getPrescriptionTest() throws Exception {
+    void getPrescriptionAndMedicationTest() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
             .withPersonIdentifier()
             .withSource("CPR")
@@ -34,7 +42,46 @@ public class FmkIT {
 
         var prescriptions = Fmk.apiClient()
             .getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
+
+        var validPrescriptions = PrescriptionService.PrescriptionFilter.none()
+            .validPrescriptionIndexes(prescriptions.getPrescription())
+            .mapToObj(idx -> prescriptions.getPrescription().get(idx))
+            .toList();
+
+        var drugMedicationIds = validPrescriptions.stream()
+            .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
+            .toList();
+
+        var drugMedications = PRESCRIPTION_SERVICE.getDrugMedicationResponse(Fmk.cprHelleReadOnly, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
         assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
+        assertThat(drugMedications.getPersonIdentifier().getValue(), is(Fmk.cprHelleReadOnly));
+    }
+
+    @Test
+    void getValidDrugMedications() throws Exception {
+        var getPrescriptionRequest = GetPrescriptionRequestType.builder()
+            .withPersonIdentifier()
+            .withSource("CPR")
+            .withValue(Fmk.cprKarl)
+            .end()
+            .withIncludeOpenPrescriptions()
+            .end()
+            .build();
+
+        var prescriptions = Fmk.apiClient()
+            .getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
+
+        var validPrescriptions = PrescriptionService.PrescriptionFilter.none()
+            .validPrescriptionIndexes(prescriptions.getPrescription())
+            .mapToObj(idx -> prescriptions.getPrescription().get(idx))
+            .toList();
+
+        var drugMedicationIds = validPrescriptions.stream()
+            .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
+            .toList();
+
+        var drugMedications = PRESCRIPTION_SERVICE.getDrugMedicationResponse(Fmk.cprKarl, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
+        assertThat(validPrescriptions.size(), is(drugMedications.getDrugMedication().size()));
     }
 
     private static String patientId(String cpr) {
@@ -73,7 +120,8 @@ public class FmkIT {
         var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository());
 
         // shouldn't throw:
-        prescriptionService.submitDispensation(patientId(cpr),
+        prescriptionService.submitDispensation(
+            patientId(cpr),
             eDispensation,
             TestIdentities.apotekerChrisChristoffersen);
 

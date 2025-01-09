@@ -30,3 +30,10 @@ root="${id.root}"<#rt>
 </addr>
 </#if><#rt>
 </#macro><#rt>
+<#macro valueOrNullField fieldName value="__NULL__"><#rt>
+  <#if value=="__NULL__"><#rt>
+    <${fieldName} nullFlavor="UNK" />
+  <#else><#rt>
+    <${fieldName} value="${value}" />
+  </#if><#rt>
+</#macro><#rt>

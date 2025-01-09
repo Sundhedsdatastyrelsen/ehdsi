@@ -32,12 +32,14 @@ jobs:
           java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
           dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCollector \
           0201909309 \
-          target/test-files/get-prescription.xml
+          target/test-files/get-prescription.xml \
+          target/test-files/drug-medication.xml
       - name: Generate ePrescription document
         run: |
           java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
-          dk.sundhedsdatastyrelsen.ncpeh.script.ePrescriptionCdaGenerator \
+          dk.sundhedsdatastyrelsen.ncpeh.script.EPrescriptionCdaGenerator \
           target/test-files/get-prescription.xml \
+          target/test-files/drug-medication.xml \
           target/test-files/eprescription-cda.xml
 
       - name: Set up Docker

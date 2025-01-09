@@ -49,7 +49,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     public String getPatientId(String s) throws NIException, InsufficientRightsException {
         return null;
     }
-    
+
     static PatientDemographics.Gender toEpsosGender(@Nullable Gender gender) {
         if (gender == null) {
             return null;

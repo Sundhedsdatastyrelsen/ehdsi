@@ -160,14 +160,14 @@
                             <id <@common.cdaIdAttrs prescriptionId />/>
                             <text>${ entryText }</text>
                             <statusCode code="active"/>
-                            <#-- Vi har ikke disse oplysninger på recepten, de ligger på medicinkortet, som vi ikke har adgang til som apoteker (uden samtykke). -->
-                            <#-- Indfør data fra ordination hvis det er der -->
-                            <#-- This is the only way to express a nullFlavor for this effectiveTime which will validate in the Gazelle validator -->
                             <effectiveTime xsi:type="IVL_TS">
-                                <low nullFlavor="UNK" />
-                                <high nullFlavor="UNK" />
+                                <@common.valueOrNullField "low" medicationStartTime  />
+                                <@common.valueOrNullField "high" medicationEndTime  />
                             </effectiveTime>
                             <effectiveTime nullFlavor="UNK"/>
+                            <#if administrationRoute?has_content><#rt>
+                            <routeCode <@common.cdaCodeAttrs administrationRoute />/>
+                            </#if><#rt>
                             <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
