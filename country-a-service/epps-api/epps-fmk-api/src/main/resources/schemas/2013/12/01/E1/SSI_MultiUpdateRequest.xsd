@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:vaccinationcard20131201e1="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_Modified.xsd"/>
+	
+	<include schemaLocation="SSI_MultiUpdateIn.xsd"/>
+	
+	<element name="MultiUpdateRequest" type="vaccinationcard20131201e1:MultiUpdateRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for multi update of a persons vaccinations</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter opdatering af en persons vaccinationer</documentation>
+		</annotation>
+	</element>
+	
+	<complexType name="MultiUpdateRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+            <element name="Created" type="vaccinationcard20131201:ModifiedType" />
+            <element name="Modified" type="vaccinationcard20131201:ModifiedType" />
+            <element name="Reported" type="vaccinationcard20131201:ModifiedType" minOccurs="0"/>
+			<element name="MultiUpdateIn" type="vaccinationcard20131201e1:MultiUpdateInType" minOccurs="0" maxOccurs="20"/>
+		</sequence>
+	</complexType>
+	
+</schema>

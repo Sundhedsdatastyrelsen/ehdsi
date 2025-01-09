@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<include schemaLocation="SSI_Modificator.xsd"/>
+	<element name="Reviewed" type="vaccinationcard:ReviewedType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element containing information about which organisation and possibly doctor who reviewed the document this element is in (e.g. vaccination) as well as the date it ocurred.</documentation>
+			<documentation xml:lang="da-DK">Element der indeholder information omkring hvilken organisation og muligvis læge som har evalueret dokumentet elementet befinder sig i (f.eks. vaccination), samt datoen dette er sket.</documentation>
+		</annotation>
+	</element>
+	<complexType name="ReviewedType">
+		<sequence>
+			<element name="Modificator" type="vaccinationcard:ModificatorType"/>
+			<element name="CreatedDateTime" type="dateTime"/>
+		</sequence>
+	</complexType>
+</schema>

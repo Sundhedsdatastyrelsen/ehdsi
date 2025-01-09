@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd201008="http://www.sdsd.dk/dgws/2010/08" targetNamespace="http://www.sdsd.dk/dgws/2010/08" elementFormDefault="qualified">
+	<element name="NameFormat" type="sdsd201008:NameFormat">
+		<annotation>
+			<documentation xml:lang="da-DK">Klassifikation af organisations-ider</documentation>
+		</annotation>
+	</element>
+	<simpleType name="NameFormat">
+		<restriction base="string">
+			<enumeration value="medcom:ynumber"/>
+			<enumeration value="medcom:pnumber"/>
+			<enumeration value="medcom:skscode"/>
+			<enumeration value="medcom:cvrnumber"/>
+			<enumeration value="medcom:communalnumber"/>
+			<enumeration value="medcom:locationnumber"/>
+			<enumeration value="medcom:sor"/>
+		</restriction>
+	</simpleType>
+</schema>

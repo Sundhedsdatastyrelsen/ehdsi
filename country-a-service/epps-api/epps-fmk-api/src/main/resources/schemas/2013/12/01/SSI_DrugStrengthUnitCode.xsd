@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="DrugStrengthUnitCode" type="vaccinationcard:DrugStrengthUnitCodeType">
+		<annotation>
+			<documentation xml:lang="en-GB">Unit for drug strength, code (LMS15 field 2)</documentation>
+			<documentation xml:lang="da-DK">Enhed for lægemiddelstyrke, kode (LMS15 felt 2)</documentation>
+		</annotation>
+	</element>
+	<simpleType name="DrugStrengthUnitCodeType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="3"/>
+		</restriction>
+	</simpleType>
+</schema>

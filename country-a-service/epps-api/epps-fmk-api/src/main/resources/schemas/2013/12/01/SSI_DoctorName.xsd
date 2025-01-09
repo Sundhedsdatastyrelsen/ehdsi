@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="DoctorName" type="vaccinationcard:DoctorNameType">
+		<annotation>
+			<documentation xml:lang="en-GB">The name of a doctor, may also contain occupation</documentation>
+			<documentation xml:lang="da-DK">Navnet på en læge, kan også indeholde stilling</documentation>
+		</annotation>
+	</element>
+	<simpleType name="DoctorNameType">
+		<restriction base="string">
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="NegativeConsentIndicator" type="vaccinationcard:NegativeConsentIndicatorType">
+		<annotation>
+			<documentation xml:lang="en-GB">If true this field indicates that the patent has given negative consent.</documentation>
+			<documentation xml:lang="da-DK">Såfremt værdien er "true" angives at patienten har givet negativ samtykke.</documentation>
+		</annotation>
+	</element>
+	<simpleType name="NegativeConsentIndicatorType">
+		<restriction base="boolean"/>
+	</simpleType>
+</schema>

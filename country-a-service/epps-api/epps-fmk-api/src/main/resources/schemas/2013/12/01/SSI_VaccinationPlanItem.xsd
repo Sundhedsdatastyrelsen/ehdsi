@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccinationPlanItemIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccineIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccineName.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanItemIndex.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanItemMinimumInterval.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanItemRecommendedTime.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanItemDescription.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanItemSeries.xsd"/>
+	<include schemaLocation="SSI_CoverageDuration.xsd"/>
+	<element name="VaccinationPlanItem" type="vaccinationcard:VaccinationPlanItemType">
+		<annotation>
+			<documentation xml:lang="en-GB">Specification of an item in a vaccinationplan</documentation>
+			<documentation xml:lang="da-DK">Specifikation af et element i et vaccinationsforløb</documentation>
+		</annotation>
+	</element>
+	<complexType name="VaccinationPlanItemType">
+		<sequence>
+			<element name="VaccinationPlanItemIdentifier" type="vaccinationcard:VaccinationPlanItemIdentifierType" />
+			<element name="VaccineIdentifier" type="vaccinationcard:VaccineIdentifierType" />
+			<element name="VaccineName" type="vaccinationcard:VaccineNameType" />
+			<element name="VaccinationPlanItemIndex" type="vaccinationcard:VaccinationPlanItemIndexType" />
+			<element name="VaccinationPlanItemMinimumInterval" type="vaccinationcard:VaccinationPlanItemMinimumIntervalType" />
+			<element name="VaccinationPlanItemRecommendedTime" type="vaccinationcard:VaccinationPlanItemRecommendedTimeType" />
+			<element name="VaccinationPlanItemDescription" type="vaccinationcard:VaccinationPlanItemDescriptionType" minOccurs="0"/>
+			<element name="VaccinationPlanItemSeries" type="vaccinationcard:VaccinationPlanItemSeriesType" minOccurs="0"/>			
+			<element name="CoverageDuration" type="vaccinationcard:CoverageDurationType" minOccurs="0"/>
+			
+		</sequence>
+	</complexType>
+</schema>

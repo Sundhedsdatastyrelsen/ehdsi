@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="EffectuatedInCountryCode" type="vaccinationcard:EffectuatedInCountryCodeType">
+		<annotation>
+			<documentation xml:lang="en-GB">Code of the country where the effectuation took place</documentation>
+			<documentation xml:lang="da-DK">Kode paa landet hvor effektueringen fandt sted</documentation>
+		</annotation>
+	</element>
+	<simpleType name="EffectuatedInCountryCodeType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="10"/>
+		</restriction>
+	</simpleType>
+</schema>

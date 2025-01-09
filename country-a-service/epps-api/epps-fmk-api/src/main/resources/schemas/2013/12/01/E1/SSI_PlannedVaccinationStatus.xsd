@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+        xmlns:vaccinationcard20131201e1="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<attribute name="PlannedVaccinationStatus" type="vaccinationcard20131201e1:PlannedVaccinationStatusType">
+		<annotation>
+			<documentation xml:lang="en-GB">Status for a planned vaccination</documentation>
+			<documentation xml:lang="da-DK">Status for en planlagt vaccination</documentation>
+		</annotation>
+	</attribute>
+	
+	<simpleType name="PlannedVaccinationStatusType">
+		<union memberTypes="vaccinationcard20131201e1:PredefinedPlannedVaccinationStatusType vaccinationcard20131201e1:UndefinedPlannedVaccinationStatusType"/>
+	</simpleType>
+	
+	<simpleType name="PredefinedPlannedVaccinationStatusType">
+		<restriction base="vaccinationcard20131201e1:UndefinedPlannedVaccinationStatusType">
+			<enumeration value="Planlagt"/>
+			<enumeration value="Effektueret"/>
+			<enumeration value="Fejlregistrering"/>
+			<enumeration value="Slettet på borgers anmodning"/>
+			<enumeration value="Slettet af lægefaglige årsager"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="UndefinedPlannedVaccinationStatusType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

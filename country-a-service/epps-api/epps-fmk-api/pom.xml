@@ -49,7 +49,8 @@
                         <arg>-verbose</arg>
                     </args>
 					<wsdlUrls>
-						<wsdlUrl>./src/main/resources/wsdl/MedicineCard-inline_2015_06_01_E6.wsdl</wsdlUrl>
+                        <wsdlUrl>./src/main/resources/wsdl/MedicineCard-inline_2015_06_01_E6.wsdl</wsdlUrl>
+                        <wsdlUrl>./src/main/resources/wsdl/vaccinationsServiceIDWS_2013-12-01-E1.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>

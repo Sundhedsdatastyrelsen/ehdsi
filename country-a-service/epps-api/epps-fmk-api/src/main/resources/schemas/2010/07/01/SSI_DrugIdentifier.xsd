@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="DrugIdentifier" type="vaccinationcard:DrugIdentifierType">
+		<annotation>
+			<documentation xml:lang="en-GB">Unique drug identification </documentation>
+			<documentation xml:lang="da-DK">Unik identifikation af lægemiddel</documentation>
+		</annotation>
+	</element>
+	<simpleType name="DrugIdentifierType">
+		<restriction base="long">
+			<minInclusive value="0"/>
+			<maxExclusive value="99999999999"/>
+		</restriction>
+	</simpleType>
+</schema>

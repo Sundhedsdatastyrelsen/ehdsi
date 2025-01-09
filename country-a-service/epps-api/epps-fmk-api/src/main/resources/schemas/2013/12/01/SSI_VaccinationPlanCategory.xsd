@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="VaccinationPlanCategory" type="vaccinationcard:VaccinationPlanCategoryType">
+		<annotation>
+			<documentation xml:lang="en-GB">Identification of a vaccinationplan catogory</documentation>
+			<documentation xml:lang="da-DK">Identifikation af en vaccinationsplan-kategori</documentation>
+		</annotation>
+	</element>
+    <simpleType name="VaccinationPlanCategoryType">
+        <union memberTypes="vaccinationcard:PredefinedVaccinationPlanCategoryType vaccinationcard:UndefinedVaccinationPlanCategoryType"/>
+    </simpleType>
+    <simpleType name="PredefinedVaccinationPlanCategoryType">
+        <restriction base="vaccinationcard:UndefinedVaccinationPlanCategoryType">
+            <enumeration value="COVID-19"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="UndefinedVaccinationPlanCategoryType">
+        <restriction base="string">
+            <minLength value="1"/>
+            <maxLength value="200"/>
+        </restriction>
+    </simpleType>
+
+
+</schema>

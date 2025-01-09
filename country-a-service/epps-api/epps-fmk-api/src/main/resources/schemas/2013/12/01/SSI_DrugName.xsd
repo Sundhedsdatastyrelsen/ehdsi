@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="DrugName" type="vaccinationcard:DrugNameType">
+		<annotation>
+			<documentation xml:lang="en-GB">Drug name (DMA01 field 6)</documentation>
+			<documentation xml:lang="da-DK">Lægemiddelnavn (LMS01 felt 6)</documentation>
+		</annotation>
+	</element>
+	<simpleType name="DrugNameType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="30"/>
+		</restriction>
+	</simpleType>
+</schema>

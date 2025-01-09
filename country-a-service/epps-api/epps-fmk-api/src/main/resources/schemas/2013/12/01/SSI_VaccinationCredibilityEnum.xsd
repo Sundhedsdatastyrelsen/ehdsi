@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="VaccinationCredibilityEnum" type="vaccinationcard:VaccinationCredibilityEnumType">
+		<annotation>
+			<documentation xml:lang="en-GB">Number, indicating the credibility of the Vaccination registration. </documentation>
+			<documentation xml:lang="da-DK">Tal, der indikerer troværdigheden af en vaccinationsregistrering.</documentation>
+		</annotation>
+	</element>
+    <simpleType name="VaccinationCredibilityEnumType">
+        <restriction base="string">
+            <enumeration value="Slettet"/>
+            <enumeration value="Oprettet af læge / medhjælp"/>
+            <enumeration value="Oprettet på baggrund af data fra Sygesikringsregisteret"/>
+            <enumeration value="Udleveret på apotek og godkendt af læge"/>
+            <enumeration value="Oprettet af læge eller oprettet af borger og godkendt af læge"/>
+            <enumeration value="Udleveret på apotek"/>
+            <enumeration value="Oprettet af borger"/>
+        </restriction>
+    </simpleType>
+</schema>
