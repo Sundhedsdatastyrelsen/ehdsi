@@ -21,7 +21,7 @@ import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
-import dk.sdsd.dgws._2012._06.WhiteListingHeader;
+import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -69,8 +69,8 @@ public class FmkClient {
         return ((Document) res.getNode()).getDocumentElement();
     }
 
-    private JAXBElement<WhiteListingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
-        final var header = WhiteListingHeader.builder()
+    private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
+        final var header = WhitelistingHeader.builder()
             .withSystemName("ePPS PoC")
             .withSystemOwnerName("Sundhedsdatastyrelsen")
             .withSystemVersion("0.1.0")
@@ -82,7 +82,7 @@ public class FmkClient {
             .withRequestedRole(requestedRole.value())
             .build();
 
-        return new ObjectFactory().createWhiteListingHeader(header);
+        return new ObjectFactory().createWhitelistingHeader(header);
     }
 
     private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {
@@ -242,7 +242,7 @@ public class FmkClient {
         Identity caller,
         Boolean requiresMedicineCardConsent
     ) throws JAXBException {
-        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.FARMACEUT, requiresMedicineCardConsent);
+        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.APOTEKER, requiresMedicineCardConsent);
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
