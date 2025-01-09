@@ -5,15 +5,28 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import jakarta.xml.bind.JAXBException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.SimpleFormatter;
 
 public class FmkPrescriptionCollector {
-    private static final Logger logger = LoggerFactory.getLogger(FmkPrescriptionCollector.class);
+    private static final Logger logger = Logger.getLogger(FmkPrescriptionCollector.class.getName());
+    static {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SimpleFormatter());
+        handler.setLevel(Level.INFO);
+
+        logger.addHandler(handler);
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.INFO);
+    }
 
     public static void main(String[] args) throws JAXBException, IOException {
         var cprInput = Fmk.cprKarl;
@@ -35,17 +48,14 @@ public class FmkPrescriptionCollector {
         var prescriptionPath = Path.of(prescriptionOutput);
         Files.createDirectories(prescriptionPath.getParent());
         FmkResponseStorage.serializeToFile(prescriptionXml, prescriptionPath.toFile());
-        logger.info("Wrote prescriptions to {}", prescriptionPath.toAbsolutePath());
+        logger.log(Level.INFO,"Wrote prescriptions to {0}", prescriptionPath.toAbsolutePath());
 
-        var medicationIds = prescriptionResponse.getPrescription()
-            .stream()
-            .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
-            .toList();
-        var medicationResponse = frs.getDrugMedicationResponse(cprInput, medicationIds, TestIdentities.apotekerChrisChristoffersen);
+        var medicationIds = prescriptionResponse.getPrescription().stream().map(PrescriptionType::getAttachedToDrugMedicationIdentifier).toList();
+        var medicationResponse = frs.getDrugMedicationResponse(cprInput,medicationIds,TestIdentities.apotekerChrisChristoffersen);
         var medicationXml = frs.createXmlFromDrugMedication(medicationResponse);
         var medicationPath = Path.of(medicationOutput);
         Files.createDirectories(medicationPath.getParent());
         FmkResponseStorage.serializeToFile(medicationXml, medicationPath.toFile());
-        logger.info("Wrote medications to {}", medicationPath.toAbsolutePath());
+        logger.log(Level.INFO,"Wrote medications to {0}", medicationPath.toAbsolutePath());
     }
 }
