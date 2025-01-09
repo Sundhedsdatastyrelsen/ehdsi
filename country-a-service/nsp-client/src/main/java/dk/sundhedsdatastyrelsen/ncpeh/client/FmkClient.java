@@ -23,6 +23,7 @@ import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
+import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -69,6 +70,24 @@ public class FmkClient {
         return ((Document) res.getNode()).getDocumentElement();
     }
 
+    private JAXBElement<dk.sdsd.ddv.dgws._2012._06.WhiteListingHeader> getDdvWhitelistingHeader(dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole requestedRole) {
+        final var header = dk.sdsd.ddv.dgws._2012._06.WhiteListingHeader.builder()
+            .withSystemName("Patient Summary")
+            .withSystemOwnerName("Sundhedsdatastyrelsen")
+            .withSystemVersion("1.0.0")
+            .withOrgResponsibleName("Sundhedsdatastyrelsen")
+            .withOrgUsingName("Sundhedsdatastyrelsen")
+            .withOrgUsingID()
+            // TODO: Don't use Region Hovedstaden's location number:
+            .withNameFormat(dk.sdsd.ddv.dgws._2010._08.NameFormat.MEDCOM_LOCATIONNUMBER)
+            .withValue("5790000120512")
+            .end()
+            .withRequestedRole(requestedRole.value())
+            .build();
+
+        return new dk.sdsd.ddv.dgws._2012._06.ObjectFactory().createWhiteListingHeader(header);
+    }
+
     private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
         final var header = WhitelistingHeader.builder()
             .withSystemName("ePPS PoC")
@@ -86,13 +105,18 @@ public class FmkClient {
     }
 
     private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {
-        final var consentHeader = ConsentHeaderType.builder().addConsent().withSource("User").withConsentType("MedicineReviewConsent").withContent("MedicineCard").end().build();
+        final var consentHeader = ConsentHeaderType.builder()
+            .addConsent()
+            .withSource("User")
+            .withConsentType("MedicineReviewConsent")
+            .withContent("MedicineCard")
+            .end()
+            .build();
 
         var objectFactory = new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
         return objectFactory.createConsentHeader(consentHeader);
     }
-
 
     /**
      * "Påbegynd ekspedition".
@@ -235,6 +259,28 @@ public class FmkClient {
         );
     }
 
+
+/**********************
+ * DDV
+ ***********************/
+    /**
+     * "GetVaccionationCard".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:ddv:1.4.0:getvaccinationcard">FMK documentation.</a>
+     */
+    public GetPrescriptionResponseType getPrescription(GetVaccinationCardRequestType request, Identity caller) throws JAXBException {
+        return makeDdvRequest(
+            fac.create(request), //TODO CONTINUE HERE, FIND OBJECT CREATOR FOR DDV ACTIONS
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription",
+            GetPrescriptionResponseType.class,
+            caller,
+            false
+        );
+    }
+
+    /**********************
+     * Private
+     ***********************/
+
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
         JAXBElement<RequestType> request,
         String soapAction,
@@ -256,11 +302,38 @@ public class FmkClient {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
         Element[] extraHeaders;
-        if(requiresMedicineCardConsent){
+        if (requiresMedicineCardConsent) {
             extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole)), toElement(getMedicineReviewConsent())};
         } else {
             extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole))};
         }
+        try {
+            reply = NspClient.request(
+                serviceUri,
+                toElement(request),
+                soapAction,
+                caller,
+                extraHeaders
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+    }
+
+    private <RequestType, ResponseType> ResponseType makeDdvRequest(
+        JAXBElement<RequestType> request,
+        String soapAction,
+        Class<ResponseType> clazz,
+        Identity caller,
+        dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole requestedRole
+    ) throws JAXBException {
+        log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
+        final Reply reply;
+        Element[] extraHeaders;
+
+        extraHeaders = new Element[]{toElement(getDdvWhitelistingHeader(requestedRole))};
+
         try {
             reply = NspClient.request(
                 serviceUri,
