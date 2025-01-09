@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd="http://www.sdsd.dk/dgws/2010/08" xmlns:sdsd201206="http://www.sdsd.dk/dgws/2012/06" targetNamespace="http://www.sdsd.dk/dgws/2012/06" elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <import namespace="http://www.sdsd.dk/dgws/2010/08" schemaLocation="../../2010/08/WhitelistingHeaderElements.xsd" />
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd="http://www.sdsd.dk/ddv/dgws/2010/08" xmlns:sdsd201206="http://www.sdsd.dk/ddv/dgws/2012/06" targetNamespace="http://www.sdsd.dk/ddv/dgws/2012/06" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <import namespace="http://www.sdsd.dk/ddv/dgws/2010/08" schemaLocation="../../2010/08/WhitelistingHeaderElements.xsd" />
 
     <element name="WhitelistingHeader" type="sdsd201206:WhitelistingHeader">
         <annotation>

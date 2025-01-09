@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        targetNamespace="http://www.sdsd.dk/dgws/2010/08"
+        targetNamespace="http://www.sdsd.dk/ddv/dgws/2010/08"
         elementFormDefault="qualified">
     <include schemaLocation="../../../../schemas/sdsd/2010/08/NameFormat.xsd" />
     <include schemaLocation="../../../../schemas/sdsd/2010/08/OrgResponsibleName.xsd" />
