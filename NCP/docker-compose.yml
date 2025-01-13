@@ -150,7 +150,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 1.5G
 
   tomcat_node_b:
     build:
@@ -190,7 +190,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 1G
 
   openncp-openatna:
     container_name: openncp-openatna
