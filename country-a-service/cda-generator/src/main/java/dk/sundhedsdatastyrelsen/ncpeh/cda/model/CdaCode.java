@@ -19,6 +19,6 @@ public class CdaCode {
     }
 
     public String getCodeSystemName() {
-        return codeSystem.name != null ? codeSystem.name : codeSystemName;
+        return codeSystem.objectName != null ? codeSystem.objectName : codeSystemName;
     }
 }

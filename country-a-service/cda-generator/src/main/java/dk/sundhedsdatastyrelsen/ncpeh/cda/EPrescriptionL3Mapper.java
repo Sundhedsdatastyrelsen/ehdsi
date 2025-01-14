@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
@@ -154,22 +155,30 @@ public class EPrescriptionL3Mapper {
                 .build();
     }
 
+    private static CdaId organizationId(OrganisationIdentifierType fmkOrgId) {
+        // See OrganisationIdentifierPredefinedSourceType for most likely values (can theoretically be anything)
+        var root = switch (fmkOrgId.getSource()) {
+            case "SKS"                 -> Oid.DK_SKS;
+            case "Yder"                -> Oid.DK_YDER;
+            case "EAN-Lokationsnummer" -> Oid.EAN;
+            case "CVR"                 -> Oid.DK_CVR;
+            case "SOR"                 -> Oid.DK_SOR;
+            // remaining: CVR-P, Kommunekode, Udenlandsk
+            // have no OID that we know of.
+            default -> null;
+        };
+        if (root == null) {
+            // when we don't have an OID matching the source then we use a generic OID
+            // and put the source name into the extension:
+            return new CdaId(Oid.DK_REGISTRIES, String.format("%s^%s", fmkOrgId.getSource(), fmkOrgId.getValue()));
+        }
+        return new CdaId(root, fmkOrgId.getValue());
+    }
+
     private static Organization authorOrganization(PrescriptionType prescription) throws MapperException {
         var org = authorOrganizationXml(prescription);
 
-        var id = new CdaId(switch (org.getIdentifier().getSource()) {
-            case "Yder" -> Oid.DK_YDER;
-            case "SOR" -> Oid.DK_SOR;
-            case "SKS" -> Oid.DK_ORG_SKS;
-            case "EAN-Lokationsnummer" -> Oid.DK_ORG_EAN;
-            case "CVR" -> Oid.DK_ORG_CVR;
-            case "CVR-P" -> Oid.DK_ORG_CVR_P;
-            case "Kommunekode" -> Oid.DK_ORG_KOMMUNEKODE;
-            case "Udenlandsk" -> Oid.DK_ORG_UDENLANDSK;
-            default ->
-                    throw new MapperException("Invalid organization identifier source! Unable to find OID for: " + org.getIdentifier()
-                            .getSource());
-        }, org.getIdentifier().getValue());
+        var id = organizationId(org.getIdentifier());
         Address address = null;
         if (!org.getAddressLine().isEmpty()) {
             var streetAddressLines = new LinkedList<String>();
@@ -195,7 +204,7 @@ public class EPrescriptionL3Mapper {
         var functionCode = CdaCode.builder()
                 .code("221")
                 .displayName("Medical doctors")
-                .codeSystem(Oid.HEALTHCARE_PROFESSIONAL_ROLES)
+                .codeSystem(Oid.ISCO)
                 .build();
 
         var creator = createdByXml(prescription);
