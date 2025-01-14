@@ -4,6 +4,6 @@
 	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
-	<import namespace="http://www.sdsd.dk/ddv/dgws/2010/08" schemaLocation="../../../sdsd/2010/08/RequestedRole.xsd"/>	
+	<import namespace="http://www.sdsd.dk/dgws/2010/08" schemaLocation="../../../sdsd/2010/08/RequestedRole.xsd"/>	
 	
 </schema>

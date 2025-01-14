@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd201008="http://www.sdsd.dk/ddv/dgws/2010/08" targetNamespace="http://www.sdsd.dk/ddv/dgws/2010/08" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd201008="http://www.sdsd.dk/dgws/2010/08" targetNamespace="http://www.sdsd.dk/dgws/2010/08" elementFormDefault="qualified">
 	<include schemaLocation="NameFormat.xsd"/>
  	<element name="OrgUsingID" type="sdsd201008:OrgUsingID">
 		<annotation>
