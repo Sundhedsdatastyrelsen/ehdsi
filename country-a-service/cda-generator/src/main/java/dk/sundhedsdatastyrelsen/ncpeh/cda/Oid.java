@@ -6,25 +6,29 @@ public enum Oid {
      */
     DK_EPRESCRIPTION_REPOSITORY_ID("2.16.17.710.802.1000.990.1"),
     /**
-     * Danish CPR numbers
+     * Danish CPR numbers.
+     * <a href="https://oid-base.com/get/1.2.208.176.1.2">Registered.</a>
      */
-    DK_CPR("2.16.17.710.802.1000.990.1.500"),
+    DK_CPR("1.2.208.176.1.2"),
     /**
      * FMK prescription ids
      */
     DK_FMK_PRESCRIPTION("2.16.17.710.802.1000.990.1.10"),
     /**
      * "Det danske autorisationsregister"
+     * <a href="https://oid-base.com/get/1.2.208.176.1.3">Registered.</a>
      */
-    DK_AUTHORIZATION_REGISTRY("2.16.17.710.802.1000.990.1.30"),
+    DK_AUTHORIZATION_REGISTRY("1.2.208.176.1.3"),
     /**
-     * Danske ydernumre
+     * Danske ydernumre.
+     * <a href="https://oid-base.com/get/1.2.208.176.1.4">Registered.</a>
      */
-    DK_YDER("2.16.17.710.802.1000.990.1.40"),
+    DK_YDER("1.2.208.176.1.4"),
     /**
-     * Sundhedsvæsenets Organisationsregister (SOR)
+     * Sundhedsvæsenets Organisationsregister (SOR).
+     * <a href="https://oid-base.com/get/1.2.208.176.1.1">Registered.</a>
      */
-    DK_SOR("2.16.17.710.802.1000.990.1.50"),
+    DK_SOR("1.2.208.176.1.1"),
     /**
      * Varenumre på lægemiddelpakninger
      * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
@@ -44,7 +48,13 @@ public enum Oid {
      * Anatomical Therapeutic Chemical
      */
     ATC("2.16.840.1.113883.6.73", "Anatomical Therapeutic Chemical"),
+
+    /**
+     * Administrative Gender.
+     * <a href="https://oid-base.com/get/2.16.840.1.113883.5.1">Registered.</a>
+     */
     ADMINISTRATIVE_GENDER("2.16.840.1.113883.5.1", "AdministrativeGender"),
+
     HEALTHCARE_PROFESSIONAL_ROLES("2.16.840.1.113883.2.9.6.2.7", "ISCO"),
 
     DK_ORG_SKS("2.16.17.710.802.1000.990.1.60.1"),
