@@ -81,7 +81,6 @@ public class EPrescriptionL3Mapper {
             if (administrationRoute != null) {
                 var administrationRouteCdaCode = CdaCode.builder()
                         .codeSystem(Oid.DK_LMS11)
-                        .codeSystemName("LMS11")
                         .code(administrationRoute.getCode().getValue())
                         .build();
                 prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
@@ -95,7 +94,6 @@ public class EPrescriptionL3Mapper {
         var f = prescription.getDrug().getForm();
         var formCode = CdaCode.builder()
                 .codeSystem(Oid.DK_LMS22)
-                .codeSystemName("LMS22")
                 .code(f.getCode().getValue())
                 .displayName(f.getText())
                 .build();
@@ -104,7 +102,6 @@ public class EPrescriptionL3Mapper {
         var size = new Size(EhdsiUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
 
         var packageCode = CdaCode.builder()
-                .codeSystemName("LMS02")
                 .codeSystem(Oid.DK_VARENUMRE)
                 .code(prescription.getPackageRestriction().getPackageNumber().getValue())
                 .build();
@@ -112,7 +109,6 @@ public class EPrescriptionL3Mapper {
         var atc = prescription.getDrug().getATC();
         var atcCode = CdaCode.builder()
                 .codeSystem(Oid.ATC)
-                .codeSystemName("Anatomical Therapeutic Chemical")
                 .codeSystemVersion("2024-01")
                 .code(atc.getCode().getValue())
                 .displayName(atc.getText())
@@ -140,7 +136,6 @@ public class EPrescriptionL3Mapper {
 
         var genderCodeBuilder = CdaCode.builder()
                 .codeSystem(Oid.ADMINISTRATIVE_GENDER)
-                .codeSystemName("AdministrativeGender")
                 .codeSystemVersion("913-20091020");
 
         switch (person.getGender()) {
@@ -201,7 +196,6 @@ public class EPrescriptionL3Mapper {
                 .code("221")
                 .displayName("Medical doctors")
                 .codeSystem(Oid.HEALTHCARE_PROFESSIONAL_ROLES)
-                .codeSystemName("ISCO")
                 .build();
 
         var creator = createdByXml(prescription);

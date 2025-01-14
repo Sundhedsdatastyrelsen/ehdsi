@@ -29,23 +29,23 @@ public enum Oid {
      * Varenumre på lægemiddelpakninger
      * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
      */
-    DK_VARENUMRE("2.16.17.710.802.1000.990.1.20.2"),
+    DK_VARENUMRE("2.16.17.710.802.1000.990.1.20.2", "Varenumre på lægemiddelpakninger"),
     /**
      * LMS11 - "Administrationsvej"
      */
-    DK_LMS11("2.16.17.710.802.1000.990.1.20.11"),
+    DK_LMS11("2.16.17.710.802.1000.990.1.20.11", "LMS11 Administrationsvej"),
     /**
      * LMS22 - "Lægemiddelform-betegnelser"
      */
-    DK_LMS22("2.16.17.710.802.1000.990.1.20.22"),
+    DK_LMS22("2.16.17.710.802.1000.990.1.20.22", "LMS22 Lægemiddelform-betegnelser"),
 
 
     /**
      * Anatomical Therapeutic Chemical
      */
-    ATC("2.16.840.1.113883.6.73"),
-    ADMINISTRATIVE_GENDER("2.16.840.1.113883.5.1"),
-    HEALTHCARE_PROFESSIONAL_ROLES("2.16.840.1.113883.2.9.6.2.7"),
+    ATC("2.16.840.1.113883.6.73", "Anatomical Therapeutic Chemical"),
+    ADMINISTRATIVE_GENDER("2.16.840.1.113883.5.1", "AdministrativeGender"),
+    HEALTHCARE_PROFESSIONAL_ROLES("2.16.840.1.113883.2.9.6.2.7", "ISCO"),
 
     DK_ORG_SKS("2.16.17.710.802.1000.990.1.60.1"),
     DK_ORG_EAN("2.16.17.710.802.1000.990.1.60.2"),
@@ -55,8 +55,14 @@ public enum Oid {
     DK_ORG_UDENLANDSK("2.16.17.710.802.1000.990.1.60.90");
 
     public final String value;
+    public final String name;
 
     Oid(String value) {
+        this(value, null);
+    }
+
+    Oid(String value, String name) {
         this.value = value;
+        this.name = name;
     }
 }
