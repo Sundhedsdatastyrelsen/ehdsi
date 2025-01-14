@@ -26,9 +26,10 @@ public enum Oid {
      */
     DK_SOR("2.16.17.710.802.1000.990.1.50"),
     /**
-     * LMS02 - "Grunddata pakning"
+     * Varenumre på lægemiddelpakninger
+     * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
      */
-    DK_LMS02("2.16.17.710.802.1000.990.1.20.2"),
+    DK_VARENUMRE("2.16.17.710.802.1000.990.1.20.2"),
     /**
      * LMS11 - "Administrationsvej"
      */

@@ -104,8 +104,8 @@ public class EPrescriptionL3Mapper {
         var size = new Size(EhdsiUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
 
         var packageCode = CdaCode.builder()
-                .codeSystem(Oid.DK_LMS02)
                 .codeSystemName("LMS02")
+                .codeSystem(Oid.DK_VARENUMRE)
                 .code(prescription.getPackageRestriction().getPackageNumber().getValue())
                 .build();
 
