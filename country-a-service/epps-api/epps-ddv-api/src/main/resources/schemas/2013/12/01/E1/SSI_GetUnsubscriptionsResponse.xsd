@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:vaccinationcard20131201e1="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<include schemaLocation="SSI_Unsubscription.xsd"/>
+	
+	<element name="GetUnsubscriptionsResponse" type="vaccinationcard20131201e1:GetUnsubscriptionsResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Outer container element for a response with vaccination plan unsubscriptions </documentation>
+			<documentation xml:lang="da-DK">Ydre container-element for et svar med fravalgte vaccinationsforløb </documentation>
+		</annotation>
+	</element>
+	
+	<complexType name="GetUnsubscriptionsResponseType">
+		<sequence>
+			<element name="Unsubscription" type="vaccinationcard20131201e1:UnsubscriptionType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+</schema>

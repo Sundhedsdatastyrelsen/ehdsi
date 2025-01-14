@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccinationPassportAsPDF.xsd" />
+    <include schemaLocation="SSI_VaccinationStatus.xsd" />
+    <include schemaLocation="SSI_Vaccination.xsd" />
+    <include schemaLocation="SSI_DocumentId.xsd" />
+    <include schemaLocation="SSI_VaccinationAgainst.xsd" />
+    <include schemaLocation="SSI_EffectuationOverview.xsd" />
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" schemaLocation="../../../cpr/CPR_SimpleCPRPerson.xsd" />
+
+	<element name="GetVaccinationPassportAsPDFResponse" type="vaccinationcard:GetVaccinationPassportAsPDFResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Outer container element for a response with a vaccination passport</documentation>
+			<documentation xml:lang="da-DK">Ydre container-element for et svar med et vaccinationspas</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetVaccinationPassportAsPDFResponseType">
+		<sequence>
+            <element name="VaccinationStatus" type="vaccinationcard:VaccinationStatus" minOccurs="0" />
+			<element name="DocumentId" type="vaccinationcard:DocumentIdType" />
+			<element name="PersonInfo" type="cpr:SimpleCPRPersonType" />
+			<element name="VaccinationAgainst" type="vaccinationcard:VaccinationAgainstType"/>
+            <element name="Effectuation" type="vaccinationcard:EffectuationOverviewType" minOccurs="0" maxOccurs="unbounded" />
+            <element name="AdditionalEffectuation" type="vaccinationcard:EffectuationOverviewType" minOccurs="0" maxOccurs="unbounded" />
+            <element name="VaccinationPassportAsPDF" type="vaccinationcard:VaccinationPassportAsPDFType" minOccurs="0" maxOccurs="1" />
+		</sequence>
+	</complexType>
+</schema>

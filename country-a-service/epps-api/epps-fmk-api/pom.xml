@@ -1,39 +1,39 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-		<artifactId>epps-api-root</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+        <artifactId>epps-api-root</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-	<name>NCPeH DK integration service - FMK API</name>
-	<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-	<artifactId>epps-fmk-api</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <name>NCPeH DK integration service - FMK API</name>
+    <artifactId>epps-fmk-api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<description>NCPeH DK integration service - FMK API</description>
+    <description>NCPeH DK integration service - FMK API</description>
 
-	<dependencies>
-		<dependency>
-			<groupId>jakarta.xml.ws</groupId>
-			<artifactId>jakarta.xml.ws-api</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.sun.xml.ws</groupId>
-				<artifactId>jaxws-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>wsimport</goal>
-						</goals>
-					</execution>
-				</executions>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>net.codesup.util</groupId>
@@ -41,22 +41,21 @@
                         <version>2.1.0</version>
                     </dependency>
                 </dependencies>
-				<configuration>
+                <configuration>
                     <args>
                         <arg>-B-Xfluent-builder</arg>
-<!--                        <arg>-B-Ximmutable</arg>-->
+                        <!--                        <arg>-B-Ximmutable</arg>-->
                         <!-- Workaround for https://github.com/mklemm/jaxb2-rich-contract-plugin/issues/47 -->
                         <arg>-verbose</arg>
                     </args>
-					<wsdlUrls>
+                    <wsdlUrls>
                         <wsdlUrl>./src/main/resources/wsdl/MedicineCard-inline_2015_06_01_E6.wsdl</wsdlUrl>
-                        <wsdlUrl>./src/main/resources/wsdl/vaccinationsServiceIDWS_2013-12-01-E1.wsdl</wsdlUrl>
-					</wsdlUrls>
-					<sourceDestDir>${sourcesDir}</sourceDestDir>
-					<destDir>${classesDir}</destDir>
-					<extension>true</extension>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                    </wsdlUrls>
+                    <sourceDestDir>${sourcesDir}</sourceDestDir>
+                    <destDir>${classesDir}</destDir>
+                    <extension>true</extension>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

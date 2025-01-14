@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_PlannedVaccinationIdentifier.xsd"/>
+	<element name="DeletePlannedVaccination" type="vaccinationcard:DeletePlannedVaccinationType">
+		<annotation>
+			<documentation xml:lang="en-GB">Structure for information about deleting a planned vaccination</documentation>
+			<documentation xml:lang="da-DK">Information til at slette en planlagt vaccination.</documentation>
+		</annotation>
+	</element>
+	<complexType name="DeletePlannedVaccinationType">
+		<sequence>
+			<element name="PlannedVaccinationIdentifier" type="vaccinationcard:PlannedVaccinationIdentifierType" />
+		</sequence>
+	</complexType>
+</schema>

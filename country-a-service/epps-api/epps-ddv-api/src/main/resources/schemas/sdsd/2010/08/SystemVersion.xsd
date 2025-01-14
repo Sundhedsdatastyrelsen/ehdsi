@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd201008="http://www.sdsd.dk/dgws/2010/08" targetNamespace="http://www.sdsd.dk/dgws/2010/08" elementFormDefault="qualified">
+	<element name="SystemVersion" type="sdsd201008:SystemVersion">
+		<annotation>
+			<documentation xml:lang="da-DK">Versionen på afsendersystemet. Ufaldsrummet dikteres alene af leverandøren af afsendersystemet</documentation>
+		</annotation>
+	</element>
+	<simpleType name="SystemVersion">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccineIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccineName.xsd"/>
+	<include schemaLocation="SSI_Disease.xsd"/>
+	<include schemaLocation="SSI_ATC.xsd"/>
+	<include schemaLocation="SSI_SSIDrug.xsd"/>
+	<include schemaLocation="SSI_VaccineKeywordsText.xsd"/>
+	<include schemaLocation="SSI_DisplayMinimumVaccinationPlan.xsd"/>
+	<element name="Vaccine" type="vaccinationcard:VaccineType">
+		<annotation>
+			<documentation xml:lang="en-GB">Information about vaccine</documentation>
+			<documentation xml:lang="da-DK">Information om vaccine</documentation>
+		</annotation>
+	</element>
+	<complexType name="VaccineType">
+		<sequence>
+			<element name="VaccineIdentifier" type="vaccinationcard:VaccineIdentifierType" />
+			<element name="VaccineName" type="vaccinationcard:VaccineNameType" />
+			<element name="Disease" type="vaccinationcard:DiseaseType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="ATC" type="vaccinationcard:ATCType"/>
+			<element name="SSIDrug" type="vaccinationcard:SSIDrugType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="VaccineKeywordsText" type="vaccinationcard:VaccineKeywordsTextType" minOccurs="0" />
+			<element name="DisplayMinimumVaccinationPlan" type="vaccinationcard:DisplayMinimumVaccinationPlanType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+</schema>

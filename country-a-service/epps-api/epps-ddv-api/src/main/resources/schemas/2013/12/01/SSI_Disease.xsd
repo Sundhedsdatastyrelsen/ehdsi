@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_DiseaseIdentifier.xsd"/>
+	<include schemaLocation="SSI_DiseaseName.xsd"/>
+	<include schemaLocation="SSI_DiseaseNameDK.xsd"/>
+	<include schemaLocation="SSI_ATC.xsd"/>
+	<element name="Disease" type="vaccinationcard:DiseaseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Information about disease</documentation>
+			<documentation xml:lang="da-DK">Information om sygdom</documentation>
+		</annotation>
+	</element>
+	<complexType name="DiseaseType">
+		<sequence>
+			<element name="DiseaseIdentifier" type="vaccinationcard:DiseaseIdentifierType" minOccurs="0"/>
+			<element name="DiseaseName" type="vaccinationcard:DiseaseNameType" minOccurs="0"/>
+			<element name="DiseaseNameDK" type="vaccinationcard:DiseaseNameDKType" minOccurs="0"/>
+			<element name="ATC" type="vaccinationcard:ATCType" />
+		</sequence>
+	</complexType>
+</schema>

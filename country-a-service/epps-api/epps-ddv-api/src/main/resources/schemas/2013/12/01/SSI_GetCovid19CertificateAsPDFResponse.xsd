@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccinationPassportAsPDF.xsd" />
+	<include schemaLocation="SSI_VaccinationStatus.xsd" />
+	<include schemaLocation="SSI_Vaccination.xsd" />
+	<include schemaLocation="SSI_DocumentId.xsd" />
+	<include schemaLocation="SSI_VaccinationAgainst.xsd" />
+	<include schemaLocation="SSI_EffectuationOverview.xsd" />
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2006/01/17/" schemaLocation="../../../cpr/CPR_SimpleCPRPerson.xsd" />
+
+	<element name="GetCovid19CertificateAsPDFResponse" type="vaccinationcard:GetCovid19CertificateAsPDFResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Outer container element for a response with a covid-19 certificate</documentation>
+			<documentation xml:lang="da-DK">Ydre container-element for et svar med et covid-19 certifikat</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetCovid19CertificateAsPDFResponseType">
+		<sequence>
+			<choice>
+				<sequence>
+					<element name="PDF" type="base64Binary" minOccurs="0" />
+					<element name="CoronaPasses" type="vaccinationcard:PassListType" />
+				</sequence>
+				<element name="FutureResult" type="vaccinationcard:FutureResultType" minOccurs="0" />
+			</choice>
+		</sequence>
+	</complexType>
+
+	<complexType name="PassListType">
+		<sequence>
+			<element name="Pass" type="vaccinationcard:PassJWTType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="PassJWTType">
+		<sequence>
+			<element name="Type" type="string" />
+			<element name="JWT" type="string" />
+			<element name="Properties" type="vaccinationcard:KeyValuePairType" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="KeyValuePairType">
+		<sequence>
+			<element name="Key" type="string" />
+			<element name="Value" type="string" />
+		</sequence>
+	</complexType>
+
+	<complexType name="FutureResultType">
+		<sequence>
+			<element name="JobId" type="string" />
+		</sequence>
+	</complexType>
+
+</schema>

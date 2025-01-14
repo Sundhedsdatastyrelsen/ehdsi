@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="RequestedRole" type="vaccinationcard:RequestedRoleType">
+		<annotation>
+			<documentation xml:lang="da-DK">Brugerens rolle</documentation>
+		</annotation>
+	</element>
+	<simpleType name="RequestedRoleType">
+		<union memberTypes="vaccinationcard:PredefinedRequestedRole vaccinationcard:UndefinedRequestedRole"/>
+	</simpleType>
+	<simpleType name="PredefinedRequestedRole">
+		<restriction base="string">
+			<enumeration value="Læge"/>
+			<enumeration value="Tandlæge"/>
+			<enumeration value="Jordemoder"/>
+			<enumeration value="Sygeplejerske"/>
+			<enumeration value="Social- og sundhedsassistent"/>
+			<enumeration value="Social- og sundhedshjælper"/>
+			<enumeration value="Sundhedsplejerske"/>
+			<enumeration value="Farmaceut"/>
+			<enumeration value="Behandlerfarmaceut"/>
+			<enumeration value="Farmakonom"/>
+			<enumeration value="Assistent for Læge"/>
+			<enumeration value="Assistent for Tandlæge"/>
+			<enumeration value="Assistent for Sygeplejerske"/>
+			<enumeration value="Assistent for Jordemoder"/>
+			<enumeration value="Assistent for Social- og sundhedsassistent"/>
+			<enumeration value="Borger"/>
+			<enumeration value="Forældermyndighed"/>
+			<enumeration value="Værge"/>
+			<enumeration value="Web administrator"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="UndefinedRequestedRole">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

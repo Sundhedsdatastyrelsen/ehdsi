@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccinationIdentifier.xsd"/>
+	<include schemaLocation="SSI_NegativeConsentRequest.xsd"/>
+	<element name="GetVaccinationHistoryRequest" type="vaccinationcard:GetVaccinationHistoryRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for a vaccination and its history</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter en vaccination og dens historie</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetVaccinationHistoryRequestType">
+		<sequence>
+			<element name="VaccinationIdentifier" type="vaccinationcard:VaccinationIdentifierType"/>
+			<element name="NegativeConsentRequest" type="vaccinationcard:NegativeConsentRequestType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>

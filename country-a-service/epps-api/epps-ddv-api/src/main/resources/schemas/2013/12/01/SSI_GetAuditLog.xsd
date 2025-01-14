@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<element name="GetAuditLog" type="vaccinationcard:GetAuditLogType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element defining a query for audit logs </documentation>
+			<documentation xml:lang="da-DK">Element for forespørgsel efter auditlogs </documentation>
+		</annotation>
+	</element>
+	<complexType name="GetAuditLogType">
+		<sequence>
+			<element name="CitizenPersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" minOccurs="0"/>
+			<element name="UserPersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+			<element name="StartDateTime" type="dateTime"/>
+			<element name="EndDateTime" type="dateTime"/>
+			<element name="Page" type="int"/>
+		</sequence>
+	</complexType>
+</schema>

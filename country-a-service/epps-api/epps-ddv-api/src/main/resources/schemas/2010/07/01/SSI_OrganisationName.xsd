@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="OrganisationName" type="vaccinationcard:OrganisationNameType">
+		<annotation>
+			<documentation xml:lang="en-GB">The name of a organisation which has acted on the vaccination card</documentation>
+			<documentation xml:lang="da-DK">Navnet paa en organisation der har foretaget en handling paa vaccinationskortet</documentation>
+		</annotation>
+	</element>
+	<simpleType name="OrganisationNameType">
+		<restriction base="string">
+			<minLength value="1"/>
+		</restriction>
+	</simpleType>
+</schema>

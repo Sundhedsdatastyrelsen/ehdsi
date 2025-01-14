@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanVersionIdentifier.xsd"/>
+	<include schemaLocation="SSI_CreatePlannedVaccination.xsd"/>
+	<element name="SubscribeAndCreatePlannedVaccinations" type="vaccinationcard:SubscribeAndCreatePlannedVaccinationsType">
+		<annotation>
+			<documentation xml:lang="en-GB">Structure for a vaccinationplan subscription and creation of planned vaccinations</documentation>
+			<documentation xml:lang="da-DK">Struktur for oprettelse af en vaccinationsforløbs tilmelding og oprettelse af tilhørende planlagte vaccinationer</documentation>
+		</annotation>
+	</element>
+	<complexType name="SubscribeAndCreatePlannedVaccinationsType">
+		<sequence>
+			<element name="VaccinationPlanIdentifier" type="vaccinationcard:VaccinationPlanIdentifierType"/>
+			<element name="VaccinationPlanVersionIdentifier" type="vaccinationcard:VaccinationPlanVersionIdentifierType"/>
+			<element name="CreatePlannedVaccination" type="vaccinationcard:CreatePlannedVaccinationType" maxOccurs="500"/>
+		</sequence>
+	</complexType>
+</schema>
