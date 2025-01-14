@@ -31,6 +31,7 @@
                 </includes>
             </resource>
         </resources>
+
         <plugins>
             <!-- JAX-WS Code Generation -->
             <plugin>
@@ -64,30 +65,15 @@
                 </configuration>
             </plugin>
 
-            <!-- Modify Package Names -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>modify-package-names</id>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <target>
-                                <replace dir="${project.build.directory}/generated-sources/wsimport"
-                                         includes="**/*.java">
-                                    <replacetoken>dk.sdsd.dgws</replacetoken>
-                                    <replacevalue>dk.sdsd.ddvdgws</replacevalue>
-                                </replace>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- =========================
+                 Remove the Antrun plugin
+                 =========================
+                 <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-antrun-plugin</artifactId>
+                     ...
+                 </plugin>
+            -->
 
             <!-- Add Generated Sources -->
             <plugin>
@@ -121,6 +107,43 @@
                     </includes>
                 </configuration>
             </plugin>
+
+            <!-- OpenRewrite for renaming packages in generated sources -->
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.47.3</version>
+                <executions>
+                    <execution>
+                        <id>rewrite-run</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Reference the recipe by its 'name' from the YAML -->
+                            <activeRecipes>
+                                <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
+                            </activeRecipes>
+
+                            <!-- Point OpenRewrite to your generated-sources folder -->
+                            <sourceDirectories>
+                                <sourceDirectory>${project.build.directory}/generated-sources/wsimport</sourceDirectory>
+                            </sourceDirectories>
+
+                            <!-- Make sure the plugin knows where to find the YAML file (if not on the classpath) -->
+                            <!-- For instance, you might do: -->
+                            <!--
+                            <rewriteRecipeArtifactCoordinates>
+                                <rewriteRecipeArtifactCoordinate>com.yourorg:your-recipes:1.0.0</rewriteRecipeArtifactCoordinate>
+                            </rewriteRecipeArtifactCoordinates>
+                            -->
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
