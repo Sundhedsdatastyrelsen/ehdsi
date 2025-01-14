@@ -102,7 +102,7 @@
         <time value="${ signatureTime }"/>
         <signatureCode code="S"/>
         <assignedEntity classCode="ASSIGNED">
-            <id root="2.16.17.710.802.1000.990.1.1"/>
+            <id root="1.2.208.176"/>
             <addr nullFlavor="NI"/>
             <telecom nullFlavor="NI"/>
             <assignedPerson nullFlavor="NI"/>

@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
@@ -85,7 +86,7 @@ public class FmkIT {
     }
 
     private static String patientId(String cpr) {
-        return cpr + "^^^&2.16.17.710.802.1000.990.1.500&ISO";
+        return String.format("%s^^^&%s&ISO", cpr, Oid.DK_CPR);
     }
 
     private static UndoDispensationRepository undoDispensationRepository() {
