@@ -23,7 +23,16 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/generated-sources/wsimport</directory>
+                <includes>
+                    <include>**/*.java</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <!-- JAX-WS Code Generation -->
             <plugin>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
@@ -44,8 +53,6 @@
                 <configuration>
                     <args>
                         <arg>-B-Xfluent-builder</arg>
-                        <!--                        <arg>-B-Ximmutable</arg>-->
-                        <!-- Workaround for https://github.com/mklemm/jaxb2-rich-contract-plugin/issues/47 -->
                         <arg>-verbose</arg>
                     </args>
                     <wsdlUrls>
@@ -56,6 +63,8 @@
                     <xnocompile>true</xnocompile>
                 </configuration>
             </plugin>
+
+            <!-- Modify Package Names -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -69,7 +78,7 @@
                                 <replace dir="${project.build.directory}/generated-sources/wsimport"
                                          includes="**/*.java">
                                     <replacetoken>dk.sdsd.dgws</replacetoken>
-                                    <replacevalue>dk.sdsd.dgws.ddv</replacevalue>
+                                    <replacevalue>dk.sdsd.ddvdgws</replacevalue>
                                 </replace>
                             </target>
                         </configuration>
@@ -78,6 +87,39 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Add Generated Sources -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/wsimport</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Package Compiled Classes -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <includes>
+                        <include>**/*.class</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

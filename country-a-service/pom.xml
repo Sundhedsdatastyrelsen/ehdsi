@@ -1,25 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0</version>
-		<relativePath/>
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.0</version>
+        <relativePath/>
+    </parent>
 
-	<name>NCPeH DK integration service</name>
-	<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-	<artifactId>epps-root</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    <name>NCPeH DK integration service</name>
+    <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+    <artifactId>epps-root</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<description>NCPeH DK integration service</description>
+    <description>NCPeH DK integration service</description>
 
-	<modules>
-		<module>epps-api</module>
-		<module>epps-service</module>
-		<module>epps-application</module>
+    <modules>
+        <module>epps-api</module>
+        <module>epps-service</module>
+        <module>epps-application</module>
         <module>cda-generator</module>
         <module>nsp-client</module>
         <module>integration-tests</module>
@@ -27,12 +28,12 @@
         <module>testing-tools</module>
     </modules>
 
-	<properties>
-		<!-- Project configuration properties -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<targetJdk>21</targetJdk>
-		<java.version>21</java.version>
+    <properties>
+        <!-- Project configuration properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <targetJdk>21</targetJdk>
+        <java.version>21</java.version>
 
         <!-- We default to skipping the integration tests.  They should only be run explicitly. -->
         <!-- To run the tests anyway: mvn verify -DskipITs=false -->
@@ -40,68 +41,73 @@
         <skipUTs>false</skipUTs>
         <sonar.organization>sundhedsdatastyrelsen</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-	</properties>
+    </properties>
 
-	<!-- Dependencies that all projects get -->
-	<dependencies>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-junit-jupiter</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <!-- Dependencies that all projects get -->
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-				<artifactId>epps-fmk-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-fmk-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-ddv-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>testing-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			<dependency>
-				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-				<artifactId>epps-ncp-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-				<artifactId>epps-cpr-api</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-				<artifactId>epps-service</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-				<artifactId>epps-fmk-mock-data</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-				<artifactId>epps-cpr-mock-data</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-ncp-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-cpr-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-fmk-mock-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>epps-cpr-mock-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>cda-generator</artifactId>
@@ -117,11 +123,11 @@
                 <artifactId>integration-tests</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			<dependency>
-				<groupId>org.openapitools</groupId>
-				<artifactId>jackson-databind-nullable</artifactId>
-				<version>0.2.6</version>
-			</dependency>
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>0.2.6</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
@@ -129,17 +135,17 @@
                 <version>4.0.3</version>
             </dependency>
 
-			<dependency>
-				<groupId>dk.sosi.seal</groupId>
-				<artifactId>seal</artifactId>
-				<version>2.6.25</version>
+            <dependency>
+                <groupId>dk.sosi.seal</groupId>
+                <artifactId>seal</artifactId>
+                <version>2.6.25</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
                 </exclusions>
-			</dependency>
+            </dependency>
 
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -152,101 +158,101 @@
                 <version>3.47.0.0</version>
             </dependency>
 
-			<!-- Solve convergence errors -->
-			<dependency>
-				<groupId>org.aspectj</groupId>
-				<artifactId>aspectjweaver</artifactId>
-				<version>1.9.20.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.checkerframework</groupId>
-				<artifactId>checker-qual</artifactId>
-				<version>3.37.0</version>
-			</dependency>
-			<dependency><!-- seal -->
-				<groupId>org.apache.santuario</groupId>
-				<artifactId>xmlsec</artifactId>
-				<version>1.4.8</version>
-			</dependency>
-			<dependency><!-- seal -->
-				<groupId>xml-apis</groupId>
-				<artifactId>xml-apis</artifactId>
-				<version>1.4.01</version>
-			</dependency>
-			<!-- Solve convergence errors -->
-		</dependencies>
-	</dependencyManagement>
+            <!-- Solve convergence errors -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.9.20.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>3.37.0</version>
+            </dependency>
+            <dependency><!-- seal -->
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>1.4.8</version>
+            </dependency>
+            <dependency><!-- seal -->
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.4.01</version>
+            </dependency>
+            <!-- Solve convergence errors -->
+        </dependencies>
+    </dependencyManagement>
 
-	<repositories>
-		<repository>
-			<id>central</id>
-			<url>https://repo1.maven.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
 
-		<repository>
-			<id>nspop-nexus</id>
-			<url>https://nexus.nspop.dk/nexus/repository/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
+        <repository>
+            <id>nspop-nexus</id>
+            <url>https://nexus.nspop.dk/nexus/repository/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<!-- Delete those annoying .attach_pid files that intellij insists on creating -->
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.2.0</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>.</directory>
-							<includes>
-								<include>.attach_pid*</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-			</plugin>
-		</plugins>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <!-- Delete those annoying .attach_pid files that intellij insists on creating -->
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>.attach_pid*</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+            </plugin>
+        </plugins>
 
-		<pluginManagement>
-			<plugins>
+        <pluginManagement>
+            <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -263,125 +269,125 @@
                         <skipITs>${skipITs}</skipITs>
                     </configuration>
                 </plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-					<executions>
-						<execution>
-							<goals>
-								<goal>repackage</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.12</version>
-					<executions>
-						<execution>
-							<id>jacoco-initialize</id>
-							<goals>
-								<goal>prepare-agent</goal>
-								<!-- <goal>check</goal> -->
-							</goals>
-							<!--
-							<configuration>
-								<rules>
-									<rule>
-										<element>CLASS</element>
-										<excludes>
-											<exclude>*Test</exclude>
-											<exclude>*Configuration</exclude>
-											<exclude>*Application</exclude>
-										</excludes>
-										<limits>
-											<limit>
-												<counter>LINE</counter>
-												<value>COVEREDRATIO</value>
-												<minimum>80%</minimum>
-											</limit>
-										</limits>
-									</rule>
-								</rules>
-							</configuration>
-							-->
-						</execution>
-						<execution>
-							<id>report</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.3.0</version>
-					<executions>
-						<execution>
-							<id>enforce</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<configuration>
-								<rules>
-									<banDuplicatePomDependencyVersions/>
-									<dependencyConvergence/>
-									<reactorModuleConvergence />
-									<requireReleaseDeps>
-										<failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
-										<excludes>
-											<exclude>dk.sundhedsdatastyrelsen.ncpeh:*</exclude>
-										</excludes>
-									</requireReleaseDeps>
-									<requireUpperBoundDeps />
-								</rules>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.owasp</groupId>
-					<artifactId>dependency-check-maven</artifactId>
-					<version>8.2.1</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.openapitools</groupId>
-					<artifactId>openapi-generator-maven-plugin</artifactId>
-					<version>6.5.0</version>
-				</plugin>
-				<plugin>
-					<groupId>com.sun.xml.ws</groupId>
-					<artifactId>jaxws-maven-plugin</artifactId>
-					<version>4.0.2</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.12</version>
+                    <executions>
+                        <execution>
+                            <id>jacoco-initialize</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                                <!-- <goal>check</goal> -->
+                            </goals>
+                            <!--
+                            <configuration>
+                                <rules>
+                                    <rule>
+                                        <element>CLASS</element>
+                                        <excludes>
+                                            <exclude>*Test</exclude>
+                                            <exclude>*Configuration</exclude>
+                                            <exclude>*Application</exclude>
+                                        </excludes>
+                                        <limits>
+                                            <limit>
+                                                <counter>LINE</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>80%</minimum>
+                                            </limit>
+                                        </limits>
+                                    </rule>
+                                </rules>
+                            </configuration>
+                            -->
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>enforce</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <banDuplicatePomDependencyVersions/>
+                                    <dependencyConvergence/>
+                                    <reactorModuleConvergence/>
+                                    <requireReleaseDeps>
+                                        <failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
+                                        <excludes>
+                                            <exclude>dk.sundhedsdatastyrelsen.ncpeh:*</exclude>
+                                        </excludes>
+                                    </requireReleaseDeps>
+                                    <requireUpperBoundDeps/>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>8.2.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>6.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>4.0.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
