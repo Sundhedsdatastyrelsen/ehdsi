@@ -17,12 +17,7 @@ https://smp-ehealth-trn.acc.edelivery.tech.ec.europa.eu/ui
 ## Debugging SSL issues
 Extract the certificate from the keystore, along with the private key, and use the following command to verify the certificate.
 ```
-openssl s_client \
-  -connect yourserver.example.com:443 \
-  -cert client.crt \
-  -key client.key \
-  -CAfile trusted-ca-chain.pem \
-  -showcerts
+openssl s_client   -connect smp-ehealth-trn-cert-auth.acc.edelivery.tech.ec.europa.eu:443   -cert tomcat.cer   -key tomcat.privkey.pem   -CAfile smpserver.cer   -showcerts
 ```
 The CA file can just be downloaded from the SMP site, by trying to access the endpoint URI, with the command
 ```
