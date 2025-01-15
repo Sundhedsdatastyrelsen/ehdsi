@@ -12,3 +12,19 @@ Once the TLS certificate has been activated, we can start generating and uploadi
 ## Training environment
 
 https://smp-ehealth-trn.acc.edelivery.tech.ec.europa.eu/ui
+
+
+## Debugging SSL issues
+Extract the certificate from the keystore, along with the private key, and use the following command to verify the certificate.
+```
+openssl s_client \
+  -connect yourserver.example.com:443 \
+  -cert client.crt \
+  -key client.key \
+  -CAfile trusted-ca-chain.pem \
+  -showcerts
+```
+The CA file can just be downloaded from the SMP site, by trying to access the endpoint URI, with the command
+```
+
+```
