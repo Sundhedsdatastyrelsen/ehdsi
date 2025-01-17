@@ -23,17 +23,22 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>${project.build.directory}/generated-sources/wsimport</directory>
-                <includes>
-                    <include>**/*.java</include>
-                </includes>
-            </resource>
-        </resources>
+        <!-- The code generation for DDV is a complicated affair.
 
+        To avoid conflicts with the classes generated for FMK (some have similar names but different content, and in one
+        case different casing (WhitelistingHeader / WhiteListingHeader) we will perform a package renaming before
+        compiling the generated code.
+
+        For the renaming we use rewrite-maven-plugin.  Unfortunately, it explicitly does not support transforming generated code,
+        so we have to make a workaround where we place the generated code outside the target-folder (src/main/generated).
+        https://github.com/openrewrite/rewrite-maven-plugin/blob/d950f9609c5200a4e837ebe508215bed89530618/src/main/java/org/openrewrite/maven/MavenMojoProjectParser.java#L423-L428
+
+        We use build-helper-maven-plugin to include src/main/generated as an additional sources root so that our generated
+        and transformed sources gets included in the compile phase.  Unfortunately, IntelliJ does not automatically
+        understand this and therefore src/main/generated has to be explicitly marked as a Generated Sources Root to be
+        included in indexing.
+        -->
         <plugins>
-            <!-- JAX-WS Code Generation -->
             <plugin>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
@@ -59,23 +64,32 @@
                     <wsdlUrls>
                         <wsdlUrl>./src/main/resources/wsdl/vaccinationsServiceIDWS_2013-12-01-E1.wsdl</wsdlUrl>
                     </wsdlUrls>
-                    <sourceDestDir>${project.build.directory}/generated-sources/wsimport</sourceDestDir>
+                    <sourceDestDir>${project.basedir}/src/main/generated</sourceDestDir>
                     <extension>true</extension>
+                    <!-- Postpone compilation of the generated code so we can transform it first -->
                     <xnocompile>true</xnocompile>
                 </configuration>
             </plugin>
 
-            <!-- =========================
-                 Remove the Antrun plugin
-                 =========================
-                 <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-antrun-plugin</artifactId>
-                     ...
-                 </plugin>
-            -->
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.47.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>runNoFork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
+                    </activeRecipes>
+                </configuration>
+            </plugin>
 
-            <!-- Add Generated Sources -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -89,61 +103,35 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/wsimport</source>
+                                <source>${project.basedir}/src/main/generated</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Package Compiled Classes -->
+            <!-- Our non-standard generated sources root does not get cleaned automatically, therefore we add it
+             to the clean plugin's filesets. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
-                    <includes>
-                        <include>**/*.class</include>
-                    </includes>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/generated</directory>
+                            <followSymlinks>false</followSymlinks>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
-
-            <!-- OpenRewrite for renaming packages in generated sources -->
-            <plugin>
-                <groupId>org.openrewrite.maven</groupId>
-                <artifactId>rewrite-maven-plugin</artifactId>
-                <version>5.47.3</version>
-                <executions>
-                    <execution>
-                        <id>rewrite-run</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Reference the recipe by its 'name' from the YAML -->
-                            <activeRecipes>
-                                <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
-                            </activeRecipes>
-
-                            <!-- Point OpenRewrite to your generated-sources folder -->
-                            <sourceDirectories>
-                                <sourceDirectory>${project.build.directory}/generated-sources/wsimport</sourceDirectory>
-                            </sourceDirectories>
-
-                            <!-- Make sure the plugin knows where to find the YAML file (if not on the classpath) -->
-                            <!-- For instance, you might do: -->
-                            <!--
-                            <rewriteRecipeArtifactCoordinates>
-                                <rewriteRecipeArtifactCoordinate>com.yourorg:your-recipes:1.0.0</rewriteRecipeArtifactCoordinate>
-                            </rewriteRecipeArtifactCoordinates>
-                            -->
-
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 </project>

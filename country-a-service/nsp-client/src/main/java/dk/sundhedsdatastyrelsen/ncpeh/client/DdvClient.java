@@ -1,25 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.ConsentHeaderType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreateDrugMedicationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.test.idp.model.Identity;
-import dk.sdsd.ddvdgws._2012._06.WhitelistingHeader;
-import dk.sdsd.ddvdgws._2010._08.PredefinedRequestedRole;
+import dk.sdsd.ddv.dgws._2010._08.NameFormat;
+import dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole;
+import dk.sdsd.ddv.dgws._2012._06.WhiteListingHeader;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
@@ -30,10 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 
 @Component
 public class DdvClient {
@@ -53,8 +35,8 @@ public class DdvClient {
         );
     }
 
-    private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
-        final var header = WhitelistingHeader.builder()
+    private JAXBElement<WhiteListingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
+        final var header = WhiteListingHeader.builder()
             .withSystemName("ePPS PoC")
             .withSystemOwnerName("Sundhedsdatastyrelsen")
             .withSystemVersion("0.1.0")
@@ -66,7 +48,7 @@ public class DdvClient {
             .withRequestedRole(requestedRole.value())
             .build();
 
-        return new ObjectFactory().createWhitelistingHeader(header);
+        return new dk.sdsd.ddv.dgws._2012._06.ObjectFactory().createWhiteListingHeader(header);
     }
 
     /**********************
