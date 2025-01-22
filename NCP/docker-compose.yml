@@ -61,10 +61,6 @@ services:
       - db_username
       - db_password
       - db_root_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   # Usage: docker compose run tsam-exporter
   # Run this to generate language files for the CDA display tool.
@@ -99,6 +95,8 @@ services:
     build:
       target: "tsam-synchronizer"
     env_file: .env
+    volumes:
+      - ./tsam-synchronizer/application.yml:/usr/local/openncp-tsam-sync/application.yml
     networks:
       - ncp
     secrets:
@@ -106,10 +104,6 @@ services:
       - db_password
       - cts_username
       - cts_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   tomcat_node_a:
     build:
