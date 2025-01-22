@@ -402,11 +402,11 @@ public class DispensationMapper {
         try {
             var node = evalNode(cda, XPaths.manufacturedMaterialCode);
             var codeSystem = xpath.evaluate("@codeSystem", node);
-            if (!Oid.DK_LMS02.value.equals(codeSystem)) {
+            if (!Oid.DK_VARENUMRE.value.equals(codeSystem)) {
                 // throw?
                 log.warn(
                     "Expected LMS02 ({}) code system, for {}. Got: {}",
-                    Oid.DK_LMS02.value,
+                    Oid.DK_VARENUMRE.value,
                     XPaths.manufacturedMaterialCode,
                     codeSystem
                 );

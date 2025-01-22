@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
@@ -13,7 +14,7 @@ public class EPrescriptionMapperTest {
         var response = FmkResponseStorage.storedPrescriptions(Fmk.cprKarl);
         var documentId = EPrescriptionDocumentIdMapper.level3DocumentId(String.valueOf(response.getPrescription().getFirst().getIdentifier()));
         var prescriptionFilter = new PrescriptionFilter(documentId,null,null);
-        var result = EPrescriptionMapper.mapResponse(Fmk.cprKarl+"^^^&2.16.17.710.802.1000.990.1.500&ISO", prescriptionFilter, response,null);
+        var result = EPrescriptionMapper.mapResponse(String.format("%s^^^&%s&ISO", Fmk.cprKarl, Oid.DK_CPR), prescriptionFilter, response,null);
         Assertions.assertEquals(1, result.size());
     }
 }
