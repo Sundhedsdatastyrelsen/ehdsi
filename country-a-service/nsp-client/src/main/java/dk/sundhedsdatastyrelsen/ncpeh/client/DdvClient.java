@@ -1,11 +1,15 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.ddv.dgws._2010._08.NameFormat;
 import dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.ddv.dgws._2012._06.WhiteListingHeader;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
+import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
+import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -24,6 +28,9 @@ public class DdvClient {
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
 
+    private static final dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory requestFactory =
+        new dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory();
+
     public DdvClient(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fmkEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance( //TODO UPDATE
@@ -31,9 +38,27 @@ public class DdvClient {
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e5"
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
-                + ":dk.sdsd.dgws.ddv._2012._06"
+                + ":dk.vaccinationsregister.schemas._2013._12._01"
+                + ":dk.sdsd.ddv.dgws._2012._06"
         );
     }
+
+    /**
+     * "GetVaccinationCard".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:ddv:1.4.0:getvaccinationcard">DDV documentation.</a>
+     */
+    public GetVaccinationCardResponseType getVaccinationCard(GetVaccinationCardRequestType request, Identity caller) throws JAXBException {
+        return makeFmkRequest(
+            requestFactory.createGetVaccinationCardRequest(request),
+            "http://vaccinationsregister.dk/schemas/2013/12/01#GetVaccinationCardIDWS",
+            GetVaccinationCardResponseType.class,
+            caller
+        );
+    }
+
+    /**********************
+     * Private
+     ***********************/
 
     private JAXBElement<WhiteListingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
         final var header = WhiteListingHeader.builder()
@@ -51,18 +76,13 @@ public class DdvClient {
         return new dk.sdsd.ddv.dgws._2012._06.ObjectFactory().createWhiteListingHeader(header);
     }
 
-    /**********************
-     * Private
-     ***********************/
-
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
-        Identity caller,
-        Boolean requiresMedicineCardConsent
+        Identity caller
     ) throws JAXBException {
-        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.FARMACEUT, requiresMedicineCardConsent);
+        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.FARMACEUT);
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
@@ -70,8 +90,7 @@ public class DdvClient {
         String soapAction,
         Class<ResponseType> clazz,
         Identity caller,
-        PredefinedRequestedRole requestedRole,
-        Boolean requiresMedicineCardConsent
+        PredefinedRequestedRole requestedRole
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
