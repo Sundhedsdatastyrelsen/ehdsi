@@ -50,7 +50,7 @@ public class DdvClient {
     public GetVaccinationCardResponseType getVaccinationCard(GetVaccinationCardRequestType request, Identity caller) throws JAXBException {
         return makeFmkRequest(
             requestFactory.createGetVaccinationCardRequest(request),
-            "http://vaccinationsregister.dk/schemas/2013/12/01#GetVaccinationCardIDWS",
+            "http://vaccinationsregister.dk/schemas/2013/12/01#GetVaccinationCard",
             GetVaccinationCardResponseType.class,
             caller
         );
@@ -62,9 +62,9 @@ public class DdvClient {
 
     private JAXBElement<WhiteListingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
         final var header = WhiteListingHeader.builder()
-            .withSystemName("ePPS PoC")
+            .withSystemName("Patient Summary")
             .withSystemOwnerName("Sundhedsdatastyrelsen")
-            .withSystemVersion("0.1.0")
+            .withSystemVersion("1.0")
             .withOrgResponsibleName("Sundhedsdatastyrelsen")
             .withOrgUsingName("Sundhedsdatastyrelsen")
             .withOrgUsingID()
@@ -82,7 +82,7 @@ public class DdvClient {
         Class<ResponseType> clazz,
         Identity caller
     ) throws JAXBException {
-        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.FARMACEUT);
+        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.LÆGE);
     }
 
     private <RequestType, ResponseType> ResponseType makeFmkRequest(

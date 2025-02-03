@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.VaccinationService;
@@ -18,7 +19,7 @@ public class DdvIT {
             .build();
 
         var vaccinationCards = Ddv.apiClient()
-            .getVaccinationCard(vaccinationRequest, TestIdentities.apotekerJeppeMoeller);
+            .getVaccinationCard(vaccinationRequest, EmployeeIdentities.lægeCharlesBabbage());
 
         var test = "test";
     }

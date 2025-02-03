@@ -62,7 +62,7 @@
                         <arg>-verbose</arg>
                     </args>
                     <wsdlUrls>
-                        <wsdlUrl>./src/main/resources/wsdl/vaccinationsServiceIDWS_2013-12-01-E1.wsdl</wsdlUrl>
+                        <wsdlUrl>./src/main/resources/wsdl/vaccinationsService_2013-12-01-E1.wsdl</wsdlUrl>
                     </wsdlUrls>
                     <sourceDestDir>${project.basedir}/src/main/generated</sourceDestDir>
                     <extension>true</extension>
