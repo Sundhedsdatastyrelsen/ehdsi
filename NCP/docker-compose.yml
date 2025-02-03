@@ -34,6 +34,7 @@ secrets:
 
 services:
   mysql:
+    profiles: ["dev"]
     container_name: openncp_db
     hostname: ${DB_HOST}
     image: mysql:9
@@ -61,10 +62,6 @@ services:
       - db_username
       - db_password
       - db_root_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   # Usage: docker compose run tsam-exporter
   # Run this to generate language files for the CDA display tool.
@@ -81,9 +78,6 @@ services:
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
       - tsam-exporter-data:/opt/openncp-configuration/EpsosRepository
-    depends_on:
-      mysql:
-        condition: service_healthy
     networks:
       - ncp
     secrets:
@@ -99,6 +93,8 @@ services:
     build:
       target: "tsam-synchronizer"
     env_file: .env
+    volumes:
+      - ./tsam-synchronizer/application.yml:/usr/local/openncp-tsam-sync/application.yml
     networks:
       - ncp
     secrets:
@@ -106,10 +102,6 @@ services:
       - db_password
       - cts_username
       - cts_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   tomcat_node_a:
     build:
@@ -124,9 +116,6 @@ services:
       - "${NCP_A_SERVER_CONNECTOR_PORT_EXTERNAL}:${NCP_A_SERVER_CONNECTOR_PORT}"
       - "${NCP_A_SERVER_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
       # - 5005:5005
-    depends_on:
-      mysql:
-        condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -147,10 +136,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 1.5G
 
   tomcat_node_b:
     build:
@@ -171,9 +156,6 @@ services:
       - ./evidence/validation:/opt/openncp-configuration/validation
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
       JAVA_OPTS: "
@@ -187,10 +169,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 1G
 
   openncp-openatna:
     container_name: openncp-openatna
@@ -210,9 +188,6 @@ services:
       - ./keystore:/opt/openncp-configuration/keystore
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
@@ -225,10 +200,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   openncp-trc-sts:
     container_name: openncp-trc-sts
@@ -246,9 +217,6 @@ services:
       - ./keystore:/opt/openncp-configuration/keystore
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
@@ -262,10 +230,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
@@ -283,9 +247,6 @@ services:
       - ./keystore:/opt/openncp-configuration/keystore
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
@@ -298,10 +259,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   openncp-web-manager:
     container_name: openncp-web-manager
@@ -322,9 +279,6 @@ services:
       - ./evidence/validation:/opt/openncp-configuration/validation
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: production
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
@@ -339,10 +293,6 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   configuration-synchronizer:
     build:
@@ -363,9 +313,6 @@ services:
       TLS_KEYSTORE_PASSWORD_FILE: /run/secrets/tls_keystore_password
       SEAL_KEYSTORE_PASSWORD_FILE: /run/secrets/seal_keystore_password
       TLS_TRUSTSTORE_PASSWORD_FILE: /run/secrets/tls_truststore_password
-    depends_on:
-      mysql:
-        condition: service_healthy
     networks:
       - ncp
     secrets:
@@ -374,10 +321,6 @@ services:
       - tls_keystore_password
       - seal_keystore_password
       - tls_truststore_password
-    deploy:
-      resources:
-        limits:
-          memory: 500M
 
   # Convenience tool for managing docker containers.
   # To enable: Add COMPOSE_PROFILES=portainer to .env
