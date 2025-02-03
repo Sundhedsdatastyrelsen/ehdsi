@@ -49,7 +49,7 @@ public class FmkResponseStorage {
     @NonNull
     private final FmkClient fmkClient;
 
-    private static final List<String> testCprs = List.of("1111111118", "0101010000", "0201909309");
+    private static final List<String> testCprs = List.of("1111111118", "0101010000", "0201909309", "1011649927");
 
     public static List<String> testCprs() {
         return testCprs;
