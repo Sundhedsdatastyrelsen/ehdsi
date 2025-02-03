@@ -9,18 +9,17 @@ import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
 public class DdvIT {
-    private static final VaccinationService VACCINATION_SERVICE = new VaccinationService(Fmk.apiClient());
+    private static final VaccinationService VACCINATION_SERVICE = new VaccinationService(Ddv.apiClient());
 
     @Test
     void getVaccinationTest() throws Exception {
-        var vaccinationRequest = GetVaccinationCardRequestType.builder()
-            .withPersonCivilRegistrationIdentifier("1111111118")
-            .build();
-
-        var vaccinationCards = Ddv.apiClient()
-            .getVaccinationCard(vaccinationRequest, EmployeeIdentities.lægeCharlesBabbage());
-
-        var test = "test";
+        var vaccinations = VACCINATION_SERVICE.GetVaccinationsForCpr("1111111118");
+        assertThat(vaccinations, is(not(empty())));
     }
 }

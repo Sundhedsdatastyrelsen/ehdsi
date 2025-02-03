@@ -1,7 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.ddv.dgws._2010._08.NameFormat;
 import dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole;
@@ -33,12 +31,8 @@ public class DdvClient {
 
     public DdvClient(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fmkEndpointUrl);
-        this.jaxbContext = JAXBContext.newInstance( //TODO UPDATE
-            "dk.dkma.medicinecard.xml_schema._2015._06._01"
-                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
-                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e5"
-                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
-                + ":dk.vaccinationsregister.schemas._2013._12._01"
+        this.jaxbContext = JAXBContext.newInstance(
+            ":dk.vaccinationsregister.schemas._2013._12._01"
                 + ":dk.sdsd.ddv.dgws._2012._06"
         );
     }
@@ -48,7 +42,7 @@ public class DdvClient {
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:ddv:1.4.0:getvaccinationcard">DDV documentation.</a>
      */
     public GetVaccinationCardResponseType getVaccinationCard(GetVaccinationCardRequestType request, Identity caller) throws JAXBException {
-        return makeFmkRequest(
+        return makeDdvRequest(
             requestFactory.createGetVaccinationCardRequest(request),
             "http://vaccinationsregister.dk/schemas/2013/12/01#GetVaccinationCard",
             GetVaccinationCardResponseType.class,
@@ -76,16 +70,16 @@ public class DdvClient {
         return new dk.sdsd.ddv.dgws._2012._06.ObjectFactory().createWhiteListingHeader(header);
     }
 
-    private <RequestType, ResponseType> ResponseType makeFmkRequest(
+    private <RequestType, ResponseType> ResponseType makeDdvRequest(
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
         Identity caller
     ) throws JAXBException {
-        return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.LÆGE);
+        return makeDdvRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.LÆGE);
     }
 
-    private <RequestType, ResponseType> ResponseType makeFmkRequest(
+    private <RequestType, ResponseType> ResponseType makeDdvRequest(
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
