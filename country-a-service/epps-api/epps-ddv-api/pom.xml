@@ -87,6 +87,9 @@
                     <activeRecipes>
                         <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
                     </activeRecipes>
+                    <configLocation>${maven.multiModuleProjectDirectory}/epps-api/epps-ddv-api/rewrite.yml
+                    </configLocation>
+                    <runPerSubmodule>true</runPerSubmodule>
                 </configuration>
             </plugin>
 
