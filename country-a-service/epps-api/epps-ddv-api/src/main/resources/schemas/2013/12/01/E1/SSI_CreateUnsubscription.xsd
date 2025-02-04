@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:vaccinationcard20131201e1="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_PersonVaccinationPlan.xsd"/>
+	<include schemaLocation="SSI_PlannedVaccinationStatus.xsd"/>
+
+	<element name="CreateUnsubscription" type="vaccinationcard20131201e1:CreateUnsubscriptionType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a creation of a vaccinationplan unsubscription</documentation>
+			<documentation xml:lang="da-DK">Element for fravalg af vaccinationsforløb</documentation>
+		</annotation>
+	</element>
+
+	<complexType name="CreateUnsubscriptionType">
+		<sequence>
+			<element name="PersonVaccinationPlan" type="vaccinationcard20131201:PersonVaccinationPlanType"/>
+			<element name="Status" type="vaccinationcard20131201e1:PlannedVaccinationStatusType" />
+		</sequence>
+	</complexType>
+</schema>

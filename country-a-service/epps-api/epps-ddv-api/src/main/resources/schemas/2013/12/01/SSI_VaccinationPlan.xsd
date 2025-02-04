@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanName.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanAllocationMethod.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanSex.xsd"/>
+	<include schemaLocation="SSI_AgeIntervalFrom.xsd"/>
+	<include schemaLocation="SSI_AgeIntervalTo.xsd"/>
+	<include schemaLocation="SSI_VaccinationPlanItem.xsd"/>
+	<element name="VaccinationPlan" type="vaccinationcard:VaccinationPlanType">
+		<annotation>
+			<documentation xml:lang="en-GB">Sparsely populated specification of a vaccinationplan</documentation>
+			<documentation xml:lang="da-DK">Sparsom specifikation af et vaccinationsforløb (til visning og dataoverførsel)</documentation>
+		</annotation>
+	</element>
+	<complexType name="VaccinationPlanType">
+		<sequence>
+			<element name="VaccinationPlanIdentifier" type="vaccinationcard:VaccinationPlanIdentifierType" />
+			<element name="VaccinationPlanName" type="vaccinationcard:VaccinationPlanNameType" />
+			<element name="UsableFrom" type="dateTime" minOccurs = "0"/>
+			<element name="UsableTo" type="dateTime" minOccurs = "0"/>
+			<element name="VaccinationPlanAllocationMethod" type="vaccinationcard:VaccinationPlanAllocationMethodType" />
+			<element name="VaccinationPlanSex" type="vaccinationcard:VaccinationPlanSexType" minOccurs="0"/>
+			<element name="BirthCohorteFrom" type="dateTime" minOccurs = "0"/>
+			<element name="BirthCohorteTo" type="dateTime" minOccurs = "0"/>
+			<element name="AgeIntervalFrom" type="vaccinationcard:AgeIntervalFromType" minOccurs="0" />
+			<element name="AgeIntervalTo" type="vaccinationcard:AgeIntervalToType" minOccurs="0" />
+			<element name="VaccinationPlanItem" type="vaccinationcard:VaccinationPlanItemType" minOccurs="0" maxOccurs="999" />
+		</sequence>
+	</complexType>
+</schema>

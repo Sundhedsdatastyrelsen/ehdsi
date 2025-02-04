@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccinationPlanIdentifier.xsd"/>
+	<element name="PersonVaccinationPlan" type="vaccinationcard:PersonVaccinationPlanType">
+		<annotation>
+			<documentation xml:lang="en-GB">Defining a persons subscription to a vaccinationplan</documentation>
+			<documentation xml:lang="da-DK">Definerer en persons tilmelding til et vaccinationsforløb</documentation>
+		</annotation>
+	</element>
+	<complexType name="PersonVaccinationPlanType">
+		<sequence>
+			<element name="VaccinationPlanIdentifier" type="vaccinationcard:VaccinationPlanIdentifierType" minOccurs="1"/>
+		</sequence>
+	</complexType>
+</schema>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:vaccinationcard20131201e1="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+
+	<include schemaLocation="SSI_UnsubscriptionDeleted.xsd"/>
+
+	<element name="DeleteNotificationUnsubscriptionResponse" type="vaccinationcard20131201e1:DeleteNotificationUnsubscriptionResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Result of removing a notification unsubscription for a person</documentation>
+			<documentation xml:lang="da-DK">Resultat af anmodning om at fjerne markering af om en person ikke ønsker notifikationer</documentation>
+		</annotation>
+	</element>
+	
+	<complexType name="DeleteNotificationUnsubscriptionResponseType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+			<element name="RecipientPersonIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" minOccurs="0" />
+			<!-- This marker-element is included if an unsubscription was actually removed. If not the person never had one to begin with. -->
+			<element name="UnsubscriptionDeleted" type="vaccinationcard20131201e1:UnsubscriptionDeletedType" minOccurs="0" />
+		</sequence>
+	</complexType>
+</schema>

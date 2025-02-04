@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_PlannedVaccinationIdentifier.xsd"/>
+	<include schemaLocation="SSI_NegativeConsentIndicator.xsd"/>
+	<element name="UpdatePlannedVaccination" type="vaccinationcard:UpdatePlannedVaccinationType">
+		<annotation>
+			<documentation xml:lang="en-GB">Structure for information about updating a planned vaccination</documentation>
+			<documentation xml:lang="da-DK">Information til at opdatere en planlagt vaccination.</documentation>
+		</annotation>
+	</element>
+	<complexType name="UpdatePlannedVaccinationType">
+		<sequence>
+			<element name="PlannedVaccinationIdentifier" type="vaccinationcard:PlannedVaccinationIdentifierType"/>
+			<element name="PlannedVaccinationDateTime" type="dateTime"/>
+			<element name="NegativeConsentIndicator" type="vaccinationcard:NegativeConsentIndicatorType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>

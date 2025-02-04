@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_DrugFormCode.xsd"/>
+	<include schemaLocation="SSI_DrugFormText.xsd"/>
+	<element name="DrugForm" type="vaccinationcard:DrugFormType">
+		<annotation>
+			<documentation xml:lang="en-GB">Drug form, code and text</documentation>
+			<documentation xml:lang="da-DK">Lægemiddelform, kode og tekst</documentation>
+		</annotation>
+	</element>
+	<complexType name="DrugFormType">
+		<sequence>
+			<element name="DrugFormCode" type="vaccinationcard:DrugFormCodeType" minOccurs="0"/>
+			<element name="DrugFormText" type="vaccinationcard:DrugFormTextType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>

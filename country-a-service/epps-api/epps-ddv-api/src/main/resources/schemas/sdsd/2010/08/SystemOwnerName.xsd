@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd201008="http://www.sdsd.dk/dgws/2010/08" targetNamespace="http://www.sdsd.dk/dgws/2010/08" elementFormDefault="qualified">
+	<element name="SystemOwnerName" type="sdsd201008:SystemOwnerName">
+		<annotation>
+			<documentation xml:lang="da-DK">Det entydige navn på leverandøren af afsendersystemet. Udfaldsrummet dikteres via det Centrale Virksomheds Register</documentation>
+		</annotation>
+	</element>
+	<simpleType name="SystemOwnerName">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

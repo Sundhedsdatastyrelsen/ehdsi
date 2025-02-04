@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="AddressLine" type="vaccinationcard:AddressLineType">
+		<annotation>
+			<documentation xml:lang="en-GB">An address line</documentation>
+			<documentation xml:lang="da-DK">Ustruktureret adresselinje</documentation>
+		</annotation>
+	</element>
+	<simpleType name="AddressLineType">
+		<restriction base="string"/>
+	</simpleType>
+</schema>

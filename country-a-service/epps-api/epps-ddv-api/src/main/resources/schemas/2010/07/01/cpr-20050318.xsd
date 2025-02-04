@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xs:include schemaLocation="../../../cpr/CPR_StreetNameForAddressingName.xsd"/>
+	<xs:include schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd" />
+
+</xs:schema>

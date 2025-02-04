@@ -7,15 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="epps-service" />
-        <module name="integration-tests" />
-        <module name="epps-cpr-api" />
         <module name="testing-tools" />
+        <module name="epps-ddv-api" />
         <module name="nsp-client" />
+        <module name="epps-service" />
         <module name="epps-fmk-api" />
         <module name="epps-application" />
         <module name="cda-generator" />
+        <module name="integration-tests" />
         <module name="testing-shared" />
+        <module name="epps-cpr-api" />
         <module name="epps-ncp-api" />
       </profile>
     </annotationProcessing>
@@ -31,6 +32,7 @@
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
       <module name="epps-cpr-mock-data" options="-parameters" />
+      <module name="epps-ddv-api" options="-parameters" />
       <module name="epps-fmk-api" options="-parameters" />
       <module name="epps-fmk-mock" options="-parameters" />
       <module name="epps-fmk-mock-data" options="-parameters" />

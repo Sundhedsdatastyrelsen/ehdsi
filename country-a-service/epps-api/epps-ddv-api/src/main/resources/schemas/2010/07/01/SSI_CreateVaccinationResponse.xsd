@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_Vaccination.xsd"/>
+	<element name="CreateVaccinationResponse" type="vaccinationcard:CreateVaccinationResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Outer container element for a response with a vaccination</documentation>
+			<documentation xml:lang="da-DK">Ydre container-element for et svar med et vaccination</documentation>
+		</annotation>
+	</element>
+	<complexType name="CreateVaccinationResponseType">
+		<sequence>
+			<element name="Vaccination" type="vaccinationcard:VaccinationType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+</schema>

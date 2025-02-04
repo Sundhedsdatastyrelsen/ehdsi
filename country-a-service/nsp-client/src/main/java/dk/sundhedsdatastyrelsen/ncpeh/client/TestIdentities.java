@@ -12,6 +12,7 @@ import java.util.UUID;
 import static dk.nsp.test.idp.builder.Builders.*;
 
 public class TestIdentities {
+
     public static Identity apotekerJeppeMoeller = employeeIdentity()
         .representing(employee()
             .identifiedBy(UUID.fromString("00798849-effe-4733-bcc4-670093830511")))
@@ -61,9 +62,9 @@ public class TestIdentities {
             .build();
     public static OrganisationIdentifierType skanderborgApotek =
         OrganisationIdentifierType.builder()
-                                  .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
-                                  .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
-                                  .build();
+            .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+            .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk
+            .build();
 
 
 }

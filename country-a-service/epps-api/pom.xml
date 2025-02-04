@@ -1,24 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-		<artifactId>epps-root</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+        <artifactId>epps-root</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-	<name>NCPeH DK integration service - API Root</name>
-	<groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-	<artifactId>epps-api-root</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    <name>NCPeH DK integration service - API Root</name>
+    <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+    <artifactId>epps-api-root</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<description>NCPeH DK integration service - API Root</description>
+    <description>NCPeH DK integration service - API Root</description>
 
-	<modules>
-		<module>epps-ncp-api</module>
-		<module>epps-fmk-api</module>
-		<module>epps-cpr-api</module>
-	</modules>
+    <modules>
+        <module>epps-ncp-api</module>
+        <module>epps-fmk-api</module>
+        <module>epps-cpr-api</module>
+        <module>epps-ddv-api</module>
+    </modules>
 
 </project>

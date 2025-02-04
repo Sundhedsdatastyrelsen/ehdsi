@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="VaccinationPlanSex" type="vaccinationcard:VaccinationPlanSexType">
+		<annotation>
+			<documentation xml:lang="en-GB">Indicates what sex the vaccinationplan is intended. Can be "F", "M", "B"</documentation>
+			<documentation xml:lang="da-DK">Indikerer hvilket køn vaccinationsplanen er tiltænkt. Kan være "F", "M", "B"</documentation>
+		</annotation>
+	</element>
+	<simpleType name="VaccinationPlanSexType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="1"/>
+		</restriction>
+	</simpleType>
+</schema>

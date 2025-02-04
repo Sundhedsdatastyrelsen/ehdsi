@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:liberty:sb"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:liberty:sb"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <xs:complexType name="IDWSFaultType">
+        <xs:sequence>
+            <xs:element ref="faultcode" minOccurs="0" />
+            <xs:element ref="faultstring" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="IDWSFault" type="IDWSFaultType"/>
+
+    <xs:simpleType name="faultcode">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:element name="faultcode" type="faultcode" />
+
+    <xs:simpleType name="faultstring">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:element name="faultstring" type="faultstring" />
+</xs:schema>

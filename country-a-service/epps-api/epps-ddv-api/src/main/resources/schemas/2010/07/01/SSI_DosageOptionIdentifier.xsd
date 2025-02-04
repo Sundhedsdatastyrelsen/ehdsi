@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="DosageOptionIdentifier" type="vaccinationcard:DosageOptionIdentifierType">
+		<annotation>
+			<documentation xml:lang="en-GB">Unique identification of the dosage option (which can occur in multiple versions)</documentation>
+			<documentation xml:lang="da-DK">Unik identifikation af doseringsforslag (som kan forekomme i flere versioner)</documentation>
+		</annotation>
+	</element>
+	<simpleType name="DosageOptionIdentifierType">
+		<restriction base="long">
+			<minInclusive value="1"/>
+		</restriction>
+	</simpleType>
+</schema>

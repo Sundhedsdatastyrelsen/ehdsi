@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_AuditLog.xsd"/>
+	<element name="GetAuditLogResponse" type="vaccinationcard:GetAuditLogResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Outer container element for a response with auditlogs</documentation>
+			<documentation xml:lang="da-DK">Ydre container-element for et svar med auditlogninger</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetAuditLogResponseType">
+		<sequence>
+			<element name="AuditLog" type="vaccinationcard:AuditLogType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="HasMorePages" type="boolean"/>
+			<element name="Page" type="int"/>
+			<element name="EndTimeStamp" type="dateTime"/>
+		</sequence>
+	</complexType>
+</schema>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="HospitalOrganisationIdentifier" type="vaccinationcard:HospitalOrganisationIdentifierType">
+		<annotation>
+			<documentation xml:lang="en-GB">Identification number of the organisation of the doctor giving a vaccination in case of a hospital number, section number etc</documentation>
+			<documentation xml:lang="da-DK">Identifikationsnummer for den vaccinerende læges organisation såfremt dette er et SKS sygehus nummer, afdelingsnummer m.m.</documentation>
+		</annotation>
+	</element>
+	<simpleType name="HospitalOrganisationIdentifierType">
+		<restriction base="string">
+			<minLength value="4"/>
+			<maxLength value="7"/>
+			<pattern value="\d{4}|\d{6}|\d{6}."/>
+		</restriction>
+	</simpleType>
+</schema>

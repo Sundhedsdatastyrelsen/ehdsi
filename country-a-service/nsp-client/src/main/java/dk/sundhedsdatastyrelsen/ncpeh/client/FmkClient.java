@@ -23,6 +23,7 @@ import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
+import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -63,12 +64,6 @@ public class FmkClient {
         );
     }
 
-    private <T> Element toElement(JAXBElement<T> jaxbElement) throws JAXBException {
-        DOMResult res = new DOMResult();
-        jaxbContext.createMarshaller().marshal(jaxbElement, res);
-        return ((Document) res.getNode()).getDocumentElement();
-    }
-
     private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
         final var header = WhitelistingHeader.builder()
             .withSystemName("ePPS PoC")
@@ -86,13 +81,18 @@ public class FmkClient {
     }
 
     private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {
-        final var consentHeader = ConsentHeaderType.builder().addConsent().withSource("User").withConsentType("MedicineReviewConsent").withContent("MedicineCard").end().build();
+        final var consentHeader = ConsentHeaderType.builder()
+            .addConsent()
+            .withSource("User")
+            .withConsentType("MedicineReviewConsent")
+            .withContent("MedicineCard")
+            .end()
+            .build();
 
         var objectFactory = new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
         return objectFactory.createConsentHeader(consentHeader);
     }
-
 
     /**
      * "Påbegynd ekspedition".
@@ -235,6 +235,10 @@ public class FmkClient {
         );
     }
 
+    /**********************
+     * Private
+     ***********************/
+
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
         JAXBElement<RequestType> request,
         String soapAction,
@@ -256,15 +260,15 @@ public class FmkClient {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
         Element[] extraHeaders;
-        if(requiresMedicineCardConsent){
-            extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole)), toElement(getMedicineReviewConsent())};
+        if (requiresMedicineCardConsent) {
+            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole)), ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
         } else {
-            extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole))};
+            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
         }
         try {
             reply = NspClient.request(
                 serviceUri,
-                toElement(request),
+                ClientUtils.toElement(jaxbContext, request),
                 soapAction,
                 caller,
                 extraHeaders

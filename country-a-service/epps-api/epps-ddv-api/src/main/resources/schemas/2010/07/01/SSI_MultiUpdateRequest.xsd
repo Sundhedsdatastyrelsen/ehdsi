@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_MultiUpdateIn.xsd"/>
+	<include schemaLocation="SSI_Organisation.xsd"/>
+	<include schemaLocation="SSI_Doctor.xsd"/>
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<element name="MultiUpdateRequest" type="vaccinationcard:MultiUpdateRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for multi update of a persons vaccinations</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter opdatering af en persons vaccinationer</documentation>
+		</annotation>
+	</element>
+	<complexType name="MultiUpdateRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+			<element name="Organisation" type="vaccinationcard:OrganisationType"/>
+			<element name="Doctor" type="vaccinationcard:DoctorType" minOccurs="0"/>
+			<element name="MultiUpdateIn" type="vaccinationcard:MultiUpdateInType" minOccurs="0" maxOccurs="20"/>
+		</sequence>
+	</complexType>
+</schema>

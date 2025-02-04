@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<element name="GetUnsubscriptionsRequest" type="vaccinationcard:GetUnsubscriptionsRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for a persons vaccinationplan-unsubscriptions </documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter en borgers fravalgte vaccinationsforløb</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetUnsubscriptionsRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType"/>
+		</sequence>
+	</complexType>
+</schema>

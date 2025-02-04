@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="ServiceCodeRemarkText" type="vaccinationcard:ServiceCodeRemarkTextType">
+		<annotation>
+			<documentation xml:lang="en-GB">Remark in relation to servicecodce</documentation>
+			<documentation xml:lang="da-DK">Bemærkning til registrering i sygesirkgisregisteret.</documentation>
+		</annotation>
+	</element>
+	<simpleType name="ServiceCodeRemarkTextType">
+		<restriction base="string">
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

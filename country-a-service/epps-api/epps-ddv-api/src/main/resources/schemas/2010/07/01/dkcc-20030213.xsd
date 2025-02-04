@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://rep.oio.dk/ebxml/xml/schemas/dkcc/2003/02/13/"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xs:include schemaLocation="../../../dkcc-20030213/DKCC_PersonGivenName.xsd"/>
+	<xs:include schemaLocation="../../../dkcc-20030213/DKCC_PersonMiddleName.xsd"/>
+	<xs:include schemaLocation="../../../dkcc-20030213/DKCC_PersonSurnameName.xsd"/>
+	<xs:include schemaLocation="../../../dkcc-20030213/DKCC_Collected.xsd"/>
+
+</xs:schema>

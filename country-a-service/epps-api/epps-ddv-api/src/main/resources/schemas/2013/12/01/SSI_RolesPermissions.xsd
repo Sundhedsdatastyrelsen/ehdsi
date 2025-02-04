@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+    xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_Permission.xsd"/>
+	<include schemaLocation="SSI_RequestedRole.xsd"/>
+	<element name="RolesPermissions" type="vaccinationcard:RolesPermissionsType">
+		<annotation>
+			<documentation xml:lang="en-GB">Permissions for a role</documentation>
+			<documentation xml:lang="da-DK">En rolles rettigheder</documentation>
+		</annotation>
+	</element>
+	<complexType name="RolesPermissionsType">
+		<sequence>
+			<element name="RequestedRole" type="vaccinationcard:RequestedRoleType"/>
+			<element name="Permission" type="vaccinationcard:PermissionType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+</schema>

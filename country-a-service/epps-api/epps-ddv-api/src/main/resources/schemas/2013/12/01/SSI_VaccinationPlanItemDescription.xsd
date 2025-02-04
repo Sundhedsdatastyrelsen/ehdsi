@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="VaccinationPlanItemDescription" type="vaccinationcard:VaccinationPlanItemDescriptionType">
+		<annotation>
+			<documentation xml:lang="en-GB">vaccinationplanItem time-description </documentation>
+			<documentation xml:lang="da-DK">vaccinationsforløbselement tidspunkt-beskrivelse</documentation>
+		</annotation>
+	</element>
+	<simpleType name="VaccinationPlanItemDescriptionType">
+		<restriction base="string">
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

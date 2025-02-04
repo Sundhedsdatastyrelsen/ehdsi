@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_AuthorisedHealthcareProfessional.xsd"/>
+	<include schemaLocation="SSI_Organisation.xsd"/>
+	<include schemaLocation="SSI_PatientFlag.xsd"/>
+	<include schemaLocation="SSI_RequestedRole.xsd"/>
+	<include schemaLocation="SSI_ModificatorPerson.xsd"/>
+    <include schemaLocation="SSI_PartlyDefinedEffectuator.xsd"/>
+    <include schemaLocation="SSI_HealthInsuranceImportFlag.xsd"/>
+    <include schemaLocation="SSI_SystemUpdateFlag.xsd"/>
+    <include schemaLocation="SSI_SystemName.xsd"/>
+	<!--	<element name="Modificator" type="medicinecard20120601:ModificatorType">
+		<annotation>
+			<documentation xml:lang="en-GB">Information about a person who modified data</documentation>
+			<documentation xml:lang="da-DK">Indeholder information omkring en person der ændrede data</documentation>
+		</annotation>
+	</element> -->
+	<complexType name="ModificatorType">
+		<sequence>
+			<choice>
+				<sequence>
+					<element name="AuthorisedHealthcareProfessional" type="vaccinationcard:AuthorisedHealthcareProfessionalType"/>
+					<element name="Organisation" type="vaccinationcard:OrganisationType"/>
+                    <element name="AuthorisedBy" type="vaccinationcard:AuthorisedModificatorType" minOccurs="0"/>
+				</sequence>
+				<element name="Patient" type="vaccinationcard:PatientFlagType"/>
+				<sequence>
+					<element name="Other" type="vaccinationcard:ModificatorPersonType"/>
+					<element name="Role" type="vaccinationcard:RequestedRoleType"/>
+					<element name="Organisation" type="vaccinationcard:OrganisationType" minOccurs="0"/>
+                    <element name="AuthorisedBy" type="vaccinationcard:AuthorisedModificatorType" minOccurs="0"/>
+				</sequence>
+                <element name="PartlyDefinedEffectuator" type="vaccinationcard:PartlyDefinedEffectuatorType"/>
+                <sequence>
+                    <element name="HealthInsuranceImport" type="vaccinationcard:HealthInsuranceImportFlagType"/>
+                    <element name="Organisation" type="vaccinationcard:OrganisationType" minOccurs="0"/>
+                </sequence>
+                <sequence>
+                    <element name="SystemUpdate" type="vaccinationcard:SystemUpdateFlagType"/>
+                    <element name="SystemName" type="vaccinationcard:SystemNameType"/>
+                </sequence>
+			</choice>
+		</sequence>
+	</complexType>
+
+    <complexType name="AuthorisedModificatorType">
+        <sequence>
+            <choice>
+                <sequence>
+                    <element name="AuthorisedHealthcareProfessional" type="vaccinationcard:AuthorisedHealthcareProfessionalType"/>
+                    <element name="Organisation" type="vaccinationcard:OrganisationType"/>
+                </sequence>
+                <sequence>
+                    <element name="Other" type="vaccinationcard:ModificatorPersonType"/>
+                    <element name="Organisation" type="vaccinationcard:OrganisationType" minOccurs="0"/>
+                </sequence>
+            </choice>
+        </sequence>
+    </complexType>
+</schema>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://rep.oio.dk/itst.dk/xml/schemas/2005/01/10/" xmlns:itst="http://rep.oio.dk/itst.dk/xml/schemas/2005/01/10/" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<element name="TelephoneNumberIdentifier" type="itst:TelephoneNumberIdentifierType">
+		<annotation>
+			<documentation xml:lang="da">Telefonnummer inkl. internationalt prefix</documentation>
+		</annotation>
+	</element>
+	<simpleType name="TelephoneNumberIdentifierType">
+		<restriction base="string">
+			<pattern value="(\+)?[0-9]{3,20}"/>
+		</restriction>
+	</simpleType>
+</schema>

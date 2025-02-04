@@ -1,0 +1,678 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://vaccinationsregister.dk/schemas/2010/07/01"
+                  xmlns:medcom="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd"
+                  xmlns:sdsd201206="http://www.sdsd.dk/dgws/2012/06"
+                  xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+                  targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01">
+    <wsdl:types>
+		<xs:schema targetNamespace="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd">
+			<xs:include schemaLocation="../schemas/2010/07/01/medcom.xsd" />
+		</xs:schema>
+		
+		<xs:schema targetNamespace="http://www.sdsd.dk/dgws/2012/06">
+			<xs:include schemaLocation="../schemas/sdsd/2012/06/WhitelistingHeader.xsd" />
+		</xs:schema>
+
+		<xs:schema targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01"  elementFormDefault="qualified">
+			<xs:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" 
+				schemaLocation="../schemas/2010/07/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"/>
+            <xs:import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../schemas/cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+		
+			<xs:include schemaLocation="../schemas/2010/07/01/SSI_OnBehalfOf.xsd"/>
+
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_TimingList.xsd"/>
+
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationCardRequest.xsd"/>
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationCardResponse.xsd"/>
+
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationCardIfUpdatedRequest.xsd"/>
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationCardIfUpdatedResponse.xsd"/>
+
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationHistoryRequest.xsd"/>
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationHistoryResponse.xsd"/>
+
+            <xs:include schemaLocation="../schemas/2010/07/01/SSI_DeleteVaccinationRequest.xsd"/>
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeleteVaccinationResponse.xsd"/>
+            	
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreateVaccinationRequest.xsd"/>
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreateVaccinationResponse.xsd"/>
+
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreatePreviousVaccinationRequest.xsd"/>
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreatePreviousVaccinationResponse.xsd"/>
+
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_UpdateVaccinationRequest.xsd"/>
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_UpdateVaccinationResponse.xsd"/>
+
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeleteSubscriptionRequest.xsd"/>
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeleteSubscriptionResponse.xsd"/>
+
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreateUnsubscriptionRequest.xsd"/>
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreateUnsubscriptionResponse.xsd"/>
+           	
+        	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeleteUnsubscriptionRequest.xsd"/>
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeleteUnsubscriptionResponse.xsd"/>
+            	
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeletePlannedVaccinationRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_DeletePlannedVaccinationResponse.xsd"/> 
+            	                	
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_GetUnsubscriptionsRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_GetUnsubscriptionsResponse.xsd"/> 
+            	                	
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_GetPlannedVaccinationsRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_GetPlannedVaccinationsResponse.xsd"/> 
+            	                	
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_UpdatePlannedVaccinationRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_UpdatePlannedVaccinationResponse.xsd"/> 
+
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_EffectuatePlannedVaccinationRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_EffectuatePlannedVaccinationResponse.xsd"/> 
+
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreateSinglePlannedVaccinationRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_CreateSinglePlannedVaccinationResponse.xsd"/> 
+
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_SubscribeAndCreatePlannedVaccinationsRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_SubscribeAndCreatePlannedVaccinationsResponse.xsd"/> 
+ 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationCardAsPDFRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_GetVaccinationCardAsPDFResponse.xsd"/> 
+ 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_MultiUpdateRequest.xsd"/> 
+           	<xs:include schemaLocation="../schemas/2010/07/01/SSI_MultiUpdateResponse.xsd"/> 
+ 
+         </xs:schema>
+    </wsdl:types>
+    
+	<wsdl:message name="SecurityHeader">
+		<wsdl:part name="SecurityHeader" element="wsse:Security"/>
+	</wsdl:message>
+
+	<wsdl:message name="MedComHeader">
+		<wsdl:part name="MedcomHeader" element="medcom:Header"/>
+	</wsdl:message> 
+
+    <wsdl:message name="WhitelistingHeader">
+        <wsdl:part name="WhitelistingHeader" element="sdsd201206:WhiteListingHeader"/>
+    </wsdl:message>
+
+	<wsdl:message name="TimingHeader">
+		<wsdl:part name="TimingHeader" element="tns:TimingList"/>
+	</wsdl:message> 
+    
+    <wsdl:message name="OnBehalfOfHeader">
+        <wsdl:part element="tns:OnBehalfOf" name="OnBehalfOfHeader"/>
+    </wsdl:message> 
+    
+    <wsdl:message name="GetVaccinationCardRequestMessage">
+        <wsdl:part element="tns:GetVaccinationCardRequest" name="GetVaccinationCardRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="GetVaccinationCardResponseMessage">
+        <wsdl:part element="tns:GetVaccinationCardResponse" name="GetVaccinationCardResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetVaccinationCardIfUpdatedRequestMessage">
+        <wsdl:part element="tns:GetVaccinationCardIfUpdatedRequest" name="GetVaccinationCardIfUpdatedRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="GetVaccinationCardIfUpdatedResponseMessage">
+        <wsdl:part element="tns:GetVaccinationCardResponse" name="GetVaccinationCardResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetVaccinationHistoryRequestMessage">
+        <wsdl:part element="tns:GetVaccinationHistoryRequest" name="GetVaccinationHistoryRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="GetVaccinationHistoryResponseMessage">
+        <wsdl:part element="tns:GetVaccinationHistoryResponse" name="GetVaccinationHistoryResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="DeleteVaccinationRequestMessage">
+        <wsdl:part element="tns:DeleteVaccinationRequest" name="DeleteVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="DeleteVaccinationResponseMessage">
+        <wsdl:part element="tns:DeleteVaccinationResponse" name="DeleteVaccinationResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="CreateVaccinationRequestMessage">
+        <wsdl:part element="tns:CreateVaccinationRequest" name="CreateVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="CreateVaccinationResponseMessage">
+        <wsdl:part element="tns:CreateVaccinationResponse" name="CreateVaccinationResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="CreatePreviousVaccinationRequestMessage">
+        <wsdl:part element="tns:CreatePreviousVaccinationRequest" name="CreatePreviousVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="CreatePreviousVaccinationResponseMessage">
+        <wsdl:part element="tns:CreatePreviousVaccinationResponse" name="CreatePreviousVaccinationResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="UpdateVaccinationRequestMessage">
+        <wsdl:part element="tns:UpdateVaccinationRequest" name="UpdateVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateVaccinationResponseMessage">
+        <wsdl:part element="tns:UpdateVaccinationResponse" name="UpdateVaccinationResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="DeleteSubscriptionRequestMessage">
+        <wsdl:part element="tns:DeleteSubscriptionRequest" name="DeleteSubscriptionRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="DeleteSubscriptionResponseMessage">
+        <wsdl:part element="tns:DeleteSubscriptionResponse" name="DeleteSubscriptionResponsePart"/>
+    </wsdl:message>
+
+	<wsdl:message name="CreateUnsubscriptionRequestMessage">
+        <wsdl:part element="tns:CreateUnsubscriptionRequest" name="CreateUnsubscriptionRequestPart"/>
+    </wsdl:message>
+	<wsdl:message name="CreateUnsubscriptionResponseMessage">
+        <wsdl:part element="tns:CreateUnsubscriptionResponse" name="CreateUnsubscriptionResponsePart"/>
+    </wsdl:message>
+    
+	<wsdl:message name="DeleteUnsubscriptionRequestMessage">
+        <wsdl:part element="tns:DeleteUnsubscriptionRequest" name="DeleteUnsubscriptionRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="DeleteUnsubscriptionResponseMessage">
+        <wsdl:part element="tns:DeleteUnsubscriptionResponse" name="DeleteUnsubscriptionResponsePart"/>
+    </wsdl:message>
+   
+    <wsdl:message name="DeletePlannedVaccinationRequestMessage">
+        <wsdl:part element="tns:DeletePlannedVaccinationRequest" name="DeletePlannedVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="DeletePlannedVaccinationResponseMessage">
+        <wsdl:part element="tns:DeletePlannedVaccinationResponse" name="DeletePlannedVaccinationResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="GetUnsubscriptionsRequestMessage">
+        <wsdl:part element="tns:GetUnsubscriptionsRequest" name="GetUnsubscriptionsRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="GetUnsubscriptionsResponseMessage">
+        <wsdl:part element="tns:GetUnsubscriptionsResponse" name="GetUnsubscriptionsResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="GetPlannedVaccinationsRequestMessage">
+        <wsdl:part element="tns:GetPlannedVaccinationsRequest" name="GetPlannedVaccinationsRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="GetPlannedVaccinationsResponseMessage">
+        <wsdl:part element="tns:GetPlannedVaccinationsResponse" name="GetPlannedVaccinationsResponsePart"/>
+    </wsdl:message>
+    
+    <wsdl:message name="UpdatePlannedVaccinationRequestMessage">
+        <wsdl:part element="tns:UpdatePlannedVaccinationRequest" name="UpdatePlannedVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="UpdatePlannedVaccinationResponseMessage">
+        <wsdl:part element="tns:UpdatePlannedVaccinationResponse" name="UpdatePlannedVaccinationResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="EffectuatePlannedVaccinationRequestMessage">
+        <wsdl:part element="tns:EffectuatePlannedVaccinationRequest" name="EffectuatePlannedVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="EffectuatePlannedVaccinationResponseMessage">
+        <wsdl:part element="tns:EffectuatePlannedVaccinationResponse" name="EffectuatePlannedVaccinationResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="CreateSinglePlannedVaccinationRequestMessage">
+        <wsdl:part element="tns:CreateSinglePlannedVaccinationRequest" name="CreateSinglePlannedVaccinationRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="CreateSinglePlannedVaccinationResponseMessage">
+        <wsdl:part element="tns:CreateSinglePlannedVaccinationResponse" name="CreateSinglePlannedVaccinationResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="SubscribeAndCreatePlannedVaccinationsRequestMessage">
+        <wsdl:part element="tns:SubscribeAndCreatePlannedVaccinationsRequest" name="SubscribeAndCreatePlannedVaccinationsRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="SubscribeAndCreatePlannedVaccinationsResponseMessage">
+        <wsdl:part element="tns:SubscribeAndCreatePlannedVaccinationsResponse" name="SubscribeAndCreatePlannedVaccinationsResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetVaccinationCardAsPDFRequestMessage">
+        <wsdl:part element="tns:GetVaccinationCardAsPDFRequest" name="GetVaccinationCardAsPDFRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="GetVaccinationCardAsPDFResponseMessage">
+        <wsdl:part element="tns:GetVaccinationCardAsPDFResponse" name="GetVaccinationCardAsPDFResponsePart"/>
+    </wsdl:message>
+
+    <wsdl:message name="MultiUpdateRequestMessage">
+        <wsdl:part element="tns:MultiUpdateRequest" name="MultiUpdateRequestPart"/>
+    </wsdl:message>
+    <wsdl:message name="MultiUpdateResponseMessage">
+        <wsdl:part element="tns:MultiUpdateResponse" name="MultiUpdateResponsePart"/>
+    </wsdl:message>
+
+	<wsdl:message name="DGWSFault">
+		<wsdl:part name="fault" element="medcom:FaultCode" />
+	</wsdl:message>
+
+
+    <wsdl:portType name="VaccinationsPortType">
+        <wsdl:operation name="GetVaccinationCard">
+            <wsdl:input message="tns:GetVaccinationCardRequestMessage" name="GetVaccinationCardRequestInput"/>
+            <wsdl:output message="tns:GetVaccinationCardResponseMessage" name="GetVaccinationCardResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="GetVaccinationCardIfUpdated">
+            <wsdl:input message="tns:GetVaccinationCardIfUpdatedRequestMessage" name="GetVaccinationCardIfUpdatedRequestInput"/>
+            <wsdl:output message="tns:GetVaccinationCardIfUpdatedResponseMessage" name="GetVaccinationCardIfUpdatedResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="GetVaccinationHistory">
+            <wsdl:input message="tns:GetVaccinationHistoryRequestMessage" name="GetVaccinationHistoryRequestInput"/>
+            <wsdl:output message="tns:GetVaccinationHistoryResponseMessage" name="GetVaccinationHistoryResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+ 
+        <wsdl:operation name="DeleteVaccination">
+            <wsdl:input message="tns:DeleteVaccinationRequestMessage" name="DeleteVaccinationRequestInput"/>
+            <wsdl:output message="tns:DeleteVaccinationResponseMessage" name="DeleteVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreateVaccination">
+            <wsdl:input message="tns:CreateVaccinationRequestMessage" name="CreateVaccinationRequestInput"/>
+            <wsdl:output message="tns:CreateVaccinationResponseMessage" name="CreateVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+ 
+        <wsdl:operation name="CreatePreviousVaccination">
+            <wsdl:input message="tns:CreatePreviousVaccinationRequestMessage" name="CreatePreviousVaccinationRequestInput"/>
+            <wsdl:output message="tns:CreatePreviousVaccinationResponseMessage" name="CreatePreviousVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="UpdateVaccination">
+            <wsdl:input message="tns:UpdateVaccinationRequestMessage" name="UpdateVaccinationRequestInput"/>
+            <wsdl:output message="tns:UpdateVaccinationResponseMessage" name="UpdateVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="DeleteSubscription">
+            <wsdl:input message="tns:DeleteSubscriptionRequestMessage" name="DeleteSubscriptionRequestInput"/>
+            <wsdl:output message="tns:DeleteSubscriptionResponseMessage" name="DeleteSubscriptionResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreateUnsubscription">
+            <wsdl:input message="tns:CreateUnsubscriptionRequestMessage" name="CreateUnsubscriptionRequestInput"/>
+            <wsdl:output message="tns:CreateUnsubscriptionResponseMessage" name="CreateUnsubscriptionResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="DeleteUnsubscription">
+            <wsdl:input message="tns:DeleteUnsubscriptionRequestMessage" name="DeleteUnsubscriptionRequestInput"/>
+            <wsdl:output message="tns:DeleteUnsubscriptionResponseMessage" name="DeleteUnsubscriptionResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="DeletePlannedVaccination">
+            <wsdl:input message="tns:DeletePlannedVaccinationRequestMessage" name="DeletePlannedVaccinationRequestInput"/>
+            <wsdl:output message="tns:DeletePlannedVaccinationResponseMessage" name="DeletePlannedVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="GetUnsubscriptions">
+            <wsdl:input message="tns:GetUnsubscriptionsRequestMessage" name="GetUnsubscriptionsRequestInput"/>
+            <wsdl:output message="tns:GetUnsubscriptionsResponseMessage" name="GetUnsubscriptionsResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+ 
+        <wsdl:operation name="GetPlannedVaccinations">
+            <wsdl:input message="tns:GetPlannedVaccinationsRequestMessage" name="GetPlannedVaccinationsRequestInput"/>
+            <wsdl:output message="tns:GetPlannedVaccinationsResponseMessage" name="GetPlannedVaccinationsResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="UpdatePlannedVaccination">
+            <wsdl:input message="tns:UpdatePlannedVaccinationRequestMessage" name="UpdatePlannedVaccinationRequestInput"/>
+            <wsdl:output message="tns:UpdatePlannedVaccinationResponseMessage" name="UpdatePlannedVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="EffectuatePlannedVaccination">
+            <wsdl:input message="tns:EffectuatePlannedVaccinationRequestMessage" name="EffectuatePlannedVaccinationRequestInput"/>
+            <wsdl:output message="tns:EffectuatePlannedVaccinationResponseMessage" name="EffectuatePlannedVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreateSinglePlannedVaccination">
+            <wsdl:input message="tns:CreateSinglePlannedVaccinationRequestMessage" name="CreateSinglePlannedVaccinationRequestInput"/>
+            <wsdl:output message="tns:CreateSinglePlannedVaccinationResponseMessage" name="CreateSinglePlannedVaccinationResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="SubscribeAndCreatePlannedVaccinations">
+            <wsdl:input message="tns:SubscribeAndCreatePlannedVaccinationsRequestMessage" name="SubscribeAndCreatePlannedVaccinationsRequestInput"/>
+            <wsdl:output message="tns:SubscribeAndCreatePlannedVaccinationsResponseMessage" name="SubscribeAndCreatePlannedVaccinationsResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+ 
+        <wsdl:operation name="GetVaccinationCardAsPDF">
+            <wsdl:input message="tns:GetVaccinationCardAsPDFRequestMessage" name="GetVaccinationCardAsPDFRequestInput"/>
+            <wsdl:output message="tns:GetVaccinationCardAsPDFResponseMessage" name="GetVaccinationCardAsPDFResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+ 
+        <wsdl:operation name="MultiUpdate">
+            <wsdl:input message="tns:MultiUpdateRequestMessage" name="MultiUpdateRequestInput"/>
+            <wsdl:output message="tns:MultiUpdateResponseMessage" name="MultiUpdateResponseOutput"/>
+			<wsdl:fault name="DGWSFault" message="tns:DGWSFault"/>
+        </wsdl:operation>
+ 
+    </wsdl:portType>
+    
+    <wsdl:binding name="VaccinationsBinding" type="tns:VaccinationsPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <!--wsaw:UsingAddressing wsdl:required="true" /-->
+
+        <wsdl:operation name="GetVaccinationCard">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#GetVaccinationCard"/>
+            <wsdl:input name="GetVaccinationCardRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetVaccinationCardResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+  
+        <wsdl:operation name="GetVaccinationCardIfUpdated">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#GetVaccinationCardIfUpdated"/>
+            <wsdl:input name="GetVaccinationCardIfUpdatedRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/>
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/>
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetVaccinationCardIfUpdatedResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="GetVaccinationHistory">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#GetVaccinationHistory"/>
+            <wsdl:input name="GetVaccinationHistoryRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetVaccinationHistoryResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+  
+       <wsdl:operation name="DeleteVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#DeleteVaccination"/>
+            <wsdl:input name="DeleteVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="DeleteVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreateVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#CreateVaccination"/>
+            <wsdl:input name="CreateVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="CreateVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreatePreviousVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#CreatePreviousVaccination"/>
+            <wsdl:input name="CreatePreviousVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="CreatePreviousVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="UpdateVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#UpdateVaccination"/>
+            <wsdl:input name="UpdateVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="UpdateVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="DeleteSubscription">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#DeleteSubscription"/>
+            <wsdl:input name="DeleteSubscriptionRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="DeleteSubscriptionResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreateUnsubscription">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#CreateUnsubscription"/>
+            <wsdl:input name="CreateUnsubscriptionRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="CreateUnsubscriptionResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="DeleteUnsubscription">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#DeleteUnsubscription"/>
+            <wsdl:input name="DeleteUnsubscriptionRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="DeleteUnsubscriptionResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="DeletePlannedVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#DeletePlannedVaccination"/>
+            <wsdl:input name="DeletePlannedVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="DeletePlannedVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="GetUnsubscriptions">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#GetUnsubscriptions"/>
+            <wsdl:input name="GetUnsubscriptionsRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetUnsubscriptionsResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+ 
+
+        <wsdl:operation name="GetPlannedVaccinations">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#GetPlannedVaccinations"/>
+            <wsdl:input name="GetPlannedVaccinationsRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetPlannedVaccinationsResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="UpdatePlannedVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#UpdatePlannedVaccination"/>
+            <wsdl:input name="UpdatePlannedVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="UpdatePlannedVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="EffectuatePlannedVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#EffectuatePlannedVaccination"/>
+            <wsdl:input name="EffectuatePlannedVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="EffectuatePlannedVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="CreateSinglePlannedVaccination">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#CreateSinglePlannedVaccination"/>
+            <wsdl:input name="CreateSinglePlannedVaccinationRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="CreateSinglePlannedVaccinationResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="SubscribeAndCreatePlannedVaccinations">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#SubscribeAndCreatePlannedVaccinations"/>
+            <wsdl:input name="SubscribeAndCreatePlannedVaccinationsRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="SubscribeAndCreatePlannedVaccinationsResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="GetVaccinationCardAsPDF">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#GetVaccinationCardAsPDF"/>
+            <wsdl:input name="GetVaccinationCardAsPDFRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 	
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetVaccinationCardAsPDFResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="MultiUpdate">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2010/07/01#MultiUpdate"/>
+            <wsdl:input name="MultiUpdateRequestInput">
+				<soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+				<soap:header use="literal" part="MedcomHeader" message="tns:MedComHeader"/> 
+				<soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/> 
+				<soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/> 
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="MultiUpdateResponseOutput">
+				<soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+			<wsdl:fault name="DGWSFault"><soap:fault name="DGWSFault" use="literal"/> </wsdl:fault>
+        </wsdl:operation>
+
+    </wsdl:binding>
+    
+    <wsdl:service name="VaccinationsService">
+        <wsdl:port binding="tns:VaccinationsBinding" name="VaccinationsPort">
+            <soap:address location="http://localhost:8080/ws/vaccinationsService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

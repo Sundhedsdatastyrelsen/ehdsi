@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="EmailAddress" type="vaccinationcard:EmailAddressType">
+		<annotation>
+			<documentation xml:lang="da">Email address</documentation>
+		</annotation>
+	</element>
+	<simpleType name="EmailAddressType">
+		<restriction base="string">
+			<minLength value="6"/>
+			<maxLength value="256"/>
+		</restriction>
+	</simpleType>
+</schema>

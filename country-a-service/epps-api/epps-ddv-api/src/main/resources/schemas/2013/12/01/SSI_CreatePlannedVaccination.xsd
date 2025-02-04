@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_VaccinationPlanItemIdentifier.xsd"/>
+	<element name="CreatePlannedVaccination" type="vaccinationcard:CreatePlannedVaccinationType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for creating a planned vaccination during subscribing</documentation>
+			<documentation xml:lang="da-DK">Element for oprettelse af planlagt vaccination under forløbstilmelding</documentation>
+		</annotation>
+	</element>
+	<complexType name="CreatePlannedVaccinationType">
+		<sequence>
+			<element name="VaccinationPlanItemIdentifier" type="vaccinationcard:VaccinationPlanItemIdentifierType"/>
+			<element name="PlannedVaccinationDateTime" type="dateTime"/>
+		</sequence>
+	</complexType>
+</schema>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<attribute name="Source" type="vaccinationcard:SourceType">
+		<annotation>
+			<documentation xml:lang="en-GB">An identification of the source which defines the content</documentation>
+			<documentation xml:lang="da-DK">En identifikation af kilden hvor indholdet er derfineret</documentation>
+		</annotation>
+	</attribute>
+	<simpleType name="SourceType">
+		<union memberTypes="vaccinationcard:PredefinedSourceType vaccinationcard:UndefinedSourceType"/>
+	</simpleType>
+	<simpleType name="PredefinedSourceType">
+		<restriction base="vaccinationcard:UndefinedSourceType">
+			<enumeration value="Chemical Abstract (CAS)"/>
+			<enumeration value="DKMA Medicine Prices"/>
+			<enumeration value="DA Medicine Prices"/>
+			<enumeration value="Local drug assortment"/>
+			<enumeration value="FMK dosage quantity unit"/>
+			<enumeration value="Local dosage quantity unit"/>
+			<enumeration value="SKS"/>
+			<enumeration value="Ydernummer"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="UndefinedSourceType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+</schema>

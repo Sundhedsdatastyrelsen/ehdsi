@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/"
+		schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd" />
+	<include schemaLocation="SSI_NegativeConsentRequest.xsd" />
+	<include schemaLocation="SSI_VaccinationPlanCategory.xsd" />
+
+	<element name="GetVaccinationPassportAsPDFRequest" type="vaccinationcard:GetVaccinationPassportAsPDFRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for a vaccination passport as PDF</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter et vaccinationspas som PDF</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetVaccinationPassportAsPDFRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+			<element name="VaccinationPlanCategory" type="vaccinationcard:VaccinationPlanCategoryType" />
+			<element name="NegativeConsentRequest" type="vaccinationcard:NegativeConsentRequestType" minOccurs="0" />
+            <element name="IncludePdf" type="boolean" minOccurs="0" />
+            <element name="IncludeVaccinationStatus" type="boolean" minOccurs="0" />
+            <element name="IncludeVaccinesAndDrugs" type="boolean" minOccurs="0" />
+            <element name="IncludeEffectuationCountryCode" type="boolean" minOccurs="0" />
+            <element name="IncludeAdditionalEffectuations" type="boolean" minOccurs="0" />
+		</sequence>
+	</complexType>
+</schema>

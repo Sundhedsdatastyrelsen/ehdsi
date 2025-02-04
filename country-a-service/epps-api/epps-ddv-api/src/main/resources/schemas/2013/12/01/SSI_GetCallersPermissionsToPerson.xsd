@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+    xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_PersonIdentifier.xsd"/>
+	<element name="GetCallersPermissionsToPerson" type="vaccinationcard:GetCallersPermissionsToPersonType">
+		<annotation>
+			<documentation xml:lang="da-DK">Forespørgsel på rettigheder til person</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetCallersPermissionsToPersonType">
+		<sequence>
+			<element name="PersonIdentifier" type="vaccinationcard:PersonIdentifierType"/>
+		</sequence>
+	</complexType>
+</schema>

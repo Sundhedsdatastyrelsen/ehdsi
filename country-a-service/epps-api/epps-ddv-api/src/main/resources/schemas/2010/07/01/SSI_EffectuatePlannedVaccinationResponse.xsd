@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_PlannedVaccination.xsd"/>
+    <include schemaLocation="SSI_Vaccination.xsd"/>
+    <element name="EffectuatePlannedVaccinationResponse" type="vaccinationcard:EffectuatePlannedVaccinationResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Outer container element for a response with a list of planned vaccinations</documentation>
+			<documentation xml:lang="da-DK">Ydre container-element for et svar med en liste af planlagte vaccinationer</documentation>
+		</annotation>
+	</element>
+	<complexType name="EffectuatePlannedVaccinationResponseType">
+		<sequence>
+            <element name="Vaccination" type="vaccinationcard:VaccinationType" minOccurs="0" maxOccurs="1"/>
+		</sequence>
+	</complexType>
+</schema>

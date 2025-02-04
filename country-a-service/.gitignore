@@ -21,7 +21,6 @@ build/
 **/.springBeans
 
 # IntelliJ
-*.iml
 *.iws
 .attach_pid*
 
@@ -37,8 +36,5 @@ _merged_spec.yaml
 
 # Environment
 .env
-
-#IntelliJ (add specific files explicitely by adding them to git
-.idea/
 
 dependency-reduced-pom.xml
