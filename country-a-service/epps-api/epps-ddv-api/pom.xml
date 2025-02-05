@@ -23,118 +23,129 @@
     </dependencies>
 
     <build>
-        <!-- The code generation for DDV is a complicated affair.
-
-        To avoid conflicts with the classes generated for FMK (some have similar names but different content, and in one
-        case different casing (WhitelistingHeader / WhiteListingHeader) we will perform a package renaming before
-        compiling the generated code.
-
-        For the renaming we use rewrite-maven-plugin.  Unfortunately, it explicitly does not support transforming generated code,
-        so we have to make a workaround where we place the generated code outside the target-folder (src/main/generated).
-        https://github.com/openrewrite/rewrite-maven-plugin/blob/d950f9609c5200a4e837ebe508215bed89530618/src/main/java/org/openrewrite/maven/MavenMojoProjectParser.java#L423-L428
-
-        We use build-helper-maven-plugin to include src/main/generated as an additional sources root so that our generated
-        and transformed sources gets included in the compile phase.  Unfortunately, IntelliJ does not automatically
-        understand this and therefore src/main/generated has to be explicitly marked as a Generated Sources Root to be
-        included in indexing.
-        -->
-        <plugins>
-            <plugin>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.codesup.util</groupId>
-                        <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                        <version>2.1.0</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <args>
-                        <arg>-B-Xfluent-builder</arg>
-                        <arg>-verbose</arg>
-                    </args>
-                    <wsdlUrls>
-                        <wsdlUrl>./src/main/resources/wsdl/vaccinationsService_2013-12-01-E1.wsdl</wsdlUrl>
-                    </wsdlUrls>
-                    <sourceDestDir>${project.basedir}/src/main/generated</sourceDestDir>
-                    <extension>true</extension>
-                    <!-- Postpone compilation of the generated code so we can transform it first -->
-                    <xnocompile>true</xnocompile>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.openrewrite.maven</groupId>
-                <artifactId>rewrite-maven-plugin</artifactId>
-                <version>5.47.3</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>runNoFork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <activeRecipes>
-                        <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
-                    </activeRecipes>
-                    <configLocation>${maven.multiModuleProjectDirectory}/epps-api/epps-ddv-api/rewrite.yml
-                    </configLocation>
-                    <runPerSubmodule>true</runPerSubmodule>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>add-generated-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.basedir}/src/main/generated</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Our non-standard generated sources root does not get cleaned automatically, therefore we add it
-             to the clean plugin's filesets. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/generated</directory>
-                            <followSymlinks>false</followSymlinks>
-                            <useDefaultExcludes>true</useDefaultExcludes>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                            <excludes>
-                                <exclude>.gitignore</exclude>
-                            </excludes>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-        </plugins>
+    <!--
+        Empty, we only build on the profile `generate-ddv-files`
+        Run using the command `mvn clean compile -Pgenerate-ddv-files` from the epps-root project
+     -->
     </build>
+    <profiles>
+        <profile>
+            <id>generate-ddv-files</id>
+            <build>
+                <!-- The code generation for DDV is a complicated affair.
+
+                To avoid conflicts with the classes generated for FMK (some have similar names but different content, and in one
+                case different casing (WhitelistingHeader / WhiteListingHeader) we will perform a package renaming before
+                compiling the generated code.
+
+                For the renaming we use rewrite-maven-plugin.  Unfortunately, it explicitly does not support transforming generated code,
+                so we have to make a workaround where we place the generated code outside the target-folder (src/main/generated).
+                https://github.com/openrewrite/rewrite-maven-plugin/blob/d950f9609c5200a4e837ebe508215bed89530618/src/main/java/org/openrewrite/maven/MavenMojoProjectParser.java#L423-L428
+
+                We use build-helper-maven-plugin to include src/main/generated as an additional sources root so that our generated
+                and transformed sources gets included in the compile phase.  Unfortunately, IntelliJ does not automatically
+                understand this and therefore src/main/generated has to be explicitly marked as a Generated Sources Root to be
+                included in indexing.
+                -->
+                <plugins>
+                    <plugin>
+                        <groupId>com.sun.xml.ws</groupId>
+                        <artifactId>jaxws-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>wsimport</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.codesup.util</groupId>
+                                <artifactId>jaxb2-rich-contract-plugin</artifactId>
+                                <version>2.1.0</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <args>
+                                <arg>-B-Xfluent-builder</arg>
+                                <arg>-verbose</arg>
+                            </args>
+                            <wsdlUrls>
+                                <wsdlUrl>./src/main/resources/wsdl/vaccinationsService_2013-12-01-E1.wsdl</wsdlUrl>
+                            </wsdlUrls>
+                            <sourceDestDir>${project.basedir}/src/main/generated</sourceDestDir>
+                            <extension>true</extension>
+                            <!-- Postpone compilation of the generated code so we can transform it first -->
+                            <xnocompile>true</xnocompile>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.openrewrite.maven</groupId>
+                        <artifactId>rewrite-maven-plugin</artifactId>
+                        <version>5.47.3</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>runNoFork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <activeRecipes>
+                                <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
+                            </activeRecipes>
+                            <configLocation>${maven.multiModuleProjectDirectory}/epps-api/epps-ddv-api/rewrite.yml
+                            </configLocation>
+                            <runPerSubmodule>true</runPerSubmodule>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-generated-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.basedir}/src/main/generated</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Our non-standard generated sources root does not get cleaned automatically, therefore we add it
+                     to the clean plugin's filesets. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>src/main/generated</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <useDefaultExcludes>true</useDefaultExcludes>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
