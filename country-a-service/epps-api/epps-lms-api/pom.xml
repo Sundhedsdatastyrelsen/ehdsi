@@ -4,23 +4,15 @@
 
     <parent>
         <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-        <artifactId>epps-root</artifactId>
+        <artifactId>epps-api-root</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>NCPeH DK integration service - API Root</name>
+    <name>NCPeH DK integration service - LMS API</name>
     <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-    <artifactId>epps-api-root</artifactId>
+    <artifactId>epps-lms-api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <description>NCPeH DK integration service - API Root</description>
-
-    <modules>
-        <module>epps-ncp-api</module>
-        <module>epps-fmk-api</module>
-        <module>epps-cpr-api</module>
-        <module>epps-lms-api</module>
-    </modules>
-
+    <description>NCPeH DK integration service - LMS API</description>
 </project>
