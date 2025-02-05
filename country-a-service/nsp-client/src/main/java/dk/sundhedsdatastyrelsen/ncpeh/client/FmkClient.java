@@ -30,7 +30,6 @@ import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.dom.DOMResult;
