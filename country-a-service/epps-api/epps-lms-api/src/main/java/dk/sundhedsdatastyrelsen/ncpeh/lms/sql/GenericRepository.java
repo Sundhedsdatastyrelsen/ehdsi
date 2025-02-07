@@ -21,10 +21,10 @@ public class GenericRepository<T extends DatabaseObject> {
     private final String deleteSQL;
 
     // Constructor
-    public GenericRepository(Class<T> type, String tableName, DataSource dataSource) {
+    public GenericRepository(Class<T> type, String tableName, JdbcTemplate jdbcTemplate) {
         this.type = type;
         this.tableName = tableName;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = jdbcTemplate;
 
         // Generate statements
         this.insertSQL = SqlGenerator.generateInsertSQL(type, tableName);
