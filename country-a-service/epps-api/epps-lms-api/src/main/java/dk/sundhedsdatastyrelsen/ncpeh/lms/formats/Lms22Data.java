@@ -1,12 +1,13 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms.formats;
 
 import dk.sundhedsdatastyrelsen.ncpeh.lms.parsing.FixedWidthField;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.DatabaseObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Lms22Data {
+public class Lms22Data implements DatabaseObject {
     @FixedWidthField(start = 0, length = 7)
     private String Code;
 
@@ -21,5 +22,10 @@ public class Lms22Data {
             return false;
         }
         return ActiveInactive.equalsIgnoreCase("a");
+    }
+
+    @Override
+    public String GetKey() {
+        return Code;
     }
 }

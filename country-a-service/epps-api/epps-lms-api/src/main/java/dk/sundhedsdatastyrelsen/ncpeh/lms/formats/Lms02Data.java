@@ -1,17 +1,16 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms.formats;
 
 import dk.sundhedsdatastyrelsen.ncpeh.lms.parsing.FixedWidthField;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.DatabasePrimaryKey;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.DatabaseObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Lms02Data {
+public class Lms02Data implements DatabaseObject {
     @FixedWidthField(start = 0, length = 11)
     private String DrugId;
-    
-    @DatabasePrimaryKey
+
     @FixedWidthField(start = 11, length = 6)
     private String ProductNumber; //Varenummer
     @FixedWidthField(start = 17, length = 3)
@@ -65,4 +64,9 @@ public class Lms02Data {
     private String SafetyFeatures;
     @FixedWidthField(start = 131, length = 6)
     private String PackageDistributor; //Pakningsdistributør
+
+    @Override
+    public String GetKey() {
+        return ProductNumber;
+    }
 }

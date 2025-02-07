@@ -5,10 +5,9 @@ import java.lang.reflect.Field;
 public class SqlGenerator {
 
     public static String generateCreateTableSQL(Class<?> clazz, String tableName) {
-        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
+        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (DATABASEKEY TEXT, ");
         Field[] fields = clazz.getDeclaredFields();
 
-        String primaryKeyField = null;
         int fieldCount = 0;
 
         for (Field field : fields) {
@@ -16,29 +15,19 @@ public class SqlGenerator {
             String columnName = field.getName();
             String columnType = mapJavaTypeToSQLType(field.getType());
 
-            // Check for @PrimaryKey
-            if (field.isAnnotationPresent(DatabasePrimaryKey.class)) {
-                primaryKeyField = columnName;
-            }
-
             sql.append(columnName).append(" ").append(columnType);
             if (fieldCount != fields.length - 1) {
                 sql.append(", ");
             }
         }
-        if (primaryKeyField != null) {
-            sql.append("PRIMARY KEY(").append(primaryKeyField).append(")");
-        } else {
-            throw new IllegalArgumentException(String.format("Cannot generate SQL to create table %s, based on class %s, because it is missing a @DatabasePrimaryKey", tableName, clazz.getName()));
-        }
+        sql.append(" PRIMARY KEY(DATABASEKEY));");
 
-        sql.append(");");
         return sql.toString();
     }
 
     public static String generateInsertSQL(Class<?> clazz, String tableName) {
-        StringBuilder sql = new StringBuilder("INSERT INTO " + tableName + " (");
-        StringBuilder values = new StringBuilder("VALUES (");
+        StringBuilder sql = new StringBuilder("INSERT INTO " + tableName + " (DATABASEKEY, ");
+        StringBuilder values = new StringBuilder("VALUES (?, ");
         Field[] fields = clazz.getDeclaredFields();
 
         for (Field field : fields) {
@@ -56,58 +45,28 @@ public class SqlGenerator {
         return "SELECT * FROM " + tableName + ";";
     }
 
-    public static String generateSelectByIdSQL(Class<?> clazz, String tableName) {
-        Field[] fields = clazz.getDeclaredFields();
-
-        String idColumnName = null;
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DatabasePrimaryKey.class)) {
-                idColumnName = field.getName();
-            }
-        }
-
-        if (idColumnName == null) {
-            throw new IllegalArgumentException(String.format("Cannot generate SQL to get by ID on table %s, based on class %s, because it is missing a @DatabasePrimaryKey", tableName, clazz.getName()));
-        }
-        return "SELECT * FROM " + tableName + " WHERE " + idColumnName + " = ?;";
+    public static String generateSelectByIdSQL(String tableName) {
+        return "SELECT * FROM " + tableName + " WHERE DATABASEKEY = ?;";
     }
 
     public static String generateUpdateSQL(Class<?> clazz, String tableName) {
         StringBuilder sql = new StringBuilder("UPDATE " + tableName + " SET ");
         Field[] fields = clazz.getDeclaredFields();
-        String idColumnName = null;
 
 
         for (Field field : fields) {
-            if (!field.isAnnotationPresent(DatabasePrimaryKey.class)) {
-                sql.append(field.getName()).append(" = ?, ");
-            } else {
-                idColumnName = field.getName();
-            }
+            sql.append(field.getName()).append(" = ?, ");
+
         }
 
-        if (idColumnName == null) {
-            throw new IllegalArgumentException(String.format("Cannot generate SQL to update by ID on table %s, based on class %s, because it is missing a @DatabasePrimaryKey", tableName, clazz.getName()));
-        }
-
-        sql.delete(sql.length() - 2, sql.length()).append(" WHERE ").append(idColumnName).append(" = ?;");
+        sql.delete(sql.length() - 2, sql.length()).append(" WHERE DATABASEKEY = ?;");
         return sql.toString();
     }
 
     public static String generateDeleteSQL(Class<?> clazz, String tableName) {
         Field[] fields = clazz.getDeclaredFields();
 
-        String idColumnName = null;
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DatabasePrimaryKey.class)) {
-                idColumnName = field.getName();
-            }
-        }
-
-        if (idColumnName == null) {
-            throw new IllegalArgumentException(String.format("Cannot generate SQL to delete by ID on table %s, based on class %s, because it is missing a @DatabasePrimaryKey", tableName, clazz.getName()));
-        }
-        return "DELETE FROM " + tableName + " WHERE " + idColumnName + " = ?;";
+        return "DELETE FROM " + tableName + " WHERE DATABASEKEY = ?;";
     }
 
     private static String mapJavaTypeToSQLType(Class<?> type) {

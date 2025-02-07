@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseObjectMapper<T> implements RowMapper<T> {
+public class DatabaseObjectMapper<T extends DatabaseObject> implements RowMapper<T> {
     private final Class<T> type;
 
     public DatabaseObjectMapper(Class<T> type) {
@@ -31,16 +31,11 @@ public class DatabaseObjectMapper<T> implements RowMapper<T> {
         }
     }
 
-    public Object[] extractFields(T entity, boolean includeId) {
+    public Object[] extractFields(T entity) {
         List<Object> values = new ArrayList<>();
         Field[] fields = type.getDeclaredFields();
 
         for (Field field : fields) {
-            if (!includeId) {
-                if (field.isAnnotationPresent(DatabasePrimaryKey.class)) {
-                    continue;
-                }
-            }
             field.setAccessible(true);
 
             try {
@@ -53,22 +48,8 @@ public class DatabaseObjectMapper<T> implements RowMapper<T> {
         return values.toArray();
     }
 
-    public Object extractId(T entity) {
+    public String extractId(T entity) {
         List<Object> values = new ArrayList<>();
-        Field[] fields = type.getDeclaredFields();
-
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DatabasePrimaryKey.class)) {
-                field.setAccessible(true);
-                Object value = null;
-                try {
-                    value = field.get(entity);
-                } catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException(String.format("Cannot get Primary Key field %s from object of type %s", field.getName(), type.getName()));
-                }
-                return value;
-            }
-        }
-        throw new IllegalArgumentException(String.format("Found no Primary Key field on object of type %s", type.getName()));
+        return entity.GetKey();
     }
 }

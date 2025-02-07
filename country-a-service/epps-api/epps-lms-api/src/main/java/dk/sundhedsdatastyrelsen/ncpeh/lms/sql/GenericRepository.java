@@ -5,9 +5,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class GenericRepository<T> {
+public class GenericRepository<T extends DatabaseObject> {
     private final JdbcTemplate jdbcTemplate;
     private final Class<T> type;
     private final String tableName;
@@ -28,7 +29,7 @@ public class GenericRepository<T> {
         // Generate statements
         this.insertSQL = SqlGenerator.generateInsertSQL(type, tableName);
         this.selectAllSQL = SqlGenerator.generateSelectAllSQL(tableName);
-        this.selectByIdSQL = SqlGenerator.generateSelectByIdSQL(type, tableName);
+        this.selectByIdSQL = SqlGenerator.generateSelectByIdSQL(tableName);
         this.updateSQL = SqlGenerator.generateUpdateSQL(type, tableName);
         this.deleteSQL = SqlGenerator.generateDeleteSQL(type, tableName);
 
@@ -36,9 +37,9 @@ public class GenericRepository<T> {
     }
 
     public void insert(T entity) {
-        Object[] params = new DatabaseObjectMapper<T>(type).extractFields(entity, true);
-
-        jdbcTemplate.update(insertSQL, params);
+        ArrayList<Object> params = new ArrayList<>(Arrays.asList(new DatabaseObjectMapper<T>(type).extractFields(entity)));
+        params.addFirst(entity.GetKey());
+        jdbcTemplate.update(insertSQL, params.toArray());
     }
 
     public List<T> getAll() {
@@ -60,7 +61,7 @@ public class GenericRepository<T> {
     public void update(T entity) {
         List<Object> params = new ArrayList<>();
         var mapper = new DatabaseObjectMapper<T>(type);
-        params.addAll(List.of(mapper.extractFields(entity, false)));
+        params.addAll(List.of(mapper.extractFields(entity)));
 
         // Where needs ID last
         params.add(mapper.extractId(entity));

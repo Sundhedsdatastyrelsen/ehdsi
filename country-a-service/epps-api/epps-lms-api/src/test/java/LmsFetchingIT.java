@@ -61,17 +61,30 @@ public class LmsFetchingIT {
             repository.insert(lmsData);
         }
 
-        List<Lms15Data> lms02DataFromDatabase = repository.getAll();
-        Assertions.assertEquals(lms15Data.size(), lms02DataFromDatabase.size());
+        List<Lms15Data> lms15DataFromDatabase = repository.getAll();
+        Assertions.assertEquals(lms15Data.size(), lms15DataFromDatabase.size());
         for (var lmsDataRow : lms15Data) {
-            Assertions.assertTrue(lms02DataFromDatabase.contains(lmsDataRow));
+            Assertions.assertTrue(lms15DataFromDatabase.contains(lmsDataRow));
         }
     }
 
     @Test
     void testDownloadAndParseLms22() {
         String result = lmsFetchingService.getLmsDataFromServer("lms22.txt");
-        List<Lms22Data> lms22 = LmsDataParser.ParseLms22Data(result);
+        List<Lms22Data> lms22data = LmsDataParser.ParseLms22Data(result);
+
+        var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
+        var repository = new GenericRepository<Lms22Data>(Lms22Data.class, "LMS22_DATA_TABLE", dataSource);
+
+        for (var lmsData : lms22data) {
+            repository.insert(lmsData);
+        }
+
+        List<Lms22Data> lms22DataFromDatabase = repository.getAll();
+        Assertions.assertEquals(lms22data.size(), lms22DataFromDatabase.size());
+        for (var lmsDataRow : lms22data) {
+            Assertions.assertTrue(lms22DataFromDatabase.contains(lmsDataRow));
+        }
     }
 
 
