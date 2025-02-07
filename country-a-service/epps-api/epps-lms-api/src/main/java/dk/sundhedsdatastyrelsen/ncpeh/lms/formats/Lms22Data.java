@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms.formats;
 
-import dk.sundhedsdatastyrelsen.ncpeh.lms.Parsing.FixedWidthField;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.parsing.FixedWidthField;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

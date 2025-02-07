@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.lms.Parsing;
+package dk.sundhedsdatastyrelsen.ncpeh.lms.parsing;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
