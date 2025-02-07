@@ -59,5 +59,15 @@ public class LmsDataRepository {
         lms22Repository.insertOrUpdateList(entities);
     }
 
+    public Lms02Data getLms02FromPackageNumber(int packageNumber) {
+        String packageNumberColumnName = "ProductNumber";
+        String packageNumberAsString = String.format("%06d", packageNumber); //LMS02 package numbers are 6 digits long
+        var dataList = lms02Repository.getByFieldAndValue(packageNumberColumnName, packageNumberAsString);
+        if (dataList.size() != 1) {
+            throw new IllegalArgumentException(String.format("Did not find single result for LMS02 field name '%s' and value '%s'. Found %d results", packageNumberColumnName, packageNumberAsString, dataList.size()));
+        }
+        return dataList.getFirst();
+    }
+
 
 }
