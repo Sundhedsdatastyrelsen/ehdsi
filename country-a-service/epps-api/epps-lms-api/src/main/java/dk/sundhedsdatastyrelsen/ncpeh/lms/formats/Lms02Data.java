@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Lms02Data {
-    @DatabasePrimaryKey
     @FixedWidthField(start = 0, length = 11)
     private String DrugId;
+    
+    @DatabasePrimaryKey
     @FixedWidthField(start = 11, length = 6)
     private String ProductNumber; //Varenummer
     @FixedWidthField(start = 17, length = 3)
