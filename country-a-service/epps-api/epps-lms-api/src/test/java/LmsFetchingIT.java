@@ -38,9 +38,7 @@ public class LmsFetchingIT {
         var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
         var repository = new GenericRepository<Lms02Data>(Lms02Data.class, "LMS02_DATA_TABLE", dataSource);
 
-        for (var lmsData : lms02Data) {
-            repository.insert(lmsData);
-        }
+        repository.insertOrUpdateList(lms02Data);
 
         List<Lms02Data> databaseData = repository.getAll();
         Assertions.assertEquals(lms02Data.size(), databaseData.size());
@@ -58,9 +56,8 @@ public class LmsFetchingIT {
         var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
         var repository = new GenericRepository<Lms14Data>(Lms14Data.class, "LMS14_DATA_TABLE", dataSource);
 
-        for (var lmsData : lms14Data) {
-            repository.insert(lmsData);
-        }
+        repository.insertOrUpdateList(lms14Data);
+
 
         List<Lms14Data> databaseData = repository.getAll();
         Assertions.assertEquals(lms14Data.size(), databaseData.size());
@@ -77,9 +74,8 @@ public class LmsFetchingIT {
         var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
         var repository = new GenericRepository<Lms15Data>(Lms15Data.class, "LMS15_DATA_TABLE", dataSource);
 
-        for (var lmsData : lms15Data) {
-            repository.insert(lmsData);
-        }
+        repository.insertOrUpdateList(lms15Data);
+
 
         List<Lms15Data> databaseData = repository.getAll();
         Assertions.assertEquals(lms15Data.size(), databaseData.size());
@@ -96,9 +92,8 @@ public class LmsFetchingIT {
         var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
         var repository = new GenericRepository<Lms22Data>(Lms22Data.class, "LMS22_DATA_TABLE", dataSource);
 
-        for (var lmsData : lms22data) {
-            repository.insert(lmsData);
-        }
+        repository.insertOrUpdateList(lms22data);
+
 
         List<Lms22Data> databaseData = repository.getAll();
         Assertions.assertEquals(lms22data.size(), databaseData.size());

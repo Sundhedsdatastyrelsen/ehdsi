@@ -49,6 +49,10 @@ public class SqlGenerator {
         return "SELECT * FROM " + tableName + " WHERE DATABASEKEY = ?;";
     }
 
+    public static String generateSelectByFieldSQL(String tableName, String fieldName) {
+        return "SELECT * FROM " + tableName + " WHERE " + fieldName + " = ?;";
+    }
+
     public static String generateUpdateSQL(Class<?> clazz, String tableName) {
         StringBuilder sql = new StringBuilder("UPDATE " + tableName + " SET ");
         Field[] fields = clazz.getDeclaredFields();

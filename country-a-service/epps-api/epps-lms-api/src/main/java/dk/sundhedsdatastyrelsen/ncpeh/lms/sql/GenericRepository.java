@@ -42,6 +42,20 @@ public class GenericRepository<T extends DatabaseObject> {
         jdbcTemplate.update(insertSQL, params.toArray());
     }
 
+    public void insertOrUpdateList(List<T> entities) {
+        var existingEntities = getAll();
+        for (var entity : entities) {
+            var existingEntity = existingEntities.stream()
+                .filter(existing -> entity.GetKey().equals(existing.GetKey()))
+                .findFirst();
+            if (existingEntity.isPresent() && !existingEntity.get().equals(entity)) {
+                update(entity);
+            } else if (!existingEntity.isPresent()) {
+                insert(entity);
+            }
+        }
+    }
+
     public List<T> getAll() {
         return jdbcTemplate.query(selectAllSQL, new DatabaseObjectMapper<T>(type));
     }
@@ -56,6 +70,11 @@ public class GenericRepository<T extends DatabaseObject> {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    public List<T> getByFieldAndValue(String fieldName, Object value) {
+        var sql = SqlGenerator.generateSelectByFieldSQL(tableName, fieldName);
+        return jdbcTemplate.query(sql, new DatabaseObjectMapper<T>(type), value);
     }
 
     public void update(T entity) {
