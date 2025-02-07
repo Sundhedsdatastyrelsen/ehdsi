@@ -27,3 +27,8 @@ logging:
     root: info
     org.springframework.web: info
     dk.sundhedsdatastyrelsen.ncpeh: info
+lmsftp:
+  server: "erhverv.medicinpriser.dk"
+  port: 21
+  username: ${LMSFTP_USERNAME}
+  password: ${LMSFTP_PASSWORD}
