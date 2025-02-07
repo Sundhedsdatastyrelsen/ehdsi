@@ -27,35 +27,35 @@ public class LmsDataRepository {
         lms22Repository = new GenericRepository<Lms22Data>(Lms22Data.class, LmsConstants.DATABASE_TABLE_NAMES.LMS_22, jdbcTemplate);
     }
 
-    public List<Lms02Data> GetAllLms02() {
+    public List<Lms02Data> getAllLms02() {
         return lms02Repository.getAll();
     }
 
-    public List<Lms14Data> GetAllLms14() {
+    public List<Lms14Data> getAllLms14() {
         return lms14Repository.getAll();
     }
 
-    public List<Lms15Data> GetAllLms15() {
+    public List<Lms15Data> getAllLms15() {
         return lms15Repository.getAll();
     }
 
-    public List<Lms22Data> GetAllLms22() {
+    public List<Lms22Data> getAllLms22() {
         return lms22Repository.getAll();
     }
 
-    public void UpdateLms02(List<Lms02Data> entities) {
+    public void updateLms02(List<Lms02Data> entities) {
         lms02Repository.insertOrUpdateList(entities);
     }
 
-    public void UpdateLms14(List<Lms14Data> entities) {
+    public void updateLms14(List<Lms14Data> entities) {
         lms14Repository.insertOrUpdateList(entities);
     }
 
-    public void UpdateLms15(List<Lms15Data> entities) {
+    public void updateLms15(List<Lms15Data> entities) {
         lms15Repository.insertOrUpdateList(entities);
     }
 
-    public void UpdateLms22(List<Lms22Data> entities) {
+    public void updateLms22(List<Lms22Data> entities) {
         lms22Repository.insertOrUpdateList(entities);
     }
 
