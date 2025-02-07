@@ -1,6 +1,7 @@
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataParser;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsFetchingService;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms22Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.GenericRepository;
@@ -41,12 +42,31 @@ public class LmsFetchingIT {
             repository.insert(lmsData);
         }
 
-        List<Lms02Data> lms02DataFromDatabase = repository.getAll();
-        Assertions.assertEquals(lms02Data.size(), lms02DataFromDatabase.size());
+        List<Lms02Data> databaseData = repository.getAll();
+        Assertions.assertEquals(lms02Data.size(), databaseData.size());
         for (var lmsDataRow : lms02Data) {
-            Assertions.assertTrue(lms02DataFromDatabase.contains(lmsDataRow));
+            Assertions.assertTrue(databaseData.contains(lmsDataRow));
         }
 
+    }
+
+    @Test
+    void testDownloadAndParseLms14() {
+        String result = lmsFetchingService.getLmsDataFromServer("lms14.txt");
+        List<Lms14Data> lms14Data = LmsDataParser.ParseLms14Data(result);
+
+        var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
+        var repository = new GenericRepository<Lms14Data>(Lms14Data.class, "LMS14_DATA_TABLE", dataSource);
+
+        for (var lmsData : lms14Data) {
+            repository.insert(lmsData);
+        }
+
+        List<Lms14Data> databaseData = repository.getAll();
+        Assertions.assertEquals(lms14Data.size(), databaseData.size());
+        for (var lmsDataRow : lms14Data) {
+            Assertions.assertTrue(databaseData.contains(lmsDataRow));
+        }
     }
 
     @Test
@@ -61,10 +81,10 @@ public class LmsFetchingIT {
             repository.insert(lmsData);
         }
 
-        List<Lms15Data> lms15DataFromDatabase = repository.getAll();
-        Assertions.assertEquals(lms15Data.size(), lms15DataFromDatabase.size());
+        List<Lms15Data> databaseData = repository.getAll();
+        Assertions.assertEquals(lms15Data.size(), databaseData.size());
         for (var lmsDataRow : lms15Data) {
-            Assertions.assertTrue(lms15DataFromDatabase.contains(lmsDataRow));
+            Assertions.assertTrue(databaseData.contains(lmsDataRow));
         }
     }
 
@@ -80,10 +100,10 @@ public class LmsFetchingIT {
             repository.insert(lmsData);
         }
 
-        List<Lms22Data> lms22DataFromDatabase = repository.getAll();
-        Assertions.assertEquals(lms22data.size(), lms22DataFromDatabase.size());
+        List<Lms22Data> databaseData = repository.getAll();
+        Assertions.assertEquals(lms22data.size(), databaseData.size());
         for (var lmsDataRow : lms22data) {
-            Assertions.assertTrue(lms22DataFromDatabase.contains(lmsDataRow));
+            Assertions.assertTrue(databaseData.contains(lmsDataRow));
         }
     }
 

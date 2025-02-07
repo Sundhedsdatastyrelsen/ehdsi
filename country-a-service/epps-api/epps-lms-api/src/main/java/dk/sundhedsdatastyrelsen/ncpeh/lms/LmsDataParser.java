@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms;
 
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.parsing.FixedWidthParser;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
@@ -16,6 +17,15 @@ public class LmsDataParser {
             return FixedWidthParser.parseString(fixedWidthData, Lms02Data.class);
         } catch (Exception e) {
             log.error(String.format("Error parsing LMS02 data, error message: %s", e.getMessage()));
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Lms14Data> ParseLms14Data(String fixedWidthData) {
+        try {
+            return FixedWidthParser.parseString(fixedWidthData, Lms14Data.class);
+        } catch (Exception e) {
+            log.error(String.format("Error parsing LMS15 data, error message: %s", e.getMessage()));
             throw new RuntimeException(e);
         }
     }
