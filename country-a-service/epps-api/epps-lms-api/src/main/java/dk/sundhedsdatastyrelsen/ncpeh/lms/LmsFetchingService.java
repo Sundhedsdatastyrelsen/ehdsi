@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 @Service
 public class LmsFetchingService {
@@ -60,7 +61,7 @@ public class LmsFetchingService {
             ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
 
             try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(ftpClient.retrieveFileStream(remoteFilePath)))) {
+                new InputStreamReader(ftpClient.retrieveFileStream(remoteFilePath), Charset.forName("cp850")))) {
 
                 if (reader == null) {
                     throw new IOException("Error: Could not open remote file stream. Check the file path or permissions.");
