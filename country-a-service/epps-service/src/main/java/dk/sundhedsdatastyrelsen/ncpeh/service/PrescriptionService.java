@@ -17,6 +17,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMappingService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
@@ -43,11 +44,12 @@ public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
+    private final EPrescriptionMappingService ePrescriptionMappingService;
 
     public record PrescriptionFilter(
-            String documentId,
-            OffsetDateTime createdBefore,
-            OffsetDateTime createdAfter
+        String documentId,
+        OffsetDateTime createdBefore,
+        OffsetDateTime createdAfter
     ) {
         public static PrescriptionFilter none() {
             return new PrescriptionFilter(null, null, null);
@@ -55,15 +57,15 @@ public class PrescriptionService {
 
         public IntStream validPrescriptionIndexes(@NonNull List<PrescriptionType> list) {
             return IntStream.range(0, list.size())
-                    .filter(idx -> apply(list.get(idx)));
+                .filter(idx -> apply(list.get(idx)));
         }
 
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = Utils.convertToOffsetDateTime(prescription.getAuthorisationDateTime());
             return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier()))
-                    .contains(documentId))
-                    && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
-                    && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
+                .contains(documentId))
+                && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
+                && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
 
         private OffsetDateTime toOffsetDateTime(@NonNull XMLGregorianCalendar xml) {
@@ -72,20 +74,20 @@ public class PrescriptionService {
     }
 
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
-            String patientId,
-            PrescriptionFilter filter,
-            Identity caller
+        String patientId,
+        PrescriptionFilter filter,
+        Identity caller
     ) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
-                .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-                .withIncludeOpenPrescriptions().end()
-                .build();
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIncludeOpenPrescriptions().end()
+            .build();
         log.debug("undoDispensation: looking up prescription information");
         try {
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
             log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
-            return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
+            return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse, ePrescriptionMappingService);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve list of prescriptions from FMK");
         }
@@ -95,9 +97,9 @@ public class PrescriptionService {
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
-                .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-                .withIncludeOpenPrescriptions().end()
-                .build();
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIncludeOpenPrescriptions().end()
+            .build();
         log.debug("Looking up info for {}", cpr);
 
         try {
@@ -106,16 +108,16 @@ public class PrescriptionService {
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
 
             var prescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription())
-                    .mapToObj(idx -> fmkResponse.getPrescription().get(idx))
-                    .toList();
+                .mapToObj(idx -> fmkResponse.getPrescription().get(idx))
+                .toList();
 
             var drugMedicationIds = prescriptions.stream()
-                    .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
-                    .toList();
+                .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
+                .toList();
 
             var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, caller);
 
-            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications);
+            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications, ePrescriptionMappingService);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }
@@ -134,8 +136,8 @@ public class PrescriptionService {
         try {
             log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
-                    dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
-                    caller);
+                dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
+                caller);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
         } catch (MapperException e) {
@@ -146,11 +148,11 @@ public class PrescriptionService {
         try {
             log.info("Create FMK pharmacy effectuation");
             effectuationResponse = fmkClient.createPharmacyEffectuation(
-                    dispensationMapper.createPharmacyEffectuationRequest(
-                            patientId,
-                            dispensationCda,
-                            response),
-                    caller);
+                dispensationMapper.createPharmacyEffectuationRequest(
+                    patientId,
+                    dispensationCda,
+                    response),
+                caller);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
         } catch (MapperException e) {
@@ -162,9 +164,9 @@ public class PrescriptionService {
             log.info("Store effectuation undo information");
             try {
                 undoDispensationRepository.insert(UndoDispensationRow.fromCdaId(
-                        eDispensationCdaId,
-                        effectuation.getEffectuationIdentifier(),
-                        effectuation.getOrderIdentifier()
+                    eDispensationCdaId,
+                    effectuation.getEffectuationIdentifier(),
+                    effectuation.getOrderIdentifier()
                 ));
             } catch (Exception e) {
                 // We should not fail the submitDispensation request here because of a database error,
@@ -191,10 +193,10 @@ public class PrescriptionService {
         UndoEffectuationRequestType undoEffectuationRequest;
         try {
             undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(
-                    patientId,
-                    cdaToDiscard,
-                    undoInfo.orderId(),
-                    undoInfo.effectuationId()
+                patientId,
+                cdaToDiscard,
+                undoInfo.orderId(),
+                undoInfo.effectuationId()
             );
         } catch (MapperException e) {
             throw new DataRequirementException(MAPPING_ERROR_MESSAGE, e);
@@ -208,19 +210,19 @@ public class PrescriptionService {
         }
 
         var cancelledEffectuationCount = undoResponse.getPrescription()
-                .stream()
-                .flatMap(p -> p.getOrder().stream())
-                .mapToLong(o -> o.getEffectuation().size())
-                .sum();
+            .stream()
+            .flatMap(p -> p.getOrder().stream())
+            .mapToLong(o -> o.getEffectuation().size())
+            .sum();
         if (cancelledEffectuationCount < 1) {
             throw new CountryAException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error cancelling effectuation, nothing was cancelled");
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error cancelling effectuation, nothing was cancelled");
         }
         if (cancelledEffectuationCount > 1) {
             log.error(
-                    "More than one ({}) FMK effectuations was cancelled where it should be exactly one",
-                    cancelledEffectuationCount);
+                "More than one ({}) FMK effectuations was cancelled where it should be exactly one",
+                cancelledEffectuationCount);
         }
         log.info("Undo effectuation successful, removing undo information");
         undoDispensationRepository.deleteByCdaId(eDispensationCdaId);
@@ -228,24 +230,24 @@ public class PrescriptionService {
 
     public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, Identity caller) throws JAXBException {
         var drugMedicationRequest = GetDrugMedicationRequestType.builder()
-                .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-                .withIdentifier(drugMedicationId)
-                .withIncludePrescriptions(false)
-                .withIncludeEffectuations(false)
-                .build();
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIdentifier(drugMedicationId)
+            .withIncludePrescriptions(false)
+            .withIncludeEffectuations(false)
+            .build();
 
         log.debug("Looking up DrugMedication  info for {}", cpr);
         GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
         log.debug("Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
-                .size(), drugMedicationId);
+            .size(), drugMedicationId);
         return fmkResponse;
     }
 
     public GetPrescriptionResponseType getPrescriptionResponse(String cpr, Identity caller) throws JAXBException {
         final var request = GetPrescriptionRequestType.builder()
-                .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-                .withIncludeOpenPrescriptions().end()
-                .build();
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .withIncludeOpenPrescriptions().end()
+            .build();
         log.debug("Looking up info for {}", cpr);
         GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
         log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);

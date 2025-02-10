@@ -4,7 +4,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
+import dk.sundhedsdatastyrelsen.ncpeh.mocks.EPrescriptionMapperServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMappingService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import org.flywaydb.core.Flyway;
@@ -23,7 +25,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 public class FmkIT {
-    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository());
+    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService());
 
     /**
      * This test simply checks that we can connect and get an answer on the data.
@@ -96,6 +98,10 @@ public class FmkIT {
         return new UndoDispensationRepository(dataSource);
     }
 
+    private static EPrescriptionMappingService ePrescriptionMappingService() {
+        return new EPrescriptionMapperServiceMock();
+    }
+
     /**
      * The dispensation test case is complex because:
      * - There has to be a valid prescription in the test environment to dispense for.
@@ -118,7 +124,7 @@ public class FmkIT {
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
 
-        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository());
+        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService());
 
         // shouldn't throw:
         prescriptionService.submitDispensation(

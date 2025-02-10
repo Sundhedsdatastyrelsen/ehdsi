@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.script;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.EPrescriptionContextAwareMappingService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
@@ -17,6 +18,7 @@ import java.util.logging.SimpleFormatter;
 
 public class EPrescriptionCdaGenerator {
     private static final Logger logger = Logger.getLogger(EPrescriptionCdaGenerator.class.getName());
+
     static {
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter());
@@ -34,7 +36,7 @@ public class EPrescriptionCdaGenerator {
         }
 
         var medicationInput = "target/test-files/drug-medication.xml";
-        if(args.length > 1) {
+        if (args.length > 1) {
             medicationInput = args[1];
         }
 
@@ -51,16 +53,24 @@ public class EPrescriptionCdaGenerator {
         Files.createDirectories(medicationResponseFile.getParent());
 
         var prescriptionResponse = FmkResponseStorage.readStoredPrescriptions(prescriptionResponseFile.toFile());
-        logger.log(Level.INFO,"Reading FMK prescription from {0}", prescriptionResponseFile.toAbsolutePath());
+        logger.log(Level.INFO, "Reading FMK prescription from {0}", prescriptionResponseFile.toAbsolutePath());
 
         var medicationResponse = FmkResponseStorage.readStoredMedication(medicationResponseFile.toFile());
-        logger.log(Level.INFO,"Reading FMK medication from {0}", medicationResponseFile.toAbsolutePath());
-        var xmlString = EPrescriptionL3Generator.generate(prescriptionResponse, medicationResponse, 0);
+        logger.log(Level.INFO, "Reading FMK medication from {0}", medicationResponseFile.toAbsolutePath());
+        var xmlString = EPrescriptionL3Generator.generate(prescriptionResponse, medicationResponse, 0, new EPrescriptionContextAwareMappingServiceMock()); //TODO replace with actual values?
 
         var ePCda = Path.of(cdaOutput);
         Files.createDirectories(ePCda.getParent());
 
         FmkResponseStorage.serializeToFile(xmlString.getBytes(StandardCharsets.UTF_8), ePCda.toFile());
-        logger.log(Level.INFO,"Wrote ePrescription CDA to {0}",ePCda.toAbsolutePath());
+        logger.log(Level.INFO, "Wrote ePrescription CDA to {0}", ePCda.toAbsolutePath());
+    }
+
+    private static class EPrescriptionContextAwareMappingServiceMock implements EPrescriptionContextAwareMappingService {
+
+        @Override
+        public String getPackageCodeFromPackageNumber(String packagingNumber) {
+            return "FIN"; // Fyldt injektionssprøjte
+        }
     }
 }

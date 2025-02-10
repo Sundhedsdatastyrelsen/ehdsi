@@ -12,9 +12,18 @@ public class EPrescriptionMapperTest {
     @Test
     public void testExpectedNumberOfEpsosDocuments() throws Exception {
         var response = FmkResponseStorage.storedPrescriptions(Fmk.cprKarl);
-        var documentId = EPrescriptionDocumentIdMapper.level3DocumentId(String.valueOf(response.getPrescription().getFirst().getIdentifier()));
-        var prescriptionFilter = new PrescriptionFilter(documentId,null,null);
-        var result = EPrescriptionMapper.mapResponse(String.format("%s^^^&%s&ISO", Fmk.cprKarl, Oid.DK_CPR), prescriptionFilter, response,null);
+        var documentId = EPrescriptionDocumentIdMapper.level3DocumentId(String.valueOf(response.getPrescription()
+            .getFirst()
+            .getIdentifier()));
+        var prescriptionFilter = new PrescriptionFilter(documentId, null, null);
+        var result = EPrescriptionMapper.mapResponse(String.format("%s^^^&%s&ISO", Fmk.cprKarl, Oid.DK_CPR), prescriptionFilter, response, null, new EPrescriptionMappingServiceMock());
         Assertions.assertEquals(1, result.size());
+    }
+
+    private class EPrescriptionMappingServiceMock extends EPrescriptionMappingService {
+        @Override
+        public String getPackageCodeFromPackageNumber(String packagingNumber) {
+            return "FIN"; //Fyldt injektionssprøjte
+        }
     }
 }
