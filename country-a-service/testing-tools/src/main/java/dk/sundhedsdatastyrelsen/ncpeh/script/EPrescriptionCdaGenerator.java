@@ -57,7 +57,7 @@ public class EPrescriptionCdaGenerator {
 
         var medicationResponse = FmkResponseStorage.readStoredMedication(medicationResponseFile.toFile());
         logger.log(Level.INFO, "Reading FMK medication from {0}", medicationResponseFile.toAbsolutePath());
-        var xmlString = EPrescriptionL3Generator.generate(prescriptionResponse, medicationResponse, 0, new referenceDataLookupServiceMock()); //TODO replace with actual values?
+        var xmlString = EPrescriptionL3Generator.generate(prescriptionResponse, medicationResponse, 0, new ReferenceDataLookupServiceMock()); //TODO replace with actual values?
 
         var ePCda = Path.of(cdaOutput);
         Files.createDirectories(ePCda.getParent());
@@ -66,7 +66,7 @@ public class EPrescriptionCdaGenerator {
         logger.log(Level.INFO, "Wrote ePrescription CDA to {0}", ePCda.toAbsolutePath());
     }
 
-    private static class referenceDataLookupServiceMock implements ReferenceDataLookupService {
+    private static class ReferenceDataLookupServiceMock implements ReferenceDataLookupService {
 
         @Override
         public String getPackageCodeFromPackageNumber(String packagingNumber) {

@@ -35,7 +35,8 @@ class LmsFetchingIT {
     void testCreationOfDatabases() {
         var dataSource = new LmsTestConfig().dataSource();
         var jdbcTemplate = new JdbcTemplate(dataSource);
-        new GenericRepository<Lms02Data>(Lms02Data.class, LmsConstants.DatabaseTableNames.LMS_02, jdbcTemplate);
+        var result = new GenericRepository<Lms02Data>(Lms02Data.class, LmsConstants.DatabaseTableNames.LMS_02, jdbcTemplate);
+        Assertions.assertNotNull(result);
     }
 
     @Test

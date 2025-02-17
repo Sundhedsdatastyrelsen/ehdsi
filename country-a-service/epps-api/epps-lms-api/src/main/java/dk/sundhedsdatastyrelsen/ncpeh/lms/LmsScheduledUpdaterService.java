@@ -14,10 +14,14 @@ import java.util.List;
 @Service
 public class LmsScheduledUpdaterService {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(LmsScheduledUpdaterService.class);
-    @Autowired
+
     private LmsFetchingService lmsFetchingService;
-    @Autowired
     private LmsDataRepository lmsDataRepository;
+
+    public LmsScheduledUpdaterService(LmsFetchingService lmsFetchingService, LmsDataRepository lmsDataRepository) {
+        this.lmsFetchingService = lmsFetchingService;
+        this.lmsDataRepository = lmsDataRepository;
+    }
 
     @Scheduled(cron = "0 0 3 * * *") // Run at 03:00 daily
     public void fetchNewLmsData() {
