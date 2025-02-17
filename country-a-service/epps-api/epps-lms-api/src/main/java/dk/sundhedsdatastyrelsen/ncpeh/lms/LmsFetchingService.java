@@ -62,10 +62,6 @@ public class LmsFetchingService {
             try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(ftpClient.retrieveFileStream(remoteFilePath), Charset.forName("cp850")))) {
 
-                if (reader == null) {
-                    throw new IOException("Error: Could not open remote file stream. Check the file path or permissions.");
-                }
-
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
