@@ -6,7 +6,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL1;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 
 import java.util.Base64;
-import java.util.Optional;
 
 public class EPrescriptionL1Mapper {
     public static EPrescriptionL1 model(GetPrescriptionResponseType response, int prescriptionIndex, EPrescriptionContextAwareMappingService mappingService) throws MapperException {

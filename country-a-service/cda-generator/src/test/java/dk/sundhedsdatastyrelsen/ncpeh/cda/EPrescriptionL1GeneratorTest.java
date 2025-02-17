@@ -14,8 +14,6 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import java.util.Optional;
-
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws Exception {

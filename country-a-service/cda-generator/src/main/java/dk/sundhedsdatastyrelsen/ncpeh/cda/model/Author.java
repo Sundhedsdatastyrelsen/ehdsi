@@ -15,7 +15,7 @@ public class Author {
 
     /**
      * "The author/time element represents the start time of the author’s participation in
-     *  the creation of the clinical document. The author/time element SHALL be present."
+     * the creation of the clinical document. The author/time element SHALL be present."
      */
     @NonNull OffsetDateTime time;
     @NonNull Name name;

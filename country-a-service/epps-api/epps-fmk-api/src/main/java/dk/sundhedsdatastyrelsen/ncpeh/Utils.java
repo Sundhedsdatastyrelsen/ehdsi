@@ -13,7 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 public final class Utils {
-    private Utils() {}
+    private Utils() {
+    }
 
     /**
      * Utility function to make it possible to in-line initialize builder-less nested classes.
@@ -34,6 +35,7 @@ public final class Utils {
 
     /**
      * Read XML document from an input stream. Closes the input stream.
+     *
      * @param xml The input stream containing well-formed XML
      * @return The XML document corresponding to the input
      */
@@ -49,6 +51,7 @@ public final class Utils {
 
     /**
      * Read XML from an input stream. Closes the input stream.
+     *
      * @param xml The input stream containing well-formed XML
      * @return The XML element corresponding to the input
      */
@@ -58,6 +61,7 @@ public final class Utils {
 
     /**
      * Read XML from a string.
+     *
      * @param xml The string containing well-formed XML
      * @return The XML document corresponding to the input
      */
@@ -72,6 +76,7 @@ public final class Utils {
 
     /**
      * Read XML from a string.
+     *
      * @param xml The string containing well-formed XML
      * @return The XML element corresponding to the input
      */

@@ -1,11 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.nsp.test.idp.OrganizationIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PatientDemographicsDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.CrossGatewayPatientDiscoveryMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
-import dk.nsp.test.idp.OrganizationIdentities;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import oio.medcom.cprservice._1_0.GetPersonInformationOut;

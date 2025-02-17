@@ -5,6 +5,7 @@ import freemarker.template.TemplateExceptionHandler;
 
 public class FreemarkerConfiguration {
     private static final Configuration config;
+
     static {
         config = new Configuration(Configuration.VERSION_2_3_32);
         config.setClassLoaderForTemplateLoading(FreemarkerConfiguration.class.getClassLoader(), "/templates");
