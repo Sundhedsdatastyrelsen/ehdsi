@@ -48,10 +48,11 @@ class UndoDispensationRepositoryTest {
         assertThat(found.cdaIdHash(), equalTo(dispensation.cdaIdHash()));
         assertThat(found.orderId(), equalTo(dispensation.orderId()));
         assertThat(found.effectuationId(), equalTo(dispensation.effectuationId()));
-        assertThat(found.timestamp(), allOf(
-            greaterThan(Instant.now().minusSeconds(3)),
-            lessThan(Instant.now().plusSeconds(3))
-        ));
+        assertThat(
+            found.timestamp(), allOf(
+                greaterThan(Instant.now().minusSeconds(3)),
+                lessThan(Instant.now().plusSeconds(3))
+            ));
     }
 
     @Test
@@ -59,7 +60,6 @@ class UndoDispensationRepositoryTest {
         var found = repository.findByCdaId("test-cda-id");
         assertThat(found, is(nullValue()));
     }
-
 
     @Test
     void testDeleteDoesNotExist() {

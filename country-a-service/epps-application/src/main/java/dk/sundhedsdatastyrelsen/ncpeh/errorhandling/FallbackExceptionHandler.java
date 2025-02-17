@@ -13,7 +13,9 @@ public class FallbackExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception e) {
         var httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        var details = new ErrorDto(httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+        var details = new ErrorDto(
+            httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass()
+            .getSimpleName());
 
         log.error("{}: {} - Returning {}", e.getClass().getSimpleName(), e.getMessage(), httpStatus, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(details);

@@ -1,10 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 /*

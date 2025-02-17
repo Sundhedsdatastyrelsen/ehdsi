@@ -44,9 +44,10 @@ public class EPrescriptionPdfGenerator {
             }
             return saveBytes(pdfDocument);
         } catch (IOException e) {
-            throw new IllegalStateException(String.format(
-                "Malformed of missing PDF file in resources path '%s'",
-                TEMPLATE), e);
+            throw new IllegalStateException(
+                String.format(
+                    "Malformed of missing PDF file in resources path '%s'",
+                    TEMPLATE), e);
         }
     }
 

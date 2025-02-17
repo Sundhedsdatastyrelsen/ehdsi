@@ -59,9 +59,10 @@ public class PrescriptionController {
         @Valid @RequestBody DisardDispensationRequestDto request
     ) {
         try {
-            prescriptionService.undoDispensation(request.getDisardDispenseDetails()
-                .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
-                .getDocument()), TestIdentities.apotekerChrisChristoffersen);
+            prescriptionService.undoDispensation(
+                request.getDisardDispenseDetails()
+                    .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
+                    .getDocument()), TestIdentities.apotekerChrisChristoffersen);
         } catch (SAXException e) {
             throw new DataRequirementException("Could not read XML document in request");
         }

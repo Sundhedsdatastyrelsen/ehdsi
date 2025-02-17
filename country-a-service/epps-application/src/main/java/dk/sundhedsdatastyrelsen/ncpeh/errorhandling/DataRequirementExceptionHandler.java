@@ -16,7 +16,9 @@ public class DataRequirementExceptionHandler {
     @ExceptionHandler(DataRequirementException.class)
     public ResponseEntity<ErrorDto> handleException(DataRequirementException e) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        var details = new ErrorDto(httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+        var details = new ErrorDto(
+            httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass()
+            .getSimpleName());
         log.info("{}: {} - Returning {}", e.getClass().getSimpleName(), e.getMessage(), httpStatus);
 
         return ResponseEntity.status(httpStatus).body(details);
