@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.EPrescriptionContextAwareMappingServiceMock;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.referenceDataLookupServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +30,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0, new EPrescriptionContextAwareMappingServiceMock());
+        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0, new referenceDataLookupServiceMock());
 
         // 1. Test if well-formed XML (can be parsed)
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();

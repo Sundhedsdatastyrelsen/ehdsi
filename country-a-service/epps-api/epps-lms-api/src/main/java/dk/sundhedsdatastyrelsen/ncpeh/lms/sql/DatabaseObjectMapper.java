@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("squid:S3011")
 public class DatabaseObjectMapper<T extends DatabaseObject> implements RowMapper<T> {
     private final Class<T> type;
 
@@ -49,7 +50,6 @@ public class DatabaseObjectMapper<T extends DatabaseObject> implements RowMapper
     }
 
     public String extractId(T entity) {
-        List<Object> values = new ArrayList<>();
-        return entity.GetKey();
+        return entity.getKey();
     }
 }

@@ -23,8 +23,8 @@ public class LmsScheduledUpdaterService {
     public void fetchNewLmsData() {
         log.info("Updating LMS02");
         try {
-            String lms02Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_02);
-            List<Lms02Data> lms02Data = LmsDataParser.ParseLms02Data(lms02Result);
+            String lms02Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_02);
+            List<Lms02Data> lms02Data = LmsDataParser.parseLms02Data(lms02Result);
             lmsDataRepository.updateLms02(lms02Data);
         } catch (Exception e) {
             log.error("Failed updating LMS02", e);
@@ -33,8 +33,8 @@ public class LmsScheduledUpdaterService {
 
         log.info("Updating LMS14");
         try {
-            String lms14Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_14);
-            List<Lms14Data> lms14Data = LmsDataParser.ParseLms14Data(lms14Result);
+            String lms14Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_14);
+            List<Lms14Data> lms14Data = LmsDataParser.parseLms14Data(lms14Result);
             lmsDataRepository.updateLms14(lms14Data);
         } catch (Exception e) {
             log.error("Failed updating LMS14", e);
@@ -43,8 +43,8 @@ public class LmsScheduledUpdaterService {
 
         log.info("Updating LMS15");
         try {
-            String lms15Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_15);
-            List<Lms15Data> lms15Data = LmsDataParser.ParseLms15Data(lms15Result);
+            String lms15Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_15);
+            List<Lms15Data> lms15Data = LmsDataParser.parseLms15Data(lms15Result);
             lmsDataRepository.updateLms15(lms15Data);
         } catch (Exception e) {
             log.error("Failed updating LMS15", e);
@@ -53,8 +53,8 @@ public class LmsScheduledUpdaterService {
 
         log.info("Updating LMS22");
         try {
-            String lms22Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_22);
-            List<Lms22Data> lms22Data = LmsDataParser.ParseLms22Data(lms22Result);
+            String lms22Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_22);
+            List<Lms22Data> lms22Data = LmsDataParser.parseLms22Data(lms22Result);
             lmsDataRepository.updateLms22(lms22Data);
         } catch (Exception e) {
             log.error("Failed updating LMS22", e);

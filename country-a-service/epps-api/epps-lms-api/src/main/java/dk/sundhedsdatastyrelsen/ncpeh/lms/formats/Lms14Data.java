@@ -5,6 +5,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.DatabaseObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@SuppressWarnings("squid:S116")
 @Data
 @NoArgsConstructor
 public class Lms14Data implements DatabaseObject {
@@ -17,7 +18,7 @@ public class Lms14Data implements DatabaseObject {
     private String Text;
 
     @Override
-    public String GetKey() {
+    public String getKey() {
         return Code;
     }
 }

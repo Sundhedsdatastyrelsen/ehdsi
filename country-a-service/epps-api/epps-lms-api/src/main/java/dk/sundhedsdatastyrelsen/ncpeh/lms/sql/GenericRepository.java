@@ -3,7 +3,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.lms.sql;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,14 +30,14 @@ public class GenericRepository<T extends DatabaseObject> {
         this.selectAllSQL = SqlGenerator.generateSelectAllSQL(tableName);
         this.selectByIdSQL = SqlGenerator.generateSelectByIdSQL(tableName);
         this.updateSQL = SqlGenerator.generateUpdateSQL(type, tableName);
-        this.deleteSQL = SqlGenerator.generateDeleteSQL(type, tableName);
+        this.deleteSQL = SqlGenerator.generateDeleteSQL(tableName);
 
         createTableIfNotExists();
     }
 
     public void insert(T entity) {
         ArrayList<Object> params = new ArrayList<>(Arrays.asList(new DatabaseObjectMapper<T>(type).extractFields(entity)));
-        params.addFirst(entity.GetKey());
+        params.addFirst(entity.getKey());
         jdbcTemplate.update(insertSQL, params.toArray());
     }
 
@@ -46,7 +45,7 @@ public class GenericRepository<T extends DatabaseObject> {
         var existingEntities = getAll();
         for (var entity : entities) {
             var existingEntity = existingEntities.stream()
-                .filter(existing -> entity.GetKey().equals(existing.GetKey()))
+                .filter(existing -> entity.getKey().equals(existing.getKey()))
                 .findFirst();
             if (existingEntity.isPresent() && !existingEntity.get().equals(entity)) {
                 update(entity);

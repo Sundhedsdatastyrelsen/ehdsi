@@ -1,10 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.script;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.EPrescriptionContextAwareMappingService;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
-import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
 
@@ -58,7 +57,7 @@ public class EPrescriptionCdaGenerator {
 
         var medicationResponse = FmkResponseStorage.readStoredMedication(medicationResponseFile.toFile());
         logger.log(Level.INFO, "Reading FMK medication from {0}", medicationResponseFile.toAbsolutePath());
-        var xmlString = EPrescriptionL3Generator.generate(prescriptionResponse, medicationResponse, 0, new EPrescriptionContextAwareMappingServiceMock()); //TODO replace with actual values?
+        var xmlString = EPrescriptionL3Generator.generate(prescriptionResponse, medicationResponse, 0, new referenceDataLookupServiceMock()); //TODO replace with actual values?
 
         var ePCda = Path.of(cdaOutput);
         Files.createDirectories(ePCda.getParent());
@@ -67,7 +66,7 @@ public class EPrescriptionCdaGenerator {
         logger.log(Level.INFO, "Wrote ePrescription CDA to {0}", ePCda.toAbsolutePath());
     }
 
-    private static class EPrescriptionContextAwareMappingServiceMock implements EPrescriptionContextAwareMappingService {
+    private static class referenceDataLookupServiceMock implements ReferenceDataLookupService {
 
         @Override
         public String getPackageCodeFromPackageNumber(String packagingNumber) {

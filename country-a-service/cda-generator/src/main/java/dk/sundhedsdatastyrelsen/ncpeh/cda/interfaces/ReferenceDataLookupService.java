@@ -7,6 +7,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces;
  * This is intended to solve all of these issues, and thus should just be a shell version, autowiring other spring
  * context services into itself, so the mapping methods do not bloat with endless services in the parameters
  */
-public interface EPrescriptionContextAwareMappingService {
+public interface ReferenceDataLookupService {
     String getPackageCodeFromPackageNumber(String packagingNumber);
 }

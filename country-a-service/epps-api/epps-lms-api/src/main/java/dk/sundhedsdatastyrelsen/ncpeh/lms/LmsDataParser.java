@@ -10,41 +10,49 @@ import org.slf4j.Logger;
 import java.util.List;
 
 public class LmsDataParser {
+    private LmsDataParser() {
+        throw new IllegalStateException();
+    }
+
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(LmsDataParser.class);
 
-    public static List<Lms02Data> ParseLms02Data(String fixedWidthData) {
+    public static List<Lms02Data> parseLms02Data(String fixedWidthData) {
         try {
             return FixedWidthParser.parseString(fixedWidthData, Lms02Data.class);
         } catch (Exception e) {
-            log.error(String.format("Error parsing LMS02 data, error message: %s", e.getMessage()));
-            throw new RuntimeException(e);
+            String errorMessage = String.format("Error parsing LMS02 data, error message: %s", e.getMessage());
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
-    public static List<Lms14Data> ParseLms14Data(String fixedWidthData) {
+    public static List<Lms14Data> parseLms14Data(String fixedWidthData) {
         try {
             return FixedWidthParser.parseString(fixedWidthData, Lms14Data.class);
         } catch (Exception e) {
-            log.error(String.format("Error parsing LMS15 data, error message: %s", e.getMessage()));
-            throw new RuntimeException(e);
+            String errorMessage = String.format("Error parsing LMS14 data, error message: %s", e.getMessage());
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
-    public static List<Lms15Data> ParseLms15Data(String fixedWidthData) {
+    public static List<Lms15Data> parseLms15Data(String fixedWidthData) {
         try {
             return FixedWidthParser.parseString(fixedWidthData, Lms15Data.class);
         } catch (Exception e) {
-            log.error(String.format("Error parsing LMS15 data, error message: %s", e.getMessage()));
-            throw new RuntimeException(e);
+            String errorMessage = String.format("Error parsing LMS15 data, error message: %s", e.getMessage());
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
-    public static List<Lms22Data> ParseLms22Data(String fixedWidthData) {
+    public static List<Lms22Data> parseLms22Data(String fixedWidthData) {
         try {
             return FixedWidthParser.parseString(fixedWidthData, Lms22Data.class);
         } catch (Exception e) {
-            log.error(String.format("Error parsing LMS22 data, error message: %s", e.getMessage()));
-            throw new RuntimeException(e);
+            String errorMessage = String.format("Error parsing LMS22 data, error message: %s", e.getMessage());
+            log.error(errorMessage);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 }

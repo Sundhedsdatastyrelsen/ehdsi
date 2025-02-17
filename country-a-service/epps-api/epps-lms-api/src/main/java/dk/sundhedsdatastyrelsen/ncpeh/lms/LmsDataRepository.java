@@ -21,10 +21,10 @@ public class LmsDataRepository {
 
     public LmsDataRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-        lms02Repository = new GenericRepository<Lms02Data>(Lms02Data.class, LmsConstants.DATABASE_TABLE_NAMES.LMS_02, jdbcTemplate);
-        lms14Repository = new GenericRepository<Lms14Data>(Lms14Data.class, LmsConstants.DATABASE_TABLE_NAMES.LMS_14, jdbcTemplate);
-        lms15Repository = new GenericRepository<Lms15Data>(Lms15Data.class, LmsConstants.DATABASE_TABLE_NAMES.LMS_15, jdbcTemplate);
-        lms22Repository = new GenericRepository<Lms22Data>(Lms22Data.class, LmsConstants.DATABASE_TABLE_NAMES.LMS_22, jdbcTemplate);
+        lms02Repository = new GenericRepository<>(Lms02Data.class, LmsConstants.DatabaseTableNames.LMS_02, jdbcTemplate);
+        lms14Repository = new GenericRepository<>(Lms14Data.class, LmsConstants.DatabaseTableNames.LMS_14, jdbcTemplate);
+        lms15Repository = new GenericRepository<>(Lms15Data.class, LmsConstants.DatabaseTableNames.LMS_15, jdbcTemplate);
+        lms22Repository = new GenericRepository<>(Lms22Data.class, LmsConstants.DatabaseTableNames.LMS_22, jdbcTemplate);
     }
 
     public List<Lms02Data> getAllLms02() {

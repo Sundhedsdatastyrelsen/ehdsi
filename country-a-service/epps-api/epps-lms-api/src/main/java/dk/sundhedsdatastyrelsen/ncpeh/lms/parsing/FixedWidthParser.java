@@ -6,7 +6,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("squid:S3011")
 public class FixedWidthParser {
+    private FixedWidthParser() {
+        throw new IllegalStateException();
+    }
 
     public static <T> List<T> parseString(String data, Class<T> clazz) throws Exception {
         List<T> records = new ArrayList<>();
@@ -14,8 +18,8 @@ public class FixedWidthParser {
         try (BufferedReader br = new BufferedReader(new StringReader(data))) {
             String line;
             while ((line = br.readLine()) != null) {
-                T record = parseLine(line, clazz);
-                records.add(record);
+                T parsedRecord = parseLine(line, clazz);
+                records.add(parsedRecord);
             }
         }
         return records;

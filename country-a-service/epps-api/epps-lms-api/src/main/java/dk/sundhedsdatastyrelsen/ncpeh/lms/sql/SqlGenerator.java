@@ -2,7 +2,11 @@ package dk.sundhedsdatastyrelsen.ncpeh.lms.sql;
 
 import java.lang.reflect.Field;
 
+@SuppressWarnings("squid:S3011")
 public class SqlGenerator {
+    private SqlGenerator() {
+        throw new IllegalStateException();
+    }
 
     public static String generateCreateTableSQL(Class<?> clazz, String tableName) {
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (DATABASEKEY TEXT, ");
@@ -42,15 +46,15 @@ public class SqlGenerator {
     }
 
     public static String generateSelectAllSQL(String tableName) {
-        return "SELECT * FROM " + tableName + ";";
+        return "SELECT * FROM " + tableName + ";"; //NOSONAR
     }
 
     public static String generateSelectByIdSQL(String tableName) {
-        return "SELECT * FROM " + tableName + " WHERE DATABASEKEY = ?;";
+        return "SELECT * FROM " + tableName + " WHERE DATABASEKEY = ?;"; //NOSONAR
     }
 
     public static String generateSelectByFieldSQL(String tableName, String fieldName) {
-        return "SELECT * FROM " + tableName + " WHERE " + fieldName + " = ?;";
+        return "SELECT * FROM " + tableName + " WHERE " + fieldName + " = ?;"; //NOSONAR
     }
 
     public static String generateUpdateSQL(Class<?> clazz, String tableName) {
@@ -67,9 +71,7 @@ public class SqlGenerator {
         return sql.toString();
     }
 
-    public static String generateDeleteSQL(Class<?> clazz, String tableName) {
-        Field[] fields = clazz.getDeclaredFields();
-
+    public static String generateDeleteSQL(String tableName) {
         return "DELETE FROM " + tableName + " WHERE DATABASEKEY = ?;";
     }
 

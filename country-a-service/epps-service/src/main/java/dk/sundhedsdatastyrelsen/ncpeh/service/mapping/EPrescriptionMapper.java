@@ -33,10 +33,10 @@ public class EPrescriptionMapper {
     public static List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(
         String patientId, PrescriptionFilter filter,
         GetPrescriptionResponseType src,
-        EPrescriptionMappingService ePrescriptionMappingService
+        LmsDataLookupService lmsDataLookupService
     ) {
         return filter.validPrescriptionIndexes(src.getPrescription())
-            .mapToObj(idx -> mapMeta(patientId, src, idx, ePrescriptionMappingService))
+            .mapToObj(idx -> mapMeta(patientId, src, idx, lmsDataLookupService))
             .toList();
     }
 
@@ -45,7 +45,7 @@ public class EPrescriptionMapper {
         PrescriptionFilter filter,
         GetPrescriptionResponseType src,
         GetDrugMedicationResponseType drugMedicationResponse,
-        EPrescriptionMappingService mappingService
+        LmsDataLookupService mappingService
     ) {
         try {
             var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
@@ -57,7 +57,7 @@ public class EPrescriptionMapper {
         }
     }
 
-    private static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, EPrescriptionMappingService mappingService) {
+    private static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, LmsDataLookupService mappingService) {
         try {
             final String cda;
             var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex, mappingService);
@@ -101,7 +101,7 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType medicationResponseType, int prescriptionIndex, DocumentLevel documentLevel, EPrescriptionMappingService mappingService) {
+    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType medicationResponseType, int prescriptionIndex, DocumentLevel documentLevel, LmsDataLookupService mappingService) {
         try {
             String cda = switch (documentLevel) {
                 case LEVEL3 ->

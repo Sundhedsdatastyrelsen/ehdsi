@@ -1,8 +1,5 @@
-import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsConstants;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataParser;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataRepository;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsFetchingService;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsScheduledUpdaterService;
+package dk.sundhedsdatastyrelsen.ncpeh.lms;
+
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
@@ -17,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.util.List;
 
 @SpringJUnitConfig(LmsTestConfig.class)
-public class LmsFetchingIT {
+class LmsFetchingIT {
 
     @Autowired
     private LmsFetchingService lmsFetchingService;
@@ -30,20 +27,21 @@ public class LmsFetchingIT {
 
     @Test
     void testDownloadFile() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_02);
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_02);
+        Assertions.assertNotNull(result);
     }
 
     @Test
     void testCreationOfDatabases() {
         var dataSource = new LmsTestConfig().dataSource();
         var jdbcTemplate = new JdbcTemplate(dataSource);
-        var repository = new GenericRepository<Lms02Data>(Lms02Data.class, LmsConstants.DATABASE_TABLE_NAMES.LMS_02, jdbcTemplate);
+        new GenericRepository<Lms02Data>(Lms02Data.class, LmsConstants.DatabaseTableNames.LMS_02, jdbcTemplate);
     }
 
     @Test
     void testDownloadAndParseAndStoreLms02() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_02);
-        List<Lms02Data> lms02Data = LmsDataParser.ParseLms02Data(result);
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_02);
+        List<Lms02Data> lms02Data = LmsDataParser.parseLms02Data(result);
 
         lmsDataRepository.updateLms02(lms02Data);
 
@@ -57,8 +55,8 @@ public class LmsFetchingIT {
 
     @Test
     void testDownloadAndParseLms14() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_14);
-        List<Lms14Data> lms14Data = LmsDataParser.ParseLms14Data(result);
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_14);
+        List<Lms14Data> lms14Data = LmsDataParser.parseLms14Data(result);
 
         lmsDataRepository.updateLms14(lms14Data);
 
@@ -72,8 +70,8 @@ public class LmsFetchingIT {
 
     @Test
     void testDownloadAndParseLms15() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_15);
-        List<Lms15Data> lms15Data = LmsDataParser.ParseLms15Data(result);
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_15);
+        List<Lms15Data> lms15Data = LmsDataParser.parseLms15Data(result);
 
         lmsDataRepository.updateLms15(lms15Data);
 
@@ -87,8 +85,8 @@ public class LmsFetchingIT {
 
     @Test
     void testDownloadAndParseLms22() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FTP_FILE_NAMES.LMS_22);
-        List<Lms22Data> lms22data = LmsDataParser.ParseLms22Data(result);
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_22);
+        List<Lms22Data> lms22data = LmsDataParser.parseLms22Data(result);
 
         lmsDataRepository.updateLms22(lms22data);
 

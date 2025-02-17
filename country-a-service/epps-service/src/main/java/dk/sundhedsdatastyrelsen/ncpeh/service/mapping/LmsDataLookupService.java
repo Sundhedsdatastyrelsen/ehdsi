@@ -1,8 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.EPrescriptionContextAwareMappingService;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,10 +12,12 @@ import org.springframework.stereotype.Service;
  * context services into itself, so the mapping methods do not bloat with endless services in the parameters
  */
 @Service
-public class EPrescriptionMappingService implements EPrescriptionContextAwareMappingService {
-
-    @Autowired
+public class LmsDataLookupService implements ReferenceDataLookupService {
     private LmsDataRepository lmsDataRepository;
+
+    public LmsDataLookupService(LmsDataRepository lmsDataRepository) {
+        this.lmsDataRepository = lmsDataRepository;
+    }
 
     public String getPackageCodeFromPackageNumber(String packagingNumber) {
         var lms2 = lmsDataRepository.getLms02FromPackageNumber(Integer.parseInt(packagingNumber));

@@ -6,7 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.EPrescriptionMapperServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMappingService;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import org.flywaydb.core.Flyway;
@@ -98,7 +98,7 @@ public class FmkIT {
         return new UndoDispensationRepository(dataSource);
     }
 
-    private static EPrescriptionMappingService ePrescriptionMappingService() {
+    private static LmsDataLookupService ePrescriptionMappingService() {
         return new EPrescriptionMapperServiceMock();
     }
 

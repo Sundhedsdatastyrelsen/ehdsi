@@ -1,8 +1,12 @@
 package dk.sundhedsdatastyrelsen.ncpeh.mocks;
 
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMappingService;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 
-public class EPrescriptionMapperServiceMock extends EPrescriptionMappingService {
+public class EPrescriptionMapperServiceMock extends LmsDataLookupService {
+
+    public EPrescriptionMapperServiceMock() {
+        super();
+    }
 
     @Override
     public String getPackageCodeFromPackageNumber(String packagingNumber) {
