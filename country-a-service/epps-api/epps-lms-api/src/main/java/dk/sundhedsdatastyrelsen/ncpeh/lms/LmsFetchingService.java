@@ -28,13 +28,10 @@ public class LmsFetchingService {
 
     public String getLmsDataFromServer(String lmsFile) {
         try {
-            String fileContents = downloadTextFileInMemory(server, port, username, password, String.format("/LMS/NYESTE/%s", lmsFile));
-
-            return fileContents;
+            return downloadTextFileInMemory(server, port, username, password, String.format("/LMS/NYESTE/%s", lmsFile));
 
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Failed downloading new data from LMS-Medicinprinser");
         }
     }
 
@@ -47,6 +44,8 @@ public class LmsFetchingService {
         String user, String pass,
         String remoteFilePath
     ) throws IOException {
+
+        @SuppressWarnings("squid:S5332") // Does not support SFTP
         FTPClient ftpClient = new FTPClient();
 
         try {
