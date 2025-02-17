@@ -8,6 +8,7 @@ public sealed interface EhdsiUnit {
      * Short class name because Freemarker cannot match on type.
      */
     String getTag();
+
     @Value
     class WithCode implements EhdsiUnit {
         String tag = "WithCode";

@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.oio.rep.ebxml.xml.schemas.dkcc._2003._02._13.PersonGenderCodeType;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.GenderDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PatientDemographicsDto;
-import dk.oio.rep.ebxml.xml.schemas.dkcc._2003._02._13.PersonGenderCodeType;
 import lombok.experimental.UtilityClass;
 import oio.medcom.cprservice._1_0.GetPersonInformationOut;
 
@@ -28,7 +28,8 @@ public class CrossGatewayPatientDiscoveryMapper {
         var postal = address != null ? address.getAddressPostal() : null;
         var country = postal != null ? postal.getCountryIdentificationCode() : null;
 
-        var cpr = info != null && info.getRegularCPRPerson() != null && info.getRegularCPRPerson().getSimpleCPRPerson() != null
+        var cpr = info != null && info.getRegularCPRPerson() != null && info.getRegularCPRPerson()
+            .getSimpleCPRPerson() != null
             ? info.getRegularCPRPerson().getSimpleCPRPerson().getPersonCivilRegistrationIdentifier()
             : null;
 

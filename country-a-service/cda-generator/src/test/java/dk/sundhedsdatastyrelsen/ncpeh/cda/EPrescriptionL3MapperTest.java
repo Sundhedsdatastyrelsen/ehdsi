@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,6 @@ class EPrescriptionL3MapperTest {
         var model = getModel();
         Assertions.assertNotNull(model.getMedicationStartTime());
     }
-
 
 
     /// etc....

@@ -12,9 +12,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequ
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
-import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

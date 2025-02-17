@@ -86,13 +86,18 @@ public class FmkClient {
     }
 
     private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {
-        final var consentHeader = ConsentHeaderType.builder().addConsent().withSource("User").withConsentType("MedicineReviewConsent").withContent("MedicineCard").end().build();
+        final var consentHeader = ConsentHeaderType.builder()
+            .addConsent()
+            .withSource("User")
+            .withConsentType("MedicineReviewConsent")
+            .withContent("MedicineCard")
+            .end()
+            .build();
 
         var objectFactory = new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
         return objectFactory.createConsentHeader(consentHeader);
     }
-
 
     /**
      * "Påbegynd ekspedition".
@@ -256,7 +261,7 @@ public class FmkClient {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
         Element[] extraHeaders;
-        if(requiresMedicineCardConsent){
+        if (requiresMedicineCardConsent) {
             extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole)), toElement(getMedicineReviewConsent())};
         } else {
             extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole))};

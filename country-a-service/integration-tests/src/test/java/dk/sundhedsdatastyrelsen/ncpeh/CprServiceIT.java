@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.nsp.test.idp.OrganizationIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Cpr;
-import dk.nsp.test.idp.OrganizationIdentities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

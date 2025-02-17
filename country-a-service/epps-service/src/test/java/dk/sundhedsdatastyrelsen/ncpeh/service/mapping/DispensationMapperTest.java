@@ -4,8 +4,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
+import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +28,6 @@ class DispensationMapperTest {
             throw new RuntimeException(e);
         }
     }
-
 
     static Stream<Arguments> testDispensationCdas() {
         //Input format:
@@ -109,7 +108,7 @@ class DispensationMapperTest {
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         var org = sut.authorOrganization(cda);
-        
+
         Assertions.assertFalse(org.getIdentifier().getSource().isBlank());
         Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
         Assertions.assertFalse(org.getType().isBlank());

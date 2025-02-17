@@ -43,7 +43,9 @@ public class SpringExceptionHandler {
     }
 
     private ResponseEntity<ErrorDto> internalError(HttpStatus httpStatus, Exception e) {
-        var details = new ErrorDto(httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+        var details = new ErrorDto(
+            httpStatus.name(), e.getMessage() != null ? e.getMessage() : e.getClass()
+            .getSimpleName());
 
         if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
             log.error("{} - Returning {}", e.getClass().getSimpleName(), httpStatus, e);
