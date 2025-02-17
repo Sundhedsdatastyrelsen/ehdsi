@@ -31,7 +31,7 @@ public class LmsFetchingService {
             return downloadTextFileInMemory(server, port, username, password, String.format("/LMS/NYESTE/%s", lmsFile));
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed downloading new data from LMS-Medicinprinser");
+            throw new LmsDataException("Failed downloading new data from LMS-Medicinprinser", e);
         }
     }
 

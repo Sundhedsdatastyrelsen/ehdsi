@@ -22,7 +22,7 @@ public class LmsDataParser {
         } catch (Exception e) {
             String errorMessage = String.format("Error parsing LMS02 data, error message: %s", e.getMessage());
             log.error(errorMessage);
-            throw new RuntimeException(errorMessage, e);
+            throw new LmsDataException(errorMessage, e);
         }
     }
 
@@ -32,7 +32,7 @@ public class LmsDataParser {
         } catch (Exception e) {
             String errorMessage = String.format("Error parsing LMS14 data, error message: %s", e.getMessage());
             log.error(errorMessage);
-            throw new RuntimeException(errorMessage, e);
+            throw new LmsDataException(errorMessage, e);
         }
     }
 
@@ -42,7 +42,7 @@ public class LmsDataParser {
         } catch (Exception e) {
             String errorMessage = String.format("Error parsing LMS15 data, error message: %s", e.getMessage());
             log.error(errorMessage);
-            throw new RuntimeException(errorMessage, e);
+            throw new LmsDataException(errorMessage, e);
         }
     }
 
@@ -52,7 +52,7 @@ public class LmsDataParser {
         } catch (Exception e) {
             String errorMessage = String.format("Error parsing LMS22 data, error message: %s", e.getMessage());
             log.error(errorMessage);
-            throw new RuntimeException(errorMessage, e);
+            throw new LmsDataException(errorMessage, e);
         }
     }
 }
