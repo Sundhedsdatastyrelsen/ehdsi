@@ -23,9 +23,9 @@ class EPrescriptionL3MapperTest {
     }
 
     @Test
-    void entryTextTest() {
+    void getPatientMedicationInstructions() {
         var model = getModel();
-        Assertions.assertNotNull(model.getEntryText());
+        Assertions.assertNotNull(model.getPatientMedicationInstructions());
     }
 
     @Test

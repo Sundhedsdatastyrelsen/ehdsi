@@ -58,10 +58,10 @@ public class EPrescriptionL3 {
      */
     @NonNull OffsetDateTime signatureTime;
     @NonNull CdaId parentDocumentId;
-    @NonNull String entryText;
     @NonNull Product product;
     @NonNull Long packageQuantity;
     @NonNull Boolean substitutionAllowed;
+    @NonNull String patientMedicationInstructions;
 
     public String getEffectiveTime() {
         return Utils.cdaDateTime(effectiveTime);
