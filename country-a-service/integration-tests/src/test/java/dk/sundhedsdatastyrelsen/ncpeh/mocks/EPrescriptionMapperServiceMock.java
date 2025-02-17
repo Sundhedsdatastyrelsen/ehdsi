@@ -5,7 +5,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 public class EPrescriptionMapperServiceMock extends LmsDataLookupService {
 
     public EPrescriptionMapperServiceMock() {
-        super();
+        super(null);
     }
 
     @Override
