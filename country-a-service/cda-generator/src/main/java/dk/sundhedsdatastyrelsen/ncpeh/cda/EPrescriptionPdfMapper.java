@@ -68,7 +68,7 @@ public class EPrescriptionPdfMapper {
         lines.add("");
         lines.add(model.getIndicationText());
         lines.add("");
-        lines.add(String.format("Dosering: %s", model.getEntryText()));
+        lines.add(String.format("Dosering: %s", model.getPatientMedicationInstructions()));
         return lines;
     }
 

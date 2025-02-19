@@ -66,11 +66,11 @@ public class EPrescriptionL3Mapper {
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .entryText(prescription.getDosageText())
             .product(product(prescription, mappingService))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
-            .indicationText(indicationText);
+            .indicationText(indicationText)
+            .patientMedicationInstructions(prescription.getDosageText());
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
