@@ -64,8 +64,11 @@ public class LmsDataRepository {
         String packageNumberColumnName = "ProductNumber";
         String packageNumberAsString = String.format("%06d", packageNumber); //LMS02 package numbers are 6 digits long
         var dataList = lms02Repository.getByFieldAndValue(packageNumberColumnName, packageNumberAsString);
-        if (dataList.size() != 1) {
-            throw new IllegalArgumentException(String.format("Did not find single result for LMS02 field name '%s' and value '%s'. Found %d results", packageNumberColumnName, packageNumberAsString, dataList.size()));
+        if (dataList.size() > 1) {
+            throw new IllegalArgumentException(String.format("Found more than one result for LMS02 field name '%s' and value '%s'. Found %d results", packageNumberColumnName, packageNumberAsString, dataList.size()));
+        }
+        if (dataList.isEmpty()) {
+            return null;
         }
         return dataList.getFirst();
     }

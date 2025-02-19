@@ -14,16 +14,16 @@ import java.nio.charset.Charset;
 @Service
 public class LmsFetchingService {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(LmsFetchingService.class);
-    @Value("${lmsftp.server}")
+    @Value("${lmsftp.server:}")
     private String server;
 
-    @Value("${lmsftp.port}")
+    @Value("${lmsftp.port:}")
     private int port;
 
-    @Value("${lmsftp.username}")
+    @Value("${lmsftp.username:}")
     private String username;
 
-    @Value("${lmsftp.password}")
+    @Value("${lmsftp.password:}")
     private String password;
 
     public String getLmsDataFromServer(String lmsFile) {
