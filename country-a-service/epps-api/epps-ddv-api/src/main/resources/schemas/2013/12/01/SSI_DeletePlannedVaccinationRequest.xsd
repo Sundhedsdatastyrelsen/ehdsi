@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_DeletePlannedVaccination.xsd"/>
+	<include schemaLocation="SSI_Modified.xsd"/>
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<element name="DeletePlannedVaccinationRequest" type="vaccinationcard:DeletePlannedVaccinationRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a deletion of a planned vaccination</documentation>
+			<documentation xml:lang="da-DK">Element for sletning af en planlagt vaccination</documentation>
+		</annotation>
+	</element>
+	<complexType name="DeletePlannedVaccinationRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+            <element name="Modified" type="vaccinationcard:ModifiedType" />
+            <element name="Reported" type="vaccinationcard:ModifiedType" minOccurs="0"/>
+			<element name="DeletePlannedVaccination" type="vaccinationcard:DeletePlannedVaccinationType"/>
+		</sequence>
+	</complexType>
+</schema>

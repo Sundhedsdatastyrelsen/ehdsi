@@ -1,0 +1,9 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix
+displayName: "Rename dgws prefix to ddvdgws"
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: "dk.sdsd.dgws"
+      newPackageName: "dk.sdsd.ddv.dgws"
+      recursive: true

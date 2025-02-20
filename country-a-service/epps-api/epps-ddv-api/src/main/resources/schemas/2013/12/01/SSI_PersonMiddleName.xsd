@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="PersonMiddleName" type="vaccinationcard:PersonMiddleNameType"/>
+	<simpleType name="PersonMiddleNameType">
+		<annotation>
+			<documentation xml:lang="en-GB">A person's middle name</documentation>
+			<documentation xml:lang="da-DK">En persons mellemnavn</documentation>
+		</annotation>
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="40"/>
+		</restriction>
+	</simpleType>
+</schema>

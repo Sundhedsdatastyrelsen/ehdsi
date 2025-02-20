@@ -17,6 +17,7 @@ import static dk.nsp.test.idp.builder.Builders.securityTokenService;
 import static dk.nsp.test.idp.builder.Builders.serviceConsumer;
 
 public class TestIdentities {
+
     public static Identity apotekerJeppeMoeller = employeeIdentity()
         .representing(employee()
             .identifiedBy(UUID.fromString("00798849-effe-4733-bcc4-670093830511")))

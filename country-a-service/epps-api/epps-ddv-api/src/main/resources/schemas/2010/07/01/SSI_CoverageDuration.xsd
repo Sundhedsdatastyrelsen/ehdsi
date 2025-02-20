@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="CoverageDuration" type="vaccinationcard:CoverageDurationType">
+		<annotation>
+			<documentation xml:lang="en-GB">coverage duration </documentation>
+			<documentation xml:lang="da-DK">anslået varighed</documentation>
+		</annotation>
+	</element>
+	<simpleType name="CoverageDurationType">
+		<restriction base="string">
+			<maxLength value="100"/>
+		</restriction>
+	</simpleType>
+</schema>

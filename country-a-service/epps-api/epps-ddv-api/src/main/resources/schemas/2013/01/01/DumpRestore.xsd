@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ssi.dk/nsi/xml.schema/2013/01/01" xmlns:tns="http://www.ssi.dk/nsi/xml.schema/2013/01/01" elementFormDefault="qualified">
+
+	<simpleType name="PersonIdentifierType">
+		<restriction base="string">
+			<pattern value="((((0[1-9]|1[0-9]|2[0-9]|3[0-1])(01|03|05|07|08|10|12))|((0[1-9]|1[0-9]|2[0-9]|30)(04|06|09|11))|((0[1-9]|1[0-9]|2[0-9])(02)))[0-9]{6})"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="SubstitutionPersonIdentifierType">
+		<restriction base="string">
+				<pattern value="[a-zA-Z0-9]{10}"/>
+			</restriction>
+	</simpleType>
+
+	<simpleType name="OtherIdentifierType">
+		<restriction base="string">
+	      <minLength value="1"/>
+	      <maxLength value="100"/>
+		</restriction>
+	</simpleType>
+	
+	<complexType name="IdentifierType">
+		<sequence>
+			<choice>
+				<element name="PersonIdentifier" type="tns:PersonIdentifierType" maxOccurs="unbounded"/>
+				<element name="SubstitutionPersonIdentifier" type="tns:SubstitutionPersonIdentifierType" maxOccurs="unbounded"/>
+				<element name="OtherIdentifier" type="tns:OtherIdentifierType" maxOccurs="unbounded"/>
+			</choice>
+		</sequence>
+	
+	</complexType>
+	
+	<complexType name="DumpDataType">
+		<sequence>
+			<element name="Identifier" type="tns:IdentifierType" maxOccurs="unbounded"/>
+			<element name="DumpData" type="base64Binary" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="DumpPatientsRequestType">
+		<sequence>
+			<element name="Identifier" type="tns:IdentifierType" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="DumpPatientsReponseType">
+		<sequence>
+			<element name="Dump" type="tns:DumpDataType" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="RestorePatientsRequestType">
+		<sequence>
+			<element name="Dump" type="tns:DumpDataType" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="RestorePatientsReponseType">
+		<sequence>
+			<element name="Identifier" type="tns:IdentifierType" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="ResetPatientsRequestType">
+		<sequence>
+			<element name="Identifier" type="tns:IdentifierType" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="ResetPatientsReponseType">
+		<sequence>
+			<element name="Identifier" type="tns:IdentifierType" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	
+	<element name="DumpPatientsRequest" type="tns:DumpPatientsRequestType" />
+	<element name="DumpPatientsResponse" type="tns:DumpPatientsReponseType" />
+
+	<element name="RestorePatientsRequest" type="tns:RestorePatientsRequestType" />
+	<element name="RestorePatientsResponse" type="tns:RestorePatientsReponseType" />
+
+	<element name="ResetPatientsRequest" type="tns:ResetPatientsRequestType" />
+	<element name="ResetPatientsResponse" type="tns:ResetPatientsReponseType" />
+</schema>

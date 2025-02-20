@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/"
+		schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd" />
+	<include schemaLocation="SSI_VaccinationPlanCategory.xsd" />
+	<include schemaLocation="SSI_PostalAddressType.xsd" />
+
+	<element name="RequestVaccinationPassportHardCopyRequest" type="vaccinationcard:RequestVaccinationPassportHardCopyRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request that a vaccination passport hard copy be sent, optionally to a specific postal address.</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel om at sende et fysisk vaccinationspas som brev, optionelt til en specifik post adresse.</documentation>
+		</annotation>
+	</element>
+	<complexType name="RequestVaccinationPassportHardCopyRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" />
+			<element name="VaccinationPlanCategory" type="vaccinationcard:VaccinationPlanCategoryType" />
+			<element name="RecipientAddress" type="vaccinationcard:PostalAddressType" minOccurs="0" />
+            <element name="IncludeVaccinations" type="boolean" minOccurs="0" />
+            <element name="IncludeRestitutions" type="boolean" minOccurs="0" />
+		</sequence>
+	</complexType>
+</schema>

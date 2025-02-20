@@ -1,0 +1,25 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="PersonIdentifier" type="vaccinationcard:PersonIdentifierType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a person identifier, according to the Danish CPR format.</documentation>
+			<documentation xml:lang="da-DK">Element for er CPR-nummer</documentation>
+		</annotation>
+	</element>
+    <simpleType name="DKPersonIdentifierType">
+        <restriction base="string">
+            <pattern value="((((0[1-9]|1[0-9]|2[0-9]|3[0-1])(01|03|05|07|08|10|12))|((0[1-9]|1[0-9]|2[0-9]|30)(04|06|09|11))|((0[1-9]|1[0-9]|2[0-9])(02)))[0-9]{6})"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="XEPersonCivilRegistrationIdentifierType">
+        <restriction base="string">
+            <pattern value="((((0[1-9]|1[0-9]|2[0-9]|3[0-1])(01|03|05|07|08|10|12))|((0[1-9]|1[0-9]|2[0-9]|30)(04|06|09|11))|((0[1-9]|1[0-9]|2[0-9])(02)))[0-9]{3}[A-Z]{2}[0-9]{1})"/>
+        </restriction>
+    </simpleType>
+	<simpleType name="PersonIdentifierType">
+        <union memberTypes="vaccinationcard:DKPersonIdentifierType vaccinationcard:XEPersonCivilRegistrationIdentifierType"/>
+	</simpleType>
+</schema>

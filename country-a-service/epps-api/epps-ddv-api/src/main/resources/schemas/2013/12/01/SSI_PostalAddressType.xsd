@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <include schemaLocation="SSI_AddressLine.xsd" />
+	<element name="PostalAddress" type="vaccinationcard:PostalAddressType">
+		<annotation>
+			<documentation xml:lang="en-GB">An address that can be used for postal services.</documentation>
+			<documentation xml:lang="da-DK">En adresse, der kan anvendes i forb. med postforsendelser.</documentation>
+		</annotation>
+	</element>
+    <complexType name="PostalAddressType">
+        <sequence>
+            <element name="Name" type="vaccinationcard:NameType" />
+            <element name="AddressLine1" type="vaccinationcard:AddressLineType" />
+            <element name="AddressLine2" type="vaccinationcard:AddressLineType" minOccurs="0" />
+            <element name="City" type="vaccinationcard:CityType" />
+            <element name="PostalCode" type="vaccinationcard:PostalCodeType" />
+            <element name="CountryCode" type="vaccinationcard:CountryCodeType" />
+        </sequence>
+    </complexType>
+    <simpleType name="NameType">
+        <restriction base="string">
+            <minLength value="1" />
+            <maxLength value="100" />
+        </restriction>
+    </simpleType>
+    <simpleType name="CityType">
+        <restriction base="string">
+            <minLength value="1" />
+            <maxLength value="60" />
+        </restriction>
+    </simpleType>
+    <!-- PostalCode is a non-structured value for now, several standards exist though -->
+    <simpleType name="PostalCodeType">
+        <restriction base="string">
+            <minLength value="1" />
+            <maxLength value="10" />
+        </restriction>
+    </simpleType>
+    <!-- CountryCode is a non-structured value for now, several standards exist though -->
+    <simpleType name="CountryCodeType">
+        <restriction base="string">
+            <minLength value="1"/>
+            <maxLength value="10"/>
+        </restriction>
+    </simpleType>
+</schema>

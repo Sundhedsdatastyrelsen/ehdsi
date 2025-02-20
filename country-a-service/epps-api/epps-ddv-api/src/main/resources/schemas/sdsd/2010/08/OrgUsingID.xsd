@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sdsd201008="http://www.sdsd.dk/dgws/2010/08" targetNamespace="http://www.sdsd.dk/dgws/2010/08" elementFormDefault="qualified">
+	<include schemaLocation="NameFormat.xsd"/>
+ 	<element name="OrgUsingID" type="sdsd201008:OrgUsingID">
+		<annotation>
+			<documentation xml:lang="da-DK">Det entydige id på den organisation, hvor brugeren aktuelt befinder sig når webservice kaldet udføres. Klassifikationen hvortil id’et hører er angivet i attributten NameFormat.</documentation>
+		</annotation>
+	</element>
+	<simpleType name="OrgUsingIDString">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+	<complexType name="OrgUsingID">
+		<simpleContent>
+			<extension base="sdsd201008:OrgUsingIDString">
+				<attribute name="NameFormat" type="sdsd201008:NameFormat" use="required"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+</schema>

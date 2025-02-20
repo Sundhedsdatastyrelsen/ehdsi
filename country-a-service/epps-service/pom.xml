@@ -70,6 +70,10 @@
             <artifactId>testing-shared</artifactId>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>epps-ddv-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

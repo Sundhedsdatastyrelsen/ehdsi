@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+		<xs:include schemaLocation="SSI_CreateNotificationUnsubscriptionRequest.xsd" />
+		<xs:include schemaLocation="SSI_CreateNotificationUnsubscriptionResponse.xsd" />
+		<xs:include schemaLocation="SSI_CreateUnsubscription.xsd" />
+		<xs:include schemaLocation="SSI_CreateUnsubscriptionRequest.xsd" />
+		<xs:include schemaLocation="SSI_DeleteNotificationUnsubscriptionRequest.xsd" />
+		<xs:include schemaLocation="SSI_DeleteNotificationUnsubscriptionResponse.xsd" />
+		<xs:include schemaLocation="SSI_DeletePlannedVaccination.xsd" />
+		<xs:include schemaLocation="SSI_DeletePlannedVaccinationRequest.xsd" />
+		<xs:include schemaLocation="SSI_DeleteSubscription.xsd" />
+		<xs:include schemaLocation="SSI_DeleteSubscriptionRequest.xsd" />
+		<xs:include schemaLocation="SSI_GetNotificationUnsubscriptionRequest.xsd" />
+		<xs:include schemaLocation="SSI_GetNotificationUnsubscriptionResponse.xsd" />
+		<xs:include schemaLocation="SSI_GetUnsubscriptionsResponse.xsd" />
+		<xs:include schemaLocation="SSI_IncludeRecipients.xsd" />
+		<xs:include schemaLocation="SSI_MultiUpdateIn.xsd" />
+		<xs:include schemaLocation="SSI_MultiUpdateRequest.xsd" />
+		<xs:include schemaLocation="SSI_PlannedVaccinationStatus.xsd" />
+		<xs:include schemaLocation="SSI_Unsubscription.xsd" />
+		<xs:include schemaLocation="SSI_UnsubscriptionDeleted.xsd" />
+
+</xs:schema>
