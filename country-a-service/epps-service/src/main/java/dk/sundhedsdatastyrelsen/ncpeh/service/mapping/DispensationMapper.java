@@ -10,11 +10,11 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import lombok.NonNull;
 import org.apache.xml.dtm.ref.DTMNodeList;
 import org.slf4j.Logger;
@@ -402,11 +402,11 @@ public class DispensationMapper {
         try {
             var node = evalNode(cda, XPaths.manufacturedMaterialCode);
             var codeSystem = xpath.evaluate("@codeSystem", node);
-            if (!Oid.DK_LMS02.value.equals(codeSystem)) {
+            if (!Oid.DK_VARENUMRE.value.equals(codeSystem)) {
                 // throw?
                 log.warn(
                     "Expected LMS02 ({}) code system, for {}. Got: {}",
-                    Oid.DK_LMS02.value,
+                    Oid.DK_VARENUMRE.value,
                     XPaths.manufacturedMaterialCode,
                     codeSystem
                 );

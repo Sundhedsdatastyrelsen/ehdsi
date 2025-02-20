@@ -10,7 +10,8 @@ class EhdsiUnitMapperTest {
     void fromLmsTest() {
         Assertions.assertEquals(new EhdsiUnit.WithCode("{Ampoule}"), EhdsiUnitMapper.fromLms("AM"));
         Assertions.assertEquals(new EhdsiUnit.WithTranslation("Inf.flaske"), EhdsiUnitMapper.fromLms("IF"));
-        Assertions.assertThrows(IllegalArgumentException.class,  () ->
-            EhdsiUnitMapper.fromLms("unknown code"));
+        Assertions.assertThrows(
+            IllegalArgumentException.class, () ->
+                EhdsiUnitMapper.fromLms("unknown code"));
     }
 }

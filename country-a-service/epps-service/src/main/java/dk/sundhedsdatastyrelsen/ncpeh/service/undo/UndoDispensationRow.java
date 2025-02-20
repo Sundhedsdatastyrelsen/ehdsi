@@ -8,10 +8,10 @@ import java.time.Instant;
 /**
  * Represents a row in the undo_dispensation table that tracks undo information for dispensations.
  *
- * @param cdaIdHash An SHA-256 hash of the eDispensation CDA id (to mask potential sensitive data)
+ * @param cdaIdHash      An SHA-256 hash of the eDispensation CDA id (to mask potential sensitive data)
  * @param effectuationId FMK id of the effectuation that needs to be undone
- * @param orderId FMK id of the prescription order containing the effectuation
- * @param timestamp When this row was created in the database, populated automatically on insert
+ * @param orderId        FMK id of the prescription order containing the effectuation
+ * @param timestamp      When this row was created in the database, populated automatically on insert
  */
 public record UndoDispensationRow(
     @NonNull String cdaIdHash,
@@ -23,9 +23,9 @@ public record UndoDispensationRow(
      * Creates a new UndoDispensationRow from a CDA ID and associated effectuation and order IDs.
      * The timestamp is set to null as it will be populated by the database on insert.
      *
-     * @param cdaId The CDA ID of the dispensation to be hashed
+     * @param cdaId          The CDA ID of the dispensation to be hashed
      * @param effectuationId The ID of the effectuation to undo
-     * @param orderId The ID of the prescription order containing the effectuation
+     * @param orderId        The ID of the prescription order containing the effectuation
      * @return A new UndoDispensationRow with the provided information
      */
     public static UndoDispensationRow fromCdaId(String cdaId, Long effectuationId, Long orderId) {

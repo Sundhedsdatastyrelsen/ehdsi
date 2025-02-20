@@ -68,7 +68,7 @@ public class EPrescriptionPdfMapper {
         lines.add("");
         lines.add(model.getIndicationText());
         lines.add("");
-        lines.add(String.format("Dosering: %s", model.getEntryText()));
+        lines.add(String.format("Dosering: %s", model.getPatientMedicationInstructions()));
         return lines;
     }
 
@@ -76,16 +76,17 @@ public class EPrescriptionPdfMapper {
         var patientLines = new ArrayList<String>();
         var cpr =
             patient.getId().getExtension().substring(0, 6)
-            + "-"
-            + patient.getId().getExtension().substring(6, 10);
+                + "-"
+                + patient.getId().getExtension().substring(6, 10);
         var nameCprLine = StringUtils.rightPad(patient.getName().getFullName(), 30) + " " + cpr;
         patientLines.add(nameCprLine);
         for (String addressLine : patient.getAddress().getStreetAddressLines()) {
             addToListIfNotNullOrEmpty(patientLines, addressLine);
         }
-        addToListIfNotNullOrEmpty(patientLines, constructPostalCityLine(
-            patient.getAddress().getPostalCode(),
-            patient.getAddress().getCity()));
+        addToListIfNotNullOrEmpty(
+            patientLines, constructPostalCityLine(
+                patient.getAddress().getPostalCode(),
+                patient.getAddress().getCity()));
         addToListIfNotNullOrEmpty(patientLines, patient.getAddress().getCountryCode());
         return patientLines;
     }
@@ -98,9 +99,10 @@ public class EPrescriptionPdfMapper {
             for (String addressLine : author.getOrganization().getAddress().getStreetAddressLines()) {
                 addToListIfNotNullOrEmpty(authorLines, addressLine);
             }
-            addToListIfNotNullOrEmpty(authorLines, constructPostalCityLine(
-                author.getOrganization().getAddress().getPostalCode(),
-                author.getOrganization().getAddress().getCity()));
+            addToListIfNotNullOrEmpty(
+                authorLines, constructPostalCityLine(
+                    author.getOrganization().getAddress().getPostalCode(),
+                    author.getOrganization().getAddress().getCity()));
             addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
         }
         return authorLines;

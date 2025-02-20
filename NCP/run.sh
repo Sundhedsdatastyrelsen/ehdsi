@@ -60,9 +60,16 @@ ensure_evidence_dirs_writable() {
   chmod go+w "$evidence_dir/validation"
 }
 
+# The DynamicDiscoveryService will write certificates into the truststore, and
+# fails with a permission problem unless we do this.
+ensure_truststore_writable() {
+  chmod go+w "$SCRIPT_DIR"/keystore/*truststore.jks
+}
+
 init() {
   initialize_secrets
   ensure_evidence_dirs_writable
+  ensure_truststore_writable
 }
 
 # Parse command-line options

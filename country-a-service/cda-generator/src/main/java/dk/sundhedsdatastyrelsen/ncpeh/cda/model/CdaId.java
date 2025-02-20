@@ -26,7 +26,7 @@ public class CdaId {
     }
 
     public String getRoot() {
-        if(rootOid != null) {
+        if (rootOid != null) {
             return rootOid.value;
         } else if (rootUuid != null) {
             return rootUuid.toString().toUpperCase(Locale.ROOT);

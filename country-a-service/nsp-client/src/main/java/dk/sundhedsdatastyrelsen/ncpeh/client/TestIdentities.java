@@ -9,7 +9,12 @@ import dk.nsp.test.idp.vault.RemoteCredentialVault;
 import java.net.URI;
 import java.util.UUID;
 
-import static dk.nsp.test.idp.builder.Builders.*;
+import static dk.nsp.test.idp.builder.Builders.employee;
+import static dk.nsp.test.idp.builder.Builders.employeeIdentity;
+import static dk.nsp.test.idp.builder.Builders.identityProvider;
+import static dk.nsp.test.idp.builder.Builders.organization;
+import static dk.nsp.test.idp.builder.Builders.securityTokenService;
+import static dk.nsp.test.idp.builder.Builders.serviceConsumer;
 
 public class TestIdentities {
 

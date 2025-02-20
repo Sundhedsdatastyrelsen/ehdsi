@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:GetPrescriptionResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns4:Patient>
+        <Person>
+            <Name>
+                <GivenName>Karl</GivenName>
+                <Surname>Pedersen</Surname>
+            </Name>
+            <PersonIdentifier source="CPR">1011649927</PersonIdentifier>
+            <BirthDate>1964-11-10</BirthDate>
+            <Gender>male</Gender>
+        </Person>
+        <Address>
+            <StreetName>Mosegårdsparken</StreetName>
+            <StreetBuildingIdentifier>228</StreetBuildingIdentifier>
+            <PostCodeIdentifier>1954</PostCodeIdentifier>
+            <DistrictName>Frederiksberg C</DistrictName>
+        </Address>
+    </ns4:Patient>
+    <ns4:Prescription>
+        <ns4:Identifier>472642925715101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>33508254</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1734943326384001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-12-23T08:42:06Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>ZB1ZV</AuthorisationIdentifier>
+                    <Name>Igor Ingvardsen</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Regionshospital Nordjylland, Ambulatorium i Modtagelsen</Name>
+                    <AddressLine>Bispensgade 37</AddressLine>
+                    <AddressLine>9800 Hjørring</AddressLine>
+                    <TelephoneNumber>97640000</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">8003469</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-12-23T08:42:06Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-12-23</ns4:ValidFromDate>
+        <ns4:ValidToDate>2026-12-23</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-12-23">458436</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>56.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-12-23">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>56 stk. (blister) (Medartuum)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-12-23">155</Code>
+            <Text>mod epilepsi</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-12-23">N03AX23</Code>
+                <Text>Brivaracetam</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-12-23">28105558015</Identifier>
+            <Name>Briviact</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-12-23">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>100.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-12-23">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-12-23">100 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-12-23">Brivaracetam</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet morgen</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>4687</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>475852784821102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>35226593</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1738153184959001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-01-29T12:19:44Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>33767630</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-01-29T12:19:44Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-01-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-01-29</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-01-29">13102</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>30.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-01-29">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>30 stk. (blister)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-01-29">122</Code>
+            <Text>mod halsbetændelse</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-01-29">J01CE02</Code>
+                <Text>Phenoxymethylpenicillin</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-01-29">28100902476</Identifier>
+            <Name>Primcillin</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-01-29">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>800.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-01-29">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2025-01-29">800 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-01-29">Phenoxymethylpenicillinkalium</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig i 10 dage</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>6722</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>475852924795002</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>35226594</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1738153324926001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-01-29T12:22:04Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>33767630</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-01-29T12:22:04Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-01-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-01-29</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-01-29">7921</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>5.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-01-29">ML</ns2:UnitCode>
+                <ns2:UnitText>ml</ns2:UnitText>
+                <ns2:PackageSizeText>5 ml</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+            <ns2:IterationNumber>3</ns2:IterationNumber>
+            <ns2:IterationInterval>14</ns2:IterationInterval>
+            <ns2:IterationIntervalUnit>dage</ns2:IterationIntervalUnit>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-01-29">184</Code>
+            <Text>mod allergisk øjenbetændelse</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-01-29">S01GX09</Code>
+                <Text>Olopatadin</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-01-29">28103235801</Identifier>
+            <Name>Opatanol</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-01-29">OJDRBO</Code>
+                <Text>øjendråber, opløsning</Text>
+            </Form>
+            <Strength>
+                <Value>1.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-01-29">MGM</UnitCode>
+                <UnitText>mg/ml</UnitText>
+                <Text source="Medicinpriser" date="2025-01-29">1 mg/ml</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-01-29">OLOPATADINHYDROCHLORID</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>2 dråber 2 gange daglig.
+Bemærk: 1 dråbe i hvert øje</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>1655</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>475853002995102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>35226595</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1738153403129001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-01-29T12:23:23Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>33767630</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-01-29T12:23:23Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-01-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-01-29</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-01-29">167913</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>90.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-01-29">G</ns2:UnitCode>
+                <ns2:UnitText>g</ns2:UnitText>
+                <ns2:PackageSizeText>90 g (3 x 30)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-01-29">222</Code>
+            <Text>mod eksem</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-01-29">D07AB02</Code>
+                <Text>Hydrocortisonbutyrat</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-01-29">28106808322</Identifier>
+            <Name>Locoid</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-01-29">CREME</Code>
+                <Text>creme</Text>
+            </Form>
+            <Strength>
+                <Value>0.1</Value>
+                <UnitCode source="Medicinpriser" date="2025-01-29">PC</UnitCode>
+                <UnitText>procent</UnitText>
+                <Text source="Medicinpriser" date="2025-01-29">0,1%</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-01-29">HYDROCORTISONBUTYRAT</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 påsmøring 2 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>17207</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>475853167931102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>35226612</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1738153568071001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-01-29T12:26:07Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>33767630</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-01-29T12:26:07Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-01-29</ns4:ValidFromDate>
+        <ns4:ValidToDate>2025-05-01</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-01-29">542474</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>64.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-01-29">DO</ns2:UnitCode>
+                <ns2:UnitText>doser</ns2:UnitText>
+                <ns2:PackageSizeText>64 doser</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+            <ns2:IterationNumber>2</ns2:IterationNumber>
+            <ns2:IterationInterval>1</ns2:IterationInterval>
+            <ns2:IterationIntervalUnit>måneder</ns2:IterationIntervalUnit>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-01-29">96</Code>
+            <Text>hormontilskud</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-01-29">G03CA03</Code>
+                <Text>Estradiol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-01-29">28101577993</Identifier>
+            <Name>Estrogel</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-01-29">GEL</Code>
+                <Text>gel</Text>
+            </Form>
+            <Strength>
+                <Value>0.6</Value>
+                <UnitCode source="Medicinpriser" date="2025-01-29">MGG</UnitCode>
+                <UnitText>mg/g</UnitText>
+                <Text source="Medicinpriser" date="2025-01-29">0,6 mg/g</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-01-29">ESTRADIOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>3 pump 1 gang daglig - smøres på låret</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>5754</ns4:Version>
+    </ns4:Prescription>
+</ns4:GetPrescriptionResponse>
