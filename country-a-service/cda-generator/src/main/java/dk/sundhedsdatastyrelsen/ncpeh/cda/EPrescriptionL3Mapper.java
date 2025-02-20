@@ -84,6 +84,7 @@ public class EPrescriptionL3Mapper {
                 var administrationRouteCdaCode = CdaCode.builder()
                     .codeSystem(Oid.DK_LMS11)
                     .code(administrationRoute.getCode().getValue())
+                    .displayName(administrationRoute.getText())
                     .build();
                 prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
             }

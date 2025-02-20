@@ -46,6 +46,11 @@ public class EPrescriptionL3 {
      */
     CdaCode administrationRoute;
 
+    /**
+     * Dosage/posology information for the medication.
+     */
+    @NonNull Dosage dosage;
+
     @NonNull Author author;
 
     @NonNull String indicationText;
