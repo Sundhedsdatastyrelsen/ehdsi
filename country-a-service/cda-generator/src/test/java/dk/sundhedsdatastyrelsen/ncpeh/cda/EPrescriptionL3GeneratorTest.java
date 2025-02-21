@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
+import net.ihe.gazelle.sch.validator.ws.SchematronValidatorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,6 +15,7 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 class EPrescriptionL3GeneratorTest {
     @Test
@@ -48,9 +50,16 @@ class EPrescriptionL3GeneratorTest {
         validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
 
         // 3. Test model/schematron via gazelle
-        // TODO?
+        var validationService = new SchematronValidatorService();
+        var port = validationService.getSchematronValidatorPort();
+        var res = port.validateBase64Document(
+            Base64.getEncoder().encodeToString(xmlString.getBytes(StandardCharsets.UTF_8)),
+            "eHDSI - ePrescription validation - Wave 8 (V8.0.0)");
+//            "eHDSI - ePrescription validation - Wave 8 (V8.0.0)");
+        System.out.println(res);
+//        System.out.println(port.about());
 
-//        //write to file for debugging:
+        //write to file for debugging:
 //        java.nio.file.Path debugFilePath = java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml");
 //        java.nio.file.Files.createDirectories(debugFilePath.getParent());
 //        java.nio.file.Files.writeString(
