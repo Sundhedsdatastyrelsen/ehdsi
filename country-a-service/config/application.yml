@@ -1,8 +1,11 @@
 spring:
   application:
     name: NCPeH-DK-national-connector-service
-  datasource:
-    url: jdbc:sqlite:data/db.sqlite
+  undo-datasource:
+    jdbcUrl: jdbc:sqlite:data/undo-db.sqlite
+    driver-class-name: org.sqlite.JDBC
+  lms-datasource:
+    jdbcUrl: jdbc:sqlite:data/lms-db.sqlite
     driver-class-name: org.sqlite.JDBC
   flyway:
     enabled: true
@@ -27,3 +30,8 @@ logging:
     root: info
     org.springframework.web: info
     dk.sundhedsdatastyrelsen.ncpeh: info
+lmsftp:
+  server: "ftp.medicinpriser.dk"
+  port: 21
+  username: ${LMSFTP_USERNAME}
+  password: ${LMSFTP_PASSWORD}

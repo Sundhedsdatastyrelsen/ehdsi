@@ -10,7 +10,7 @@ public class Product {
     @NonNull String name;
     @NonNull String description;
     @NonNull CdaCode formCode;
-    @NonNull CdaCode packageCode;
+    CdaCode packageCode;
     @NonNull CdaCode atcCode;
     @NonNull Size size;
 }

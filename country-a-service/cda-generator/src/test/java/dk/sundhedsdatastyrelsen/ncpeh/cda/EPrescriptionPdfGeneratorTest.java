@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.referenceDataLookupServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ class EPrescriptionPdfGeneratorTest {
     void generateTest() throws Exception {
         var cpr = "0201909309";
         var fmkResponse = FmkResponseStorage.storedPrescriptions(cpr);
-        var modelL3 = EPrescriptionL3Mapper.model(fmkResponse, 0, null);
+        var modelL3 = EPrescriptionL3Mapper.model(fmkResponse, 0, null, new referenceDataLookupServiceMock());
         var modelL1 = EPrescriptionPdfMapper.map(modelL3);
         var pdf = EPrescriptionPdfGenerator.generate(modelL1);
         Assertions.assertNotNull(pdf);
