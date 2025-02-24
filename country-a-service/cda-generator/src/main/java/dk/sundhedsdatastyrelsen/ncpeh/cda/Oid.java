@@ -45,6 +45,12 @@ public enum Oid {
      * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
      */
     DK_VARENUMRE("2.16.17.710.802.1000.990.1.20.2", "Varenumre på lægemiddelpakninger"),
+
+    /**
+     * Varenumre på lægemiddelpakninger
+     * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
+     */
+    DK_PRODUKTPAKNINGSBESKRIVELSER("2.16.17.710.802.1000.990.1.20.14", "Produktpakningskoder fra LMS14"),
     /**
      * Central Virksomhedsregister (CVR).
      * <a href="https://oid-base.com/get/2.16.840.1.113883.2.24.1.1">Registered.</a>

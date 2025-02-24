@@ -20,6 +20,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
@@ -43,6 +44,7 @@ public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
+    private final LmsDataLookupService lmsDataLookupService;
 
     public record PrescriptionFilter(
         String documentId,
@@ -85,7 +87,7 @@ public class PrescriptionService {
         try {
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
             log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
-            return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse);
+            return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse, lmsDataLookupService);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve list of prescriptions from FMK");
         }
@@ -115,7 +117,7 @@ public class PrescriptionService {
 
             var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, caller);
 
-            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications);
+            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications, lmsDataLookupService);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }
@@ -236,9 +238,8 @@ public class PrescriptionService {
 
         log.debug("Looking up DrugMedication  info for {}", cpr);
         GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
-        log.debug(
-            "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
-                .size(), drugMedicationId);
+        log.debug("Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
+            .size(), drugMedicationId);
         return fmkResponse;
     }
 

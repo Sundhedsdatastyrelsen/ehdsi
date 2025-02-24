@@ -16,7 +16,18 @@ public class EPrescriptionMapperTest {
             .getFirst()
             .getIdentifier()));
         var prescriptionFilter = new PrescriptionFilter(documentId, null, null);
-        var result = EPrescriptionMapper.mapResponse(String.format("%s^^^&%s&ISO", Fmk.cprKarl, Oid.DK_CPR), prescriptionFilter, response, null);
+        var result = EPrescriptionMapper.mapResponse(String.format("%s^^^&%s&ISO", Fmk.cprKarl, Oid.DK_CPR), prescriptionFilter, response, null, new LmsDataLookupServiceMock());
         Assertions.assertEquals(1, result.size());
+    }
+
+    private class LmsDataLookupServiceMock extends LmsDataLookupService {
+        private LmsDataLookupServiceMock() {
+            super(null);
+        }
+
+        @Override
+        public String getPackageCodeFromPackageNumber(String packagingNumber) {
+            return "FIN"; //Fyldt injektionssprøjte
+        }
     }
 }
