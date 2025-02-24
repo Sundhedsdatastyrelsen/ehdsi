@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -22,4 +23,11 @@ public class Beans {
     public DataSource lmsDataSource() {
         return DataSourceBuilder.create().build();
     }
+
+    @Bean
+    public UndoDispensationRepository undoDispensationRepository() {
+        return new UndoDispensationRepository(undoDataSource());
+    }
+
+
 }

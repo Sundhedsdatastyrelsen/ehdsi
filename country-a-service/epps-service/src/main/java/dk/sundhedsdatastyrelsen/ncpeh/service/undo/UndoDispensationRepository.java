@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
-@Repository
 public class UndoDispensationRepository {
     private final JdbcTemplate jdbcTemplate;
 
