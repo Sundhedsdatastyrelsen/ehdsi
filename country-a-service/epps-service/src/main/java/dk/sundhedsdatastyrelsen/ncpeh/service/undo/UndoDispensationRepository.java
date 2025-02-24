@@ -1,12 +1,10 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.undo;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 import org.sqlite.SQLiteErrorCode;
 import org.sqlite.SQLiteException;
 
@@ -18,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 public class UndoDispensationRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public UndoDispensationRepository(@Qualifier("undo-database") DataSource dataSource) {
+    public UndoDispensationRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
