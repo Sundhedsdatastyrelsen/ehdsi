@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class UndoDispensationRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public UndoDispensationRepository(@Qualifier("undo-database") DataSource dataSource) {
+    public UndoDispensationRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 

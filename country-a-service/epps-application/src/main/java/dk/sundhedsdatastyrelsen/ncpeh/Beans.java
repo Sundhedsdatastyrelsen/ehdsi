@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataRepository;
+import dk.sundhedsdatastyrelsen.ncpeh.service.exception.ErrorRecordingRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.startup.FlywayConfigs;
 import org.flywaydb.core.Flyway;
@@ -46,13 +47,22 @@ public class Beans {
     }
 
     @Bean
+    public ErrorRecordingRepository errorRecordingRepository() {
+        return new ErrorRecordingRepository(errorDataSource());
+    }
+
+    @Bean
     public Flyway undoFlywayMigration() {
-        return FlywayConfigs.undoFlyway(undoDataSource());
+        var flyway = FlywayConfigs.undoFlyway(undoDataSource());
+        flyway.migrate();
+        return flyway;
     }
 
     @Bean
     public Flyway errorFlywayMigration() {
-        return FlywayConfigs.errorsFlyway(errorDataSource());
+        var flyway = FlywayConfigs.errorsFlyway(errorDataSource());
+        flyway.migrate();
+        return flyway;
     }
 
     @Bean

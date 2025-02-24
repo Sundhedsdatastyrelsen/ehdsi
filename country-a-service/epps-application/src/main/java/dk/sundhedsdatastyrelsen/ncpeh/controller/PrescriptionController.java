@@ -11,6 +11,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
+import dk.sundhedsdatastyrelsen.ncpeh.service.exception.ErrorRecordingRepository;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +25,11 @@ import java.util.List;
 public class PrescriptionController {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(PrescriptionController.class);
     private final PrescriptionService prescriptionService;
+    private final ErrorRecordingRepository errorRecordingRepository;
 
-    public PrescriptionController(PrescriptionService prescriptionService) {
+    public PrescriptionController(PrescriptionService prescriptionService, ErrorRecordingRepository errorRecordingRepository) {
         this.prescriptionService = prescriptionService;
+        this.errorRecordingRepository = errorRecordingRepository;
     }
 
     @PostMapping(path = "/api/find-eprescription-documents/")

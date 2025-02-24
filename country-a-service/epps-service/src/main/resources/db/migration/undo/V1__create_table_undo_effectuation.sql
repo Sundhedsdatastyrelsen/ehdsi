@@ -1,4 +1,4 @@
-CREATE TABLE undo_dispensation (
+CREATE TABLE IF NOT EXISTS undo_dispensation (
     cda_id_hash TEXT PRIMARY KEY,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     order_id INTEGER NOT NULL,

@@ -1,4 +1,4 @@
-CREATE TABLE errors (
+CREATE TABLE IF NOT EXISTS errors (
     cda_id_hash TEXT PRIMARY KEY,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     request_body TEXT,
