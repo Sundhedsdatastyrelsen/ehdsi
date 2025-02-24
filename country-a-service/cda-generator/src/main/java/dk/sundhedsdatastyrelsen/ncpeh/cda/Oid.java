@@ -63,12 +63,14 @@ public enum Oid {
     EAN("1.3.88", "Global Location Number"),
     /**
      * LMS11 - "Administrationsvej"
+     * <a href="https://oid-base.com/get/1.2.208.176.3.11">Registered.</a>
      */
-    DK_LMS11("2.16.17.710.802.1000.990.1.20.11", "LMS11 Administrationsvej"),
+    DK_LMS11("1.2.208.176.3.11", "LMS11 Administrationsvej"),
     /**
      * LMS22 - "Lægemiddelform-betegnelser"
+     * <a href="https://oid-base.com/get/1.2.208.176.3.22">Registered.</a>
      */
-    DK_LMS22("2.16.17.710.802.1000.990.1.20.22", "LMS22 Lægemiddelform-betegnelser"),
+    DK_LMS22("1.2.208.176.3.22", "LMS22 Lægemiddelform-betegnelser"),
 
 
     /**
