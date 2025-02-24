@@ -5,14 +5,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms22Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.GenericRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
 
-@Repository
 public class LmsDataRepository {
     private final JdbcTemplate jdbcTemplate;
     private final GenericRepository<Lms02Data> lms02Repository;
@@ -20,7 +17,7 @@ public class LmsDataRepository {
     private final GenericRepository<Lms15Data> lms15Repository;
     private final GenericRepository<Lms22Data> lms22Repository;
 
-    public LmsDataRepository(@Qualifier("lms-database") DataSource dataSource) {
+    public LmsDataRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         lms02Repository = new GenericRepository<>(Lms02Data.class, LmsConstants.DatabaseTableNames.LMS_02, jdbcTemplate);
         lms14Repository = new GenericRepository<>(Lms14Data.class, LmsConstants.DatabaseTableNames.LMS_14, jdbcTemplate);
