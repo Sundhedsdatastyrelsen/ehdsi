@@ -7,6 +7,9 @@ spring:
   lms-datasource:
     jdbcUrl: jdbc:sqlite:data/lms-db.sqlite
     driver-class-name: org.sqlite.JDBC
+  error-datasource:
+    jdbcUrl: jdbc:sqlite:data/error-db.sqlite
+    driver-class-name: org.sqlite.JDBC
   flyway:
     enabled: true
     locations: "classpath:db/migration"

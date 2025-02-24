@@ -17,7 +17,7 @@ class UndoDispensationCleanupServiceTest {
     UndoDispensationRepository undoDispensationRepository() {
         var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
         // perform db migrations
-        Flyway.configure().dataSource(dataSource).load().migrate();
+        Flyway.configure().dataSource(dataSource).locations("classpath:db/migration/undo").load().migrate();
         return new UndoDispensationRepository(dataSource);
     }
 
