@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccinationIdentifier.xsd"/>
+	<include schemaLocation="SSI_VaccinationVersionIdentifier.xsd"/>
+	<include schemaLocation="SSI_Vaccine.xsd"/>
+	<include schemaLocation="SSI_Modified.xsd"/>
+	<include schemaLocation="SSI_Created.xsd"/>
+	<include schemaLocation="SSI_Reviewed.xsd"/>
+	<include schemaLocation="SSI_SSIDrug.xsd"/>
+	<include schemaLocation="SSI_BatchNumber.xsd"/>
+	<include schemaLocation="SSI_CoverageDuration.xsd"/>
+	<include schemaLocation="SSI_DosageOptionIdentifier.xsd"/>
+    <include schemaLocation="SSI_DosageText.xsd"/>
+    <include schemaLocation="SSI_VaccinationCredibility.xsd"/>
+	<include schemaLocation="SSI_ServiceCode.xsd"/>
+	<include schemaLocation="SSI_ServiceCodeRemarkText.xsd"/>
+	<include schemaLocation="SSI_Effectuated.xsd"/>
+	<include schemaLocation="SSI_NegativeConsentIndicator.xsd"/>
+	<element name="Vaccination" type="vaccinationcard:VaccinationType">
+		<annotation>
+			<documentation xml:lang="en-GB">Specification of a vaccination</documentation>
+			<documentation xml:lang="da-DK">Specifikation af en vaccination</documentation>
+		</annotation>
+	</element>
+	<complexType name="VaccinationType">
+		<sequence>
+			<element name="VaccinationIdentifier" type="vaccinationcard:VaccinationIdentifierType"/>
+			<element name="VaccinationVersionIdentifier" type="vaccinationcard:VaccinationVersionIdentifierType"/>
+			<element name="Modified" type="vaccinationcard:ModifiedType" minOccurs="0"/>
+			<element name="Created" type="vaccinationcard:CreatedType"/>
+			<element name="Reviewed" type="vaccinationcard:ReviewedType" minOccurs="0"/>
+			<element name="Vaccine" type="vaccinationcard:VaccineType"/>
+			<element name="VaccinationCredibility" type="vaccinationcard:VaccinationCredibilityType"/>
+			<element name="SSIDrug" type="vaccinationcard:SSIDrugType" minOccurs="0"/>
+			<element name="BatchNumber" type="vaccinationcard:BatchNumberType" minOccurs="0"/>
+			<element name="CoverageDuration" type="vaccinationcard:CoverageDurationType" minOccurs="0"/>
+			<element name="DosageOptionIdentifier" type="vaccinationcard:DosageOptionIdentifierType" minOccurs="0"/>
+            <element name="DosageText" type="vaccinationcard:DosageTextType" minOccurs="0"/>
+            <element name="Effectuated" type="vaccinationcard:EffectuatedType" minOccurs="0"/>
+			<element name="ServiceCode" type="vaccinationcard:ServiceCodeType" minOccurs="0"/>
+			<element name="ServiceCodeRemarkText" type="vaccinationcard:ServiceCodeRemarkTextType" minOccurs="0"/>
+			<element name="ConfirmedByPrescriptionServer" type="boolean"/>
+            <element name="ActiveStatus" type="boolean"/>
+			<element name="IsPrevious" type="boolean"/>
+			<element name="NegativeConsentIndicator" type="vaccinationcard:NegativeConsentIndicatorType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="MunicipalityOrganisationIdentifier" type="vaccinationcard:MunicipalityOrganisationIdentifierType">
+		<annotation>
+			<documentation xml:lang="en-GB">Identification number of the organisation of the doctor giving a vaccination in case of a municipality number</documentation>
+			<documentation xml:lang="da-DK">Identifikationsnummer for den vaccinerende læges organisation såfremt dette er et kommunenummer</documentation>
+		</annotation>
+	</element>
+	<simpleType name="MunicipalityOrganisationIdentifierType">
+		<restriction base="int">
+			<minInclusive value="100"/>
+			<maxExclusive value="999"/>
+		</restriction>
+	</simpleType>
+</schema>

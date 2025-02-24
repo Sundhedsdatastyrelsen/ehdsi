@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<include schemaLocation="SSI_NegativeConsentRequest.xsd"/>
+	<element name="GetVaccinationCardAsPDFRequest" type="vaccinationcard:GetVaccinationCardAsPDFRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for a vaccination card as PDF</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter et vaccinationskort som PDF</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetVaccinationCardAsPDFRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType"/>
+			<element name="NegativeConsentRequest" type="vaccinationcard:NegativeConsentRequestType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>

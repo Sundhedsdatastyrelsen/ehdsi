@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:cv19card="http://vaccinationsregister.dk/schemas/2021/04/01" 
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2021/04/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<element name="GetCovid19VaccinationCardRequest" type="cv19card:GetCovid19VaccinationCardRequestType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for a covid19 vaccination card</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter et covid19-vaccinationskort</documentation>
+		</annotation>
+	</element>
+	<complexType name="GetCovid19VaccinationCardRequestType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType" maxOccurs="1"/>
+		</sequence>
+	</complexType>
+</schema>

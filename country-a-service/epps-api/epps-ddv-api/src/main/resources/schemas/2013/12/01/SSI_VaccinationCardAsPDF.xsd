@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="VaccinationCardAsPDF" type="vaccinationcard:VaccinationCardAsPDFType">
+		<annotation>
+			<documentation xml:lang="en-GB">A vaccinationcard as PDF embedded as BASE64 encoded text</documentation>
+			<documentation xml:lang="da-DK">Et vacccinationskort indlejret som BASE64 encoded tekst</documentation>
+		</annotation>
+	</element>
+	<simpleType name="VaccinationCardAsPDFType">
+		<restriction base="string"/>
+	</simpleType>
+</schema>

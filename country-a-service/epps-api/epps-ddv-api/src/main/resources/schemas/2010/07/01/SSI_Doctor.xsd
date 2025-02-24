@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_AuthorisationIdentifier.xsd"/>
+	<include schemaLocation="SSI_DoctorName.xsd"/>
+	<include schemaLocation="SSI_SpecialityCode.xsd"/>
+	<element name="Doctor" type="vaccinationcard:DoctorType">
+		<annotation>
+			<documentation xml:lang="en-GB">Contains authorisation number and name of a doctor</documentation>
+			<documentation xml:lang="da-DK">Indeholder autorsationsnummer og navn på en læge</documentation>
+		</annotation>
+	</element>
+	<complexType name="DoctorType">
+		<sequence>
+			<element name="AuthorisationIdentifier" type="vaccinationcard:AuthorisationIdentifierType"/>
+			<element name="DoctorName" type="vaccinationcard:DoctorNameType"/>
+			<element name="SpecialityCode" type="vaccinationcard:SpecialityCodeType" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>

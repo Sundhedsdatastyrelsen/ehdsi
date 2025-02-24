@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="testing-tools" />
+        <module name="epps-ddv-api" />
         <module name="epps-lms-api" />
         <module name="nsp-client" />
         <module name="epps-service" />
@@ -33,6 +34,7 @@
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
       <module name="epps-cpr-mock-data" options="-parameters" />
+      <module name="epps-ddv-api" options="-parameters" />
       <module name="epps-fmk-api" options="-parameters" />
       <module name="epps-fmk-mock" options="-parameters" />
       <module name="epps-fmk-mock-data" options="-parameters" />

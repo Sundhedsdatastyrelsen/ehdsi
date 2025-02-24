@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_PersonGivenName.xsd"/>
+	<include schemaLocation="SSI_PersonMiddleName.xsd"/>
+	<include schemaLocation="SSI_PersonSurname.xsd"/>
+	<element name="PersonName" type="vaccinationcard:PersonNameType"/>
+	<complexType name="PersonNameType">
+		<sequence>
+			<element name="GivenName" type="vaccinationcard:PersonGivenNameType"/>
+			<element name="MiddleName" type="vaccinationcard:PersonMiddleNameType" minOccurs="0"/>
+			<element name="Surname" type="vaccinationcard:PersonSurnameType"/>
+		</sequence>
+	</complexType>
+</schema>

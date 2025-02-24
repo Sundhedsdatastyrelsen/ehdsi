@@ -23,13 +23,13 @@ import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
+import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.dom.DOMResult;
@@ -61,12 +61,6 @@ public class FmkClient {
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
                 + ":dk.sdsd.dgws._2012._06"
         );
-    }
-
-    private <T> Element toElement(JAXBElement<T> jaxbElement) throws JAXBException {
-        DOMResult res = new DOMResult();
-        jaxbContext.createMarshaller().marshal(jaxbElement, res);
-        return ((Document) res.getNode()).getDocumentElement();
     }
 
     private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
@@ -240,6 +234,10 @@ public class FmkClient {
         );
     }
 
+    /**********************
+     * Private
+     ***********************/
+
     private <RequestType, ResponseType> ResponseType makeFmkRequest(
         JAXBElement<RequestType> request,
         String soapAction,
@@ -262,14 +260,14 @@ public class FmkClient {
         final Reply reply;
         Element[] extraHeaders;
         if (requiresMedicineCardConsent) {
-            extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole)), toElement(getMedicineReviewConsent())};
+            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole)), ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
         } else {
-            extraHeaders = new Element[]{toElement(getWhitelistingHeader(requestedRole))};
+            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
         }
         try {
             reply = NspClient.request(
                 serviceUri,
-                toElement(request),
+                ClientUtils.toElement(jaxbContext, request),
                 soapAction,
                 caller,
                 extraHeaders

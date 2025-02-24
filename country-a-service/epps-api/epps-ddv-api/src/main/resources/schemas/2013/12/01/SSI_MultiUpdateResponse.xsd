@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:cpr="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_MultiUpdateOut.xsd"/>
+	<include schemaLocation="SSI_VersionMismatchWarningIndicator.xsd"/>
+	<import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../../../cpr/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+	<element name="MultiUpdateResponse" type="vaccinationcard:MultiUpdateResponseType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a request for multi update of a persons vaccinations</documentation>
+			<documentation xml:lang="da-DK">Element for en forespørgsel efter opdatering af en persons vaccinationer</documentation>
+		</annotation>
+	</element>
+	<complexType name="MultiUpdateResponseType">
+		<sequence>
+			<element name="PersonCivilRegistrationIdentifier" type="cpr:PersonCivilRegistrationIdentifierType"/>
+			<element name="VersionMismatchWarningIndicator" type="vaccinationcard:VersionMismatchWarningIndicatorType" minOccurs="0" />
+			<element name="MultiUpdateOut" type="vaccinationcard:MultiUpdateOutType" minOccurs="0" maxOccurs="20"/>
+		</sequence>
+	</complexType>
+</schema>

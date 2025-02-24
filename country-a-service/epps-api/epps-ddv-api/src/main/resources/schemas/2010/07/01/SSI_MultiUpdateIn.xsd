@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	targetNamespace="http://vaccinationsregister.dk/schemas/2010/07/01" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_PreviousVaccinationCreate.xsd"/>
+	<include schemaLocation="SSI_CreateSinglePlannedVaccination.xsd"/>
+	<include schemaLocation="SSI_CreateUnsubscription.xsd"/>
+	<include schemaLocation="SSI_CreateVaccinationPlanSubscription.xsd"/>
+	<include schemaLocation="SSI_VaccinationCreate.xsd"/>
+	<include schemaLocation="SSI_DeletePlannedVaccination.xsd"/>
+	<include schemaLocation="SSI_DeleteSubscription.xsd"/>
+	<include schemaLocation="SSI_DeleteUnsubscription.xsd"/>
+	<include schemaLocation="SSI_DeleteVaccination.xsd"/>
+	<include schemaLocation="SSI_EffectuatePlannedVaccination.xsd"/>
+	<include schemaLocation="SSI_SubscribeAndCreatePlannedVaccinations.xsd"/>
+	<include schemaLocation="SSI_UpdatePlannedVaccination.xsd"/>
+	<include schemaLocation="SSI_VaccinationUpdate.xsd"/>
+	
+	<element name="MultiUpdateIn" type="vaccinationcard:MultiUpdateInType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a multi update of a persons vaccinations</documentation>
+			<documentation xml:lang="da-DK">Element for multi opdatering af en persons vaccinationer</documentation>
+		</annotation>
+	</element>
+	<complexType name="MultiUpdateInType">
+		<choice>
+			<element name="VaccinationCreate" type="vaccinationcard:VaccinationCreateType"/>
+			<element name="PreviousVaccinationCreate" type="vaccinationcard:PreviousVaccinationCreateType"/>
+			<element name="VaccinationUpdate" type="vaccinationcard:VaccinationUpdateType"/>
+			<element name="DeleteVaccination" type="vaccinationcard:DeleteVaccinationType"/>
+
+			<element name="CreateSinglePlannedVaccination" type="vaccinationcard:CreateSinglePlannedVaccinationType"/>
+			<element name="EffectuatePlannedVaccination" type="vaccinationcard:EffectuatePlannedVaccinationType"/>
+			<element name="UpdatePlannedVaccination" type="vaccinationcard:UpdatePlannedVaccinationType"/>
+			<element name="DeletePlannedVaccination" type="vaccinationcard:DeletePlannedVaccinationType"/>
+
+			<element name="SubscribeAndCreatePlannedVaccinations" type="vaccinationcard:SubscribeAndCreatePlannedVaccinationsType"/>
+			<element name="CreateVaccinationPlanSubscription" type="vaccinationcard:CreateVaccinationPlanSubscriptionType"/>
+			<element name="DeleteSubscription" type="vaccinationcard:DeleteSubscriptionType"/>
+			<element name="CreateUnsubscription" type="vaccinationcard:CreateUnsubscriptionType"/>
+			<element name="DeleteUnsubscription" type="vaccinationcard:DeleteUnsubscriptionType"/>
+
+		</choice>
+	</complexType>
+</schema>

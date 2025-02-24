@@ -20,7 +20,7 @@
         <module>epps-ncp-api</module>
         <module>epps-fmk-api</module>
         <module>epps-cpr-api</module>
+        <module>epps-ddv-api</module>
         <module>epps-lms-api</module>
     </modules>
-
 </project>

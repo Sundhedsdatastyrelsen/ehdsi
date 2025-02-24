@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+	xmlns:vaccinationcard20131201e1="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01/E1"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_PreviousVaccinationCreate.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_CreateSinglePlannedVaccination.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_CreateVaccinationPlanSubscription.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_VaccinationCreate.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_DeleteUnsubscription.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_DeleteVaccination.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_EffectuatePlannedVaccination.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_SubscribeAndCreatePlannedVaccinations.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_UpdatePlannedVaccination.xsd"/>
+	<import namespace="http://vaccinationsregister.dk/schemas/2013/12/01" schemaLocation="../SSI_VaccinationUpdate.xsd"/>
+	
+	<include schemaLocation="SSI_CreateUnsubscription.xsd"/>
+	<include schemaLocation="SSI_DeletePlannedVaccination.xsd"/>
+	<include schemaLocation="SSI_DeleteSubscription.xsd"/>
+	
+	<element name="MultiUpdateIn" type="vaccinationcard20131201e1:MultiUpdateInType">
+		<annotation>
+			<documentation xml:lang="en-GB">Element for a multi update of a persons vaccinations</documentation>
+			<documentation xml:lang="da-DK">Element for multi opdatering af en persons vaccinationer</documentation>
+		</annotation>
+	</element>
+	
+	<complexType name="MultiUpdateInType">
+		<choice>
+			<element name="VaccinationCreate" type="vaccinationcard20131201:VaccinationCreateType"/>
+			<element name="PreviousVaccinationCreate" type="vaccinationcard20131201:PreviousVaccinationCreateType"/>
+			<element name="VaccinationUpdate" type="vaccinationcard20131201:VaccinationUpdateType"/>
+			<element name="DeleteVaccination" type="vaccinationcard20131201:DeleteVaccinationType"/>
+
+			<element name="CreateSinglePlannedVaccination" type="vaccinationcard20131201:CreateSinglePlannedVaccinationType"/>
+			<element name="EffectuatePlannedVaccination" type="vaccinationcard20131201:EffectuatePlannedVaccinationType"/>
+			<element name="UpdatePlannedVaccination" type="vaccinationcard20131201:UpdatePlannedVaccinationType"/>
+			<element name="DeletePlannedVaccination" type="vaccinationcard20131201e1:DeletePlannedVaccinationType"/>
+
+			<element name="SubscribeAndCreatePlannedVaccinations" type="vaccinationcard20131201:SubscribeAndCreatePlannedVaccinationsType"/>
+			<element name="DeleteSubscription" type="vaccinationcard20131201e1:DeleteSubscriptionType"/>
+			<element name="CreateUnsubscription" type="vaccinationcard20131201e1:CreateUnsubscriptionType"/>
+			<element name="DeleteUnsubscription" type="vaccinationcard20131201:DeleteUnsubscriptionType"/>
+
+		</choice>
+	</complexType>
+</schema>

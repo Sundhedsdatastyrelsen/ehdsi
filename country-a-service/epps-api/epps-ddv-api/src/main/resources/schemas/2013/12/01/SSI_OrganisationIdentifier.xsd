@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:vaccinationcard="http://vaccinationsregister.dk/schemas/2013/12/01"
+        targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<include schemaLocation="SSI_Source.xsd"/>
+	<element name="OrganisationIdentifier" type="vaccinationcard:OrganisationIdentifierType">
+		<annotation>
+			<documentation xml:lang="en-GB">Number or code identifying an organisation</documentation>
+			<documentation xml:lang="da-DK">Nummer eller kode der identificerer en organisation</documentation>
+		</annotation>
+	</element>
+	<complexType name="OrganisationIdentifierType">
+		<simpleContent>
+			<extension base="vaccinationcard:OrganisationIdentifierValueType">
+				<attribute name="source" type="vaccinationcard:OrganisationIdentifierSourceType" use="required"/>
+							</extension>
+		</simpleContent>
+	</complexType>
+	<simpleType name="OrganisationIdentifierValueType">
+		<restriction base="string">
+			<minLength value="1"/>
+			<maxLength value="200"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="OrganisationIdentifierSourceType">
+		<union memberTypes="vaccinationcard:OrganisationIdentifierPredefinedSourceType vaccinationcard:UndefinedSourceType"/>
+	</simpleType>
+	<simpleType name="OrganisationIdentifierPredefinedSourceType">
+		<restriction base="vaccinationcard:UndefinedSourceType">
+			<enumeration value="SKS"/>
+			<enumeration value="Yder"/>
+			<enumeration value="EAN-Lokationsnummer"/>
+			<enumeration value="CVR"/>
+			<enumeration value="CVR-P"/>
+			<enumeration value="Kommunekode"/>
+			<enumeration value="SOR"/>
+		</restriction>
+	</simpleType>
+</schema>
