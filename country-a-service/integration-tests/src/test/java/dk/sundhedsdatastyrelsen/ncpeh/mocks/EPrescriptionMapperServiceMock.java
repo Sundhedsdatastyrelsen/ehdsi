@@ -9,7 +9,7 @@ public class EPrescriptionMapperServiceMock extends LmsDataLookupService {
     }
 
     @Override
-    public String getPackageCodeFromPackageNumber(String packagingNumber) {
+    public String getPackageFormCodeFromPackageNumber(String packagingNumber) {
         return "FIN"; //Always return "Fyldt injentionssprøjte" for tests
     }
 }

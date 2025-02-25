@@ -69,7 +69,7 @@ public class EPrescriptionCdaGenerator {
     private static class ReferenceDataLookupServiceMock implements ReferenceDataLookupService {
 
         @Override
-        public String getPackageCodeFromPackageNumber(String packagingNumber) {
+        public String getPackageFormCodeFromPackageNumber(String packagingNumber) {
             return "FIN"; // Fyldt injektionssprøjte
         }
     }

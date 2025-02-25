@@ -110,7 +110,7 @@ public class EPrescriptionL3Mapper {
             .build();
         var packageFormCode = CdaCode.builder()
             .codeSystem(Oid.DK_EMBALLAGETYPE)
-            .code(mappingService.getPackageCodeFromPackageNumber(packageNumber))
+            .code(mappingService.getPackageFormCodeFromPackageNumber(packageNumber))
             .build();
 
         var atc = prescription.getDrug().getATC();

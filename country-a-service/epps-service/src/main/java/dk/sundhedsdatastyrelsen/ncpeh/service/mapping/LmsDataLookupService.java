@@ -19,7 +19,7 @@ public class LmsDataLookupService implements ReferenceDataLookupService {
         this.lmsDataRepository = lmsDataRepository;
     }
 
-    public String getPackageCodeFromPackageNumber(String packagingNumber) {
+    public String getPackageFormCodeFromPackageNumber(String packagingNumber) {
         var lms2 = lmsDataRepository.getLms02FromPackageNumber(Integer.parseInt(packagingNumber));
         if (lms2 != null) {
             return lms2.getPackagingType();
