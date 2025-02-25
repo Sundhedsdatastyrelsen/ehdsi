@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.referenceDataLookupServiceMock;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
@@ -41,7 +40,8 @@ class EPrescriptionL3GeneratorTest {
 
         //Set packageCode to null, and regenerate
         var productWithNullPackageCode = Product.builder()
-            .packageCode(null)
+            .packageCode(epL3.getProduct().getPackageCode())
+            .packageFormCode(null)
             .atcCode(epL3.getProduct().getAtcCode())
             .formCode(epL3.getProduct().getFormCode())
             .description(epL3.getProduct().getDescription())

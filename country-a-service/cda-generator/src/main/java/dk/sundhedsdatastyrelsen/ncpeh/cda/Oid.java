@@ -47,10 +47,10 @@ public enum Oid {
     DK_VARENUMRE("2.16.17.710.802.1000.990.1.20.2", "Varenumre på lægemiddelpakninger"),
 
     /**
-     * Varenumre på lægemiddelpakninger
-     * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
+     * Emballagetype fra LMS14
+     * <a href="https://oid-base.com/get/1.2.208.176.3.14">Registered.</a>
      */
-    DK_PRODUKTPAKNINGSBESKRIVELSER("2.16.17.710.802.1000.990.1.20.14", "Produktpakningskoder fra LMS14"),
+    DK_EMBALLAGETYPE("1.2.208.176.3.14", "Emballagetype fra LMS14"),
     /**
      * Central Virksomhedsregister (CVR).
      * <a href="https://oid-base.com/get/2.16.840.1.113883.2.24.1.1">Registered.</a>
@@ -63,12 +63,14 @@ public enum Oid {
     EAN("1.3.88", "Global Location Number"),
     /**
      * LMS11 - "Administrationsvej"
+     * <a href="https://oid-base.com/get/1.2.208.176.3.11">Registered.</a>
      */
-    DK_LMS11("2.16.17.710.802.1000.990.1.20.11", "LMS11 Administrationsvej"),
+    DK_LMS11("1.2.208.176.3.11", "LMS11 Administrationsvej"),
     /**
      * LMS22 - "Lægemiddelform-betegnelser"
+     * <a href="https://oid-base.com/get/1.2.208.176.3.22">Registered.</a>
      */
-    DK_LMS22("2.16.17.710.802.1000.990.1.20.22", "LMS22 Lægemiddelform-betegnelser"),
+    DK_LMS22("1.2.208.176.3.22", "LMS22 Lægemiddelform-betegnelser"),
 
 
     /**

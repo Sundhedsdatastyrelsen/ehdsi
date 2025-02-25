@@ -8,5 +8,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces;
  * context services into itself, so the mapping methods do not bloat with endless services in the parameters
  */
 public interface ReferenceDataLookupService {
-    String getPackageCodeFromPackageNumber(String packagingNumber);
+    /**
+     * Look up package form code ("emballagetype-kode") from packaging number ("varenummer").
+     * @param packagingNumber "Varenummer"
+     */
+    String getPackageFormCodeFromPackageNumber(String packagingNumber);
 }

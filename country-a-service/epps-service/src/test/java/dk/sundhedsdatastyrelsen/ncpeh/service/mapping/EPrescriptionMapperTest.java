@@ -26,7 +26,7 @@ public class EPrescriptionMapperTest {
         }
 
         @Override
-        public String getPackageCodeFromPackageNumber(String packagingNumber) {
+        public String getPackageFormCodeFromPackageNumber(String packagingNumber) {
             return "FIN"; //Fyldt injektionssprøjte
         }
     }
