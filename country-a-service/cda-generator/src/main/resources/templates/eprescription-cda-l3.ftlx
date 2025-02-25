@@ -188,12 +188,13 @@
                                               <#stop "Invalid product.size.unit.tag">
                                             </#if>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
-                                            <#if product.packageCode?? > <#-- Checks if product.packageCode is not null -->
                                                 <pharm:code <@common.cdaCodeAttrs product.packageCode/> />
-                                            </#if>
                                                 <pharm:name>${ product.name }</pharm:name>
-                                                <#-- Vi har ikke en kodet beskrivelse af pakkeformen - det nærmeste vi kommer er "PackageSizeText" som kommer fra LMS02 og er ustruktureret  -->
+<#if product.packageFormCode?has_content >
+                                                <pharm:formCode <@common.cdaCodeAttrs product.packageFormCode/> />
+<#else>
                                                 <pharm:formCode nullFlavor="UNK" />
+</#if>
                                             </pharm:containerPackagedProduct>
                                         </pharm:asContent>
                                         <pharm:asSpecializedKind classCode="GRIC">

@@ -103,13 +103,14 @@ public class EPrescriptionL3Mapper {
         var ps = prescription.getPackageRestriction().getPackageSize();
         var size = new Size(EhdsiUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
 
+        var packageNumber = prescription.getPackageRestriction().getPackageNumber().getValue();
         var packageCode = CdaCode.builder()
-            .codeSystem(Oid.DK_PRODUKTPAKNINGSBESKRIVELSER)
-            .code(mappingService.getPackageCodeFromPackageNumber(
-                prescription.getPackageRestriction()
-                    .getPackageNumber()
-                    .getValue())
-            )
+            .codeSystem(Oid.DK_VARENUMRE)
+            .code(packageNumber)
+            .build();
+        var packageFormCode = CdaCode.builder()
+            .codeSystem(Oid.DK_EMBALLAGETYPE)
+            .code(mappingService.getPackageCodeFromPackageNumber(packageNumber))
             .build();
 
         var atc = prescription.getDrug().getATC();
@@ -126,6 +127,7 @@ public class EPrescriptionL3Mapper {
             .formCode(formCode)
             .size(size)
             .packageCode(packageCode)
+            .packageFormCode(packageFormCode)
             .atcCode(atcCode)
             .build();
     }

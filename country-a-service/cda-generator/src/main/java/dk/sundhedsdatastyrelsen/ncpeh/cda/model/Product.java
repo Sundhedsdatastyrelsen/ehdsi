@@ -11,6 +11,7 @@ public class Product {
     @NonNull String description;
     @NonNull CdaCode formCode;
     CdaCode packageCode;
+    CdaCode packageFormCode;
     @NonNull CdaCode atcCode;
     @NonNull Size size;
 }
