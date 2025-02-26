@@ -58,8 +58,9 @@ public class EPrescriptionL3Mapper {
         var indicationText = i.getFreeText() != null ? i.getFreeText() : i.getText();
         var prescriptionBuilder = EPrescriptionL3.builder()
             .documentId(new CdaId(UUID.randomUUID()))
-            .title(String.format("eHDSI ePrescription %s - %s", patient(response).getName()
-                .getFullName(), prescription.getIdentifier()))
+            .title(String.format(
+                "eHDSI ePrescription %s - %s", patient(response).getName()
+                    .getFullName(), prescription.getIdentifier()))
             .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))
             .author(author(prescription))
@@ -74,16 +75,19 @@ public class EPrescriptionL3Mapper {
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
-            prescriptionBuilder.medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentStartDate()));
-            prescriptionBuilder.medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentEndDate()));
+            prescriptionBuilder
+                .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                    .getTreatmentStartDate()))
+                .dosage(DosageMapper.model(drugMedicationType.getDosage()))
+                .medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                    .getTreatmentEndDate()));
 
             var administrationRoute = drugMedicationType.getRouteOfAdministration();
             if (administrationRoute != null) {
                 var administrationRouteCdaCode = CdaCode.builder()
                     .codeSystem(Oid.DK_LMS11)
                     .code(administrationRoute.getCode().getValue())
+                    .displayName(administrationRoute.getText())
                     .build();
                 prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
             }
