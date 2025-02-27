@@ -7,6 +7,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -53,7 +55,9 @@ public class DosageMapper {
 
         return Optional.of(
             Pair.of(
-                new Dosage.Period.Simple("d", Double.toString(1d / doses.size())),
+                new Dosage.Period.Simple(
+                    "d",
+                    BigDecimal.valueOf(1).divide(BigDecimal.valueOf(doses.size()), 3, RoundingMode.HALF_EVEN)),
                 new Dosage.Quantity(firstDose.getQuantity())));
     }
 }

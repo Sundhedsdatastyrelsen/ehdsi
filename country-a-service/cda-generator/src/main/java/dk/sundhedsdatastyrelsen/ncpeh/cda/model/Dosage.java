@@ -4,7 +4,10 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public sealed interface Dosage {
     @NonNull
@@ -54,7 +57,12 @@ public sealed interface Dosage {
             /**
              * Can be fractional (eg 0.5, 0.25) or whole (eg 2, 3).
              */
-            @NonNull String value; // Or float/double?
+            @NonNull BigDecimal value;
+
+            public String getValue() {
+                var df = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
+                return df.format(value);
+            }
         }
     }
 
