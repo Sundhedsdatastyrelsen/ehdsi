@@ -15,28 +15,36 @@ import java.util.Optional;
 @Slf4j
 public class DosageMapper {
     public static Dosage model(DosageForResponseType dosage) {
-        return switch (dosage.getType()) {
-            case FAST -> {
-                var structure = dosage.getStructuresFixed().getEmptyStructureOrStructure().getFirst();
-                Optional<Pair<Dosage.Period, Dosage.Quantity>> pair = switch (structure) {
-                    case DosageStructureForResponseType ds -> mapToPeriod(ds);
-                    case EmptyDosageStructureType ignored -> Optional.empty();
-                    default -> {
-                        log.warn("Unknown dosage structure type {}", structure.getClass().getName());
-                        yield Optional.empty();
-                    }
-                };
-                yield new Dosage.Interval(
-                    false,
-                    pair.map(Pair::getLeft).orElse(null),
-                    pair.map(Pair::getRight).orElse(null),
-                    Collections.emptyList());
-            }
-            default -> {
+        switch (dosage.getType()) {
+            case FAST:
+                var structures = dosage.getStructuresFixed().getEmptyStructureOrStructure();
+                if (structures.size() != 1) {
+                    log.warn("Only 1 dosage structure supported, but was {}.", structures.size());
+                    return new Dosage.Empty();
+                }
+                var maybePair = mapEmptyStructureOrStructure(structures.getFirst());
+                return maybePair.map(pair -> (Dosage) new Dosage.Interval(
+                        false,
+                        pair.getLeft(),
+                        pair.getRight(),
+                        Collections.emptyList()))
+                    .orElseGet(Dosage.Empty::new);
+            default:
                 log.warn("Unknown dosage type {}", dosage.getType());
-                yield new Dosage.Empty();
-            }
-        };
+                return new Dosage.Empty();
+        }
+    }
+
+    public static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapEmptyStructureOrStructure(Object emptyStructureOrStructure) {
+        switch (emptyStructureOrStructure) {
+            case DosageStructureForResponseType ds:
+                return mapToPeriod(ds);
+            case EmptyDosageStructureType ignored:
+                return Optional.empty();
+            default:
+                log.warn("Unknown dosage structure type {}", emptyStructureOrStructure.getClass().getName());
+                return Optional.empty();
+        }
     }
 
     public static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapToPeriod(DosageStructureForResponseType structure) {
