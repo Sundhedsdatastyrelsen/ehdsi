@@ -13,6 +13,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Organization;
@@ -91,6 +92,8 @@ public class EPrescriptionL3Mapper {
                     .build();
                 prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
             }
+        } else {
+            prescriptionBuilder.dosage(new Dosage.Empty());
         }
 
         return prescriptionBuilder.build();

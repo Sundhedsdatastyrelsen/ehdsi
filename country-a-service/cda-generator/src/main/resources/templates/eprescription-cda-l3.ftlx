@@ -164,9 +164,8 @@
                                 <@common.valueOrNullField "low" medicationStartTime  />
                                 <@common.valueOrNullField "high" medicationEndTime  />
                             </effectiveTime>
-<#-- Choice of different types of effective time, or fallback to null.
-     `((dosage.tag)!"")` handles missing values. -->
-<#if ((dosage.tag)!"") == "interval">
+<#-- Choice of different types of effective time, or fallback to null. -->
+<#if dosage.tag == "interval">
                             <effectiveTime xsi:type="PIVL_TS" institutionSpecified="${ dosage.institutionSpecified?string("true","false") }">
                                 <period unit="${ dosage.period.unit }" value="${ dosage.period.value }" />
                             </effectiveTime>
@@ -176,7 +175,7 @@
 <#if administrationRoute?has_content>
                             <routeCode <@common.cdaCodeAttrs administrationRoute />/>
 </#if>
-<#if ((dosage.tag)!"") == "interval">
+<#if dosage.tag == "interval">
                             <doseQuantity unit="1" value="${ dosage.quantity.value }" />
 <#else>
                             <doseQuantity nullFlavor="UNK" />

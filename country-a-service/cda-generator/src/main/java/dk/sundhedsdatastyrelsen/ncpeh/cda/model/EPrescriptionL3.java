@@ -49,7 +49,7 @@ public class EPrescriptionL3 {
     /**
      * Dosage/posology information for the medication.
      */
-    Dosage dosage;
+    @NonNull Dosage dosage;
 
     @NonNull Author author;
 

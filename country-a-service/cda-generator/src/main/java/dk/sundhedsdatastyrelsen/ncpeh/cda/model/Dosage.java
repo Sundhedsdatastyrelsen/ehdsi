@@ -4,9 +4,16 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public sealed interface Dosage {
+    @NonNull
     String getTag();
+
+    @Value
+    class Empty implements Dosage {
+        String tag = "empty";
+    }
 
     /**
      * An interval based dosage, e.g. "2 pills 3 times per day".
@@ -17,6 +24,7 @@ public sealed interface Dosage {
         boolean institutionSpecified;
         Period period;
         Quantity quantity;
+        @NonNull List<Dosage> subordinateDosages;
     }
 
     /**
