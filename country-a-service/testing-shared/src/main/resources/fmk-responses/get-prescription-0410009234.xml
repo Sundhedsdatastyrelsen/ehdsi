@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:GetPrescriptionResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns4:Patient>
+        <Person>
+            <Name>
+                <GivenName>Sofie</GivenName>
+                <Surname>Bach</Surname>
+            </Name>
+            <PersonIdentifier source="CPR">0410009234</PersonIdentifier>
+            <BirthDate>2000-10-04</BirthDate>
+            <Gender>female</Gender>
+        </Person>
+        <Address>
+            <StreetName>Morbærvej</StreetName>
+            <StreetBuildingIdentifier>200</StreetBuildingIdentifier>
+            <PostCodeIdentifier>1362</PostCodeIdentifier>
+            <DistrictName>København K</DistrictName>
+        </Address>
+    </ns4:Patient>
+    <ns4:Prescription>
+        <ns4:Identifier>471017992117101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>32757830</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1733318393043001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2024-12-04T13:19:52Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>ZB1ZV</AuthorisationIdentifier>
+                    <Name>Igor Ingvardsen</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>DFS Plus</Name>
+                    <AddressLine>Skagensgade 39</AddressLine>
+                    <AddressLine>2630 Taastrup</AddressLine>
+                    <TelephoneNumber>60264810</TelephoneNumber>
+                    <Type>hjemmeplejeenhed</Type>
+                    <Identifier source="SOR">929621000016005</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-12-04T13:19:52Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2024-12-04</ns4:ValidFromDate>
+        <ns4:ValidToDate>2025-04-11</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2024-12-04">448060</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>15.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2024-12-04">ML</ns2:UnitCode>
+                <ns2:UnitText>ml</ns2:UnitText>
+                <ns2:PackageSizeText>5 x 3 ml (1-80E/inj.)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2024-12-04">31</Code>
+            <Text>mod diabetes</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-12-04">A10AE04</Code>
+                <Text>Insulin glargin</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-12-04">28105484214</Identifier>
+            <Name>Abasaglar KwikPen</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-12-04">INJVOP</Code>
+                <Text>injektionsvæske, opløsning i fyldt pen</Text>
+            </Form>
+            <Strength>
+                <Value>100.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-12-04">UML</UnitCode>
+                <UnitText>enheder/ml</UnitText>
+                <Text source="Medicinpriser" date="2024-12-04">100 E/ml</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-12-04">Insulin glargin</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 enhed morgen, middag, aften og nat</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>15957</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>478299475783102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>36680133</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1740599876338001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-02-26T19:57:56Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22222222</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-02-26T19:57:56Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-02-26</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-02-26</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-02-26">525618</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>84.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-02-26">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>84 stk. (blister)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-02-26">94</Code>
+            <Text>P-piller</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-02-26">G03AA07</Code>
+                <Text>Levonorgestrel og ethinylestradiol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-02-26">28103087599</Identifier>
+            <Name>Loette 28</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-02-26">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Text source="Medicinpriser" date="2025-02-26">0,10+0,02 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-02-26">Ethinylestradiol</SubstanceText>
+                </ActiveSubstance>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-02-26">LEVONORGESTREL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>23839</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>478299832581102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>36680134</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1740600233339001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-02-26T20:03:53Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22222222</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-02-26T20:03:53Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-02-26</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-02-26</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-02-26">142903</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>63.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-02-26">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>3 x 21 stk. (blister)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-02-26">94</Code>
+            <Text>P-piller</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-02-26">G03AA07</Code>
+                <Text>Levonorgestrel og ethinylestradiol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-02-26">28105439913</Identifier>
+            <Name>Malonetta</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-02-26">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Text source="Medicinpriser" date="2025-02-26">150+30 mikrogram</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-02-26">Ethinylestradiol</SubstanceText>
+                </ActiveSubstance>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-02-26">LEVONORGESTREL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet daglig i 3 uger, herefter en uges pause</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>13013</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>478343843634102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>36755255</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1740644244385001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-02-27T08:17:24Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22222222</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-02-27T08:17:24Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-02-27</ns4:ValidFromDate>
+        <ns4:ValidToDate>2025-04-04</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-02-27">79442</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-02-27">ML</ns2:UnitCode>
+                <ns2:UnitText>ml</ns2:UnitText>
+                <ns2:PackageSizeText>100 ml</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-02-27">121</Code>
+            <Text>mod mellemørebetændelse</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-02-27">J01CA04</Code>
+                <Text>Amoxicillin</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-02-27">28101137283</Identifier>
+            <Name>Imacillin</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-02-27">ORAGRAS</Code>
+                <Text>granulat til oral suspension</Text>
+            </Form>
+            <Strength>
+                <Value>50.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-02-27">MGM</UnitCode>
+                <UnitText>mg/ml</UnitText>
+                <Text source="Medicinpriser" date="2025-02-27">50 mg/ml</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-02-27">AMOXICILLINTRIHYDRAT</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>5 ml 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>4594</ns4:Version>
+    </ns4:Prescription>
+</ns4:GetPrescriptionResponse>

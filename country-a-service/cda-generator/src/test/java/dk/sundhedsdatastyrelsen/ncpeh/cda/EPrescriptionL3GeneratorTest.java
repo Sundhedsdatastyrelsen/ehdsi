@@ -7,7 +7,7 @@ import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,6 +16,7 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 class EPrescriptionL3GeneratorTest {
     @Test
@@ -56,32 +57,38 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertNotEquals(xmlString, xmlStringWithNullPackageCode);
     }
 
+    static List<String> e2eTestCprs() {
+        return FmkResponseStorage.e2eTestCprs();
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = {"0201909309"})
+    @MethodSource("e2eTestCprs")
     public void testCdaValidity(String cpr) throws Exception {
-        var prescription = FmkResponseStorage.storedPrescriptions(cpr);
-        var medication = FmkResponseStorage.storedDrugMedications(cpr);
+        var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
+        var medication = FmkResponseStorage.getTestMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0, new referenceDataLookupServiceMock());
+        var prescriptions = prescription.getPrescription();
+        for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
+            var xmlString = EPrescriptionL3Generator.generate(prescription, medication, prescriptionindex, new referenceDataLookupServiceMock());
 
-        // 1. Test if well-formed XML (can be parsed)
-        var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
-        Assertions.assertDoesNotThrow(() ->
-            documentBuilder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)))
-        );
+            // 1. Test if well-formed XML (can be parsed)
+            var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
+            Assertions.assertDoesNotThrow(() ->
+                documentBuilder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)))
+            );
 
-        // 2. Test if valid against HL7 CDA schema
-        var schemaUrl = this.getClass().getClassLoader().getResource("cda-schema/CDA_Pharma.xsd");
-        Assertions.assertNotNull(schemaUrl);
-        var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        var schema = schemaFactory.newSchema(schemaUrl);
-        var validator = schema.newValidator();
+            // 2. Test if valid against HL7 CDA schema
+            var schemaUrl = this.getClass().getClassLoader().getResource("cda-schema/CDA_Pharma.xsd");
+            Assertions.assertNotNull(schemaUrl);
+            var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            var schema = schemaFactory.newSchema(schemaUrl);
+            var validator = schema.newValidator();
 
 
-        validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
+            validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
 
-        // 3. Test model/schematron via gazelle
-        // TODO?
+            // 3. Test model/schematron via gazelle
+            // TODO?
 
 //        //write to file for debugging:
 //        java.nio.file.Path debugFilePath = java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml");
@@ -92,5 +99,6 @@ class EPrescriptionL3GeneratorTest {
 //            java.nio.file.StandardOpenOption.CREATE,
 //            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 //        );
+        }
     }
 }

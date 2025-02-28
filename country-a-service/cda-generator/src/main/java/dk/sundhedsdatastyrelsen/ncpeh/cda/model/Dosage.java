@@ -6,7 +6,6 @@ import lombok.Value;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
 import java.util.Locale;
 
 public sealed interface Dosage {
@@ -23,11 +22,10 @@ public sealed interface Dosage {
      */
     @Value
     class Interval implements Dosage {
-        String tag = "interval";
+        String tag = "Interval";
         boolean institutionSpecified;
         Period period;
         Quantity quantity;
-        @NonNull List<Dosage> subordinateDosages;
     }
 
     /**
@@ -78,5 +76,22 @@ public sealed interface Dosage {
     @Value
     class Quantity {
         @NonNull BigDecimal value;
+        @NonNull Unit unit;
+    }
+
+    /// The Unit of a Dosage. Examples are "ml", "pust", "påsmøringer".
+    ///
+    /// The field is `<Dosage><UnitText(s)>` in the FMK data, and it is a free text field. So we will always need
+    /// a 'translated' option, which just outputs the text. We could do some heuristics later to add things like
+    /// 'ml' from the ehdsiQuantityUnit dataset.
+    interface Unit {
+        @NonNull
+        String getTag();
+
+        @Value
+        class Translated implements Unit {
+            @NonNull String tag = "Translated";
+            @NonNull String translation;
+        }
     }
 }

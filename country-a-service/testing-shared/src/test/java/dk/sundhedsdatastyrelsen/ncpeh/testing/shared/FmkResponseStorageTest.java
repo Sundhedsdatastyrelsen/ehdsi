@@ -8,7 +8,7 @@ import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage.s
 class FmkResponseStorageTest {
     @Test
     void validateStoredPrescriptions() throws JAXBException {
-        for (var cpr : FmkResponseStorage.testCprs()) {
+        for (var cpr : FmkResponseStorage.rawResponseCprs()) {
             storedPrescriptions(cpr);
         }
     }
