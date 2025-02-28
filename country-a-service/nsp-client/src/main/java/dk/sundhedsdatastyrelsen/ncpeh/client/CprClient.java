@@ -51,7 +51,7 @@ public class CprClient {
                 caller
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new NspClientException("CPR registry request failed", e);
         }
 
         final var unmarshaller = jaxbContext.createUnmarshaller();
