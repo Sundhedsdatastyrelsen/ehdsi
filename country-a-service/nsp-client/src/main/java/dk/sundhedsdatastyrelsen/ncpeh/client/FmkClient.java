@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
-import javax.xml.transform.dom.DOMResult;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -273,7 +272,7 @@ public class FmkClient {
                 extraHeaders
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new NspClientException("FMK request failed", e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
     }

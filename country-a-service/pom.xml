@@ -90,6 +90,11 @@
             </dependency>
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>autorisationsregister-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>epps-cpr-api</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -32,7 +32,7 @@ public class NspClient {
                  .execute(soapBody, extraHeaders)) {
             var reply = sosiFactory.deserializeReply(IOUtils.toString(response.getResponse(), StandardCharsets.UTF_8));
             if (response.isFault()) {
-                throw new RuntimeException(String.format("Request failed with message: %s", reply.getFaultString()));
+                throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
             }
             return reply;
         }

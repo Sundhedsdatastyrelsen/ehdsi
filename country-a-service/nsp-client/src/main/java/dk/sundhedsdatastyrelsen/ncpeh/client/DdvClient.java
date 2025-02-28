@@ -101,7 +101,7 @@ public class DdvClient {
                 extraHeaders
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new NspClientException("DDV request failed", e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
     }
