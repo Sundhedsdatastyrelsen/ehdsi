@@ -3,9 +3,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 public enum Oid {
     /**
      * EPrescription document repository id. For now, we use the DK home OID.
-     * Not registered.
+     * <a href="https://oid-base.com/get/1.2.208">Registered.</a>
      */
-    DK_EPRESCRIPTION_REPOSITORY_ID("2.16.17.710.802.1000.990.1"),
+    DK_EPRESCRIPTION_REPOSITORY_ID("1.2.208"),
     /**
      * Registries used in the Danish health by data exchange.
      * <a href="https://oid-base.com/get/1.2.208.176.1">Registered.</a>
@@ -18,8 +18,9 @@ public enum Oid {
     DK_CPR("1.2.208.176.1.2"),
     /**
      * FMK prescription ids
+     * <a href="https://oid-base.com/get/1.2.208.176.7.2.2">Registered.</a>
      */
-    DK_FMK_PRESCRIPTION("2.16.17.710.802.1000.990.1.10"),
+    DK_FMK_PRESCRIPTION("1.2.208.176.7.2.2"),
     /**
      * "Det danske autorisationsregister"
      * <a href="https://oid-base.com/get/1.2.208.176.1.3">Registered.</a>
@@ -43,8 +44,9 @@ public enum Oid {
     /**
      * Varenumre på lægemiddelpakninger
      * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>
+     * <a href="https://oid-base.com/get/1.2.208.176.3.2">Registered.</a>
      */
-    DK_VARENUMRE("2.16.17.710.802.1000.990.1.20.2", "Varenumre på lægemiddelpakninger"),
+    DK_VARENUMRE("1.2.208.176.3.2", "Varenumre på lægemiddelpakninger"),
 
     /**
      * Emballagetype fra LMS14
