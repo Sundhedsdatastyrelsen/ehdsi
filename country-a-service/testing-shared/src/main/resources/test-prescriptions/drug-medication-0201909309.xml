@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:GetDrugMedicationResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns2:PersonIdentifier source="CPR">0201909309</ns2:PersonIdentifier>
+    <ns2:DrugMedication>
+        <ns2:Identifier>33038750</ns2:Identifier>
+        <ns2:Version>1733969446920001002</ns2:Version>
+        <ns2:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                    <SpecialityCode source="Medicinpriser" date="2024-09-12">7170</SpecialityCode>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-12-12T02:10:46Z</DateTime>
+        </ns2:Created>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                    <SpecialityCode source="Medicinpriser" date="2024-09-12">7170</SpecialityCode>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Amager og Hvidovre Hospital, Familieambulatorium, Rigshospitalet</Name>
+                    <TelephoneNumber>+4587654321</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">133016N</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2024-12-12T02:10:46Z</DateTime>
+        </ns2:Modified>
+        <ns2:Type>Lægeordineret</ns2:Type>
+        <ns2:BeginEndDate>
+            <CreatedDateTime>2024-12-12T02:10:46Z</CreatedDateTime>
+            <TreatmentStartDate>2024-12-12</TreatmentStartDate>
+            <TreatmentEndingUndetermined/>
+        </ns2:BeginEndDate>
+        <ns2:Indication>
+            <Code source="Medicinpriser" date="2024-09-12">145</Code>
+            <Text>mod smerter</Text>
+        </ns2:Indication>
+        <ns2:RouteOfAdministration>
+            <Code source="Medicinpriser" date="2024-09-12">OR</Code>
+            <Text>Oral anvendelse</Text>
+        </ns2:RouteOfAdministration>
+        <ns2:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2024-09-12">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2024-09-12">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2024-09-12">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode source="Medicinpriser" date="2024-09-12">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2024-09-12">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2024-09-12">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns2:Drug>
+        <ns2:Dosage>
+            <ns2:UnitText>tablet</ns2:UnitText>
+            <ns2:StructuresFixed>
+                <Structure>
+                    <IterationInterval>1</IterationInterval>
+                    <StartDate>2024-12-12</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Day>
+                        <Number>1</Number>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                    </Day>
+                    <DosageTranslation>
+                        <ShortText>1 tablet 3 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 12. dec. 2024:
+1 tablet 3 gange hver dag</LongText>
+                    </DosageTranslation>
+                </Structure>
+                <DosageTranslationCombined>
+                    <ShortText>1 tablet 3 gange daglig</ShortText>
+                    <LongText>Dosering fra d. 12. dec. 2024:
+1 tablet 3 gange hver dag</LongText>
+                </DosageTranslationCombined>
+            </ns2:StructuresFixed>
+            <ns2:Type>fast</ns2:Type>
+        </ns2:Dosage>
+        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+    </ns2:DrugMedication>
+</ns2:GetDrugMedicationResponse>
