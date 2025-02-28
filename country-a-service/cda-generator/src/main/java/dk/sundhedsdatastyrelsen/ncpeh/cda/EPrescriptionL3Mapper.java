@@ -44,9 +44,9 @@ public class EPrescriptionL3Mapper {
      * Map a prescription response from FMK to a CDA data model.
      */
     public static EPrescriptionL3 model(EPrescriptionL3Input input) throws MapperException {
-        var response = input.response();
+        var response = input.fmkPrescriptionResponse();
         var prescriptionIndex = input.prescriptionIndex();
-        var drugMedicationResponse = input.drugMedicationResponse();
+        var drugMedicationResponse = input.fmkDrugMedicationResponse();
 
         var prescription = response.getPrescription().get(prescriptionIndex);
         Optional<DrugMedicationType> medication = Optional.empty();
@@ -218,7 +218,7 @@ public class EPrescriptionL3Mapper {
     }
 
     private static Author author(PrescriptionType prescription) throws MapperException {
-        // TODO: extract professional code from prescription?
+        // TODO: map from AuthorizationType in input
         var functionCode = CdaCode.builder()
             .code("221")
             .displayName("Medical doctors")

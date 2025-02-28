@@ -11,9 +11,14 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.test.idp.model.Identity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
@@ -24,6 +29,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
+import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -95,13 +102,28 @@ public class PrescriptionService {
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
+        var input = assembleEPrescriptionInput(patientId, filter, caller);
+        DocumentLevel documentLevel;
+        try {
+            documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
+            var cda = switch (documentLevel) {
+                case LEVEL3 -> EPrescriptionL3Generator.generate(input);
+                case LEVEL1 ->
+                    EPrescriptionL1Generator.generate(input.fmkPrescriptionResponse(), input.prescriptionIndex());
+            };
+
+            return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6));
+        } catch (MapperException | TemplateException | IOException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    private EPrescriptionL3Input assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, Identity caller) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
-        log.debug("Looking up info for {}", cpr);
-
         try {
             GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
 
@@ -117,11 +139,16 @@ public class PrescriptionService {
 
             var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, caller);
 
-            return EPrescriptionMapper.mapResponse(cpr, filter, fmkResponse, drugMedications, lmsDataLookupService);
+            // TODO: look up LMS stuff
+            // TODO: look up authorization registry stuff
+
+            return filter.validPrescriptionIndexes(fmkResponse.getPrescription())
+                .mapToObj(idx -> new EPrescriptionL3Input(fmkResponse, idx, drugMedications))
+                .findFirst()
+                .orElse(null);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }
-
     }
 
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) {

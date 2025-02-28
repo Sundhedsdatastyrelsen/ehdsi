@@ -18,6 +18,7 @@ class AuthorizationRegistryIT {
         var response = client.requestByAuthorizationCode("6QF17", OrganizationIdentities.sundhedsdatastyrelsen());
 
         assertThat(response.getAuthorization().size(), is(1));
+        // For codes: https://www.nspop.dk/display/public/web/Autorisation
         assertThat(response.getAuthorization().getFirst().getEducationCode(), is("7170"));
         assertThat(response.getAuthorization().getFirst().getEducationName(), is("Læge"));
     }

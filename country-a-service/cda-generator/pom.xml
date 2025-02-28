@@ -20,6 +20,10 @@
             <artifactId>epps-fmk-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>autorisationsregister-model</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
