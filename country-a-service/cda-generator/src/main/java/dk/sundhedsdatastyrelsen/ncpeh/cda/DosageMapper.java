@@ -32,8 +32,7 @@ public class DosageMapper {
                 return maybePair.map(pair -> (Dosage) new Dosage.Interval(
                         false,
                         pair.getLeft(),
-                        pair.getRight(),
-                        Collections.emptyList()))
+                        pair.getRight()))
                     .orElseGet(Dosage.Empty::new);
             default:
                 log.warn("Unknown dosage type {}", dosage.getType());

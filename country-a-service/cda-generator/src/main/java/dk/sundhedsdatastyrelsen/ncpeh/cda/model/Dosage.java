@@ -27,7 +27,6 @@ public sealed interface Dosage {
         boolean institutionSpecified;
         Period period;
         Quantity quantity;
-        @NonNull List<Dosage> subordinateDosages;
     }
 
     /**
