@@ -29,7 +29,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var xmlString = EPrescriptionL3Generator.generate(prescription, medication, 0);
+        var xmlString = EPrescriptionL3Generator.generate(new EPrescriptionL3Input(prescription, 0, medication));
 
         // 1. Test if well-formed XML (can be parsed)
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();

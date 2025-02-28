@@ -11,7 +11,7 @@ class EPrescriptionL3MapperTest {
             var response = FmkResponseStorage.storedPrescriptions(FmkResponseStorage.testCprs().get(2));
             var medicationResponse = FmkResponseStorage.storedDrugMedications(FmkResponseStorage.testCprs().get(2));
 
-            return EPrescriptionL3Mapper.model(response, 0, medicationResponse);
+            return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
