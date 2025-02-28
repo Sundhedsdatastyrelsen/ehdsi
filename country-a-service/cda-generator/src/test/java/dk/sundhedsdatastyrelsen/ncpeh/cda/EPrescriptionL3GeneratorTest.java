@@ -32,6 +32,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
+        var xmlString = EPrescriptionL3Generator.generate(new EPrescriptionL3Input(prescription, 0, medication));
         var epL3 = EPrescriptionL3Mapper.model(prescription, 0, medication, new referenceDataLookupServiceMock());
 
         //Generate prescription without null in packageCode

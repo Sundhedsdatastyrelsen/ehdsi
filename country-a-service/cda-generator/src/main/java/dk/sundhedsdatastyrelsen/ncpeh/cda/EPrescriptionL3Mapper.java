@@ -5,7 +5,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
@@ -32,17 +31,23 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class EPrescriptionL3Mapper {
+    private EPrescriptionL3Mapper() {}
+
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, ReferenceDataLookupService mappingService) throws MapperException {
-        return model(response, prescriptionIndex, null, mappingService);
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex) throws MapperException {
+        return model(new EPrescriptionL3Input(response, prescriptionIndex, null, mappingService));
     }
 
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, GetDrugMedicationResponseType drugMedicationResponse, ReferenceDataLookupService mappingService) throws MapperException {
+    public static EPrescriptionL3 model(EPrescriptionL3Input input) throws MapperException {
+        var response = input.response();
+        var prescriptionIndex = input.prescriptionIndex();
+        var drugMedicationResponse = input.drugMedicationResponse();
+
         var prescription = response.getPrescription().get(prescriptionIndex);
         Optional<DrugMedicationType> medication = Optional.empty();
         if (drugMedicationResponse != null) {
@@ -51,7 +56,6 @@ public class EPrescriptionL3Mapper {
                 .filter(dm -> prescription.getAttachedToDrugMedicationIdentifier().equals(dm.getIdentifier()))
                 .findAny();
         }
-
 
         var prescriptionId = new CdaId(Oid.DK_FMK_PRESCRIPTION, Long.toString(prescription.getIdentifier()));
 

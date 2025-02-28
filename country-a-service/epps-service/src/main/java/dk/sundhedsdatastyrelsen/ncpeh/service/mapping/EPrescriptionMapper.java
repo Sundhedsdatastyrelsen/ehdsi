@@ -5,6 +5,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseT
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionPdfGenerator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionPdfMapper;
@@ -104,9 +105,8 @@ public class EPrescriptionMapper {
     private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType medicationResponseType, int prescriptionIndex, DocumentLevel documentLevel, LmsDataLookupService mappingService) {
         try {
             String cda = switch (documentLevel) {
-                case LEVEL3 ->
-                    EPrescriptionL3Generator.generate(response, medicationResponseType, prescriptionIndex, mappingService);
-                case LEVEL1 -> EPrescriptionL1Generator.generate(response, prescriptionIndex, mappingService);
+                case LEVEL3 -> EPrescriptionL3Generator.generate(new EPrescriptionL3Input(response, prescriptionIndex, medicationResponseType));
+                case LEVEL1 -> EPrescriptionL1Generator.generate(response, prescriptionIndex);
             };
             return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
         } catch (MapperException | TemplateException | IOException e) {
