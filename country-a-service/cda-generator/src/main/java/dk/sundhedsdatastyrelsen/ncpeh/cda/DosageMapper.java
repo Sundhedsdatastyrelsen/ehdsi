@@ -9,14 +9,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
 import java.util.Optional;
 
 @Slf4j
 public class DosageMapper {
     public static Dosage model(DosageForResponseType dosage) {
         final var unit = mapUnit(dosage).orElse(null);
-        if(unit == null) {
+        if (unit == null) {
             // If there is no unit, it is not safe to display any dosage.
             // We still provide the free-text parts of the prescription in the narrative block.
             return new Dosage.Empty();

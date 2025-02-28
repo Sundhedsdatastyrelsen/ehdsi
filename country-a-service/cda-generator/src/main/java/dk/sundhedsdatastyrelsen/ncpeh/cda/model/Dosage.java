@@ -6,7 +6,6 @@ import lombok.Value;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
 import java.util.Locale;
 
 public sealed interface Dosage {
@@ -86,7 +85,8 @@ public sealed interface Dosage {
     /// a 'translated' option, which just outputs the text. We could do some heuristics later to add things like
     /// 'ml' from the ehdsiQuantityUnit dataset.
     interface Unit {
-        @NonNull String getTag();
+        @NonNull
+        String getTag();
 
         @Value
         class Translated implements Unit {
