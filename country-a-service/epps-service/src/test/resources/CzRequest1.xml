@@ -118,12 +118,12 @@
     </legalAuthenticator>
     <inFulfillmentOf>
         <order moodCode="RQO">
-            <id extension="469854419288102" root="2.16.17.710.802.1000.990.1.10"/>
+            <id extension="469854419288102" root="1.2.208.176.7.2.2"/>
         </order>
     </inFulfillmentOf>
     <relatedDocument typeCode="XFRM">
         <parentDocument classCode="DOCCLIN">
-            <id extension="469854419288102" root="2.16.17.710.802.1000.990.1.10"/>
+            <id extension="469854419288102" root="1.2.208.176.7.2.2"/>
         </parentDocument>
     </relatedDocument>
     <component>
@@ -249,7 +249,7 @@
                             </participant>
                             <entryRelationship typeCode="REFR">
                                 <substanceAdministration classCode="SBADM" moodCode="INT">
-                                    <id extension="469854419288102" root="2.16.17.710.802.1000.990.1.10"/>
+                                    <id extension="469854419288102" root="1.2.208.176.7.2.2"/>
                                     <text>1 tablet 3 gange daglig</text>
                                     <statusCode code="active"/>
                                     <effectiveTime xsi:type="IVL_TS">

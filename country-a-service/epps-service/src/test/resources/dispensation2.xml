@@ -106,7 +106,7 @@
   </hl7:legalAuthenticator>
   <hl7:inFulfillmentOf>
     <hl7:order moodCode="RQO">
-      <hl7:id extension="462617619087101" root="2.16.17.710.802.1000.990.1.10" />
+      <hl7:id extension="462617619087101" root="1.2.208.176.7.2.2" />
     </hl7:order>
   </hl7:inFulfillmentOf>
   <hl7:component>
@@ -204,7 +204,7 @@
               </hl7:participant>
               <hl7:entryRelationship typeCode="REFR">
                 <hl7:substanceAdministration classCode="SBADM" moodCode="INT">
-                  <hl7:id extension="462617619087101" root="2.16.17.710.802.1000.990.1.10" />
+                  <hl7:id extension="462617619087101" root="1.2.208.176.7.2.2" />
                   <hl7:consumable>
                     <hl7:manufacturedProduct classCode="MANU">
                       <templateId xmlns="urn:hl7-org:v3" root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29" />

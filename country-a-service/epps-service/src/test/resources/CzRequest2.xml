@@ -119,7 +119,7 @@
     </legalAuthenticator>
     <inFulfillmentOf>
         <order moodCode="RQO">
-            <id extension="465339231276101" root="2.16.17.710.802.1000.990.1.10"/>
+            <id extension="465339231276101" root="1.2.208.176.7.2.2"/>
         </order>
     </inFulfillmentOf>
     <relatedDocument typeCode="XFRM">
@@ -249,7 +249,7 @@
                             </performer>
                             <entryRelationship typeCode="REFR">
                                 <substanceAdministration classCode="SBADM" moodCode="INT">
-                                    <id extension="465339231276101" root="2.16.17.710.802.1000.990.1.10"/>
+                                    <id extension="465339231276101" root="1.2.208.176.7.2.2"/>
                                     <statusCode code="active"/>
                                     <effectiveTime xsi:type="IVL_TS">
                                         <low nullFlavor="UNK"/>
