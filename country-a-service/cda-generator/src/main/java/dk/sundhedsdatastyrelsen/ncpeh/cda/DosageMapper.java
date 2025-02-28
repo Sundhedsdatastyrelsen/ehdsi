@@ -41,7 +41,7 @@ public class DosageMapper {
         }
     }
 
-    public static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapEmptyStructureOrStructure(Object emptyStructureOrStructure) {
+    static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapEmptyStructureOrStructure(Object emptyStructureOrStructure, Dosage.Unit unit) {
         switch (emptyStructureOrStructure) {
             case DosageStructureForResponseType ds:
                 return mapToPeriod(ds, unit);
@@ -53,7 +53,7 @@ public class DosageMapper {
         }
     }
 
-    public static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapToPeriod(DosageStructureForResponseType structure) {
+    static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapToPeriod(DosageStructureForResponseType structure, Dosage.Unit unit) {
         var days = structure.getDay();
         if (days.size() != 1) {
             log.warn("Can only handle exactly one day for now.");
