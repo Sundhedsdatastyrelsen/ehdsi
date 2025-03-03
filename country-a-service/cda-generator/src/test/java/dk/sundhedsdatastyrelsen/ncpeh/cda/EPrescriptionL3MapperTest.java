@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.referenceDataLookupServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +12,7 @@ class EPrescriptionL3MapperTest {
             var medicationResponse = FmkResponseStorage.storedDrugMedications(FmkResponseStorage.rawResponseCprs()
                 .get(2));
 
-            return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse));
+            return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse, "FIN"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

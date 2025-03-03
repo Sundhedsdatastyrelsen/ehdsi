@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Service;
  * context services into itself, so the mapping methods do not bloat with endless services in the parameters
  */
 @Service
-public class LmsDataLookupService implements ReferenceDataLookupService {
-    private LmsDataRepository lmsDataRepository;
+public class LmsDataLookupService {
+    private final LmsDataRepository lmsDataRepository;
 
     public LmsDataLookupService(LmsDataRepository lmsDataRepository) {
         this.lmsDataRepository = lmsDataRepository;

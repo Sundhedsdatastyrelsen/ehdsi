@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -85,31 +86,20 @@ public class PrescriptionService {
         PrescriptionFilter filter,
         Identity caller
     ) {
-        String cpr = PatientIdMapper.toCpr(patientId);
-        final var request = GetPrescriptionRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeOpenPrescriptions().end()
-            .build();
         log.debug("undoDispensation: looking up prescription information");
-        try {
-            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-            log.debug("undoDispensation: Found {} prescriptions", fmkResponse.getPrescription().size());
-            return EPrescriptionMapper.mapMeta(cpr, filter, fmkResponse, lmsDataLookupService);
-        } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve list of prescriptions from FMK");
-        }
+        return assembleEPrescriptionInput(patientId, filter, caller).map(input -> EPrescriptionMapper.mapMeta(patientId, input))
+            .toList();
 
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
-        var input = assembleEPrescriptionInput(patientId, filter, caller);
+        var input = assembleEPrescriptionInput(patientId, filter, caller).findFirst().orElse(null);
         DocumentLevel documentLevel;
         try {
             documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
             var cda = switch (documentLevel) {
                 case LEVEL3 -> EPrescriptionL3Generator.generate(input);
-                case LEVEL1 ->
-                    EPrescriptionL1Generator.generate(input.fmkPrescriptionResponse(), input.prescriptionIndex());
+                case LEVEL1 -> EPrescriptionL1Generator.generate(input);
             };
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6));
@@ -118,7 +108,7 @@ public class PrescriptionService {
         }
     }
 
-    private EPrescriptionL3Input assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, Identity caller) {
+    private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, Identity caller) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
@@ -139,13 +129,17 @@ public class PrescriptionService {
 
             var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, caller);
 
-            // TODO: look up LMS stuff
             // TODO: look up authorization registry stuff
 
             return filter.validPrescriptionIndexes(fmkResponse.getPrescription())
-                .mapToObj(idx -> new EPrescriptionL3Input(fmkResponse, idx, drugMedications))
-                .findFirst()
-                .orElse(null);
+                .mapToObj(idx -> new EPrescriptionL3Input(
+                    fmkResponse,
+                    idx,
+                    drugMedications,
+                    this.lmsDataLookupService.getPackageFormCodeFromPackageNumber(prescriptions.get(idx)
+                        .getPackageRestriction()
+                        .getPackageNumber()
+                        .getValue())));
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }
@@ -265,8 +259,9 @@ public class PrescriptionService {
 
         log.debug("Looking up DrugMedication  info for {}", cpr);
         GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
-        log.debug("Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
-            .size(), drugMedicationId);
+        log.debug(
+            "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
+                .size(), drugMedicationId);
         return fmkResponse;
     }
 
