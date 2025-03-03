@@ -29,6 +29,8 @@ public class EhdsiUnitMapper {
 
     /**
      * Convert a package unit code from LMS15 ("Medicinpriser") to an eHDSI Unit code.
+     * <p>
+     * Examples: "AM", "HD", "MT", "KG"
      */
     public static EhdsiUnit fromLms(String lms15Code) {
         final var result = lms15ToEntries.get(lms15Code);

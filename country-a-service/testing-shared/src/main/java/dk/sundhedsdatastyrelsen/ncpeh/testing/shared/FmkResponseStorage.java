@@ -44,14 +44,20 @@ public class FmkResponseStorage {
 
     }
 
-    private static final String resourceDir = "fmk-responses";
+    private static final String rawResponseDir = "fmk-responses";
+    private static final String testDataDir = "test-prescriptions";
+    private static final List<String> testCprs = List.of("0201909309", "0410009234", "1011649927");
 
     @NonNull
     private final FmkClient fmkClient;
 
-    private static final List<String> testCprs = List.of("1111111118", "0101010000", "0201909309", "1011649927");
+    private static final List<String> rawResponseCprs = List.of("1111111118", "0101010000", "0201909309", "0410009234", "1011649927");
 
-    public static List<String> testCprs() {
+    public static List<String> rawResponseCprs() {
+        return rawResponseCprs;
+    }
+
+    public static List<String> e2eTestCprs() {
         return testCprs;
     }
 
@@ -117,17 +123,33 @@ public class FmkResponseStorage {
         return fac.createGetDrugMedicationResponse(response);
     }
 
+    public static GetPrescriptionResponseType getTestPrescriptions(String cpr) throws JAXBException {
+        return storedPrescriptions(cpr, testDataDir);
+    }
+
     public static GetPrescriptionResponseType storedPrescriptions(String cpr) throws JAXBException {
+        return storedPrescriptions(cpr, rawResponseDir);
+    }
+
+    public static GetPrescriptionResponseType storedPrescriptions(String cpr, String resourceDir) throws JAXBException {
         var name = "get-prescription-" + cpr + ".xml";
-        return readStoredPrescriptions(name);
+        return readStoredPrescriptions(name, resourceDir);
+    }
+
+    public static GetDrugMedicationResponseType getTestMedications(String cpr) throws JAXBException {
+        return storedDrugMedications(cpr, testDataDir);
     }
 
     public static GetDrugMedicationResponseType storedDrugMedications(String cpr) throws JAXBException {
-        var name = "drug-medication-" + cpr + ".xml";
-        return readStoredMedication(name);
+        return storedDrugMedications(cpr, rawResponseDir);
     }
 
-    public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName) throws JAXBException {
+    public static GetDrugMedicationResponseType storedDrugMedications(String cpr, String resourceDir) throws JAXBException {
+        var name = "drug-medication-" + cpr + ".xml";
+        return readStoredMedication(name, resourceDir);
+    }
+
+    public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName, String resourceDir) throws JAXBException {
         var url = FmkResponseStorage.class.getClassLoader()
             .getResource(String.format("%s/%s", resourceDir, resourceName));
         if (url == null) {
@@ -142,7 +164,7 @@ public class FmkResponseStorage {
         throw new IllegalStateException("File does not contain GetPrescriptionResponseType data");
     }
 
-    public static GetDrugMedicationResponseType readStoredMedication(String resourceName) throws JAXBException {
+    public static GetDrugMedicationResponseType readStoredMedication(String resourceName, String resourceDir) throws JAXBException {
         var url = FmkResponseStorage.class.getClassLoader()
             .getResource(String.format("%s/%s", resourceDir, resourceName));
         if (url == null) {
@@ -183,8 +205,8 @@ public class FmkResponseStorage {
     public static void main(String[] args) throws Exception {
         var frs = new FmkResponseStorage(Fmk.apiClient());
         var dir = Files.createDirectories(
-            Path.of("testing-shared", "src", "main", "resources", resourceDir));
-        for (var cpr : testCprs) {
+            Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
+        for (var cpr : rawResponseCprs) {
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             var prescriptions = frs.getPrescriptionResponse(cpr, TestIdentities.apotekerChrisChristoffersen);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
