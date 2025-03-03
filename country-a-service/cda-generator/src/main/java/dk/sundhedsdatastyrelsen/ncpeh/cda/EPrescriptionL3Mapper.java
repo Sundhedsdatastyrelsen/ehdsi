@@ -7,6 +7,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.nsi.__.stamdata._3.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
@@ -68,7 +69,7 @@ public class EPrescriptionL3Mapper {
                     .getFullName(), prescription.getIdentifier()))
             .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))
-            .author(author(prescription))
+            .author(author(prescription, input.authorAuthorizations()))
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
@@ -217,15 +218,16 @@ public class EPrescriptionL3Mapper {
         return new Organization(id, org.getName(), org.getTelephoneNumber(), address);
     }
 
-    private static Author author(PrescriptionType prescription) throws MapperException {
-        // TODO: map from AuthorizationType in input
-        var functionCode = CdaCode.builder()
-            .code("221")
-            .displayName("Medical doctors")
-            .codeSystem(Oid.ISCO)
-            .build();
+    private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizationTypes) throws MapperException {
+        var functionCodes = authorizationTypes.stream().map(AuthorizationTypeMapper::mapAuthorizationType).toList();
+        var functionCode = functionCodes.stream()
+            // "22" is the default when we can't find anything
+            .filter(c -> !c.getCode().equals("22"))
+            .findFirst()
+            // We might not get any authorizationTypes from the authorization registry, and we always need to return something.
+            .orElse(AuthorizationTypeMapper.mapAuthorizationType(null));
 
-        var creator = createdByXml(prescription);
+        var creator = getAuthorizedHealthcareProfessional(prescription);
 
         return Author.builder()
             .functionCode(functionCode)
@@ -261,7 +263,7 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator organization"));
     }
 
-    private static AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType createdByXml(PrescriptionType prescriptionType) throws MapperException {
+    public static AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
         return prescriptionType.getCreated()
             .getBy()
             .getContent()

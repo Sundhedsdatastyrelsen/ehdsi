@@ -14,9 +14,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
+import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
@@ -34,6 +36,7 @@ import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -53,6 +56,7 @@ public class PrescriptionService {
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
     private final LmsDataLookupService lmsDataLookupService;
+    private final AuthorizationRegistryClient authorizationRegistry;
 
     public record PrescriptionFilter(
         String documentId,
@@ -63,9 +67,10 @@ public class PrescriptionService {
             return new PrescriptionFilter(null, null, null);
         }
 
-        public IntStream validPrescriptionIndexes(@NonNull List<PrescriptionType> list) {
+        public Stream<Pair<Integer, PrescriptionType>> validPrescriptionIndexes(@NonNull List<PrescriptionType> list) {
             return IntStream.range(0, list.size())
-                .filter(idx -> apply(list.get(idx)));
+                .mapToObj(idx -> Pair.of(idx, list.get(idx)))
+                .filter(pair -> apply(pair.getRight()));
         }
 
         private boolean apply(PrescriptionType prescription) {
@@ -119,27 +124,31 @@ public class PrescriptionService {
 
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
 
-            var prescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription())
-                .mapToObj(idx -> fmkResponse.getPrescription().get(idx))
-                .toList();
+            var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
 
-            var drugMedicationIds = prescriptions.stream()
+            var drugMedicationIds = validPrescriptions.stream().map(Pair::getRight)
                 .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
                 .toList();
 
             var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, caller);
 
-            // TODO: look up authorization registry stuff
-
-            return filter.validPrescriptionIndexes(fmkResponse.getPrescription())
-                .mapToObj(idx -> new EPrescriptionL3Input(
-                    fmkResponse,
-                    idx,
-                    drugMedications,
-                    this.lmsDataLookupService.getPackageFormCodeFromPackageNumber(prescriptions.get(idx)
-                        .getPackageRestriction()
-                        .getPackageNumber()
-                        .getValue())));
+            return validPrescriptions.stream().map(pair -> {
+                try {
+                    return new EPrescriptionL3Input(
+                        fmkResponse,
+                        pair.getLeft(),
+                        drugMedications,
+                        authorizationRegistry.requestByAuthorizationCode(
+                            EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(pair.getRight())
+                                .getAuthorisationIdentifier(), caller).getAuthorization(),
+                        lmsDataLookupService.getPackageFormCodeFromPackageNumber(pair.getRight()
+                            .getPackageRestriction()
+                            .getPackageNumber()
+                            .getValue()));
+                } catch (JAXBException | MapperException e) {
+                    throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get authorizationType or packageFormCode.");
+                }
+            });
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
         }
