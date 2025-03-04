@@ -20,6 +20,8 @@ services:
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-dev}"
       CPR_ENDPOINT_URL: "${CPR_ENDPOINT_URL}"
       FMK_ENDPOINT_URL: "${FMK_ENDPOINT_URL}"
+      LMSFTP_USERNAME: "${LMSFTP_USERNAME}"
+      LMSFTP_PASSWORD: "${LMSFTP_PASSWORD}"
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data

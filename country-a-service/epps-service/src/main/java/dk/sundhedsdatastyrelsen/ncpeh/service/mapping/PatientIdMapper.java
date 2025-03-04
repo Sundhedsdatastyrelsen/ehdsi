@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * PatientId in EU contains the cpr and some identifier separated by three hats (^^^).
  * CPR should just be 10 digits.
- * Example: 1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO
+ * Example: 1111111118^^^&1.2.208.176.1.2&ISO
  *
  * For now, we ignore the root (whatever comes after the ^^^) and assume that the value (whatever comes before ^^^)
  * represents a Danish CPR number.

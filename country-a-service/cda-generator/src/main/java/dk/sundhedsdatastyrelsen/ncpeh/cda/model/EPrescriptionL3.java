@@ -8,7 +8,7 @@ import lombok.Value;
 import java.time.OffsetDateTime;
 
 @Value
-@Builder
+@Builder(toBuilder = true)
 public class EPrescriptionL3 {
     /**
      * Unique ID identifying the CDA document (not the prescription itself).
@@ -45,6 +45,11 @@ public class EPrescriptionL3 {
      * this element shall not be sent.
      */
     CdaCode administrationRoute;
+
+    /**
+     * Dosage/posology information for the medication.
+     */
+    @NonNull Dosage dosage;
 
     @NonNull Author author;
 

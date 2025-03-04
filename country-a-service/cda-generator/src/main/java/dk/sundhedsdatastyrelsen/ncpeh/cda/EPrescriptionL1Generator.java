@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL1;
 import freemarker.template.TemplateException;
 
@@ -15,9 +16,9 @@ public class EPrescriptionL1Generator {
         return writer.toString();
     }
 
-    public static String generate(GetPrescriptionResponseType response, int prescriptionIndex)
+    public static String generate(GetPrescriptionResponseType response, int prescriptionIndex, ReferenceDataLookupService mappingService)
         throws TemplateException, IOException, MapperException {
-        var dataModel = EPrescriptionL1Mapper.model(response, prescriptionIndex);
+        var dataModel = EPrescriptionL1Mapper.model(response, prescriptionIndex, mappingService);
         return generate(dataModel);
     }
 }

@@ -194,7 +194,7 @@ class DispensationMapperTest {
 
 
         var result = sut.createPharmacyEffectuationRequest(
-            "1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO",
+            "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,
             startEffectuationResponse
         );

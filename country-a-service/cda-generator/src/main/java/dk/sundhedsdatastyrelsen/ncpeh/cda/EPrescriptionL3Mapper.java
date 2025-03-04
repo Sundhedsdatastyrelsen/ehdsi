@@ -8,10 +8,12 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Organization;
@@ -33,14 +35,14 @@ public class EPrescriptionL3Mapper {
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex) throws MapperException {
-        return model(response, prescriptionIndex, null);
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, ReferenceDataLookupService mappingService) throws MapperException {
+        return model(response, prescriptionIndex, null, mappingService);
     }
 
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, GetDrugMedicationResponseType drugMedicationResponse) throws MapperException {
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, GetDrugMedicationResponseType drugMedicationResponse, ReferenceDataLookupService mappingService) throws MapperException {
         var prescription = response.getPrescription().get(prescriptionIndex);
         Optional<DrugMedicationType> medication = Optional.empty();
         if (drugMedicationResponse != null) {
@@ -66,7 +68,7 @@ public class EPrescriptionL3Mapper {
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .product(product(prescription))
+            .product(product(prescription, mappingService))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
@@ -74,25 +76,30 @@ public class EPrescriptionL3Mapper {
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
-            prescriptionBuilder.medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentStartDate()));
-            prescriptionBuilder.medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
-                .getTreatmentEndDate()));
+            prescriptionBuilder
+                .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                    .getTreatmentStartDate()))
+                .dosage(DosageMapper.model(drugMedicationType.getDosage()))
+                .medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
+                    .getTreatmentEndDate()));
 
             var administrationRoute = drugMedicationType.getRouteOfAdministration();
             if (administrationRoute != null) {
                 var administrationRouteCdaCode = CdaCode.builder()
                     .codeSystem(Oid.DK_LMS11)
                     .code(administrationRoute.getCode().getValue())
+                    .displayName(administrationRoute.getText())
                     .build();
                 prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
             }
+        } else {
+            prescriptionBuilder.dosage(new Dosage.Empty());
         }
 
         return prescriptionBuilder.build();
     }
 
-    private static Product product(PrescriptionType prescription) throws MapperException {
+    private static Product product(PrescriptionType prescription, ReferenceDataLookupService mappingService) throws MapperException {
         var f = prescription.getDrug().getForm();
         var formCode = CdaCode.builder()
             .codeSystem(Oid.DK_LMS22)
@@ -103,9 +110,14 @@ public class EPrescriptionL3Mapper {
         var ps = prescription.getPackageRestriction().getPackageSize();
         var size = new Size(EhdsiUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
 
+        var packageNumber = prescription.getPackageRestriction().getPackageNumber().getValue();
         var packageCode = CdaCode.builder()
             .codeSystem(Oid.DK_VARENUMRE)
-            .code(prescription.getPackageRestriction().getPackageNumber().getValue())
+            .code(packageNumber)
+            .build();
+        var packageFormCode = CdaCode.builder()
+            .codeSystem(Oid.DK_EMBALLAGETYPE)
+            .code(mappingService.getPackageFormCodeFromPackageNumber(packageNumber))
             .build();
 
         var atc = prescription.getDrug().getATC();
@@ -122,6 +134,7 @@ public class EPrescriptionL3Mapper {
             .formCode(formCode)
             .size(size)
             .packageCode(packageCode)
+            .packageFormCode(packageFormCode)
             .atcCode(atcCode)
             .build();
     }

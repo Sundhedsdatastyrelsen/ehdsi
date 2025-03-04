@@ -32,10 +32,11 @@ public class EPrescriptionMapper {
 
     public static List<DocumentAssociationForEPrescriptionDocumentMetadataDto> mapMeta(
         String patientId, PrescriptionFilter filter,
-        GetPrescriptionResponseType src
+        GetPrescriptionResponseType src,
+        LmsDataLookupService lmsDataLookupService
     ) {
         return filter.validPrescriptionIndexes(src.getPrescription())
-            .mapToObj(idx -> mapMeta(patientId, src, idx))
+            .mapToObj(idx -> mapMeta(patientId, src, idx, lmsDataLookupService))
             .toList();
     }
 
@@ -43,30 +44,30 @@ public class EPrescriptionMapper {
         String patientId,
         PrescriptionFilter filter,
         GetPrescriptionResponseType src,
-        GetDrugMedicationResponseType drugMedicationResponse
+        GetDrugMedicationResponseType drugMedicationResponse,
+        LmsDataLookupService mappingService
     ) {
         try {
             var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
             return filter.validPrescriptionIndexes(src.getPrescription())
-                .mapToObj(idx -> mapPrescription(patientId, src, drugMedicationResponse, idx, documentLevel))
+                .mapToObj(idx -> mapPrescription(patientId, src, drugMedicationResponse, idx, documentLevel, mappingService))
                 .toList();
         } catch (MapperException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
-    private static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex) {
+    private static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType response, int prescriptionIndex, LmsDataLookupService mappingService) {
         try {
             final String cda;
-            var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex);
+            var dataModel = EPrescriptionL3Mapper.model(response, prescriptionIndex, mappingService);
             try {
                 cda = EPrescriptionL3Generator.generate(dataModel);
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var l3Meta = generateMeta(
-                patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId()
-                    .getExtension()));
+            var l3Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId()
+                .getExtension()));
             l3Meta.setSize((long) cda.length());
             // "Document metadata shall include a SHA1 hash of the document content."
             // https://www.ihe.net/uploadedFiles/Documents/ITI/IHE_ITI_TF_Rev17-0_Vol1_FT_2020-07-20.pdf
@@ -75,9 +76,8 @@ public class EPrescriptionMapper {
             //Generate PDF to deliver metadata on it
             var pdf = EPrescriptionPdfGenerator.generate(EPrescriptionPdfMapper.map(dataModel));
 
-            var l1Meta = generateMeta(
-                patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId()
-                    .getExtension()));
+            var l1Meta = generateMeta(patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId()
+                .getExtension()));
             l1Meta.setSize((long) pdf.length);
             // "Document metadata shall include a SHA1 hash of the document content."
             // https://www.ihe.net/uploadedFiles/Documents/ITI/IHE_ITI_TF_Rev17-0_Vol1_FT_2020-07-20.pdf
@@ -101,11 +101,12 @@ public class EPrescriptionMapper {
         return meta;
     }
 
-    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType medicationResponseType, int prescriptionIndex, DocumentLevel documentLevel) {
+    private static EpsosDocumentDto mapPrescription(String patientId, GetPrescriptionResponseType response, GetDrugMedicationResponseType medicationResponseType, int prescriptionIndex, DocumentLevel documentLevel, LmsDataLookupService mappingService) {
         try {
             String cda = switch (documentLevel) {
-                case LEVEL3 -> EPrescriptionL3Generator.generate(response, medicationResponseType, prescriptionIndex);
-                case LEVEL1 -> EPrescriptionL1Generator.generate(response, prescriptionIndex);
+                case LEVEL3 ->
+                    EPrescriptionL3Generator.generate(response, medicationResponseType, prescriptionIndex, mappingService);
+                case LEVEL1 -> EPrescriptionL1Generator.generate(response, prescriptionIndex, mappingService);
             };
             return new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6);
         } catch (MapperException | TemplateException | IOException e) {
