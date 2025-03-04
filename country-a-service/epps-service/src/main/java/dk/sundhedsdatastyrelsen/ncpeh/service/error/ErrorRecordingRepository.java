@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.service.exception;
+package dk.sundhedsdatastyrelsen.ncpeh.service.error;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -11,5 +11,5 @@ public class ErrorRecordingRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    
+
 }

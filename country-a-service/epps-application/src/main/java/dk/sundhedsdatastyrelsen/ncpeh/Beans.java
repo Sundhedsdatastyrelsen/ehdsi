@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataRepository;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.ErrorRecordingRepository;
+import dk.sundhedsdatastyrelsen.ncpeh.service.error.ErrorRecordingRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.startup.FlywayConfigs;
 import org.flywaydb.core.Flyway;

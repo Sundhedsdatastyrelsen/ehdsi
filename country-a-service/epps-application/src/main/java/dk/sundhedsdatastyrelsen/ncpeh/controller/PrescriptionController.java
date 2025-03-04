@@ -10,8 +10,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindEPrescriptionDocumentsRequ
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.ErrorRecordingRepository;
+import dk.sundhedsdatastyrelsen.ncpeh.service.error.ErrorRecordingRepository;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
