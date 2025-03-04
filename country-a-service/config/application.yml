@@ -12,8 +12,9 @@ spring:
     locations: "classpath:db/migration"
 
 app:
-  fmk.endpoint.url: ${FMK_ENDPOINT_URL}
-  cpr.endpoint.url: ${CPR_ENDPOINT_URL}
+  fmk.endpoint.url: "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"
+  cpr.endpoint.url: "https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4"
+  authorizationregistry.endpoint.url: "https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService"
 
 management:
   endpoint:

@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.referenceDataLookupServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
@@ -32,7 +31,8 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var epL3 = EPrescriptionL3Mapper.model(prescription, 0, medication, new referenceDataLookupServiceMock());
+        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN");
+        var epL3 = EPrescriptionL3Mapper.model(input);
 
         //Generate prescription without null in packageCode
         var xmlString = EPrescriptionL3Generator.generate(epL3);
@@ -69,7 +69,8 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var prescriptions = prescription.getPrescription();
         for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
-            var xmlString = EPrescriptionL3Generator.generate(prescription, medication, prescriptionindex, new referenceDataLookupServiceMock());
+            var input = new EPrescriptionL3Input(prescription, prescriptionindex, medication, "FIN");
+            var xmlString = EPrescriptionL3Generator.generate(input);
 
             // 1. Test if well-formed XML (can be parsed)
             var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
@@ -83,7 +84,6 @@ class EPrescriptionL3GeneratorTest {
             var schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             var schema = schemaFactory.newSchema(schemaUrl);
             var validator = schema.newValidator();
-
 
             validator.validate(new StreamSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
 

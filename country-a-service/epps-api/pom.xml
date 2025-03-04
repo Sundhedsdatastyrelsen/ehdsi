@@ -9,7 +9,6 @@
     </parent>
 
     <name>NCPeH DK integration service - API Root</name>
-    <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
     <artifactId>epps-api-root</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -22,5 +21,6 @@
         <module>epps-cpr-api</module>
         <module>epps-ddv-api</module>
         <module>epps-lms-api</module>
+        <module>autorisationsregister-model</module>
     </modules>
 </project>

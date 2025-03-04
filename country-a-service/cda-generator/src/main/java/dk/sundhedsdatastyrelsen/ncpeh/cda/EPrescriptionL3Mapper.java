@@ -5,10 +5,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.interfaces.ReferenceDataLookupService;
+import dk.nsi.__.stamdata._3.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
@@ -32,17 +31,24 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class EPrescriptionL3Mapper {
-    /**
-     * Map a prescription response from FMK to a CDA data model.
-     */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, ReferenceDataLookupService mappingService) throws MapperException {
-        return model(response, prescriptionIndex, null, mappingService);
+    private EPrescriptionL3Mapper() {
     }
 
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, GetDrugMedicationResponseType drugMedicationResponse, ReferenceDataLookupService mappingService) throws MapperException {
+    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, String packageFormCode) throws MapperException {
+        return model(new EPrescriptionL3Input(response, prescriptionIndex, null, packageFormCode));
+    }
+
+    /**
+     * Map a prescription response from FMK to a CDA data model.
+     */
+    public static EPrescriptionL3 model(EPrescriptionL3Input input) throws MapperException {
+        var response = input.fmkPrescriptionResponse();
+        var prescriptionIndex = input.prescriptionIndex();
+        var drugMedicationResponse = input.fmkDrugMedicationResponse();
+
         var prescription = response.getPrescription().get(prescriptionIndex);
         Optional<DrugMedicationType> medication = Optional.empty();
         if (drugMedicationResponse != null) {
@@ -51,7 +57,6 @@ public class EPrescriptionL3Mapper {
                 .filter(dm -> prescription.getAttachedToDrugMedicationIdentifier().equals(dm.getIdentifier()))
                 .findAny();
         }
-
 
         var prescriptionId = new CdaId(Oid.DK_FMK_PRESCRIPTION, Long.toString(prescription.getIdentifier()));
 
@@ -64,11 +69,11 @@ public class EPrescriptionL3Mapper {
                     .getFullName(), prescription.getIdentifier()))
             .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))
-            .author(author(prescription))
+            .author(author(prescription, input.authorAuthorizations()))
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .product(product(prescription, mappingService))
+            .product(product(prescription, input.packageFormCode()))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
@@ -99,7 +104,7 @@ public class EPrescriptionL3Mapper {
         return prescriptionBuilder.build();
     }
 
-    private static Product product(PrescriptionType prescription, ReferenceDataLookupService mappingService) throws MapperException {
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) throws MapperException {
         var f = prescription.getDrug().getForm();
         var formCode = CdaCode.builder()
             .codeSystem(Oid.DK_LMS22)
@@ -117,7 +122,7 @@ public class EPrescriptionL3Mapper {
             .build();
         var packageFormCode = CdaCode.builder()
             .codeSystem(Oid.DK_EMBALLAGETYPE)
-            .code(mappingService.getPackageFormCodeFromPackageNumber(packageNumber))
+            .code(packageFormCodeRaw)
             .build();
 
         var atc = prescription.getDrug().getATC();
@@ -213,18 +218,21 @@ public class EPrescriptionL3Mapper {
         return new Organization(id, org.getName(), org.getTelephoneNumber(), address);
     }
 
-    private static Author author(PrescriptionType prescription) throws MapperException {
-        // TODO: extract professional code from prescription?
-        var functionCode = CdaCode.builder()
-            .code("221")
-            .displayName("Medical doctors")
-            .codeSystem(Oid.ISCO)
+    private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizationTypes) throws MapperException {
+        // https://www.nspop.dk/display/public/web/Autorisation has the list of education codes
+        var functionCode = authorizationTypes.stream()
+            .findFirst()
+            .map(AuthorizationType::getEducationCode)
+            // 0000 means 'Erstatningsautorisation' replacement authorization
+            .orElse("0000");
+        var cdaFunctionCode = CdaCode.builder()
+            .codeSystem(Oid.DK_AUTHORIZATION_REGISTRY_EDUCATION_CODE)
+            .code(functionCode)
             .build();
-
-        var creator = createdByXml(prescription);
+        var creator = getAuthorizedHealthcareProfessional(prescription);
 
         return Author.builder()
-            .functionCode(functionCode)
+            .functionCode(cdaFunctionCode)
             .time(offsetDateTime(prescription.getCreated().getDateTime()))
             .id(new CdaId(Oid.DK_AUTHORIZATION_REGISTRY, creator.getAuthorisationIdentifier()))
             .name(Name.fromFullName(creator.getName()))
@@ -257,7 +265,7 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator organization"));
     }
 
-    private static AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType createdByXml(PrescriptionType prescriptionType) throws MapperException {
+    public static AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
         return prescriptionType.getCreated()
             .getBy()
             .getContent()

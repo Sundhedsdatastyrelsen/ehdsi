@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.mocks.referenceDataLookupServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,8 @@ public class EPrescriptionL1GeneratorTest {
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var xmlString = EPrescriptionL1Generator.generate(prescription, 0, new referenceDataLookupServiceMock());
+        var xmlString = EPrescriptionL1Generator.generate(new EPrescriptionL3Input(
+            prescription, 0, null, "FIN"));
 
         // 1. Test if well-formed XML (can be parsed)
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();

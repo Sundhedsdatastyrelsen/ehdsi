@@ -3,12 +3,15 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
+import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
+import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.EPrescriptionMapperServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
+import org.apache.commons.lang3.tuple.Pair;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -25,7 +28,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 public class FmkIT {
-    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService());
+    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), authorizationRegistryClient());
 
     /**
      * This test simply checks that we can connect and get an answer on the data.
@@ -48,10 +51,9 @@ public class FmkIT {
 
         var validPrescriptions = PrescriptionService.PrescriptionFilter.none()
             .validPrescriptionIndexes(prescriptions.getPrescription())
-            .mapToObj(idx -> prescriptions.getPrescription().get(idx))
-            .toList();
+            .map(Pair::getRight);
 
-        var drugMedicationIds = validPrescriptions.stream()
+        var drugMedicationIds = validPrescriptions
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
 
@@ -76,7 +78,7 @@ public class FmkIT {
 
         var validPrescriptions = PrescriptionService.PrescriptionFilter.none()
             .validPrescriptionIndexes(prescriptions.getPrescription())
-            .mapToObj(idx -> prescriptions.getPrescription().get(idx))
+            .map(Pair::getRight)
             .toList();
 
         var drugMedicationIds = validPrescriptions.stream()
@@ -102,6 +104,10 @@ public class FmkIT {
         return new EPrescriptionMapperServiceMock();
     }
 
+    private static AuthorizationRegistryClient authorizationRegistryClient() {
+        return new AuthorizationRegistryClientMock();
+    }
+
     /**
      * The dispensation test case is complex because:
      * - There has to be a valid prescription in the test environment to dispense for.
@@ -124,7 +130,7 @@ public class FmkIT {
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
 
-        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService());
+        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), authorizationRegistryClient());
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
