@@ -219,18 +219,20 @@ public class EPrescriptionL3Mapper {
     }
 
     private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizationTypes) throws MapperException {
-        var functionCodes = authorizationTypes.stream().map(AuthorizationTypeMapper::mapAuthorizationType).toList();
-        var functionCode = functionCodes.stream()
-            // "22" is the default when we can't find anything
-            .filter(c -> !c.getCode().equals("22"))
+        // https://www.nspop.dk/display/public/web/Autorisation has the list of education codes
+        var functionCode = authorizationTypes.stream()
             .findFirst()
-            // We might not get any authorizationTypes from the authorization registry, and we always need to return something.
-            .orElse(AuthorizationTypeMapper.mapAuthorizationType(null));
-
+            .map(AuthorizationType::getEducationCode)
+            // 0000 means 'Erstatningsautorisation' replacement authorization
+            .orElse("0000");
+        var cdaFunctionCode = CdaCode.builder()
+            .codeSystem(Oid.DK_AUTHORIZATION_REGISTRY_EDUCATION_CODE)
+            .code(functionCode)
+            .build();
         var creator = getAuthorizedHealthcareProfessional(prescription);
 
         return Author.builder()
-            .functionCode(functionCode)
+            .functionCode(cdaFunctionCode)
             .time(offsetDateTime(prescription.getCreated().getDateTime()))
             .id(new CdaId(Oid.DK_AUTHORIZATION_REGISTRY, creator.getAuthorisationIdentifier()))
             .name(Name.fromFullName(creator.getName()))
