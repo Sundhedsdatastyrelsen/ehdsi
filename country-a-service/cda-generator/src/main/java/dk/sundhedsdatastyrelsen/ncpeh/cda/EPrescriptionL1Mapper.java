@@ -7,7 +7,7 @@ import java.util.Base64;
 
 public class EPrescriptionL1Mapper {
     public static EPrescriptionL1 model(EPrescriptionL3Input input) throws MapperException {
-        return model(EPrescriptionL3Mapper.model(input)); //Should this also have the medication? Probably
+        return model(EPrescriptionL3Mapper.model(input));
     }
 
     public static EPrescriptionL1 model(EPrescriptionL3 l3Model) throws MapperException {

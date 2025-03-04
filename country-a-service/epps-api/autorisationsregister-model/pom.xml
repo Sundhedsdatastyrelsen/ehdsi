@@ -59,9 +59,7 @@
                         <arg>-B-Xfluent-builder</arg>
                     </args>
                     <wsdlUrls>
-                        <wsdlUrl>
-                            https://wsdl.nspop.dk/stamdata-authorization-lookup-ws/service/AuthorizationService?wsdl
-                        </wsdlUrl>
+                        <wsdlUrl>./src/main/resources/authorization-registry.wsdl</wsdlUrl>
                     </wsdlUrls>
                     <sourceDestDir>${sourcesDir}</sourceDestDir>
                     <destDir>${classesDir}</destDir>
