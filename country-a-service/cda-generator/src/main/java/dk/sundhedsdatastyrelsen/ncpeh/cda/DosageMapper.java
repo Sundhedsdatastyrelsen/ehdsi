@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /// Maps from the FMK ordination representation of dosage to the eHDSI substanceAdministration
@@ -86,29 +87,76 @@ import java.util.Optional;
 @Slf4j
 public class DosageMapper {
     public static Dosage model(DosageForResponseType dosage) {
+        final var unstructuredText = getUnstructuredText(dosage);
         final var unit = mapUnit(dosage).orElse(null);
         if (unit == null) {
             // If there is no unit, it is not safe to display any dosage.
             // We still provide the free-text parts of the prescription in the narrative block.
-            return new Dosage.Empty();
+            return new Dosage.Unstructured(unstructuredText);
         }
         switch (dosage.getType()) {
-            case FAST:
+            case FAST: {
+                // In "FAST", the dosage contains only "structuresFixed" and no "structuresAccordingToNeed".
                 var structures = dosage.getStructuresFixed().getEmptyStructureOrStructure();
                 if (structures.size() != 1) {
-                    log.warn("Only 1 dosage structure supported, but was {}.", structures.size());
-                    return new Dosage.Empty();
+                    // In the Danish model, there may be several structures, to support things like 'first three months
+                    // with one pill every day, then two months with one pill every other day'. It's a type of tapered
+                    // dosing, so not supported.
+                    return new Dosage.Unstructured(unstructuredText);
                 }
-                var maybePair = mapEmptyStructureOrStructure(structures.getFirst(), unit);
-                return maybePair.map(pair -> (Dosage) new Dosage.Interval(
+                var maybePeriodAndQuantity = mapEmptyStructureOrStructure(structures.getFirst(), unit);
+                return maybePeriodAndQuantity.map(periodAndQuantity -> (Dosage) new Dosage.PeriodicInterval(
+                        unstructuredText,
                         false,
-                        pair.getLeft(),
-                        pair.getRight()))
-                    .orElseGet(Dosage.Empty::new);
+                        periodAndQuantity.getLeft(),
+                        periodAndQuantity.getRight()))
+                    .orElseGet(() -> new Dosage.Unstructured(unstructuredText));
+            }
+            case EFTER_BEHOV: {
+                // In "EFTER_BEHOV", the dosage contains only "structuresAccordingToNeed" and no "structuresFixed".
+                // TODO implement this
+                return new Dosage.Unstructured(unstructuredText);
+            }
+            case IKKE_ANGIVET, KOMBINERET: {
+                // In these cases, the dosage may contain both a need element and a fixed element. To cover 'you have to
+                // take these pills at these times, and then you can add one or two more if you need them' cases.
+                // We could also just ignore the type, and always handle both?
+                // TODO implement this
+                return new Dosage.Unstructured(unstructuredText);
+            }
             default:
                 log.warn("Unknown dosage type {}", dosage.getType());
-                return new Dosage.Empty();
+                return new Dosage.Unstructured(unstructuredText);
         }
+    }
+
+    static @NonNull String getUnstructuredText(@NonNull DosageForResponseType dosage) {
+        final var unstructuredTexts = new ArrayList<String>();
+        if (dosage.getStructuresFixed() != null && dosage.getStructuresFixed()
+            .getDosageTranslationCombined() != null && dosage.getStructuresFixed()
+            .getDosageTranslationCombined()
+            .getLongText() != null) {
+            unstructuredTexts.add(dosage.getStructuresFixed().getDosageTranslationCombined().getLongText());
+        }
+        if (dosage.getStructuresAccordingToNeed() != null && dosage.getStructuresAccordingToNeed()
+            .getDosageTranslationCombined() != null && dosage.getStructuresAccordingToNeed()
+            .getDosageTranslationCombined()
+            .getLongText() != null) {
+            unstructuredTexts.add(dosage.getStructuresAccordingToNeed().getDosageTranslationCombined().getLongText());
+        }
+        if (dosage.getFreeText() != null && dosage.getFreeText().getText() != null) {
+            unstructuredTexts.add(dosage.getFreeText().getText());
+        }
+
+        final var builder = new StringBuilder();
+        for (String s : unstructuredTexts) {
+            if (!builder.isEmpty()) {
+                builder.append("\n\n");
+            }
+            builder.append(s);
+        }
+
+        return builder.isEmpty() ? "No unstructured dosage text" : builder.toString();
     }
 
     static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapEmptyStructureOrStructure(Object emptyStructureOrStructure, Dosage.Unit unit) {

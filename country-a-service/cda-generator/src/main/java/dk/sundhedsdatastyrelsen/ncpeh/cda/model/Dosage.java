@@ -12,20 +12,25 @@ public sealed interface Dosage {
     @NonNull
     String getTag();
 
+    @NonNull
+    String getUnstructuredText();
+
     @Value
-    class Empty implements Dosage {
-        String tag = "empty";
+    class Unstructured implements Dosage {
+        String tag = "Unstructured";
+        @NonNull String unstructuredText;
     }
 
     /**
-     * An interval based dosage, e.g. "2 pills 3 times per day".
+     * An periodic interval based dosage, e.g. "2 pills 3 times per day".
      */
     @Value
-    class Interval implements Dosage {
-        String tag = "Interval";
+    class PeriodicInterval implements Dosage {
+        String tag = "PeriodicInterval";
+        @NonNull String unstructuredText;
         boolean institutionSpecified;
-        Period period;
-        Quantity quantity;
+        @NonNull Period period;
+        @NonNull Quantity quantity;
     }
 
     /**

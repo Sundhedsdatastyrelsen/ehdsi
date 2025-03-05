@@ -132,11 +132,15 @@
                     <id <@common.cdaIdAttrs prescriptionId />/>
                     <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
                     <title>Prescriptions</title>
-                    <text> <#-- TODO review w. semantics -->
+                    <text><#-- TODO review w. semantics -->
                         <content ID="entry-text"><#-- TODO can't use <paragraph> within content, doesn't validate. So how is this supposed to be structured? -->
                             ${ product.name }
                             ${ indicationText }
                             ${ patientMedicationInstructions }
+
+                            Unstructured dosage text:
+
+                            ${ dosage.unstructuredText }
                         </content>
                         <content ID="product-name">${ product.name }</content>
                         <content ID="indication-text">${ indicationText }</content>
@@ -165,7 +169,7 @@
                                 <@common.valueOrNullField "high" medicationEndTime  />
                             </effectiveTime>
 <#-- Choice of different types of effective time, or fallback to null. -->
-<#if dosage.tag == "Interval">
+<#if dosage.tag == "PeriodicInterval">
                             <effectiveTime xsi:type="PIVL_TS" institutionSpecified="${ dosage.institutionSpecified?string("true","false") }">
                                 <period unit="${ dosage.period.unit }" value="${ dosage.period.value }" />
                             </effectiveTime>
@@ -175,7 +179,7 @@
 <#if administrationRoute?has_content>
                             <routeCode <@common.cdaCodeAttrs administrationRoute />/>
 </#if>
-<#if dosage.tag == "Interval" && dosage.quantity.unit.tag == "Translated">
+<#if dosage.tag == "PeriodicInterval" && dosage.quantity.unit.tag == "Translated">
                             <doseQuantity>
                                 <low value="${ dosage.quantity.value }" unit="1">
                                     <translation>
