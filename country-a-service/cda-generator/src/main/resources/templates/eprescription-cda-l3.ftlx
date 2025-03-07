@@ -132,11 +132,15 @@
                     <id <@common.cdaIdAttrs prescriptionId />/>
                     <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
                     <title>Prescriptions</title>
-                    <text> <#-- TODO review w. semantics -->
+                    <text><#-- TODO review w. semantics -->
                         <content ID="entry-text"><#-- TODO can't use <paragraph> within content, doesn't validate. So how is this supposed to be structured? -->
                             ${ product.name }
                             ${ indicationText }
                             ${ patientMedicationInstructions }
+
+                            Unstructured dosage text:
+
+                            ${ dosage.unstructuredText }
                         </content>
                         <content ID="product-name">${ product.name }</content>
                         <content ID="indication-text">${ indicationText }</content>
@@ -165,19 +169,25 @@
                                 <@common.valueOrNullField "high" medicationEndTime  />
                             </effectiveTime>
 <#-- Choice of different types of effective time, or fallback to null. -->
-<#if dosage.tag == "Interval">
-                            <effectiveTime xsi:type="PIVL_TS" institutionSpecified="${ dosage.institutionSpecified?string("true","false") }">
+<#if dosage.tag == "Once">
+                            <effectiveTime operator="A" xsi:type="TS" value="${ dosage.timeValue }"/>
+<#elseif dosage.tag == "PeriodicInterval">
+                            <effectiveTime operator="A" xsi:type="PIVL_TS" institutionSpecified="${ dosage.institutionSpecified?string("true","false") }">
                                 <period unit="${ dosage.period.unit }" value="${ dosage.period.value }" />
                             </effectiveTime>
+<#elseif dosage.tag == "EventInterval">
+                            <effectiveTime operator="A" xsi:type="EIVL_TS">
+                                <event code="${ dosage.event }" codeSystem="2.16.840.1.113883.5.139"/>
+                            </effectiveTime>
 <#else>
-                            <effectiveTime nullFlavor="UNK"/>
+                            <effectiveTime operator="A" nullFlavor="UNK"/>
 </#if>
 <#if administrationRoute?has_content>
                             <routeCode <@common.cdaCodeAttrs administrationRoute />/>
 </#if>
-<#if dosage.tag == "Interval" && dosage.quantity.unit.tag == "Translated">
+<#if dosage.quantity?? && dosage.quantity.unit.tag == "Translated">
                             <doseQuantity>
-                                <low value="${ dosage.quantity.value }" unit="1">
+                                <low value="${ dosage.quantity.minValue }" unit="1">
                                     <translation>
                                         <originalText>${ dosage.quantity.unit.translation }</originalText>
                                     </translation>
