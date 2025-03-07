@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageDayType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DoseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.EmptyDosageStructureType;
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /// Maps from the FMK ordination representation of dosage to the eHDSI substanceAdministration
 /// representation of dosage.
@@ -237,8 +239,7 @@ public final class DosageMapper {
         if (structure.getIterationInterval() == 1) {
             return mapFixedIteratedDaily(structure, unit, unstructuredText);
         }
-        // TODO intervals that have the same time distance, so they can be represented as simply 'every n days/weeks/months'.
-        return new Dosage.Unstructured(unstructuredText);
+        return mapFixedIteratedNonDaily(structure, unit, unstructuredText);
     }
 
     static @NonNull Dosage mapFixedNotIterated(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
@@ -254,15 +255,22 @@ public final class DosageMapper {
                 unstructuredText,
                 time == null
                     ? Either.ofLeft(Utils.convertToLocalDate(structure.getStartDate()))
-                    // TODO look a little more at this time/timezone use.
+                    // TODO look a little more at this time/timezone use. The FMK start date is zoned to UTC, but the
+                    //  dose time is probably meant to be 'local to wherever you are'. Unless of course it's very
+                    //  precise medicine, in which case it's 'local to DK time'. If you take the low-dose birth control
+                    //  pills at 08:00 DK time and you travel to another time zone, you still have to take them 08:00 DK
+                    //  time every day, right? How do we express that? Also, some of the dose times are things like
+                    //  "noon" and "morning", that should probably be translated to event-based instead? But can't in
+                    //  this case, because it's not iterated.
                     : Either.ofRight(ZonedDateTime.of(startDateTime.toLocalDate(), fmkTimeToLocalTime(time), startDateTime.getZone())),
                 mapDoseToQuantity(day.getDose().getFirst(), unit));
         }
 
-        // We could try to translate a non-repeated dosage to a repeated one, so we can represent it, but the
-        // benefit of this is small, since then the Danish model would have used a repeating pattern too.
+        // We can only express one non-repeated dose simply.
+        // We could try to translate a non-repeated dosage to a repeated one, so we could express it, but the
+        // benefit of this is small, since in that case the DK model would probably have used a repeating pattern too.
         // Or we could try to use `SEXP_TS` to do something clever, but no one displays these complex expressions
-        // - at least yet, and there is work being done on subordinate substanceAdministrations which will also be
+        // yet, and there is work being done on subordinate substanceAdministrations which will also be
         // able to express this, so right now we just don't try more.
         return new Dosage.Unstructured(unstructuredText);
     }
@@ -313,6 +321,30 @@ public final class DosageMapper {
             mapDoseToQuantity(firstDose, unit));
     }
 
+    static @NonNull Dosage mapFixedIteratedNonDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+        // If the days within the iteration interval all have the same time distance, we can express this in the ehdsi
+        // model with "every N days/weeks/months". But then they also all have to have only a single dose, and the doses
+        // must all be the same quantity. If they have a time element, it also has to be the same.
+        var dayDistance = getDayDistance(structure.getIterationInterval(), structure.getDay());
+        var allSingleDose = structure.getDay().stream().allMatch(d -> d.getDose().size() == 1);
+        var allDoses = structure.getDay().stream().flatMap(d -> d.getDose().stream()).toList();
+        if (dayDistance.isEmpty() || !allSingleDose || !dosesHaveSameQuantity(allDoses) || !dosesHaveSameTime(allDoses)) {
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        // TODO Add support for when they all have the same time element. Can be supported with the <phase><low> element.
+        if (allDoses.stream().anyMatch(d -> d.getTime() != null)) {
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        return new Dosage.PeriodicInterval(
+            unstructuredText,
+            false,
+            new Dosage.Period.Simple("d", BigDecimal.valueOf(dayDistance.get())),
+            mapDoseToQuantity(allDoses.getFirst(), unit)
+        );
+    }
+
     static LocalTime fmkTimeToLocalTime(@NonNull String fmkTime) {
         // TODO fmkTime can be 'morning', 'noon', etc, or an actual time.
         // I'm unsure whether this should be allowed to be null.
@@ -337,9 +369,35 @@ public final class DosageMapper {
         return new Dosage.Quantity(dose.getQuantity(), unit, null);
     }
 
+    public static Optional<Integer> getDayDistance(int iterationInterval, List<DosageDayType> days) {
+        var firstDay = days.getFirst();
+        if (firstDay.getNumber() != 1) {
+            // Sanity check. I don't think this will ever happen.
+            return Optional.empty();
+        }
+        if (days.size() == 1) {
+            return Optional.of(iterationInterval);
+        }
+
+        var firstInterval = days.get(1).getNumber() - firstDay.getNumber();
+        for (int i = 1; i < days.size(); i++) {
+            if (days.get(i).getNumber() - days.get(i - 1).getNumber() != firstInterval) {
+                return Optional.empty();
+            }
+        }
+
+        return iterationInterval - days.getLast()
+            .getNumber() + 1 == firstInterval ? Optional.of(firstInterval) : Optional.empty();
+    }
+
     static boolean dosesHaveSameQuantity(@NonNull List<DoseType> doses) {
         var firstDose = doses.getFirst();
         // TODO this doesn't cover max/min dosage types.
         return doses.stream().anyMatch(d -> !d.getQuantity().equals(firstDose.getQuantity()));
+    }
+
+    static boolean dosesHaveSameTime(@NonNull List<DoseType> doses) {
+        var firstDoseTime = doses.getFirst().getTime();
+        return doses.stream().allMatch(d -> d.getTime().equals(firstDoseTime));
     }
 }

@@ -41,15 +41,18 @@ public sealed interface Dosage {
         String tag = "PeriodicInterval";
         @NonNull String unstructuredText;
         /// Institution specified means that the timing is not precise. This is to distinguish between 'every 8 hours'
-        /// and '3 times per day'. In DK model, we don't distinguish.
+        /// and '3 times per day'. `true` = Not important/3 times per day. `false` = Important. Follow times precisely.
+        ///
+        /// In DK model, this is distinguished by whether there are "time" elements on the doses.
         boolean institutionSpecified;
         @NonNull Period period;
         @NonNull Quantity quantity;
     }
 
-    /**
-     * An event-interval based dosage, e.g. "1 pill after each meal"
-     */
+    /// An event-interval based dosage, e.g. "1 pill after each meal" or "1 pill after dinner".
+    ///
+    /// This isn't very useful, because it's implicitly "once per day", you can't express things like
+    /// "one after breakfast and one after dinner".
     @Value
     class EventInterval implements Dosage {
         String tag = "EventInterval";
