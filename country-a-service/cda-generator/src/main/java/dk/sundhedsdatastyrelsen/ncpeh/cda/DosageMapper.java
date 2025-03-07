@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageAnyDayType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageDayType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DoseType;
@@ -349,7 +350,20 @@ public final class DosageMapper {
     }
 
     static @NonNull Dosage mapAnyDay(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
-        // TODO implement this
+        var anyDay = structure.getAnyDay();
+        if (structure.getIterationInterval() == 1) {
+            // This case is exactly the same as if there had been a Day with number 1. FMK recommends not using AnyDay
+            // for iteration interval 1 for this reason.
+            // Copy the structure, and turn the anyDay into a normal day, and call mapIteratedDaily.
+            var copiedStructure = structure.newCopyBuilder()
+                .withAnyDay(null)
+                .withDay(anyDayToNormalDay(anyDay))
+                .build();
+            return mapIteratedDaily(copiedStructure, unit, unstructuredText, true);
+        }
+        // TODO In other cases, the best representation of AnyDay could be something like adding a <phase> to the periodic
+        //  interval, to express "take the pill over these days, when you need it". But there are also the cases with
+        //  NotIterated, doses with times in them, and multiple doses in the AnyDay. What then?
         return new Dosage.Unstructured(unstructuredText);
     }
 
@@ -434,5 +448,18 @@ public final class DosageMapper {
         return isAccordingToNeed && structure.getNotIterated() != null
             && (structure.getAnyDay() != null && structure.getAnyDay().getDose().size() == 1
             || structure.getDay().size() == 1 && structure.getDay().getFirst().getDose().size() == 1);
+    }
+
+    static @NonNull DosageDayType anyDayToNormalDay(@NonNull DosageAnyDayType anyDay) {
+        var copiedDoses = anyDay.getDose()
+            .stream()
+            .map(d -> DoseType.builder()
+                .withQuantity(d.getQuantity())
+                .withMaximalQuantity(d.getMaximalQuantity())
+                .withMinimalQuantity(d.getMinimalQuantity())
+                .withTime(d.getTime())
+                .build())
+            .toList();
+        return DosageDayType.builder().withNumber(1).withDose(copiedDoses).build();
     }
 }
