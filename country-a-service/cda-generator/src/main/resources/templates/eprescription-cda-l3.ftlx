@@ -187,7 +187,7 @@
 </#if>
 <#if dosage.quantity?? && dosage.quantity.unit.tag == "Translated">
                             <doseQuantity>
-                                <low value="${ dosage.quantity.value }" unit="1">
+                                <low value="${ dosage.quantity.minValue }" unit="1">
                                     <translation>
                                         <originalText>${ dosage.quantity.unit.translation }</originalText>
                                     </translation>

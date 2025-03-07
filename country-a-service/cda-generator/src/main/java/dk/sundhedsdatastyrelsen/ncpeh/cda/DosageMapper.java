@@ -178,30 +178,39 @@ public final class DosageMapper {
         }
     }
 
-    /// A fixed structure can have any combination of iterated/not iterated, endDate/dosageEndingUndetermined,
-    /// iterationInterval can be set to 1 or 28.
-    ///
     /// `<AnyDay>` elements can only occur when the doses are according to need, and cannot be mixed with normal days -
-    /// I tried and it errors when creating them.
+    /// I tried and it errors when creating them. `<AnyDay>` also is a looser prescription than just a normal `<Day>`,
+    /// so currently we just map all `<AnyDay>` elements to `<Day>` elements.
     static @NonNull Dosage mapStructure(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         if (structure.getNotIterated() == null && structure.getIterationInterval() == null) {
             // There's no information
             return new Dosage.Unstructured(unstructuredText);
         }
-        if (isUnboundedAccordingToNeedCase(structure, isAccordingToNeed)) {
-            return mapUnboundedAccordingToNeed(structure, unit, unstructuredText);
+        // TODO The best representation of AnyDay could be something like adding a <phase> to the periodic
+        //  interval, to express "take the pill over these days, when you need it". But there are also the cases with
+        //  NotIterated, doses with times in them, and multiple doses in the AnyDay. What then? The simplest thing is
+        //  to simply treat it as the first day.
+        var structureWithoutAnyDay = structure.getAnyDay() == null ? structure : structure.newCopyBuilder()
+            .withAnyDay(null)
+            .withDay(anyDayToNormalDay(structure.getAnyDay()))
+            .build();
+        if (isUnboundedAccordingToNeedCase(structureWithoutAnyDay, isAccordingToNeed)) {
+            return mapUnboundedAccordingToNeed(structureWithoutAnyDay, unit, unstructuredText);
         }
-        if (structure.getAnyDay() != null) {
-            // AnyDay is always according to need.
-            return mapAnyDay(structure, unit, unstructuredText);
+        if (structureWithoutAnyDay.getNotIterated() != null) {
+            return mapNotIterated(structureWithoutAnyDay, unit, unstructuredText, isAccordingToNeed);
         }
-        if (structure.getNotIterated() != null) {
-            return mapNotIterated(structure, unit, unstructuredText, isAccordingToNeed);
+        if (structureWithoutAnyDay.getIterationInterval() == 1) {
+            return mapIteratedDaily(structureWithoutAnyDay, unit, unstructuredText, isAccordingToNeed);
         }
-        if (structure.getIterationInterval() == 1) {
-            return mapIteratedDaily(structure, unit, unstructuredText, isAccordingToNeed);
-        }
-        return mapIteratedNonDaily(structure, unit, unstructuredText, isAccordingToNeed);
+        return mapIteratedNonDaily(structureWithoutAnyDay, unit, unstructuredText, isAccordingToNeed);
+    }
+
+    static @NonNull Dosage mapUnboundedAccordingToNeed(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+        var day = structure.getAnyDay() != null
+            ? anyDayToNormalDay(structure.getAnyDay())
+            : structure.getDay().getFirst();
+        return new Dosage.Unbounded(unstructuredText, mapDoseToQuantity(day.getDose().getFirst(), unit, true));
     }
 
     static @NonNull Dosage mapNotIterated(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
@@ -305,66 +314,6 @@ public final class DosageMapper {
             new Dosage.Period.Simple("d", BigDecimal.valueOf(dayDistance.get())),
             mapDoseToQuantity(allDoses.getFirst(), unit, isAccordingToNeed)
         );
-    }
-
-    /// A "per need" or "according to need" structure can have any combination of
-    /// iterated/not iterated, day/anyDay, endDate/dosageEndingUndetermined, iterationInterval can be set to 1 or 28.
-    ///
-    /// `<AnyDay>` elements can occur in StructuresAccordingToNeed. But you cannot mix Day and AnyDay elements, I tried
-    /// and it errors.
-    ///
-    /// ## Examples
-    ///
-    /// Take two when needed, as many times per day as you need.
-    /// This example is a little special. It is only interpreted this way if there is exactly 1 day and that day has
-    /// exactly 1 dose, and the dose is according to need.
-    /// ```
-    /// <StructuresAccordingToNeed>
-    ///     ...
-    ///     <NotIterated/>
-    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent if there is only 1 day -->
-    ///         <Dose>
-    ///             <Quantity>2</Quantity>
-    ///         </Dose>
-    ///     </AnyDay>
-    ///     ...
-    /// </StructuresAccordingToNeed>
-    ///```
-    ///
-    /// Take 1 when needed, maximum 1 per day.
-    /// ```
-    /// <StructuresAccordingToNeed>
-    ///     ...
-    ///     <IterationInterval>1</IterationInterval>
-    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent when IterationInterval is 1 -->
-    ///         <Dose>
-    ///             <Quantity>1</Quantity>
-    ///         </Dose>
-    ///     </AnyDay>
-    ///     ...
-    /// </StructuresAccordingToNeed>
-    ///```
-    static @NonNull Dosage mapUnboundedAccordingToNeed(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
-        // TODO how do we express this in ehdsi?
-        return new Dosage.Unstructured(unstructuredText);
-    }
-
-    static @NonNull Dosage mapAnyDay(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
-        var anyDay = structure.getAnyDay();
-        if (structure.getIterationInterval() == 1) {
-            // This case is exactly the same as if there had been a Day with number 1. FMK recommends not using AnyDay
-            // for iteration interval 1 for this reason.
-            // Copy the structure, and turn the anyDay into a normal day, and call mapIteratedDaily.
-            var copiedStructure = structure.newCopyBuilder()
-                .withAnyDay(null)
-                .withDay(anyDayToNormalDay(anyDay))
-                .build();
-            return mapIteratedDaily(copiedStructure, unit, unstructuredText, true);
-        }
-        // TODO In other cases, the best representation of AnyDay could be something like adding a <phase> to the periodic
-        //  interval, to express "take the pill over these days, when you need it". But there are also the cases with
-        //  NotIterated, doses with times in them, and multiple doses in the AnyDay. What then?
-        return new Dosage.Unstructured(unstructuredText);
     }
 
     static LocalTime fmkTimeToLocalTime(@NonNull String fmkTime) {

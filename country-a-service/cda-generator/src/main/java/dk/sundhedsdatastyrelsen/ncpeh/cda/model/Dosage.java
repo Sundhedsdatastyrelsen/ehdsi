@@ -76,6 +76,14 @@ public sealed interface Dosage {
         }
     }
 
+    /// A dose that doesn't have a time element, but does have a quantity.
+    @Value
+    class Unbounded implements Dosage {
+        String tag = "Unbounded";
+        @NonNull String unstructuredText;
+        Quantity quantity;
+    }
+
     /**
      * Period of time used for dosage.
      * <p>
