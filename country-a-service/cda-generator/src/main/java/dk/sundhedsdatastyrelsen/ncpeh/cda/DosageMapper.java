@@ -16,6 +16,7 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /// Maps from the FMK ordination representation of dosage to the eHDSI substanceAdministration
@@ -382,8 +383,10 @@ public final class DosageMapper {
 
     static boolean dosesHaveSameQuantity(@NonNull List<DoseType> doses) {
         var firstDose = doses.getFirst();
-        // TODO this doesn't cover max/min dosage types.
-        return doses.stream().anyMatch(d -> !d.getQuantity().equals(firstDose.getQuantity()));
+        return doses.stream().allMatch(d ->
+            Objects.equals(firstDose.getQuantity(), d.getQuantity()) &&
+                Objects.equals(firstDose.getMaximalQuantity(), d.getMaximalQuantity()) &&
+                Objects.equals(firstDose.getMinimalQuantity(), d.getMinimalQuantity()));
     }
 
     static boolean dosesHaveSameTime(@NonNull List<DoseType> doses) {
