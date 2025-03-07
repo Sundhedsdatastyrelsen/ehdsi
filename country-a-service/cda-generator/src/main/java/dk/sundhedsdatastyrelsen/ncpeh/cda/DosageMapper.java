@@ -1,16 +1,19 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DoseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.EmptyDosageStructureType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DosageForResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 
 /// Maps from the FMK ordination representation of dosage to the eHDSI substanceAdministration
 /// representation of dosage.
@@ -84,50 +87,61 @@ import java.util.Optional;
 ///   solved with the `SEXP_TS` type, and there _is_ an example of birth control pills [here](https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?spaceKey=EHDSI&title=General),
 ///   but that's the only one I've been able to find, it only covers that specific case, and it's ambiguous. It doesn't
 ///   specify when to start and end within the 28 days.
+/// - dosage that occurs at more than one event. The `EIVL_TS` element that represents event-based intervals only supports
+///   one event code. It is possible to express multiple events by wrapping them in a `SEXP_TS`, but nobody reads them,
+///   and they are hard to translate to text.
+///
+/// Other gotchas:
+///
+/// - In the Danish documentation of dosage, they mention an `<IsAccordingToNeed/>` element. But this is never actually
+///   returned from calls to FMK, so the documentation seems to be outdated.
 @Slf4j
-public class DosageMapper {
-    public static Dosage model(DosageForResponseType dosage) {
+public final class DosageMapper {
+    private DosageMapper() {
+    }
+
+    public static @NonNull Dosage model(@NonNull DosageForResponseType dosage) {
         final var unstructuredText = getUnstructuredText(dosage);
-        final var unit = mapUnit(dosage).orElse(null);
+        final var unit = mapUnit(dosage);
         if (unit == null) {
             // If there is no unit, it is not safe to display any dosage.
             // We still provide the free-text parts of the prescription in the narrative block.
             return new Dosage.Unstructured(unstructuredText);
         }
-        switch (dosage.getType()) {
-            case FAST: {
-                // In "FAST", the dosage contains only "structuresFixed" and no "structuresAccordingToNeed".
-                var structures = dosage.getStructuresFixed().getEmptyStructureOrStructure();
-                if (structures.size() != 1) {
-                    // In the Danish model, there may be several structures, to support things like 'first three months
-                    // with one pill every day, then two months with one pill every other day'. It's a type of tapered
-                    // dosing, so not supported.
-                    return new Dosage.Unstructured(unstructuredText);
-                }
-                var maybePeriodAndQuantity = mapEmptyStructureOrStructure(structures.getFirst(), unit);
-                return maybePeriodAndQuantity.map(periodAndQuantity -> (Dosage) new Dosage.PeriodicInterval(
-                        unstructuredText,
-                        false,
-                        periodAndQuantity.getLeft(),
-                        periodAndQuantity.getRight()))
-                    .orElseGet(() -> new Dosage.Unstructured(unstructuredText));
-            }
-            case EFTER_BEHOV: {
-                // In "EFTER_BEHOV", the dosage contains only "structuresAccordingToNeed" and no "structuresFixed".
-                // TODO implement this
+        if (dosage.getStructuresFixed() != null && dosage.getStructuresAccordingToNeed() == null && dosage.getAdministrationAccordingToSchemaInLocalSystem() == null && dosage.getFreeText() == null) {
+            // Map structures that are not according to need.
+            var structures = dosage.getStructuresFixed().getEmptyStructureOrStructure();
+            if (structures.size() != 1) {
+                // In the Danish model, there may be several structures, to support things like 'first three months
+                // with one pill every day, then two months with one pill every other day'. It's a type of tapered
+                // dosing, so not supported.
                 return new Dosage.Unstructured(unstructuredText);
             }
-            case IKKE_ANGIVET, KOMBINERET: {
-                // In these cases, the dosage may contain both a need element and a fixed element. To cover 'you have to
-                // take these pills at these times, and then you can add one or two more if you need them' cases.
-                // We could also just ignore the type, and always handle both?
-                // TODO implement this
+            var structure = getStructureOrNull(structures.getFirst());
+            if (structure == null) {
                 return new Dosage.Unstructured(unstructuredText);
             }
-            default:
-                log.warn("Unknown dosage type {}", dosage.getType());
-                return new Dosage.Unstructured(unstructuredText);
+            return mapFixedStructure(structure, unit, unstructuredText);
         }
+        if (dosage.getStructuresFixed() == null && dosage.getStructuresAccordingToNeed() != null && dosage.getAdministrationAccordingToSchemaInLocalSystem() == null && dosage.getFreeText() == null) {
+            // Map structures that are according to need.
+            var structures = dosage.getStructuresAccordingToNeed().getEmptyStructureOrStructure();
+            if (structures.size() != 1) {
+                // In the Danish model, there may be several structures, to support things like 'first three months
+                // with one pill every day, then two months with one pill every other day'. It's a type of tapered
+                // dosing, so not supported.
+                return new Dosage.Unstructured(unstructuredText);
+            }
+            var structure = getStructureOrNull(structures.getFirst());
+            if (structure == null) {
+                return new Dosage.Unstructured(unstructuredText);
+            }
+            // TODO handle the according-to-need cases we _can_ handle
+            return new Dosage.Unstructured(unstructuredText);
+        }
+        // The remaining cases we can't handle. Mixed, where there are both fixed and according to need/other elements,
+        // and the more unstructured ones. In those cases, we just return the unstructured one.
+        return new Dosage.Unstructured(unstructuredText);
     }
 
     static @NonNull String getUnstructuredText(@NonNull DosageForResponseType dosage) {
@@ -159,41 +173,153 @@ public class DosageMapper {
         return builder.isEmpty() ? "No unstructured dosage text" : builder.toString();
     }
 
-    static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapEmptyStructureOrStructure(Object emptyStructureOrStructure, Dosage.Unit unit) {
+    static DosageStructureForResponseType getStructureOrNull(@NonNull Object emptyStructureOrStructure) {
         switch (emptyStructureOrStructure) {
             case DosageStructureForResponseType ds:
-                return mapToPeriod(ds, unit);
+                return ds;
             case EmptyDosageStructureType ignored:
-                return Optional.empty();
+                return null;
             default:
                 log.warn("Unknown dosage structure type {}", emptyStructureOrStructure.getClass().getName());
-                return Optional.empty();
+                return null;
         }
     }
 
-    static Optional<Pair<Dosage.Period, Dosage.Quantity>> mapToPeriod(DosageStructureForResponseType structure, Dosage.Unit unit) {
+    /// TODO Don't mind this docstring right now. It's more for the unstructured variant.
+    ///
+    /// This is where it gets complex. A structure can have any combination of iterated/not iterated, day/anyDay,
+    /// endDate/dosageEndingUndetermined, iterationInterval can be set to 1 or 28.
+    ///
+    /// `<AnyDay>` elements can only occur in StructuresAccordingToNeed. Also, you cannot mix Day and AnyDay elements.
+    /// I tried and it errors.
+    ///
+    /// ## Examples
+    ///
+    /// ### PN-1
+    /// Take two when needed, as many times per day as you need.
+    /// This example is a little special. It is only interpreted this way if there is exactly 1 day and that day has
+    /// exactly 1 dose, and the dose is according to need.
+    /// ```
+    /// <StructuresAccordingToNeed>
+    ///     ...
+    ///     <NotIterated/>
+    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent if there is only 1 day -->
+    ///         <Dose>
+    ///             <Quantity>2</Quantity>
+    ///         </Dose>
+    ///     </AnyDay>
+    ///     ...
+    /// </StructuresAccordingToNeed>
+    ///```
+    ///
+    /// ### PN-2
+    /// Take 1 when needed, maximum 1 per day.
+    /// ```
+    /// <StructuresAccordingToNeed>
+    ///     ...
+    ///     <IterationInterval>1</IterationInterval>
+    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent when IterationInterval is 1 -->
+    ///         <Dose>
+    ///             <Quantity>1</Quantity>
+    ///         </Dose>
+    ///     </AnyDay>
+    ///     ...
+    /// </StructuresAccordingToNeed>
+    ///```
+    static @NonNull Dosage mapFixedStructure(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+        if (structure.getNotIterated() == null && structure.getIterationInterval() == null) {
+            // There's no information
+            return new Dosage.Unstructured(unstructuredText);
+        }
+        if (structure.getNotIterated() != null) {
+            return mapFixedNotIterated(structure, unit, unstructuredText);
+        }
+        if (structure.getIterationInterval() == 1) {
+            return mapFixedIteratedDaily(structure, unit, unstructuredText);
+        }
+        // TODO intervals that have the same time distance, so they can be represented as simply 'every n days/weeks/months'.
+        return new Dosage.Unstructured(unstructuredText);
+    }
+
+    static @NonNull Dosage mapFixedNotIterated(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+        if (structure.getDay() == null) {
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        if (structure.getDay().size() == 1 && structure.getDay().getFirst().getDose().size() == 1) {
+            var day = structure.getDay().getFirst();
+            var time = day.getDose().getFirst().getTime();
+            var startDateTime = structure.getStartDate().toGregorianCalendar().toZonedDateTime();
+            return new Dosage.Once(
+                unstructuredText,
+                time == null
+                    ? Either.ofLeft(Utils.convertToLocalDate(structure.getStartDate()))
+                    // TODO look a little more at this time/timezone use.
+                    : Either.ofRight(ZonedDateTime.of(startDateTime.toLocalDate(), fmkTimeToLocalTime(time), startDateTime.getZone())),
+                mapDoseToQuantity(day.getDose().getFirst(), unit));
+        }
+
+        // We could try to translate a non-repeated dosage to a repeated one, so we can represent it, but the
+        // benefit of this is small, since then the Danish model would have used a repeating pattern too.
+        // Or we could try to use `SEXP_TS` to do something clever, but no one displays these complex expressions
+        // - at least yet, and there is work being done on subordinate substanceAdministrations which will also be
+        // able to express this, so right now we just don't try more.
+        return new Dosage.Unstructured(unstructuredText);
+    }
+
+    static @NonNull Dosage mapFixedIteratedDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
         var days = structure.getDay();
         if (days.size() != 1) {
-            log.warn("Can only handle exactly one day for now.");
-            return Optional.empty();
+            return new Dosage.Unstructured(unstructuredText);
         }
+
+        // Either this is something you do once per day, or it is something you do several times every day.
         var day = days.getFirst();
         var doses = day.getDose();
         var firstDose = doses.getFirst();
-        if (doses.stream().anyMatch(d -> !d.getQuantity().equals(firstDose.getQuantity()))) {
-            log.warn("Can't handle split dosing yet.");
-            return Optional.empty();
+
+        if (doses.size() == 1) {
+            // TODO there's a time aspect of the single dose too. Can probably be expressed by the <phase><low> element.
+
+            return new Dosage.PeriodicInterval(
+                unstructuredText,
+                true,
+                new Dosage.Period.Simple("d", BigDecimal.valueOf(1)),
+                mapDoseToQuantity(firstDose, unit));
         }
 
-        return Optional.of(
-            Pair.of(
-                new Dosage.Period.Simple(
-                    "d",
-                    BigDecimal.valueOf(1).divide(BigDecimal.valueOf(doses.size()), 3, RoundingMode.HALF_EVEN)),
-                new Dosage.Quantity(firstDose.getQuantity(), unit)));
+        if (!dosesHaveSameQuantity(doses)) {
+            // This is the case mentioned above where there are different quantities at different times of the day.
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        if (doses.stream().anyMatch(d -> d.getTime() != null)) {
+            // TODO identify the cases where the time distance between the doses is the same and
+            //  handle those. It's complex, but can in some cases be expressed with <phase><low>.
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        if (24 % doses.size() > 0) {
+            // We can't expect other countries to handle fractional hours, because we don't.
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        return new Dosage.PeriodicInterval(
+            unstructuredText,
+            true,
+            new Dosage.Period.Simple(
+                "h",
+                BigDecimal.valueOf(24).divide(BigDecimal.valueOf(doses.size()), RoundingMode.UNNECESSARY)),
+            mapDoseToQuantity(firstDose, unit));
     }
 
-    static Optional<Dosage.Unit> mapUnit(DosageForResponseType dosage) {
+    static LocalTime fmkTimeToLocalTime(@NonNull String fmkTime) {
+        // TODO fmkTime can be 'morning', 'noon', etc, or an actual time.
+        // I'm unsure whether this should be allowed to be null.
+        return LocalTime.of(12, 0);
+    }
+
+    static Dosage.Unit mapUnit(@NonNull DosageForResponseType dosage) {
         var singular = dosage.getUnitText();
         var plural = dosage.getUnitTexts();
         var text = singular != null
@@ -203,6 +329,17 @@ public class DosageMapper {
             : plural.getSingular() != null
             ? plural.getSingular()
             : plural.getPlural();
-        return text == null ? Optional.empty() : Optional.of(new Dosage.Unit.Translated(text));
+        return text == null ? null : new Dosage.Unit.Translated(text);
+    }
+
+    static @NonNull Dosage.Quantity mapDoseToQuantity(@NonNull DoseType dose, @NonNull Dosage.Unit unit) {
+        // TODO add support for max/min dosage. The Danish `DoseType` also has `maxDosage` and `minDosage`.
+        return new Dosage.Quantity(dose.getQuantity(), unit, null);
+    }
+
+    static boolean dosesHaveSameQuantity(@NonNull List<DoseType> doses) {
+        var firstDose = doses.getFirst();
+        // TODO this doesn't cover max/min dosage types.
+        return doses.stream().anyMatch(d -> !d.getQuantity().equals(firstDose.getQuantity()));
     }
 }

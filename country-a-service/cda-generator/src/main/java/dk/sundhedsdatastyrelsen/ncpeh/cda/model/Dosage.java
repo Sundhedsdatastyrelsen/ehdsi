@@ -1,24 +1,36 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda.model;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Either;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import lombok.NonNull;
 import lombok.Value;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 
 public sealed interface Dosage {
+    DecimalFormat decimalFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
+
     @NonNull
     String getTag();
 
     @NonNull
     String getUnstructuredText();
 
+    Quantity getQuantity();
+
     @Value
     class Unstructured implements Dosage {
         String tag = "Unstructured";
         @NonNull String unstructuredText;
+
+        public Quantity getQuantity() {
+            return null;
+        }
     }
 
     /**
@@ -28,9 +40,37 @@ public sealed interface Dosage {
     class PeriodicInterval implements Dosage {
         String tag = "PeriodicInterval";
         @NonNull String unstructuredText;
+        /// Institution specified means that the timing is not precise. This is to distinguish between 'every 8 hours'
+        /// and '3 times per day'. In DK model, we don't distinguish.
         boolean institutionSpecified;
         @NonNull Period period;
         @NonNull Quantity quantity;
+    }
+
+    /**
+     * An event-interval based dosage, e.g. "1 pill after each meal"
+     */
+    @Value
+    class EventInterval implements Dosage {
+        String tag = "EventInterval";
+        @NonNull String unstructuredText;
+        @NonNull EventEnum event;
+        @NonNull Quantity quantity;
+    }
+
+    /// A dose taken only once
+    @Value
+    class Once implements Dosage {
+        String tag = "Once";
+        @NonNull String unstructuredText;
+        @NonNull Either<LocalDate, ZonedDateTime> timeValue;
+        @NonNull Quantity quantity;
+
+        public String getTimeValue() {
+            // TODO unsure about the formatting of the ZonedDateTime value. In art-decor, it's specified as `CCYYMMDDHHMMSS`,
+            //  but elsewhere we use the offset version.
+            return timeValue.match(Utils::cdaDate, Utils::cdaTs);
+        }
     }
 
     /**
@@ -63,8 +103,7 @@ public sealed interface Dosage {
             @NonNull BigDecimal value;
 
             public String getValue() {
-                var df = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
-                return df.format(value);
+                return decimalFormat.format(value);
             }
         }
     }
@@ -82,6 +121,16 @@ public sealed interface Dosage {
     class Quantity {
         @NonNull BigDecimal value;
         @NonNull Unit unit;
+        BigDecimal minValue;
+
+        public String getValue() {
+            return decimalFormat.format(value);
+        }
+
+        public String getMinValue() {
+            // TODO reconsider this. What's a good way to express min/max value?
+            return decimalFormat.format(minValue != null ? minValue : value);
+        }
     }
 
     /// The Unit of a Dosage. Examples are "ml", "pust", "påsmøringer".
@@ -97,6 +146,54 @@ public sealed interface Dosage {
         class Translated implements Unit {
             @NonNull String tag = "Translated";
             @NonNull String translation;
+        }
+    }
+
+    enum EventEnum {
+        /// - before meal (from lat. ante cibus)
+        AC("AC"),
+        /// - before lunch (from lat. ante cibus diurnus)
+        ACD("ACD"),
+        /// - before breakfast (from lat. ante cibus matutinus)
+        ACM("ACM"),
+        /// - before dinner (from lat. ante cibus vespertinus)
+        ACV("ACV"),
+        /// - Prior to beginning a regular period of extended sleep (this would exclude naps). Note that this might occur at different times of day depending on a person's regular sleep schedule.
+        HS("HS"),
+        /// - between meals (from lat. inter cibus)
+        IC("IC"),
+        /// - between lunch and dinner
+        ICD("ICD"),
+        /// - between breakfast and lunch
+        ICM("ICM"),
+        /// - between dinner and the hour of sleep
+        ICV("ICV"),
+        /// - after meal (from lat. post cibus)
+        PC("PC"),
+        /// - after lunch (from lat. post cibus diurnus)
+        PCD("PCD"),
+        /// - after breakfast (from lat. post cibus matutinus)
+        PCM("PCM"),
+        /// - after dinner (from lat. post cibus vespertinus)
+        PCV("PCV");
+
+        private final String value;
+
+        EventEnum(String v) {
+            value = v;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        public static EventEnum fromValue(String v) {
+            for (EventEnum ee : EventEnum.values()) {
+                if (ee.value.equals(v)) {
+                    return ee;
+                }
+            }
+            throw new IllegalArgumentException(v);
         }
     }
 }
