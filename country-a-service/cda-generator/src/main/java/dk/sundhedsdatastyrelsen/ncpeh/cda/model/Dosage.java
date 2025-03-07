@@ -132,6 +132,7 @@ public sealed interface Dosage {
     class Quantity {
         @NonNull BigDecimal value;
         @NonNull Unit unit;
+        /// If min value is set, treat value as max value.
         BigDecimal minValue;
 
         public String getValue() {
@@ -139,7 +140,6 @@ public sealed interface Dosage {
         }
 
         public String getMinValue() {
-            // TODO reconsider this. What's a good way to express min/max value?
             return decimalFormat.format(minValue != null ? minValue : value);
         }
     }
