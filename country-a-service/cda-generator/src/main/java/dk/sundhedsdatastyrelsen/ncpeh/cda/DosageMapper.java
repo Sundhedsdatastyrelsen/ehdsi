@@ -92,6 +92,7 @@ import java.util.Optional;
 /// - dosage that occurs at more than one event. The `EIVL_TS` element that represents event-based intervals only supports
 ///   one event code. It is possible to express multiple events by wrapping them in a `SEXP_TS`, but nobody reads them,
 ///   and they are hard to translate to text.
+/// - according to need/per need medicine with minimum doses.
 ///
 /// Other gotchas:
 ///
@@ -110,40 +111,29 @@ public final class DosageMapper {
             // We still provide the free-text parts of the prescription in the narrative block.
             return new Dosage.Unstructured(unstructuredText);
         }
-        if (dosage.getStructuresFixed() != null && dosage.getStructuresAccordingToNeed() == null && dosage.getAdministrationAccordingToSchemaInLocalSystem() == null && dosage.getFreeText() == null) {
-            // Map structures that are not according to need.
-            var structures = dosage.getStructuresFixed().getEmptyStructureOrStructure();
-            if (structures.size() != 1) {
-                // In the Danish model, there may be several structures, to support things like 'first three months
-                // with one pill every day, then two months with one pill every other day'. It's a type of tapered
-                // dosing, so not supported.
-                return new Dosage.Unstructured(unstructuredText);
-            }
-            var structure = getStructureOrNull(structures.getFirst());
-            if (structure == null) {
-                return new Dosage.Unstructured(unstructuredText);
-            }
-            return mapFixedStructure(structure, unit, unstructuredText);
-        }
-        if (dosage.getStructuresFixed() == null && dosage.getStructuresAccordingToNeed() != null && dosage.getAdministrationAccordingToSchemaInLocalSystem() == null && dosage.getFreeText() == null) {
-            // Map structures that are according to need.
-            var structures = dosage.getStructuresAccordingToNeed().getEmptyStructureOrStructure();
-            if (structures.size() != 1) {
-                // In the Danish model, there may be several structures, to support things like 'first three months
-                // with one pill every day, then two months with one pill every other day'. It's a type of tapered
-                // dosing, so not supported.
-                return new Dosage.Unstructured(unstructuredText);
-            }
-            var structure = getStructureOrNull(structures.getFirst());
-            if (structure == null) {
-                return new Dosage.Unstructured(unstructuredText);
-            }
-            // TODO handle the according-to-need cases we _can_ handle
+        if (dosage.getAdministrationAccordingToSchemaInLocalSystem() != null || dosage.getFreeText() != null) {
+            // We can't handle it if one of these two are set - they are escape hatches in the DK model for unstructured
+            // text, so the best we can do is to return everything unstructured.
             return new Dosage.Unstructured(unstructuredText);
         }
-        // The remaining cases we can't handle. Mixed, where there are both fixed and according to need/other elements,
-        // and the more unstructured ones. In those cases, we just return the unstructured one.
-        return new Dosage.Unstructured(unstructuredText);
+        if (dosage.getStructuresFixed() == null && dosage.getStructuresAccordingToNeed() == null
+            || dosage.getStructuresFixed() != null && dosage.getStructuresAccordingToNeed() != null) {
+            // If they are both missing or both there, we can't express it in the current ehdsi model.
+            return new Dosage.Unstructured(unstructuredText);
+        }
+
+        var structures = dosage.getStructuresFixed() != null ? dosage.getStructuresFixed() : dosage.getStructuresAccordingToNeed();
+        if (structures.getEmptyStructureOrStructure().size() != 1) {
+            // In the Danish model, there may be several structures, to support things like 'first three months
+            // with one pill every day, then two months with one pill every other day'. It's a type of tapered
+            // dosing, so not supported.
+            return new Dosage.Unstructured(unstructuredText);
+        }
+        var structure = getStructureOrNull(structures.getEmptyStructureOrStructure().getFirst());
+        if (structure == null) {
+            return new Dosage.Unstructured(unstructuredText);
+        }
+        return mapStructure(structure, unit, unstructuredText, dosage.getStructuresAccordingToNeed() != null);
     }
 
     static @NonNull String getUnstructuredText(@NonNull DosageForResponseType dosage) {
@@ -187,62 +177,33 @@ public final class DosageMapper {
         }
     }
 
-    /// TODO Don't mind this docstring right now. It's more for the unstructured variant.
+    /// A fixed structure can have any combination of iterated/not iterated, endDate/dosageEndingUndetermined,
+    /// iterationInterval can be set to 1 or 28.
     ///
-    /// This is where it gets complex. A structure can have any combination of iterated/not iterated, day/anyDay,
-    /// endDate/dosageEndingUndetermined, iterationInterval can be set to 1 or 28.
-    ///
-    /// `<AnyDay>` elements can only occur in StructuresAccordingToNeed. Also, you cannot mix Day and AnyDay elements.
-    /// I tried and it errors.
-    ///
-    /// ## Examples
-    ///
-    /// ### PN-1
-    /// Take two when needed, as many times per day as you need.
-    /// This example is a little special. It is only interpreted this way if there is exactly 1 day and that day has
-    /// exactly 1 dose, and the dose is according to need.
-    /// ```
-    /// <StructuresAccordingToNeed>
-    ///     ...
-    ///     <NotIterated/>
-    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent if there is only 1 day -->
-    ///         <Dose>
-    ///             <Quantity>2</Quantity>
-    ///         </Dose>
-    ///     </AnyDay>
-    ///     ...
-    /// </StructuresAccordingToNeed>
-    ///```
-    ///
-    /// ### PN-2
-    /// Take 1 when needed, maximum 1 per day.
-    /// ```
-    /// <StructuresAccordingToNeed>
-    ///     ...
-    ///     <IterationInterval>1</IterationInterval>
-    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent when IterationInterval is 1 -->
-    ///         <Dose>
-    ///             <Quantity>1</Quantity>
-    ///         </Dose>
-    ///     </AnyDay>
-    ///     ...
-    /// </StructuresAccordingToNeed>
-    ///```
-    static @NonNull Dosage mapFixedStructure(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+    /// `<AnyDay>` elements can only occur when the doses are according to need, and cannot be mixed with normal days -
+    /// I tried and it errors when creating them.
+    static @NonNull Dosage mapStructure(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         if (structure.getNotIterated() == null && structure.getIterationInterval() == null) {
             // There's no information
             return new Dosage.Unstructured(unstructuredText);
         }
+        if (isUnboundedAccordingToNeedCase(structure, isAccordingToNeed)) {
+            return mapUnboundedAccordingToNeed(structure, unit, unstructuredText);
+        }
+        if (structure.getAnyDay() != null) {
+            // AnyDay is always according to need.
+            return mapAnyDay(structure, unit, unstructuredText);
+        }
         if (structure.getNotIterated() != null) {
-            return mapFixedNotIterated(structure, unit, unstructuredText);
+            return mapNotIterated(structure, unit, unstructuredText, isAccordingToNeed);
         }
         if (structure.getIterationInterval() == 1) {
-            return mapFixedIteratedDaily(structure, unit, unstructuredText);
+            return mapIteratedDaily(structure, unit, unstructuredText, isAccordingToNeed);
         }
-        return mapFixedIteratedNonDaily(structure, unit, unstructuredText);
+        return mapIteratedNonDaily(structure, unit, unstructuredText, isAccordingToNeed);
     }
 
-    static @NonNull Dosage mapFixedNotIterated(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+    static @NonNull Dosage mapNotIterated(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         if (structure.getDay() == null) {
             return new Dosage.Unstructured(unstructuredText);
         }
@@ -263,7 +224,7 @@ public final class DosageMapper {
                     //  "noon" and "morning", that should probably be translated to event-based instead? But can't in
                     //  this case, because it's not iterated.
                     : Either.ofRight(ZonedDateTime.of(startDateTime.toLocalDate(), fmkTimeToLocalTime(time), startDateTime.getZone())),
-                mapDoseToQuantity(day.getDose().getFirst(), unit));
+                mapDoseToQuantity(day.getDose().getFirst(), unit, isAccordingToNeed));
         }
 
         // We can only express one non-repeated dose simply.
@@ -275,7 +236,7 @@ public final class DosageMapper {
         return new Dosage.Unstructured(unstructuredText);
     }
 
-    static @NonNull Dosage mapFixedIteratedDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+    static @NonNull Dosage mapIteratedDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         var days = structure.getDay();
         if (days.size() != 1) {
             return new Dosage.Unstructured(unstructuredText);
@@ -293,7 +254,7 @@ public final class DosageMapper {
                 unstructuredText,
                 true,
                 new Dosage.Period.Simple("d", BigDecimal.valueOf(1)),
-                mapDoseToQuantity(firstDose, unit));
+                mapDoseToQuantity(firstDose, unit, isAccordingToNeed));
         }
 
         if (!dosesHaveSameQuantity(doses)) {
@@ -318,10 +279,10 @@ public final class DosageMapper {
             new Dosage.Period.Simple(
                 "h",
                 BigDecimal.valueOf(24).divide(BigDecimal.valueOf(doses.size()), RoundingMode.UNNECESSARY)),
-            mapDoseToQuantity(firstDose, unit));
+            mapDoseToQuantity(firstDose, unit, isAccordingToNeed));
     }
 
-    static @NonNull Dosage mapFixedIteratedNonDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+    static @NonNull Dosage mapIteratedNonDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         // If the days within the iteration interval all have the same time distance, we can express this in the ehdsi
         // model with "every N days/weeks/months". But then they also all have to have only a single dose, and the doses
         // must all be the same quantity. If they have a time element, it also has to be the same.
@@ -341,8 +302,55 @@ public final class DosageMapper {
             unstructuredText,
             false,
             new Dosage.Period.Simple("d", BigDecimal.valueOf(dayDistance.get())),
-            mapDoseToQuantity(allDoses.getFirst(), unit)
+            mapDoseToQuantity(allDoses.getFirst(), unit, isAccordingToNeed)
         );
+    }
+
+    /// A "per need" or "according to need" structure can have any combination of
+    /// iterated/not iterated, day/anyDay, endDate/dosageEndingUndetermined, iterationInterval can be set to 1 or 28.
+    ///
+    /// `<AnyDay>` elements can occur in StructuresAccordingToNeed. But you cannot mix Day and AnyDay elements, I tried
+    /// and it errors.
+    ///
+    /// ## Examples
+    ///
+    /// Take two when needed, as many times per day as you need.
+    /// This example is a little special. It is only interpreted this way if there is exactly 1 day and that day has
+    /// exactly 1 dose, and the dose is according to need.
+    /// ```
+    /// <StructuresAccordingToNeed>
+    ///     ...
+    ///     <NotIterated/>
+    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent if there is only 1 day -->
+    ///         <Dose>
+    ///             <Quantity>2</Quantity>
+    ///         </Dose>
+    ///     </AnyDay>
+    ///     ...
+    /// </StructuresAccordingToNeed>
+    ///```
+    ///
+    /// Take 1 when needed, maximum 1 per day.
+    /// ```
+    /// <StructuresAccordingToNeed>
+    ///     ...
+    ///     <IterationInterval>1</IterationInterval>
+    ///     <AnyDay><!-- Could also just be Day 1, these are equivalent when IterationInterval is 1 -->
+    ///         <Dose>
+    ///             <Quantity>1</Quantity>
+    ///         </Dose>
+    ///     </AnyDay>
+    ///     ...
+    /// </StructuresAccordingToNeed>
+    ///```
+    static @NonNull Dosage mapUnboundedAccordingToNeed(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+        // TODO how do we express this in ehdsi?
+        return new Dosage.Unstructured(unstructuredText);
+    }
+
+    static @NonNull Dosage mapAnyDay(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText) {
+        // TODO implement this
+        return new Dosage.Unstructured(unstructuredText);
     }
 
     static LocalTime fmkTimeToLocalTime(@NonNull String fmkTime) {
@@ -364,12 +372,27 @@ public final class DosageMapper {
         return text == null ? null : new Dosage.Unit.Translated(text);
     }
 
-    static @NonNull Dosage.Quantity mapDoseToQuantity(@NonNull DoseType dose, @NonNull Dosage.Unit unit) {
-        // TODO add support for max/min dosage. The Danish `DoseType` also has `maxDosage` and `minDosage`.
-        return new Dosage.Quantity(dose.getQuantity(), unit, null);
+    static Dosage.Quantity mapDoseToQuantity(@NonNull DoseType dose, @NonNull Dosage.Unit unit, boolean isAccordingToNeed) {
+        if (dose.getQuantity() != null) {
+            return new Dosage.Quantity(dose.getQuantity(), unit, isAccordingToNeed ? BigDecimal.ZERO : null);
+        }
+        // TODO this is interpreting a max value and a missing min value as 0-max. Are there any problems with that?
+        var min = Optional.ofNullable(dose.getMinimalQuantity()).orElse(BigDecimal.ZERO);
+        var max = dose.getMaximalQuantity();
+        if (max == null) {
+            // I don't think we will ever hit a case where only minimum is set, but if we do, what does that mean?
+            // I think we should just say we don't know the quantity in that case.
+            return null;
+        }
+
+        if (isAccordingToNeed && !min.equals(BigDecimal.ZERO) && !min.equals(BigDecimal.ONE) && !min.equals(max)) {
+            // No way to describe in ehdsi that you have to take a minimum of 2, but you can choose not to take any.
+            return null;
+        }
+        return new Dosage.Quantity(max, unit, isAccordingToNeed ? BigDecimal.ZERO : min);
     }
 
-    public static Optional<Integer> getDayDistance(int iterationInterval, List<DosageDayType> days) {
+    public static Optional<Integer> getDayDistance(int iterationInterval, @NonNull List<DosageDayType> days) {
         var firstDay = days.getFirst();
         if (firstDay.getNumber() != 1) {
             // Sanity check. I don't think this will ever happen.
@@ -386,6 +409,10 @@ public final class DosageMapper {
             }
         }
 
+        // In practice, we probably won't reach this for relevant cases. Since we require that time and quantity is the
+        // same for all the days, and the distance between them is the same, the cases
+        // (iterationInterval: 4, days: [1, 3]) and (iterationInterval: 2, days: [1]) are the same, and FMK tries to
+        // simplify this when they save.
         return iterationInterval - days.getLast()
             .getNumber() + 1 == firstInterval ? Optional.of(firstInterval) : Optional.empty();
     }
@@ -399,5 +426,13 @@ public final class DosageMapper {
     static boolean dosesHaveSameTime(@NonNull List<DoseType> doses) {
         var firstDoseTime = doses.getFirst().getTime();
         return doses.stream().allMatch(d -> d.getTime().equals(firstDoseTime));
+    }
+
+    /// This case has a specific meaning, in that there is no limit to how many times you're allowed to take the medicine
+    /// every day.
+    static boolean isUnboundedAccordingToNeedCase(@NonNull DosageStructureForResponseType structure, boolean isAccordingToNeed) {
+        return isAccordingToNeed && structure.getNotIterated() != null
+            && (structure.getAnyDay() != null && structure.getAnyDay().getDose().size() == 1
+            || structure.getDay().size() == 1 && structure.getDay().getFirst().getDose().size() == 1);
     }
 }

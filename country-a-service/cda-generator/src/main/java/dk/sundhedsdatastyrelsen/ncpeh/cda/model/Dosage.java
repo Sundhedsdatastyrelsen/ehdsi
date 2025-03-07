@@ -46,7 +46,7 @@ public sealed interface Dosage {
         /// In DK model, this is distinguished by whether there are "time" elements on the doses.
         boolean institutionSpecified;
         @NonNull Period period;
-        @NonNull Quantity quantity;
+        Quantity quantity;
     }
 
     /// An event-interval based dosage, e.g. "1 pill after each meal" or "1 pill after dinner".
@@ -58,7 +58,7 @@ public sealed interface Dosage {
         String tag = "EventInterval";
         @NonNull String unstructuredText;
         @NonNull EventEnum event;
-        @NonNull Quantity quantity;
+        Quantity quantity;
     }
 
     /// A dose taken only once
@@ -67,7 +67,7 @@ public sealed interface Dosage {
         String tag = "Once";
         @NonNull String unstructuredText;
         @NonNull Either<LocalDate, ZonedDateTime> timeValue;
-        @NonNull Quantity quantity;
+        Quantity quantity;
 
         public String getTimeValue() {
             // TODO unsure about the formatting of the ZonedDateTime value. In art-decor, it's specified as `CCYYMMDDHHMMSS`,
