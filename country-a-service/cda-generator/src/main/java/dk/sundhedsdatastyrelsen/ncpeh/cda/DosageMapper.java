@@ -9,6 +9,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DosageForResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /// Maps from the FMK ordination representation of dosage to the eHDSI substanceAdministration
 /// representation of dosage.
@@ -223,9 +225,14 @@ public final class DosageMapper {
             var day = structure.getDay().getFirst();
             var time = day.getDose().getFirst().getTime();
             var startDateTime = structure.getStartDate().toGregorianCalendar().toZonedDateTime();
+            var transformedTime = time == null ? null : fmkTimeToLocalTime(time);
+            if (time != null && transformedTime == null) {
+                // Can't return the structured information without the time element.
+                return new Dosage.Unstructured(unstructuredText);
+            }
             return new Dosage.Once(
                 unstructuredText,
-                time == null
+                transformedTime == null
                     ? Either.ofLeft(Utils.convertToLocalDate(structure.getStartDate()))
                     // TODO look a little more at this time/timezone use. The FMK start date is zoned to UTC, but the
                     //  dose time is probably meant to be 'local to wherever you are'. Unless of course it's very
@@ -234,7 +241,7 @@ public final class DosageMapper {
                     //  time every day, right? How do we express that? Also, some of the dose times are things like
                     //  "noon" and "morning", that should probably be translated to event-based instead? But can't in
                     //  this case, because it's not iterated.
-                    : Either.ofRight(ZonedDateTime.of(startDateTime.toLocalDate(), fmkTimeToLocalTime(time), startDateTime.getZone())),
+                    : Either.ofRight(ZonedDateTime.of(startDateTime.toLocalDate(), transformedTime.getLeft(), startDateTime.getZone())),
                 mapDoseToQuantity(day.getDose().getFirst(), unit, isAccordingToNeed));
         }
 
@@ -276,6 +283,7 @@ public final class DosageMapper {
         if (doses.stream().anyMatch(d -> d.getTime() != null)) {
             // TODO identify the cases where the time distance between the doses is the same and
             //  handle those. It's complex, but can in some cases be expressed with <phase><low>.
+            // TODO also consider the ones where time is morning/noon/evening/night. Those are probably easier to handle.
             return new Dosage.Unstructured(unstructuredText);
         }
 
@@ -317,10 +325,40 @@ public final class DosageMapper {
         );
     }
 
-    static LocalTime fmkTimeToLocalTime(@NonNull String fmkTime) {
-        // TODO fmkTime can be 'morning', 'noon', etc, or an actual time.
-        // I'm unsure whether this should be allowed to be null.
-        return LocalTime.of(12, 0);
+    /// I'm unsure whether this should be allowed to be null.
+    ///
+    /// I'm also unsure whether the translation from "morning" and friends is acceptable. I've asked semantics, and I'm
+    /// waiting for a reply. If we set the "institutionSpecified" flag to true, it means that the time is only a
+    /// guideline, and in that case I think it's OK. But that's only possible on the periodic interval of time element.
+    ///
+    /// @return Null if the time cannot be expressed, or a pair of LocalTime and a boolean whether the time is precise
+    /// or not.
+    static Pair<LocalTime, Boolean> fmkTimeToLocalTime(@NonNull String fmkTime) {
+        switch (fmkTime) {
+            case "morning":
+                return Pair.of(LocalTime.of(7, 0), false);
+            case "noon":
+                return Pair.of(LocalTime.of(13, 0), false);
+            case "evening":
+                return Pair.of(LocalTime.of(19, 0), false);
+            case "night":
+                return Pair.of(LocalTime.of(1, 0), false);
+            default:
+                break;
+        }
+        // Not one of the known cases, so we try to parse to time.
+        // 1-2 digits, then a single any character, then 2 digits, and no more than that.
+        var pattern = Pattern.compile("^(\\d?\\d).(\\d\\d)$");
+        var matcher = pattern.matcher(fmkTime);
+        if (!matcher.hasMatch()) {
+            return null;
+        }
+        var hours = Integer.parseInt(matcher.group(1));
+        var minutes = Integer.parseInt(matcher.group(2));
+        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+            return null;
+        }
+        return Pair.of(LocalTime.of(hours, minutes), true);
     }
 
     static Dosage.Unit mapUnit(@NonNull DosageForResponseType dosage) {
