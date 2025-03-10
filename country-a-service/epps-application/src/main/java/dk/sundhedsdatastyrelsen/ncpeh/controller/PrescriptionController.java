@@ -12,6 +12,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ import org.xml.sax.SAXException;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
@@ -50,7 +53,17 @@ public class PrescriptionController {
         try {
             prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()), TestIdentities.apotekerChrisChristoffersen);
         } catch (SAXException e) {
-            throw new DataRequirementException("Could not read XML document in request");
+            log.error("Could not read XML document in request", e);
+        } catch (Exception e) {
+            // The received dispensation is just a receipt, error handling needs to make sure the information is
+            // communicated to relevant error handling parties - and not throw an error, since the NCP service does not
+            // regard failure as anything other than the service being down.
+            // TODO Logs here might contain patient information, should be stored somewhere with better security
+            // TODO Logs are probably not the best tool for communicating this
+            log.error("Failed in handling dispensation request for patient id %s, with classcode {}", request.getPatientId(), request.getClassCode()
+                .toString());
+            log.error("SOAP Header: {}", request.getSoapHeader());
+            log.error("Request document: {}", request.getDocument());
         }
     }
 
@@ -64,7 +77,18 @@ public class PrescriptionController {
                     .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
                     .getDocument()), TestIdentities.apotekerChrisChristoffersen);
         } catch (SAXException e) {
-            throw new DataRequirementException("Could not read XML document in request");
+            log.error("Could not read XML document in request");
+        } catch (Exception e) {
+            // The received discard request is just a receipt, error handling needs to make sure the information is
+            // communicated to relevant error handling parties - and not throw an error, since the NCP service does not
+            // regard failure as anything other than the service being down.
+            // TODO Logs here might contain patient information, should be stored somewhere with better security
+            // TODO Logs are probably not the best tool for communicating this
+            log.error("Failed in handling discard request for patient id %s, with classcode {}", request.getDispensationToDiscard()
+                .getPatientId(), request.getDispensationToDiscard().getClassCode()
+                .toString());
+            log.error("SOAP Header: {}", request.getSoapHeader());
+            log.error("Request document: {}", request.getDispensationToDiscard().getDocument());
         }
     }
 }
