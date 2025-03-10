@@ -394,6 +394,17 @@ public final class DosageMapper {
         return new Dosage.Quantity(max, unit, isAccordingToNeed ? BigDecimal.ZERO : min);
     }
 
+    /// If the number of days between each dose is the same, get that number.
+    ///
+    /// When there is an iteration interval, the days repeat every iteration interval days, and the days' numbers are
+    /// limited to the iteration interval. What we're trying to do here is to identify whether we can express the
+    /// number of days between doses as a single day number - it can't vary.
+    ///
+    /// The iteration interval is important, because that's how many days go by from the last day until the schema
+    /// repeats. So to check that the distance from the last day to the first day is the same as the other distances,
+    /// we need to check how far the last day is from the end of the interval.
+    ///
+    /// Public for testing.
     public static Optional<Integer> getDayDistance(int iterationInterval, @NonNull List<DosageDayType> days) {
         var firstDay = days.getFirst();
         if (firstDay.getNumber() != 1) {
