@@ -349,7 +349,7 @@ public final class DosageMapper {
         // 1-2 digits, then a single any character, then 2 digits, and no more than that.
         var pattern = Pattern.compile("^(\\d?\\d).(\\d\\d)$");
         var matcher = pattern.matcher(fmkTime);
-        if (!matcher.hasMatch()) {
+        if (!matcher.matches()) {
             return null;
         }
         var hours = Integer.parseInt(matcher.group(1));
@@ -439,7 +439,7 @@ public final class DosageMapper {
 
     static boolean dosesHaveSameTime(@NonNull List<DoseType> doses) {
         var firstDoseTime = doses.getFirst().getTime();
-        return doses.stream().allMatch(d -> d.getTime().equals(firstDoseTime));
+        return doses.stream().allMatch(d -> Objects.equals(d.getTime(), firstDoseTime));
     }
 
     /// This case has a specific meaning, in that there is no limit to how many times you're allowed to take the medicine
