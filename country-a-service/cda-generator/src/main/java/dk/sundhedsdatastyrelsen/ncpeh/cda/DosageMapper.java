@@ -113,17 +113,17 @@ public final class DosageMapper {
         if (unit == null) {
             // If there is no unit, it is not safe to display any dosage.
             // We still provide the free-text parts of the prescription in the narrative block.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Could not parse dosage unit.");
         }
         if (dosage.getAdministrationAccordingToSchemaInLocalSystem() != null || dosage.getFreeText() != null) {
             // We can't handle it if one of these two are set - they are escape hatches in the DK model for unstructured
             // text, so the best we can do is to return everything unstructured.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "DK model not structured.");
         }
         if (dosage.getStructuresFixed() == null && dosage.getStructuresAccordingToNeed() == null
             || dosage.getStructuresFixed() != null && dosage.getStructuresAccordingToNeed() != null) {
             // If they are both missing or both there, we can't express it in the current ehdsi model.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Both fixed and according to need or both missing.");
         }
 
         var structures = dosage.getStructuresFixed() != null ? dosage.getStructuresFixed() : dosage.getStructuresAccordingToNeed();
@@ -131,11 +131,11 @@ public final class DosageMapper {
             // In the Danish model, there may be several structures, to support things like 'first three months
             // with one pill every day, then two months with one pill every other day'. It's a type of tapered
             // dosing, so not supported.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Multiple dosage structures.");
         }
         var structure = getStructureOrNull(structures.getEmptyStructureOrStructure().getFirst());
         if (structure == null) {
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "No dosage structure.");
         }
         return mapStructure(structure, unit, unstructuredText, dosage.getStructuresAccordingToNeed() != null);
     }
@@ -187,7 +187,7 @@ public final class DosageMapper {
     static @NonNull Dosage mapStructure(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         if (structure.getNotIterated() == null && structure.getIterationInterval() == null) {
             // There's no information
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Structure neither iterated nor not iterated.");
         }
         // TODO The best representation of AnyDay could be something like adding a <phase> to the periodic
         //  interval, to express "take the pill over these days, when you need it". But there are also the cases with
@@ -218,7 +218,7 @@ public final class DosageMapper {
 
     static @NonNull Dosage mapNotIterated(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         if (structure.getDay() == null) {
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "No days in not iterated structure.");
         }
 
         if (structure.getDay().size() == 1 && structure.getDay().getFirst().getDose().size() == 1) {
@@ -228,7 +228,7 @@ public final class DosageMapper {
             var transformedTime = time == null ? null : fmkTimeToLocalTime(time);
             if (time != null && transformedTime == null) {
                 // Can't return the structured information without the time element.
-                return new Dosage.Unstructured(unstructuredText);
+                return new Dosage.Unstructured(unstructuredText, "Not iterated time could not be mapped.");
             }
             return new Dosage.Once(
                 unstructuredText,
@@ -251,13 +251,13 @@ public final class DosageMapper {
         // Or we could try to use `SEXP_TS` to do something clever, but no one displays these complex expressions
         // yet, and there is work being done on subordinate substanceAdministrations which will also be
         // able to express this, so right now we just don't try more.
-        return new Dosage.Unstructured(unstructuredText);
+        return new Dosage.Unstructured(unstructuredText, "Multiple non-repeated doses.");
     }
 
     static @NonNull Dosage mapIteratedDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
         var days = structure.getDay();
-        if (days.size() != 1) {
-            return new Dosage.Unstructured(unstructuredText);
+        if (days == null || days.size() != 1) {
+            return new Dosage.Unstructured(unstructuredText, "Daily structure with days.size() != 1.");
         }
 
         // Either this is something you do once per day, or it is something you do several times every day.
@@ -277,19 +277,19 @@ public final class DosageMapper {
 
         if (!dosesHaveSameQuantity(doses)) {
             // This is the case mentioned above where there are different quantities at different times of the day.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Daily doses with different quantities.");
         }
 
         if (doses.stream().anyMatch(d -> d.getTime() != null)) {
             // TODO identify the cases where the time distance between the doses is the same and
             //  handle those. It's complex, but can in some cases be expressed with <phase><low>.
             // TODO also consider the ones where time is morning/noon/evening/night. Those are probably easier to handle.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Daily dose with time.");
         }
 
         if (24 % doses.size() > 0) {
             // We can't expect other countries to handle fractional hours, because we don't.
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Daily dose doesn't fit 24h.");
         }
 
         return new Dosage.PeriodicInterval(
@@ -309,12 +309,12 @@ public final class DosageMapper {
         var allSingleDose = structure.getDay().stream().allMatch(d -> d.getDose().size() == 1);
         var allDoses = structure.getDay().stream().flatMap(d -> d.getDose().stream()).toList();
         if (dayDistance.isEmpty() || !allSingleDose || !dosesHaveSameQuantity(allDoses) || !dosesHaveSameTime(allDoses)) {
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Iterated non daily with unequal distance, multiple doses per day, different quantities, or different times.");
         }
 
         // TODO Add support for when they all have the same time element. Can be supported with the <phase><low> element.
         if (allDoses.stream().anyMatch(d -> d.getTime() != null)) {
-            return new Dosage.Unstructured(unstructuredText);
+            return new Dosage.Unstructured(unstructuredText, "Iterated non daily with time.");
         }
 
         return new Dosage.PeriodicInterval(

@@ -98,7 +98,7 @@ public class EPrescriptionL3Mapper {
                 prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
             }
         } else {
-            prescriptionBuilder.dosage(new Dosage.Unstructured("No unstructured dosage text."));
+            prescriptionBuilder.dosage(new Dosage.Unstructured("No unstructured dosage text.", "No medication."));
         }
 
         return prescriptionBuilder.build();

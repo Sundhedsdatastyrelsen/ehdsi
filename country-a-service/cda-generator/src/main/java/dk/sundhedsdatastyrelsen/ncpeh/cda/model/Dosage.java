@@ -27,6 +27,8 @@ public sealed interface Dosage {
     class Unstructured implements Dosage {
         String tag = "Unstructured";
         @NonNull String unstructuredText;
+        /// Reason is for logging and testing purposes, so we can see why something became unstructured.
+        String reason;
 
         public Quantity getQuantity() {
             return null;
