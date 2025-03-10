@@ -378,7 +378,7 @@ public final class DosageMapper {
         if (dose.getQuantity() != null) {
             return new Dosage.Quantity(dose.getQuantity(), unit, isAccordingToNeed ? BigDecimal.ZERO : null);
         }
-        // TODO this is interpreting a max value and a missing min value as 0-max. Are there any problems with that?
+        // This is interpreting a max value and a missing min value as 0-max, which I'm pretty sure is correct.
         var min = Optional.ofNullable(dose.getMinimalQuantity()).orElse(BigDecimal.ZERO);
         var max = dose.getMaximalQuantity();
         if (max == null) {
