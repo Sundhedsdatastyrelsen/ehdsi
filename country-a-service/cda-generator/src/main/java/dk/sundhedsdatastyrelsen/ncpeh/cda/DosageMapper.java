@@ -325,24 +325,23 @@ public final class DosageMapper {
         );
     }
 
-    /// I'm unsure whether this should be allowed to be null.
+    /// The mapping of "morning" etc. to specific times has been verified by semantics 2025-03-10:
     ///
-    /// I'm also unsure whether the translation from "morning" and friends is acceptable. I've asked semantics, and I'm
-    /// waiting for a reply. If we set the "institutionSpecified" flag to true, it means that the time is only a
-    /// guideline, and in that case I think it's OK. But that's only possible on the periodic interval of time element.
+    /// > Vi går med 8, 12, 18 og 22. Det er nok det, som er tættest på, hvis man fx er indlagt, fortæller min
+    /// > sygeplejeske-kilde. Så går man til ro ved 22-tiden for natten.
     ///
     /// @return Null if the time cannot be expressed, or a pair of LocalTime and a boolean whether the time is precise
     /// or not.
     static Pair<LocalTime, Boolean> fmkTimeToLocalTime(@NonNull String fmkTime) {
         switch (fmkTime) {
             case "morning":
-                return Pair.of(LocalTime.of(7, 0), false);
+                return Pair.of(LocalTime.of(8, 0), false);
             case "noon":
-                return Pair.of(LocalTime.of(13, 0), false);
+                return Pair.of(LocalTime.of(12, 0), false);
             case "evening":
-                return Pair.of(LocalTime.of(19, 0), false);
+                return Pair.of(LocalTime.of(18, 0), false);
             case "night":
-                return Pair.of(LocalTime.of(1, 0), false);
+                return Pair.of(LocalTime.of(22, 0), false);
             default:
                 break;
         }
