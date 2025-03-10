@@ -266,7 +266,7 @@ public final class DosageMapper {
         var firstDose = doses.getFirst();
 
         if (doses.size() == 1) {
-            // TODO there's a time aspect of the single dose too. Can probably be expressed by the <phase><low> element.
+            // TODO #138 there's a time aspect of the single dose too. Can probably be expressed by the <phase><low> element.
 
             return new Dosage.PeriodicInterval(
                 unstructuredText,
@@ -281,9 +281,9 @@ public final class DosageMapper {
         }
 
         if (doses.stream().anyMatch(d -> d.getTime() != null)) {
-            // TODO identify the cases where the time distance between the doses is the same and
+            // TODO #138 identify the cases where the time distance between the doses is the same and
             //  handle those. It's complex, but can in some cases be expressed with <phase><low>.
-            // TODO also consider the ones where time is morning/noon/evening/night. Those are probably easier to handle.
+            // TODO #138 also consider the ones where time is morning/noon/evening/night. Those are probably easier to handle.
             return new Dosage.Unstructured(unstructuredText, "Daily dose with time.");
         }
 
@@ -312,7 +312,7 @@ public final class DosageMapper {
             return new Dosage.Unstructured(unstructuredText, "Iterated non daily with unequal distance, multiple doses per day, different quantities, or different times.");
         }
 
-        // TODO Add support for when they all have the same time element. Can be supported with the <phase><low> element.
+        // TODO #138 Add support for when they all have the same time element. Can be supported with the <phase><low> element.
         if (allDoses.stream().anyMatch(d -> d.getTime() != null)) {
             return new Dosage.Unstructured(unstructuredText, "Iterated non daily with time.");
         }
