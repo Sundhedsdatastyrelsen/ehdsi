@@ -1,3 +1,4 @@
+# The name is used to link workflows. Don't change it.
 name: NCP Docker Images
 
 on:
