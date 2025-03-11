@@ -365,6 +365,7 @@ public final class DosageMapper {
     static Dosage.Unit mapUnit(@NonNull DosageForResponseType dosage) {
         var singular = dosage.getUnitText();
         var plural = dosage.getUnitTexts();
+        // Get the first text that exists, and prioritize singular over plural. This sucks to write however you do it.
         var text = singular != null
             ? singular
             : plural == null

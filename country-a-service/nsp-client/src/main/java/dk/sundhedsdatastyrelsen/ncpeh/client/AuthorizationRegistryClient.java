@@ -6,17 +6,20 @@ import dk.sosi.seal.model.Reply;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@Component
 public class AuthorizationRegistryClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(AuthorizationRegistryClient.class);
     private final URI serviceUri;
 
-    public AuthorizationRegistryClient(String serviceUri) {
+    public AuthorizationRegistryClient(@Value("${app.authorization-registry.endpoint.url}") String serviceUri) {
         try {
             this.serviceUri = new URI(serviceUri);
         } catch (URISyntaxException e) {
