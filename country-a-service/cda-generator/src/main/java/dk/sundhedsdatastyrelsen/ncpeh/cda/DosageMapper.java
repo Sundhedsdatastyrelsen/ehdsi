@@ -107,6 +107,8 @@ public final class DosageMapper {
     private DosageMapper() {
     }
 
+    // TODO #141 We should log the reason why dosage became unstructured, so we can monitor it and improve it where it
+    //  matters most.
     public static @NonNull Dosage model(@NonNull DosageForResponseType dosage) {
         final var unstructuredText = getUnstructuredText(dosage);
         final var unit = mapUnit(dosage);
@@ -189,7 +191,7 @@ public final class DosageMapper {
             // There's no information
             return new Dosage.Unstructured(unstructuredText, "Structure neither iterated nor not iterated.");
         }
-        // TODO The best representation of AnyDay could be something like adding a <phase> to the periodic
+        // TODO #139 The best representation of AnyDay might be something like adding a <phase> to the periodic
         //  interval, to express "take the pill over these days, when you need it". But there are also the cases with
         //  NotIterated, doses with times in them, and multiple doses in the AnyDay. What then? The simplest thing is
         //  to simply treat it as the first day.
@@ -234,7 +236,7 @@ public final class DosageMapper {
                 unstructuredText,
                 transformedTime == null
                     ? Either.ofLeft(Utils.convertToLocalDate(structure.getStartDate()))
-                    // TODO look a little more at this time/timezone use. The FMK start date is zoned to UTC, but the
+                    // TODO #141 look a little more at this time/timezone use. The FMK start date is zoned to UTC, but the
                     //  dose time is probably meant to be 'local to wherever you are'. Unless of course it's very
                     //  precise medicine, in which case it's 'local to DK time'. If you take the low-dose birth control
                     //  pills at 08:00 DK time and you travel to another time zone, you still have to take them 08:00 DK
