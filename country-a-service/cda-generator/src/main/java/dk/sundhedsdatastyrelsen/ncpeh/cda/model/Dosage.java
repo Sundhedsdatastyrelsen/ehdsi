@@ -98,6 +98,9 @@ public sealed interface Dosage {
         @NonNull
         String getTag();
 
+        /// Simple period that only supports a fixed period of time between each dose.
+        ///
+        /// Other options would be including `<phase>` elements or `median` elements, see art-decor.
         @Value
         class Simple implements Period {
             String tag = "Simple";
