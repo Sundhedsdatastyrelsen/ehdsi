@@ -91,14 +91,14 @@ class EPrescriptionL3GeneratorTest {
             // TODO?
 
 //        //write to file for debugging:
-//        java.nio.file.Path debugFilePath = java.nio.file.Path.of("temp/cda-eprescription-" + cpr + ".xml");
-//        java.nio.file.Files.createDirectories(debugFilePath.getParent());
-//        java.nio.file.Files.writeString(
-//            debugFilePath,
-//            xmlString,
-//            java.nio.file.StandardOpenOption.CREATE,
-//            java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-//        );
+//            java.nio.file.Path debugFilePath = java.nio.file.Path.of("temp/cda-eprescription-" + cpr + "-" + prescriptionindex + ".xml");
+//            java.nio.file.Files.createDirectories(debugFilePath.getParent());
+//            java.nio.file.Files.writeString(
+//                debugFilePath,
+//                xmlString,
+//                java.nio.file.StandardOpenOption.CREATE,
+//                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//            );
         }
     }
 }
