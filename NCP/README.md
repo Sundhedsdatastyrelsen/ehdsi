@@ -20,6 +20,12 @@ This is a list of URLs that are used in the NCP setup:
 - http://192.168.104.80:8097/openncp-gateway-backend/
 - http://192.168.104.80:8097/openncp-web-manager/#/login
 
+# Setting up a server environment
+To ensure regular logging to the CTS, add the following line (edited appropiatly for the path) to the cronfile using `crontab -e` (using the same user running the docker containers in general):
+```bash
+0 3 * * * cd /var/ehdsi/NCP && docker compose run tsam-synchronizer
+```
+
 # Tests
 
 The `test-tool` directory contains scripts for querying the SOAP endpoints, and a request builder tool for building valid SOAP request bodies with signed SAML2.0 assertions.
