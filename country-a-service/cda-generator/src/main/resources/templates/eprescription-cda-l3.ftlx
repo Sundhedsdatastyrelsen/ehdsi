@@ -137,6 +137,7 @@
                             ${ product.name }
                             ${ indicationText }
                             ${ patientMedicationInstructions }
+                            <#if unstructuredActiveIngredients??>${ unstructuredActiveIngredients }</#if>
 
                             Unstructured dosage text:
 
@@ -166,7 +167,7 @@
                             <statusCode code="active"/>
                             <effectiveTime xsi:type="IVL_TS">
                                 <@common.valueOrNullField "low" medicationStartTime  />
-                                <@common.valueOrNullField "high" medicationEndTime  />
+                                <@common.valueOrNullField "high" medicationEndTime  /><#-- We should return nullFlavor NA if there is no end time. -->
                             </effectiveTime>
 <#-- Choice of different types of effective time, or fallback to null. -->
 <#if dosage.tag == "Once">
@@ -210,21 +211,21 @@
                                         <pharm:desc>${ product.description }</pharm:desc>
                                         <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
                                         <pharm:asContent classCode="CONT">
-                                            <#if product.size.unit.tag == "WithCode">
-                                                <pharm:quantity unit="${ product.size.unit.code }" value="${ product.size.value }"/>
-                                            <#elseif product.size.unit.tag == "WithTranslation">
-                                                <pharm:quantity unit="1" value="${ product.size.value }">
-                                                  <translation>
+<#if product.size.unit.tag == "WithCode">
+                                            <pharm:quantity unit="${ product.size.unit.code }" value="${ product.size.value }"/>
+<#elseif product.size.unit.tag == "WithTranslation">
+                                            <pharm:quantity unit="1" value="${ product.size.value }">
+                                                <translation>
                                                     <originalText>${ product.size.unit.translation }</originalText>
-                                                  </translation>
-                                                </pharm:quantity>
-                                            <#else>
-                                              <#stop "Invalid product.size.unit.tag">
-                                            </#if>
+                                                </translation>
+                                            </pharm:quantity>
+<#else>
+<#stop "Invalid product.size.unit.tag">
+</#if>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
                                                 <pharm:code <@common.cdaCodeAttrs product.packageCode/> />
                                                 <pharm:name>${ product.name }</pharm:name>
-<#if product.packageFormCode?has_content >
+<#if product.packageFormCode?has_content>
                                                 <pharm:formCode <@common.cdaCodeAttrs product.packageFormCode/> />
 <#else>
                                                 <pharm:formCode nullFlavor="UNK" />
@@ -236,6 +237,26 @@
                                                 <pharm:code <@common.cdaCodeAttrs product.atcCode /> />
                                             </pharm:generalizedMaterialKind>
                                         </pharm:asSpecializedKind>
+<#list activeIngredients as ingredient>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+<#if ingredient.translation??>
+                                                <numerator value="${ ingredient.numerator }" unit="${ ingredient.numeratorUnit }" xsi:type="PQ">
+                                                    <translation>
+                                                        <originalText>${ ingredient.translation }</originalText>
+                                                    </translation>
+                                                </numerator>
+<#else>
+                                                <numerator value="${ ingredient.numerator }" unit="${ ingredient.numeratorUnit }" xsi:type="PQ"/>
+</#if>
+                                                <denominator value="${ ingredient.denominator }" unit="${ ingredient.denominatorUnit }" xsi:type="PQ"/>
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code nullFlavor="UNK"/><#-- We don't have the information coded. -->
+                                                <pharm:name>${ ingredient.name }</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+</#list>
                                     </manufacturedMaterial>
                                 </manufacturedProduct>
                             </consumable>
