@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Value
 @Builder(toBuilder = true)
@@ -51,6 +52,11 @@ public class EPrescriptionL3 {
      */
     @NonNull Dosage dosage;
 
+    /// List of active ingredients, if we have them structured.
+    @NonNull List<ActiveIngredient> activeIngredients;
+    /// The text of the active ingredients if we don't have them structured.
+    String unstructuredActiveIngredients;
+
     @NonNull Author author;
 
     @NonNull String indicationText;
@@ -66,6 +72,8 @@ public class EPrescriptionL3 {
     @NonNull Product product;
     @NonNull Long packageQuantity;
     @NonNull Boolean substitutionAllowed;
+
+    /// A short text describing the dosage on the prescription that must be understandable to the patient.
     @NonNull String patientMedicationInstructions;
 
     public String getEffectiveTime() {
