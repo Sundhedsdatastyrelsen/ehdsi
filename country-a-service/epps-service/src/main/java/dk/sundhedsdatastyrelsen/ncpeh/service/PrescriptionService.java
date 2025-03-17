@@ -9,6 +9,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.nsp.test.idp.OrganizationIdentities;
 import dk.nsp.test.idp.model.Identity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
@@ -139,8 +140,11 @@ public class PrescriptionService {
                         pair.getLeft(),
                         drugMedications,
                         authorizationRegistry.requestByAuthorizationCode(
-                            EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(pair.getRight())
-                                .getAuthorisationIdentifier(), caller).getAuthorization(),
+                                EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(pair.getRight())
+                                    .getAuthorisationIdentifier(),
+                                // TODO should not use a test identity
+                                OrganizationIdentities.sundhedsdatastyrelsen())
+                            .getAuthorization(),
                         lmsDataLookupService.getPackageFormCodeFromPackageNumber(pair.getRight()
                             .getPackageRestriction()
                             .getPackageNumber()
