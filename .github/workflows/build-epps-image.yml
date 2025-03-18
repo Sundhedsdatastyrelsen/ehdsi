@@ -1,3 +1,4 @@
+# Name is used as reference in other workflows. Check when changing.
 name: Country A Docker Images
 
 on:

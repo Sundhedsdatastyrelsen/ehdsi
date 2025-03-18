@@ -1,0 +1,35 @@
+name: Nightly Translations Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 02 * * *"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEV_VM_USER }}@${{ secrets.DEV_VM_HOST }} << 'EOF'
+            # 1. Go to the NCP folder
+            cd /var/ehdsi/NCP
+
+            # 2. Log in to GitHub Container Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # 3. Run the tsam synchronizer
+            docker compose run tsam-synchronizer
+
+            # 4. Run the exporter
+            docker compose run tsam-exporter
+          EOF
