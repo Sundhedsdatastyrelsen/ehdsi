@@ -70,7 +70,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/country-a-api.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/country-a-api-is.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>

@@ -1,0 +1,617 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: NCP API
+
+servers:
+  - url: http://localhost:8080
+
+
+paths:
+
+  # 55
+  /api/find-patients/:
+    post:
+      summary: Return information about patients
+      operationId: postFindPatients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FindPatientsRequest'
+                - $ref: '#/components/schemas/SoapHeader'
+      responses:
+        200:
+          description: Patient info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindPatientsResponse'
+        400:
+          description: 400 BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # 39
+  /api/fetch-document/:
+    post:
+      summary: |
+        Retrieve a single document matching search criteria.
+        Corresponds to XCA ITI-39 endpoint.
+      operationId: postFetchDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FetchDocumentRequest'
+                - $ref: '#/components/schemas/SoapHeader'
+      responses:
+        200:
+          description: Documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EpsosDocument'
+        400:
+          description: 400 BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Could not locate document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # 38
+  /api/find-eprescription-documents/:
+    post:
+      summary: |
+        Search for ePrescriptions matching the given search criteria.
+        Corresponds to XCA ITI-38 endpoint.
+      operationId: postFindEPrescriptionDocuments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FindEprescriptionDocumentsRequest'
+                - $ref: '#/components/schemas/SoapHeader'
+              x-all-of-name: "FindEprescriptionDocumentsRequest"
+      responses:
+        200:
+          description: ePrescription document metadata matching criteria.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentAssociationForEPrescriptionDocumentMetadata'
+        400:
+          description: 400 BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/edispensation/submit:
+    post:
+      summary: |
+        Submit an eDispensation document.
+        Corresponds to XDC ITI-41.
+      operationId: submitDispensation
+      requestBody:
+        description: The eDispensation document
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/EpsosDocument'
+                - $ref: '#/components/schemas/SoapHeader'
+      responses:
+        204:
+          description: Dispensation submitted successfully.
+        400:
+          description: Invalid eDispensation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/edispensation/discard:
+    post:
+      summary: |
+        Discard an eDispensation.
+      operationId: disardDispensation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SoapHeader'
+                - type: object
+                  properties:
+                    disardDispenseDetails:
+                      $ref: '#/components/schemas/DiscardDispenseDetails'
+                    dispensationToDiscard:
+                      $ref: '#/components/schemas/EpsosDocument'
+
+      responses:
+        204:
+          description: Dispensation discarded successfully.
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/find-patientsummary-document:
+    post:
+      summary: "Gets a patient summary List by ID for a patient."
+      operationId: postFindPatientSummaryDocuments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FindPatientSummaryDocumentsRequest'
+                - $ref: '#/components/schemas/SoapHeader'
+              x-all-of-name: "FindPatientSummaryDocumentsRequest"
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                "$ref": "#/components/schemas/DocumentAssociationForPatientSummaryDocumentMetadata"
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DocumentAssociationForPatientSummaryDocumentMetadata"
+            text/json:
+              schema:
+                "$ref": "#/components/schemas/DocumentAssociationForPatientSummaryDocumentMetadata"
+        400:
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            text/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            text/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+        403:
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            text/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+        404:
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            text/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+        408:
+          description: Request Timeout
+          content:
+            text/plain:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+            text/json:
+              schema:
+                "$ref": "#/components/schemas/ProblemDetails"
+        500:
+          description: Internal Server Error
+        503:
+          description: Service Unavailable
+
+components:
+  schemas:
+    ConfidentialityMetadata:
+      required:
+      - confidentialityCode
+      - confidentialityDisplay
+      type: object
+      properties:
+        confidentialityCode:
+          type: string
+        confidentialityDisplay:
+          type: string
+      nullable: true
+
+    SoapHeader:
+      type: object
+      properties:
+        soapHeader:
+          type: string
+          format: xml
+
+    FindPatientsRequest:
+      type: object
+      required:
+        - patientIds
+      properties:
+        patientIds:
+          type: array
+          items:
+            type: string
+
+    FindPatientSummaryDocumentsRequest:
+          required:
+          - patientId
+          type: object
+          properties:
+            patientId:
+              type: string
+            repositoryId:
+              type: string
+            documentId:
+              type: string
+            maximumSize:
+              type: integer
+              format: int64
+              nullable: true
+            createdBefore:
+              type: string
+              format: date-time
+              nullable: true
+            createdAfter:
+              type: string
+              format: date-time
+              nullable: true
+            soapHeader:
+              type: string
+              format: xml
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+
+    FindPatientsResponse:
+      description: Information about a patient.
+      type: object
+      required:
+        - patients
+        - patientsNotFound
+      properties:
+        patients:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatientDemographics'
+        patientsNotFound:
+          type: array
+          items:
+            type: string
+
+    FetchDocumentRequest:
+      type: object
+      required:
+        - patientId
+      properties:
+        patientId:
+          type: string
+        repositoryId:
+          type: string
+        documentId:
+          type: string
+        maximumSize:
+          type: integer
+          format: int64
+        createdBefore:
+          type: string
+          format: date-time
+        createdAfter:
+          type: string
+          format: date-time
+
+    FindEprescriptionDocumentsRequest:
+      type: object
+      required:
+        - patientId
+      properties:
+        patientId:
+          type: string
+        repositoryId:
+          type: string
+        documentId:
+          type: string
+        maximumSize:
+          type: integer
+          format: int64
+        createdBefore:
+          type: string
+          format: date-time
+        createdAfter:
+          type: string
+          format: date-time
+
+    DocumentAssociationForPatientSummaryDocumentMetadata:
+      required:
+      - level1
+      - level3
+      type: object
+      properties:
+        level1:
+          "$ref": "#/components/schemas/EpsosDocumentMetadata"
+        level3:
+          "$ref": "#/components/schemas/EpsosDocumentMetadata2"
+
+    PatientDemographics:
+      description: Information about a patient.
+      type: object
+      required:
+        - idList
+      properties:
+        familyName:
+          type: string
+        givenName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        administrativeGender:
+          $ref: '#/components/schemas/Gender'
+        city:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        streetAddress:
+          type: string
+        telephone:
+          type: string
+          pattern: '^\+?(\(.+\))?[0-9 ?\-?]+[0-9]$'
+        email:
+          type: string
+          format: email
+        idList:
+          type: array
+          items:
+            type: string
+
+    Gender:
+      type: string
+      description: Administrative gender; sometimes shortened as F=FEMALE, M=MALE, UN=UNDIFFERENTIATED.
+      enum:
+        - FEMALE
+        - MALE
+        - UNDIFFERENTIATED
+
+    Error:
+      type: object
+      required:
+        - type
+        - message
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+
+    EpsosDocument:
+      type: object
+      description: A representation of a concrete document, e.g., an ePrescription or a dispensation.
+      required:
+        - patientId
+        - document
+        - classCode
+      properties:
+        patientId:
+          type: string
+        document:
+          description: The full CDA document.
+          type: string
+          format: xml
+        classCode:
+          $ref: '#/components/schemas/ClassCode'
+
+    EpsosDocumentMetadata:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+        patientId:
+          type: string
+        format:
+          type: string
+          nullable: true
+        effectiveTime:
+          type: string
+          format: date-time
+          nullable: true
+        classCode:
+          type: string
+          nullable: true
+        repositoryId:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        language:
+          type: string
+        size:
+          type: integer
+          format: int64
+          nullable: true
+        hash:
+          type: string
+        confidentiality:
+          $ref: "#/components/schemas/ConfidentialityMetadata"
+    EpsosDocumentMetadata2:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        patientId:
+          type: string
+        format:
+          type: string
+          nullable: true
+        effectiveTime:
+          type: string
+          format: date-time
+          nullable: true
+        classCode:
+          type: string
+          nullable: true
+        repositoryId:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        language:
+          type: string
+        size:
+          type: integer
+          format: int64
+          nullable: true
+        hash:
+          type: string
+        confidentiality:
+          $ref: "#/components/schemas/ConfidentialityMetadata"
+
+    DocumentAssociationForEPrescriptionDocumentMetadata:
+      type: object
+      description: Document association for metadata for an ePrescription document (both L1 and L3).
+      required:
+        - level1
+        - level3
+      properties:
+        level3:
+          $ref: '#/components/schemas/EPrescriptionDocumentMetadata'
+        level1:
+          $ref: '#/components/schemas/EPrescriptionDocumentMetadata'
+
+    EPrescriptionDocumentMetadata:
+      description: Metadata for an ePrescription document.
+      allOf:
+        - $ref: '#/components/schemas/EpsosDocumentMetadata'
+        - type: object
+          properties:
+            description:
+              type: string
+            productCode:
+              type: string
+            productName:
+              type: string
+            dispensable:
+              type: boolean
+            atcCode:
+              type: string
+            atcName:
+              type: string
+            doseFormCode:
+              type: string
+            doseFormName:
+              type: string
+            strength:
+              type: string
+            substitutionCode:
+              type: string
+            substitutionDisplayName:
+              type: string
+
+    ClassCode:
+      description: LOINC code for the document type.
+      type: string
+      enum:
+        # For PoC we only support ePrescriptions and eDispensations:
+        - "57833-6" # Prescription for medication https://loinc.org/57833-6
+        - "60593-1" # Medication dispensed.extended Document https://loinc.org/60593-1
+
+    DocumentFormat:
+      type: string
+      enum:
+        - pdf
+        - xml
+
+    DiscardDispenseDetails:
+      type: object
+      properties:
+        discardId:
+          type: string
+        dispenseId:
+          type: string
+        discardDate:
+          type: string
+          format: date-time
+        patientId:
+          type: string
+        healthCareProviderId:
+          type: string
+        healthCareProvider:
+          type: string
+        healthCareProviderFacility:
+          type: string
+        healthCareProviderOrganizationId:
+          type: string
+        healthCareProviderOrganization:
+          type: string
