@@ -6,11 +6,12 @@ WORKDIR /usr/src/app
 
 RUN --mount=type=cache,target=/root/.m2 \
     git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
-    cd ehealth && \
-    mvn -DskipTests install
+    cd ehealth
 
 # Use sed to replace the old URL with the new URL
 RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
+
+RUN mvn -DskipTests install
 
 COPY openncp-national-connector openncp-national-connector
 COPY ncp_a/pom.xml openncp-server/pom.xml
