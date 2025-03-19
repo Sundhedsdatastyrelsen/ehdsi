@@ -1,17 +1,18 @@
-FROM maven:3.9-eclipse-temurin-11 as builder
+FROM maven:3.9-eclipse-temurin-11 AS builder
 
 ARG OPENNCP_BRANCH="8.0.2"
 
 WORKDIR /usr/src/app
 
-RUN --mount=type=cache,target=/root/.m2 \
-    git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
+RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
     cd ehealth
+
+WORKDIR /usr/src/app/ehealth
 
 # Use sed to replace the old URL with the new URL
 RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
 
-RUN mvn -DskipTests install
+RUN --mount=type=cache,target=/root/.m2 mvn -DskipTests install
 
 COPY openncp-national-connector openncp-national-connector
 COPY ncp_a/pom.xml openncp-server/pom.xml
@@ -23,7 +24,7 @@ RUN --mount=type=cache,target=/root/.m2 \
     mvn install
 
 # Base Tomcat image for most services
-FROM tomcat:9-jdk11-temurin as tomcat-base
+FROM tomcat:9-jdk11-temurin AS tomcat-base
 
 RUN apt-get update \
     && apt-get install -y \
@@ -49,7 +50,7 @@ RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 
 # TSAM Exporter
-FROM eclipse-temurin:11-jre-jammy as tsam-exporter
+FROM eclipse-temurin:11-jre-jammy AS tsam-exporter
 
 WORKDIR /usr/local/openncp-tsam-exporter
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar .
@@ -61,7 +62,7 @@ ENTRYPOINT ["./entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsamexporter.jar"]
 
 # Node A
-FROM tomcat-base as node-a
+FROM tomcat-base AS node-a
 
 COPY --from=builder \
     /usr/src/app/openncp-server/target/openncp-server-*.war \
@@ -85,7 +86,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # Node B
-FROM tomcat-base as node-b
+FROM tomcat-base AS node-b
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-client-connector.war /usr/local/tomcat/webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
@@ -100,7 +101,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # TRC-STS
-FROM tomcat-base as trc-sts
+FROM tomcat-base AS trc-sts
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/TRC-STS.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
@@ -115,7 +116,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # OpenATNA
-FROM tomcat-base as openatna
+FROM tomcat-base AS openatna
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openatna-web.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
@@ -130,7 +131,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # Translations and Mappings
-FROM tomcat-base as translations-and-mappings
+FROM tomcat-base AS translations-and-mappings
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/translations-and-mappings-ws.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
@@ -145,7 +146,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # TSAM Sync
-FROM eclipse-temurin:11-jre-jammy as tsam-synchronizer
+FROM eclipse-temurin:11-jre-jammy AS tsam-synchronizer
 
 RUN apt-get update \
     && apt-get install -y \
@@ -161,7 +162,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
 
 # Web Manager Frontend
-FROM node:14.21-alpine as web-manager-frontend-builder
+FROM node:14.21-alpine AS web-manager-frontend-builder
 
 WORKDIR /app
 
@@ -175,7 +176,7 @@ ARG VUE_APP_SERVER_URL="/openncp-gateway-backend"
 RUN npm run build
 
 # Web Manager
-FROM tomcat-base as web-manager
+FROM tomcat-base AS web-manager
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
