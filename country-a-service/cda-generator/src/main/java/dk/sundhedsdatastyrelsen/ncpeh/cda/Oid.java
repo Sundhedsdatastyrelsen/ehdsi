@@ -27,10 +27,11 @@ public enum Oid {
      */
     DK_AUTHORIZATION_REGISTRY("1.2.208.176.1.3"),
     /**
+     * faggrupper
      * "Uddannelseskoder i det danske autorisationsregister"
-     * Not yet registered.
+     * <a href="https://oid-base.com/get/1.2.208.176.1.3.1">Registered.</a>
      */
-    DK_AUTHORIZATION_REGISTRY_EDUCATION_CODE("1.2.208.176.1.3.999"),
+    DK_AUTHORIZATION_REGISTRY_EDUCATION_CODE("1.2.208.176.1.3.1"),
     /**
      * Danske ydernumre.
      * <a href="https://oid-base.com/get/1.2.208.176.1.4">Registered.</a>
