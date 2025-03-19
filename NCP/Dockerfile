@@ -9,6 +9,9 @@ RUN --mount=type=cache,target=/root/.m2 \
     cd ehealth && \
     mvn -DskipTests install
 
+# Use sed to replace the old URL with the new URL
+RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
+
 COPY openncp-national-connector openncp-national-connector
 COPY ncp_a/pom.xml openncp-server/pom.xml
 
