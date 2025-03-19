@@ -14,6 +14,8 @@ RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https:/
 
 RUN --mount=type=cache,target=/root/.m2 mvn -DskipTests install
 
+WORKDIR /usr/src/app
+
 COPY openncp-national-connector openncp-national-connector
 COPY ncp_a/pom.xml openncp-server/pom.xml
 
