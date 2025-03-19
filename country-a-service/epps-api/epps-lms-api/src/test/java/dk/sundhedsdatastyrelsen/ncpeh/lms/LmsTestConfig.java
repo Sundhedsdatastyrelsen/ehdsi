@@ -1,5 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,5 +21,10 @@ public class LmsTestConfig {
         // Ensures the single connection is never truly closed, so we don't lose the in-memory DB
         ds.setSuppressClose(true);
         return ds;
+    }
+
+    @Bean
+    public LmsDataRepository lmsDataRepository() {
+        return new LmsDataRepository(dataSource());
     }
 }

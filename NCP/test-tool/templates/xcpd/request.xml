@@ -18,10 +18,10 @@
          <acceptAckCode code="AL"/>
          <receiver typeCode="RCV">
             <device classCode="DEV" determinerCode="INSTANCE">
-               <id root="2.16.17.710.802.1000.990.1"/>
+               <id root="1.2.208"/>
                <asAgent classCode="AGNT">
                   <representedOrganization classCode="ORG" determinerCode="INSTANCE">
-                     <id root="2.16.17.710.802.1000.990.1"/>
+                     <id root="1.2.208"/>
                   </representedOrganization>
                </asAgent>
             </device>
