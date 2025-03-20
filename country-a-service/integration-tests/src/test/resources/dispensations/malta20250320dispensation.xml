@@ -1,0 +1,312 @@
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:ext="urn:hl7-EE-DL-Ext:v1" xmlns:mif="urn:hl7-org:v3/mif"
+                  xmlns:pharm="urn:hl7-org:pharm" xmlns:sch="http://www.ascc.net/xml/schematron">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.2"/>
+    <id extension="ZURSWWWDFz40/g++" root="2.16.470.1.100.1.2.1000.990.1.16"/>
+    <code code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59"
+          displayName="Medication dispensed.extended Document">
+        <translation code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+                     displayName="eDispensation"/>
+    </code>
+    <title>Medication dispensed</title>
+    <effectiveTime value="20250320144355+0100"/>
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality"
+                         codeSystemVersion="2018-08-12" displayName="normal"/>
+    <languageCode code="en-GB"/>
+    <recordTarget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="1503194046" root="1.2.208.176.1.2"/>
+            <addr>
+                <streetAddressLine>Kærhusevej 332</streetAddressLine>
+                <city>Mårslet</city>
+                <postalCode>8320</postalCode>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given>Lotte</given>
+                    <family>Svendsen</family>
+                </name>
+                <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1"
+                                          codeSystemName="AdministrativeGender" codeSystemVersion="913-20091020"
+                                          displayName="Female"/>
+                <birthTime value="20190315"/>
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author typeCode="AUT">
+        <functionCode code="2262" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO"
+                      codeSystemVersion="2008" displayName="Pharmacists"/>
+        <time value="20250320144355+0100"/>
+        <assignedAuthor>
+            <id extension="94e9cd39-f9c2-434c-9069-ee8bd81b11c1" root="2.16.470.1.100.1.2.1000.990.1.18"/>
+            <addr>
+                <streetAddressLine>15, Palazzo Castellania,Merchants Street</streetAddressLine>
+                <city>Valetta</city>
+                <postalCode>VLT 1171</postalCode>
+                <state nullFlavor="UNK"/>
+                <country>MT</country>
+            </addr>
+            <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+            <assignedPerson>
+                <name>
+                    <family>pharmacist</family>
+                    <given>pharmacist</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization>
+                <id extension="94e9cd39-f9c2-434c-9069-ee8bd81b11c1" root="2.16.470.1.100.1.2.1000.990.1.18.1"/>
+                <name>Ministry for Health</name>
+                <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+                <addr>
+                    <streetAddressLine>15, Palazzo Castellania,Merchants Street</streetAddressLine>
+                    <city>Valetta</city>
+                    <postalCode>VLT 1171</postalCode>
+                    <state nullFlavor="UNK"/>
+                    <country>MT</country>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization>
+                <id root="2.16.470.1.100.1.2.1000.990.1.20"/>
+                <name>Ministry for Health, Government of Malta</name>
+                <telecom nullFlavor="NI"/>
+                <addr>
+                    <streetAddressLine nullFlavor="UNK"/>
+                    <city nullFlavor="UNK"/>
+                    <postalCode nullFlavor="UNK"/>
+                    <state nullFlavor="UNK"/>
+                    <country>MT</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="20250320134355"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id root="2.16.470.1.100.1.2.1000.990.1.17"/>
+            <addr>
+                <streetAddressLine>15 Merchants Street</streetAddressLine>
+                <city>Valletta</city>
+                <postalCode>10551</postalCode>
+                <state nullFlavor="UNK"/>
+                <country>MT</country>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson>
+                <name>
+                    <family>Ministry for Health, Government of Malta</family>
+                    <given>Ministry for Health, Government of Malta</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.470.1.100.1.2.1000.990.1.17.1"/>
+                <name>Ministry for Health, Government of Malta</name>
+                <telecom nullFlavor="NI"/>
+                <addr>
+                    <streetAddressLine>N/A</streetAddressLine>
+                    <city>Valletta</city>
+                    <postalCode>10551</postalCode>
+                    <state nullFlavor="UNK"/>
+                    <country>MT</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <inFulfillmentOf>
+        <order moodCode="RQO">
+            <id extension="480003371650102" root="1.2.208.176.7.2.2"/>
+        </order>
+    </inFulfillmentOf>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN">
+            <id nullFlavor="NI"/>
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody classCode="DOCBODY">
+            <component typeCode="COMP">
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.2"/>
+                    <templateId root="2.16.840.1.113883.10.20.1.8"/>
+                    <id extension="D-146410E9-94BA-4581-BE39-59A7F8C4F4C5" root="2.16.470.1.100.1.2.1000.990.1.16"/>
+                    <code code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+                          codeSystemVersion="2.59" displayName="Medication dispensed.brief Document"/>
+                    <title>Dispensation: D-146410E9-94BA-4581-BE39-59A7F8C4F4C5</title>
+                    <text>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>Dispensed medicine code</th>
+                                    <th>Dispensed medicine commercial name</th>
+                                    <th>Dispensed medicine ATC code</th>
+                                    <th>Dispensed medicine ATC name</th>
+                                    <th>Dispensed number of packages</th>
+                                    <th>Dispensed medicine package size</th>
+                                </tr>
+                                <tr>
+                                    <td>MA1277/02701</td>
+                                    <td>Paracetamol 10 mg/ml solution for infusion</td>
+                                    <td>N02BE01</td>
+                                    <td>paracetamol</td>
+                                    <td>1</td>
+                                    <td>10countable units</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </text>
+                    <entry typeCode="COMP">
+                        <supply classCode="SPLY" moodCode="EVN">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.3"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.34"/>
+                            <id extension="1.2.208.176.7.2.2^480003371650102"
+                                root="2.16.470.1.100.1.2.1000.990.1.16.1"/>
+                            <quantity unit="1" value="1"/>
+                            <product>
+                                <manufacturedProduct>
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                        <code code="MA1277/02701" codeSystem="2.16.470.1.100.1.2.1000.990.1.15"
+                                              codeSystemName="ΜΤ_NationalSystem"
+                                              displayName="Paracetamol 10 mg/ml solution for infusion "/>
+                                        <name>Paracetamol 10 mg/ml solution for infusion</name>
+                                        <pharm:desc>10 milligram(s)/millilitre</pharm:desc>
+                                        <pharm:formCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        code="10221000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                        codeSystemName="EDQM" codeSystemVersion="2025-01-07"
+                                                        displayName="Film-coated tablet"/>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="1" value="10"/>
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:name>Paracetamol 10 mg/ml solution for infusion</pharm:name>
+                                                <pharm:formCode nullFlavor="UNK"/>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73"
+                                                            codeSystemName="Anatomical Therapeutic Chemical"
+                                                            codeSystemVersion="2025-01" displayName="paracetamol"/>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator xmlns:urn="urn:hl7-org:v3"
+                                                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           nullFlavor="NI" xsi:type="urn:PQ"/>
+                                                <denominator xmlns:urn="urn:hl7-org:v3"
+                                                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             nullFlavor="NI" xsi:type="urn:PQ"/>
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code nullFlavor="NI"/>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                    </manufacturedMaterial>
+                                </manufacturedProduct>
+                            </product>
+                            <performer typeCode="PRF">
+                                <time value="20250320144355+0100"/>
+                                <assignedEntity>
+                                    <id extension="94e9cd39-f9c2-434c-9069-ee8bd81b11c1"
+                                        root="2.16.470.1.100.1.2.1000.990.1.19"/>
+                                    <addr>
+                                        <streetAddressLine>15, Palazzo Castellania,Merchants Street</streetAddressLine>
+                                        <city>Valetta</city>
+                                        <postalCode>VLT 1171</postalCode>
+                                        <state nullFlavor="UNK"/>
+                                        <country>MT</country>
+                                    </addr>
+                                    <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+                                    <assignedPerson>
+                                        <name>
+                                            <family>pharmacist</family>
+                                            <given>pharmacist</given>
+                                        </name>
+                                    </assignedPerson>
+                                    <representedOrganization>
+                                        <id extension="94e9cd39-f9c2-434c-9069-ee8bd81b11c1"
+                                            root="2.16.470.1.100.1.2.1000.990.1.19.1"/>
+                                        <name>Ministry for Health</name>
+                                        <telecom use="WP" value="mailto:pharmacist@ncp.eu"/>
+                                        <addr>
+                                            <streetAddressLine>15, Palazzo Castellania,Merchants Street
+                                            </streetAddressLine>
+                                            <city>Valetta</city>
+                                            <postalCode>VLT 1171</postalCode>
+                                            <state nullFlavor="UNK"/>
+                                            <country>MT</country>
+                                        </addr>
+                                    </representedOrganization>
+                                </assignedEntity>
+                            </performer>
+                            <participant contextControlCode="OP" typeCode="PRF">
+                                <participantRole classCode="LIC">
+                                    <id root="2.16.470.1.100.1.2.1000.990.1.21"/>
+                                    <scopingEntity>
+                                        <id root="2.16.470.1.100.1.2.1000.990.1.21.1"/>
+                                    </scopingEntity>
+                                </participantRole>
+                            </participant>
+                            <entryRelationship typeCode="REFR">
+                                <substanceAdministration classCode="SBADM" moodCode="INT">
+                                    <id xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                        extension="480003371650102" root="1.2.208.176.7.2.2"/>
+                                    <consumable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" typeCode="CSM">
+                                        <manufacturedProduct classCode="MANU">
+                                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                            <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                                <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                                <name>Panodil</name>
+                                                <pharm:desc>500 mg</pharm:desc>
+                                                <pharm:formCode code="10221000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                                codeSystemName="EDQM" codeSystemVersion="2025-01-07"
+                                                                displayName="Film-coated tablet"/>
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="1" value="10">
+
+                                                    </pharm:quantity>
+                                                    <pharm:containerPackagedProduct classCode="CONT"
+                                                                                    determinerCode="KIND">
+                                                        <pharm:code code="5813" codeSystem="1.2.208.176.3.2"
+                                                                    codeSystemName="Varenumre på lægemiddelpakninger"/>
+                                                        <pharm:name>Panodil</pharm:name>
+                                                        <pharm:formCode code="30007000"
+                                                                        codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                                        codeSystemName="EDQM"
+                                                                        codeSystemVersion="2025-01-07"
+                                                                        displayName="Blister"/>
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                                <pharm:asSpecializedKind classCode="GRIC">
+                                                    <pharm:generalizedMaterialKind classCode="MMAT"
+                                                                                   determinerCode="KIND">
+                                                        <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73"
+                                                                    codeSystemName="Anatomical Therapeutic Chemical"
+                                                                    codeSystemVersion="2025-01"
+                                                                    displayName="paracetamol"/>
+                                                    </pharm:generalizedMaterialKind>
+                                                </pharm:asSpecializedKind>
+                                            </manufacturedMaterial>
+                                        </manufacturedProduct>
+                                    </consumable>
+                                </substanceAdministration>
+                            </entryRelationship>
+                            <entryRelationship typeCode="COMP">
+                                <act classCode="ACT" moodCode="EVN">
+                                    <code code="SUBST" codeSystem="2.16.840.1.113883.5.6"/>
+                                </act>
+                            </entryRelationship>
+                        </supply>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>
