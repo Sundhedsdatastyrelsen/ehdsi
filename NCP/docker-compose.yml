@@ -88,7 +88,7 @@ services:
   # Run this to synchronize the local terminology database with
   # the Central Terminology Service
   tsam-synchronizer:
-    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:${IMAGE_TAG}
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:latest
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     build:
       target: "tsam-synchronizer"
