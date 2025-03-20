@@ -128,7 +128,7 @@ public class EPrescriptionL3Mapper {
         var atc = prescription.getDrug().getATC();
         var atcCode = CdaCode.builder()
             .codeSystem(Oid.ATC)
-            .codeSystemVersion("2024-01")
+            .codeSystemVersion("2025-01")
             .code(atc.getCode().getValue())
             .displayName(atc.getText())
             .build();
