@@ -55,6 +55,9 @@ public class PrescriptionController {
         } catch (SAXException e) {
             log.error("Could not read XML document in request", e);
         } catch (Exception e) {
+            if (e.getClass().equals(DataRequirementException.class)) {
+                throw e; // Data requirement errors should be forwarded to the other party
+            }
             // The received dispensation is just a receipt, error handling needs to make sure the information is
             // communicated to relevant error handling parties - and not throw an error, since the NCP service does not
             // regard failure as anything other than the service being down.
