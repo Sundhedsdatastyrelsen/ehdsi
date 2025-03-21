@@ -58,7 +58,7 @@ public enum Oid {
      * Emballagetype fra LMS14
      * <a href="https://oid-base.com/get/1.2.208.176.3.14">Registered.</a>
      */
-    DK_EMBALLAGETYPE("1.2.208.176.3.14", "Emballagetype fra LMS14"),
+    DK_EMBALLAGETYPE("1.2.208.176.3.14", "LMS14"),
     /**
      * Central Virksomhedsregister (CVR).
      * <a href="https://oid-base.com/get/2.16.840.1.113883.2.24.1.1">Registered.</a>
@@ -73,12 +73,12 @@ public enum Oid {
      * LMS11 - "Administrationsvej"
      * <a href="https://oid-base.com/get/1.2.208.176.3.11">Registered.</a>
      */
-    DK_LMS11("1.2.208.176.3.11", "LMS11 Administrationsvej"),
+    DK_LMS11("1.2.208.176.3.11", "LMS11"),
     /**
      * LMS22 - "Lægemiddelform-betegnelser"
      * <a href="https://oid-base.com/get/1.2.208.176.3.22">Registered.</a>
      */
-    DK_LMS22("1.2.208.176.3.22", "LMS22 Lægemiddelform-betegnelser"),
+    DK_LMS22("1.2.208.176.3.22", "LMS22"),
 
 
     /**

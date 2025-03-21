@@ -11,6 +11,11 @@ public class Fmk {
      * Helle Bonde is a test persona which we do *not* own, so we should only perform read operations on her.
      */
     public static final String cprHelleReadOnly = "1111111118";
+
+    /**
+     * This is our EU Test person
+     */
+    public static final String cprLotteSvendsen = "1503194046";
     /**
      * Karl Læge ePPS is a test persona which we own, so we can perform read and write operations on him.
      */
