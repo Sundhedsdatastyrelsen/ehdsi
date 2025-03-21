@@ -188,12 +188,12 @@
 <#if dosage.quantity?? && dosage.quantity.unit.tag == "Translated">
                             <doseQuantity>
                                 <low value="${ dosage.quantity.minValue }" unit="1">
-                                    <translation>
+                                    <translation nullFlavor="UNK"><#-- This doesn't match the example, but it doesn't validate without nullFlavor -->
                                         <originalText>${ dosage.quantity.unit.translation }</originalText>
                                     </translation>
                                 </low>
                                 <high value="${ dosage.quantity.value }" unit="1">
-                                    <translation>
+                                    <translation nullFlavor="UNK"><#-- This doesn't match the example, but it doesn't validate without nullFlavor -->
                                         <originalText>${ dosage.quantity.unit.translation }</originalText>
                                     </translation>
                                 </high>
