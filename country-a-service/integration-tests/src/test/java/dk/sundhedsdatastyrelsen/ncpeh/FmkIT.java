@@ -118,8 +118,7 @@ public class FmkIT {
     @Test
     public void submitDispensationTest() throws Exception {
         var cpr = Fmk.cprLotteSvendsen;
-        //var eDispensationRawPath = System.getProperty("eDispensationITPath");
-        var eDispensationRawPath = "D:\\Code\\Globeteam\\ehdsi\\country-a-service\\integration-tests\\src\\test\\resources\\dispensations\\malta20250320dispensation.xml";
+        var eDispensationRawPath = System.getProperty("eDispensationITPath");
         assertThat(
             "Java system property eDispensationITPath must be set",
             eDispensationRawPath,
