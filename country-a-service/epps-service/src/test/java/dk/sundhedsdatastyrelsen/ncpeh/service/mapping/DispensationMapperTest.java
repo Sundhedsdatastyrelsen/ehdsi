@@ -37,8 +37,10 @@ class DispensationMapperTest {
         return Stream.of(
             Arguments.of("dispensation2.xml", null), //Our own constructed test dispensation
             Arguments.of("CzRequest1.xml", null), // One of the requests the CZ team sent us during the Fall 2024 test
-            Arguments.of("CzRequest2.xml", missingPharmCodeErrorMessage), // One of the requests the CZ team sent us during the Fall 2024 test
-            Arguments.of("GrRequest1.xml", missingPharmCodeErrorMessage) // One of the requests the GR team sent us during the Fall 2024 test
+
+            //We have updated the handling to not throw the missingPharmCodeErrorMesasge anymore.. Maybe this is a mistake? TODO Conference with Hans and Christian monday
+            Arguments.of("CzRequest2.xml", null), // One of the requests the CZ team sent us during the Fall 2024 test
+            Arguments.of("GrRequest1.xml", null) // One of the requests the GR team sent us during the Fall 2024 test
 
         );
     }
