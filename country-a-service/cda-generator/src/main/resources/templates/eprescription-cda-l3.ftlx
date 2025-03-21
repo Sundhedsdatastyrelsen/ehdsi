@@ -162,7 +162,7 @@
                             <#-- Globalt unikt "prescription item id" - i vores tilfælde det samme som "prescription id",
                                  da der er et 1-1 forhold. -->
                             <id <@common.cdaIdAttrs prescriptionId />/>
-                            <text><reference value="entry-text" /></text>
+                            <text><reference value="#entry-text" /></text>
                             <statusCode code="active"/>
                             <effectiveTime xsi:type="IVL_TS">
                                 <@common.valueOrNullField "low" medicationStartTime  />
