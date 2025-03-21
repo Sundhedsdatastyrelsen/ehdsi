@@ -380,7 +380,8 @@ public class DispensationMapper {
             log.warn("Substitutions are not supported. No conversion was made.");
         }
         // verify that package number matches prescription
-        if (!packageRestriction.getPackageNumber().getValue().equals(packageNumber(cda))) {
+        var packageNumber = packageNumber(cda);
+        if (packageNumber != null && !packageRestriction.getPackageNumber().getValue().equals(packageNumber)) {
             throw new MapperException(String.format(
                 "Package number in dispensation (%s) does not match prescription (%s).",
                 packageNumber(cda),
@@ -401,6 +402,9 @@ public class DispensationMapper {
     String packageNumber(Document cda) {
         try {
             var node = evalNode(cda, XPaths.manufacturedMaterialCode);
+            if (node == null) {
+                return null; //The field is 0..1, and we cannot require it to be there. If it is missing, we return null.
+            }
             var codeSystem = xpath.evaluate("@codeSystem", node);
             if (!Oid.DK_VARENUMRE.value.equals(codeSystem)) {
                 // throw?
