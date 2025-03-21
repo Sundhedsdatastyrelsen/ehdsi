@@ -117,7 +117,7 @@ public class FmkIT {
      */
     @Test
     public void submitDispensationTest() throws Exception {
-        var cpr = Fmk.cprLotteSvendsen;
+        var cpr = Fmk.cprKarl;
         var eDispensationRawPath = System.getProperty("eDispensationITPath");
         assertThat(
             "Java system property eDispensationITPath must be set",
