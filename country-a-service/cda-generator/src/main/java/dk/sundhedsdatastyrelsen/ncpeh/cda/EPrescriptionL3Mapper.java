@@ -220,13 +220,15 @@ public class EPrescriptionL3Mapper {
 
     private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizationTypes) throws MapperException {
         // https://www.nspop.dk/display/public/web/Autorisation has the list of education codes
-        var functionCode = authorizationTypes.stream()
+        // We should use the translation layer for these codes, but they are also used in L1, which isn't mapped in
+        // OpenNCP, so we have to map it in the code.
+        var functionCode = FunctionCodeMapper.mapToFunctionCode(authorizationTypes.stream()
             .findFirst()
             .map(AuthorizationType::getEducationCode)
             // 0000 means 'Erstatningsautorisation' replacement authorization
-            .orElse("0000");
+            .orElse("0000"));
         var cdaFunctionCode = CdaCode.builder()
-            .codeSystem(Oid.DK_AUTHORIZATION_REGISTRY_EDUCATION_CODE)
+            .codeSystem(Oid.FUNCTION_CODE)
             .code(functionCode)
             .build();
         var creator = getAuthorizedHealthcareProfessional(prescription);
