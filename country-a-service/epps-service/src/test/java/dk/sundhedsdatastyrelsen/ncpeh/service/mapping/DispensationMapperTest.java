@@ -64,7 +64,7 @@ class DispensationMapperTest {
     void startEffectuationRequestTest(String xmlFileName, String mappingErrorMessageExpected) throws MapperException {
         var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        var req = sut.startEffectuationRequest("1111111118^^^&2.16.17.710.802.1000.990.1.500&ISO", cda);
+        var req = sut.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
 
         assertThat(req.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(req.getPrescription().getFirst().getIdentifier() > 0L);

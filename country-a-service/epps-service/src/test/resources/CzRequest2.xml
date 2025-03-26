@@ -18,7 +18,7 @@
     <recordTarget contextControlCode="OP" typeCode="RCT">
         <templateId root="2.16.840.1.113883.3.1937.777.11.10.100"/>
         <patientRole classCode="PAT">
-            <id extension="0201909309" root="2.16.17.710.802.1000.990.1.500"/>
+            <id extension="0201909309" root="1.2.208.176.1.2"/>
             <addr>
                 <streetAddressLine>Nørre Allé 143</streetAddressLine>
                 <city>Øduvík</city>
