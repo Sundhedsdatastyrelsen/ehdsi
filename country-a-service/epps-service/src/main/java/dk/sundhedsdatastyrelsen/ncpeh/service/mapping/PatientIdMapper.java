@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 
 import java.util.regex.Pattern;
@@ -13,7 +14,8 @@ import java.util.regex.Pattern;
  * represents a Danish CPR number.
  */
 public final class PatientIdMapper {
-    private static final Pattern patientIdPattern = Pattern.compile("(\\d{10})(?:\\^{3}.*)?");
+    private static final String regexPattern = "(\\d{10})(?:\\^{3}&" + Oid.DK_CPR.value + "&ISO)?";
+    private static final Pattern patientIdPattern = Pattern.compile(regexPattern);
 
     private PatientIdMapper() {
     }
