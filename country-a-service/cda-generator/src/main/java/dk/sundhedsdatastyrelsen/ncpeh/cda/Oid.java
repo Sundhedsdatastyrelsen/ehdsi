@@ -87,8 +87,8 @@ public enum Oid {
      */
     ATC("2.16.840.1.113883.6.73", "Anatomical Therapeutic Chemical"),
 
-    /// eHDSIHealthcareProfessionalRole used for function code
-    FUNCTION_CODE("1.3.6.1.4.1.12559.11.10.1.3.1.42.1", "eHDSIHealthcareProfessionalRole"),
+    /// International standard classification of occupations (ISCO) used for function code
+    FUNCTION_CODE("2.16.840.1.113883.2.9.6.2.7", "ISCO"),
 
     /**
      * Administrative Gender.
