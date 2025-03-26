@@ -82,7 +82,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
             return new PatientId(matcher.group(1), matcher.group(2));
         }
         // If the string does not contain three carets then we assume it is a CPR number
-        return new PatientId("2.16.17.710.802.1000.990.1.500", id);
+        return new PatientId("1.2.208.176.1.2", id);
     }
 
     static PatientDemographics toEpsosPatient(dk.sundhedsdatastyrelsen.ncpeh.api.model.PatientDemographics patient) {
@@ -117,8 +117,8 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
 
     static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader, DefaultApi countryAApi) throws NIException {
         try {
-            // We only accept patient ids with root "2.16.17.710.802.1000.990.1.500", otherwise we throw.
-            final var pidsValidInvalid = patientIds.stream().collect(Collectors.partitioningBy(pid -> "2.16.17.710.802.1000.990.1.500".equals(
+            // We only accept patient ids with root "1.2.208.176.1.2", otherwise we throw.
+            final var pidsValidInvalid = patientIds.stream().collect(Collectors.partitioningBy(pid -> "1.2.208.176.1.2".equals(
                 pid.getRoot())));
             if (!pidsValidInvalid.get(false).isEmpty()) {
                 throw new NIException(OpenNCPErrorCode.ERROR_PI_GENERIC, String.format(
@@ -159,7 +159,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
     public static void main(String[] args) throws Exception {
         try {
             var foo = getPatientDemographicsFromCountryA(
-                List.of(new PatientId("2.16.17.710.802.1000.990.1.500", "1111111118")),
+                List.of(new PatientId("1.2.208.176.1.2", "1111111118")),
                 XmlUtil.parseContent("<SomeXml/>").getDocumentElement(),
                 CountryAService.api());
             return;
