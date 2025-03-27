@@ -27,7 +27,7 @@
 #     translation element can be used to convey the type of content item.
 #
 #     If the @unit attribute is not provided, it is considered to have the default
-#     value '1'."
+#     value '1'.
 
 "AM":
   lms15-display-name: "ampuller"

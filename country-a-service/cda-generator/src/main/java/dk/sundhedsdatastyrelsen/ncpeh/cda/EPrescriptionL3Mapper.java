@@ -1,34 +1,42 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsi.__.stamdata._3.AuthorizationType;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EhdsiUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Organization;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Size;
+import lombok.NonNull;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EPrescriptionL3Mapper {
     private EPrescriptionL3Mapper() {
@@ -62,6 +70,9 @@ public class EPrescriptionL3Mapper {
 
         var i = prescription.getIndication();
         var indicationText = i.getFreeText() != null ? i.getFreeText() : i.getText();
+        var activeIngredients = getActiveIngredients(
+            prescription.getDrug().getStrength(), prescription.getDrug()
+                .getSubstances());
         var prescriptionBuilder = EPrescriptionL3.builder()
             .documentId(new CdaId(UUID.randomUUID()))
             .title(String.format(
@@ -77,7 +88,9 @@ public class EPrescriptionL3Mapper {
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
-            .patientMedicationInstructions(prescription.getDosageText());
+            .patientMedicationInstructions(prescription.getDosageText())
+            .activeIngredients(activeIngredients.isLeft() ? activeIngredients.getLeft() : Collections.emptyList())
+            .unstructuredActiveIngredients(activeIngredients.isRight() ? activeIngredients.getRight() : null);
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
@@ -278,12 +291,55 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator information"));
     }
 
-    private static String drugStrengthText(PrescriptionType prescription) throws MapperException {
-        for (var xml : prescription.getDrug().getStrength().getContent()) {
-            if (xml.getName().getLocalPart().equals("Text")) {
-                return ((DrugStrengthTextType) xml.getValue()).getValue();
+    private static @NonNull Either<List<ActiveIngredient>, String> getActiveIngredients(DrugStrengthType strength, SubstancesType substances) {
+        if (substances == null
+            || substances.getActiveSubstance() == null
+            || substances.getActiveSubstance().stream().allMatch(ai -> getSubstanceText(ai) == null)) {
+            return Either.ofRight(null);
+        }
+
+        if (substances.getActiveSubstance().size() == 1) {
+            var text = getSubstanceText(substances.getActiveSubstance().getFirst());
+            // TODO this mapping only works for a few of the strengths.
+            var codedStrength = EhdsiUnitMapper.fromLms(strength.getUnitCode().getValue());
+            if (text != null && codedStrength instanceof EhdsiUnit.WithCode withCode) {
+                return Either.ofLeft(List.of(ActiveIngredient.builder()
+                    .name(text)
+                    .numerator(strength.getValue())
+                    .numeratorUnit(withCode.getCode())
+                    .denominatorUnit("1")
+                    .build()));
             }
         }
-        throw new MapperException("Missing Text element on DrugStrength");
+
+        // When there is more than 1 active substance, we don't have the strength in a structured format, so we return
+        // the list unstructured.
+        return Either.ofRight(Stream.concat(
+                Stream.of(getSubstanceStrengthText(strength)), substances.getActiveSubstance()
+                    .stream()
+                    .map(EPrescriptionL3Mapper::getSubstanceText))
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining("; ")));
+    }
+
+    private static String getSubstanceText(ActiveSubstanceType substance) {
+        if (substance == null) return null;
+        if (substance.getSubstanceText() != null) return substance.getSubstanceText().getValue();
+        if (substance.getText() != null) return substance.getText();
+        if (substance.getFreeText() != null) return substance.getFreeText();
+        return null;
+    }
+
+    private static String getSubstanceStrengthText(DrugStrengthType strength) {
+        if (strength == null) return null;
+        if (strength.getUnitText() != null) return strength.getUnitText();
+        if (strength.getText() != null) return strength.getText().getValue();
+        return null;
+    }
+
+    private static @NonNull String drugStrengthText(@NonNull PrescriptionType prescription) throws MapperException {
+        var text = prescription.getDrug().getStrength().getText();
+        if (text == null) throw new MapperException("Missing Text element on DrugStrength");
+        return text.getValue();
     }
 }
