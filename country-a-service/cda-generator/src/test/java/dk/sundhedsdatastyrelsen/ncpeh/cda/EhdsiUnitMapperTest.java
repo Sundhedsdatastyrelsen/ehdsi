@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EhdsiUnit;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -8,10 +8,10 @@ class EhdsiUnitMapperTest {
 
     @Test
     void fromLmsTest() {
-        Assertions.assertEquals(new EhdsiUnit.WithCode("{Ampoule}"), EhdsiUnitMapper.fromLms("AM"));
-        Assertions.assertEquals(new EhdsiUnit.WithTranslation("Inf.flaske"), EhdsiUnitMapper.fromLms("IF"));
+        Assertions.assertEquals(new PackageUnit.WithCode("{Ampoule}"), PackageUnitMapper.fromLms("AM"));
+        Assertions.assertEquals(new PackageUnit.WithTranslation("Inf.flaske"), PackageUnitMapper.fromLms("IF"));
         Assertions.assertThrows(
             IllegalArgumentException.class, () ->
-                EhdsiUnitMapper.fromLms("unknown code"));
+                PackageUnitMapper.fromLms("unknown code"));
     }
 }

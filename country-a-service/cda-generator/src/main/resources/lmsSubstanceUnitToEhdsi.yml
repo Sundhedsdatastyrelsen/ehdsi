@@ -1,0 +1,29 @@
+# Mapping from LMS15 "substance" (unit type 3) codes to eHDSI unit values.
+#
+# Codes and values are based on:
+# - eHDSIUnit and eHDSIQuantityUnit from MVC 7.2.0
+# - LMS15 codes from 20240503.
+# TODO more of these. there are a lot.
+
+# Some thoughts. We do have units with both number and unit in the denominator. (MGH: mg/24 timer)
+# In eHDSI, they write that we have to write the units as num/den, except in the case that the
+# number cannot be converted to that. I take that to mean that the numbers should be whole?
+# Yeah. I won't try to convert anything from decimal to fractional.
+
+"DOS":
+  lms15-display-name: "doser"
+"G":
+  numerator: "g"
+"IU": # Internationale enheder
+  numerator: "[IU]"
+"MEQ":
+  numerator: "meq"
+"MG":
+  numerator: "mg"
+"MGP":
+  lms15-display-name: "mg/pust"
+  numerator: "mg"
+"ML":
+  numerator: "mL"
+"UN":
+  lms15-display-name: "enheder"

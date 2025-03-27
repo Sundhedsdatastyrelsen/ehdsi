@@ -4,7 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionPdf;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EhdsiUnit;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PdfField;
 import lombok.NonNull;
@@ -42,8 +42,8 @@ public class EPrescriptionPdfMapper {
         var quantity = model.getPackageQuantityLong();
         var packagePlural = quantity > 1 ? "pakker" : "pakke";
         var unit = switch (model.getProduct().getSize().getUnit()) {
-            case EhdsiUnit.WithCode u -> u.getCode();
-            case EhdsiUnit.WithTranslation u -> u.getTranslation();
+            case PackageUnit.WithCode u -> u.getCode();
+            case PackageUnit.WithTranslation u -> u.getTranslation();
         };
         return String.format(
             "%s %s à %s %s %s",

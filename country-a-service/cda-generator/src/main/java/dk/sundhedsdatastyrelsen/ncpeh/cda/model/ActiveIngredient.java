@@ -23,12 +23,12 @@ import java.util.Locale;
 public class ActiveIngredient {
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
     @NonNull BigDecimal numerator;
-    // The Danish encoding doesn't allow for denominator != 1.
-    @NonNull BigDecimal denominator = BigDecimal.ONE;
+    @NonNull BigDecimal denominator;
     /// Unit must be taken from the eHDSIUnit value set, https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/voc-1.3.6.1.4.1.12559.11.10.1.3.1.42.16-2024-04-16T112900.html.
     @NonNull String numeratorUnit;
     @NonNull String denominatorUnit;
     @NonNull String name;
+    String translation;
 
     public @NonNull String getNumerator() {
         return decimalFormat.format(numerator);
