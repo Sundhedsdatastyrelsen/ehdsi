@@ -90,7 +90,7 @@ public class FmkIT {
     }
 
     private static String patientId(String cpr) {
-        return String.format("%s^^^&%s&ISO", cpr, Oid.DK_CPR);
+        return String.format("%s^^^&%s&ISO", cpr, Oid.DK_CPR.value);
     }
 
     private static UndoDispensationRepository undoDispensationRepository() {
