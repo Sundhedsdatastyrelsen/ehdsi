@@ -1150,18 +1150,29 @@
 		</xs:annotation>
 	</xs:element>
 	<xs:complexType name="DrugStrengthType">
-		<xs:choice>
-			<xs:sequence>
-				<xs:element name="Value" type="medicinecard20150601:DrugStrengthValueType"/>
-				<xs:element name="UnitCode" type="medicinecard20150601:DrugStrengthUnitCodeType"/>
-				<?filter nsf="ignore"?>
-				<xs:element name="UnitText" type="medicinecard20150601:DrugStrengthUnitTextType"/>
-				<xs:element minOccurs="0" name="Text" type="medicinecard20150601:DrugStrengthTextType"/>
-			</xs:sequence>
-			<xs:element name="Text" type="medicinecard20150601:DrugStrengthTextType"/>
-		</xs:choice>
-		<!-- A convoluted construction for either value+unit, text or both but not neither -->
-	</xs:complexType>
+        <!-- JAV: We simplify this choice to enable more useful code generation at the cost of precision -->
+        <!-- Original: -->
+<!--        <xs:choice>-->
+<!--            <xs:sequence>-->
+<!--                <xs:element name="Value" type="medicinecard20150601:DrugStrengthValueType"/>-->
+<!--                <xs:element name="UnitCode" type="medicinecard20150601:DrugStrengthUnitCodeType"/>-->
+<!--                <?filter nsf="ignore"?>-->
+<!--                <xs:element name="UnitText" type="medicinecard20150601:DrugStrengthUnitTextType"/>-->
+<!--                <xs:element minOccurs="0" name="Text" type="medicinecard20150601:DrugStrengthTextType"/>-->
+<!--            </xs:sequence>-->
+<!--            <xs:element name="Text" type="medicinecard20150601:DrugStrengthTextType"/>-->
+<!--        </xs:choice>-->
+<!--		&lt;!&ndash; A convoluted construction for either value+unit, text or both but not neither &ndash;&gt;-->
+        <!-- Replacement: -->
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Value" type="medicinecard20150601:DrugStrengthValueType"/>
+                <xs:element minOccurs="0" name="UnitCode" type="medicinecard20150601:DrugStrengthUnitCodeType"/>
+                <?filter nsf="ignore"?>
+                <xs:element minOccurs="0" name="UnitText" type="medicinecard20150601:DrugStrengthUnitTextType"/>
+                <xs:element minOccurs="0" name="Text" type="medicinecard20150601:DrugStrengthTextType"/>
+            </xs:sequence>
+        <!-- End replacement -->
+        	</xs:complexType>
 
 	<xs:simpleType name="GetPrescriptionRequestsToDateTimeType">
 		<xs:annotation>

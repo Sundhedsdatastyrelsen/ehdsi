@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda.model;
 
+import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
@@ -18,10 +19,12 @@ import java.util.Locale;
 /// allowed to use something like 1.5 "mg/mL" as the numerator, and then 1 "1" as the denominator, where "1" is a special
 /// unit that means "per countable unit" - like a tablet or a tube.
 @Value
+@Builder(toBuilder = true)
 public class ActiveIngredient {
     private static final DecimalFormat decimalFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
     @NonNull BigDecimal numerator;
-    @NonNull BigDecimal denominator;
+    // The Danish encoding doesn't allow for denominator != 1.
+    @NonNull BigDecimal denominator = BigDecimal.ONE;
     /// Unit must be taken from the eHDSIUnit value set, https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/voc-1.3.6.1.4.1.12559.11.10.1.3.1.42.16-2024-04-16T112900.html.
     @NonNull String numeratorUnit;
     @NonNull String denominatorUnit;
