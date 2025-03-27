@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Value
 public class Size {
-    @NonNull EhdsiUnit unit;
+    @NonNull PackageUnit unit;
     @NonNull BigDecimal value;
 
     public String getValue() {

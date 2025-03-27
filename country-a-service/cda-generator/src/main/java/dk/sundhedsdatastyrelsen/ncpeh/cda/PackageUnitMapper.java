@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EhdsiUnit;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -8,18 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EhdsiUnitMapper {
-    private static final Map<String, EhdsiUnit> lms15ToEntries;
+public class PackageUnitMapper {
+    private static final Map<String, PackageUnit> lmsPackageUnitsToEntries;
 
     static {
-        try (var is = EhdsiUnitMapper.class.getClassLoader().getResourceAsStream("lms15ToEhdsi.yml")) {
+        try (var is = PackageUnitMapper.class.getClassLoader().getResourceAsStream("lmsPackageUnitToEhdsi.yml")) {
             var yaml = new Yaml();
             HashMap<String, HashMap<String, String>> data = yaml.load(is);
-            lms15ToEntries = data.entrySet().stream().map(kv -> {
+            lmsPackageUnitsToEntries = data.entrySet().stream().map(kv -> {
                 var unit = kv.getValue().get("ehdsi-unit");
-                EhdsiUnit ehdsiUnit = unit != null
-                    ? new EhdsiUnit.WithCode(unit)
-                    : new EhdsiUnit.WithTranslation(kv.getValue().get("lms15-display-name"));
+                PackageUnit ehdsiUnit = unit != null
+                    ? new PackageUnit.WithCode(unit)
+                    : new PackageUnit.WithTranslation(kv.getValue().get("lms15-display-name"));
                 return Map.entry(kv.getKey(), ehdsiUnit);
             }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         } catch (IOException e) {
@@ -32,10 +32,10 @@ public class EhdsiUnitMapper {
      * <p>
      * Examples: "AM", "HD", "MT", "KG"
      */
-    public static EhdsiUnit fromLms(String lms15Code) {
-        final var result = lms15ToEntries.get(lms15Code);
+    public static PackageUnit fromLms(String lms15Code) {
+        final var result = lmsPackageUnitsToEntries.get(lms15Code);
         if (result == null) {
-            throw new IllegalArgumentException(String.format("Unknown LMS15 code: %s", lms15Code));
+            throw new IllegalArgumentException(String.format("Unknown LMS15 package unit code: %s", lms15Code));
         }
         return result;
     }

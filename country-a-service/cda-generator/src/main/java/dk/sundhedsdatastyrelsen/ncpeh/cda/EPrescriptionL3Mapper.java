@@ -17,7 +17,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EhdsiUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Organization;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
@@ -126,7 +125,7 @@ public class EPrescriptionL3Mapper {
             .build();
 
         var ps = prescription.getPackageRestriction().getPackageSize();
-        var size = new Size(EhdsiUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
+        var size = new Size(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
 
         var packageNumber = prescription.getPackageRestriction().getPackageNumber().getValue();
         var packageCode = CdaCode.builder()
@@ -300,16 +299,18 @@ public class EPrescriptionL3Mapper {
 
         if (substances.getActiveSubstance().size() == 1) {
             var text = getSubstanceText(substances.getActiveSubstance().getFirst());
-            // TODO this mapping only works for a few of the strengths.
-            var codedStrength = EhdsiUnitMapper.fromLms(strength.getUnitCode().getValue());
-            if (text != null && codedStrength instanceof EhdsiUnit.WithCode withCode) {
+            var codedStrength = SubstanceUnitMapper.fromLms(strength.getUnitCode().getValue());
+            if (text != null && codedStrength != null) {
                 return Either.ofLeft(List.of(ActiveIngredient.builder()
                     .name(text)
                     .numerator(strength.getValue())
-                    .numeratorUnit(withCode.getCode())
-                    .denominatorUnit("1")
+                    .numeratorUnit(codedStrength.numeratorUnit())
+                    .denominator(codedStrength.denominator())
+                    .denominatorUnit(codedStrength.denominatorUnit())
+                    .translation(codedStrength.translation())
                     .build()));
             }
+            // If the strength is not coded, or we can't find the text, fall back to unstructured.
         }
 
         // When there is more than 1 active substance, we don't have the strength in a structured format, so we return
