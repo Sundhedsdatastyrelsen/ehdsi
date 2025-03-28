@@ -47,6 +47,11 @@ public enum Oid {
      * <a href="https://oid-base.com/get/1.2.208.176.2.4">Registered.</a>
      */
     DK_SKS("1.2.208.176.2.4", "Sundhedsvæsenets Klassifikations System"),
+
+    /// Lægemiddelstyrelsens drugid
+    /// Registered: https://oid-base.com/get/1.2.208.176.3.1
+    DK_DRUG_ID("1.2.208.176.3.1", "Lægemiddelstyrelsens DrugID"),
+
     /**
      * Varenumre på lægemiddelpakninger
      * <a href="https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/">https://laegemiddelstyrelsen.dk/da/tilskud/varenumre/</a>

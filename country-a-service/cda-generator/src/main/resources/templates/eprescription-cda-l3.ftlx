@@ -207,6 +207,9 @@
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
                                     <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
                                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+<#if product.drugId??>
+                                        <code <@common.cdaCodeAttrs product.drugId />/>
+</#if>
                                         <name>${ product.name }</name>
                                         <pharm:desc>${ product.description }</pharm:desc>
                                         <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
