@@ -21,7 +21,7 @@ This is a list of URLs that are used in the NCP setup:
 - http://192.168.104.80:8097/openncp-web-manager/#/login
 
 # Setting up a server environment
-To ensure regular logging to the CTS, add the following line (edited appropiatly for the path) to the cronfile using `crontab -e` (using the same user running the docker containers in general):
+To ensure regular synchronization from the CTS, add the following line (edited appropriately for the path) to the cronfile using `crontab -e` (using the same user running the docker containers in general):
 ```bash
 0 3 * * * cd /var/ehdsi/NCP && /usr/bin/docker compose run tsam-synchronizer
 ```
