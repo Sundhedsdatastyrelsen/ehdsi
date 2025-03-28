@@ -105,6 +105,11 @@ public class EPrescriptionL3Mapper {
     }
 
     private static Product product(PrescriptionType prescription, String packageFormCodeRaw) throws MapperException {
+        var drugId = prescription.getDrug().getIdentifier();
+        var codedId = drugId != null ? CdaCode.builder()
+            .codeSystem(Oid.DK_DRUG_ID)
+            .code(String.valueOf(drugId.getValue()))
+            .build() : null;
         var f = prescription.getDrug().getForm();
         var formCode = CdaCode.builder()
             .codeSystem(Oid.DK_LMS22)
@@ -134,6 +139,7 @@ public class EPrescriptionL3Mapper {
             .build();
 
         return Product.builder()
+            .drugId(codedId)
             .name(prescription.getDrug().getName())
             .description(drugStrengthText(prescription))
             .formCode(formCode)

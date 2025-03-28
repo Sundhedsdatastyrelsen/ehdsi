@@ -7,6 +7,8 @@ import lombok.Value;
 @Value
 @Builder
 public class Product {
+    /// LMS drug id
+    CdaCode drugId;
     @NonNull String name;
     @NonNull String description;
     @NonNull CdaCode formCode;
