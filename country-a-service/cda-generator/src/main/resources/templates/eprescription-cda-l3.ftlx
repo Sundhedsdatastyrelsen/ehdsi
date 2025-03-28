@@ -272,6 +272,7 @@
                             <entryRelationship typeCode="SUBJ" inversionInd="true">
                                 <act classCode="ACT" moodCode="INT">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.12"/>
+                                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3"/><#-- IHE template root, not required, but used in the display tool -->
                                     <templateId root="2.16.840.1.113883.10.20.1.49"/>
                                     <code code="PINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
                                     <text><reference value="#patient-medication-instructions" /></text>
