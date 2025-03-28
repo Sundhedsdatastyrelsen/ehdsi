@@ -211,7 +211,9 @@
                                         <code <@common.cdaCodeAttrs product.drugId />/>
 </#if>
                                         <name>${ product.name }</name>
+<#if product.description??>
                                         <pharm:desc>${ product.description }</pharm:desc>
+</#if>
                                         <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
                                         <pharm:asContent classCode="CONT">
 <#if product.size.unit.tag == "WithCode">
