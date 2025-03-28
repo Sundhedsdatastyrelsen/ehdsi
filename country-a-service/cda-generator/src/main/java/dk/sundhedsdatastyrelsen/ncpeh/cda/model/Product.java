@@ -8,7 +8,7 @@ import lombok.Value;
 @Builder
 public class Product {
     @NonNull String name;
-    @NonNull String description;
+    String description;
     @NonNull CdaCode formCode;
     CdaCode packageCode;
     CdaCode packageFormCode;

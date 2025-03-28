@@ -338,9 +338,11 @@ public class EPrescriptionL3Mapper {
         return null;
     }
 
-    private static @NonNull String drugStrengthText(@NonNull PrescriptionType prescription) throws MapperException {
-        var text = prescription.getDrug().getStrength().getText();
-        if (text == null) throw new MapperException("Missing Text element on DrugStrength");
-        return text.getValue();
+    private static String drugStrengthText(@NonNull PrescriptionType prescription) {
+        if (prescription.getDrug() == null || prescription.getDrug().getStrength() == null ||
+            prescription.getDrug().getStrength().getText() == null ||
+            prescription.getDrug().getStrength().getText().getValue() == null)
+            return null;
+        return prescription.getDrug().getStrength().getText().getValue();
     }
 }
