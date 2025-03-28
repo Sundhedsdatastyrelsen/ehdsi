@@ -87,9 +87,6 @@ public enum Oid {
      */
     ATC("2.16.840.1.113883.6.73", "Anatomical Therapeutic Chemical"),
 
-    /// International standard classification of occupations (ISCO) used for function code
-    FUNCTION_CODE("2.16.840.1.113883.2.9.6.2.7", "ISCO"),
-
     /**
      * Administrative Gender.
      * <a href="https://oid-base.com/get/2.16.840.1.113883.5.1">Registered.</a>

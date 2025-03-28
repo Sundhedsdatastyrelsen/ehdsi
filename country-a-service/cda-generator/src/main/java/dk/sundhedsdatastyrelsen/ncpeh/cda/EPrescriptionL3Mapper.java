@@ -228,7 +228,7 @@ public class EPrescriptionL3Mapper {
             // 0000 means 'Erstatningsautorisation' replacement authorization
             .orElse("0000"));
         var cdaFunctionCode = CdaCode.builder()
-            .codeSystem(Oid.FUNCTION_CODE)
+            .codeSystem(Oid.ISCO)
             .code(functionCode)
             .build();
         var creator = getAuthorizedHealthcareProfessional(prescription);
