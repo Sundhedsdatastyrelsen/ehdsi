@@ -1,6 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms;
 
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms01Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms09Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms22Data;
@@ -40,7 +42,21 @@ class LmsFetchingIT {
     }
 
     @Test
-    void testDownloadAndParseAndStoreLms02() {
+    void testDownloadAndParseLms01() {
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_01);
+        List<Lms01Data> lms01data = LmsDataParser.parseLms01Data(result);
+
+        lmsDataRepository.updateLms01(lms01data);
+
+        List<Lms01Data> databaseData = lmsDataRepository.getAllLms01();
+        Assertions.assertEquals(lms01data.size(), databaseData.size());
+        for (var lmsDataRow : lms01data) {
+            Assertions.assertTrue(databaseData.contains(lmsDataRow));
+        }
+    }
+
+    @Test
+    void testDownloadAndParseLms02() {
         String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_02);
         List<Lms02Data> lms02Data = LmsDataParser.parseLms02Data(result);
 
@@ -49,6 +65,20 @@ class LmsFetchingIT {
         List<Lms02Data> databaseData = lmsDataRepository.getAllLms02();
         Assertions.assertEquals(lms02Data.size(), databaseData.size());
         for (var lmsDataRow : lms02Data) {
+            Assertions.assertTrue(databaseData.contains(lmsDataRow));
+        }
+
+    }
+    @Test
+    void testDownloadAndParseLms09() {
+        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_09);
+        List<Lms09Data> lms09Data = LmsDataParser.parseLms09Data(result);
+
+        lmsDataRepository.updateLms09(lms09Data);
+
+        List<Lms09Data> databaseData = lmsDataRepository.getAllLms09();
+        Assertions.assertEquals(lms09Data.size(), databaseData.size());
+        for (var lmsDataRow : lms09Data) {
             Assertions.assertTrue(databaseData.contains(lmsDataRow));
         }
 

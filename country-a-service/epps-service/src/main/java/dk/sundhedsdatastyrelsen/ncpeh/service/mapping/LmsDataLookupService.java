@@ -25,4 +25,8 @@ public class LmsDataLookupService {
         }
         return null;
     }
+
+    public String getManufacturerOrganizationNameFromDrugId(long drugId) {
+        return "TODO";
+    }
 }

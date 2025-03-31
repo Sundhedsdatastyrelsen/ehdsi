@@ -140,7 +140,9 @@ public class PrescriptionService {
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue());
-                    var manufacturerOrganizationName = "todo";
+                    var manufacturerOrganizationName = lmsDataLookupService.getManufacturerOrganizationNameFromDrugId(
+                        prescription.getDrug().getIdentifier().getValue()
+                    );
 
                     return new EPrescriptionL3Input(
                         fmkResponse,
