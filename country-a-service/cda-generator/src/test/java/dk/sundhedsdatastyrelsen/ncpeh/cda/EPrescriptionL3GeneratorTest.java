@@ -31,7 +31,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN");
+        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", "Manufacturer");
         var epL3 = EPrescriptionL3Mapper.model(input);
 
         //Generate prescription without null in packageCode
@@ -69,7 +69,7 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var prescriptions = prescription.getPrescription();
         for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
-            var input = new EPrescriptionL3Input(prescription, prescriptionindex, medication, "FIN");
+            var input = new EPrescriptionL3Input(prescription, prescriptionindex, medication, "FIN", "Manufacturer");
             var xmlString = EPrescriptionL3Generator.generate(input);
 
             // 1. Test if well-formed XML (can be parsed)

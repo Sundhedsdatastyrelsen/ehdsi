@@ -11,7 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.HashSet;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @SpringJUnitConfig(LmsTestConfig.class)
 class LmsFetchingIT {
@@ -40,7 +45,25 @@ class LmsFetchingIT {
     }
 
     @Test
-    void testDownloadAndParseAndStoreLms02() {
+    void testLms01AndLms09() {
+        var lms01Raw = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_01);
+        var lms09Raw = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_09);
+        var lms01Data = LmsDataParser.parseLms01Data(lms01Raw);
+        var lms09Data = LmsDataParser.parseLms09Data(lms09Raw);
+        lmsDataRepository.updateLms01(lms01Data);
+        lmsDataRepository.updateLms09(lms09Data);
+        assertThat(new HashSet<>(lmsDataRepository.getAllLms01()), is(new HashSet<>(lms01Data)));
+        assertThat(new HashSet<>(lmsDataRepository.getAllLms09()), is(new HashSet<>(lms09Data)));
+
+        // This test is only valid as long as Panodil 500 mg is marketed by Haleon Denmark ApS
+        assertThat(lmsDataRepository.getManufacturerOrganizationNameFromDrugId(28100636073L), is("Haleon Denmark ApS"));
+        assertThat("we should gracefully return null when no drug or manufacturer org found",
+            lmsDataRepository.getManufacturerOrganizationNameFromDrugId(9999999L),
+            is(nullValue()));
+    }
+
+    @Test
+    void testDownloadAndParseLms02() {
         String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_02);
         List<Lms02Data> lms02Data = LmsDataParser.parseLms02Data(result);
 
@@ -51,7 +74,6 @@ class LmsFetchingIT {
         for (var lmsDataRow : lms02Data) {
             Assertions.assertTrue(databaseData.contains(lmsDataRow));
         }
-
     }
 
     @Test

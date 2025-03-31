@@ -1,6 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms;
 
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms01Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms09Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms22Data;
@@ -14,8 +16,8 @@ import java.util.List;
 public class LmsScheduledUpdaterService {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(LmsScheduledUpdaterService.class);
 
-    private LmsFetchingService lmsFetchingService;
-    private LmsDataRepository lmsDataRepository;
+    private final LmsFetchingService lmsFetchingService;
+    private final LmsDataRepository lmsDataRepository;
 
     public LmsScheduledUpdaterService(LmsFetchingService lmsFetchingService, LmsDataRepository lmsDataRepository) {
         this.lmsFetchingService = lmsFetchingService;
@@ -24,6 +26,16 @@ public class LmsScheduledUpdaterService {
 
     @Scheduled(cron = "0 0 3 * * *") // Run at 03:00 daily
     public void fetchNewLmsData() {
+        log.info("Updating LMS01");
+        try {
+            String lms01Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_01);
+            List<Lms01Data> lms01Data = LmsDataParser.parseLms01Data(lms01Result);
+            lmsDataRepository.updateLms01(lms01Data);
+        } catch (Exception e) {
+            log.error("Failed updating LMS01", e);
+        }
+        log.info("Finished updating LMS01");
+
         log.info("Updating LMS02");
         try {
             String lms02Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_02);
@@ -33,6 +45,16 @@ public class LmsScheduledUpdaterService {
             log.error("Failed updating LMS02", e);
         }
         log.info("Finished updating LMS02");
+
+        log.info("Updating LMS09");
+        try {
+            String lms09Result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_09);
+            List<Lms09Data> lms09Data = LmsDataParser.parseLms09Data(lms09Result);
+            lmsDataRepository.updateLms09(lms09Data);
+        } catch (Exception e) {
+            log.error("Failed updating LMS09", e);
+        }
+        log.info("Finished updating LMS09");
 
         log.info("Updating LMS14");
         try {

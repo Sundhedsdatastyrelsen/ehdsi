@@ -17,8 +17,10 @@ public class Product {
     CdaCode packageFormCode;
     @NonNull CdaCode atcCode;
     @NonNull Size size;
+    String manufacturerOrganizationName;
 
     public String getDescription(){ //Right now, description just returns the strength
         return getStrength();
     }
+
 }
