@@ -153,7 +153,7 @@ public class EPrescriptionL3Mapper {
         return Product.builder()
             .drugId(codedId)
             .name(prescription.getDrug().getName())
-            .description(drugStrengthText(prescription))
+            .strength(drugStrengthText(prescription))
             .formCode(formCode)
             .size(size)
             .packageCode(packageCode)
