@@ -16,5 +16,4 @@ public class Lms09Data implements DatabaseObject {
     public String getKey() {
         return companyId;
     }
-
 }

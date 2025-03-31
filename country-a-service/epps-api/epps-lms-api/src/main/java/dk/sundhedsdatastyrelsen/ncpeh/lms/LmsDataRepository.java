@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms22Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.sql.GenericRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -90,5 +91,21 @@ public class LmsDataRepository {
             return null;
         }
         return dataList.getFirst();
+    }
+
+    public String getManufacturerOrganizationNameFromDrugId(long drugId) {
+        var sql = """
+            SELECT l09.companyName
+            FROM LMS09_DATA_TABLE l09
+            JOIN LMS01_DATA_TABLE l01
+            ON l01.marketingAuthorizationHolder = l09.companyId
+            WHERE l01.drugId = ?
+            """;
+
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, drugId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

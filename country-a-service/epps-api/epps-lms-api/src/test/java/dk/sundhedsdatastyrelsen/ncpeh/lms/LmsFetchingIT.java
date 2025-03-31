@@ -1,8 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.lms;
 
-import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms01Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms09Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms14Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms15Data;
 import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms22Data;
@@ -13,7 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.HashSet;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @SpringJUnitConfig(LmsTestConfig.class)
 class LmsFetchingIT {
@@ -42,17 +45,21 @@ class LmsFetchingIT {
     }
 
     @Test
-    void testDownloadAndParseLms01() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_01);
-        List<Lms01Data> lms01data = LmsDataParser.parseLms01Data(result);
+    void testLms01AndLms09() {
+        var lms01Raw = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_01);
+        var lms09Raw = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_09);
+        var lms01Data = LmsDataParser.parseLms01Data(lms01Raw);
+        var lms09Data = LmsDataParser.parseLms09Data(lms09Raw);
+        lmsDataRepository.updateLms01(lms01Data);
+        lmsDataRepository.updateLms09(lms09Data);
+        assertThat(new HashSet<>(lmsDataRepository.getAllLms01()), is(new HashSet<>(lms01Data)));
+        assertThat(new HashSet<>(lmsDataRepository.getAllLms09()), is(new HashSet<>(lms09Data)));
 
-        lmsDataRepository.updateLms01(lms01data);
-
-        List<Lms01Data> databaseData = lmsDataRepository.getAllLms01();
-        Assertions.assertEquals(lms01data.size(), databaseData.size());
-        for (var lmsDataRow : lms01data) {
-            Assertions.assertTrue(databaseData.contains(lmsDataRow));
-        }
+        // This test is only valid as long as Panodil 500 mg is marketed by Haleon Denmark ApS
+        assertThat(lmsDataRepository.getManufacturerOrganizationNameFromDrugId(28100636073L), is("Haleon Denmark ApS"));
+        assertThat("we should gracefully return null when no drug or manufacturer org found",
+            lmsDataRepository.getManufacturerOrganizationNameFromDrugId(9999999L),
+            is(nullValue()));
     }
 
     @Test
@@ -67,21 +74,6 @@ class LmsFetchingIT {
         for (var lmsDataRow : lms02Data) {
             Assertions.assertTrue(databaseData.contains(lmsDataRow));
         }
-
-    }
-    @Test
-    void testDownloadAndParseLms09() {
-        String result = lmsFetchingService.getLmsDataFromServer(LmsConstants.FtpFileNames.LMS_09);
-        List<Lms09Data> lms09Data = LmsDataParser.parseLms09Data(result);
-
-        lmsDataRepository.updateLms09(lms09Data);
-
-        List<Lms09Data> databaseData = lmsDataRepository.getAllLms09();
-        Assertions.assertEquals(lms09Data.size(), databaseData.size());
-        for (var lmsDataRow : lms09Data) {
-            Assertions.assertTrue(databaseData.contains(lmsDataRow));
-        }
-
     }
 
     @Test

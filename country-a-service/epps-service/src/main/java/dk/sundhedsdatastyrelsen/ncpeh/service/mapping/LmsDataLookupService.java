@@ -27,6 +27,6 @@ public class LmsDataLookupService {
     }
 
     public String getManufacturerOrganizationNameFromDrugId(long drugId) {
-        return "TODO";
+        return lmsDataRepository.getManufacturerOrganizationNameFromDrugId(drugId);
     }
 }
