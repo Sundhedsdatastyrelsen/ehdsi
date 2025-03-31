@@ -40,14 +40,6 @@ import java.util.stream.Stream;
 public class EPrescriptionL3Mapper {
     private EPrescriptionL3Mapper() {
     }
-
-    /**
-     * Map a prescription response from FMK to a CDA data model.
-     */
-    public static EPrescriptionL3 model(GetPrescriptionResponseType response, int prescriptionIndex, String packageFormCode) throws MapperException {
-        return model(new EPrescriptionL3Input(response, prescriptionIndex, null, packageFormCode));
-    }
-
     /**
      * Map a prescription response from FMK to a CDA data model.
      */

@@ -16,4 +16,5 @@ public class Product {
     CdaCode packageFormCode;
     @NonNull CdaCode atcCode;
     @NonNull Size size;
+    String manufacturerOrganizationName;
 }
