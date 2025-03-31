@@ -8,8 +8,12 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionPdfGenerator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionPdfMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import freemarker.template.TemplateException;
@@ -32,24 +36,9 @@ public class EPrescriptionMapper {
             } catch (TemplateException | IOException e) {
                 throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
-            var l3Meta = generateMeta(
-                patientId, dataModel, EPrescriptionDocumentIdMapper.level3DocumentId(dataModel.getPrescriptionId()
-                    .getExtension()));
-            l3Meta.setSize((long) cda.length());
-            // "Document metadata shall include a SHA1 hash of the document content."
-            // https://www.ihe.net/uploadedFiles/Documents/ITI/IHE_ITI_TF_Rev17-0_Vol1_FT_2020-07-20.pdf
-            l3Meta.setHash(DigestUtils.sha1Hex(cda));
+            var l3Meta = generateMeta(patientId, dataModel, cda , DocumentLevel.LEVEL3);
 
-            //Generate PDF to deliver metadata on it
-            var pdf = EPrescriptionPdfGenerator.generate(EPrescriptionPdfMapper.map(dataModel));
-
-            var l1Meta = generateMeta(
-                patientId, dataModel, EPrescriptionDocumentIdMapper.level1DocumentId(dataModel.getPrescriptionId()
-                    .getExtension()));
-            l1Meta.setSize((long) pdf.length);
-            // "Document metadata shall include a SHA1 hash of the document content."
-            // https://www.ihe.net/uploadedFiles/Documents/ITI/IHE_ITI_TF_Rev17-0_Vol1_FT_2020-07-20.pdf
-            l1Meta.setHash(DigestUtils.sha1Hex(cda));
+            var l1Meta = generateMeta(patientId, dataModel, cda, DocumentLevel.LEVEL1);
 
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
 
@@ -58,7 +47,21 @@ public class EPrescriptionMapper {
         }
     }
 
-    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, String documentId) {
+    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, String cda, DocumentLevel documentLevel) {
+        if(!documentLevel.equals(DocumentLevel.LEVEL1) && !documentLevel.equals(DocumentLevel.LEVEL3)){
+            throw new IllegalArgumentException("Does not support documentLevel: "+documentLevel.toString());
+        }
+
+        String documentId = switch (documentLevel){
+            case DocumentLevel.LEVEL1 -> EPrescriptionDocumentIdMapper.level1DocumentId(model.getPrescriptionId().getExtension());
+            case DocumentLevel.LEVEL3 -> EPrescriptionDocumentIdMapper.level3DocumentId(model.getPrescriptionId().getExtension());
+        };
+
+        DocumentFormatDto documentFormat = switch (documentLevel){
+            case DocumentLevel.LEVEL1 -> DocumentFormatDto.PDF;
+            case DocumentLevel.LEVEL3 -> DocumentFormatDto.XML;
+        };
+
         var meta = new EPrescriptionDocumentMetadataDto(documentId);
         meta.setPatientId(patientId);
         meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
@@ -66,6 +69,31 @@ public class EPrescriptionMapper {
         meta.setAuthor(model.getAuthor().getName().getFullName());
         meta.setTitle(model.getTitle());
         meta.setDescription(model.getIndicationText());
+        meta.setProductCode(model.getProduct().getPackageCode().getCode());
+        meta.setAtcCode(model.getProduct().getAtcCode().getCode());
+        meta.setAtcName(model.getProduct().getAtcCode().getDisplayName());
+        meta.setClassCode(ClassCodeDto._57833_6); // Prescription for medication
+        meta.setDispensable(true); //This should always be true, we don't return non-dispensable prescriptions
+        meta.setFormat(documentFormat);
+        meta.setLanguage("da-DK"); //We always include danish text in free-text, so
+        meta.setProductCode(model.getProduct().getDrugId().getCode()); //Is this the correct code? It seems to be the drug code, not form/etc
+        meta.setProductName(model.getProduct().getName());
+        meta.setDoseFormCode(model.getProduct().getFormCode().getCode()); //Is this correct? It is the form that the dose is supposed to take, but not the actual dosage
+        meta.setDoseFormName(model.getProduct().getFormCode().getDisplayName());
+        meta.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N").confidentialityDisplay("Normal"));
+        meta.setStrength(model.getProduct().getStrength());
+
+        //The following data is set to this by convention to indicate a document generated on-demand
+        // https://profiles.ihe.net/ITI/TF/Volume2/ITI-38.html
+        meta.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709"); //SHA1 hash of a zero length file
+        meta.setSize(0L);
+
+        // TODO Missing metadata fields as of now
+        /*
+        String substitutionCode;
+        String substitutionDisplayName;
+         */
+
         return meta;
     }
 }
