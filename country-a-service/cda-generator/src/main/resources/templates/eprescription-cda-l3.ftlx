@@ -263,6 +263,11 @@
                                         </pharm:ingredient>
 </#list>
                                     </manufacturedMaterial>
+<#if product.manufacturerOrganizationName?has_content>
+                                    <manufacturerOrganization classCode="ORG" determinerCode="INSTANCE">
+                                      <name>${ product.manufacturerOrganizationName }</name>
+                                    </manufacturerOrganization>
+</#if>
                                 </manufacturedProduct>
                             </consumable>
                             <entryRelationship typeCode="COMP">

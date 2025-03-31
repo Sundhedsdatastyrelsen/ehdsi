@@ -135,6 +135,13 @@ public class PrescriptionService {
 
             return validPrescriptions.stream().map(pair -> {
                 try {
+                    var prescription = pair.getRight();
+                    var packageFormCode = lmsDataLookupService.getPackageFormCodeFromPackageNumber(prescription
+                        .getPackageRestriction()
+                        .getPackageNumber()
+                        .getValue());
+                    var manufacturerOrganizationName = "todo";
+
                     return new EPrescriptionL3Input(
                         fmkResponse,
                         pair.getLeft(),
@@ -145,10 +152,8 @@ public class PrescriptionService {
                                 // TODO should not use a test identity
                                 OrganizationIdentities.sundhedsdatastyrelsen())
                             .getAuthorization(),
-                        lmsDataLookupService.getPackageFormCodeFromPackageNumber(pair.getRight()
-                            .getPackageRestriction()
-                            .getPackageNumber()
-                            .getValue()));
+                        packageFormCode,
+                        manufacturerOrganizationName);
                 } catch (JAXBException | MapperException e) {
                     throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get authorizationType or packageFormCode.");
                 }
