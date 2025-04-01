@@ -29,16 +29,11 @@ public class EPrescriptionMapper {
 
     public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, EPrescriptionL3Input generatorInput) {
         try {
-            final String cda;
             var dataModel = EPrescriptionL3Mapper.model(generatorInput);
-            try {
-                cda = EPrescriptionL3Generator.generate(dataModel);
-            } catch (TemplateException | IOException e) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
-            }
-            var l3Meta = generateMeta(patientId, dataModel, cda , DocumentLevel.LEVEL3);
 
-            var l1Meta = generateMeta(patientId, dataModel, cda, DocumentLevel.LEVEL1);
+            var l3Meta = generateMeta(patientId, dataModel, DocumentLevel.LEVEL3);
+
+            var l1Meta = generateMeta(patientId, dataModel, DocumentLevel.LEVEL1);
 
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
 
@@ -47,17 +42,19 @@ public class EPrescriptionMapper {
         }
     }
 
-    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, String cda, DocumentLevel documentLevel) {
-        if(!documentLevel.equals(DocumentLevel.LEVEL1) && !documentLevel.equals(DocumentLevel.LEVEL3)){
-            throw new IllegalArgumentException("Does not support documentLevel: "+documentLevel.toString());
+    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, DocumentLevel documentLevel) {
+        if (!documentLevel.equals(DocumentLevel.LEVEL1) && !documentLevel.equals(DocumentLevel.LEVEL3)) {
+            throw new IllegalArgumentException("Does not support documentLevel: " + documentLevel.toString());
         }
 
-        String documentId = switch (documentLevel){
-            case DocumentLevel.LEVEL1 -> EPrescriptionDocumentIdMapper.level1DocumentId(model.getPrescriptionId().getExtension());
-            case DocumentLevel.LEVEL3 -> EPrescriptionDocumentIdMapper.level3DocumentId(model.getPrescriptionId().getExtension());
+        String documentId = switch (documentLevel) {
+            case DocumentLevel.LEVEL1 ->
+                EPrescriptionDocumentIdMapper.level1DocumentId(model.getPrescriptionId().getExtension());
+            case DocumentLevel.LEVEL3 ->
+                EPrescriptionDocumentIdMapper.level3DocumentId(model.getPrescriptionId().getExtension());
         };
 
-        DocumentFormatDto documentFormat = switch (documentLevel){
+        DocumentFormatDto documentFormat = switch (documentLevel) {
             case DocumentLevel.LEVEL1 -> DocumentFormatDto.PDF;
             case DocumentLevel.LEVEL3 -> DocumentFormatDto.XML;
         };
@@ -76,11 +73,16 @@ public class EPrescriptionMapper {
         meta.setDispensable(true); //This should always be true, we don't return non-dispensable prescriptions
         meta.setFormat(documentFormat);
         meta.setLanguage("da-DK"); //We always include danish text in free-text, so
-        meta.setProductCode(model.getProduct().getDrugId().getCode()); //Is this the correct code? It seems to be the drug code, not form/etc
+        meta.setProductCode(model.getProduct()
+            .getDrugId()
+            .getCode()); //Is this the correct code? It seems to be the drug code, not form/etc
         meta.setProductName(model.getProduct().getName());
-        meta.setDoseFormCode(model.getProduct().getFormCode().getCode()); //Is this correct? It is the form that the dose is supposed to take, but not the actual dosage
+        meta.setDoseFormCode(model.getProduct()
+            .getFormCode()
+            .getCode()); //Is this correct? It is the form that the dose is supposed to take, but not the actual dosage
         meta.setDoseFormName(model.getProduct().getFormCode().getDisplayName());
-        meta.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N").confidentialityDisplay("Normal"));
+        meta.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
+            .confidentialityDisplay("Normal"));
         meta.setStrength(model.getProduct().getStrength());
 
         //The following data is set to this by convention to indicate a document generated on-demand
