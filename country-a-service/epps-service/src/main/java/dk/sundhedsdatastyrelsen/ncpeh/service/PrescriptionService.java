@@ -193,17 +193,16 @@ public class PrescriptionService {
 
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) {
         StartEffectuationResponseType response;
-        var dispensationMapper = new DispensationMapper();
         String eDispensationCdaId;
         try {
-            eDispensationCdaId = dispensationMapper.cdaId(dispensationCda);
+            eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
         } catch (MapperException e) {
             throw new DataRequirementException("Invalid CDA ID value", e);
         }
         try {
             log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
-                dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
+                DispensationMapper.startEffectuationRequest(patientId, dispensationCda),
                 caller);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
@@ -215,7 +214,7 @@ public class PrescriptionService {
         try {
             log.info("Create FMK pharmacy effectuation");
             effectuationResponse = fmkClient.createPharmacyEffectuation(
-                dispensationMapper.createPharmacyEffectuationRequest(
+                DispensationMapper.createPharmacyEffectuationRequest(
                     patientId,
                     dispensationCda,
                     response),
@@ -244,10 +243,9 @@ public class PrescriptionService {
     }
 
     public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) {
-        var dispensationMapper = new DispensationMapper();
         String eDispensationCdaId;
         try {
-            eDispensationCdaId = dispensationMapper.cdaId(cdaToDiscard);
+            eDispensationCdaId = DispensationMapper.cdaId(cdaToDiscard);
         } catch (MapperException e) {
             throw new DataRequirementException("Invalid CDA ID value", e);
         }
@@ -259,7 +257,7 @@ public class PrescriptionService {
 
         UndoEffectuationRequestType undoEffectuationRequest;
         try {
-            undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(
+            undoEffectuationRequest = DispensationMapper.createUndoEffectuationRequest(
                 patientId,
                 cdaToDiscard,
                 undoInfo.orderId(),
