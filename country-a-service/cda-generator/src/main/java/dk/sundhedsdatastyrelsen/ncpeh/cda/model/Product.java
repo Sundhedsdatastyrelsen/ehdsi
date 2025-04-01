@@ -10,6 +10,7 @@ public class Product {
     /// LMS drug id
     CdaCode drugId;
     @NonNull String name;
+    String strength;
     String description;
     @NonNull CdaCode formCode;
     CdaCode packageCode;
@@ -17,4 +18,9 @@ public class Product {
     @NonNull CdaCode atcCode;
     @NonNull Size size;
     String manufacturerOrganizationName;
+
+    public String getDescription(){ //Right now, description just returns the strength
+        return getStrength();
+    }
+
 }

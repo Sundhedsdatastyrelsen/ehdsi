@@ -45,7 +45,7 @@ class EPrescriptionL3GeneratorTest {
             .packageFormCode(null)
             .atcCode(epL3.getProduct().getAtcCode())
             .formCode(epL3.getProduct().getFormCode())
-            .description(epL3.getProduct().getDescription())
+            .strength(epL3.getProduct().getStrength())
             .name(epL3.getProduct().getName())
             .size(epL3.getProduct().getSize())
             .build();
