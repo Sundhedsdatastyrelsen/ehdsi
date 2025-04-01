@@ -1,11 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionPdfGenerator;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionPdfMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
@@ -16,11 +13,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptio
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
-import freemarker.template.TemplateException;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpStatus;
-
-import java.io.IOException;
 
 public class EPrescriptionMapper {
 
