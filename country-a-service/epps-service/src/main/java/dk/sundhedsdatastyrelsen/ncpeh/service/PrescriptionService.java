@@ -1,5 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
@@ -9,6 +11,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.nsi.__.stamdata._3.AuthorizationResponseType;
+import dk.nsi.__.stamdata._3.AuthorizationType;
 import dk.nsp.test.idp.OrganizationIdentities;
 import dk.nsp.test.idp.model.Identity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
@@ -44,8 +48,10 @@ import org.w3c.dom.Document;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -58,6 +64,10 @@ public class PrescriptionService {
     private final UndoDispensationRepository undoDispensationRepository;
     private final LmsDataLookupService lmsDataLookupService;
     private final AuthorizationRegistryClient authorizationRegistry;
+    private final Cache<String, List<AuthorizationType>> authorizationRegistryCache = Caffeine.newBuilder()
+        .maximumSize(500)
+        .expireAfterWrite(Duration.ofMinutes(15))
+        .build();
 
     public record PrescriptionFilter(
         String documentId,
@@ -143,25 +153,33 @@ public class PrescriptionService {
                     var manufacturerOrganizationName = lmsDataLookupService.getManufacturerOrganizationNameFromDrugId(
                         prescription.getDrug().getIdentifier().getValue()
                     );
+                    var authorizations = authorizationRegistryCache.get(
+                        EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription)
+                            .getAuthorisationIdentifier(),
+                        id -> getAuthorizationByIdentifierCode(id, OrganizationIdentities.sundhedsdatastyrelsen())
+                            .getAuthorization());
 
                     return new EPrescriptionL3Input(
                         fmkResponse,
                         pair.getLeft(),
                         drugMedications,
-                        authorizationRegistry.requestByAuthorizationCode(
-                                EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(pair.getRight())
-                                    .getAuthorisationIdentifier(),
-                                // TODO should not use a test identity
-                                OrganizationIdentities.sundhedsdatastyrelsen())
-                            .getAuthorization(),
+                        Optional.ofNullable(authorizations).orElse(List.of()),
                         packageFormCode,
                         manufacturerOrganizationName);
-                } catch (JAXBException | MapperException e) {
-                    throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get authorizationType or packageFormCode.");
+                } catch (MapperException e) {
+                    throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get packageFormCode.");
                 }
             });
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
+        }
+    }
+
+    private @NonNull AuthorizationResponseType getAuthorizationByIdentifierCode(String authorizationIdentifier, Identity caller) {
+        try {
+            return authorizationRegistry.requestByAuthorizationCode(authorizationIdentifier, caller);
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get authorizationType.");
         }
     }
 
