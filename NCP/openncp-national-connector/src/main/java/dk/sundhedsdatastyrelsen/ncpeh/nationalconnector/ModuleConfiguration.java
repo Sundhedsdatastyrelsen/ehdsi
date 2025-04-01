@@ -1,5 +1,4 @@
 package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector;
-
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.fhir.DenmarkDispatchingService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xcpd.PatientSearch;
@@ -11,30 +10,26 @@ import eu.europa.ec.sante.openncp.core.server.api.ihe.xdr.DocumentSubmitInterfac
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-
 @Configuration
 public class ModuleConfiguration {
-    @Bean
-    @Primary
-    public DispatchingService dispatchingServiceDk() {
-        return new DenmarkDispatchingService();
-    }
-
-    @Bean
-    @Primary
-    public DocumentSearchInterface documentSearchDk() {
-        return new DocumentSearch();
-    }
-
-    @Bean
-    @Primary
-    public PatientSearchInterface patientSearchDk() {
-        return new PatientSearch();
-    }
-
-    @Bean
-    @Primary
-    public DocumentSubmitInterface documentSubmitDk() {
-        return new DocumentSubmit();
-    }
+ @Bean
+ @Primary
+ public DispatchingService dispatchingServiceDk() {
+ return new DenmarkDispatchingService();
+ }
+  @Bean
+ @Primary
+ public DocumentSearchInterface documentSearchDk() {
+ return new DocumentSearch();
+ }
+  @Bean
+ @Primary
+ public PatientSearchInterface patientSearchDk() {
+ return new PatientSearch();
+ }
+  @Bean
+ @Primary
+ public DocumentSubmitInterface documentSubmitDk() {
+ return new DocumentSubmit();
+ }
 }
