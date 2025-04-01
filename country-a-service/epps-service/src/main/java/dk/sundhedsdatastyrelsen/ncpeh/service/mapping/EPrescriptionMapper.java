@@ -83,7 +83,7 @@ public class EPrescriptionMapper {
         meta.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709"); //SHA1 hash of a zero length file
         meta.setSize(0L);
 
-        // TODO Missing metadata fields as of now
+        // TODO Missing metadata fields as of 2025-04-01
         /*
         String substitutionCode;
         String substitutionDisplayName;
