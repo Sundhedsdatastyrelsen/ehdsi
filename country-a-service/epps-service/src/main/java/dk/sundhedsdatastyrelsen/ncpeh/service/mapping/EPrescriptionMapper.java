@@ -74,12 +74,12 @@ public class EPrescriptionMapper {
         meta.setFormat(documentFormat);
         meta.setLanguage("da-DK"); //We always include danish text in free-text, so
         meta.setProductCode(model.getProduct()
-            .getDrugId()
-            .getCode()); //Is this the correct code? It seems to be the drug code, not form/etc
+            .getPackageCode()
+            .getCode()); //Varenummer
         meta.setProductName(model.getProduct().getName());
         meta.setDoseFormCode(model.getProduct()
             .getFormCode()
-            .getCode()); //Is this correct? It is the form that the dose is supposed to take, but not the actual dosage
+            .getCode());
         meta.setDoseFormName(model.getProduct().getFormCode().getDisplayName());
         meta.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
             .confidentialityDisplay("Normal"));
