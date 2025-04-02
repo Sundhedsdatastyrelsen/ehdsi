@@ -12,6 +12,7 @@ import java.time.OffsetDateTime;
 public class Author {
     @NonNull CdaCode functionCode;
     @NonNull CdaId id;
+    CdaCode specialization;
 
     /**
      * "The author/time element represents the start time of the author’s participation in

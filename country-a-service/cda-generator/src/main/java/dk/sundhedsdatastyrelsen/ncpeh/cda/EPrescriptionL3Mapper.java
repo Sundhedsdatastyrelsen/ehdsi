@@ -9,7 +9,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.nsi.__.stamdata._3.AuthorizationType;
+import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 public class EPrescriptionL3Mapper {
     private EPrescriptionL3Mapper() {
     }
+
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
@@ -228,13 +229,14 @@ public class EPrescriptionL3Mapper {
         return new Organization(id, org.getName(), org.getTelephoneNumber(), address);
     }
 
-    private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizationTypes) throws MapperException {
+    private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizations) throws MapperException {
+        var firstValidAuthorization = authorizations.stream()
+            .filter(a -> "1".equals(a.getAutorisationGyldig()))
+            .findFirst();
         // https://www.nspop.dk/display/public/web/Autorisation has the list of education codes
         // We should use the translation layer for these codes, but they are also used in L1, which isn't mapped in
         // OpenNCP, so we have to map it in the code.
-        var functionCode = FunctionCodeMapper.mapToFunctionCode(authorizationTypes.stream()
-            .findFirst()
-            .map(AuthorizationType::getEducationCode)
+        var functionCode = FunctionCodeMapper.mapToFunctionCode(firstValidAuthorization.map(AuthorizationType::getUddannelsesKode)
             // 0000 means 'Erstatningsautorisation' replacement authorization
             .orElse("0000"));
         var cdaFunctionCode = CdaCode.builder()
@@ -245,10 +247,36 @@ public class EPrescriptionL3Mapper {
 
         return Author.builder()
             .functionCode(cdaFunctionCode)
+            .specialization(getSpecialization(firstValidAuthorization.orElse(null)))
             .time(offsetDateTime(prescription.getCreated().getDateTime()))
             .id(new CdaId(Oid.DK_AUTHORIZATION_REGISTRY, creator.getAuthorisationIdentifier()))
             .name(Name.fromFullName(creator.getName()))
             .organization(authorOrganization(prescription))
+            .build();
+    }
+
+    private static CdaCode getSpecialization(AuthorizationType authorization) {
+        if (authorization == null) {
+            return null;
+        }
+
+        var specializations = Stream.of(
+                Optional.ofNullable(authorization.getSpeciale1()),
+                Optional.ofNullable(authorization.getSpeciale2()),
+                Optional.ofNullable(authorization.getSpeciale3()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
+
+        // There is no specified coded format for specializations in eHDSI CDA, and no way to send more than one
+        // specialization. So we send it over in an uncoded format. However, in order to display it on the receiver
+        // side, we do need to specify a code system. So we make one up. This is not the ideal way of doing this, we
+        // should ask for a code system from the EU and change the CDA format to support more than one specialization,
+        // but that could take years, so we do this for now.
+        return specializations.isEmpty() ? null : CdaCode.builder()
+            .codeSystem(Oid.DK_AUTHORIZATION_REGISTRY_SPECIALIZATION)
+            .code(String.join(", ", specializations))
+            .displayName(String.join(", ", specializations))
             .build();
     }
 

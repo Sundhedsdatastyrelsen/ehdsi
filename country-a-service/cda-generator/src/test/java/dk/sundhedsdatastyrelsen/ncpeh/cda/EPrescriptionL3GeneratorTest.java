@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
@@ -69,7 +70,12 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var prescriptions = prescription.getPrescription();
         for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
-            var input = new EPrescriptionL3Input(prescription, prescriptionindex, medication, "FIN", "Manufacturer");
+            var input = new EPrescriptionL3Input(
+                prescription, prescriptionindex, medication, List.of(AuthorizationType.builder()
+                .withSpeciale1("Kirurgi")
+                .withUddannelsesKode("7170")
+                .withAutorisationGyldig("1")
+                .build()), "FIN", "Manufacturer");
             var xmlString = EPrescriptionL3Generator.generate(input);
 
             // 1. Test if well-formed XML (can be parsed)

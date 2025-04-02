@@ -11,8 +11,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
-import dk.nsi.__.stamdata._3.AuthorizationResponseType;
-import dk.nsi.__.stamdata._3.AuthorizationType;
+import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
+import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.nsp.test.idp.OrganizationIdentities;
 import dk.nsp.test.idp.model.Identity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
@@ -157,7 +157,7 @@ public class PrescriptionService {
                         EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription)
                             .getAuthorisationIdentifier(),
                         id -> getAuthorizationByIdentifierCode(id, OrganizationIdentities.sundhedsdatastyrelsen())
-                            .getAuthorization());
+                            .getAutorisation());
 
                     return new EPrescriptionL3Input(
                         fmkResponse,

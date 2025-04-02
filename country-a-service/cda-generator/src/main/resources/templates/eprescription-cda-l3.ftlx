@@ -53,6 +53,9 @@
         <time value="${ author.time }"/>
         <assignedAuthor classCode="ASSIGNED">
             <id <@common.cdaIdAttrs author.id /> />
+<#if author.specialization??>
+            <code <@common.cdaCodeAttrs author.specialization />/>
+</#if>
             <#-- TODO: Er det nødvendigt med addr og telecom?  -->
             <addr nullFlavor="NI"/>
             <telecom nullFlavor="NI"/>
