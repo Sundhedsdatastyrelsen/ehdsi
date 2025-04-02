@@ -32,7 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +39,7 @@ import java.util.stream.Stream;
 public class EPrescriptionL3Mapper {
     private EPrescriptionL3Mapper() {
     }
+
     /**
      * Map a prescription response from FMK to a CDA data model.
      */
@@ -65,7 +65,7 @@ public class EPrescriptionL3Mapper {
             prescription.getDrug().getStrength(), prescription.getDrug()
                 .getSubstances());
         var prescriptionBuilder = EPrescriptionL3.builder()
-            .documentId(new CdaId(UUID.randomUUID()))
+            .documentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(prescriptionId.getExtension())))
             .title(String.format(
                 "eHDSI ePrescription %s - %s", patient(response).getName()
                     .getFullName(), prescription.getIdentifier()))
