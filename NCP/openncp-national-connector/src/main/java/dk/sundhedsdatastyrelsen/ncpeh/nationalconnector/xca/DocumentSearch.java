@@ -9,14 +9,9 @@ import eu.europa.ec.sante.openncp.common.ClassCode;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
 import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentAssociation;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentFactory;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPDocumentMetaData;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPSOSDocument;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.OrCDDocumentMetaData;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.PSDocumentMetaData;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteria;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteriaImpl;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SimpleConfidentialityEnum;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SubstitutionCodeEnum;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.*;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
 import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
@@ -107,6 +102,18 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         md.getLevel3().getTitle(),
                         md.getLevel3().getAuthor(),
                         md.getLevel3().getDescription(),
+                        md.getLevel3().getProductCode(),
+                        md.getLevel3().getProductName(),
+                        new EpListParam(md.getLevel3().getDispensable(),
+                            md.getLevel3().getAtcCode(),
+                            md.getLevel3().getAtcName(),
+                            md.getLevel3().getDoseFormCode(),
+                            md.getLevel3().getDoseFormName(),
+                            md.getLevel3().getStrength(),
+                            new SubstitutionMetadata(md.getLevel3().getSubstitutionCode(),
+                                md.getLevel1().getSubstitutionDisplayName())),
+                        SimpleConfidentialityEnum.findByCode(md.getLevel3().getConfidentiality().getConfidentialityCode()),
+                        md.getLevel3().getLanguage(),
                         md.getLevel3().getSize(),
                         md.getLevel3().getHash()
                     ),
@@ -118,7 +125,19 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         md.getLevel1().getTitle(),
                         md.getLevel1().getAuthor(),
                         md.getLevel1().getDescription(),
-                        md.getLevel1().getSize() == null ? 0 : md.getLevel1().getSize(),
+                        md.getLevel1().getProductCode(),
+                        md.getLevel1().getProductName(),
+                        new EpListParam(md.getLevel1().getDispensable(),
+                            md.getLevel1().getAtcCode(),
+                            md.getLevel1().getAtcName(),
+                            md.getLevel1().getDoseFormCode(),
+                            md.getLevel1().getDoseFormName(),
+                            md.getLevel1().getStrength(),
+                            new SubstitutionMetadata(md.getLevel1().getSubstitutionCode(),
+                                md.getLevel1().getSubstitutionDisplayName())),
+                        SimpleConfidentialityEnum.findByCode(md.getLevel1().getConfidentiality().getConfidentialityCode()),
+                        md.getLevel1().getLanguage(),
+                        md.getLevel1().getSize(),
                         md.getLevel1().getHash()
                     )))
                 .collect(Collectors.toList());
