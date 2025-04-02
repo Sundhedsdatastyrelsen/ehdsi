@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.7-b01-. -->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://nsi.dk/2024/01/05/StamdataAuthorization" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:dgws="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd" targetNamespace="http://nsi.dk/2024/01/05/StamdataAuthorization">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sd="http://nsi.dk/2024/01/05/StamdataAuthorization" targetNamespace="http://nsi.dk/2024/01/05/StamdataAuthorization" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <element name="AuthorizationRequestStructure" type="sd:AuthorizationRequestType">
+        <annotation>
+          <documentation>Request element with a CPR-number.</documentation>
+        </annotation>
+      </element>
+      <complexType name="AuthorizationRequestType">
+        <sequence>
+          <element name="cpr" type="string"/>
+        </sequence>
+      </complexType>
+       <element name="AuthorizationCodeRequestStructure" type="sd:AuthorizationCodeRequestType">
+        <annotation>
+          <documentation>Request element with an authorization code.</documentation>
+        </annotation>
+      </element>
+      <complexType name="AuthorizationCodeRequestType">
+      	<sequence>
+      		<element name="authorizationCode" type="string"/>
+      	</sequence>
+      </complexType>
+      <complexType name="AuthorizationType">
+        <sequence>
+          <element name="autorisationsNummer" type="string"/>
+          <element name="uddannelsesKode" type="string"/>
+          <element name="uddannelsesNavn" type="string" minOccurs="0"/>
+          <element name="uddannelsesLand" type="string" minOccurs="0"/>
+          <element name="tidsbegraenset" type="string" minOccurs="0"/>
+          <element name="tilsyn" type="string" minOccurs="0"/>
+          <element name="tilsynsBemaerkninger" type="string" minOccurs="0"/>
+          <element name="sanktionsType" type="string" minOccurs="0"/>
+          <element name="dispensation75Aarsreglen" type="string" minOccurs="0"/>
+          <element name="selvstaendigVirkeDato" type="string" minOccurs="0"/>
+          <element name="selvstaendigtVirke" type="string" minOccurs="0"/>
+          <element name="selvstaendigVirkeUddLand" type="string" minOccurs="0"/>
+          <element name="speciale1" type="string" minOccurs="0"/>
+          <element name="specialeDato1" type="string" minOccurs="0"/>
+          <element name="specialeUddLand1" type="string" minOccurs="0"/>
+          <element name="speciale2" type="string" minOccurs="0"/>
+          <element name="specialeDato2" type="string" minOccurs="0"/>
+          <element name="specialeUddLand2" type="string" minOccurs="0"/>
+          <element name="speciale3" type="string" minOccurs="0"/>
+          <element name="specialeDato3" type="string" minOccurs="0"/>
+          <element name="specialeUddLand3" type="string" minOccurs="0"/>
+          <element name="autorisationGyldig" type="string" minOccurs="0"/>
+          <element name="autorisationsDato" type="string" minOccurs="0"/>
+        </sequence>
+      </complexType>
+      <element name="AuthorizationResponseStructure" type="sd:AuthorizationResponseType">
+        <annotation>
+          <documentation>Response element for a authorization number.</documentation>
+        </annotation>
+      </element>
+      <complexType name="AuthorizationResponseType">
+        <sequence minOccurs="0">
+          <element name="cpr" type="string"/>
+          <element name="fornavn" type="string" minOccurs="0"/>
+          <element name="efternavn" type="string" minOccurs="0"/>
+          <element name="autorisation" type="sd:AuthorizationType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+      </complexType>
+    </xsd:schema>
+
+    <!-- Den gode webservice schemas. -->
+    <xsd:schema targetNamespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+    <xsd:include schemaLocation="http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105?xsd=4"/>
+  </xsd:schema>
+  <xsd:schema targetNamespace="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd">
+    <xsd:include schemaLocation="http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105?xsd=2"/>
+  </xsd:schema>
+  
+    <!-- NB: This is added to avoid JAX-WS mapping date to XMLGregorialCalendar, which does not play nice with SEAL. -->
+    <xsd:schema xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" targetNamespace="http://nsi.dk/2024/01/05/StamdataAuthorization" jaxb:version="2.1" elementFormDefault="qualified">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <jaxb:globalBindings>
+          <jaxb:javaType name="java.util.Calendar" xmlType="xsd:dateTime" parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime" printMethod="javax.xml.bind.DatatypeConverter.printDateTime"/>
+        </jaxb:globalBindings>
+      </xsd:appinfo>
+    </xsd:annotation>
+  </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="AuthorizationRequestMessage">
+    <wsdl:part name="wsseHeader" element="wsse:Security"/>
+    <wsdl:part name="medcomHeader" element="dgws:Header"/>
+    <wsdl:part element="tns:AuthorizationRequestStructure" name="parameters"/>
+  </wsdl:message>
+  
+  <wsdl:message name="AuthorizationCodeRequestMessage">
+    <wsdl:part name="wsseHeader" element="wsse:Security"/>
+    <wsdl:part name="medcomHeader" element="dgws:Header"/>
+    <wsdl:part element="tns:AuthorizationCodeRequestStructure" name="parameters"/>
+  </wsdl:message>
+
+  <wsdl:message name="AuthorizationResponseMessage">
+    <wsdl:part name="wsseHeader" element="wsse:Security"/>
+    <wsdl:part name="medcomHeader" element="dgws:Header"/>
+    <wsdl:part element="tns:AuthorizationResponseStructure" name="parameters"/>
+  </wsdl:message>
+
+  <wsdl:message name="DGWSFault">
+    <wsdl:part name="fault" element="dgws:FaultCode"/>
+  </wsdl:message>
+
+  <wsdl:portType name="AuthorizationPortType">
+    <wsdl:operation name="Authorization">
+      <wsdl:input message="tns:AuthorizationRequestMessage" name="AuthorizationRequestStructureInput"/>
+      <wsdl:output message="tns:AuthorizationResponseMessage" name="AuthorizationResponseStructureOutput"/>
+      <wsdl:fault message="tns:DGWSFault" name="DGWSFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  <wsdl:portType name="AuthorizationCodePortType">
+    <wsdl:operation name="Authorization">
+      <wsdl:input message="tns:AuthorizationCodeRequestMessage" name="AuthorizationCodeRequestStructureInput"/>
+      <wsdl:output message="tns:AuthorizationResponseMessage" name="AuthorizationCodeResponseStructureOutput"/>
+      <wsdl:fault message="tns:DGWSFault" name="DGWSFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="AuthorizationBinding" type="tns:AuthorizationPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Authorization">
+      <soap:operation soapAction="http://nsi.dk/sdm/Gateway"/>
+      <wsdl:input name="AuthorizationRequestStructureInput">
+        <soap:body use="literal" parts="parameters"/>
+        <soap:header message="tns:AuthorizationRequestMessage" part="wsseHeader" use="literal"/>
+        <soap:header message="tns:AuthorizationRequestMessage" part="medcomHeader" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="AuthorizationResponseStructureOutput">
+        <soap:body use="literal" parts="parameters"/>
+        <soap:header message="tns:AuthorizationResponseMessage" part="wsseHeader" use="literal"/>
+        <soap:header message="tns:AuthorizationResponseMessage" part="medcomHeader" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="DGWSFault">
+        <soap:fault name="DGWSFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:binding name="AuthorizationCodeBinding" type="tns:AuthorizationCodePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Authorization">
+      <soap:operation soapAction="http://nsi.dk/sdm/Gateway"/>
+      <wsdl:input name="AuthorizationCodeRequestStructureInput">
+        <soap:body use="literal" parts="parameters"/>
+        <soap:header message="tns:AuthorizationCodeRequestMessage" part="wsseHeader" use="literal"/>
+        <soap:header message="tns:AuthorizationCodeRequestMessage" part="medcomHeader" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="AuthorizationCodeResponseStructureOutput">
+        <soap:body use="literal" parts="parameters"/>
+        <soap:header message="tns:AuthorizationResponseMessage" part="wsseHeader" use="literal"/>
+        <soap:header message="tns:AuthorizationResponseMessage" part="medcomHeader" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="DGWSFault">
+        <soap:fault name="DGWSFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="AuthorizationService">
+    <wsdl:port binding="tns:AuthorizationBinding" name="AuthorizationPort">
+      <!-- The following is required in the wsdl, but the actual url is defined 
+        elsewhere -->
+      <soap:address location="http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105"/>
+    </wsdl:port>
+  </wsdl:service>
+  <wsdl:service name="AuthorizationCodeService">
+    <wsdl:port binding="tns:AuthorizationCodeBinding" name="AuthorizationCodePort">
+      <!-- The following is required in the wsdl, but the actual url is defined 
+        elsewhere -->
+      <soap:address location="http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

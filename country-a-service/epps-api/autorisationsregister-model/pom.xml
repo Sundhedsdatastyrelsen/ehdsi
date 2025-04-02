@@ -59,7 +59,7 @@
                         <arg>-B-Xfluent-builder</arg>
                     </args>
                     <wsdlUrls>
-                        <wsdlUrl>./src/main/resources/authorization-registry.wsdl</wsdlUrl>
+                        <wsdlUrl>./src/main/resources/AuthorizationService-20240105.wsdl</wsdlUrl>
                     </wsdlUrls>
                     <sourceDestDir>${sourcesDir}</sourceDestDir>
                     <destDir>${classesDir}</destDir>

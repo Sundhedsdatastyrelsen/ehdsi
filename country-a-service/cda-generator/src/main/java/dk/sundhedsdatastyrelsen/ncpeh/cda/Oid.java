@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 public enum Oid {
     /**
      * EPrescription document repository id. For now, we use the DK home OID.
+     * TODO Once the spring 2025 test is over, we should update this to 1.2.208.176.7.2.3.
      * <a href="https://oid-base.com/get/1.2.208">Registered.</a>
      */
     DK_EPRESCRIPTION_REPOSITORY_ID("1.2.208"),
@@ -32,6 +33,17 @@ public enum Oid {
      * <a href="https://oid-base.com/get/1.2.208.176.1.3.1">Registered.</a>
      */
     DK_AUTHORIZATION_REGISTRY_EDUCATION_CODE("1.2.208.176.1.3.1"),
+    /**
+     * Made up OID for the specializations in the authorization registry.
+     * If the information does become coded at some point, we should update this.
+     * <p>
+     * There is no specified coded format for specializations in eHDSI CDA, and no way to send more than one
+     * specialization. So we send it over in an uncoded format. However, in order to display it on the receiver
+     * side, we do need to specify a code system. So we make one up. This is not the ideal way of doing this, we
+     * should ask for a code system from the EU and change the CDA format to support more than one specialization,
+     * but that could take years, so we do this for now.
+     */
+    DK_AUTHORIZATION_REGISTRY_SPECIALIZATION("1.2.208.176.1.3.51648"),
     /**
      * Danske ydernumre.
      * <a href="https://oid-base.com/get/1.2.208.176.1.4">Registered.</a>

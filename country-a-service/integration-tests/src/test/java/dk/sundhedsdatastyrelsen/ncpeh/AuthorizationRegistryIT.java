@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 class AuthorizationRegistryIT {
-    private final String serviceUrl = "https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService";
+    private final String serviceUrl = "https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105";
 
     @Test
     void authorizationLookup() throws JAXBException {
@@ -17,9 +17,9 @@ class AuthorizationRegistryIT {
         // 6QF17 is the authorisation code of Charles Babbage
         var response = client.requestByAuthorizationCode("6QF17", OrganizationIdentities.sundhedsdatastyrelsen());
 
-        assertThat(response.getAuthorization().size(), is(1));
+        assertThat(response.getAutorisation().size(), is(1));
         // For codes: https://www.nspop.dk/display/public/web/Autorisation
-        assertThat(response.getAuthorization().getFirst().getEducationCode(), is("7170"));
-        assertThat(response.getAuthorization().getFirst().getEducationName(), is("Læge"));
+        assertThat(response.getAutorisation().getFirst().getUddannelsesKode(), is("7170"));
+        assertThat(response.getAutorisation().getFirst().getUddannelsesNavn(), is("Læge"));
     }
 }
