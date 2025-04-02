@@ -295,7 +295,7 @@ public class EPrescriptionL3Mapper {
             return Either.ofRight(null);
         }
 
-        if (substances.getActiveSubstance().size() == 1) {
+        if (substances.getActiveSubstance().size() == 1 && strength != null && strength.getUnitCode() != null) {
             var text = getSubstanceText(substances.getActiveSubstance().getFirst());
             var codedStrength = SubstanceUnitMapper.fromLms(strength.getUnitCode().getValue());
             if (text != null && codedStrength != null) {
