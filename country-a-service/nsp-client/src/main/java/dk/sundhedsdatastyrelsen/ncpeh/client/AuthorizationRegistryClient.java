@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.nsi.__.stamdata._3.AuthorizationResponseType;
+import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
 import jakarta.xml.bind.JAXBContext;
@@ -32,7 +32,7 @@ public class AuthorizationRegistryClient {
         factory.setNamespaceAware(true);
         var builder = factory.newDocumentBuilder();
         var document = builder.newDocument();
-        var ns = "http://nsi.dk/-/stamdata/3.0";
+        var ns = "http://nsi.dk/2024/01/05/StamdataAuthorization";
         var rootElement = document.createElementNS(ns, "AuthorizationCodeRequestStructure");
         var authCodeElement = document.createElementNS(ns, "authorizationCode");
         authCodeElement.appendChild(document.createTextNode(authorizationCode));
