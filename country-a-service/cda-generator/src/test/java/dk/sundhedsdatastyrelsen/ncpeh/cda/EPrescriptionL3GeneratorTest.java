@@ -73,6 +73,7 @@ class EPrescriptionL3GeneratorTest {
             var input = new EPrescriptionL3Input(
                 prescription, prescriptionindex, medication, List.of(AuthorizationType.builder()
                 .withSpeciale1("Kirurgi")
+                .withSpeciale2("Børnepsykiatri")
                 .withUddannelsesKode("7170")
                 .withAutorisationGyldig("1")
                 .build()), "FIN", "Manufacturer");
