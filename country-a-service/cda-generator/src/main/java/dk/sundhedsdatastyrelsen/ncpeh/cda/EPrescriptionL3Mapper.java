@@ -25,8 +25,10 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Size;
 import lombok.NonNull;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -274,7 +276,8 @@ public class EPrescriptionL3Mapper {
         // but that could take years, so we do this for now.
         return specializations.isEmpty() ? null : CdaCode.builder()
             .codeSystem(Oid.DK_AUTHORIZATION_REGISTRY_SPECIALIZATION)
-            .code(String.join(", ", specializations))
+            .code(Base64.getEncoder()
+                .encodeToString(String.join(", ", specializations).getBytes(StandardCharsets.UTF_8)))
             .displayName(String.join(", ", specializations))
             .build();
     }
