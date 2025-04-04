@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * represents a Danish CPR number.
  */
 public final class PatientIdMapper {
-    private static final String regexPattern = "(\\d{10})(?:\\^{3}&" + Oid.DK_CPR.value + "&ISO)?";
+    private static final String regexPattern = "^(\\d{6}-?\\d{4})(?:\\^{3}&" + Oid.DK_CPR.value + "&ISO)?";
     private static final Pattern patientIdPattern = Pattern.compile(regexPattern);
 
     private PatientIdMapper() {
@@ -33,6 +33,6 @@ public final class PatientIdMapper {
         if (!matcher.matches()) {
             throw new DataRequirementException("'" + patientId + "' doesn't match any of the expected patterns");
         }
-        return matcher.group(1);
+        return matcher.group(1).replace("-", "");
     }
 }
