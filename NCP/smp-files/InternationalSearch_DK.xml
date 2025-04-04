@@ -9,7 +9,7 @@
          <ism:identifier type="NORMAL">
             <ism:id contextualDescription="nationalIdentityCardNumber"
                domain="1.2.208.176.1.2"
-               format="[0-9]{10}"
+               format="^\d{6}-?\d{4}$"
                label="label.ism.nationalIdentityCardNumber"
                mandatory="true" />
          </ism:identifier>
