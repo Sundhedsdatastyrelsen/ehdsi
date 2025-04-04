@@ -68,9 +68,7 @@ public class EPrescriptionL3Mapper {
                 .getSubstances());
         var prescriptionBuilder = EPrescriptionL3.builder()
             .documentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(prescriptionId.getExtension())))
-            .title(String.format(
-                "eHDSI ePrescription %s - %s", patient(response).getName()
-                    .getFullName(), prescription.getIdentifier()))
+            .title(makeTitle(response, prescription))
             .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))
             .author(author(prescription, input.authorAuthorizations()))
@@ -110,7 +108,14 @@ public class EPrescriptionL3Mapper {
         return prescriptionBuilder.build();
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) throws MapperException {
+    public static String makeTitle(GetPrescriptionResponseType response, PrescriptionType prescription) {
+        var patientName = response.getPatient().getPerson().getName();
+        return String.format(
+            "eHDSI ePrescription %s - %s", Name.fromFirstMiddleLast(patientName.getGivenName(), patientName.getMiddleName(), patientName.getSurname())
+                .getFullName(), prescription.getIdentifier());
+    }
+
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -366,7 +371,7 @@ public class EPrescriptionL3Mapper {
         return null;
     }
 
-    private static String drugStrengthText(@NonNull PrescriptionType prescription) {
+    public static String drugStrengthText(@NonNull PrescriptionType prescription) {
         if (prescription.getDrug() == null || prescription.getDrug().getStrength() == null ||
             prescription.getDrug().getStrength().getText() == null ||
             prescription.getDrug().getStrength().getText().getValue() == null)
