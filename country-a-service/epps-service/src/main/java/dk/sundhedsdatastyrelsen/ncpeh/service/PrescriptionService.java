@@ -46,7 +46,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -91,10 +90,6 @@ public class PrescriptionService {
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
-
-        private OffsetDateTime toOffsetDateTime(@NonNull XMLGregorianCalendar xml) {
-            return xml.toGregorianCalendar().toZonedDateTime().toOffsetDateTime();
-        }
     }
 
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
@@ -102,10 +97,23 @@ public class PrescriptionService {
         PrescriptionFilter filter,
         Identity caller
     ) {
-        log.debug("undoDispensation: looking up prescription information");
-        return assembleEPrescriptionInput(patientId, filter, caller).map(input -> EPrescriptionMapper.mapMeta(patientId, input))
-            .toList();
+        try {
+            String cpr = PatientIdMapper.toCpr(patientId);
+            final var request = GetPrescriptionRequestType.builder()
+                .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+                .withIncludeOpenPrescriptions().end()
+                .build();
+            var fmkResponse = fmkClient.getPrescription(request, caller);
 
+            log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+
+            var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
+            return validPrescriptions.stream()
+                .map(pair -> EPrescriptionMapper.mapMeta(patientId, fmkResponse, pair.getLeft()))
+                .toList();
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
@@ -300,17 +308,6 @@ public class PrescriptionService {
         log.debug(
             "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
                 .size(), drugMedicationId);
-        return fmkResponse;
-    }
-
-    public GetPrescriptionResponseType getPrescriptionResponse(String cpr, Identity caller) throws JAXBException {
-        final var request = GetPrescriptionRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeOpenPrescriptions().end()
-            .build();
-        log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return fmkResponse;
     }
 }
