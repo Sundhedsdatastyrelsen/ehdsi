@@ -233,7 +233,7 @@
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
                                                 <pharm:code <@common.cdaCodeAttrs product.packageCode/> />
                                                 <pharm:name>${ product.name }</pharm:name>
-<#if product.packageFormCode?has_content>
+<#if (product.packageFormCode.code)?has_content>
                                                 <pharm:formCode <@common.cdaCodeAttrs product.packageFormCode/> />
 <#else>
                                                 <pharm:formCode nullFlavor="UNK" />
