@@ -4,11 +4,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
 
 import java.util.List;
 
-public final class CanDispense {
-    private CanDispense() {
+public final class DispensationAllowed {
+    private DispensationAllowed() {
     }
 
-    public static boolean canDispense(Lms02Data lms02Entry) {
+    public static boolean isDispensationAllowed(Lms02Data lms02Entry) {
         return dispensableRegulations.stream()
             .anyMatch(code -> code.equals(lms02Entry.getDispensationRegulationCode()));
     }

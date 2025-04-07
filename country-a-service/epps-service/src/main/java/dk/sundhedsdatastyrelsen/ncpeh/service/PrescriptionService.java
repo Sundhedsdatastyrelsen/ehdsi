@@ -46,6 +46,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -206,6 +207,30 @@ public class PrescriptionService {
         } catch (MapperException e) {
             throw new DataRequirementException("Invalid CDA ID value", e);
         }
+
+        try {
+            var prescriptionId = DispensationMapper.prescriptionId(dispensationCda);
+            var prescriptionResponse = fmkClient.getPrescription(
+                GetPrescriptionRequestType.builder()
+                    .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
+                    .withIncludeOpenPrescriptions().end()
+                    .build(),
+                caller);
+            var prescription = prescriptionResponse.getPrescription()
+                .stream()
+                .filter(p -> p.getIdentifier() == prescriptionId)
+                .findFirst()
+                .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
+            var isDispensable = DispensationAllowed.isDispensationAllowed(lmsDataLookupService.getLms02EntryFromPackageNumber(prescription.getPackageRestriction()
+                .getPackageNumber()
+                .getValue()));
+            if (!isDispensable) {
+                throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed");
+            }
+        } catch (XPathExpressionException | MapperException | JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch prescription to dispense", e);
+        }
+
         try {
             log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
