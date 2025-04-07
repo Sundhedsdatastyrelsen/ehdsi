@@ -374,7 +374,7 @@ public class DispensationMapper {
             .withPackageDispensed()
             .withPackageQuantity(packageQuantity(cda))
             .withPackageNumber(packageNumber(cda))
-            .withPackageSize(packageRestriction.getPackageSize()) // TODO get package size from CDA
+            .withPackageSize(packageRestriction.getPackageSize()) // TODO #200 get package size from CDA
             .withSubstitutedDrug(drug)
             .end()
             .withDeliverySite(TestIdentities.deliverySiteRyApotek) // TODO #190
@@ -384,9 +384,7 @@ public class DispensationMapper {
     static DrugType drug(Document cda) {
         return DrugType.builder()
             .withDetailedDrugText(detailedDrugText(cda))
-            // TODO: Strength
-            // TODO: ATC code
-            // TODO: substances
+            // TODO #201: Strength, ATC code, substances
             .build();
     }
 
@@ -429,6 +427,9 @@ public class DispensationMapper {
 //            log.warn("Could not find find data at path: {}", XPaths.manufacturedMaterialCode);
 //            return null;
 //        }
+
+        // TODO #199: If the container packaged product code system is Oid.DK_VARENUMRE then we can provide it to FMK.
+
         return PackageNumberType.builder()
             .withSource("Local")
             .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
