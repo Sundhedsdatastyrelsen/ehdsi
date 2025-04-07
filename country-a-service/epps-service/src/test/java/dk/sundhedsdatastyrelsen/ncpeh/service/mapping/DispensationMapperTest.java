@@ -33,7 +33,7 @@ class DispensationMapperTest {
         //Input format:
         // - Filename
         // - String of expected error message from mapping the CDA (null means no error is expected)
-        String missingPharmCodeErrorMessage = String.format("Could not find find data at path: %s", DispensationMapper.XPaths.manufacturedMaterialCode);
+        String missingPharmCodeErrorMessage = String.format("Could not find find data at path: %s", DispensationMapper.XPaths.containerPackagedProductCode);
         return Stream.of(
             Arguments.of("dispensation2.xml", null), //Our own constructed test dispensation
             Arguments.of("CzRequest1.xml", null), // One of the requests the CZ team sent us during the Fall 2024 test
@@ -46,9 +46,8 @@ class DispensationMapperTest {
     }
 
     StartEffectuationResponseType testStartEffectuationResponse(Document cda) {
-        String packageNumber = DispensationMapper.packageNumber(cda);
         var packageRestriction = PackageRestrictionType.builder()
-            .withPackageNumber().withSource("Medicinpriser").withValue(packageNumber).withDate("20240725").end()
+            .withPackageNumber(DispensationMapper.packageNumber(cda))
             .withPackageQuantity(2)
             .build();
         return StartEffectuationResponseType.builder()

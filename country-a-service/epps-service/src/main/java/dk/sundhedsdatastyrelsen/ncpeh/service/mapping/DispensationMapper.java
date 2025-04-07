@@ -1,9 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
@@ -38,7 +40,8 @@ import java.util.stream.Stream;
 public class DispensationMapper {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DispensationMapper.class);
 
-    private DispensationMapper() {}
+    private DispensationMapper() {
+    }
 
     // ART DECOR template for eDispensation CDA:
     // https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-2.16.840.1.113883.3.1937.777.11.10.111-2020-10-07T094007.html
@@ -173,10 +176,16 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         static final String packageQuantity =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:quantity";
-        static final String manufacturedMaterialCode =
+        static final String containerPackagedProductCode =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
+        static final String manufacturedMaterialName =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:name";
+        static final String manufacturedMaterialCode =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code";
         static final String substitution =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
+        static final String atcCode =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asSpecializedKind[@classCode='GRIC']/pharm:generalizedMaterialKind/pharm:code";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
@@ -378,51 +387,72 @@ public class DispensationMapper {
         var effectiveTime = (String) xpath.evaluate(XPaths.effectiveTime, cda, XPathConstants.STRING);
         var packageRestriction = startEffectuationResponse.getPrescription().getFirst().getPackageRestriction();
 
-        // how do we handle substitutions? for now, disallow
-        if ((Node) xpath.evaluate(XPaths.substitution, cda, XPathConstants.NODE) != null) {
-            log.warn("Substitutions are not supported. No conversion was made.");
-        }
-        // verify that package number matches prescription
-        var packageNumber = packageNumber(cda);
-        if (packageNumber != null && !packageRestriction.getPackageNumber().getValue().equals(packageNumber)) {
-            throw new MapperException(String.format(
-                "Package number in dispensation (%s) does not match prescription (%s).",
-                packageNumber(cda),
-                packageRestriction.getPackageNumber().getValue()));
-        }
+        var drug = drug(cda);
 
         return CreatePharmacyEffectuationType.builder()
             .withDateTime(Utils.parseEpsosTime(effectiveTime))
             .withPackageDispensed()
             .withPackageQuantity(packageQuantity(cda))
-            .withPackageNumber(packageRestriction.getPackageNumber())
-            .withPackageSize(packageRestriction.getPackageSize())
+            .withPackageNumber(packageNumber(cda))
+            .withPackageSize(packageRestriction.getPackageSize()) // TODO get package size from CDA
+            .withSubstitutedDrug(drug)
             .end()
-            .withDeliverySite(TestIdentities.deliverySiteRyApotek)
+            .withDeliverySite(TestIdentities.deliverySiteRyApotek) // TODO #190
             .build();
     }
 
-    static String packageNumber(Document cda) {
+    static DrugType drug(Document cda) {
+        return DrugType.builder()
+            .withDetailedDrugText(detailedDrugText(cda))
+            // TODO: Strength
+            // TODO: ATC code
+            // TODO: substances
+            .build();
+    }
+
+    static String detailedDrugText(Document cda) {
+        var xpath = xpath();
+        String drugName;
         try {
-            var xpath = xpath();
-            var node = (Node) xpath.evaluate(XPaths.manufacturedMaterialCode, cda, XPathConstants.NODE);
-            if (node == null) {
-                return null; //The field is 0..1, and we cannot require it to be there. If it is missing, we return null.
-            }
-            var codeSystem = xpath.evaluate("@codeSystem", node);
-            if (!Oid.DK_VARENUMRE.value.equals(codeSystem)) {
-                // throw?
-                log.warn(
-                    "Expected LMS02 ({}) code system, for {}. Got: {}",
-                    Oid.DK_VARENUMRE.value,
-                    XPaths.manufacturedMaterialCode,
-                    codeSystem
-                );
-            }
-            return xpath.evaluate("@code", node);
+            drugName = (String) xpath.evaluate(XPaths.manufacturedMaterialName, cda, XPathConstants.STRING);
         } catch (XPathExpressionException e) {
-            throw new DataRequirementException(String.format("Could not find find data at path: %s", XPaths.manufacturedMaterialCode));
+            throw new DataRequirementException(String.format("Could not find data at path: %s", XPaths.manufacturedMaterialName));
         }
+        String drugId;
+        try {
+            var node = (Node) xpath.evaluate(XPaths.manufacturedMaterialCode, cda, XPathConstants.NODE);
+            var system = xpath.evaluate("@codeSystem", node);
+            var id = xpath.evaluate("@code", node);
+            drugId = String.format("%s^^^%s", system, id);
+        } catch (XPathExpressionException e) {
+            drugId = "unknown";
+        }
+        return String.format("%s - id: %s", drugName, drugId);
+    }
+
+    static PackageNumberType packageNumber(Document cda) {
+        //        try {
+//            var xpath = xpath();
+//            var node = (Node) xpath.evaluate(XPaths.containerPackagedProductCode, cda, XPathConstants.NODE);
+//            if (node == null) {
+//                return null; //The field is 0..1, and we cannot require it to be there. If it is missing, we return null.
+//            }
+//            var codeSystem = xpath.evaluate("@codeSystem", node);
+//            var code = xpath.evaluate("@code", node);
+//
+//            var packageNumber = codeSystem + "^^^" + code;
+//            return PackageNumberType.builder()
+//                .withSource("Local")
+//                .withValue(packageNumber)
+//                .build();
+//        } catch (XPathExpressionException e) {
+//            log.warn("Could not find find data at path: {}", XPaths.manufacturedMaterialCode);
+//            return null;
+//        }
+        return PackageNumberType.builder()
+            .withSource("Local")
+            .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
+            .build();
     }
 
     public static String cdaId(Document cda) throws MapperException {
