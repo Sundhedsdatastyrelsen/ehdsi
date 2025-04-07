@@ -269,7 +269,7 @@ public class DispensationMapper {
         return s != null && !s.isBlank();
     }
 
-    private static OrganisationIdentifierType placeholdePharmacyId() {
+    private static OrganisationIdentifierType placeholderPharmacyId() {
         return OrganisationIdentifierType.builder()
             .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
             .withValue("5790001392277") // NSI, Udenlandsk Apotek via epSOS ( SOR-nummer: 397941000016003 )
@@ -297,7 +297,7 @@ public class DispensationMapper {
         }
 
         var b = OrganisationType.builder()
-            .withIdentifier(placeholdePharmacyId())
+            .withIdentifier(placeholderPharmacyId())
             .withName((String) xpath.evaluate(XPaths.authorOrgName, cda, XPathConstants.STRING))
             .withType("Apotek")
             .addAddressLine(addressLines);
