@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierPredefinedSourceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
@@ -268,32 +269,11 @@ public class DispensationMapper {
         return s != null && !s.isBlank();
     }
 
-    /**
-     * TODO FMK Improvement
-     * FMK is supposed to support "Udenlandsk" OrganisationIdenfier, according to the documentation
-     * When called, it responds with an error that it is not supported yet
-     * <p>
-     * Two options going forward:
-     * - FMK start supporting Udenlandsk, and we reimplement forwarding the identifier from Country-B
-     * - We agree with FMK to "proxy" all requests through another Organisation, like we do in the code right now.
-     * <p>
-     * (2024/09/10)
-     */
-    private static OrganisationIdentifierType identifier(Node id) {
-
-//        var attrs = id.getAttributes();
-//        var root = attrs.getNamedItem("root");
-//        var ext = attrs.getNamedItem("extension");
-//        if (root == null) {
-//            throw new IllegalArgumentException("Id nodes without root attributes are unsupported");
-//        }
-//        return OrganisationIdentifierType.builder()
-//            .withSource(OrganisationIdentifierPredefinedSourceType.UDENLANDSK.value())
-//            .withValue(ext == null
-//                ? root.getTextContent()
-//                : String.format("%s.%s", root.getTextContent(), ext.getTextContent()))
-//            .build();
-        return TestIdentities.skanderborgApotek;
+    private static OrganisationIdentifierType placeholdePharmacyId() {
+        return OrganisationIdentifierType.builder()
+            .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+            .withValue("5790001392277") // NSI, Udenlandsk Apotek via epSOS ( SOR-nummer: 397941000016003 )
+            .build();
     }
 
     static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
@@ -317,9 +297,9 @@ public class DispensationMapper {
         }
 
         var b = OrganisationType.builder()
-            .withIdentifier(identifier((Node) xpath.evaluate(XPaths.authorOrgId, cda, XPathConstants.NODE)))
+            .withIdentifier(placeholdePharmacyId())
             .withName((String) xpath.evaluate(XPaths.authorOrgName, cda, XPathConstants.STRING))
-            .withType("Apotek") // TODO: How can we determine this?
+            .withType("Apotek")
             .addAddressLine(addressLines);
 
         if (email != null) b.withEmailAddress(email);
