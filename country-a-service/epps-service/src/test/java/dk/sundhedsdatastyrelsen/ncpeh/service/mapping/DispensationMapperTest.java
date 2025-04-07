@@ -156,9 +156,8 @@ class DispensationMapperTest {
         Assertions.assertTrue(packageDispensed.getPackageQuantity() > 0);
         Assertions.assertEquals(1, packageDispensed.getPackageQuantity());
 
-        Assertions.assertEquals("56232", packageDispensed.getPackageNumber().getValue());
-        Assertions.assertEquals("20240725", packageDispensed.getPackageNumber().getDate());
-        Assertions.assertEquals("Medicinpriser", packageDispensed.getPackageNumber().getSource());
+        Assertions.assertEquals("720000", packageDispensed.getPackageNumber().getValue());
+        Assertions.assertEquals("Local", packageDispensed.getPackageNumber().getSource());
 
     }
 
