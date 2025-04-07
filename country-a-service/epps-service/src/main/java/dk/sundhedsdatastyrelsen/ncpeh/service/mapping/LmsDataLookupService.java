@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.sundhedsdatastyrelsen.ncpeh.lms.LmsDataRepository;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +25,10 @@ public class LmsDataLookupService {
             return lms2.getPackagingType();
         }
         return null;
+    }
+
+    public Lms02Data getLms02EntryFromPackageNumber(String packageNumber) {
+        return lmsDataRepository.getLms02FromPackageNumber(Integer.parseInt(packageNumber));
     }
 
     public String getManufacturerOrganizationNameFromDrugId(long drugId) {
