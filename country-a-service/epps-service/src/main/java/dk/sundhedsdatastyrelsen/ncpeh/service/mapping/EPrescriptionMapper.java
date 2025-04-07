@@ -12,7 +12,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
-import dk.sundhedsdatastyrelsen.ncpeh.service.CanDispense;
+import dk.sundhedsdatastyrelsen.ncpeh.service.DispensationAllowed;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
@@ -123,7 +123,7 @@ public class EPrescriptionMapper {
             prescription.getDrug().getForm().getCode().getValue(),
             prescription.getDrug().getForm().getText(),
             EPrescriptionL3Mapper.drugStrengthText(prescription),
-            CanDispense.canDispense(lms02Entry)
+            DispensationAllowed.isDispensationAllowed(lms02Entry)
         );
     }
 }
