@@ -109,7 +109,14 @@ public class PrescriptionService {
 
             var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
             return validPrescriptions.stream()
-                .map(pair -> EPrescriptionMapper.mapMeta(patientId, fmkResponse, pair.getLeft()))
+                .map(pair -> EPrescriptionMapper.mapMeta(
+                    patientId,
+                    fmkResponse,
+                    pair.getLeft(),
+                    lmsDataLookupService.getLms02EntryFromPackageNumber(pair.getRight()
+                        .getPackageRestriction()
+                        .getPackageNumber()
+                        .getValue())))
                 .toList();
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);

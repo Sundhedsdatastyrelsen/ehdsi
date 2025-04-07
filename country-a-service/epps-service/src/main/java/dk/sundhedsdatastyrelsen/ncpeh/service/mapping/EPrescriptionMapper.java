@@ -6,11 +6,13 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
+import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
+import dk.sundhedsdatastyrelsen.ncpeh.service.CanDispense;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
@@ -36,13 +38,14 @@ public class EPrescriptionMapper {
         String atcName,
         String doseFormCode,
         String doseFormName,
-        String strength
+        String strength,
+        boolean dispensable
     ) {
     }
 
-    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex) {
+    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, Lms02Data lms02Entry) {
         try {
-            var model = makeModel(patientId, prescriptions, prescriptionIndex);
+            var model = makeModel(patientId, prescriptions, prescriptionIndex, lms02Entry);
             var l3Meta = generateMeta(patientId, model, DocumentLevel.LEVEL3);
             var l1Meta = generateMeta(patientId, model, DocumentLevel.LEVEL1);
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
@@ -77,7 +80,7 @@ public class EPrescriptionMapper {
         meta.setAtcCode(model.atcCode());
         meta.setAtcName(model.atcName());
         meta.setClassCode(ClassCodeDto._57833_6); // Prescription for medication
-        meta.setDispensable(true); //This should always be true, we don't return non-dispensable prescriptions
+        meta.setDispensable(model.dispensable());
         meta.setFormat(documentFormat);
         meta.setLanguage("da-DK"); //We always include danish text in free-text
         meta.setProductCode(model.productCode()); //Varenummer
@@ -103,7 +106,7 @@ public class EPrescriptionMapper {
     }
 
     @NonNull
-    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex) throws MapperException {
+    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, Lms02Data lms02Entry) throws MapperException {
         var prescription = prescriptions.getPrescription().get(prescriptionIndex);
         return new MetaModel(
             patientId,
@@ -119,7 +122,8 @@ public class EPrescriptionMapper {
             prescription.getDrug().getATC().getText(),
             prescription.getDrug().getForm().getCode().getValue(),
             prescription.getDrug().getForm().getText(),
-            EPrescriptionL3Mapper.drugStrengthText(prescription)
+            EPrescriptionL3Mapper.drugStrengthText(prescription),
+            CanDispense.canDispense(lms02Entry)
         );
     }
 }
