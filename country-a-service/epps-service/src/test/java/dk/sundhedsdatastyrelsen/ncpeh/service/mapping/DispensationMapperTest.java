@@ -113,7 +113,7 @@ class DispensationMapperTest {
 
         // Assertions
         Assertions.assertEquals("EAN-Lokationsnummer", org.getIdentifier().getSource(), "Source does not match");
-        Assertions.assertEquals("5790000170609", org.getIdentifier().getValue(), "Value does not match");
+        Assertions.assertEquals("5790001392277", org.getIdentifier().getValue(), "Value does not match");
         Assertions.assertEquals("Apotek", org.getType(), "Type does not match");
         Assertions.assertEquals("NCP-B-CZ Portal", org.getName(), "Name does not match");
         Assertions.assertEquals("invalid@email.test", org.getEmailAddress(), "Email does not match");
