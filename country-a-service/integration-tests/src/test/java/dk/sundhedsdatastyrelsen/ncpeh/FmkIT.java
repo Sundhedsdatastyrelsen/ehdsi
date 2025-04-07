@@ -140,5 +140,11 @@ public class FmkIT {
 
         // shouldn't throw:
         prescriptionService.undoDispensation(patientId(cpr), eDispensation, TestIdentities.apotekerChrisChristoffersen);
+
+        // we perform the dispensation again to clean up after ourselves:
+        prescriptionService.submitDispensation(
+            patientId(cpr),
+            eDispensation,
+            TestIdentities.apotekerChrisChristoffersen);
     }
 }

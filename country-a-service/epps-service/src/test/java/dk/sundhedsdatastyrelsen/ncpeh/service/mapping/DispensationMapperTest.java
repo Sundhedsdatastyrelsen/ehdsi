@@ -33,7 +33,7 @@ class DispensationMapperTest {
         //Input format:
         // - Filename
         // - String of expected error message from mapping the CDA (null means no error is expected)
-        String missingPharmCodeErrorMessage = String.format("Could not find find data at path: %s", DispensationMapper.XPaths.manufacturedMaterialCode);
+        String missingPharmCodeErrorMessage = String.format("Could not find find data at path: %s", DispensationMapper.XPaths.containerPackagedProductCode);
         return Stream.of(
             Arguments.of("dispensation2.xml", null), //Our own constructed test dispensation
             Arguments.of("CzRequest1.xml", null), // One of the requests the CZ team sent us during the Fall 2024 test
@@ -46,9 +46,8 @@ class DispensationMapperTest {
     }
 
     StartEffectuationResponseType testStartEffectuationResponse(Document cda) {
-        String packageNumber = new DispensationMapper().packageNumber(cda);
         var packageRestriction = PackageRestrictionType.builder()
-            .withPackageNumber().withSource("Medicinpriser").withValue(packageNumber).withDate("20240725").end()
+            .withPackageNumber(DispensationMapper.packageNumber(cda))
             .withPackageQuantity(2)
             .build();
         return StartEffectuationResponseType.builder()
@@ -62,9 +61,8 @@ class DispensationMapperTest {
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void startEffectuationRequestTest(String xmlFileName, String mappingErrorMessageExpected) throws MapperException {
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        var req = sut.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
+        var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
 
         assertThat(req.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(req.getPrescription().getFirst().getIdentifier() > 0L);
@@ -74,9 +72,8 @@ class DispensationMapperTest {
     @Test
     void authorPersonTest() throws XPathExpressionException {
         var xmlFileName = "CzRequest1.xml";
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        var person = sut.authorPerson(cda);
+        var person = DispensationMapper.authorPerson(cda);
 
         Assertions.assertNotNull(person.getPersonIdentifier());
         Assertions.assertEquals("CPR", person.getPersonIdentifier().getSource());
@@ -95,9 +92,8 @@ class DispensationMapperTest {
     void authorRoleTest() throws XPathExpressionException {
         var xmlFileName = "CzRequest1.xml";
 
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        var role = sut.authorRole(cda);
+        var role = DispensationMapper.authorRole(cda);
 
         Assertions.assertFalse(role.isBlank());
         Assertions.assertEquals("Apoteker", role);
@@ -107,9 +103,8 @@ class DispensationMapperTest {
     void authorOrganizationTest() throws XPathExpressionException {
         var xmlFileName = "CzRequest1.xml";
 
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        var org = sut.authorOrganization(cda);
+        var org = DispensationMapper.authorOrganization(cda);
 
         Assertions.assertFalse(org.getIdentifier().getSource().isBlank());
         Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
@@ -118,7 +113,7 @@ class DispensationMapperTest {
 
         // Assertions
         Assertions.assertEquals("EAN-Lokationsnummer", org.getIdentifier().getSource(), "Source does not match");
-        Assertions.assertEquals("5790000170609", org.getIdentifier().getValue(), "Value does not match");
+        Assertions.assertEquals("5790001392277", org.getIdentifier().getValue(), "Value does not match");
         Assertions.assertEquals("Apotek", org.getType(), "Type does not match");
         Assertions.assertEquals("NCP-B-CZ Portal", org.getName(), "Name does not match");
         Assertions.assertEquals("invalid@email.test", org.getEmailAddress(), "Email does not match");
@@ -132,9 +127,8 @@ class DispensationMapperTest {
     void startEffectuationRequestPrescriptionTest() throws XPathExpressionException, MapperException {
         var xmlFileName = "CzRequest1.xml";
 
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
-        var p = sut.startEffectuationRequestPrescription(cda);
+        var p = DispensationMapper.startEffectuationRequestPrescription(cda);
 
         Assertions.assertEquals(469854419288102L, p.getIdentifier());
     }
@@ -143,12 +137,11 @@ class DispensationMapperTest {
     void effectuationTest() throws Exception {
         var xmlFileName = "CzRequest1.xml";
 
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
 
         var startEffectuationResponse = testStartEffectuationResponse(cda);
 
-        var e = sut.effectuation(cda, startEffectuationResponse);
+        var e = DispensationMapper.effectuation(cda, startEffectuationResponse);
 
         Assertions.assertTrue(e.getDateTime().isValid());
 
@@ -163,9 +156,8 @@ class DispensationMapperTest {
         Assertions.assertTrue(packageDispensed.getPackageQuantity() > 0);
         Assertions.assertEquals(1, packageDispensed.getPackageQuantity());
 
-        Assertions.assertEquals("56232", packageDispensed.getPackageNumber().getValue());
-        Assertions.assertEquals("20240725", packageDispensed.getPackageNumber().getDate());
-        Assertions.assertEquals("Medicinpriser", packageDispensed.getPackageNumber().getSource());
+        Assertions.assertEquals("720000", packageDispensed.getPackageNumber().getValue());
+        Assertions.assertEquals("Local", packageDispensed.getPackageNumber().getSource());
 
     }
 
@@ -174,10 +166,9 @@ class DispensationMapperTest {
 
         var xmlFileName = "CzRequest1.xml";
 
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
 
-        var q = sut.packageQuantity(cda);
+        var q = DispensationMapper.packageQuantity(cda);
 
         Assertions.assertEquals(1, q);
     }
@@ -185,7 +176,6 @@ class DispensationMapperTest {
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void createPharmacyEffectuationRequestTest(String xmlFileName, String mappingErrorMessageExpected) throws MapperException, XPathExpressionException {
-        var sut = new DispensationMapper();
         var cda = testDispensationCda(xmlFileName);
         if (mappingErrorMessageExpected != null) {
             var exception = Assertions.assertThrows(DataRequirementException.class, () -> testStartEffectuationResponse(cda));
@@ -195,7 +185,7 @@ class DispensationMapperTest {
         var startEffectuationResponse = testStartEffectuationResponse(cda);
 
 
-        var result = sut.createPharmacyEffectuationRequest(
+        var result = DispensationMapper.createPharmacyEffectuationRequest(
             "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,
             startEffectuationResponse
