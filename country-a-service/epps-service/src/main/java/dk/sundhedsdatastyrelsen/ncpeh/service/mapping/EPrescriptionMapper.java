@@ -17,13 +17,13 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptio
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.DispensationAllowed;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import lombok.NonNull;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+@Slf4j
 public class EPrescriptionMapper {
 
     private EPrescriptionMapper() {
@@ -53,9 +53,9 @@ public class EPrescriptionMapper {
             var l3Meta = generateMeta(patientId, model, DocumentLevel.LEVEL3);
             var l1Meta = generateMeta(patientId, model, DocumentLevel.LEVEL1);
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
-        } catch (MapperException e) {
-            // TODO I don't think we should throw here? Just return the ones that work.
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        } catch (Exception e) {
+            log.error("An error occurred while mapping metadata.", e);
+            return null;
         }
     }
 
