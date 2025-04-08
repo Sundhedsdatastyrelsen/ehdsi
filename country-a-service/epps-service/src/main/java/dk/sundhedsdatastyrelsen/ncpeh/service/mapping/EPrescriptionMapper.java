@@ -4,7 +4,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
@@ -112,7 +111,10 @@ public class EPrescriptionMapper {
     @NonNull
     private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, Lms02Data lms02Entry) throws MapperException {
         var prescription = prescriptions.getPrescription().get(prescriptionIndex);
-        var atc = Optional.ofNullable(prescription).map(PrescriptionType::getDrug).map(DrugType::getATC);
+        if (prescription == null) {
+            throw new MapperException("Missing prescription");
+        }
+        var atc = Optional.ofNullable(prescription.getDrug()).map(DrugType::getATC);
         return new MetaModel(
             patientId,
             OffsetDateTime.now(),

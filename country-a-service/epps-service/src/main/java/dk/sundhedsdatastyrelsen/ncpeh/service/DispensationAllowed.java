@@ -14,13 +14,13 @@ public final class DispensationAllowed {
     public static boolean isDispensationAllowed(PrescriptionType prescription, Lms02Data lms02Entry) {
         // We check that the regulation code ("Udleveringsbestemmelse") of the product is valid.
         // Specifically, we use this check to disallow narcotics ("§4-lægemidler") which are out-of-scope.
-        var isValidRegulationCode = dispensableRegulations.stream()
-            .anyMatch(code -> code.equals(lms02Entry.getDeliveryStatement()));
+        var isValidRegulationCode = lms02Entry != null
+            && dispensableRegulations.stream().anyMatch(code -> code.equals(lms02Entry.getDeliveryStatement()));
 
         // KBP = "Kombinationspakning" (LMS14)
         // Combination packaging is out of scope, so we disallow them.
         // There is also no good transcoding of KBP.
-        var isNotCombinationPackaging = !"KBP".equals(lms02Entry.getPackagingType());
+        var isNotCombinationPackaging = lms02Entry != null && !"KBP".equals(lms02Entry.getPackagingType());
 
         // A prescription is magistral (based on a recipe) if there is a DetailedDrugText on it.
         // This is the only way to tell if a drug is magistral.
