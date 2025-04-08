@@ -221,9 +221,11 @@ public class PrescriptionService {
                 .filter(p -> p.getIdentifier() == prescriptionId)
                 .findFirst()
                 .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
-            var isDispensable = DispensationAllowed.isDispensationAllowed(lmsDataLookupService.getLms02EntryFromPackageNumber(prescription.getPackageRestriction()
-                .getPackageNumber()
-                .getValue()));
+            var isDispensable = DispensationAllowed.isDispensationAllowed(
+                prescription,
+                lmsDataLookupService.getLms02EntryFromPackageNumber(prescription.getPackageRestriction()
+                    .getPackageNumber()
+                    .getValue()));
             if (!isDispensable) {
                 throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed");
             }

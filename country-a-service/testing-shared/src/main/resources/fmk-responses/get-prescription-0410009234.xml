@@ -21,6 +21,7 @@
         <ns4:Identifier>471017992117101</ns4:Identifier>
         <ns4:AttachedToDrugMedicationIdentifier>32757830</ns4:AttachedToDrugMedicationIdentifier>
         <ns4:CreatedFromDrugMedicationVersion>1733318393043001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:DrugMedicationEnded>Behandling afsluttet</ns4:DrugMedicationEnded>
         <ns4:AuthorisationDateTime>2024-12-04T13:19:52Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
@@ -212,10 +213,72 @@
         <ns4:Version>13013</ns4:Version>
     </ns4:Prescription>
     <ns4:Prescription>
-        <ns4:Identifier>478343843634102</ns4:Identifier>
-        <ns4:AttachedToDrugMedicationIdentifier>36755255</ns4:AttachedToDrugMedicationIdentifier>
-        <ns4:CreatedFromDrugMedicationVersion>1740644244385001001</ns4:CreatedFromDrugMedicationVersion>
-        <ns4:AuthorisationDateTime>2025-02-27T08:17:24Z</ns4:AuthorisationDateTime>
+        <ns4:Identifier>478687820122101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>36905889</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1740988220154001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:DrugMedicationEnded>Behandling afsluttet</ns4:DrugMedicationEnded>
+        <ns4:AuthorisationDateTime>2025-03-03T07:50:20Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Gentofte Hospital, Hjertemedicinsk afdeling P</Name>
+                    <TelephoneNumber>23836750</TelephoneNumber>
+                    <Type>Sygehus</Type>
+                    <Identifier source="SKS">1501031</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-03-03T07:50:20Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-03-03</ns4:ValidFromDate>
+        <ns4:ValidToDate>2025-04-09</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2025-03-03">466915</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>10.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2025-03-03">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>10 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2025-03-03">214</Code>
+            <Text>til sårbehandling</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-03-03">D09AB01</Code>
+                <Text>Zinkbandage uden tilsætninger</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-03-03">28101902597</Identifier>
+            <Name>Zipzoc</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-03-03">IMPGAZE</Code>
+                <Text>imprægneret gaze</Text>
+            </Form>
+            <Strength>
+                <Text source="Medicinpriser" date="2025-03-03">Ukendt</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-03-03">ZINKOXID</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 strømpe efter behov, højst 2 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>26820</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>481801817572102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>38974934</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1744102217775001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-04-08T08:50:17Z</ns4:AuthorisationDateTime>
         <ns4:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
@@ -224,55 +287,49 @@
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>22222222</TelephoneNumber>
+                    <TelephoneNumber>87654321</TelephoneNumber>
                     <Type>Yder</Type>
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2025-02-27T08:17:24Z</DateTime>
+            <DateTime>2025-04-08T08:50:17Z</DateTime>
         </ns4:Created>
-        <ns4:ValidFromDate>2025-02-27</ns4:ValidFromDate>
-        <ns4:ValidToDate>2025-04-04</ns4:ValidToDate>
+        <ns4:ValidFromDate>2025-04-08</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-04-08</ns4:ValidToDate>
         <ns4:PackageRestriction>
-            <ns2:PackageNumber source="Medicinpriser" date="2025-02-27">79442</ns2:PackageNumber>
+            <ns2:PackageNumber source="Local" date="2025-04-08">922222</ns2:PackageNumber>
             <ns2:PackageSize>
-                <ns2:Value>100.00</ns2:Value>
-                <ns2:UnitCode source="Medicinpriser" date="2025-02-27">ML</ns2:UnitCode>
-                <ns2:UnitText>ml</ns2:UnitText>
-                <ns2:PackageSizeText>100 ml</ns2:PackageSizeText>
+                <ns2:PackageSizeText>6</ns2:PackageSizeText>
             </ns2:PackageSize>
             <ns2:PackageQuantity>1</ns2:PackageQuantity>
         </ns4:PackageRestriction>
         <ns4:Indication>
-            <Code source="Medicinpriser" date="2025-02-27">121</Code>
-            <Text>mod mellemørebetændelse</Text>
+            <FreeText>Mod onde onder</FreeText>
         </ns4:Indication>
         <ns4:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2025-02-27">J01CA04</Code>
-                <Text>Amoxicillin</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2025-02-27">28101137283</Identifier>
-            <Name>Imacillin</Name>
+            <DetailedDrugText>8 haletudser og 1 sprællende frø</DetailedDrugText>
             <Form>
-                <Code source="Medicinpriser" date="2025-02-27">ORAGRAS</Code>
-                <Text>granulat til oral suspension</Text>
+                <Code source="Medicinpriser" date="2025-04-08">BLAVSK</Code>
+                <Text>blæreskyllevæske</Text>
             </Form>
             <Strength>
-                <Value>50.0</Value>
-                <UnitCode source="Medicinpriser" date="2025-02-27">MGM</UnitCode>
-                <UnitText>mg/ml</UnitText>
-                <Text source="Medicinpriser" date="2025-02-27">50 mg/ml</Text>
+                <Value>8.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-04-08">UN</UnitCode>
+                <UnitText>enheder</UnitText>
+                <Text source="Medicinpriser" date="2025-04-08">8 enheder</Text>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2025-02-27">AMOXICILLINTRIHYDRAT</SubstanceText>
+                    <FreeText>Haletudse</FreeText>
+                </ActiveSubstance>
+                <ActiveSubstance>
+                    <FreeText>Frø</FreeText>
                 </ActiveSubstance>
             </Substances>
         </ns4:Drug>
-        <ns4:DosageText>5 ml 3 gange daglig</ns4:DosageText>
-        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:DosageText>1 dråbe nat</ns4:DosageText>
+        <ns4:SubstitutionAllowed>false</ns4:SubstitutionAllowed>
         <ns4:Status>åben</ns4:Status>
-        <ns4:Version>4594</ns4:Version>
+        <ns4:Version>17841</ns4:Version>
     </ns4:Prescription>
 </ns4:GetPrescriptionResponse>
