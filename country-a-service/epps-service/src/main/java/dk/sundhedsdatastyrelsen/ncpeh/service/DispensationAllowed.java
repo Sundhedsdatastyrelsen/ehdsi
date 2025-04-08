@@ -9,8 +9,17 @@ public final class DispensationAllowed {
     }
 
     public static boolean isDispensationAllowed(Lms02Data lms02Entry) {
-        return dispensableRegulations.stream()
+        // We check that the regulation code ("Udleveringsbestemmelse") of the product is valid.
+        // Specifically, we use this check to disallow narcotics ("§4-lægemidler") which are out-of-scope.
+        var isValidRegulationCode = dispensableRegulations.stream()
             .anyMatch(code -> code.equals(lms02Entry.getDispensationRegulationCode()));
+
+        // KBP = "Kombinationspakning" (LMS14)
+        // Combination packaging is out of scope, so we disallow them.
+        // There is also no good transcoding of KBP.
+        var isNotCombinationPackaging = !"KBP".equals(lms02Entry.getPackagingType());
+
+        return isValidRegulationCode && isNotCombinationPackaging;
     }
 
     /// The list of regulations we can dispense in other EU countries, with the
