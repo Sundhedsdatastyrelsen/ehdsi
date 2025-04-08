@@ -123,7 +123,7 @@ public class EPrescriptionMapper {
             prescription.getDrug().getForm().getCode().getValue(),
             prescription.getDrug().getForm().getText(),
             EPrescriptionL3Mapper.drugStrengthText(prescription),
-            DispensationAllowed.isDispensationAllowed(lms02Entry)
+            DispensationAllowed.isDispensationAllowed(prescription, lms02Entry)
         );
     }
 }
