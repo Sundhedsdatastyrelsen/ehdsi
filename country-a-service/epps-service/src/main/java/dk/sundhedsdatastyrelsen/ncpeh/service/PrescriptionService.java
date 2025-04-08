@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -118,6 +119,7 @@ public class PrescriptionService {
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue())))
+                .filter(Objects::nonNull)
                 .toList();
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
