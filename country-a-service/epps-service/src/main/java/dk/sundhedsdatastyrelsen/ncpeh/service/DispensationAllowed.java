@@ -15,7 +15,7 @@ public final class DispensationAllowed {
         // We check that the regulation code ("Udleveringsbestemmelse") of the product is valid.
         // Specifically, we use this check to disallow narcotics ("§4-lægemidler") which are out-of-scope.
         var isValidRegulationCode = dispensableRegulations.stream()
-            .anyMatch(code -> code.equals(lms02Entry.getDispensationRegulationCode()));
+            .anyMatch(code -> code.equals(lms02Entry.getDeliveryStatement()));
 
         // KBP = "Kombinationspakning" (LMS14)
         // Combination packaging is out of scope, so we disallow them.
