@@ -270,7 +270,7 @@ public class EPrescriptionL3Mapper {
                 Optional.ofNullable(authorization.getSpeciale1()),
                 Optional.ofNullable(authorization.getSpeciale2()),
                 Optional.ofNullable(authorization.getSpeciale3()))
-            .filter(Optional::isPresent)
+            .filter(spe -> !spe.orElse("").trim().isEmpty())
             .map(Optional::get)
             .toList();
 
