@@ -31,9 +31,9 @@ public class Lms02Data implements DatabaseObject {
     @FixedWidthField(start = 69, length = 4)
     private String PackagingType; //Emballagetype
     @FixedWidthField(start = 73, length = 5)
-    private String DispensationRegulationCode; //Udleveringsbestemmelse
+    private String DeliveryStatement; //Udleveringsbestemmelse
     @FixedWidthField(start = 78, length = 5)
-    private String RequiredSpecialization; //Udleveringsspeciale - some prescriptions can only be handed out if they are created by health professionals with the right specialization.
+    private String DeliverySpecialty; //Udleveringsspeciale
     @FixedWidthField(start = 83, length = 2)
     private String MedicalSubsidyCode; //Medicintilskudskode
     @FixedWidthField(start = 85, length = 5)
