@@ -26,6 +26,7 @@
         <module>integration-tests</module>
         <module>testing-shared</module>
         <module>testing-tools</module>
+        <module>local-lms-db</module>
     </modules>
 
     <properties>
