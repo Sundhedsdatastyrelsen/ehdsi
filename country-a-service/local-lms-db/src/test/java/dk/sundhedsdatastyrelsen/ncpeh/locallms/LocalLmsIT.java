@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.locallms;
 
 import org.junit.jupiter.api.Test;
+import org.sqlite.SQLiteDataSource;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,24 +12,40 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class LocalLmsIT {
-    private static FtpConnection.ServerInfo getServerInfo() {
+    private static FtpConnection.ServerInfo serverInfo() {
         var user = Objects.requireNonNull(System.getenv("MEDICINPRISER_FTP_USERNAME"), "envvar MEDICINPRISER_FTP_USERNAME is not set");
         var password = Objects.requireNonNull(System.getenv("MEDICINPRISER_FTP_PASSWORD"), "envvar MEDICINPRISER_FTP_PASSWORD is not set");
         return new FtpConnection.ServerInfo("ftp.medicinpriser.dk", 21, user, password);
     }
 
     @Test
+    void downloadData() throws SQLException, IOException {
+        var ds = new SQLiteDataSource();
+        ds.setUrl("jdbc:sqlite:local-lms-testdb.sqlite");
+        LocalLmsLoader.fetchData(serverInfo(), ds);
+    }
+
+    @Test
     void loadTablesWithRealData() throws IOException, SQLException {
         var dbFile = Files.createTempFile("local-lms-it", ".sqlite");
         var jdbcUrl = "jdbc:sqlite:" + dbFile.toAbsolutePath();
-        var q = new DataProvider(jdbcUrl);
+        var ds = new SQLiteDataSource();
+        ds.setUrl(jdbcUrl);
+        var q = new DataProvider(ds);
 
-        var serverInfo = getServerInfo();
-        LocalLmsLoader.fetchData(jdbcUrl, serverInfo);
+        LocalLmsLoader.fetchData(serverInfo(), ds);
 
         assertThat(q.lastImport().isPresent(), is(true));
         // This test is valid as long as Panodil 500 mg is marketed by Haleon Denmark ApS
         assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
         Files.delete(dbFile);
+    }
+
+    @Test
+    void query() {
+        var ds = new SQLiteDataSource();
+        ds.setUrl("jdbc:sqlite:local-lms-testdb.sqlite");
+        var q = new DataProvider(ds);
+        System.out.println(q.manufacturerOrganizationName(28100636073L));
     }
 }

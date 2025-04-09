@@ -27,6 +27,12 @@ public class Beans {
         return DataSourceBuilder.create().build();
     }
 
+    @Bean("localLmsDataSource")
+    @ConfigurationProperties("spring.local-lms-datasource")
+    public DataSource localLmsDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
     @Bean
     public UndoDispensationRepository undoDispensationRepository() {
         return new UndoDispensationRepository(undoDataSource());

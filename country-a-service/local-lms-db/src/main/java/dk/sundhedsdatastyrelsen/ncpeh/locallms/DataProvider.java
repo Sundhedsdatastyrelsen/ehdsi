@@ -1,15 +1,15 @@
 package dk.sundhedsdatastyrelsen.ncpeh.locallms;
 
-import java.sql.DriverManager;
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Optional;
 
 public class DataProvider {
-    private final String jdbcUrl;
+    private final DataSource dataSource;
 
-    public DataProvider(String jdbcUrl) {
-        this.jdbcUrl = jdbcUrl;
+    public DataProvider(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -41,7 +41,7 @@ public class DataProvider {
      * @return the (first) string result, or null if there are none.
      */
     private String queryOneString(String sql, String... params) {
-        try (var conn = DriverManager.getConnection(jdbcUrl);
+        try (var conn = dataSource.getConnection();
              var pstmt = conn.prepareStatement(sql)) {
             for (var i = 0; i < params.length; i++) {
                 pstmt.setString(i + 1, params[i]);

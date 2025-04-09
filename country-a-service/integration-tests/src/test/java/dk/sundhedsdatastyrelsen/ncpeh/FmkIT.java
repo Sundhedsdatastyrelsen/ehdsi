@@ -7,7 +7,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.EPrescriptionMapperServiceMock;
-import dk.sundhedsdatastyrelsen.ncpeh.service.LmsDataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
@@ -17,6 +16,7 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import javax.sql.DataSource;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -29,8 +29,14 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
-    private final String localLmsJdbcUrl = "jdbc:sqlite:./data/local-lms.sqlite";
-    private final PrescriptionService prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), new LmsDataProvider(localLmsJdbcUrl), authorizationRegistryClient());
+    private final DataSource lmsDataSource = new SingleConnectionDataSource("jdbc:sqlite:./data/local-lms.sqlite", true);
+
+    private final PrescriptionService prescriptionService = new PrescriptionService(
+        Fmk.apiClient(),
+        undoDispensationRepository(),
+        ePrescriptionMappingService(),
+        lmsDataSource,
+        authorizationRegistryClient());
 
     /**
      * This test simply checks that we can connect and get an answer on the data.

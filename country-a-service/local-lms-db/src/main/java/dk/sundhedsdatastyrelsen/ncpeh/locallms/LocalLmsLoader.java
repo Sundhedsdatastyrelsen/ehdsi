@@ -2,12 +2,12 @@ package dk.sundhedsdatastyrelsen.ncpeh.locallms;
 
 import org.slf4j.Logger;
 
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Instant;
 
@@ -17,15 +17,16 @@ public class LocalLmsLoader {
     /**
      * Download data from LMS (medicinpriser/taksten) and load it into a local SQLite database.
      */
-    public static void fetchData(String jdbcUrl, FtpConnection.ServerInfo serverInfo) throws IOException, SQLException {
+    public static void fetchData(FtpConnection.ServerInfo serverInfo, DataSource dataSource) throws IOException, SQLException {
         try (var ftpConn = new FtpConnection(serverInfo)) {
-            parseAndLoadRawData(ftpConn.rawDataProvider(), jdbcUrl);
+            parseAndLoadRawData(ftpConn.rawDataProvider(), dataSource);
         }
+        log.info("Local LMS database synchronized");
     }
 
-    static void parseAndLoadRawData(RawDataProvider rdp, String jdbcUrl) throws IOException, SQLException {
+    static void parseAndLoadRawData(RawDataProvider rdp, DataSource dataSource) throws IOException, SQLException {
         var tables = Specs.get();
-        try (var conn = DriverManager.getConnection(jdbcUrl)) {
+        try (var conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
 
             for (var table : tables) {

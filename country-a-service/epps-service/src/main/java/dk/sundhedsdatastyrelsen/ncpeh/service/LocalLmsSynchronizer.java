@@ -4,10 +4,12 @@ import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -15,24 +17,23 @@ import java.sql.SQLException;
 @Slf4j
 public class LocalLmsSynchronizer {
     private final FtpConnection.ServerInfo serverInfo;
-    private final String jdbcUrl;
     private final DataProvider dataProvider;
+    private final DataSource dataSource;
 
     public LocalLmsSynchronizer(
-        @Value("${local-lms.server:}")
+        @Value("${lmsftp.server:}")
         String server,
-        @Value("${local-lms.port:}")
+        @Value("${lmsftp.port:}")
         int port,
-        @Value("${local-lms.username:}")
+        @Value("${lmsftp.username:}")
         String username,
-        @Value("${local-lms.password:}")
+        @Value("${lmsftp.password:}")
         String password,
-        @Value("${local-lms.jdbcUrl:}")
-        String jdbcUrl
-    ) {
+        @Qualifier("localLmsDataSource") DataSource dataSource
+        ) {
         this.serverInfo = new FtpConnection.ServerInfo(server, port, username, password);
-        this.jdbcUrl = jdbcUrl;
-        this.dataProvider = new DataProvider(jdbcUrl);
+        this.dataSource = dataSource;
+        this.dataProvider = new DataProvider(dataSource);
         initialize();
     }
 
@@ -40,9 +41,9 @@ public class LocalLmsSynchronizer {
         if (dataProvider.lastImport().isEmpty()) {
             log.info("The local LMS database is unavailable. Attempting to create it.");
             try {
-                LocalLmsLoader.fetchData(jdbcUrl, serverInfo);
+                LocalLmsLoader.fetchData(serverInfo, dataSource);
             } catch (IOException | SQLException e) {
-                log.error("Cannot create local LMS database. To avoid this error, either fix the underlying problem, or place a copy of the database from another source at: {}", jdbcUrl);
+                log.error("Cannot create local LMS database. To avoid this error, either fix the underlying problem, or use a copy of the database from another source");
                 throw new IllegalStateException(e);
             }
         }
@@ -52,7 +53,7 @@ public class LocalLmsSynchronizer {
     public void nightlySync() {
         log.info("Synchronizing local LMS database");
         try {
-            LocalLmsLoader.fetchData(jdbcUrl, serverInfo);
+            LocalLmsLoader.fetchData(serverInfo, dataSource);
         } catch (IOException | SQLException e) {
             log.error("Cannot synchronize local LMS database.", e);
         }

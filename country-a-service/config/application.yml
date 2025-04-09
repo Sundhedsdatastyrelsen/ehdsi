@@ -9,6 +9,8 @@ spring:
     jdbcUrl: jdbc:sqlite:data/lms-db.sqlite
     url: jdbc:sqlite:data/lms-db.sqlite
     driver-class-name: org.sqlite.JDBC
+  local-lms-datasource:
+    jdbcUrl: jdbc:sqlite:data/lms-db.sqlite
   flyway:
     enabled: true
     locations: "classpath:db/migration"
@@ -38,10 +40,3 @@ lmsftp:
   port: 21
   username: ${LMSFTP_USERNAME}
   password: ${LMSFTP_PASSWORD}
-
-local-lms:
-  server: "ftp.medicinpriser.dk"
-  port: 21
-  username: ${LMSFTP_USERNAME}
-  password: ${LMSFTP_PASSWORD}
-  jdbcUrl: "jdbc:sqlite:data/local-lms-db.sqlite"
