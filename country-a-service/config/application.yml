@@ -38,3 +38,10 @@ lmsftp:
   port: 21
   username: ${LMSFTP_USERNAME}
   password: ${LMSFTP_PASSWORD}
+
+local-lms:
+  server: "ftp.medicinpriser.dk"
+  port: 21
+  username: ${LMSFTP_USERNAME}
+  password: ${LMSFTP_PASSWORD}
+  jdbcUrl: "jdbc:sqlite:data/local-lms-db.sqlite"

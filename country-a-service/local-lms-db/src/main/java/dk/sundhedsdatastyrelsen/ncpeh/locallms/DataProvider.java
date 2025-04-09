@@ -12,12 +12,20 @@ public class DataProvider {
         this.jdbcUrl = jdbcUrl;
     }
 
+    /**
+     * Return the timestamp of the last import, if available.
+     * Returns empty if the timestamp is not available or we cannot connect to the database.
+     */
     public Optional<Instant> lastImport() {
-        return Optional.ofNullable(queryOneString("SELECT last_import FROM import_metadata"))
-            .map(Instant::parse);
+        try {
+            return Optional.ofNullable(queryOneString("SELECT last_import FROM import_metadata"))
+                .map(Instant::parse);
+        } catch (IllegalStateException e) {
+            return Optional.empty();
+        }
     }
 
-    public String getManufacturerOrganizationNameFromDrugId(long drugId) {
+    public String manufacturerOrganizationName(long drugId) {
         return queryOneString("""
             SELECT LMS09.companyName
             FROM LMS09

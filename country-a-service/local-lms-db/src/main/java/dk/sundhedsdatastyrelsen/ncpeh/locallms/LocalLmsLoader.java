@@ -11,17 +11,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Instant;
 
-public class Loader {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Loader.class);
-    public static void loadTables(String jdbcUrl, FtpConnection.ServerInfo serverInfo) {
+public class LocalLmsLoader {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(LocalLmsLoader.class);
+
+    /**
+     * Download data from LMS (medicinpriser/taksten) and load it into a local SQLite database.
+     */
+    public static void fetchData(String jdbcUrl, FtpConnection.ServerInfo serverInfo) throws IOException, SQLException {
         try (var ftpConn = new FtpConnection(serverInfo)) {
             parseAndLoadRawData(ftpConn.rawDataProvider(), jdbcUrl);
-        } catch (IOException | SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    public static void parseAndLoadRawData(RawDataProvider rdp, String jdbcUrl) throws IOException, SQLException {
+    static void parseAndLoadRawData(RawDataProvider rdp, String jdbcUrl) throws IOException, SQLException {
         var tables = Specs.get();
         try (var conn = DriverManager.getConnection(jdbcUrl)) {
             conn.setAutoCommit(false);
@@ -66,6 +68,7 @@ public class Loader {
         return new BufferedReader(new InputStreamReader(is, Charset.forName("cp850")));
     }
 
+    @FunctionalInterface
     public interface RawDataProvider {
         InputStream get(Specs.Table table) throws IOException;
     }

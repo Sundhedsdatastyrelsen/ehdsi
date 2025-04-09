@@ -64,6 +64,7 @@ public class PrescriptionService {
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
     private final LmsDataLookupService lmsDataLookupService;
+    private final LmsDataProvider lmsDataProvider;
     private final AuthorizationRegistryClient authorizationRegistry;
     private final Cache<String, List<AuthorizationType>> authorizationRegistryCache = Caffeine.newBuilder()
         .maximumSize(500)
@@ -168,7 +169,7 @@ public class PrescriptionService {
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue());
-                    var manufacturerOrganizationName = lmsDataLookupService.getManufacturerOrganizationNameFromDrugId(
+                    var manufacturerOrganizationName = lmsDataProvider.manufacturerOrganizationName(
                         prescription.getDrug().getIdentifier().getValue()
                     );
                     var authorizations = authorizationRegistryCache.get(

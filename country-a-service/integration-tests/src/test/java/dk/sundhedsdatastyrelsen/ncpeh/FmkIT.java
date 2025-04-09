@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.EPrescriptionMapperServiceMock;
+import dk.sundhedsdatastyrelsen.ncpeh.service.LmsDataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
@@ -27,8 +28,9 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
-public class FmkIT {
-    private static final PrescriptionService PRESCRIPTION_SERVICE = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), authorizationRegistryClient());
+class FmkIT {
+    private final String localLmsJdbcUrl = "jdbc:sqlite:./data/local-lms.sqlite";
+    private final PrescriptionService prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), new LmsDataProvider(localLmsJdbcUrl), authorizationRegistryClient());
 
     /**
      * This test simply checks that we can connect and get an answer on the data.
@@ -57,7 +59,7 @@ public class FmkIT {
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
 
-        var drugMedications = PRESCRIPTION_SERVICE.getDrugMedicationResponse(Fmk.cprHelleReadOnly, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
+        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprHelleReadOnly, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
         assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
         assertThat(drugMedications.getPersonIdentifier().getValue(), is(Fmk.cprHelleReadOnly));
     }
@@ -85,7 +87,7 @@ public class FmkIT {
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
 
-        var drugMedications = PRESCRIPTION_SERVICE.getDrugMedicationResponse(Fmk.cprKarl, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
+        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprKarl, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
         assertThat(validPrescriptions.size(), is(drugMedications.getDrugMedication().size()));
     }
 
@@ -130,7 +132,7 @@ public class FmkIT {
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
 
-        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), authorizationRegistryClient());
+//        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), authorizationRegistryClient());
 
         // shouldn't throw:
         prescriptionService.submitDispensation(

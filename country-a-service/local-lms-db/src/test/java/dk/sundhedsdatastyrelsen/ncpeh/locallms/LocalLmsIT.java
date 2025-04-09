@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,17 +18,17 @@ public class LocalLmsIT {
     }
 
     @Test
-    void loadTablesWithRealData() throws IOException {
+    void loadTablesWithRealData() throws IOException, SQLException {
         var dbFile = Files.createTempFile("local-lms-it", ".sqlite");
         var jdbcUrl = "jdbc:sqlite:" + dbFile.toAbsolutePath();
         var q = new DataProvider(jdbcUrl);
 
         var serverInfo = getServerInfo();
-        Loader.loadTables(jdbcUrl, serverInfo);
+        LocalLmsLoader.fetchData(jdbcUrl, serverInfo);
 
         assertThat(q.lastImport().isPresent(), is(true));
         // This test is valid as long as Panodil 500 mg is marketed by Haleon Denmark ApS
-        assertThat(q.getManufacturerOrganizationNameFromDrugId(28100636073L), is("Haleon Denmark ApS"));
+        assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
         Files.delete(dbFile);
     }
 }

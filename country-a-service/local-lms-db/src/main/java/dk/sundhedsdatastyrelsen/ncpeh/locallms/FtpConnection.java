@@ -6,10 +6,9 @@ import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Slf4j
-class FtpConnection implements AutoCloseable {
+public class FtpConnection implements AutoCloseable {
     private final FTPClient ftpClient;
 
     FtpConnection(ServerInfo conn) throws IOException {
@@ -23,20 +22,14 @@ class FtpConnection implements AutoCloseable {
         ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
     }
 
-    public Loader.RawDataProvider rawDataProvider() {
-        return new Loader.RawDataProvider() {
+    public LocalLmsLoader.RawDataProvider rawDataProvider() {
+        return (table) -> new FilterInputStream(ftpClient.retrieveFileStream(table.ftpPath())) {
             @Override
-            public InputStream get(Specs.Table table) throws IOException {
-                // wrapped InputStream which completes the FTP command on close
-                return new FilterInputStream(ftpClient.retrieveFileStream(table.ftpPath())) {
-                    @Override
-                    public void close() throws IOException {
-                        super.close();
-                        if (!ftpClient.completePendingCommand()) {
-                            throw new IOException("Error: Failed to complete pending command after file retrieval.");
-                        }
-                    }
-                };
+            public void close() throws IOException {
+                super.close();
+                if (!ftpClient.completePendingCommand()) {
+                    throw new IOException("Error: Failed to complete pending command after file retrieval.");
+                }
             }
         };
     }

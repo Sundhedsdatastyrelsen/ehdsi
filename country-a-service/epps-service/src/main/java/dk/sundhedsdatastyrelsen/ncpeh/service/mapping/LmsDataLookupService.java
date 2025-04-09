@@ -30,8 +30,4 @@ public class LmsDataLookupService {
     public Lms02Data getLms02EntryFromPackageNumber(String packageNumber) {
         return lmsDataRepository.getLms02FromPackageNumber(Integer.parseInt(packageNumber));
     }
-
-    public String getManufacturerOrganizationNameFromDrugId(long drugId) {
-        return lmsDataRepository.getManufacturerOrganizationNameFromDrugId(drugId);
-    }
 }
