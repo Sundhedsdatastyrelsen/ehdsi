@@ -122,10 +122,12 @@ services:
       - ./keystore:/opt/openncp-configuration/keystore
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
+      - ./ncp_a/logback.xml:/opt/logging/logback.xml
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       NC_DK_COUNTRY_A_HOST: "http://epps-country-a:8080"
       JAVA_OPTS: "
+        -Dlogback.configurationFile=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8"
       # LOGGING_LEVEL_ROOT: DEBUG
