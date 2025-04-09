@@ -10,7 +10,7 @@ file automatically. -->
         <layout class="ch.qos.logback.classic.PatternLayout">
             <!--pattern>%d{yyyy-MM-dd
             HH:mm:ss} %-5level %logger{36} - %msg%n</pattern-->
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level)%logger{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
         </layout>
     </appender>
 
@@ -18,7 +18,7 @@ file automatically. -->
         <file>${catalina.base}/logs/openncp-ws-server.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread])%highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -26,7 +26,7 @@ file automatically. -->
         <file>${catalina.base}/logs/openncp-ws-server-clinical.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread])%cyan([%logger{36}]) %highlight(%-5level) %C{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %cyan([%logger{36}]) %highlight(%-5level) %C{36}.%M\(%line\) - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -34,7 +34,7 @@ file automatically. -->
         <file>${catalina.base}/logs/openncp-abuse-detection.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread])%highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
         </encoder>
     </appender>
 
