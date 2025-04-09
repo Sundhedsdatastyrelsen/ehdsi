@@ -9,6 +9,9 @@ RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/
 
 WORKDIR /usr/src/app/ehealth
 
+# We replace the logging configuration with our own logging configuration
+COPY ncp_a/logback.xml openncp-core\openncp-core-server\src\main\resources\logback.xml
+
 # Use sed to replace the old URL with the new URL
 RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
 

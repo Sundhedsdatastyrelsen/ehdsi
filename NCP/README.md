@@ -26,6 +26,14 @@ To ensure regular synchronization from the CTS, add the following line (edited a
 0 3 * * * cd /var/ehdsi/NCP && /usr/bin/docker compose run tsam-synchronizer
 ```
 
+# How it's built
+Take a look in the docker file for specifics, but we checkout the EHEALTH code from Europa, and then inject our own country-a code (in openncp-national-connector), and replace the pom in ncp_a with our pom (which is dependant on openncp-national-connector). We also change the logging by replacing their logback.xml
+
+## Updating to newer NCP versions
+The above means that when we update to newer NCP versions, we should manually merge changes from:
+- ehealth openncp-server/pom.xml to ncp_a/pom.xml
+- ehealth openncp-core/openncp-core-server/src/main/resources/logback.xml to ncp_a/logback.xml
+
 # Tests
 
 The `test-tool` directory contains scripts for querying the SOAP endpoints, and a request builder tool for building valid SOAP request bodies with signed SAML2.0 assertions.
