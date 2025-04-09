@@ -32,7 +32,7 @@ Take a look in the docker file for specifics, but we checkout the EHEALTH code f
 ## Updating to newer NCP versions
 The above means that when we update to newer NCP versions, we should manually merge changes from:
 - ehealth openncp-server/pom.xml to ncp_a/pom.xml
-- ehealth openncp-core/openncp-core-server/src/main/resources/logback.xml to ncp_a/logback.xml
+- ehealth openncp-application\openncp-application-server\src\main\resources\logback.xml to ncp_a/logback.xml
 
 # Tests
 

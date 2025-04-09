@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--This file is copied from EHEALTH: openncp-core\openncp-core-server\src\main\resources\logback.xml -->
-<!-- We overwrite their file with this, so any changes to their logging is not going to into our file automatically. -->
+<!--This file is copied from EHEALTH:
+openncp-application\openncp-application-server\src\main\resources\logback.xml -->
+<!-- We overwrite their file with this, so any changes to their logging is not going to into our
+file automatically. -->
 <!-- Please merge manually if logging updates are needed -->
 
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <!--pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern-->
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+            <!--pattern>%d{yyyy-MM-dd
+            HH:mm:ss} %-5level %logger{36} - %msg%n</pattern-->
+            <pattern>%red([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level)
+                %logger{36}.%M\(%line\) - %msg%n</pattern>
         </layout>
     </appender>
 
@@ -15,7 +19,8 @@
         <file>${catalina.base}/logs/openncp-ws-server.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread])
+                %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -23,7 +28,8 @@
         <file>${catalina.base}/logs/openncp-ws-server-clinical.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %cyan([%logger{36}]) %highlight(%-5level) %C{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread])
+                %cyan([%logger{36}]) %highlight(%-5level) %C{36}.%M\(%line\) - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -31,125 +37,163 @@
         <file>${catalina.base}/logs/openncp-abuse-detection.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread]) %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
+            <pattern>%green([%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}]) %cyan([%thread])
+                %highlight(%-5level) %logger{36}.%M\(%line\) - %msg%n</pattern>
         </encoder>
     </appender>
 
     <logger name="LOGGER_CLINICAL" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE_CLINICAL"/>
-        <appender-ref ref="STDOUT"/> <!-- DK Addition-->
+        <appender-ref ref="FILE_CLINICAL" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="ee.affecto.epsos.util" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
+
     </logger>
 
-    <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+    <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="INFO"
+        additivity="false">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
+
     </logger>
 
     <!-- Spring Web Service Payload Logging - Uncomment to enable MessageTracing Request/Response-->
-    <!--<logger name="org.springframework.ws.client.MessageTracing" level="TRACE" additivity="false">-->
-    <!--<appender-ref ref="FILE_CLINICAL"/>-->
+    <!--<logger
+    name="org.springframework.ws.client.MessageTracing" level="TRACE" additivity="false">-->
+    <!--<appender-ref
+    ref="FILE_CLINICAL"/>-->
     <!--</logger>-->
-    <!--<logger name="org.springframework.ws.server.MessageTracing" level="TRACE" additivity="false">-->
-    <!--<appender-ref ref="FILE_CLINICAL"/>-->
+    <!--<logger
+    name="org.springframework.ws.server.MessageTracing" level="TRACE" additivity="false">-->
+    <!--<appender-ref
+    ref="FILE_CLINICAL"/>-->
     <!--</logger>-->
     <!-- End Spring Web Service Logging-->
 
     <logger name="org.apache.axis2" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
-    </logger>
-
-    <logger name="ee.affecto.epsos.util" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="ee.affecto.epsos.ws.handler" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="org.hibernate.orm.deprecation" level="ERROR" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.epsos.protocolterminators.ws.server" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.epsos.protocolterminators.ws.server.xca.impl" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.europa.ec.sante.ehdsi.gazelle.validation" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="com.spirit.epsos.cc.adc" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="tr.com.srdc.epsos.util.http" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
+
     </logger>
 
     <logger name="tr.com.srdc.epsos.ws.server" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/> <!-- DK Addition-->
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="_2007.xds_b.iti.ihe" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="_2009.xcpd.iti.ihe" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.esens.abb.nonrep" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="epsos.ccd.gnomon.configmanager" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="epsos.ccd.gnomon.auditmanager" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="epsos.ccd.gnomon.auditmanager.ssl" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.europa.ec.sante.openncp.core.common.tm.service" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
-    <logger name="eu.europa.ec.sante.openncp.core.common.tsam.service" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+    <logger name="eu.europa.ec.sante.openncp.core.common.tsam.service" level="INFO"
+        additivity="false">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.epsos.util" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.europa.ec.sante.openncp.core.common.tsam.dao" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.europa.ec.sante.ehdsi.openncp" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/> <!-- DK Addition-->
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
+    </logger>
+
+    <logger name="epsos.ccd.posam.tm.service" level="INFO" additivity="false">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
+    </logger>
+
+    <logger name="epsos.ccd.posam.tsam.service" level="INFO" additivity="false">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
     <logger name="eu.europa.ec.sante.ehdsi.openncp.abusedetection" level="INFO" additivity="false">
-        <appender-ref ref="FILE_ABUSE"/>
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_ABUSE" />
+        <appender-ref ref="STDOUT" />
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
     </root>
+
+
 </configuration>
