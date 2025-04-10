@@ -19,13 +19,6 @@ public class LocalLmsIT {
     }
 
     @Test
-    void downloadData() throws SQLException, IOException {
-        var ds = new SQLiteDataSource();
-        ds.setUrl("jdbc:sqlite:local-lms-testdb.sqlite");
-        LocalLmsLoader.fetchData(serverInfo(), ds);
-    }
-
-    @Test
     void loadTablesWithRealData() throws IOException, SQLException {
         var dbFile = Files.createTempFile("local-lms-it", ".sqlite");
         var jdbcUrl = "jdbc:sqlite:" + dbFile.toAbsolutePath();
@@ -40,14 +33,5 @@ public class LocalLmsIT {
         assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
         assertThat(q.packageFormCode("005813"), is("BLI"));
         Files.delete(dbFile);
-    }
-
-    @Test
-    void query() {
-        var ds = new SQLiteDataSource();
-        ds.setUrl("jdbc:sqlite:local-lms-testdb.sqlite");
-        var q = new DataProvider(ds);
-        System.out.println(q.manufacturerOrganizationName(28100636073L));
-        System.out.println(q.packageFormCode("005813"));
     }
 }
