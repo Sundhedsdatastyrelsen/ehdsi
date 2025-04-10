@@ -28,35 +28,40 @@ public class LocalLmsLoader {
         var tables = Specs.get();
         try (var conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
-            for (var table : tables) {
-                // update DDL
-                try (var stmt = conn.createStatement()) {
-                    for (var ddl: table.ddl()) {
-                        stmt.executeUpdate(ddl);
-                    }
-                }
-                // parse and insert data from data provider
-                try (var rdr = reader(rdp.get(table));
-                     var pstmt = conn.prepareStatement(table.insertSql())) {
-                    String row;
-                    while ((row = rdr.readLine()) != null) {
-                        var parsed = table.parseRow(row);
-                        for (var i = 0; i < parsed.size(); i++) {
-                            pstmt.setString(i + 1, parsed.get(i));
+            try {
+                for (var table : tables) {
+                    // update DDL
+                    try (var stmt = conn.createStatement()) {
+                        for (var ddl : table.ddl()) {
+                            stmt.executeUpdate(ddl);
                         }
-                        pstmt.executeUpdate();
+                    }
+                    // parse and insert data from data provider
+                    try (var rdr = reader(rdp.get(table));
+                         var pstmt = conn.prepareStatement(table.insertSql())) {
+                        String row;
+                        while ((row = rdr.readLine()) != null) {
+                            var parsed = table.parseRow(row);
+                            for (var i = 0; i < parsed.size(); i++) {
+                                pstmt.setString(i + 1, parsed.get(i));
+                            }
+                            pstmt.executeUpdate();
+                        }
                     }
                 }
+                try (var stmt = conn.createStatement()) {
+                    stmt.executeUpdate("DROP TABLE IF EXISTS import_metadata");
+                    stmt.executeUpdate("CREATE TABLE import_metadata (last_import TEXT)");
+                }
+                try (var pstmt = conn.prepareStatement("INSERT INTO import_metadata (last_import) VALUES (?)")) {
+                    pstmt.setString(1, Instant.now().toString());
+                    pstmt.executeUpdate();
+                }
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
             }
-            try (var stmt = conn.createStatement()) {
-                stmt.executeUpdate("DROP TABLE IF EXISTS import_metadata");
-                stmt.executeUpdate("CREATE TABLE import_metadata (last_import TEXT)");
-            }
-            try (var pstmt = conn.prepareStatement("INSERT INTO import_metadata (last_import) VALUES (?)")) {
-                pstmt.setString(1, Instant.now().toString());
-                pstmt.executeUpdate();
-            }
-            conn.commit();
         }
     }
 
