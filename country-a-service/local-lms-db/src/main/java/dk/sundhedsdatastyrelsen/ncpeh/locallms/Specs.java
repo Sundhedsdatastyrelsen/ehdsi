@@ -101,7 +101,7 @@ public class Specs {
                       Field.textPrimaryKey("packageNumber", 11, 6),
                       Field.text("drugId", 0, 11),
                       Field.text("dispensationRegulationCode", 73, 5),
-                      Field.text("packagingFormCode", 69, 4)
+                      Field.text("packageFormCode", 69, 4)
                   )
                 ),
                 new Table(

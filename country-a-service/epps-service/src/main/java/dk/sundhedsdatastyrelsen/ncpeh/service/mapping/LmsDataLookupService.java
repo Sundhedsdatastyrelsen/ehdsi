@@ -19,14 +19,6 @@ public class LmsDataLookupService {
         this.lmsDataRepository = lmsDataRepository;
     }
 
-    public String getPackageFormCodeFromPackageNumber(String packagingNumber) {
-        var lms2 = lmsDataRepository.getLms02FromPackageNumber(Integer.parseInt(packagingNumber));
-        if (lms2 != null) {
-            return lms2.getPackagingType();
-        }
-        return null;
-    }
-
     public Lms02Data getLms02EntryFromPackageNumber(String packageNumber) {
         return lmsDataRepository.getLms02FromPackageNumber(Integer.parseInt(packageNumber));
     }

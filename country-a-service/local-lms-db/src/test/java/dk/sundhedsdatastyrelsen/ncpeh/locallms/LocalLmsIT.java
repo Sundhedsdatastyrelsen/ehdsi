@@ -38,6 +38,7 @@ public class LocalLmsIT {
         assertThat(q.lastImport().isPresent(), is(true));
         // This test is valid as long as Panodil 500 mg is marketed by Haleon Denmark ApS
         assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
+        assertThat(q.packageFormCode("005813"), is("BLI"));
         Files.delete(dbFile);
     }
 
@@ -47,5 +48,6 @@ public class LocalLmsIT {
         ds.setUrl("jdbc:sqlite:local-lms-testdb.sqlite");
         var q = new DataProvider(ds);
         System.out.println(q.manufacturerOrganizationName(28100636073L));
+        System.out.println(q.packageFormCode("005813"));
     }
 }

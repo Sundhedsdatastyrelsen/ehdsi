@@ -36,6 +36,15 @@ public class DataProvider {
             Long.toString(drugId));
     }
 
+    public String packageFormCode(String packageNumber) {
+        return queryOneString("""
+            SELECT LMS02.packageFormCode
+            FROM LMS02
+            WHERE LMS02.packageNumber = ?
+            """,
+            packageNumber);
+    }
+
     /**
      * Perform a SQL query where the result set is expected to be 1 row with 1 string.
      * @return the (first) string result, or null if there are none.

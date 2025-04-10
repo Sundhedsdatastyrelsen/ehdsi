@@ -180,7 +180,7 @@ public class PrescriptionService {
             return validPrescriptions.stream().map(pair -> {
                 try {
                     var prescription = pair.getRight();
-                    var packageFormCode = lmsDataLookupService.getPackageFormCodeFromPackageNumber(prescription
+                    var packageFormCode = lmsDataProvider.packageFormCode(prescription
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue());
