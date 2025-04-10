@@ -28,7 +28,6 @@ public class LocalLmsLoader {
         var tables = Specs.get();
         try (var conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
-
             for (var table : tables) {
                 // update DDL
                 try (var stmt = conn.createStatement()) {
@@ -36,7 +35,7 @@ public class LocalLmsLoader {
                         stmt.executeUpdate(ddl);
                     }
                 }
-
+                // parse and insert data from data provider
                 try (var rdr = reader(rdp.get(table));
                      var pstmt = conn.prepareStatement(table.insertSql())) {
                     String row;
@@ -49,17 +48,14 @@ public class LocalLmsLoader {
                     }
                 }
             }
-
             try (var stmt = conn.createStatement()) {
                 stmt.executeUpdate("DROP TABLE IF EXISTS import_metadata");
                 stmt.executeUpdate("CREATE TABLE import_metadata (last_import TEXT)");
             }
-
             try (var pstmt = conn.prepareStatement("INSERT INTO import_metadata (last_import) VALUES (?)")) {
                 pstmt.setString(1, Instant.now().toString());
                 pstmt.executeUpdate();
             }
-
             conn.commit();
         }
     }
