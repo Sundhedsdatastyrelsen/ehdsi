@@ -6,9 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
-import dk.sundhedsdatastyrelsen.ncpeh.mocks.EPrescriptionMapperServiceMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,7 +32,6 @@ class FmkIT {
     private final PrescriptionService prescriptionService = new PrescriptionService(
         Fmk.apiClient(),
         undoDispensationRepository(),
-        ePrescriptionMappingService(),
         lmsDataSource,
         authorizationRegistryClient());
 
@@ -106,10 +103,6 @@ class FmkIT {
         // perform db migrations
         Flyway.configure().dataSource(dataSource).load().migrate();
         return new UndoDispensationRepository(dataSource);
-    }
-
-    private static LmsDataLookupService ePrescriptionMappingService() {
-        return new EPrescriptionMapperServiceMock();
     }
 
     private static AuthorizationRegistryClient authorizationRegistryClient() {

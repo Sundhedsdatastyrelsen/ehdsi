@@ -33,7 +33,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
@@ -64,7 +63,6 @@ public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
-    private final LmsDataLookupService lmsDataLookupService;
     private final DataProvider lmsDataProvider;
     private final AuthorizationRegistryClient authorizationRegistry;
     private final Cache<String, List<AuthorizationType>> authorizationRegistryCache = Caffeine.newBuilder()
@@ -75,13 +73,11 @@ public class PrescriptionService {
     public PrescriptionService(
         FmkClient fmkClient,
         UndoDispensationRepository undoDispensationRepository,
-        LmsDataLookupService lmsDataLookupService,
         @Qualifier("localLmsDataSource") DataSource lmsDataSource,
         AuthorizationRegistryClient authorizationRegistry
     ) {
         this.fmkClient = fmkClient;
         this.undoDispensationRepository = undoDispensationRepository;
-        this.lmsDataLookupService = lmsDataLookupService;
         this.lmsDataProvider = new DataProvider(lmsDataSource);
         this.authorizationRegistry = authorizationRegistry;
     }
@@ -131,7 +127,7 @@ public class PrescriptionService {
                     patientId,
                     fmkResponse,
                     pair.getLeft(),
-                    lmsDataLookupService.getLms02EntryFromPackageNumber(pair.getRight()
+                    lmsDataProvider.packageInfo(pair.getRight()
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue())))
@@ -241,7 +237,7 @@ public class PrescriptionService {
                 .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
             var isDispensable = DispensationAllowed.isDispensationAllowed(
                 prescription,
-                lmsDataLookupService.getLms02EntryFromPackageNumber(prescription.getPackageRestriction()
+                lmsDataProvider.packageInfo(prescription.getPackageRestriction()
                     .getPackageNumber()
                     .getValue()));
             if (!isDispensable) {
