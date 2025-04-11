@@ -1,5 +1,8 @@
-package dk.sundhedsdatastyrelsen.ncpeh.locallms;
+package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
 import org.junit.jupiter.api.Test;
 import org.sqlite.SQLiteDataSource;
 
@@ -13,8 +16,8 @@ import static org.hamcrest.Matchers.is;
 
 class LocalLmsIT {
     private static FtpConnection.ServerInfo serverInfo() {
-        var user = Objects.requireNonNull(System.getenv("MEDICINPRISER_FTP_USERNAME"), "envvar MEDICINPRISER_FTP_USERNAME is not set");
-        var password = Objects.requireNonNull(System.getenv("MEDICINPRISER_FTP_PASSWORD"), "envvar MEDICINPRISER_FTP_PASSWORD is not set");
+        var user = Objects.requireNonNull(System.getenv("LMSFTP_USERNAME"), "envvar LMSFTP_USERNAME is not set");
+        var password = Objects.requireNonNull(System.getenv("LMSFTP_PASSWORD"), "envvar LMSFTP_PASSWORD is not set");
         return new FtpConnection.ServerInfo("ftp.medicinpriser.dk", 21, user, password);
     }
 

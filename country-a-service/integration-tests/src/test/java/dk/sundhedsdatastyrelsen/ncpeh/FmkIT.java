@@ -5,18 +5,25 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import org.apache.commons.lang3.tuple.Pair;
 import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
@@ -27,13 +34,27 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
-    private final DataSource lmsDataSource = new SingleConnectionDataSource("jdbc:sqlite:./data/local-lms-db-it.sqlite", true);
+    private final DataSource lmsDataSource =
+        new SingleConnectionDataSource("jdbc:sqlite:./local-lms-db-it.sqlite", true);
 
     private final PrescriptionService prescriptionService = new PrescriptionService(
         Fmk.apiClient(),
         undoDispensationRepository(),
         lmsDataSource,
         authorizationRegistryClient());
+
+    @BeforeAll
+    void initialiseLmsData() throws SQLException, IOException {
+        if (new DataProvider(lmsDataSource).lastImport().isEmpty()) {
+            LocalLmsLoader.fetchData(lmsServerInfo(), lmsDataSource);
+        }
+    }
+
+    private static FtpConnection.ServerInfo lmsServerInfo() {
+        var user = Objects.requireNonNull(System.getenv("LMSFTP_USERNAME"), "envvar LMSFTP_USERNAME is not set");
+        var password = Objects.requireNonNull(System.getenv("LMSFTP_PASSWORD"), "envvar LMSFTP_PASSWORD is not set");
+        return new FtpConnection.ServerInfo("ftp.medicinpriser.dk", 21, user, password);
+    }
 
     /**
      * This test simply checks that we can connect and get an answer on the data.
