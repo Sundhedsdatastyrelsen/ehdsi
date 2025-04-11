@@ -10,7 +10,7 @@ spring:
     url: jdbc:sqlite:data/lms-db.sqlite
     driver-class-name: org.sqlite.JDBC
   local-lms-datasource:
-    jdbcUrl: jdbc:sqlite:data/lms-db.sqlite
+    jdbcUrl: jdbc:sqlite:data/local-lms-db.sqlite
   flyway:
     enabled: true
     locations: "classpath:db/migration"

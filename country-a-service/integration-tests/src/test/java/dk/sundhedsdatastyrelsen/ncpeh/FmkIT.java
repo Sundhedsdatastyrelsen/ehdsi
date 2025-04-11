@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
-    private final DataSource lmsDataSource = new SingleConnectionDataSource("jdbc:sqlite:./data/local-lms.sqlite", true);
+    private final DataSource lmsDataSource = new SingleConnectionDataSource("jdbc:sqlite:./data/local-lms-db-it.sqlite", true);
 
     private final PrescriptionService prescriptionService = new PrescriptionService(
         Fmk.apiClient(),
@@ -117,7 +117,7 @@ class FmkIT {
      * is available at the path given by the system property eDispensationITPath.
      */
     @Test
-    public void submitDispensationTest() throws Exception {
+    void submitDispensationTest() throws Exception {
         var cpr = Fmk.cprKarl;
         var eDispensationRawPath = System.getProperty("eDispensationITPath");
         assertThat(
@@ -130,8 +130,6 @@ class FmkIT {
             eDispensationPath.toFile(),
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
-
-//        var prescriptionService = new PrescriptionService(Fmk.apiClient(), undoDispensationRepository(), ePrescriptionMappingService(), authorizationRegistryClient());
 
         // shouldn't throw:
         prescriptionService.submitDispensation(

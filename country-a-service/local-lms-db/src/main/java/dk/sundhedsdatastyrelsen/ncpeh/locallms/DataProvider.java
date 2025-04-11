@@ -27,14 +27,16 @@ public class DataProvider {
     }
 
     public String manufacturerOrganizationName(long drugId) {
-        return queryRow((rs) -> rs.getString(1),
+        return queryRow(
+            (rs) -> rs.getString(1),
             """
             SELECT LMS09.companyName
             FROM LMS09
             JOIN LMS01
             ON LMS01.marketingAuthorizationHolder = LMS09.companyId
             WHERE LMS01.drugId = ?
-            """, Long.toString(drugId));
+            """,
+            Long.toString(drugId));
     }
 
     public String packageFormCode(String packageNumber) {
@@ -52,7 +54,8 @@ public class DataProvider {
         var sql = """
             SELECT drugId, dispensationRegulationCode, packageFormCode
             FROM LMS02
-            WHERE packageNumber = ?""";
+            WHERE packageNumber = ?
+            """;
         return queryRow(
             (rs) -> new PackageInfo(rs.getString(1), rs.getString(2), rs.getString(3)),
             sql,
