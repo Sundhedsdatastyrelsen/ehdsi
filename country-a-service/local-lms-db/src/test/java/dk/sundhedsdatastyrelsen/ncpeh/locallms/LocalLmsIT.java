@@ -11,7 +11,7 @@ import java.util.Objects;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class LocalLmsIT {
+class LocalLmsIT {
     private static FtpConnection.ServerInfo serverInfo() {
         var user = Objects.requireNonNull(System.getenv("MEDICINPRISER_FTP_USERNAME"), "envvar MEDICINPRISER_FTP_USERNAME is not set");
         var password = Objects.requireNonNull(System.getenv("MEDICINPRISER_FTP_PASSWORD"), "envvar MEDICINPRISER_FTP_PASSWORD is not set");

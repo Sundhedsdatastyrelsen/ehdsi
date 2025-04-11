@@ -28,7 +28,7 @@ public class DataProvider {
 
     public String manufacturerOrganizationName(long drugId) {
         return queryRow(
-            (rs) -> rs.getString(1),
+            rs -> rs.getString(1),
             """
             SELECT LMS09.companyName
             FROM LMS09
@@ -41,7 +41,7 @@ public class DataProvider {
 
     public String packageFormCode(String packageNumber) {
         return queryRow(
-            (rs) -> rs.getString(1),
+            rs -> rs.getString(1),
             """
             SELECT LMS02.packageFormCode
             FROM LMS02
@@ -57,7 +57,7 @@ public class DataProvider {
             WHERE packageNumber = ?
             """;
         return queryRow(
-            (rs) -> new PackageInfo(rs.getString(1), rs.getString(2), rs.getString(3)),
+            rs -> new PackageInfo(rs.getString(1), rs.getString(2), rs.getString(3)),
             sql,
             packageNumber);
     }

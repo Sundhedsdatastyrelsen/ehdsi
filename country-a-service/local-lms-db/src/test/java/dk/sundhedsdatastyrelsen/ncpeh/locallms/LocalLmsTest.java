@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LocalLmsTest {
     @Test
-    public void loadAndQueryTestData() throws SQLException, IOException {
+    void loadAndQueryTestData() throws SQLException, IOException {
         var ds = dataSource();
         LocalLmsLoader.parseAndLoadRawData(testDataProvider(), ds);
         var q = new DataProvider(ds);
@@ -37,7 +37,7 @@ class LocalLmsTest {
     }
 
     @Test
-    public void badImportDoesNotDestroyOldData() throws SQLException, IOException {
+    void badImportDoesNotDestroyOldData() throws SQLException, IOException {
         var ds = dataSource();
         LocalLmsLoader.parseAndLoadRawData(testDataProvider(), ds);
         var q = new DataProvider(ds);
@@ -52,12 +52,12 @@ class LocalLmsTest {
         assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
     }
 
-    private LocalLmsLoader.RawDataProvider testDataProvider() {
+    private RawDataProvider testDataProvider() {
         return table -> Thread.currentThread().getContextClassLoader()
             .getResourceAsStream("lms-test-data/%s.txt".formatted(table.name()));
     }
 
-    private LocalLmsLoader.RawDataProvider badDataProvider() {
+    private RawDataProvider badDataProvider() {
         return table -> {
             // we crash when we reach the last table
             if ("LMS09".equals(table.name())) {
@@ -71,6 +71,5 @@ class LocalLmsTest {
 
     private DataSource dataSource() {
         return new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
-//        return new SingleConnectionDataSource("jdbc:sqlite:unit-test-db.sqlite", true);
     }
 }

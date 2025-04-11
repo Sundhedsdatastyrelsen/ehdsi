@@ -22,8 +22,8 @@ public class FtpConnection implements AutoCloseable {
         ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
     }
 
-    public LocalLmsLoader.RawDataProvider rawDataProvider() {
-        return (table) -> new FilterInputStream(ftpClient.retrieveFileStream(table.ftpPath())) {
+    public RawDataProvider rawDataProvider() {
+        return table -> new FilterInputStream(ftpClient.retrieveFileStream(table.ftpPath())) {
             @Override
             public void close() throws IOException {
                 super.close();

@@ -69,9 +69,4 @@ public class LocalLmsLoader {
         // LMS files are encoded with charset cp850.
         return new BufferedReader(new InputStreamReader(is, Charset.forName("cp850")));
     }
-
-    @FunctionalInterface
-    public interface RawDataProvider {
-        InputStream get(Specs.Table table) throws IOException;
-    }
 }
