@@ -20,12 +20,6 @@ public class Beans {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
-    @ConfigurationProperties("spring.lms-datasource")
-    public DataSource lmsDataSource() {
-        return DataSourceBuilder.create().build();
-    }
-
     @Bean("localLmsDataSource")
     @ConfigurationProperties("spring.local-lms-datasource")
     public DataSource localLmsDataSource() {
