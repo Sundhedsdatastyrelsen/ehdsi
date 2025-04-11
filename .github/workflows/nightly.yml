@@ -72,6 +72,9 @@ jobs:
           mvn --batch-mode --projects integration-tests --also-make \
             verify -DskipITs=false -DskipUTs \
             -DeDispensationITPath=${{ github.workspace }}/target/test-files/edispensation-cda.xml
+        env:
+          LMSFTP_USERNAME: ${{ secrets.LMSFTP_USERNAME }}
+          LMSFTP_PASSWORD: ${{ secrets.LMSFTP_PASSWORD }}
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
