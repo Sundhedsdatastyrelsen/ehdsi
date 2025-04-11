@@ -34,8 +34,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
-    private final DataSource lmsDataSource =
-        new SingleConnectionDataSource("jdbc:sqlite:./local-lms-db-it.sqlite", true);
+    private final DataSource lmsDataSource = lmsDataSource();
 
     private final PrescriptionService prescriptionService = new PrescriptionService(
         Fmk.apiClient(),
@@ -43,10 +42,15 @@ class FmkIT {
         lmsDataSource,
         authorizationRegistryClient());
 
+    private static DataSource lmsDataSource() {
+        return new SingleConnectionDataSource("jdbc:sqlite:./local-lms-db-it.sqlite", true);
+    }
+
     @BeforeAll
-    void initialiseLmsData() throws SQLException, IOException {
-        if (new DataProvider(lmsDataSource).lastImport().isEmpty()) {
-            LocalLmsLoader.fetchData(lmsServerInfo(), lmsDataSource);
+    static void initialiseLmsData() throws SQLException, IOException {
+        var ds = lmsDataSource();
+        if (new DataProvider(ds).lastImport().isEmpty()) {
+            LocalLmsLoader.fetchData(lmsServerInfo(), ds);
         }
     }
 
