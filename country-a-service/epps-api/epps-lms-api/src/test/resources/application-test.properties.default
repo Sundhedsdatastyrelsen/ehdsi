@@ -1,5 +1,0 @@
-# application-test.properties
-lmsftp.server=ftp.medicinpriser.dk
-lmsftp.port=21
-lmsftp.username=SECRET
-lmsftp.password=SECRET

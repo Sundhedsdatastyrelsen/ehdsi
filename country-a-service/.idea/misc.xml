@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="org.springframework.scheduling.annotation.Scheduled" />
-      <item index="1" class="java.lang.String" itemvalue="org.springframework.stereotype.Service" />
+    <list size="3">
+      <item index="0" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
+      <item index="1" class="java.lang.String" itemvalue="org.springframework.scheduling.annotation.Scheduled" />
+      <item index="2" class="java.lang.String" itemvalue="org.springframework.stereotype.Service" />
     </list>
     <writeAnnotations>
       <writeAnnotation name="org.springframework.beans.factory.annotation.Value" />
@@ -15,6 +16,11 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/epps-api/epps-lms-api/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="NullableNotNullManager">
