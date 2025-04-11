@@ -39,3 +39,4 @@ _merged_spec.yaml
 
 dependency-reduced-pom.xml
 /epps-api/epps-lms-api/src/test/resources/application-test.properties
+/data/
