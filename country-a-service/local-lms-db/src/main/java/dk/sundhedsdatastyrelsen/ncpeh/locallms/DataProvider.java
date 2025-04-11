@@ -47,7 +47,7 @@ public class DataProvider {
             FROM LMS02
             WHERE LMS02.packageNumber = ?
             """,
-            packageNumber);
+            canonicalizePackageNumber(packageNumber));
     }
 
     public PackageInfo packageInfo(String packageNumber) {
@@ -59,7 +59,15 @@ public class DataProvider {
         return queryRow(
             rs -> new PackageInfo(rs.getString(1), rs.getString(2), rs.getString(3)),
             sql,
-            packageNumber);
+            canonicalizePackageNumber(packageNumber));
+    }
+
+    private String canonicalizePackageNumber(String packageNumber) {
+        try {
+            return "%06d".formatted(Integer.parseInt(packageNumber)); //LMS02 package numbers are 6 digits long
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("packageNumber should be an integer");
+        }
     }
 
     /**

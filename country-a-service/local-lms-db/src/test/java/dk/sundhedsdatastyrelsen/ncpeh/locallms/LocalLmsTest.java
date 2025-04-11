@@ -24,6 +24,8 @@ class LocalLmsTest {
         assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
         assertThat(q.manufacturerOrganizationName(28100713276L), is("Dansk Lægemiddelforsyning DLF"));
         assertThat(q.packageFormCode("005813"), is("BLI"));
+        // FMK removes leading zeros, so it should work without them:
+        assertThat(q.packageFormCode("5813"), is("BLI"));
         assertThat(q.packageInfo("005813"), is(new PackageInfo(
             "28100636073",
             "HX18",
@@ -33,7 +35,10 @@ class LocalLmsTest {
         // Querying unknown values should give null
         assertThat(q.manufacturerOrganizationName(0L), is(nullValue()));
         assertThat(q.packageFormCode("00000"), is(nullValue()));
-        assertThat(q.packageInfo("abc"), is(nullValue()));
+
+        // Querying malformed values should throw
+        assertThrows(IllegalArgumentException.class, () ->
+            q.packageInfo("abc"));
     }
 
     @Test
