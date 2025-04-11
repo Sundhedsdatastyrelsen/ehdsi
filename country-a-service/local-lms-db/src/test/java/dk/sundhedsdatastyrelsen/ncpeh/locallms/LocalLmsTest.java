@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -42,14 +43,30 @@ class LocalLmsTest {
     }
 
     @Test
-    void badImportDoesNotDestroyOldData() throws SQLException, IOException {
+    void crashingImportDoesNotDestroyOldData() throws SQLException, IOException {
         var ds = dataSource();
         LocalLmsLoader.parseAndLoadRawData(testDataProvider(), ds);
         var q = new DataProvider(ds);
         var lastImport = q.lastImport();
 
         // this should fail
-        assertThrows(IOException.class, () -> LocalLmsLoader.parseAndLoadRawData(badDataProvider(), ds));
+        assertThrows(IOException.class, () -> LocalLmsLoader.parseAndLoadRawData(crashingDataProvider(), ds));
+
+        // the data should still be intact
+        assertThat(q.lastImport(), is(lastImport));
+        // query that uses LMS09:
+        assertThat(q.manufacturerOrganizationName(28100636073L), is("Haleon Denmark ApS"));
+    }
+
+    @Test
+    void corruptedDataShouldNotDestroyOldData() throws SQLException, IOException {
+        var ds = dataSource();
+        LocalLmsLoader.parseAndLoadRawData(testDataProvider(), ds);
+        var q = new DataProvider(ds);
+        var lastImport = q.lastImport();
+
+        // this should fail
+        assertThrows(IOException.class, () -> LocalLmsLoader.parseAndLoadRawData(emptyLms09DataProvider(), ds));
 
         // the data should still be intact
         assertThat(q.lastImport(), is(lastImport));
@@ -62,16 +79,26 @@ class LocalLmsTest {
             .getResourceAsStream("lms-test-data/%s.txt".formatted(table.name()));
     }
 
-    private RawDataProvider badDataProvider() {
+    private RawDataProvider crashingDataProvider() {
         return table -> {
-            // we crash when we reach the last table
+            // we crash when we reach LMS09
             if ("LMS09".equals(table.name())) {
                 throw new IOException("I'm crashing!");
             }
             return Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream("lms-test-data/%s.txt".formatted(table.name()));
         };
+    }
 
+    private RawDataProvider emptyLms09DataProvider() {
+        return table -> {
+            // we return the empty stream when we reach LMS09
+            if ("LMS09".equals(table.name())) {
+                return new ByteArrayInputStream(new byte[] {});
+            }
+            return Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream("lms-test-data/%s.txt".formatted(table.name()));
+        };
     }
 
     private DataSource dataSource() {

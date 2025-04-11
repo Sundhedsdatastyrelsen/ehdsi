@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Instant;
 
@@ -51,6 +52,7 @@ public class LocalLmsLoader {
                             pstmt.executeUpdate();
                         }
                     }
+                    validate(conn, table);
                 }
                 try (var stmt = conn.createStatement()) {
                     stmt.executeUpdate("DROP TABLE IF EXISTS import_metadata");
@@ -62,8 +64,22 @@ public class LocalLmsLoader {
                 }
                 conn.commit();
             } catch (Exception e) {
+                log.warn("Something went wrong with LMS import, rolling back to previous version.");
                 conn.rollback();
                 throw e;
+            }
+        }
+    }
+
+    private static void validate(Connection conn, Specs.Table table) throws SQLException, IOException {
+        // We use the following heuristics to validate that an import was successful:
+        // - the table should be non-empty.
+        try (var stmt = conn.createStatement()) {
+            var rs = stmt.executeQuery("SELECT COUNT(1) FROM %s".formatted(table.name()));
+            rs.next();
+            var count = rs.getInt(1);
+            if (count == 0) {
+                throw new IOException("Bad data from LMS");
             }
         }
     }
