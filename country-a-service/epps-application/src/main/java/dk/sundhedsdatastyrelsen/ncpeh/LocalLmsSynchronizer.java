@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.service;
+package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
