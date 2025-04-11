@@ -19,7 +19,7 @@ public class DataProvider {
      */
     public Optional<Instant> lastImport() {
         try {
-            return Optional.ofNullable(queryRow((rs) -> rs.getString(1), "SELECT last_import FROM import_metadata"))
+            return Optional.ofNullable(queryRow(rs -> rs.getString(1), "SELECT last_import FROM import_metadata"))
                 .map(Instant::parse);
         } catch (IllegalStateException e) {
             return Optional.empty();

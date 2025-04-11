@@ -14,6 +14,9 @@ import java.time.Instant;
 public class LocalLmsLoader {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(LocalLmsLoader.class);
 
+    private LocalLmsLoader() {
+    }
+
     /**
      * Download data from LMS (medicinpriser/taksten) and load it into a local SQLite database.
      */
