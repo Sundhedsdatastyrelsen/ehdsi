@@ -3,8 +3,6 @@ spring:
     name: NCPeH-DK-national-connector-service
   undo-datasource:
     jdbcUrl: jdbc:sqlite:data/undo-db.sqlite
-    url: jdbc:sqlite:data/undo-db.sqlite
-    driver-class-name: org.sqlite.JDBC
   local-lms-datasource:
     jdbcUrl: jdbc:sqlite:data/local-lms-db.sqlite
   flyway:
