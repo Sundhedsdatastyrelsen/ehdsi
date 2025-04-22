@@ -74,6 +74,7 @@ public sealed interface Dosage {
         public String getTimeValue() {
             // TODO unsure about the formatting of the ZonedDateTime value. In art-decor, it's specified as `CCYYMMDDHHMMSS`,
             //  but elsewhere we use the offset version.
+            // Left is LocalDate, right is ZonedDateTime
             return timeValue.match(Utils::cdaDate, Utils::cdaTs);
         }
     }
