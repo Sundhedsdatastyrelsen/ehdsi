@@ -4,6 +4,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
@@ -20,7 +21,10 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class EPrescriptionMapper {
@@ -121,8 +125,7 @@ public class EPrescriptionMapper {
             Long.toString(prescription.getIdentifier()),
             EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription).getName(),
             EPrescriptionL3Mapper.makeTitle(prescriptions, prescription),
-            Optional.ofNullable(prescription.getIndication().getFreeText())
-                .orElse(prescription.getIndication().getText()),
+            makeDescription(prescription),
             prescription.getPackageRestriction().getPackageNumber().getValue(),
             prescription.getDrug().getName(),
             atc.map(ATCType::getCode).map(ATCCodeType::getValue).orElse(null),
@@ -132,5 +135,16 @@ public class EPrescriptionMapper {
             EPrescriptionL3Mapper.drugStrengthText(prescription),
             DispensationAllowed.isDispensationAllowed(prescription, packageInfo)
         );
+    }
+
+    static String makeDescription(PrescriptionType prescription) {
+        // Want to write something like "Pinex, 500mg, mod smerter"
+        return Stream.of(
+                prescription.getDrug().getName(),
+                EPrescriptionL3Mapper.drugStrengthText(prescription),
+                Optional.ofNullable(prescription.getIndication())
+                    .map(i -> i.getText() != null ? i.getText() : i.getFreeText())
+                    .orElse(null))
+            .filter(Objects::nonNull).collect(Collectors.joining(", "));
     }
 }

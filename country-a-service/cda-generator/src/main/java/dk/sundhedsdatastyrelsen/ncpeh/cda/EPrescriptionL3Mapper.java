@@ -2,7 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
@@ -372,10 +374,10 @@ public class EPrescriptionL3Mapper {
     }
 
     public static String drugStrengthText(@NonNull PrescriptionType prescription) {
-        if (prescription.getDrug() == null || prescription.getDrug().getStrength() == null ||
-            prescription.getDrug().getStrength().getText() == null ||
-            prescription.getDrug().getStrength().getText().getValue() == null)
-            return null;
-        return prescription.getDrug().getStrength().getText().getValue();
+        return Optional.ofNullable(prescription.getDrug())
+            .map(DrugType::getStrength)
+            .map(DrugStrengthType::getText)
+            .map(DrugStrengthTextType::getValue)
+            .orElse(null);
     }
 }
