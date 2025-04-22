@@ -20,7 +20,6 @@
         <module>epps-fmk-api</module>
         <module>epps-cpr-api</module>
         <module>epps-ddv-api</module>
-        <module>epps-lms-api</module>
         <module>autorisationsregister-model</module>
     </modules>
 </project>

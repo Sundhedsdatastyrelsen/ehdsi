@@ -9,7 +9,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
-import dk.sundhedsdatastyrelsen.ncpeh.lms.formats.Lms02Data;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
@@ -46,9 +46,9 @@ public class EPrescriptionMapper {
     ) {
     }
 
-    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, Lms02Data lms02Entry) {
+    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) {
         try {
-            var model = makeModel(patientId, prescriptions, prescriptionIndex, lms02Entry);
+            var model = makeModel(patientId, prescriptions, prescriptionIndex, packageInfo);
             var l3Meta = generateMeta(patientId, model, DocumentLevel.LEVEL3);
             var l1Meta = generateMeta(patientId, model, DocumentLevel.LEVEL1);
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
@@ -109,7 +109,7 @@ public class EPrescriptionMapper {
     }
 
     @NonNull
-    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, Lms02Data lms02Entry) throws MapperException {
+    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) throws MapperException {
         var prescription = prescriptions.getPrescription().get(prescriptionIndex);
         if (prescription == null) {
             throw new MapperException("Missing prescription");
@@ -130,7 +130,7 @@ public class EPrescriptionMapper {
             prescription.getDrug().getForm().getCode().getValue(),
             prescription.getDrug().getForm().getText(),
             EPrescriptionL3Mapper.drugStrengthText(prescription),
-            DispensationAllowed.isDispensationAllowed(prescription, lms02Entry)
+            DispensationAllowed.isDispensationAllowed(prescription, packageInfo)
         );
     }
 }

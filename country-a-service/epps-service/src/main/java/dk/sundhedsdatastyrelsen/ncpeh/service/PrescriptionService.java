@@ -25,6 +25,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
@@ -32,20 +33,20 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
 import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
+import javax.sql.DataSource;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.Duration;
@@ -58,17 +59,28 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
-    private final LmsDataLookupService lmsDataLookupService;
+    private final DataProvider lmsDataProvider;
     private final AuthorizationRegistryClient authorizationRegistry;
     private final Cache<String, List<AuthorizationType>> authorizationRegistryCache = Caffeine.newBuilder()
         .maximumSize(500)
         .expireAfterWrite(Duration.ofMinutes(15))
         .build();
+
+    public PrescriptionService(
+        FmkClient fmkClient,
+        UndoDispensationRepository undoDispensationRepository,
+        @Qualifier("localLmsDataSource") DataSource lmsDataSource,
+        AuthorizationRegistryClient authorizationRegistry
+    ) {
+        this.fmkClient = fmkClient;
+        this.undoDispensationRepository = undoDispensationRepository;
+        this.lmsDataProvider = new DataProvider(lmsDataSource);
+        this.authorizationRegistry = authorizationRegistry;
+    }
 
     public record PrescriptionFilter(
         String documentId,
@@ -115,7 +127,7 @@ public class PrescriptionService {
                     patientId,
                     fmkResponse,
                     pair.getLeft(),
-                    lmsDataLookupService.getLms02EntryFromPackageNumber(pair.getRight()
+                    lmsDataProvider.packageInfo(pair.getRight()
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue())))
@@ -164,11 +176,11 @@ public class PrescriptionService {
             return validPrescriptions.stream().map(pair -> {
                 try {
                     var prescription = pair.getRight();
-                    var packageFormCode = lmsDataLookupService.getPackageFormCodeFromPackageNumber(prescription
+                    var packageFormCode = lmsDataProvider.packageFormCode(prescription
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue());
-                    var manufacturerOrganizationName = lmsDataLookupService.getManufacturerOrganizationNameFromDrugId(
+                    var manufacturerOrganizationName = lmsDataProvider.manufacturerOrganizationName(
                         prescription.getDrug().getIdentifier().getValue()
                     );
                     var authorizations = authorizationRegistryCache.get(
@@ -225,7 +237,7 @@ public class PrescriptionService {
                 .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
             var isDispensable = DispensationAllowed.isDispensationAllowed(
                 prescription,
-                lmsDataLookupService.getLms02EntryFromPackageNumber(prescription.getPackageRestriction()
+                lmsDataProvider.packageInfo(prescription.getPackageRestriction()
                     .getPackageNumber()
                     .getValue()));
             if (!isDispensable) {
