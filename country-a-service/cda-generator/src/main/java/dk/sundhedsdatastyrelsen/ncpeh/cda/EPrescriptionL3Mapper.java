@@ -368,7 +368,6 @@ public class EPrescriptionL3Mapper {
 
     private static String getSubstanceStrengthText(DrugStrengthType strength) {
         if (strength == null) return null;
-        if (strength.getUnitText() != null) return strength.getUnitText();
         if (strength.getText() != null) return strength.getText().getValue();
         return null;
     }
