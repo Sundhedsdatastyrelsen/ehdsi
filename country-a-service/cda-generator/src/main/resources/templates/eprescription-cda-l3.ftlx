@@ -142,8 +142,6 @@
                             ${ patientMedicationInstructions }
                             <#if unstructuredActiveIngredients??>${ unstructuredActiveIngredients }</#if>
 
-                            Unstructured dosage text:
-
                             ${ dosage.unstructuredText }
                         </content>
                         <content ID="product-name">${ product.name }</content>
