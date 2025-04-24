@@ -30,8 +30,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -66,8 +66,8 @@ public class EPrescriptionL3Mapper {
         var i = prescription.getIndication();
         var indicationText = i.getFreeText() != null ? i.getFreeText() : i.getText();
         var activeIngredients = getActiveIngredients(
-            prescription.getDrug().getStrength(), prescription.getDrug()
-                .getSubstances());
+            prescription.getDrug().getStrength(),
+            prescription.getDrug().getSubstances());
         var prescriptionBuilder = EPrescriptionL3.builder()
             .documentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(prescriptionId.getExtension())))
             .title(makeTitle(response, prescription))
@@ -82,8 +82,8 @@ public class EPrescriptionL3Mapper {
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
             .patientMedicationInstructions(prescription.getDosageText())
-            .activeIngredients(activeIngredients.isLeft() ? activeIngredients.getLeft() : Collections.emptyList())
-            .unstructuredActiveIngredients(activeIngredients.isRight() ? activeIngredients.getRight() : null);
+            .activeIngredients(activeIngredients.structured())
+            .unstructuredActiveIngredients(activeIngredients.unstructured());
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
@@ -325,37 +325,43 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator information"));
     }
 
-    private static @NonNull Either<List<ActiveIngredient>, String> getActiveIngredients(DrugStrengthType strength, SubstancesType substances) {
+    private record ActiveIngredients(@NonNull List<ActiveIngredient> structured, @NonNull String unstructured) {
+    }
+
+    private static @NonNull ActiveIngredients getActiveIngredients(DrugStrengthType strength, SubstancesType substances) {
         if (substances == null
             || substances.getActiveSubstance() == null
             || substances.getActiveSubstance().stream().allMatch(ai -> getSubstanceText(ai) == null)) {
-            return Either.ofRight(null);
+            return new ActiveIngredients(List.of(), "");
         }
 
+        var structured = new ArrayList<ActiveIngredient>(1);
+        // We can only return structured active ingredient information when we have exactly 1 ingredient,
+        // because otherwise we can not deduce the strength values for the ingredients.
         if (substances.getActiveSubstance().size() == 1 && strength != null && strength.getUnitCode() != null) {
             var text = getSubstanceText(substances.getActiveSubstance().getFirst());
             var codedStrength = SubstanceUnitMapper.fromLms(strength.getUnitCode().getValue());
             if (text != null && codedStrength != null) {
-                return Either.ofLeft(List.of(ActiveIngredient.builder()
+                structured.add(ActiveIngredient.builder()
                     .name(text)
                     .numerator(strength.getValue())
                     .numeratorUnit(codedStrength.numeratorUnit())
                     .denominator(codedStrength.denominator())
                     .denominatorUnit(codedStrength.denominatorUnit())
                     .translation(codedStrength.translation())
-                    .build()));
+                    .build());
             }
-            // If the strength is not coded, or we can't find the text, fall back to unstructured.
         }
 
-        // When there is more than 1 active substance, we don't have the strength in a structured format, so we return
-        // the list unstructured.
-        return Either.ofRight(Stream.concat(
-                Stream.of(getSubstanceStrengthText(strength)), substances.getActiveSubstance()
+        var unstructured = Stream.concat(
+                Stream.of(getSubstanceStrengthText(strength)),
+                substances.getActiveSubstance()
                     .stream()
                     .map(EPrescriptionL3Mapper::getSubstanceText))
             .filter(Objects::nonNull)
-            .collect(Collectors.joining("; ")));
+            .collect(Collectors.joining("; "));
+
+        return new ActiveIngredients(structured, unstructured);
     }
 
     private static String getSubstanceText(ActiveSubstanceType substance) {

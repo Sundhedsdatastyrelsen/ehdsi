@@ -54,8 +54,8 @@ public class EPrescriptionL3 {
 
     /// List of active ingredients, if we have them structured.
     @NonNull List<ActiveIngredient> activeIngredients;
-    /// The text of the active ingredients if we don't have them structured.
-    String unstructuredActiveIngredients;
+    /// The unstructured text of the active ingredients.
+    @NonNull String unstructuredActiveIngredients;
 
     @NonNull Author author;
 

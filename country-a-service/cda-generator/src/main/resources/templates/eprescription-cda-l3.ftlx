@@ -140,7 +140,7 @@
                             ${ product.name }
                             ${ indicationText }
                             ${ patientMedicationInstructions }
-                            <#if unstructuredActiveIngredients??>${ unstructuredActiveIngredients }</#if>
+                            ${ unstructuredActiveIngredients }
 
                             ${ dosage.unstructuredText }
                         </content>
