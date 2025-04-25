@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugFormType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
@@ -9,6 +10,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
@@ -160,6 +163,7 @@ public class EPrescriptionL3Mapper {
             .packageCode(packageCode)
             .packageFormCode(packageFormCode)
             .atcCode(atcCode)
+            .description(productDescription(prescription))
             .build();
     }
 
@@ -373,16 +377,40 @@ public class EPrescriptionL3Mapper {
     }
 
     private static String getSubstanceStrengthText(DrugStrengthType strength) {
-        if (strength == null) return null;
-        if (strength.getText() != null) return strength.getText().getValue();
-        return null;
+        return Optional.ofNullable(strength)
+            .map(DrugStrengthType::getText)
+            .map(DrugStrengthTextType::getValue)
+            .orElse(null);
     }
 
     public static String drugStrengthText(@NonNull PrescriptionType prescription) {
         return Optional.ofNullable(prescription.getDrug())
             .map(DrugType::getStrength)
-            .map(DrugStrengthType::getText)
-            .map(DrugStrengthTextType::getValue)
+            .map(EPrescriptionL3Mapper::getSubstanceStrengthText)
             .orElse(null);
+    }
+
+    public static String productDescription(@NonNull PrescriptionType prescription) {
+        // "[...]the element SHALL contain a sufficiently detailed description of the prescribed
+        // medicinal product/package. The description may contain information on the brand name,
+        // dose form, package (including its type or brand name), strength, etc."
+        // For example:
+        // Abasaglar KwikPen, injektionsvæske, opløsning i fyldt pen, 100 E/ml, 5 x 3 ml (1-80E/inj.)
+
+        return Stream.of(
+                prescription.getDrug().getName(),
+                Optional.of(prescription)
+                    .map(PrescriptionType::getDrug)
+                    .map(DrugType::getForm)
+                    .map(DrugFormType::getText)
+                    .orElse(null),
+                drugStrengthText(prescription),
+                Optional.of(prescription)
+                    .map(PrescriptionType::getPackageRestriction)
+                    .map(PackageRestrictionType::getPackageSize)
+                    .map(PackageSizeType::getPackageSizeText)
+                    .orElse(null))
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining(", "));
     }
 }

@@ -4,12 +4,14 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import lombok.With;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Value
-@Builder(toBuilder = true)
+@Builder
+@With
 public class EPrescriptionL3 {
     /**
      * Unique ID identifying the CDA document (not the prescription itself).

@@ -69,7 +69,7 @@ public class EPrescriptionPdfMapper {
         lines.add(String.format(
             "%s %s (%s)",
             model.getProduct().getName(),
-            model.getProduct().getDescription(),
+            model.getProduct().getStrength(),
             model.getProduct().getAtcCode().getDisplayName()));
         lines.add(packageLine(model));
         lines.add("");
