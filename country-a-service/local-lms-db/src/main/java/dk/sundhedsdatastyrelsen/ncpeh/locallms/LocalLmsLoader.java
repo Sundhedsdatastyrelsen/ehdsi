@@ -31,6 +31,9 @@ public class LocalLmsLoader {
     static void parseAndLoadRawData(RawDataProvider rdp, DataSource dataSource) throws IOException, SQLException {
         var tables = Specs.get();
         try (var conn = dataSource.getConnection()) {
+            // We could have decided to reset autoCommit to the original value after we release the connection,
+            // but we don't expect anyone to need to perform updates anywhere else, much less with autoCommit=true,
+            // so why bother.
             conn.setAutoCommit(false);
             try {
                 for (var table : tables) {
