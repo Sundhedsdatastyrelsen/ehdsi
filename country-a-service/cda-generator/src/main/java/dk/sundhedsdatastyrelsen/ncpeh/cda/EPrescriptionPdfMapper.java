@@ -1,13 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionPdf;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PdfField;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,7 +13,6 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class EPrescriptionPdfMapper {
@@ -77,44 +74,8 @@ public class EPrescriptionPdfMapper {
         lines.add("");
         lines.add(String.format("Dosering: %s", model.getPatientMedicationInstructions()));
         lines.add("");
-        lines.add(String.format("Aktive substanser: %s", activeIngredients(model.getActiveIngredients(), model.getUnstructuredActiveIngredients())));
+        lines.add(String.format("Aktive substanser: %s", model.getUnstructuredActiveIngredients()));
         return lines;
-    }
-
-    private static @NonNull String activeIngredients(@NonNull List<ActiveIngredient> list, String unstructured) {
-        if (unstructured != null) {
-            return unstructured;
-        }
-        return list.stream()
-            .map(EPrescriptionPdfMapper::activeIngredientToString)
-            .collect(Collectors.joining(", "));
-    }
-
-    /// Translate an active ingredient to a string. This is more work than you would expect, because the denominator-unit
-    /// can be countable or non-countable.
-    private static @NonNull String activeIngredientToString(@NonNull ActiveIngredient i) {
-        final var simpleDenominator = i.getDenominator().equals("1");
-        final var denominatorUnitIsCountable = i.getDenominatorUnit().equals("1") || i.getDenominatorUnit()
-            .startsWith("{");
-
-        if (simpleDenominator && denominatorUnitIsCountable) {
-            // "Paracetamol 500 mg"
-            return String.format("%s %s %s", i.getName(), i.getNumerator(), i.getNumeratorUnit());
-        }
-
-        if (simpleDenominator) {
-            // "Paracetamol 50 mg/mL"
-            return String.format("%s %s %s/%s", i.getName(), i.getNumerator(), i.getNumeratorUnit(), i.getDenominatorUnit());
-        }
-        // With the current mapping of LMS substance units, we won't ever get here where denominator != 1.
-        // But it's possible we will need it later - DK has substance units like ml/8 hours.
-
-        if (denominatorUnitIsCountable) {
-            // "Paracetamol 50 mg/2" or "Paracetamol 50 mg/mL/2", but I don't think the second will happen.
-            return String.format("%s %s %s/%s", i.getName(), i.getNumerator(), i.getNumeratorUnit(), i.getDenominator());
-        }
-        // "Paracetamol 50 mg/10 mL"
-        return String.format("%s %s %s/%s %s", i.getName(), i.getNumerator(), i.getNumeratorUnit(), i.getDenominatorUnit(), i.getDenominator());
     }
 
     private static List<String> patientLines(Patient patient) {
