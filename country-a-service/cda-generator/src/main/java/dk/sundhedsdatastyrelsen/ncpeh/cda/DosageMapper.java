@@ -13,8 +13,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -107,8 +107,6 @@ public final class DosageMapper {
     private DosageMapper() {
     }
 
-    // TODO #141 We should log the reason why dosage became unstructured, so we can monitor it and improve it where it
-    //  matters most.
     public static @NonNull Dosage model(@NonNull DosageForResponseType dosage) {
         final var unstructuredText = getUnstructuredText(dosage);
         final var unit = mapUnit(dosage);
@@ -236,14 +234,7 @@ public final class DosageMapper {
                 unstructuredText,
                 transformedTime == null
                     ? Either.ofLeft(Utils.convertToLocalDate(structure.getStartDate()))
-                    // TODO #141 look a little more at this time/timezone use. The FMK start date is zoned to UTC, but the
-                    //  dose time is probably meant to be 'local to wherever you are'. Unless of course it's very
-                    //  precise medicine, in which case it's 'local to DK time'. If you take the low-dose birth control
-                    //  pills at 08:00 DK time and you travel to another time zone, you still have to take them 08:00 DK
-                    //  time every day, right? How do we express that? Also, some of the dose times are things like
-                    //  "noon" and "morning", that should probably be translated to event-based instead? But can't in
-                    //  this case, because it's not iterated.
-                    : Either.ofRight(ZonedDateTime.of(startDateTime.toLocalDate(), transformedTime.getLeft(), startDateTime.getZone())),
+                    : Either.ofRight(LocalDateTime.of(startDateTime.toLocalDate(), transformedTime.getLeft())),
                 mapDoseToQuantity(day.getDose().getFirst(), unit, isAccordingToNeed));
         }
 
@@ -365,7 +356,7 @@ public final class DosageMapper {
     static Dosage.Unit mapUnit(@NonNull DosageForResponseType dosage) {
         var singular = dosage.getUnitText();
         var plural = dosage.getUnitTexts();
-        // Get the first text that exists, and prioritize singular over plural. This sucks to write however you do it.
+        // Get the first text that exists, and prioritize singular over plural. This is complex to write however you do it.
         var text = singular != null
             ? singular
             : plural == null
