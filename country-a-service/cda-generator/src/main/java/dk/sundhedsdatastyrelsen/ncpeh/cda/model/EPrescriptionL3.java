@@ -79,7 +79,7 @@ public class EPrescriptionL3 {
     @NonNull String patientMedicationInstructions;
 
     public String getEffectiveTime() {
-        return Utils.cdaDateTime(effectiveTime);
+        return Utils.cdaZonedDateTime(effectiveTime);
     }
 
     public OffsetDateTime getEffectiveTimeOffsetDateTime() {
@@ -87,7 +87,7 @@ public class EPrescriptionL3 {
     }
 
     public String getSignatureTime() {
-        return Utils.cdaDateTime(signatureTime);
+        return Utils.cdaZonedDateTime(signatureTime);
     }
 
     public String getPackageQuantity() {

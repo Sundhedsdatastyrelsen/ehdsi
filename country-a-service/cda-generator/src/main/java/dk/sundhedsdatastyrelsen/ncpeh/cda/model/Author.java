@@ -23,6 +23,6 @@ public class Author {
     @NonNull Organization organization;
 
     public String getTime() {
-        return Utils.cdaDateTime(time);
+        return Utils.cdaZonedDateTime(time);
     }
 }

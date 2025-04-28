@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 public sealed interface Dosage {
@@ -68,13 +68,13 @@ public sealed interface Dosage {
     class Once implements Dosage {
         String tag = "Once";
         @NonNull String unstructuredText;
-        @NonNull Either<LocalDate, ZonedDateTime> timeValue;
+        @NonNull Either<LocalDate, LocalDateTime> timeValue;
         Quantity quantity;
 
         public String getTimeValue() {
-            // TODO unsure about the formatting of the ZonedDateTime value. In art-decor, it's specified as `CCYYMMDDHHMMSS`,
-            //  but elsewhere we use the offset version.
-            return timeValue.match(Utils::cdaDate, Utils::cdaTs);
+            // Dosage times are always local. It is up to the health professional dispensing the medicine to consider
+            // changing time zones.
+            return timeValue.match(Utils::cdaDate, Utils::cdaLocalDateTime);
         }
     }
 
