@@ -28,6 +28,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Size;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +44,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class EPrescriptionL3Mapper {
     private EPrescriptionL3Mapper() {
     }
@@ -90,6 +92,10 @@ public class EPrescriptionL3Mapper {
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
+            var dosage = DosageMapper.model(drugMedicationType.getDosage());
+            if (dosage instanceof Dosage.Unstructured unstructured) {
+                log.info("Dosage could not be mapped. Reason: {}", unstructured.getReason());
+            }
             prescriptionBuilder
                 .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                     .getTreatmentStartDate()))
