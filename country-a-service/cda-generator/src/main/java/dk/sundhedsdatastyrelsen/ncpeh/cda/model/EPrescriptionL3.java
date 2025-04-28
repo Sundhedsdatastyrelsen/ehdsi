@@ -4,12 +4,14 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import lombok.With;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Value
-@Builder(toBuilder = true)
+@Builder
+@With
 public class EPrescriptionL3 {
     /**
      * Unique ID identifying the CDA document (not the prescription itself).
@@ -54,8 +56,8 @@ public class EPrescriptionL3 {
 
     /// List of active ingredients, if we have them structured.
     @NonNull List<ActiveIngredient> activeIngredients;
-    /// The text of the active ingredients if we don't have them structured.
-    String unstructuredActiveIngredients;
+    /// The unstructured text of the active ingredients.
+    @NonNull String unstructuredActiveIngredients;
 
     @NonNull Author author;
 

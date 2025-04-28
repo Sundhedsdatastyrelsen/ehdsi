@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Assertions;
@@ -41,16 +40,8 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertFalse(xmlString.isBlank());
 
         //Set packageCode to null, and regenerate
-        var productWithNullPackageCode = Product.builder()
-            .packageCode(epL3.getProduct().getPackageCode())
-            .packageFormCode(null)
-            .atcCode(epL3.getProduct().getAtcCode())
-            .formCode(epL3.getProduct().getFormCode())
-            .strength(epL3.getProduct().getStrength())
-            .name(epL3.getProduct().getName())
-            .size(epL3.getProduct().getSize())
-            .build();
-        var epL3NullPackageCode = epL3.toBuilder().product(productWithNullPackageCode).build();
+        var productWithNullPackageCode = epL3.getProduct().withPackageFormCode(null);
+        var epL3NullPackageCode = epL3.withProduct(productWithNullPackageCode);
         var xmlStringWithNullPackageCode = EPrescriptionL3Generator.generate(epL3NullPackageCode);
         Assertions.assertNotNull(xmlStringWithNullPackageCode);
         Assertions.assertFalse(xmlStringWithNullPackageCode.isBlank());

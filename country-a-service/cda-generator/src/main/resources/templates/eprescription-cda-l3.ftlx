@@ -140,9 +140,7 @@
                             ${ product.name }
                             ${ indicationText }
                             ${ patientMedicationInstructions }
-                            <#if unstructuredActiveIngredients??>${ unstructuredActiveIngredients }</#if>
-
-                            Unstructured dosage text:
+                            ${ unstructuredActiveIngredients }
 
                             ${ dosage.unstructuredText }
                         </content>
@@ -214,8 +212,9 @@
                                         <code <@common.cdaCodeAttrs product.drugId />/>
 </#if>
                                         <name>${ product.name }</name>
-<#if product.description??>
-                                        <pharm:desc>${ product.description }</pharm:desc>
+<#if product.strength??>
+                                        <#-- "Free-text representation of the strength." -->
+                                        <pharm:desc>${ product.strength }</pharm:desc>
 </#if>
                                         <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
                                         <pharm:asContent classCode="CONT">
@@ -232,7 +231,12 @@
 </#if>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
                                                 <pharm:code <@common.cdaCodeAttrs product.packageCode/> />
-                                                <pharm:name>${ product.name }</pharm:name>
+                                                <#-- "If present, the element SHALL contain a sufficiently detailed description of
+                                                the prescribed medicinal product/package. The description may contain information
+                                                on the brand name, dose form, package (including its type or brand name), strength, etc.
+
+                                                If the detailed description of the product is not available, the element SHALL be skipped." -->
+                                                <pharm:name>${ product.description }</pharm:name>
 <#if (product.packageFormCode.code)?has_content>
                                                 <pharm:formCode <@common.cdaCodeAttrs product.packageFormCode/> />
 <#else>
