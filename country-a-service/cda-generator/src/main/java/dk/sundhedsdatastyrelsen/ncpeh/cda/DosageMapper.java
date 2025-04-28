@@ -189,10 +189,12 @@ public final class DosageMapper {
             // There's no information
             return new Dosage.Unstructured(unstructuredText, "Structure neither iterated nor not iterated.");
         }
-        // TODO #139 The best representation of AnyDay might be something like adding a <phase> to the periodic
-        //  interval, to express "take the pill over these days, when you need it". But there are also the cases with
-        //  NotIterated, doses with times in them, and multiple doses in the AnyDay. What then? The simplest thing is
-        //  to simply treat it as the first day.
+
+        // Map AnyDay to Day.
+        // The only case where this makes a difference is when the doses have a structure spanning several days. In that
+        // case, it would be a little more precise to specify a `<phase>` element with a `<width>`, but it would
+        // interfere with the time handling there and the benefit is minimal - "0-3 pills over 7 days, repeat every 7
+        // days" as opposed to "0-3 pills every 7 days". And the extra information is in the unstructured text.
         var structureWithoutAnyDay = structure.getAnyDay() == null ? structure : structure.newCopyBuilder()
             .withAnyDay(null)
             .withDay(anyDayToNormalDay(structure.getAnyDay()))
