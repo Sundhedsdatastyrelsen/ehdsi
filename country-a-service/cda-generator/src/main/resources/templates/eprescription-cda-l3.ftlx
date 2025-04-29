@@ -175,6 +175,11 @@
                             <effectiveTime operator="A" xsi:type="TS" value="${ dosage.timeValue }"/>
 <#elseif dosage.tag == "PeriodicInterval">
                             <effectiveTime operator="A" xsi:type="PIVL_TS" institutionSpecified="${ dosage.institutionSpecified?string("true","false") }">
+    <#if dosage.time??>
+                                <phase>
+                                    <low value="${ dosage.time }" inclusive="true"/>
+                                </phase>
+    </#if>
                                 <period unit="${ dosage.period.unit }" value="${ dosage.period.value }" />
                             </effectiveTime>
 <#elseif dosage.tag == "EventInterval">

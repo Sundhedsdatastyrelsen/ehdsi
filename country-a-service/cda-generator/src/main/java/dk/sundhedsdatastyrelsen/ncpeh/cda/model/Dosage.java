@@ -49,6 +49,11 @@ public sealed interface Dosage {
         boolean institutionSpecified;
         @NonNull Period period;
         Quantity quantity;
+        LocalDateTime time;
+
+        public String getTime() {
+            return time == null ? null : Utils.cdaDosageTime(time);
+        }
     }
 
     /// An event-interval based dosage, e.g. "1 pill after each meal" or "1 pill after dinner".
@@ -74,7 +79,7 @@ public sealed interface Dosage {
         public String getTimeValue() {
             // Dosage times are always local. It is up to the health professional dispensing the medicine to consider
             // changing time zones.
-            return timeValue.match(Utils::cdaDate, Utils::cdaLocalDateTime);
+            return timeValue.match(Utils::cdaDate, Utils::cdaDosageTime);
         }
     }
 

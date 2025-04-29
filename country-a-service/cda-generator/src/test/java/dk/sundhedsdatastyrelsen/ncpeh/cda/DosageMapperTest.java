@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 class DosageMapperTest {
     @Test
     void getDayDistanceIsSaneTest() {
@@ -26,6 +29,24 @@ class DosageMapperTest {
         Assertions.assertEquals(Optional.of(2), DosageMapper.getDayDistance(4, days(1, 3)));
         Assertions.assertEquals(Optional.empty(), DosageMapper.getDayDistance(3, days(1, 3)));
         Assertions.assertEquals(Optional.empty(), DosageMapper.getDayDistance(3, days(1, 2)));
+    }
+
+    @Test
+    void getDoseTimeDistanceIsTheSameIsSaneTest() {
+        assertThat("morning, noon, evening works", DosageMapper.dosesTimeDistanceIsTheSame(List.of("morning", "noon", "evening")), is(true));
+        assertThat("specific times work", DosageMapper.dosesTimeDistanceIsTheSame(List.of("11.00", "23.00")), is(true));
+        assertThat(
+            "all nulls work",
+            DosageMapper.dosesTimeDistanceIsTheSame(Arrays.stream(new String[]{null, null}).toList()),
+            is(true));
+        assertThat("mix of loose and precise times with even distance works", DosageMapper.dosesTimeDistanceIsTheSame(List.of("morning", "20.00")));
+        assertThat("uneven times don't work", DosageMapper.dosesTimeDistanceIsTheSame(List.of("11.00", "12.00")), is(false));
+        assertThat("uneven loose times don't work", DosageMapper.dosesTimeDistanceIsTheSame(List.of("morning", "noon")), is(false));
+        assertThat(
+            "mixed nulls and values don't work",
+            DosageMapper.dosesTimeDistanceIsTheSame(Arrays.stream(new String[]{null, "11.00"}).toList()),
+            is(false));
+        assertThat("times that can't be parsed don't work", DosageMapper.dosesTimeDistanceIsTheSame(List.of("11.00", "not a time")), is(false));
     }
 
     List<DosageDayType> days(int... numbers) {
@@ -209,7 +230,7 @@ class DosageMapperTest {
         Assertions.assertEquals("Once", result.getTag());
         Assertions.assertInstanceOf(Dosage.Once.class, result);
         var dosage = (Dosage.Once) result;
-        Assertions.assertEquals("20231103080000", dosage.getTimeValue());
+        Assertions.assertEquals("202311030800", dosage.getTimeValue());
     }
 
     private final DosageForResponseType onePillAccordingToNeedResponse = onePillDailyResponse.newCopyBuilder()

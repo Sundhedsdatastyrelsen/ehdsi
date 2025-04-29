@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 /// Maps from the FMK ordination representation of dosage to the eHDSI substanceAdministration
 /// representation of dosage.
@@ -261,13 +263,12 @@ public final class DosageMapper {
         var firstDose = doses.getFirst();
 
         if (doses.size() == 1) {
-            // TODO #138 there's a time aspect of the single dose too. Can probably be expressed by the <phase><low> element.
-
             return new Dosage.PeriodicInterval(
                 unstructuredText,
                 true,
                 new Dosage.Period.Simple("d", BigDecimal.valueOf(1)),
-                mapDoseToQuantity(firstDose, unit, isAccordingToNeed));
+                mapDoseToQuantity(firstDose, unit, isAccordingToNeed),
+                getStartTime(structure));
         }
 
         if (!dosesHaveSameQuantity(doses)) {
@@ -275,11 +276,8 @@ public final class DosageMapper {
             return new Dosage.Unstructured(unstructuredText, "Daily doses with different quantities.");
         }
 
-        if (doses.stream().anyMatch(d -> d.getTime() != null)) {
-            // TODO #138 identify the cases where the time distance between the doses is the same and
-            //  handle those. It's complex, but can in some cases be expressed with <phase><low>.
-            // TODO #138 also consider the ones where time is morning/noon/evening/night. Those are probably easier to handle.
-            return new Dosage.Unstructured(unstructuredText, "Daily dose with time.");
+        if (!dosesTimeDistanceIsTheSame(doses.stream().map(DoseType::getTime).toList())) {
+            return new Dosage.Unstructured(unstructuredText, "Daily doses with different times.");
         }
 
         if (24 % doses.size() > 0) {
@@ -293,7 +291,8 @@ public final class DosageMapper {
             new Dosage.Period.Simple(
                 "h",
                 BigDecimal.valueOf(24).divide(BigDecimal.valueOf(doses.size()), RoundingMode.UNNECESSARY)),
-            mapDoseToQuantity(firstDose, unit, isAccordingToNeed));
+            mapDoseToQuantity(firstDose, unit, isAccordingToNeed),
+            getStartTime(structure));
     }
 
     static @NonNull Dosage mapIteratedNonDaily(@NonNull DosageStructureForResponseType structure, @NonNull Dosage.Unit unit, @NonNull String unstructuredText, boolean isAccordingToNeed) {
@@ -307,16 +306,12 @@ public final class DosageMapper {
             return new Dosage.Unstructured(unstructuredText, "Iterated non daily with unequal distance, multiple doses per day, different quantities, or different times.");
         }
 
-        // TODO #138 Add support for when they all have the same time element. Can be supported with the <phase><low> element.
-        if (allDoses.stream().anyMatch(d -> d.getTime() != null)) {
-            return new Dosage.Unstructured(unstructuredText, "Iterated non daily with time.");
-        }
-
         return new Dosage.PeriodicInterval(
             unstructuredText,
             false,
             new Dosage.Period.Simple("d", BigDecimal.valueOf(dayDistance.get())),
-            mapDoseToQuantity(allDoses.getFirst(), unit, isAccordingToNeed)
+            mapDoseToQuantity(allDoses.getFirst(), unit, isAccordingToNeed),
+            getStartTime(structure)
         );
     }
 
@@ -398,9 +393,7 @@ public final class DosageMapper {
     /// The iteration interval is important, because that's how many days go by from the last day until the schema
     /// repeats. So to check that the distance from the last day to the first day is the same as the other distances,
     /// we need to check how far the last day is from the end of the interval.
-    ///
-    /// Public for testing.
-    public static Optional<Integer> getDayDistance(int iterationInterval, @NonNull List<DosageDayType> days) {
+    static Optional<Integer> getDayDistance(int iterationInterval, @NonNull List<DosageDayType> days) {
         var firstDay = days.getFirst();
         if (firstDay.getNumber() != 1) {
             // Sanity check. I don't think this will ever happen.
@@ -438,6 +431,68 @@ public final class DosageMapper {
         return doses.stream().allMatch(d -> Objects.equals(d.getTime(), firstDoseTime));
     }
 
+    /// If all the times are morning/noon/evening/night, there's some leverage so we can stretch most of those to
+    /// every 6/8/12 hours.
+    static class DoseTimeCases {
+        private DoseTimeCases() {
+        }
+
+        static final String morning = "morning";
+        static final String noon = "noon";
+        static final String evening = "evening";
+        static final String night = "night";
+        static final List<List<String>> allowedCases = List.of(
+            // these are about 12 hours
+            List.of(morning, evening),
+            List.of(morning, night),
+            List.of(noon, night),
+            // these are about 8 hours
+            List.of(morning, noon, evening),
+            List.of(morning, noon, night),
+            List.of(morning, evening, night),
+            // this is about 6 hours
+            List.of(morning, noon, evening, night));
+    }
+
+    static boolean dosesTimeDistanceIsTheSame(@NonNull List<String> doseTimes) {
+        // If none of them have times, or there is only one, they implicitly always have the same distance.
+        if (doseTimes.stream().allMatch(Objects::isNull) || doseTimes.size() == 1) {
+            return true;
+        }
+
+        // But now that we know that one of them has a time, none of the others should be null - I don't think this is
+        // possible, but it's handled nonetheless.
+        if (doseTimes.stream().anyMatch(Objects::isNull)) {
+            return false;
+        }
+
+        // There are some specific cases we allow with the loose times used by FMK. These are spelled out in a helper class.
+        if (DoseTimeCases.allowedCases.stream().anyMatch(option -> doseTimes.size() == option.size()
+            && doseTimes.containsAll(option) && option.containsAll(doseTimes))) {
+            return true;
+        }
+
+        // Finally, we try to match the times to local times, and see whether they have the same individual distance.
+        var localTimes = doseTimes.stream()
+            .map(DosageMapper::fmkTimeToLocalTime)
+            .filter(Objects::nonNull)
+            .map(Pair::getLeft)
+            .sorted()
+            .toList();
+
+        if (localTimes.size() != doseTimes.size()) {
+            // Some of the times couldn't be mapped.
+            return false;
+        }
+
+        // Compare all the distances between the individual doses. The distance between the last and the first times
+        // will always be negative, as they are ordered (23.00 to 03.00 = -20h). So we add a day.
+        var lastDistance = Duration.between(localTimes.getLast(), localTimes.getFirst()).plusDays(1);
+        return IntStream.range(0, localTimes.size() - 1)
+            .allMatch(i -> Duration.between(localTimes.get(i), localTimes.get((i + 1)))
+                .equals(lastDistance));
+    }
+
     /// This case has a specific meaning, in that there is no limit to how many times you're allowed to take the medicine
     /// every day.
     static boolean isUnboundedAccordingToNeedCase(@NonNull DosageStructureForResponseType structure, boolean isAccordingToNeed) {
@@ -457,5 +512,23 @@ public final class DosageMapper {
                 .build())
             .toList();
         return DosageDayType.builder().withNumber(1).withDose(copiedDoses).build();
+    }
+
+    /// Get the start time of the first dose of the first day, if there is one. Otherwise return null. Also, it has to
+    /// be a local date time because that's what it is expressed like in CDA.
+    static LocalDateTime getStartTime(@NonNull DosageStructureForResponseType structure) {
+        var startDate = structure.getStartDate()
+            .toGregorianCalendar()
+            .toZonedDateTime()
+            .toLocalDate();
+
+        return Optional.ofNullable(structure.getDay())
+            .map(List::getFirst)
+            .map(DosageDayType::getDose)
+            .map(List::getFirst)
+            .map(DoseType::getTime)
+            .map(DosageMapper::fmkTimeToLocalTime)
+            .map(time -> LocalDateTime.of(startDate, time.getLeft()))
+            .orElse(null);
     }
 }
