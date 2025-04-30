@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-            <artifactId>integration-tests</artifactId>
+            <artifactId>cda-generator</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

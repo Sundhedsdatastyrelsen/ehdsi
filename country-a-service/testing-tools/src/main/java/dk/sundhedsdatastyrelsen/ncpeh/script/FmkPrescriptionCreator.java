@@ -16,9 +16,13 @@ import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.GregorianCalendar;
 
 public class FmkPrescriptionCreator {
     //The source for creating prescriptions is always Medicinpriser
@@ -65,10 +69,10 @@ public class FmkPrescriptionCreator {
             .withCreatedBy(prescriptionCreatedBy())
             .addPrescription()
             .withDrugMedicationIdentifier(drugMedicationIdentifier)
-            .withAuthorisationDateTime(dk.sundhedsdatastyrelsen.ncpeh.service.Utils.xmlGregorianCalendar(ZonedDateTime.now()))
+            .withAuthorisationDateTime(xmlGregorianCalendar(ZonedDateTime.now()))
             // System name is mandatory, but the value doesn't seem to be validated by FMK.
             .withSystemName("NCP ePrescription test system")
-            .withValidFromDate(dk.sundhedsdatastyrelsen.ncpeh.service.Utils.xmlGregorianCalendar(LocalDate.now()))
+            .withValidFromDate(xmlGregorianCalendar(LocalDate.now()))
             .withPackageRestriction()
             .withPackageQuantity(1)
             // 056232 is LMS02 id for "Pinex 500mg 100 stks." package
@@ -89,6 +93,20 @@ public class FmkPrescriptionCreator {
             PredefinedRequestedRole.LÆGE);
 
         return createPrescriptionResponse;
+    }
+
+    /**
+     * Convert a ZonedDateTime to XMLGregorianCalendar.
+     */
+    static XMLGregorianCalendar xmlGregorianCalendar(ZonedDateTime zdt) {
+        return DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar(GregorianCalendar.from(zdt));
+    }
+
+    /**
+     * Convert a LocalDate to XMLGregorianCalendar.
+     */
+    static XMLGregorianCalendar xmlGregorianCalendar(LocalDate date) {
+        return xmlGregorianCalendar(date.atStartOfDay(ZoneId.of("Z")));
     }
 
     /*
@@ -124,8 +142,8 @@ public class FmkPrescriptionCreator {
         var dosageStructure = DosageStructuresForRequestType.builder()
             .addStructureOrEmptyStructure(DosageStructureForRequestType.builder()
                 .withIterationInterval(1)
-                .withStartDate(dk.sundhedsdatastyrelsen.ncpeh.service.Utils.xmlGregorianCalendar(LocalDate.now()))
-                .withDosageEndingUndetermined().end()
+                .withStartDate(xmlGregorianCalendar(LocalDate.now()))
+                .withEndDate(xmlGregorianCalendar(LocalDate.now().plusDays(2)))
                 .addDay()
                 .withNumber(1)
                 .addDose().withQuantity(BigDecimal.valueOf(1)).end()
@@ -137,9 +155,8 @@ public class FmkPrescriptionCreator {
 
         return CreateDrugMedicationType.builder()
             .withBeginEndDate()
-            .withTreatmentStartDate(dk.sundhedsdatastyrelsen.ncpeh.service.Utils.xmlGregorianCalendar(LocalDate.now()))
-            .withTreatmentEndingUndetermined()
-            .end()
+            .withTreatmentStartDate(xmlGregorianCalendar(LocalDate.now()))
+            .withTreatmentEndDate(xmlGregorianCalendar(LocalDate.now().plusDays(2)))
             .end()
             .withIndication()
             // 145 is LMS26 code for "mod smerter"

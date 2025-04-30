@@ -1,0 +1,27 @@
+{
+    "identifier": "0410009234^^^&1.2.208.176.1.2&ISO",
+    "root": "1.2.208.176.1.2",
+    "extension": "0410009234",
+    "firstName": "Sofie",
+    "familyName": "Bach",
+    "birthDate": 970617600000,
+    "gender": "F",
+    "addressStreet": "Morbærvej 200",
+    "addressPostalCode": "1362",
+    "addressCity": "København K",
+    "addressCountry": "DK",
+    "nextOfKin": false,
+    "patientDemographics": {
+        "administrativeGender": "F",
+        "birthDate": 970617600000,
+        "city": "København K",
+        "country": "DK",
+        "email": null,
+        "familyName": "Bach",
+        "givenName": "Sofie",
+        "postalCode": "1362",
+        "streetAddress": "Morbærvej 200",
+        "telephone": null,
+        "patientId": [{ "root": "1.2.208.176.1.2", "extension": "0410009234" }]
+    }
+}
