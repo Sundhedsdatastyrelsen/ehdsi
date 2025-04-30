@@ -1,0 +1,62 @@
+{
+    "patientIdentifier": "0410009234^^^&1.2.208.176.1.2&ISO",
+    "clinicalDocuments": [
+        {
+            "identifier": "478299475783102L1",
+            "repositoryId": "1.2.208",
+            "homeCommunityId": "urn:oid:1.2.208",
+            "name": "ePrescription",
+            "formatCode": "urn:ihe:iti:xds-sd:pdf:2008",
+            "mimeType": "text/xml"
+        },
+        {
+            "identifier": "478299475783102L3",
+            "repositoryId": "1.2.208",
+            "homeCommunityId": "urn:oid:1.2.208",
+            "name": "ePrescription",
+            "formatCode": "urn:epsos:ep:pre:2010",
+            "mimeType": "text/xml"
+        },
+        {
+            "identifier": "481801817572102L1",
+            "repositoryId": "1.2.208",
+            "homeCommunityId": "urn:oid:1.2.208",
+            "name": "ePrescription",
+            "formatCode": "urn:ihe:iti:xds-sd:pdf:2008",
+            "mimeType": "text/xml"
+        },
+        {
+            "identifier": "481801817572102L3",
+            "repositoryId": "1.2.208",
+            "homeCommunityId": "urn:oid:1.2.208",
+            "name": "ePrescription",
+            "formatCode": "urn:epsos:ep:pre:2010",
+            "mimeType": "text/xml"
+        },
+        {
+            "identifier": "478299832581102L1",
+            "repositoryId": "1.2.208",
+            "homeCommunityId": "urn:oid:1.2.208",
+            "name": "ePrescription",
+            "formatCode": "urn:ihe:iti:xds-sd:pdf:2008",
+            "mimeType": "text/xml"
+        },
+        {
+            "identifier": "478299832581102L3",
+            "repositoryId": "1.2.208",
+            "homeCommunityId": "urn:oid:1.2.208",
+            "name": "ePrescription",
+            "formatCode": "urn:epsos:ep:pre:2010",
+            "mimeType": "text/xml"
+        }
+    ],
+    "nextOfKin": false,
+    "atcCode": "G03AA07",
+    "atcText": "Levonorgestrel og ethinylestradiol",
+    "doseFormCode": "TABFILM",
+    "doseFormText": "filmovertrukne tabletter",
+    "strength": "150+30 mikrogram",
+    "substitution": null,
+    "description": "Malonetta, 150+30 mikrogram, P-piller",
+    "dispensable": true
+}

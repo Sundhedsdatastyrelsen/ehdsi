@@ -86,6 +86,11 @@
             </dependency>
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>testing-tools</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>epps-ncp-api</artifactId>
                 <version>${project.version}</version>
             </dependency>

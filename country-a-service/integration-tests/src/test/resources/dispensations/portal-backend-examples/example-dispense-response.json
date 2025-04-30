@@ -1,0 +1,9 @@
+{
+    "dispenseId": null,
+    "prescriptionId": null,
+    "productName": null,
+    "packageSize": null,
+    "status": "urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success",
+    "numberOfPackage": 0,
+    "substitution": false
+}
