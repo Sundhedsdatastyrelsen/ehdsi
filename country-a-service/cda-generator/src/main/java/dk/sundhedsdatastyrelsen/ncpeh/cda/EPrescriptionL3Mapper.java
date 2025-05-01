@@ -2,11 +2,16 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugFormType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
@@ -23,11 +28,14 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Size;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +44,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class EPrescriptionL3Mapper {
     private EPrescriptionL3Mapper() {
     }
@@ -62,13 +71,11 @@ public class EPrescriptionL3Mapper {
         var i = prescription.getIndication();
         var indicationText = i.getFreeText() != null ? i.getFreeText() : i.getText();
         var activeIngredients = getActiveIngredients(
-            prescription.getDrug().getStrength(), prescription.getDrug()
-                .getSubstances());
+            prescription.getDrug().getStrength(),
+            prescription.getDrug().getSubstances());
         var prescriptionBuilder = EPrescriptionL3.builder()
             .documentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(prescriptionId.getExtension())))
-            .title(String.format(
-                "eHDSI ePrescription %s - %s", patient(response).getName()
-                    .getFullName(), prescription.getIdentifier()))
+            .title(makeTitle(response, prescription))
             .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))
             .author(author(prescription, input.authorAuthorizations()))
@@ -80,11 +87,15 @@ public class EPrescriptionL3Mapper {
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
             .patientMedicationInstructions(prescription.getDosageText())
-            .activeIngredients(activeIngredients.isLeft() ? activeIngredients.getLeft() : Collections.emptyList())
-            .unstructuredActiveIngredients(activeIngredients.isRight() ? activeIngredients.getRight() : null);
+            .activeIngredients(activeIngredients.structured())
+            .unstructuredActiveIngredients(activeIngredients.unstructured());
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
+            var dosage = DosageMapper.model(drugMedicationType.getDosage());
+            if (dosage instanceof Dosage.Unstructured unstructured) {
+                log.info("Dosage could not be mapped. Reason: {}", unstructured.getReason());
+            }
             prescriptionBuilder
                 .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                     .getTreatmentStartDate()))
@@ -108,7 +119,14 @@ public class EPrescriptionL3Mapper {
         return prescriptionBuilder.build();
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) throws MapperException {
+    public static String makeTitle(GetPrescriptionResponseType response, PrescriptionType prescription) {
+        var patientName = response.getPatient().getPerson().getName();
+        return String.format(
+            "eHDSI ePrescription %s - %s", Name.fromFirstMiddleLast(patientName.getGivenName(), patientName.getMiddleName(), patientName.getSurname())
+                .getFullName(), prescription.getIdentifier());
+    }
+
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -151,6 +169,7 @@ public class EPrescriptionL3Mapper {
             .packageCode(packageCode)
             .packageFormCode(packageFormCode)
             .atcCode(atcCode)
+            .description(productDescription(prescription))
             .build();
     }
 
@@ -263,7 +282,7 @@ public class EPrescriptionL3Mapper {
                 Optional.ofNullable(authorization.getSpeciale1()),
                 Optional.ofNullable(authorization.getSpeciale2()),
                 Optional.ofNullable(authorization.getSpeciale3()))
-            .filter(Optional::isPresent)
+            .filter(spe -> !spe.orElse("").trim().isEmpty())
             .map(Optional::get)
             .toList();
 
@@ -274,7 +293,8 @@ public class EPrescriptionL3Mapper {
         // but that could take years, so we do this for now.
         return specializations.isEmpty() ? null : CdaCode.builder()
             .codeSystem(Oid.DK_AUTHORIZATION_REGISTRY_SPECIALIZATION)
-            .code(String.join(", ", specializations))
+            .code(Base64.getEncoder()
+                .encodeToString(String.join(", ", specializations).getBytes(StandardCharsets.UTF_8)))
             .displayName(String.join(", ", specializations))
             .build();
     }
@@ -315,37 +335,43 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator information"));
     }
 
-    private static @NonNull Either<List<ActiveIngredient>, String> getActiveIngredients(DrugStrengthType strength, SubstancesType substances) {
+    private record ActiveIngredients(@NonNull List<ActiveIngredient> structured, @NonNull String unstructured) {
+    }
+
+    private static @NonNull ActiveIngredients getActiveIngredients(DrugStrengthType strength, SubstancesType substances) {
         if (substances == null
             || substances.getActiveSubstance() == null
             || substances.getActiveSubstance().stream().allMatch(ai -> getSubstanceText(ai) == null)) {
-            return Either.ofRight(null);
+            return new ActiveIngredients(List.of(), "");
         }
 
+        var structured = new ArrayList<ActiveIngredient>(1);
+        // We can only return structured active ingredient information when we have exactly 1 ingredient,
+        // because otherwise we can not deduce the strength values for the ingredients.
         if (substances.getActiveSubstance().size() == 1 && strength != null && strength.getUnitCode() != null) {
             var text = getSubstanceText(substances.getActiveSubstance().getFirst());
             var codedStrength = SubstanceUnitMapper.fromLms(strength.getUnitCode().getValue());
             if (text != null && codedStrength != null) {
-                return Either.ofLeft(List.of(ActiveIngredient.builder()
+                structured.add(ActiveIngredient.builder()
                     .name(text)
                     .numerator(strength.getValue())
                     .numeratorUnit(codedStrength.numeratorUnit())
                     .denominator(codedStrength.denominator())
                     .denominatorUnit(codedStrength.denominatorUnit())
                     .translation(codedStrength.translation())
-                    .build()));
+                    .build());
             }
-            // If the strength is not coded, or we can't find the text, fall back to unstructured.
         }
 
-        // When there is more than 1 active substance, we don't have the strength in a structured format, so we return
-        // the list unstructured.
-        return Either.ofRight(Stream.concat(
-                Stream.of(getSubstanceStrengthText(strength)), substances.getActiveSubstance()
+        var unstructured = Stream.concat(
+                Stream.of(getSubstanceStrengthText(strength)),
+                substances.getActiveSubstance()
                     .stream()
                     .map(EPrescriptionL3Mapper::getSubstanceText))
             .filter(Objects::nonNull)
-            .collect(Collectors.joining("; ")));
+            .collect(Collectors.joining("; "));
+
+        return new ActiveIngredients(structured, unstructured);
     }
 
     private static String getSubstanceText(ActiveSubstanceType substance) {
@@ -357,17 +383,40 @@ public class EPrescriptionL3Mapper {
     }
 
     private static String getSubstanceStrengthText(DrugStrengthType strength) {
-        if (strength == null) return null;
-        if (strength.getUnitText() != null) return strength.getUnitText();
-        if (strength.getText() != null) return strength.getText().getValue();
-        return null;
+        return Optional.ofNullable(strength)
+            .map(DrugStrengthType::getText)
+            .map(DrugStrengthTextType::getValue)
+            .orElse(null);
     }
 
-    private static String drugStrengthText(@NonNull PrescriptionType prescription) {
-        if (prescription.getDrug() == null || prescription.getDrug().getStrength() == null ||
-            prescription.getDrug().getStrength().getText() == null ||
-            prescription.getDrug().getStrength().getText().getValue() == null)
-            return null;
-        return prescription.getDrug().getStrength().getText().getValue();
+    public static String drugStrengthText(@NonNull PrescriptionType prescription) {
+        return Optional.ofNullable(prescription.getDrug())
+            .map(DrugType::getStrength)
+            .map(EPrescriptionL3Mapper::getSubstanceStrengthText)
+            .orElse(null);
+    }
+
+    public static String productDescription(@NonNull PrescriptionType prescription) {
+        // "[...]the element SHALL contain a sufficiently detailed description of the prescribed
+        // medicinal product/package. The description may contain information on the brand name,
+        // dose form, package (including its type or brand name), strength, etc."
+        // For example:
+        // Abasaglar KwikPen, injektionsvæske, opløsning i fyldt pen, 100 E/ml, 5 x 3 ml (1-80E/inj.)
+
+        return Stream.of(
+                prescription.getDrug().getName(),
+                Optional.of(prescription)
+                    .map(PrescriptionType::getDrug)
+                    .map(DrugType::getForm)
+                    .map(DrugFormType::getText)
+                    .orElse(null),
+                drugStrengthText(prescription),
+                Optional.of(prescription)
+                    .map(PrescriptionType::getPackageRestriction)
+                    .map(PackageRestrictionType::getPackageSize)
+                    .map(PackageSizeType::getPackageSizeText)
+                    .orElse(null))
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining(", "));
     }
 }

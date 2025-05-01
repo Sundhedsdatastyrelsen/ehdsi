@@ -55,18 +55,13 @@ public class PrescriptionController {
         } catch (SAXException e) {
             log.error("Could not read XML document in request", e);
         } catch (Exception e) {
-            if (e.getClass().equals(DataRequirementException.class)) {
-                throw e; // Data requirement errors should be forwarded to the other party
-            }
-            // The received dispensation is just a receipt, error handling needs to make sure the information is
-            // communicated to relevant error handling parties - and not throw an error, since the NCP service does not
-            // regard failure as anything other than the service being down.
             // TODO Logs here might contain patient information, should be stored somewhere with better security
             // TODO Logs are probably not the best tool for communicating this
             log.error("Failed in handling dispensation request for patient id %s, with classcode {}", request.getPatientId(), request.getClassCode()
                 .toString());
             log.error("SOAP Header: {}", request.getSoapHeader());
             log.error("Request document: {}", request.getDocument());
+            throw e;
         }
     }
 
@@ -82,9 +77,6 @@ public class PrescriptionController {
         } catch (SAXException e) {
             log.error("Could not read XML document in request");
         } catch (Exception e) {
-            // The received discard request is just a receipt, error handling needs to make sure the information is
-            // communicated to relevant error handling parties - and not throw an error, since the NCP service does not
-            // regard failure as anything other than the service being down.
             // TODO Logs here might contain patient information, should be stored somewhere with better security
             // TODO Logs are probably not the best tool for communicating this
             log.error("Failed in handling discard request for patient id %s, with classcode {}", request.getDispensationToDiscard()
@@ -92,6 +84,7 @@ public class PrescriptionController {
                 .toString());
             log.error("SOAP Header: {}", request.getSoapHeader());
             log.error("Request document: {}", request.getDispensationToDiscard().getDocument());
+            throw e;
         }
     }
 }

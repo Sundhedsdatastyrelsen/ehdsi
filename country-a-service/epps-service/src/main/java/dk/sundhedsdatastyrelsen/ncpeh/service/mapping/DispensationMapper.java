@@ -1,9 +1,12 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierPredefinedSourceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
@@ -34,10 +37,12 @@ import java.util.stream.Stream;
 
 /**
  * Class for mapping eDispensation CDAs to FMK requests.
- * Not threadsafe due to xpath, so construct a new instance for each thread.
  */
 public class DispensationMapper {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DispensationMapper.class);
+
+    private DispensationMapper() {
+    }
 
     // ART DECOR template for eDispensation CDA:
     // https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-2.16.840.1.113883.3.1937.777.11.10.111-2020-10-07T094007.html
@@ -172,25 +177,34 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         static final String packageQuantity =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:quantity";
-        static final String manufacturedMaterialCode =
+        static final String containerPackagedProductCode =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
+        static final String manufacturedMaterialName =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:name";
+        static final String manufacturedMaterialCode =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code";
         static final String substitution =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
+        static final String atcCode =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asSpecializedKind[@classCode='GRIC']/pharm:generalizedMaterialKind/pharm:code";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
 
-    private final XPath xpath;
-
-    {
-        xpath = XPathFactory.newInstance().newXPath();
+    /**
+     * Construct a new XPath object.
+     * XPath is not thread-safe, so we construct a new instance each time instead of reusing.
+     */
+    private static XPath xpath() {
+        var xpath = XPathFactory.newInstance().newXPath();
         var nsCtx = new SimpleNamespaceContext();
         nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
         nsCtx.bindNamespaceUri("pharm", "urn:hl7-org:pharm");
         xpath.setNamespaceContext(nsCtx);
+        return xpath;
     }
 
-    private List<String> evalMany(Document cda, String xpathExpression) throws XPathExpressionException {
+    private static List<String> evalMany(XPath xpath, Document cda, String xpathExpression) throws XPathExpressionException {
         var nodeList = (DTMNodeList) xpath.evaluate(xpathExpression, cda, XPathConstants.NODESET);
         var l = nodeList.getLength();
         var result = new ArrayList<String>();
@@ -200,7 +214,8 @@ public class DispensationMapper {
         return Collections.unmodifiableList(result);
     }
 
-    private List<String> evalMany(
+    private static List<String> evalMany(
+        XPath xpath,
         Document cda,
         String xpathExpression,
         String attrName
@@ -217,17 +232,10 @@ public class DispensationMapper {
         return Collections.unmodifiableList(result);
     }
 
-    private String eval(Document cda, String xpathExpression) throws XPathExpressionException {
-        return (String) xpath.evaluate(xpathExpression, cda, XPathConstants.STRING);
-    }
-
-    private Node evalNode(Document cda, String xpathExpression) throws XPathExpressionException {
-        return (Node) xpath.evaluate(xpathExpression, cda, XPathConstants.NODE);
-    }
-
-    ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
-        var familyNames = evalMany(cda, XPaths.authorFamilyName);
-        var givenNames = evalMany(cda, XPaths.authorGivenName);
+    static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
+        var xpath = xpath();
+        var familyNames = evalMany(xpath, cda, XPaths.authorFamilyName);
+        var givenNames = evalMany(xpath, cda, XPaths.authorGivenName);
         var allButLastName = Stream.concat(
                 givenNames.stream(),
                 familyNames.subList(0, familyNames.size() - 1).stream())
@@ -240,9 +248,10 @@ public class DispensationMapper {
             .build();
     }
 
-    String authorRole(Document cda) throws XPathExpressionException {
-        var functionCode = eval(cda, XPaths.authorFunctionCode);
-        var functionCodeSystem = eval(cda, XPaths.authorFunctionCodeSystem);
+    static String authorRole(Document cda) throws XPathExpressionException {
+        var xpath = xpath();
+        var functionCode = (String) xpath.evaluate(XPaths.authorFunctionCode, cda, XPathConstants.STRING);
+        var functionCodeSystem = (String) xpath.evaluate(XPaths.authorFunctionCodeSystem, cda, XPathConstants.STRING);
         if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             //This is the "official" translation of "Pharmacists" from ISCO.
             // It has implications in FMK, who validates these
@@ -256,51 +265,31 @@ public class DispensationMapper {
         throw new IllegalArgumentException("Unexpected function code: " + functionCode);
     }
 
-    private boolean notBlank(String s) {
+    private static boolean notBlank(String s) {
         return s != null && !s.isBlank();
     }
 
-    /**
-     * TODO FMK Improvement
-     * FMK is supposed to support "Udenlandsk" OrganisationIdenfier, according to the documentation
-     * When called, it responds with an error that it is not supported yet
-     * <p>
-     * Two options going forward:
-     * - FMK start supporting Udenlandsk, and we reimplement forwarding the identifier from Country-B
-     * - We agree with FMK to "proxy" all requests through another Organisation, like we do in the code right now.
-     * <p>
-     * (2024/09/10)
-     */
-    private OrganisationIdentifierType identifier(Node id) {
-
-//        var attrs = id.getAttributes();
-//        var root = attrs.getNamedItem("root");
-//        var ext = attrs.getNamedItem("extension");
-//        if (root == null) {
-//            throw new IllegalArgumentException("Id nodes without root attributes are unsupported");
-//        }
-//        return OrganisationIdentifierType.builder()
-//            .withSource(OrganisationIdentifierPredefinedSourceType.UDENLANDSK.value())
-//            .withValue(ext == null
-//                ? root.getTextContent()
-//                : String.format("%s.%s", root.getTextContent(), ext.getTextContent()))
-//            .build();
-        return TestIdentities.skanderborgApotek;
+    private static OrganisationIdentifierType placeholderPharmacyId() {
+        return OrganisationIdentifierType.builder()
+            .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+            .withValue("5790001392277") // NSI, Udenlandsk Apotek via epSOS ( SOR-nummer: 397941000016003 )
+            .build();
     }
 
-    OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
-        var addressLines = new ArrayList<>(evalMany(cda, XPaths.authorOrgAddressLine));
-        var postalCode = eval(cda, XPaths.authorOrgPostalCode);
-        var city = eval(cda, XPaths.authorOrgCity);
-        var state = eval(cda, XPaths.authorOrgState);
-        var country = eval(cda, XPaths.authorOrgCountry);
+    static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
+        var xpath = xpath();
+        var addressLines = new ArrayList<>(evalMany(xpath, cda, XPaths.authorOrgAddressLine));
+        var postalCode = (String) xpath.evaluate(XPaths.authorOrgPostalCode, cda, XPathConstants.STRING);
+        var city = (String) xpath.evaluate(XPaths.authorOrgCity, cda, XPathConstants.STRING);
+        var state = (String) xpath.evaluate(XPaths.authorOrgState, cda, XPathConstants.STRING);
+        var country = (String) xpath.evaluate(XPaths.authorOrgCountry, cda, XPathConstants.STRING);
         if (notBlank(postalCode)) addressLines.add(postalCode);
         if (notBlank(city)) addressLines.add(city);
         if (notBlank(state)) addressLines.add(state);
         if (notBlank(country)) addressLines.add(country);
 
         String email = null, telephone = null;
-        var telecoms = evalMany(cda, XPaths.authorOrgTelecom, "value");
+        var telecoms = evalMany(xpath, cda, XPaths.authorOrgTelecom, "value");
         for (var t : telecoms) {
             if (t == null) continue;
             if (t.startsWith("tel:")) telephone = t.substring(4);
@@ -308,9 +297,9 @@ public class DispensationMapper {
         }
 
         var b = OrganisationType.builder()
-            .withIdentifier(identifier(evalNode(cda, XPaths.authorOrgId)))
-            .withName(eval(cda, XPaths.authorOrgName))
-            .withType("Apotek") // TODO: How can we determine this?
+            .withIdentifier(placeholderPharmacyId())
+            .withName((String) xpath.evaluate(XPaths.authorOrgName, cda, XPathConstants.STRING))
+            .withType("Apotek")
             .addAddressLine(addressLines);
 
         if (email != null) b.withEmailAddress(email);
@@ -319,12 +308,13 @@ public class DispensationMapper {
         return b.build();
     }
 
-    OrganisationType orderedAtPharmacy(Document cda) throws XPathExpressionException {
+    static OrganisationType orderedAtPharmacy(Document cda) throws XPathExpressionException {
         return authorOrganization(cda);
     }
 
-    public long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
-        var id = evalNode(cda, XPaths.inFulfillmentOfId);
+    public static long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
+        var xpath = xpath();
+        var id = (Node) xpath.evaluate(XPaths.inFulfillmentOfId, cda, XPathConstants.NODE);
         var root = xpath.evaluate("@root", id);
         if (!Oid.DK_FMK_PRESCRIPTION.value.equals(root)) {
             throw new MapperException("Unknown prescription id type: " + root);
@@ -337,14 +327,14 @@ public class DispensationMapper {
         }
     }
 
-    StartEffectuationRequestType.Prescription startEffectuationRequestPrescription(Document cda) throws XPathExpressionException,
+    static StartEffectuationRequestType.Prescription startEffectuationRequestPrescription(Document cda) throws XPathExpressionException,
         MapperException {
         return StartEffectuationRequestType.Prescription.builder()
             .withIdentifier(prescriptionId(cda))
             .build();
     }
 
-    CreatePharmacyEffectuationOnPrescriptionType prescription(
+    static CreatePharmacyEffectuationOnPrescriptionType prescription(
         Document cda,
         @NonNull StartEffectuationResponseType startEffectuationResponse
     ) throws XPathExpressionException, MapperException {
@@ -359,8 +349,9 @@ public class DispensationMapper {
             .build();
     }
 
-    Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
-        var node = evalNode(cda, XPaths.packageQuantity);
+    static Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
+        var xpath = xpath();
+        var node = (Node) xpath.evaluate(XPaths.packageQuantity, cda, XPathConstants.NODE);
         var unit = xpath.evaluate("@unit", node);
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
@@ -368,62 +359,87 @@ public class DispensationMapper {
         return Integer.parseInt(xpath.evaluate("@value", node));
     }
 
-    CreatePharmacyEffectuationType effectuation(
+    static CreatePharmacyEffectuationType effectuation(
         Document cda,
         StartEffectuationResponseType startEffectuationResponse
     ) throws XPathExpressionException, MapperException {
-        var effectiveTime = eval(cda, XPaths.effectiveTime);
+        var xpath = xpath();
+        var effectiveTime = (String) xpath.evaluate(XPaths.effectiveTime, cda, XPathConstants.STRING);
         var packageRestriction = startEffectuationResponse.getPrescription().getFirst().getPackageRestriction();
 
-        // how do we handle substitutions? for now, disallow
-        if (evalNode(cda, XPaths.substitution) != null) {
-            log.warn("Substitutions are not supported. No conversion was made.");
-        }
-        // verify that package number matches prescription
-        var packageNumber = packageNumber(cda);
-        if (packageNumber != null && !packageRestriction.getPackageNumber().getValue().equals(packageNumber)) {
-            throw new MapperException(String.format(
-                "Package number in dispensation (%s) does not match prescription (%s).",
-                packageNumber(cda),
-                packageRestriction.getPackageNumber().getValue()));
-        }
+        var drug = drug(cda);
 
         return CreatePharmacyEffectuationType.builder()
             .withDateTime(Utils.parseEpsosTime(effectiveTime))
             .withPackageDispensed()
             .withPackageQuantity(packageQuantity(cda))
-            .withPackageNumber(packageRestriction.getPackageNumber())
-            .withPackageSize(packageRestriction.getPackageSize())
+            .withPackageNumber(packageNumber(cda))
+            .withPackageSize(packageRestriction.getPackageSize()) // TODO #200 get package size from CDA
+            .withSubstitutedDrug(drug)
             .end()
-            .withDeliverySite(TestIdentities.deliverySiteRyApotek)
+            .withDeliverySite(TestIdentities.deliverySiteRyApotek) // TODO #190
             .build();
     }
 
-    String packageNumber(Document cda) {
-        try {
-            var node = evalNode(cda, XPaths.manufacturedMaterialCode);
-            if (node == null) {
-                return null; //The field is 0..1, and we cannot require it to be there. If it is missing, we return null.
-            }
-            var codeSystem = xpath.evaluate("@codeSystem", node);
-            if (!Oid.DK_VARENUMRE.value.equals(codeSystem)) {
-                // throw?
-                log.warn(
-                    "Expected LMS02 ({}) code system, for {}. Got: {}",
-                    Oid.DK_VARENUMRE.value,
-                    XPaths.manufacturedMaterialCode,
-                    codeSystem
-                );
-            }
-            return xpath.evaluate("@code", node);
-        } catch (XPathExpressionException e) {
-            throw new DataRequirementException(String.format("Could not find find data at path: %s", XPaths.manufacturedMaterialCode));
-        }
+    static DrugType drug(Document cda) {
+        return DrugType.builder()
+            .withDetailedDrugText(detailedDrugText(cda))
+            // TODO #201: Strength, ATC code, substances
+            .build();
     }
 
-    public String cdaId(Document cda) throws MapperException {
+    static String detailedDrugText(Document cda) {
+        var xpath = xpath();
+        String drugName;
         try {
-            var node = evalNode(cda, XPaths.cdaId);
+            drugName = (String) xpath.evaluate(XPaths.manufacturedMaterialName, cda, XPathConstants.STRING);
+        } catch (XPathExpressionException e) {
+            throw new DataRequirementException(String.format("Could not find data at path: %s", XPaths.manufacturedMaterialName));
+        }
+        String drugId;
+        try {
+            var node = (Node) xpath.evaluate(XPaths.manufacturedMaterialCode, cda, XPathConstants.NODE);
+            var system = xpath.evaluate("@codeSystem", node);
+            var id = xpath.evaluate("@code", node);
+            drugId = String.format("%s^^^%s", system, id);
+        } catch (XPathExpressionException e) {
+            drugId = "unknown";
+        }
+        return String.format("%s - id: %s", drugName, drugId);
+    }
+
+    static PackageNumberType packageNumber(Document cda) {
+        //        try {
+//            var xpath = xpath();
+//            var node = (Node) xpath.evaluate(XPaths.containerPackagedProductCode, cda, XPathConstants.NODE);
+//            if (node == null) {
+//                return null; //The field is 0..1, and we cannot require it to be there. If it is missing, we return null.
+//            }
+//            var codeSystem = xpath.evaluate("@codeSystem", node);
+//            var code = xpath.evaluate("@code", node);
+//
+//            var packageNumber = codeSystem + "^^^" + code;
+//            return PackageNumberType.builder()
+//                .withSource("Local")
+//                .withValue(packageNumber)
+//                .build();
+//        } catch (XPathExpressionException e) {
+//            log.warn("Could not find find data at path: {}", XPaths.manufacturedMaterialCode);
+//            return null;
+//        }
+
+        // TODO #199: If the container packaged product code system is Oid.DK_VARENUMRE then we can provide it to FMK.
+
+        return PackageNumberType.builder()
+            .withSource("Local")
+            .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
+            .build();
+    }
+
+    public static String cdaId(Document cda) throws MapperException {
+        try {
+            var xpath = xpath();
+            var node = (Node) xpath.evaluate(XPaths.cdaId, cda, XPathConstants.NODE);
             var root = xpath.evaluate("@root", node);
             var ext = xpath.evaluate("@extension", node);
             return ext == null
@@ -434,7 +450,7 @@ public class DispensationMapper {
         }
     }
 
-    public StartEffectuationRequestType startEffectuationRequest(
+    public static StartEffectuationRequestType startEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda
     ) throws MapperException {
@@ -455,7 +471,7 @@ public class DispensationMapper {
         }
     }
 
-    public CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
+    public static CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
         @NonNull StartEffectuationResponseType startEffectuationResponse
@@ -476,7 +492,7 @@ public class DispensationMapper {
         }
     }
 
-    public UndoEffectuationRequestType createUndoEffectuationRequest(
+    public static UndoEffectuationRequestType createUndoEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
         long orderId,

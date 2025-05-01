@@ -11,15 +11,15 @@ public final class Utils {
     private Utils() {
     }
 
-    static final DateTimeFormatter cdaDateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ", Locale.ROOT);
+    static final DateTimeFormatter cdaZonedDateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ", Locale.ROOT);
     static final DateTimeFormatter cdaDateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.ROOT);
-    static final DateTimeFormatter cdaTSFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    static final DateTimeFormatter cdaLocalDateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /**
      * Convert java.time value to "TS Time Stamp" datetime string as expected by CDA.
      */
-    public static String cdaDateTime(TemporalAccessor time) {
-        return cdaDateTimeFormatter.format(time);
+    public static String cdaZonedDateTime(TemporalAccessor time) {
+        return cdaZonedDateTimeFormatter.format(time);
     }
 
     /**
@@ -29,8 +29,8 @@ public final class Utils {
         return cdaDateFormatter.format(time);
     }
 
-    public static String cdaTs(TemporalAccessor time) {
-        return cdaTSFormatter.format(time);
+    public static String cdaLocalDateTime(TemporalAccessor time) {
+        return cdaLocalDateTimeFormatter.format(time);
     }
 
     /**

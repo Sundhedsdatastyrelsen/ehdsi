@@ -1,50 +1,75 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCCodeType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
-import org.springframework.http.HttpStatus;
+import dk.sundhedsdatastyrelsen.ncpeh.service.DispensationAllowed;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.OffsetDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Slf4j
 public class EPrescriptionMapper {
 
     private EPrescriptionMapper() {
     }
 
-    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, EPrescriptionL3Input generatorInput) {
+    private record MetaModel(
+        String patientId,
+        OffsetDateTime effectiveTime,
+        String prescriptionId,
+        String authorName,
+        String title,
+        String description,
+        String productCode,
+        String productName,
+        String atcCode,
+        String atcName,
+        String doseFormCode,
+        String doseFormName,
+        String strength,
+        boolean dispensable
+    ) {
+    }
+
+    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) {
         try {
-            var dataModel = EPrescriptionL3Mapper.model(generatorInput);
-
-            var l3Meta = generateMeta(patientId, dataModel, DocumentLevel.LEVEL3);
-
-            var l1Meta = generateMeta(patientId, dataModel, DocumentLevel.LEVEL1);
-
+            var model = makeModel(patientId, prescriptions, prescriptionIndex, packageInfo);
+            var l3Meta = generateMeta(patientId, model, DocumentLevel.LEVEL3);
+            var l1Meta = generateMeta(patientId, model, DocumentLevel.LEVEL1);
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
-
-        } catch (MapperException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        } catch (Exception e) {
+            log.error("An error occurred while mapping metadata.", e);
+            return null;
         }
     }
 
-    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, EPrescriptionL3 model, DocumentLevel documentLevel) {
+    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, MetaModel model, DocumentLevel documentLevel) {
         if (!documentLevel.equals(DocumentLevel.LEVEL1) && !documentLevel.equals(DocumentLevel.LEVEL3)) {
-            throw new IllegalArgumentException("Does not support documentLevel: " + documentLevel.toString());
+            throw new IllegalArgumentException("Does not support documentLevel: " + documentLevel);
         }
 
         String documentId = switch (documentLevel) {
-            case DocumentLevel.LEVEL1 ->
-                EPrescriptionDocumentIdMapper.level1DocumentId(model.getPrescriptionId().getExtension());
-            case DocumentLevel.LEVEL3 ->
-                EPrescriptionDocumentIdMapper.level3DocumentId(model.getPrescriptionId().getExtension());
+            case DocumentLevel.LEVEL1 -> EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId());
+            case DocumentLevel.LEVEL3 -> EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId());
         };
 
         DocumentFormatDto documentFormat = switch (documentLevel) {
@@ -54,29 +79,24 @@ public class EPrescriptionMapper {
 
         var meta = new EPrescriptionDocumentMetadataDto(documentId);
         meta.setPatientId(patientId);
-        meta.setEffectiveTime(model.getEffectiveTimeOffsetDateTime());
+        meta.setEffectiveTime(model.effectiveTime());
         meta.setRepositoryId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value);
-        meta.setAuthor(model.getAuthor().getName().getFullName());
-        meta.setTitle(model.getTitle());
-        meta.setDescription(model.getIndicationText());
-        meta.setProductCode(model.getProduct().getPackageCode().getCode());
-        meta.setAtcCode(model.getProduct().getAtcCode().getCode());
-        meta.setAtcName(model.getProduct().getAtcCode().getDisplayName());
+        meta.setAuthor(model.authorName());
+        meta.setTitle(model.title());
+        meta.setDescription(model.description());
+        meta.setAtcCode(model.atcCode());
+        meta.setAtcName(model.atcName());
         meta.setClassCode(ClassCodeDto._57833_6); // Prescription for medication
-        meta.setDispensable(true); //This should always be true, we don't return non-dispensable prescriptions
+        meta.setDispensable(model.dispensable());
         meta.setFormat(documentFormat);
-        meta.setLanguage("da-DK"); //We always include danish text in free-text, so
-        meta.setProductCode(model.getProduct()
-            .getPackageCode()
-            .getCode()); //Varenummer
-        meta.setProductName(model.getProduct().getName());
-        meta.setDoseFormCode(model.getProduct()
-            .getFormCode()
-            .getCode());
-        meta.setDoseFormName(model.getProduct().getFormCode().getDisplayName());
+        meta.setLanguage("da-DK"); //We always include danish text in free-text
+        meta.setProductCode(model.productCode()); //Varenummer
+        meta.setProductName(model.productName());
+        meta.setDoseFormCode(model.doseFormCode());
+        meta.setDoseFormName(model.doseFormName());
         meta.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
             .confidentialityDisplay("Normal"));
-        meta.setStrength(model.getProduct().getStrength());
+        meta.setStrength(model.strength());
 
         //The following data is set to this by convention to indicate a document generated on-demand
         // https://profiles.ihe.net/ITI/TF/Volume2/ITI-38.html
@@ -90,5 +110,41 @@ public class EPrescriptionMapper {
          */
 
         return meta;
+    }
+
+    @NonNull
+    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) throws MapperException {
+        var prescription = prescriptions.getPrescription().get(prescriptionIndex);
+        if (prescription == null) {
+            throw new MapperException("Missing prescription");
+        }
+        var atc = Optional.ofNullable(prescription.getDrug()).map(DrugType::getATC);
+        return new MetaModel(
+            patientId,
+            OffsetDateTime.now(),
+            Long.toString(prescription.getIdentifier()),
+            EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription).getName(),
+            EPrescriptionL3Mapper.makeTitle(prescriptions, prescription),
+            makeDescription(prescription),
+            prescription.getPackageRestriction().getPackageNumber().getValue(),
+            prescription.getDrug().getName(),
+            atc.map(ATCType::getCode).map(ATCCodeType::getValue).orElse(null),
+            atc.map(ATCType::getText).orElse(null),
+            prescription.getDrug().getForm().getCode().getValue(),
+            prescription.getDrug().getForm().getText(),
+            EPrescriptionL3Mapper.drugStrengthText(prescription),
+            DispensationAllowed.isDispensationAllowed(prescription, packageInfo)
+        );
+    }
+
+    static String makeDescription(PrescriptionType prescription) {
+        // Want to write something like "Pinex, 500mg, mod smerter"
+        return Stream.of(
+                prescription.getDrug().getName(),
+                EPrescriptionL3Mapper.drugStrengthText(prescription),
+                Optional.ofNullable(prescription.getIndication())
+                    .map(i -> i.getText() != null ? i.getText() : i.getFreeText())
+                    .orElse(null))
+            .filter(Objects::nonNull).collect(Collectors.joining(", "));
     }
 }

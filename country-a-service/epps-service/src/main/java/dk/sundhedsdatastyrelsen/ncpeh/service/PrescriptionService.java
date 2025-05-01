@@ -25,6 +25,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
@@ -32,42 +33,54 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.LmsDataLookupService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
 import freemarker.template.TemplateException;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.sql.DataSource;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClient fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
-    private final LmsDataLookupService lmsDataLookupService;
+    private final DataProvider lmsDataProvider;
     private final AuthorizationRegistryClient authorizationRegistry;
     private final Cache<String, List<AuthorizationType>> authorizationRegistryCache = Caffeine.newBuilder()
         .maximumSize(500)
         .expireAfterWrite(Duration.ofMinutes(15))
         .build();
+
+    public PrescriptionService(
+        FmkClient fmkClient,
+        UndoDispensationRepository undoDispensationRepository,
+        @Qualifier("localLmsDataSource") DataSource lmsDataSource,
+        AuthorizationRegistryClient authorizationRegistry
+    ) {
+        this.fmkClient = fmkClient;
+        this.undoDispensationRepository = undoDispensationRepository;
+        this.lmsDataProvider = new DataProvider(lmsDataSource);
+        this.authorizationRegistry = authorizationRegistry;
+    }
 
     public record PrescriptionFilter(
         String documentId,
@@ -91,10 +104,6 @@ public class PrescriptionService {
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
-
-        private OffsetDateTime toOffsetDateTime(@NonNull XMLGregorianCalendar xml) {
-            return xml.toGregorianCalendar().toZonedDateTime().toOffsetDateTime();
-        }
     }
 
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
@@ -102,10 +111,31 @@ public class PrescriptionService {
         PrescriptionFilter filter,
         Identity caller
     ) {
-        log.debug("undoDispensation: looking up prescription information");
-        return assembleEPrescriptionInput(patientId, filter, caller).map(input -> EPrescriptionMapper.mapMeta(patientId, input))
-            .toList();
+        try {
+            String cpr = PatientIdMapper.toCpr(patientId);
+            final var request = GetPrescriptionRequestType.builder()
+                .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+                .withIncludeOpenPrescriptions().end()
+                .build();
+            var fmkResponse = fmkClient.getPrescription(request, caller);
 
+            log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+
+            var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
+            return validPrescriptions.stream()
+                .map(pair -> EPrescriptionMapper.mapMeta(
+                    patientId,
+                    fmkResponse,
+                    pair.getLeft(),
+                    lmsDataProvider.packageInfo(pair.getRight()
+                        .getPackageRestriction()
+                        .getPackageNumber()
+                        .getValue())))
+                .filter(Objects::nonNull)
+                .toList();
+        } catch (JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
     }
 
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
@@ -146,11 +176,11 @@ public class PrescriptionService {
             return validPrescriptions.stream().map(pair -> {
                 try {
                     var prescription = pair.getRight();
-                    var packageFormCode = lmsDataLookupService.getPackageFormCodeFromPackageNumber(prescription
+                    var packageFormCode = lmsDataProvider.packageFormCode(prescription
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue());
-                    var manufacturerOrganizationName = lmsDataLookupService.getManufacturerOrganizationNameFromDrugId(
+                    var manufacturerOrganizationName = lmsDataProvider.manufacturerOrganizationName(
                         prescription.getDrug().getIdentifier().getValue()
                     );
                     var authorizations = authorizationRegistryCache.get(
@@ -185,17 +215,42 @@ public class PrescriptionService {
 
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) {
         StartEffectuationResponseType response;
-        var dispensationMapper = new DispensationMapper();
         String eDispensationCdaId;
         try {
-            eDispensationCdaId = dispensationMapper.cdaId(dispensationCda);
+            eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
         } catch (MapperException e) {
             throw new DataRequirementException("Invalid CDA ID value", e);
         }
+
+        try {
+            var prescriptionId = DispensationMapper.prescriptionId(dispensationCda);
+            var prescriptionResponse = fmkClient.getPrescription(
+                GetPrescriptionRequestType.builder()
+                    .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
+                    .withIncludeOpenPrescriptions().end()
+                    .build(),
+                caller);
+            var prescription = prescriptionResponse.getPrescription()
+                .stream()
+                .filter(p -> p.getIdentifier() == prescriptionId)
+                .findFirst()
+                .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
+            var isDispensable = DispensationAllowed.isDispensationAllowed(
+                prescription,
+                lmsDataProvider.packageInfo(prescription.getPackageRestriction()
+                    .getPackageNumber()
+                    .getValue()));
+            if (!isDispensable) {
+                throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed");
+            }
+        } catch (XPathExpressionException | MapperException | JAXBException e) {
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch prescription to dispense", e);
+        }
+
         try {
             log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
-                dispensationMapper.startEffectuationRequest(patientId, dispensationCda),
+                DispensationMapper.startEffectuationRequest(patientId, dispensationCda),
                 caller);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
@@ -207,7 +262,7 @@ public class PrescriptionService {
         try {
             log.info("Create FMK pharmacy effectuation");
             effectuationResponse = fmkClient.createPharmacyEffectuation(
-                dispensationMapper.createPharmacyEffectuationRequest(
+                DispensationMapper.createPharmacyEffectuationRequest(
                     patientId,
                     dispensationCda,
                     response),
@@ -236,10 +291,9 @@ public class PrescriptionService {
     }
 
     public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) {
-        var dispensationMapper = new DispensationMapper();
         String eDispensationCdaId;
         try {
-            eDispensationCdaId = dispensationMapper.cdaId(cdaToDiscard);
+            eDispensationCdaId = DispensationMapper.cdaId(cdaToDiscard);
         } catch (MapperException e) {
             throw new DataRequirementException("Invalid CDA ID value", e);
         }
@@ -251,7 +305,7 @@ public class PrescriptionService {
 
         UndoEffectuationRequestType undoEffectuationRequest;
         try {
-            undoEffectuationRequest = dispensationMapper.createUndoEffectuationRequest(
+            undoEffectuationRequest = DispensationMapper.createUndoEffectuationRequest(
                 patientId,
                 cdaToDiscard,
                 undoInfo.orderId(),
@@ -300,17 +354,6 @@ public class PrescriptionService {
         log.debug(
             "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
                 .size(), drugMedicationId);
-        return fmkResponse;
-    }
-
-    public GetPrescriptionResponseType getPrescriptionResponse(String cpr, Identity caller) throws JAXBException {
-        final var request = GetPrescriptionRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-            .withIncludeOpenPrescriptions().end()
-            .build();
-        log.debug("Looking up info for {}", cpr);
-        GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
-        log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
         return fmkResponse;
     }
 }
