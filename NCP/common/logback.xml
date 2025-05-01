@@ -38,158 +38,27 @@ file automatically. -->
         </encoder>
     </appender>
 
+    <!-- Clinical data can contain sensitive data, and is only logged to the specified file (not STDOUT)-->
     <logger name="LOGGER_CLINICAL" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_CLINICAL" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
     </logger>
 
-    <logger name="ee.affecto.epsos.util" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-
-    </logger>
-
-    <logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="INFO"
-        additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-
-    </logger>
-
-    <!-- Spring Web Service Payload Logging - Uncomment to enable MessageTracing Request/Response-->
-    <!--<logger
-    name="org.springframework.ws.client.MessageTracing" level="TRACE" additivity="false">-->
-    <!--<appender-ref
-    ref="FILE_CLINICAL"/>-->
-    <!--</logger>-->
-    <!--<logger
-    name="org.springframework.ws.server.MessageTracing" level="TRACE" additivity="false">-->
-    <!--<appender-ref
-    ref="FILE_CLINICAL"/>-->
-    <!--</logger>-->
-    <!-- End Spring Web Service Logging-->
-
-    <logger name="org.apache.axis2" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="ee.affecto.epsos.ws.handler" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="org.hibernate.orm.deprecation" level="ERROR" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.epsos.protocolterminators.ws.server" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.epsos.protocolterminators.ws.server.xca.impl" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.europa.ec.sante.ehdsi.gazelle.validation" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="com.spirit.epsos.cc.adc" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="tr.com.srdc.epsos.util.http" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-
-    </logger>
-
-    <logger name="tr.com.srdc.epsos.ws.server" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="_2007.xds_b.iti.ihe" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="_2009.xcpd.iti.ihe" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.esens.abb.nonrep" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="epsos.ccd.gnomon.configmanager" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="epsos.ccd.gnomon.auditmanager" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="epsos.ccd.gnomon.auditmanager.ssl" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.europa.ec.sante.openncp.core.common.tm.service" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.europa.ec.sante.openncp.core.common.tsam.service" level="INFO"
-        additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.epsos.util" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.europa.ec.sante.openncp.core.common.tsam.dao" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="eu.europa.ec.sante.ehdsi.openncp" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="epsos.ccd.posam.tm.service" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
-    <logger name="epsos.ccd.posam.tsam.service" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" /> <!-- DK Addition-->
-    </logger>
-
+    <!-- Abuse detection is logged to a specific file-->
     <logger name="eu.europa.ec.sante.ehdsi.openncp.abusedetection" level="INFO" additivity="false">
         <appender-ref ref="FILE_ABUSE" />
         <appender-ref ref="STDOUT" />
     </logger>
 
+    <!-- Hibernate deprecation warnings are not shown, we we only log errors from this package -->
+    <logger name="org.hibernate.orm.deprecation" level="ERROR" additivity="false">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <!-- Everything else logs to file and STDOUT -->
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>
-
 
 </configuration>
