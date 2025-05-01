@@ -3,20 +3,21 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.util.List;
 import java.util.logging.Logger;
 
 @SpringBootApplication
 @EnableScheduling
 public class Application {
     private static final Logger logger = Logger.getLogger(Application.class.getName());
-    private static final String[] REQUIRED_ENV_VARS = {
+    private static final List<String> REQUIRED_ENV_VARS = List.of(
         "LMSFTP_USERNAME",
         "LMSFTP_PASSWORD",
         "COUNTRY_A_KEYSTORE_PASSWORD",
         "COUNTRY_A_CERTIFICATE_ALIAS",
         "COUNTRY_A_KEY_PASSWORD",
-        "COUNTRY_A_KEYSTORE_LOCATION"
-    };
+        "COUNTRY_A_KEYSTORE_LOCATION");
 
     private static void validateEnvironmentVariables() {
         boolean hasMissingVars = false;
