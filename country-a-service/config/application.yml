@@ -16,7 +16,7 @@ spring:
 server:
   port: 8443
   ssl:
-    key-store: /opt/keystore/keystore.jks
+    key-store: ${COUNTRY_A_KEYSTORE_LOCATION}
     key-store-password: ${COUNTRY_A_KEYSTORE_PASSWORD}
     key-alias: ${COUNTRY_A_CERTIFICATE_ALIAS}
     key-password: ${COUNTRY_A_KEY_PASSWORD}

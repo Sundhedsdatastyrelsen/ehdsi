@@ -25,10 +25,10 @@ services:
       COUNTRY_A_KEYSTORE_PASSWORD: "${COUNTRY_A_KEYSTORE_PASSWORD}"
       COUNTRY_A_CERTIFICATE_ALIAS: "${COUNTRY_A_CERTIFICATE_ALIAS}"
       COUNTRY_A_KEY_PASSWORD: "${COUNTRY_A_KEY_PASSWORD}"
+      COUNTRY_A_KEYSTORE_LOCATION: "${COUNTRY_A_KEYSTORE_LOCATION}"
 
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
-      - ./config/dev-keystore.jks:/opt/keystore/keystore.jks
     networks:
       - epps-backend
