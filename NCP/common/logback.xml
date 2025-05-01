@@ -44,9 +44,8 @@ file automatically. -->
     </logger>
 
     <!-- Abuse detection is logged to a specific file-->
-    <logger name="eu.europa.ec.sante.ehdsi.openncp.abusedetection" level="INFO" additivity="false">
+    <logger name="eu.europa.ec.sante.ehdsi.openncp.abusedetection" level="INFO" additivity="true">
         <appender-ref ref="FILE_ABUSE" />
-        <appender-ref ref="STDOUT" />
     </logger>
 
     <!-- Hibernate deprecation warnings are not shown, we we only log errors from this package -->
