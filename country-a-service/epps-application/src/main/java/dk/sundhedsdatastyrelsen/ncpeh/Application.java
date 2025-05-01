@@ -5,12 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @SpringBootApplication
 @EnableScheduling
 public class Application {
-    private static final Logger logger = Logger.getLogger(Application.class.getName());
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Application.class);
     private static final List<String> REQUIRED_ENV_VARS = List.of(
         "LMSFTP_USERNAME",
         "LMSFTP_PASSWORD",
@@ -24,7 +23,7 @@ public class Application {
         for (String envVar : REQUIRED_ENV_VARS) {
             String value = System.getenv(envVar);
             if (value == null || value.trim().isEmpty()) {
-                logger.severe("Required environment variable " + envVar + " is not set or empty");
+                log.error("Required environment variable {} is not set or empty", envVar);
                 hasMissingVars = true;
             }
         }
