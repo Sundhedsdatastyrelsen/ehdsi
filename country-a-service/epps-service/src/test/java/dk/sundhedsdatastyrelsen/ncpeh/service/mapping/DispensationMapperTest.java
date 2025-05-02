@@ -5,7 +5,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,16 +31,13 @@ class DispensationMapperTest {
     static Stream<Arguments> testDispensationCdas() {
         //Input format:
         // - Filename
-        // - String of expected error message from mapping the CDA (null means no error is expected)
-        String missingPharmCodeErrorMessage = String.format("Could not find find data at path: %s", DispensationMapper.XPaths.containerPackagedProductCode);
         return Stream.of(
-            Arguments.of("dispensation2.xml", null), //Our own constructed test dispensation
-            Arguments.of("CzRequest1.xml", null), // One of the requests the CZ team sent us during the Fall 2024 test
-
-            //We have updated the handling to not throw the missingPharmCodeErrorMesasge anymore.. Maybe this is a mistake? TODO Conference with Hans and Christian monday
-            Arguments.of("CzRequest2.xml", null), // One of the requests the CZ team sent us during the Fall 2024 test
-            Arguments.of("GrRequest1.xml", null) // One of the requests the GR team sent us during the Fall 2024 test
-
+            Arguments.of("dispensation1.xml"), //Our own constructed test dispensation
+            Arguments.of("dispensation2.xml"), //Our own constructed test dispensation
+            Arguments.of("CzRequest1.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
+            Arguments.of("CzRequest2.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
+            Arguments.of("CzRequest3.xml"), // One of the requests the CZ team sent us during the Spring 2025 test
+            Arguments.of("GrRequest1.xml") // One of the requests the GR team sent us during the Fall 2024 test
         );
     }
 
@@ -60,7 +56,7 @@ class DispensationMapperTest {
 
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
-    void startEffectuationRequestTest(String xmlFileName, String mappingErrorMessageExpected) throws MapperException {
+    void startEffectuationRequestTest(String xmlFileName) throws MapperException {
         var cda = testDispensationCda(xmlFileName);
         var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
 
@@ -173,18 +169,27 @@ class DispensationMapperTest {
         Assertions.assertEquals(1, q);
     }
 
+    @Test
+    void packageSizeTest() throws Exception {
+        // unit="1" and has translation text
+        var s1 = DispensationMapper.packageSize(testDispensationCda("CzRequest1.xml"));
+        assertThat(s1.getPackageSizeText(), is("100 stk."));
+        // unit="1" and no translation text
+        var s2 = DispensationMapper.packageSize(testDispensationCda("CzRequest2.xml"));
+        assertThat(s2.getPackageSizeText(), is("10 units"));
+        // unit!="1"
+        var s3 = DispensationMapper.packageSize(testDispensationCda("dispensation1.xml"));
+        assertThat(s3.getPackageSizeText(), is("100 mL"));
+        // funny namespace
+        var s4 = DispensationMapper.packageSize(testDispensationCda("CzRequest3.xml"));
+        assertThat(s4.getPackageSizeText(), is("100 units"));
+    }
+
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
-    void createPharmacyEffectuationRequestTest(String xmlFileName, String mappingErrorMessageExpected) throws MapperException, XPathExpressionException {
+    void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {
         var cda = testDispensationCda(xmlFileName);
-        if (mappingErrorMessageExpected != null) {
-            var exception = Assertions.assertThrows(DataRequirementException.class, () -> testStartEffectuationResponse(cda));
-            Assertions.assertEquals(exception.getMessage(), mappingErrorMessageExpected);
-            return;
-        }
         var startEffectuationResponse = testStartEffectuationResponse(cda);
-
-
         var result = DispensationMapper.createPharmacyEffectuationRequest(
             "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,

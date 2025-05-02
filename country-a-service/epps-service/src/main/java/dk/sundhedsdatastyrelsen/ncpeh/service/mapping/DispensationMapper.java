@@ -10,6 +10,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -19,6 +20,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.dtm.ref.DTMNodeList;
 import org.slf4j.Logger;
 import org.springframework.util.xml.SimpleNamespaceContext;
@@ -183,6 +185,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:name";
         static final String manufacturedMaterialCode =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code";
+        static final String contentQuantity =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:quantity";
         static final String substitution =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
         static final String atcCode =
@@ -374,7 +378,7 @@ public class DispensationMapper {
             .withPackageDispensed()
             .withPackageQuantity(packageQuantity(cda))
             .withPackageNumber(packageNumber(cda))
-            .withPackageSize(packageRestriction.getPackageSize()) // TODO #200 get package size from CDA
+            .withPackageSize(packageSize(cda))
             .withSubstitutedDrug(drug)
             .end()
             .withDeliverySite(TestIdentities.deliverySiteRyApotek) // TODO #190
@@ -434,6 +438,35 @@ public class DispensationMapper {
             .withSource("Local")
             .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
             .build();
+    }
+
+    static PackageSizeType packageSize(Document cda) throws MapperException {
+        try {
+            var xpath = xpath();
+            var node = (Node) xpath.evaluate(XPaths.contentQuantity, cda, XPathConstants.NODE);
+            // "This element describes how many content items are present in the package.
+            //
+            // The preferred way is to provide the quantity in a coded form using the @unit and @value attributes.
+            //
+            // If no coded information is available and even the use of UCUM annotations is not sufficient and more
+            // information is available within the national infrastructure, the originalText element can be used to
+            // add additional information[...]"
+            // https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
+            var value = xpath.evaluate("@value", node);
+            var unit = xpath.evaluate("@unit", node);
+            String unitText;
+            if ("1".equals(unit)) {
+                var originalText = xpath.evaluate("hl7:translation/hl7:originalText", node);
+                unitText = StringUtils.isEmpty(originalText) ? "units" : originalText;
+            } else {
+                unitText = unit;
+            }
+            return PackageSizeType.builder()
+                .withPackageSizeText("%s %s".formatted(value, unitText))
+                .build();
+        } catch (XPathExpressionException e) {
+            throw new MapperException("Could not find package size information", e);
+        }
     }
 
     public static String cdaId(Document cda) throws MapperException {
