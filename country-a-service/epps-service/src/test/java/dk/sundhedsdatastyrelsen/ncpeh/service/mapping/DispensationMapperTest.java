@@ -206,6 +206,20 @@ class DispensationMapperTest {
         }
     }
 
+    @Test
+    void drugStrengthTest() throws Exception {
+        {
+            var ds = DispensationMapper.drugStrength(testDispensationCda("CzRequest1.xml"));
+            assertThat(ds, is(notNullValue()));
+            assertThat(ds.getText().getSource(), is("Local"));
+            assertThat(ds.getText().getValue(), is("500 mg"));
+        }
+        {
+            var ds = DispensationMapper.drugStrength(testDispensationCda("dispensation1.xml"));
+            assertThat(ds, is(nullValue()));
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {

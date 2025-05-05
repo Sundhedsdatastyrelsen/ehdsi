@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
@@ -192,6 +193,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:entryRelationship[@typeCode = 'COMP']/hl7:act/hl7:code[@code = 'SUBST']";
         static final String atcCode =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asSpecializedKind[@classCode='GRIC']/pharm:generalizedMaterialKind/pharm:code";
+        static final String drugStrengthFreeText =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:desc";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
@@ -386,7 +389,27 @@ public class DispensationMapper {
         return DrugType.builder()
             .withDetailedDrugText(detailedDrugText(cda))
             .withATC(atc(cda))
-            // TODO #201: Strength, substances
+            .withStrength(drugStrength(cda))
+            // TODO #201: substances
+            .build();
+    }
+
+    static DrugStrengthType drugStrength(Document cda) throws XPathExpressionException {
+        // [...]
+        // Tilsvarende kan lægemidlet styrke angives for i Medicinpriser og “Stærke vitaminer og mineraler”,
+        // og skal angives hvis der substitueres til andre typer af lægemidler. Styrken angives enten som
+        // numerisk værdi og enhedskode samt evt. enheds-tekst og evt. komplet tekst, eller alternativt
+        // som komplet tekst.
+        // https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:opret_effektuering
+        var drugStrengthFreeText = eval(cda, XPaths.drugStrengthFreeText);
+        if (StringUtils.isBlank(drugStrengthFreeText)) {
+            return null;
+        }
+        return DrugStrengthType.builder()
+            .withText()
+            .withSource("Local")
+            .withValue(drugStrengthFreeText)
+            .end()
             .build();
     }
 
