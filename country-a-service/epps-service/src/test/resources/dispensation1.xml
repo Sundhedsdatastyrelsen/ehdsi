@@ -151,11 +151,12 @@
                         <pharm:formCode nullFlavor="UNK" />
                       </pharm:containerPackagedProduct>
                     </pharm:asContent>
-                    <pharm:asSpecializedKind xmlns:pharm="urn:hl7-org:pharm" classCode="GRIC">
-                      <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
-                        <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="Paracetamol" />
-                      </pharm:generalizedMaterialKind>
-                    </pharm:asSpecializedKind>
+<!--                      The following element has cardinality 0..1.  We remove it here to have a test without it. -->
+<!--                    <pharm:asSpecializedKind xmlns:pharm="urn:hl7-org:pharm" classCode="GRIC">-->
+<!--                      <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">-->
+<!--                        <pharm:code code="N02BE01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2024-01" displayName="Paracetamol" />-->
+<!--                      </pharm:generalizedMaterialKind>-->
+<!--                    </pharm:asSpecializedKind>-->
                   </manufacturedMaterial>
                 </hl7:manufacturedProduct>
               </hl7:product>

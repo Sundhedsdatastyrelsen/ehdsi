@@ -15,9 +15,8 @@ import org.w3c.dom.Document;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 class DispensationMapperTest {
     Document testDispensationCda(String xmlFileName) {
@@ -183,6 +182,28 @@ class DispensationMapperTest {
         // funny namespace
         var s4 = DispensationMapper.packageSize(testDispensationCda("CzRequest3.xml"));
         assertThat(s4.getPackageSizeText(), is("100 units"));
+    }
+
+    @Test
+    void atcTest() throws Exception {
+        {
+            var atc = DispensationMapper.atc(testDispensationCda("CzRequest1.xml"));
+            assertThat(atc, is(notNullValue()));
+            assertThat(atc.getCode().getSource(), is("Medicinpriser"));
+            assertThat(atc.getCode().getValue(), is("N02BE01"));
+            assertThat(atc.getText(), is("paracetamol"));
+        }
+        {
+            var atc = DispensationMapper.atc(testDispensationCda("CzRequest3.xml"));
+            assertThat(atc, is(notNullValue()));
+            assertThat(atc.getCode().getSource(), is("Medicinpriser"));
+            assertThat(atc.getCode().getValue(), is("N04BA03"));
+            assertThat(atc.getText(), is("levodopa, decarboxylase inhibitor and COMT inhibitor"));
+        }
+        {
+            var atc = DispensationMapper.atc(testDispensationCda("dispensation1.xml"));
+            assertThat(atc, is(nullValue()));
+        }
     }
 
     @ParameterizedTest
