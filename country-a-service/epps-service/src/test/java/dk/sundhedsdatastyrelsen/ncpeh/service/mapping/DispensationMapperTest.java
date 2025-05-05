@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -218,6 +219,22 @@ class DispensationMapperTest {
             var ds = DispensationMapper.drugStrength(testDispensationCda("dispensation1.xml"));
             assertThat(ds, is(nullValue()));
         }
+    }
+
+    @Test
+    void substancesTest() throws Exception {
+        {
+            var substances = DispensationMapper.substances(testDispensationCda("CzRequest1.xml"));
+            assertThat(substances, is(nullValue()));
+        }
+        {
+            var substances = DispensationMapper.substances(testDispensationCda("CzRequest3.xml"));
+            assertThat(substances, is(notNullValue()));
+            assertThat(substances.getActiveSubstance(), hasSize(3));
+            assertThat(substances.getActiveSubstance().stream().map(ActiveSubstanceType::getFreeText).toList(),
+                contains("LEVODOPA", "CARBIDOPA", "ENTACAPONE"));
+        }
+
     }
 
     @ParameterizedTest

@@ -9,6 +9,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierPrede
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
@@ -36,6 +37,7 @@ import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -195,6 +197,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asSpecializedKind[@classCode='GRIC']/pharm:generalizedMaterialKind/pharm:code";
         static final String drugStrengthFreeText =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:desc";
+        static final String activeIngredients =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:ingredient[@classCode = 'ACTI']";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
@@ -209,31 +213,18 @@ public class DispensationMapper {
         return xp;
     });
 
-    private static List<String> evalMany(Document cda, String xpathExpression) throws XPathExpressionException {
+    private static List<Node> evalNodeMany(Document cda, String xpathExpression) throws XPathExpressionException {
         var nodeList = (DTMNodeList) xpath.get().evaluate(xpathExpression, cda, XPathConstants.NODESET);
         var l = nodeList.getLength();
-        var result = new ArrayList<String>();
+        var result = new ArrayList<Node>();
         for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i).getTextContent());
+            result.add(nodeList.item(i));
         }
         return Collections.unmodifiableList(result);
     }
 
-    private static List<String> evalMany(
-        Document cda,
-        String xpathExpression,
-        String attrName
-    ) throws XPathExpressionException {
-        var nodeList = (DTMNodeList) xpath.get().evaluate(xpathExpression, cda, XPathConstants.NODESET);
-        var l = nodeList.getLength();
-        var result = new ArrayList<String>();
-        for (var i = 0; i < l; i++) {
-            var item = nodeList.item(i).getAttributes().getNamedItem(attrName);
-            if (item != null) {
-                result.add(item.getTextContent());
-            }
-        }
-        return Collections.unmodifiableList(result);
+    private static List<String> evalMany(Document cda, String xpathExpression) throws XPathExpressionException {
+        return evalNodeMany(cda, xpathExpression).stream().map(Node::getTextContent).toList();
     }
 
     private static String eval(Node node, String xpathExpression) throws XPathExpressionException {
@@ -297,8 +288,14 @@ public class DispensationMapper {
         if (notBlank(state)) addressLines.add(state);
         if (notBlank(country)) addressLines.add(country);
 
-        String email = null, telephone = null;
-        var telecoms = evalMany(cda, XPaths.authorOrgTelecom, "value");
+        String email = null;
+        String telephone = null;
+        var telecoms = evalNodeMany(cda, XPaths.authorOrgTelecom)
+            .stream()
+            .map(node -> node.getAttributes().getNamedItem("value"))
+            .filter(Objects::nonNull)
+            .map(Node::getTextContent)
+            .toList();
         for (var t : telecoms) {
             if (t == null) continue;
             if (t.startsWith("tel:")) telephone = t.substring(4);
@@ -390,8 +387,23 @@ public class DispensationMapper {
             .withDetailedDrugText(detailedDrugText(cda))
             .withATC(atc(cda))
             .withStrength(drugStrength(cda))
-            // TODO #201: substances
+            .withSubstances(substances(cda))
             .build();
+    }
+
+    static SubstancesType substances(Document cda) throws XPathExpressionException {
+        var ingredientNodes = evalNodeMany(cda, XPaths.activeIngredients);
+        if (ingredientNodes.isEmpty()) {
+            return null;
+        }
+        var b = SubstancesType.builder();
+        for (var node : ingredientNodes) {
+            var substanceName = eval(node, "pharm:ingredientSubstance/pharm:name");
+            if (StringUtils.isNotBlank(substanceName)) {
+                b.addActiveSubstance().withFreeText(substanceName);
+            }
+        }
+        return b.build();
     }
 
     static DrugStrengthType drugStrength(Document cda) throws XPathExpressionException {
