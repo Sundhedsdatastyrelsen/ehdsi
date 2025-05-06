@@ -371,7 +371,7 @@ public class DispensationMapper {
             .withDateTime(Utils.parseEpsosTime(effectiveTime))
             .withPackageDispensed()
             .withPackageQuantity(packageQuantity(cda))
-            .withPackageNumber(packageNumber(cda))
+            .withPackageNumber(packageNumber())
             .withPackageSize(packageSize(cda))
             .withSubstitutedDrug(drug)
             .end()
@@ -463,42 +463,7 @@ public class DispensationMapper {
         return String.format("%s - id: %s", drugName, drugId);
     }
 
-    static PackageNumberType packageNumber(Document cda) {
-        //        try {
-//            var xpath = xpath();
-//            var node = evalNode(cda, XPaths.containerPackagedProductCode);
-//            if (node == null) {
-//                return null; //The field is 0..1, and we cannot require it to be there. If it is missing, we return null.
-//            }
-//            var codeSystem = eval(node, "@codeSystem");
-//            var code = eval(node, "@code");
-//
-//            var packageNumber = codeSystem + "^^^" + code;
-//            return PackageNumberType.builder()
-//                .withSource("Local")
-//                .withValue(packageNumber)
-//                .build();
-//        } catch (XPathExpressionException e) {
-//            log.warn("Could not find find data at path: {}", XPaths.manufacturedMaterialCode);
-//            return null;
-//        }
-//
-//        var defaultVal = PackageNumberType.builder()
-//            .withSource("Local")
-//            .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
-//            .build();
-//
-//        try {
-//            var xpath = xpath();
-//            var node = evalNode(cda, XPaths.containerPackagedProductCode);
-//            if (node == null) {
-//                return defaultVal;
-//            }
-//
-//        }
-
-        // TODO #199: If the container packaged product code system is Oid.DK_VARENUMRE then we can provide it to FMK.
-
+    static PackageNumberType packageNumber() {
         return PackageNumberType.builder()
             .withSource("Local")
             .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre

@@ -43,7 +43,7 @@ class DispensationMapperTest {
 
     StartEffectuationResponseType testStartEffectuationResponse(Document cda) {
         var packageRestriction = PackageRestrictionType.builder()
-            .withPackageNumber(DispensationMapper.packageNumber(cda))
+            .withPackageNumber(DispensationMapper.packageNumber())
             .withPackageQuantity(2)
             .build();
         return StartEffectuationResponseType.builder()
