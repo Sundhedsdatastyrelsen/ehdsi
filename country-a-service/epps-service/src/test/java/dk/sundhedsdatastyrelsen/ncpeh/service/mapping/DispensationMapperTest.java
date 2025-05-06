@@ -135,9 +135,7 @@ class DispensationMapperTest {
 
         var cda = testDispensationCda(xmlFileName);
 
-        var startEffectuationResponse = testStartEffectuationResponse(cda);
-
-        var e = DispensationMapper.effectuation(cda, startEffectuationResponse);
+        var e = DispensationMapper.effectuation(cda);
 
         Assertions.assertTrue(e.getDateTime().isValid());
 

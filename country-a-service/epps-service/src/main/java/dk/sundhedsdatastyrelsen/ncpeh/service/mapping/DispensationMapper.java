@@ -349,7 +349,7 @@ public class DispensationMapper {
         return CreatePharmacyEffectuationOnPrescriptionType.builder()
             .withPrescriptionIdentifier(prescriptionId(cda))
             .withOrderIdentifier(order.getIdentifier())
-            .withEffectuation(effectuation(cda, startEffectuationResponse))
+            .withEffectuation(effectuation(cda))
             .withTerminate(terminate)
             .build();
     }
@@ -363,10 +363,7 @@ public class DispensationMapper {
         return Integer.parseInt(eval(node, "@value"));
     }
 
-    static CreatePharmacyEffectuationType effectuation(
-        Document cda,
-        StartEffectuationResponseType startEffectuationResponse
-    ) throws XPathExpressionException, MapperException {
+    static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
         var effectiveTime = eval(cda, XPaths.effectiveTime);
         var drug = drug(cda);
 
