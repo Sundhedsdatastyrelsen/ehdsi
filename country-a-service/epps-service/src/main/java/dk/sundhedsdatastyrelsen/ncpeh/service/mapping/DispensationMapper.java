@@ -440,7 +440,7 @@ public class DispensationMapper {
 
         return ATCType.builder()
             .withCode()
-            .withSource("Medicinpriser")
+            .withSource("Local")
             .withValue(code)
             .end()
             .withText(displayName)

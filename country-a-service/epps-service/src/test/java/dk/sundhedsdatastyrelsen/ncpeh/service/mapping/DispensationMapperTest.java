@@ -190,14 +190,14 @@ class DispensationMapperTest {
         {
             var atc = DispensationMapper.atc(testDispensationCda("CzRequest1.xml"));
             assertThat(atc, is(notNullValue()));
-            assertThat(atc.getCode().getSource(), is("Medicinpriser"));
+            assertThat(atc.getCode().getSource(), is("Local"));
             assertThat(atc.getCode().getValue(), is("N02BE01"));
             assertThat(atc.getText(), is("paracetamol"));
         }
         {
             var atc = DispensationMapper.atc(testDispensationCda("CzRequest3.xml"));
             assertThat(atc, is(notNullValue()));
-            assertThat(atc.getCode().getSource(), is("Medicinpriser"));
+            assertThat(atc.getCode().getSource(), is("Local"));
             assertThat(atc.getCode().getValue(), is("N04BA03"));
             assertThat(atc.getText(), is("levodopa, decarboxylase inhibitor and COMT inhibitor"));
         }
