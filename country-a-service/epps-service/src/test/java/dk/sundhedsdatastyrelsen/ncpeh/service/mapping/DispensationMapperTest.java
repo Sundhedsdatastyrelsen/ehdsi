@@ -228,8 +228,8 @@ class DispensationMapperTest {
         {
             var substances = DispensationMapper.substances(testDispensationCda("CzRequest3.xml"));
             assertThat(substances, is(notNullValue()));
-            assertThat(substances.getActiveSubstance(), hasSize(3));
-            assertThat(substances.getActiveSubstance().stream().map(ActiveSubstanceType::getFreeText).toList(),
+            assertThat(
+                substances.getActiveSubstance().stream().map(ActiveSubstanceType::getFreeText).toList(),
                 contains("LEVODOPA", "CARBIDOPA", "ENTACAPONE"));
         }
 
