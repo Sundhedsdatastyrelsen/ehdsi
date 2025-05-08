@@ -41,19 +41,6 @@ class DispensationMapperTest {
         );
     }
 
-    StartEffectuationResponseType testStartEffectuationResponse(Document cda) {
-        var packageRestriction = PackageRestrictionType.builder()
-            .withPackageNumber(DispensationMapper.packageNumber())
-            .withPackageQuantity(2)
-            .build();
-        return StartEffectuationResponseType.builder()
-            .addPrescription(PrescriptionType.builder()
-                .withPackageRestriction(packageRestriction)
-                .addOrder().withIdentifier(12345L).end()
-                .build())
-            .build();
-    }
-
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void startEffectuationRequestTest(String xmlFileName) throws MapperException {
@@ -239,7 +226,16 @@ class DispensationMapperTest {
     @MethodSource("testDispensationCdas")
     void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {
         var cda = testDispensationCda(xmlFileName);
-        var startEffectuationResponse = testStartEffectuationResponse(cda);
+        var packageRestriction = PackageRestrictionType.builder()
+            .withPackageNumber(DispensationMapper.packageNumber())
+            .withPackageQuantity(2)
+            .build();
+        var startEffectuationResponse = StartEffectuationResponseType.builder()
+            .addPrescription(PrescriptionType.builder()
+                .withPackageRestriction(packageRestriction)
+                .addOrder().withIdentifier(12345L).end()
+                .build())
+            .build();
         var result = DispensationMapper.createPharmacyEffectuationRequest(
             "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,
