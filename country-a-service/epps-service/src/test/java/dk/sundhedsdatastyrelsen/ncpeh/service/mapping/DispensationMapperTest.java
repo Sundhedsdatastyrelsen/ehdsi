@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
@@ -15,9 +16,8 @@ import org.w3c.dom.Document;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 class DispensationMapperTest {
     Document testDispensationCda(String xmlFileName) {
@@ -39,19 +39,6 @@ class DispensationMapperTest {
             Arguments.of("CzRequest3.xml"), // One of the requests the CZ team sent us during the Spring 2025 test
             Arguments.of("GrRequest1.xml") // One of the requests the GR team sent us during the Fall 2024 test
         );
-    }
-
-    StartEffectuationResponseType testStartEffectuationResponse(Document cda) {
-        var packageRestriction = PackageRestrictionType.builder()
-            .withPackageNumber(DispensationMapper.packageNumber(cda))
-            .withPackageQuantity(2)
-            .build();
-        return StartEffectuationResponseType.builder()
-            .addPrescription(PrescriptionType.builder()
-                .withPackageRestriction(packageRestriction)
-                .addOrder().withIdentifier(12345L).end()
-                .build())
-            .build();
     }
 
     @ParameterizedTest
@@ -135,9 +122,7 @@ class DispensationMapperTest {
 
         var cda = testDispensationCda(xmlFileName);
 
-        var startEffectuationResponse = testStartEffectuationResponse(cda);
-
-        var e = DispensationMapper.effectuation(cda, startEffectuationResponse);
+        var e = DispensationMapper.effectuation(cda);
 
         Assertions.assertTrue(e.getDateTime().isValid());
 
@@ -185,11 +170,72 @@ class DispensationMapperTest {
         assertThat(s4.getPackageSizeText(), is("100 units"));
     }
 
+    @Test
+    void atcTest() throws Exception {
+        {
+            var atc = DispensationMapper.atc(testDispensationCda("CzRequest1.xml"));
+            assertThat(atc, is(notNullValue()));
+            assertThat(atc.getCode().getSource(), is("Local"));
+            assertThat(atc.getCode().getValue(), is("N02BE01"));
+            assertThat(atc.getText(), is("paracetamol"));
+        }
+        {
+            var atc = DispensationMapper.atc(testDispensationCda("CzRequest3.xml"));
+            assertThat(atc, is(notNullValue()));
+            assertThat(atc.getCode().getSource(), is("Local"));
+            assertThat(atc.getCode().getValue(), is("N04BA03"));
+            assertThat(atc.getText(), is("levodopa, decarboxylase inhibitor and COMT inhibitor"));
+        }
+        {
+            var atc = DispensationMapper.atc(testDispensationCda("dispensation1.xml"));
+            assertThat(atc, is(nullValue()));
+        }
+    }
+
+    @Test
+    void drugStrengthTest() throws Exception {
+        {
+            var ds = DispensationMapper.drugStrength(testDispensationCda("CzRequest1.xml"));
+            assertThat(ds, is(notNullValue()));
+            assertThat(ds.getText().getSource(), is("Local"));
+            assertThat(ds.getText().getValue(), is("500 mg"));
+        }
+        {
+            var ds = DispensationMapper.drugStrength(testDispensationCda("dispensation1.xml"));
+            assertThat(ds, is(nullValue()));
+        }
+    }
+
+    @Test
+    void substancesTest() throws Exception {
+        {
+            var substances = DispensationMapper.substances(testDispensationCda("CzRequest1.xml"));
+            assertThat(substances, is(nullValue()));
+        }
+        {
+            var substances = DispensationMapper.substances(testDispensationCda("CzRequest3.xml"));
+            assertThat(substances, is(notNullValue()));
+            assertThat(
+                substances.getActiveSubstance().stream().map(ActiveSubstanceType::getFreeText).toList(),
+                contains("LEVODOPA", "CARBIDOPA", "ENTACAPONE"));
+        }
+
+    }
+
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {
         var cda = testDispensationCda(xmlFileName);
-        var startEffectuationResponse = testStartEffectuationResponse(cda);
+        var packageRestriction = PackageRestrictionType.builder()
+            .withPackageNumber(DispensationMapper.packageNumber())
+            .withPackageQuantity(2)
+            .build();
+        var startEffectuationResponse = StartEffectuationResponseType.builder()
+            .addPrescription(PrescriptionType.builder()
+                .withPackageRestriction(packageRestriction)
+                .addOrder().withIdentifier(12345L).end()
+                .build())
+            .build();
         var result = DispensationMapper.createPharmacyEffectuationRequest(
             "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,
