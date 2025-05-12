@@ -246,6 +246,8 @@ public class DispensationMapper {
             .withName()
             .withSurname(familyNames.getLast())
             .withGivenName(allButLastName).end()
+            // without the following ID the FMK request fails with:
+            // Identifier anvendt i certifikatet CPR:3001010033 stemmer ikke overens med identifier i modifikator-elementet (CreatedBy/ModifiedBy/...) CPR:null
             .withPersonIdentifier().withSource("CPR").withValue("3001010033").end()
             .build();
     }

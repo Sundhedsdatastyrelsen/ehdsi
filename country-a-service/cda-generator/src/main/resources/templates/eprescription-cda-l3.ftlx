@@ -256,18 +256,25 @@
                                         </pharm:asSpecializedKind>
 <#list activeIngredients as ingredient>
                                         <pharm:ingredient classCode="ACTI">
+<#if ingredient.quantity??>
                                             <pharm:quantity>
-<#if ingredient.translation??>
-                                                <numerator value="${ ingredient.numerator }" unit="${ ingredient.numeratorUnit }" xsi:type="PQ">
+<#if ingredient.quantity.translation??>
+                                                <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ">
                                                     <translation>
-                                                        <originalText>${ ingredient.translation }</originalText>
+                                                        <originalText>${ ingredient.quantity.translation }</originalText>
                                                     </translation>
                                                 </numerator>
 <#else>
-                                                <numerator value="${ ingredient.numerator }" unit="${ ingredient.numeratorUnit }" xsi:type="PQ"/>
+                                                <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ"/>
 </#if>
-                                                <denominator value="${ ingredient.denominator }" unit="${ ingredient.denominatorUnit }" xsi:type="PQ"/>
+                                                <denominator value="${ ingredient.quantity.denominator }" unit="${ ingredient.quantity.denominatorUnit }" xsi:type="PQ"/>
                                             </pharm:quantity>
+<#else>
+                                            <pharm:quantity>
+                                                <numerator nullFlavor="NI" xsi:type="PQ" />
+                                                <denominator nullFlavor="NI" xsi:type="PQ" />
+                                            </pharm:quantity>
+</#if>
                                             <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
                                                 <pharm:code nullFlavor="UNK"/><#-- We don't have the information coded. -->
                                                 <pharm:name>${ ingredient.name }</pharm:name>

@@ -242,7 +242,7 @@ public class FmkClient {
         String soapAction,
         Class<ResponseType> clazz,
         Identity caller,
-        Boolean requiresMedicineCardConsent
+        boolean requiresMedicineCardConsent
     ) throws JAXBException {
         return makeFmkRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.APOTEKER, requiresMedicineCardConsent);
     }
@@ -253,7 +253,7 @@ public class FmkClient {
         Class<ResponseType> clazz,
         Identity caller,
         PredefinedRequestedRole requestedRole,
-        Boolean requiresMedicineCardConsent
+        boolean requiresMedicineCardConsent
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Reply reply;
