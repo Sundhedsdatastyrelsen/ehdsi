@@ -345,22 +345,33 @@ public class EPrescriptionL3Mapper {
             return new ActiveIngredients(List.of(), "");
         }
 
-        var structured = new ArrayList<ActiveIngredient>(1);
-        // We can only return structured active ingredient information when we have exactly 1 ingredient,
-        // because otherwise we can not deduce the strength values for the ingredients.
+        var structured = new ArrayList<ActiveIngredient>();
+        // We can only assign a strength value to an active ingredient when there is exactly 1 active ingredient,
+        // because the "strength" value from FMK is a combined value for all ingredients, and for combination drugs
+        // it is given in free text, so there is no safe way to separate it out to the individual ingredients.
         if (substances.getActiveSubstance().size() == 1 && strength != null && strength.getUnitCode() != null) {
             var text = getSubstanceText(substances.getActiveSubstance().getFirst());
             var codedStrength = SubstanceUnitMapper.fromLms(strength.getUnitCode().getValue());
             if (text != null && codedStrength != null) {
                 structured.add(ActiveIngredient.builder()
                     .name(text)
-                    .numerator(strength.getValue())
-                    .numeratorUnit(codedStrength.numeratorUnit())
-                    .denominator(codedStrength.denominator())
-                    .denominatorUnit(codedStrength.denominatorUnit())
-                    .translation(codedStrength.translation())
+                        .quantity(ActiveIngredient.Quantity.builder()
+                            .numerator(strength.getValue())
+                            .numeratorUnit(codedStrength.numeratorUnit())
+                            .denominator(codedStrength.denominator())
+                            .denominatorUnit(codedStrength.denominatorUnit())
+                            .translation(codedStrength.translation())
+                            .build())
                     .build());
             }
+        } else {
+            structured.addAll(substances.getActiveSubstance().stream()
+                .map(EPrescriptionL3Mapper::getSubstanceText)
+                .filter(Objects::nonNull)
+                .map(st -> ActiveIngredient.builder()
+                    .name(st)
+                    .build())
+                .toList());
         }
 
         var unstructured = Stream.concat(
