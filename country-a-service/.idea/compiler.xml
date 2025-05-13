@@ -14,6 +14,7 @@
         <module name="testing-tools" />
         <module name="autorisationsregister-model" />
         <module name="nsp-client" />
+        <module name="epps-dds-api" />
         <module name="epps-fmk-api" />
         <module name="epps-application" />
         <module name="local-lms-db" />
@@ -35,6 +36,7 @@
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
       <module name="epps-cpr-mock-data" options="-parameters" />
+      <module name="epps-dds-api" options="-parameters" />
       <module name="epps-ddv-api" options="-parameters" />
       <module name="epps-fmk-api" options="-parameters" />
       <module name="epps-fmk-mock" options="-parameters" />
