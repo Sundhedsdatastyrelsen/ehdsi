@@ -1,0 +1,369 @@
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3" />
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.2" />
+    <id extension="A9F0065214DE43D1AB0509" root="2.16.840.1.113883.3.4424.7.20.2.2.1.2.7.19.5.1" />
+    <code code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+        codeSystemVersion="2.59" displayName="Medication dispensed.extended Document" />
+    <title>eHDSI eDispensation Ulrik E2E Polen Kristensen</title>
+    <effectiveTime value="20250404122129+0100" />
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25"
+        codeSystemName="Confidentiality" codeSystemVersion="2018-08-12" displayName="normal" />
+    <languageCode code="pl-PL" />
+    <setId extension="A9F0065214DE43D1AB0509" root="2.16.840.1.113883.3.4424.7.20.2.2.2.2.7.19.5.1" />
+    <versionNumber value="1" />
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="2205226691" root="1.2.208.176.1.2" />
+            <addr>
+                <streetAddressLine>Randersvej 437</streetAddressLine>
+                <city>Toftlund</city>
+                <postalCode>6520</postalCode>
+            </addr>
+            <telecom nullFlavor="NI" />
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given>Ulrik</given>
+                    <given>E2E Polen</given>
+                    <family>Kristensen</family>
+                </name>
+                <administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1"
+                    codeSystemName="AdministrativeGender" codeSystemVersion="913-20091020"
+                    displayName="Male" />
+                <birthTime value="20220522" />
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author contextControlCode="OP" typeCode="AUT">
+        <functionCode code="2262" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO"
+            codeSystemVersion="2008" displayName="Pharmacists" />
+        <time value="20250404122129+0100" />
+        <assignedAuthor classCode="ASSIGNED">
+            <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1" />
+            <addr>
+                <streetAddressLine nullFlavor="NI" />
+                <city nullFlavor="NI" />
+                <postalCode nullFlavor="NI" />
+                <country>PL</country>
+            </addr>
+            <telecom nullFlavor="NI" />
+            <assignedPerson classCode="PSN">
+                <name>
+                    <family>Testowy</family>
+                    <given>Farmaceuta</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6" />
+                <name>Apteka porcelanowa</name>
+                <telecom use="WP" value="tel:+4832123456" />
+                <addr>
+                    <country>PL</country>
+                    <postalCode>77-330</postalCode>
+                    <city>KrakÃ³w</city>
+                    <streetAddressLine>WolnoÅ\u009bci 7</streetAddressLine>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.840.1.113883.3.4424" />
+                <name>Centrum e-Zdrowia</name>
+                <telecom use="WP" value="mailto:biuro@cez.gov.pl" />
+                <addr>
+                    <streetAddressLine>ul. StanisÅ\u0082awa Dubois 5A</streetAddressLine>
+                    <city>Warszawa</city>
+                    <postalCode>00-184</postalCode>
+                    <state>mazowieckie</state>
+                    <country>PL</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="20250404122129+0100" />
+        <signatureCode code="S" />
+        <assignedEntity classCode="ASSIGNED">
+            <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1" />
+            <addr>
+                <streetAddressLine nullFlavor="NI" />
+                <city nullFlavor="NI" />
+                <postalCode nullFlavor="NI" />
+                <country>PL</country>
+            </addr>
+            <telecom nullFlavor="NI" />
+            <assignedPerson>
+                <name>
+                    <family>Testowy</family>
+                    <given>Farmaceuta</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6" />
+                <name>Apteka porcelanowa</name>
+                <telecom use="WP" value="tel:+4832123456" />
+                <addr>
+                    <country>PL</country>
+                    <postalCode>77-330</postalCode>
+                    <city>KrakÃ³w</city>
+                    <streetAddressLine>WolnoÅ\u009bci 7</streetAddressLine>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <inFulfillmentOf typeCode="FLFS">
+        <order classCode="ACT" moodCode="RQO">
+            <id extension="481295000650102" root="1.2.208.176.7.2.2" />
+        </order>
+    </inFulfillmentOf>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id extension="A9F0065214DE43D1AB0509" root="2.16.840.1.113883.3.4424.2.7.19.5.1" />
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody classCode="DOCBODY">
+            <component typeCode="COMP">
+                <section classCode="DOCSECT" moodCode="EVN">
+                    <templateId root="2.16.840.1.113883.10.20.1.8" />
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.2" />
+                    <id extension="A9F0065214DE43D1AB0509"
+                        root="2.16.840.1.113883.3.4424.7.20.2.2.4.2.7.19.5.1" />
+                    <code code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+                        codeSystemVersion="2.59" displayName="Medication dispensed.brief Document" />
+                    <title>Dispensation</title>
+                    <text mediaType="text/plain">
+                        <paragraph>
+                            <content>DANE RECEPTY ELEKTRONICZNEJ</content>
+                            <br />
+                            <content>Pozycja recepty:</content>
+                            <content>1.2.208.176.7.2.2:481295000650102-1</content>
+                            <br />
+                            <content>NPWZ ID:</content>
+                            <content styleCode="Bold">LKPGJ</content>
+                        </paragraph>
+                        <paragraph ID="SPLY_1">
+                            <content>WYDANO LEK GOTOWY</content>
+                            <br />
+                            <content>Data realizacji:</content>
+                            <content styleCode="Bold">2025.04.04 12:21:29</content>
+                            <br />
+                            <content>Numer leku nadany przez aptekÄ\u0099:</content>
+                            <content styleCode="Bold">100224877</content>
+                            <br />
+                            <content>Kategoria dostÄ\u0099pnoÅ\u009bci:</content>
+                            <content styleCode="Bold">Rp</content>
+                            <br />
+                            <br />
+                            <br />
+                            <content>Nazwa</content>
+                            <content styleCode="Bold">Asubtela</content>
+                            <br />
+                            <content>PostaÄ\u0087:</content>
+                            <content styleCode="Bold">Tabletki powlekane</content>
+                            <br />
+                            <content>Dawka:</content>
+                            <content styleCode="Bold">3 mg + 0,03 mg</content>
+                            <br />
+                            <content>Opakowanie:</content>
+                            <content styleCode="Bold">21 tabl.</content>
+                            <br />
+                            <content>Nr serii:</content>
+                            <content styleCode="Bold">XYZ123</content>
+                            <content>Data waÅ¼noÅ\u009bci:</content>
+                            <content styleCode="Bold">2026.04.04</content>
+                            <br />
+                            <content>Identyfikator produktu:</content>
+                            <content>05909990773541 (GS1/EAN)</content>
+                            <br />
+                            <content>IloÅ\u009bÄ\u0087:</content>
+                            <content styleCode="Bold">1.0</content>
+                        </paragraph>
+                        <paragraph ID="ACT_2">
+                            <content styleCode="Bold">TAKSACJA</content>
+                            <br />
+                            <content>ZapÅ\u0082acono:</content>
+                            <content styleCode="Bold">15,98 zÅ\u0082</content>
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <supply classCode="SPLY" moodCode="EVN">
+                            <templateId root="2.16.840.1.113883.10.20.1.34" />
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.3" />
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3" />
+                            <id extension="A9F0065214DE43D1AB0509-1"
+                                root="2.16.840.1.113883.3.4424.7.20.2.2.3.2.7.19.5.1" />
+                            <quantity unit="1" value="1" />
+                            <product typeCode="PRD">
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29" />
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30" />
+                                        <code code="100224877"
+                                            codeSystem="2.16.840.1.113883.3.4424.6.1"
+                                            codeSystemName="Identyfikatory lekÃ³w z bazy produktÃ³w leczniczych URPL"
+                                            displayName="Asubtela" />
+                                        <name>Asubtela</name>
+                                        <pharm:desc>3 mg + 0,03 mg</pharm:desc>
+                                        <pharm:formCode code="10221000"
+                                            codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                            codeSystemName="EDQM" codeSystemVersion="2025-01-07"
+                                            displayName="Film-coated tablet">
+                                            <pharm:translation xmlns:pharm="urn:hl7-org:v3"
+                                                code="10221000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                codeSystemName="EDQM"
+                                                displayName="Tabletki powlekane" />
+                                        </pharm:formCode>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="1" value="21">
+                                                <translation>
+                                                    <originalText>tablet</originalText>
+                                                </translation>
+                                            </pharm:quantity>
+                                            <pharm:containerPackagedProduct classCode="CONT"
+                                                determinerCode="KIND">
+                                                <pharm:formCode nullFlavor="NI" />
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="1" value="1" />
+                                                    <pharm:containerPackagedProduct classCode="CONT"
+                                                        determinerCode="KIND">
+                                                        <pharm:code code="05909990773541"
+                                                            codeSystem="1.3.160"
+                                                            codeSystemName="GS1"
+                                                            displayName="Asubtela, film-coated tablet, 3 mg + 0,03 mg, 1 x package(s), 21 tablet, 05909990773541 / drospirenone and ethinylestradiol, G03AA12" />
+                                                        <pharm:name>Asubtela, film-coated tablet, 3
+                                                            mg + 0,03 mg, 1 x package(s), 21 tablet,
+                                                            05909990773541 / drospirenone and
+                                                            ethinylestradiol, G03AA12</pharm:name>
+                                                        <pharm:formCode nullFlavor="NI" />
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind classCode="MMAT"
+                                                determinerCode="KIND">
+                                                <pharm:code code="G03AA12"
+                                                    codeSystem="2.16.840.1.113883.6.73"
+                                                    codeSystemName="Anatomical Therapeutic Chemical"
+                                                    codeSystemVersion="2025-01"
+                                                    displayName="drospirenone and ethinylestradiol">
+                                                    <pharm:translation xmlns:pharm="urn:hl7-org:v3"
+                                                        code="G03AA12"
+                                                        codeSystem="2.16.840.1.113883.6.73"
+                                                        codeSystemName="Anatomical Therapeutic Chemical"
+                                                        displayName="drospirenon i etynyloestradiol" />
+                                                </pharm:code>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator unit="mg" value="3" xsi:type="PQ" />
+                                                <denominator unit="1" value="1" xsi:type="PQ" />
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT"
+                                                determinerCode="KIND">
+                                                <pharm:code nullFlavor="NI" />
+                                                <pharm:name>Drospirenonum</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator unit="mg" value="0.03" xsi:type="PQ" />
+                                                <denominator unit="1" value="1" xsi:type="PQ" />
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT"
+                                                determinerCode="KIND">
+                                                <pharm:code nullFlavor="NI" />
+                                                <pharm:name>Ethinylestradiol</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                    </manufacturedMaterial>
+                                    <manufacturerOrganization classCode="ORG"
+                                        determinerCode="INSTANCE">
+                                        <name>Exeltis Poland Sp. z o.o.</name>
+                                    </manufacturerOrganization>
+                                </manufacturedProduct>
+                            </product>
+                            <performer typeCode="PRF">
+                                <time value="20250404122129+0100" />
+                                <assignedEntity>
+                                    <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1" />
+                                    <addr nullFlavor="NI" />
+                                    <telecom nullFlavor="NI" />
+                                    <assignedPerson>
+                                        <name>
+                                            <family>Testowy</family>
+                                            <given>Farmaceuta</given>
+                                        </name>
+                                    </assignedPerson>
+                                    <representedOrganization classCode="ORG"
+                                        determinerCode="INSTANCE">
+                                        <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6" />
+                                        <name>Apteka porcelanowa</name>
+                                        <telecom use="WP" value="tel:+4832123456" />
+                                        <addr>
+                                            <country>PL</country>
+                                            <postalCode>77-330</postalCode>
+                                            <city>KrakÃ³w</city>
+                                            <streetAddressLine>WolnoÅ\u009bci 7</streetAddressLine>
+                                        </addr>
+                                    </representedOrganization>
+                                </assignedEntity>
+                            </performer>
+                            <entryRelationship typeCode="REFR">
+                                <substanceAdministration classCode="SBADM" moodCode="INT">
+                                    <id extension="481295000650102" root="1.2.208.176.7.2.2" />
+                                    <consumable typeCode="CSM">
+                                        <manufacturedProduct classCode="MANU">
+                                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29" />
+                                            <manufacturedMaterial classCode="MMAT"
+                                                determinerCode="KIND">
+                                                <templateId
+                                                    root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30" />
+                                                <code code="28105051112"
+                                                    codeSystem="1.2.208.176.3.1"
+                                                    codeSystemName="LÃ¦gemiddelstyrelsens DrugID" />
+                                                <name>Asubtela</name>
+                                                <pharm:desc>0,03+3 mg</pharm:desc>
+                                                <pharm:formCode code="10221000"
+                                                    codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                    codeSystemName="EDQM"
+                                                    codeSystemVersion="2025-01-07"
+                                                    displayName="Tabletka powlekana" />
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="1" value="63" />
+                                                    <pharm:containerPackagedProduct classCode="CONT"
+                                                        determinerCode="KIND">
+                                                        <pharm:name>Asubtela</pharm:name>
+                                                        <pharm:formCode code="30007000"
+                                                            codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                            codeSystemName="EDQM"
+                                                            codeSystemVersion="2025-01-07"
+                                                            displayName="Blister" />
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                                <pharm:asSpecializedKind classCode="GRIC">
+                                                    <pharm:generalizedMaterialKind classCode="MMAT"
+                                                        determinerCode="KIND">
+                                                        <pharm:code code="G03AA12"
+                                                            codeSystem="2.16.840.1.113883.6.73"
+                                                            codeSystemName="Anatomical Therapeutic Chemical"
+                                                            codeSystemVersion="2025-01"
+                                                            displayName="drospirenon i etynyloestradiol" />
+                                                    </pharm:generalizedMaterialKind>
+                                                </pharm:asSpecializedKind>
+                                            </manufacturedMaterial>
+                                        </manufacturedProduct>
+                                    </consumable>
+                                </substanceAdministration>
+                            </entryRelationship>
+                        </supply>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>
