@@ -21,7 +21,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.dtm.ref.DTMNodeList;
@@ -199,6 +198,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:desc";
         static final String activeIngredients =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:ingredient[@classCode = 'ACTI']";
+        static final String drugFormCodeDisplayName =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:formCode/@displayName";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
@@ -227,7 +228,7 @@ public class DispensationMapper {
         return evalNodeMany(cda, xpathExpression).stream().map(Node::getTextContent).toList();
     }
 
-    private static String eval(Node node, String xpathExpression) throws XPathExpressionException {
+    static String eval(Node node, String xpathExpression) throws XPathExpressionException {
         return xpath.get().evaluate(xpathExpression, node);
     }
 
@@ -446,23 +447,58 @@ public class DispensationMapper {
             .build();
     }
 
-    static String detailedDrugText(Document cda) {
-        String drugName;
-        try {
-            drugName = eval(cda, XPaths.manufacturedMaterialName);
-        } catch (XPathExpressionException e) {
-            throw new DataRequirementException(String.format("Could not find data at path: %s", XPaths.manufacturedMaterialName));
+    static Node packageId(Document cda) throws XPathExpressionException {
+        return evalNode(cda, XPaths.containerPackagedProductCode);
+    }
+
+    static String detailedDrugText(Document cda) throws XPathExpressionException {
+        /// drug name, lægemiddel-form
+        /// lægemiddel-id: ...
+        /// varenummer: ...
+        /// atc displayname
+        /// Aktive ingredienser: [aktive ingredienser, kommasepareret]
+        var drugName = eval(cda, XPaths.manufacturedMaterialName);
+        var drugIdNode = evalNode(cda, XPaths.manufacturedMaterialCode);
+        var drugId = drugIdNode == null
+            ? "N/A"
+            : "code: %s, code system: %s".formatted(
+            eval(drugIdNode, "@code"),
+            eval(drugIdNode, "@codeSystem"));
+        var packageIdNode = packageId(cda);
+        var packageId = packageIdNode == null
+            ? "N/A"
+            : "code: %s, code system: %s".formatted(
+            eval(packageIdNode, "@code"),
+            eval(packageIdNode, "@codeSystem"));
+
+        var drugFormDisplayName = eval(cda, XPaths.drugFormCodeDisplayName);
+        var drugForm = StringUtils.isBlank(drugFormDisplayName)
+            ? "no form information"
+            : drugFormDisplayName;
+
+        var atcDisplayName = eval(cda, XPaths.atcCode + "/@displayName");
+
+        var ingredients = new ArrayList<String>();
+        for (var node : evalNodeMany(cda, XPaths.activeIngredients)) {
+            ingredients.add(eval(node, "pharm:ingredientSubstance/pharm:name"));
         }
-        String drugId;
-        try {
-            var node = evalNode(cda, XPaths.manufacturedMaterialCode);
-            var system = eval(node, "@codeSystem");
-            var id = eval(node, "@code");
-            drugId = String.format("%s^^^%s", system, id);
-        } catch (XPathExpressionException e) {
-            drugId = "unknown";
-        }
-        return String.format("%s - id: %s", drugName, drugId);
+
+        // The "DetailedDrugText" element in FMK has a max size of 400 chars.
+        return StringUtils.abbreviate(
+            """
+                %s, %s
+                Drug id: %s
+                Package id: %s
+                %s
+                %s
+                """.formatted(
+                drugName,
+                drugForm,
+                drugId,
+                packageId,
+                atcDisplayName,
+                String.join("; ", ingredients)),
+            400);
     }
 
     static PackageNumberType packageNumber() {
@@ -471,6 +507,8 @@ public class DispensationMapper {
             .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
             .build();
     }
+
+
 
     static PackageSizeType packageSize(Document cda) throws MapperException {
         try {
