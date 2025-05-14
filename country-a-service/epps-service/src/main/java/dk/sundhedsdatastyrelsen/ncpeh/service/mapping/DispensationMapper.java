@@ -182,8 +182,9 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         static final String packageQuantity =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:quantity";
-        static final String containerPackagedProductCode =
-            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
+        static final String innermostContainerPackagedProduct =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial"
+                + "//pharm:containerPackagedProduct[not(pharm:asContent)]";
         static final String manufacturedMaterialName =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:name";
         static final String manufacturedMaterialCode =
@@ -448,15 +449,19 @@ public class DispensationMapper {
     }
 
     static Node packageId(Document cda) throws XPathExpressionException {
-        return evalNode(cda, XPaths.containerPackagedProductCode);
+        /// The package id is found on the "containerPackagedProduct" element.  But there can be up to 3
+        /// containerPackagedProduct elements nested inside each other.
+        /// Our current understanding (2025-05-14) of the convoluted documentation in ART-DECOR
+        /// https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
+        /// is that it is the innermost (most deeply nested) containerPackagedProduct which represents the
+        /// packaged medicinal product.  I.e., the meaning of the element ".../manufacturedMaterial/asContent"
+        /// is dependent on whether it has a "/containerPackagedProduct/asContent" subelement (and also on whether
+        /// that subelement has a "/containerPackagedProduct/asContent" subelement).
+
+        return evalNode(cda, XPaths.innermostContainerPackagedProduct + "/pharm:code");
     }
 
     static String detailedDrugText(Document cda) throws XPathExpressionException {
-        /// drug name, lægemiddel-form
-        /// lægemiddel-id: ...
-        /// varenummer: ...
-        /// atc displayname
-        /// Aktive ingredienser: [aktive ingredienser, kommasepareret]
         var drugName = eval(cda, XPaths.manufacturedMaterialName);
         var drugIdNode = evalNode(cda, XPaths.manufacturedMaterialCode);
         var drugId = drugIdNode == null
@@ -507,8 +512,6 @@ public class DispensationMapper {
             .withValue("720000") // "Ukendt" https://wiki.fmk-teknik.dk/doku.php?id=fmk:generel:varenumre
             .build();
     }
-
-
 
     static PackageSizeType packageSize(Document cda) throws MapperException {
         try {
