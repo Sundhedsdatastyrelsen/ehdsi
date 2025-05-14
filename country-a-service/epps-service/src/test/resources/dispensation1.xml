@@ -148,7 +148,8 @@
                       <pharm:quantity unit="mL" value="100"/>
                       <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
                         <pharm:code code="492285" codeSystem="2.16.17.710.802.1000.990.1.20.2" codeSystemName="LMS02" />
-                        <pharm:name>Paracetamol "Orifarm"</pharm:name>
+                          <!-- Testing: "If the detailed description of the product is not available, the element SHALL be skipped." -->
+                          <!-- <pharm:name>Paracetamol "Orifarm"</pharm:name>-->
                         <pharm:formCode nullFlavor="UNK" />
                       </pharm:containerPackagedProduct>
                     </pharm:asContent>
