@@ -243,6 +243,19 @@ class DispensationMapperTest {
         }
     }
 
+    @Test
+    void packageDescriptionTest() throws Exception {
+        {
+            var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("PlRequest1.xml"));
+            assertThat(packageDesc, containsString("Asubtela, film-coated tablet, 3 mg"));
+            assertThat(packageDesc, not(containsString("\n")));
+        }
+        {
+            var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("dispensation1.xml"));
+            assertThat(packageDesc, is(""));
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
     void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {
