@@ -229,7 +229,7 @@ public class DispensationMapper {
         return evalNodeMany(cda, xpathExpression).stream().map(Node::getTextContent).toList();
     }
 
-    static String eval(Node node, String xpathExpression) throws XPathExpressionException {
+    static @NonNull String eval(Node node, String xpathExpression) throws XPathExpressionException {
         return xpath.get().evaluate(xpathExpression, node);
     }
 
@@ -448,8 +448,8 @@ public class DispensationMapper {
             .build();
     }
 
-    static Node packageId(Document cda) throws XPathExpressionException {
-        /// The package id is found on the "containerPackagedProduct" element.  But there can be up to 3
+    static Node packagedMedicinalProduct(Document cda) throws XPathExpressionException {
+        /// The Packaged Medicinal Product is found on the "containerPackagedProduct" element.  But there can be up to 3
         /// containerPackagedProduct elements nested inside each other.
         /// Our current understanding (2025-05-14) of the convoluted documentation in ART-DECOR
         /// https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
@@ -457,8 +457,25 @@ public class DispensationMapper {
         /// packaged medicinal product.  I.e., the meaning of the element ".../manufacturedMaterial/asContent"
         /// is dependent on whether it has a "/containerPackagedProduct/asContent" subelement (and also on whether
         /// that subelement has a "/containerPackagedProduct/asContent" subelement).
+        return evalNode(cda, XPaths.innermostContainerPackagedProduct);
+    }
 
-        return evalNode(cda, XPaths.innermostContainerPackagedProduct + "/pharm:code");
+    static Node packageId(Document cda) throws XPathExpressionException {
+        var pmp = packagedMedicinalProduct(cda);
+        if (pmp == null) return null;
+        return evalNode(pmp, "pharm:code");
+    }
+
+    static @NonNull String packagedMedicinalProductDescription(Document cda) throws XPathExpressionException {
+        var pmp = packagedMedicinalProduct(cda);
+        if (pmp == null) return "";
+        /// "If present, the element SHALL contain a sufficiently detailed description of the prescribed/dispensed
+        /// medicinal product/package. The description may contain information on the brand name, dose form, package
+        /// (including its type or brand name), strength, etc."
+        /// https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
+        var desc = eval(pmp, "pharm:name");
+        // normalize whitespace
+        return desc.replaceAll("\\s+", " ");
     }
 
     static String detailedDrugText(Document cda) throws XPathExpressionException {
@@ -469,6 +486,7 @@ public class DispensationMapper {
             : "code: %s, code system: %s".formatted(
             eval(drugIdNode, "@code"),
             eval(drugIdNode, "@codeSystem"));
+
         var packageIdNode = packageId(cda);
         var packageId = packageIdNode == null
             ? "N/A"
@@ -491,18 +509,20 @@ public class DispensationMapper {
         // The "DetailedDrugText" element in FMK has a max size of 400 chars.
         return StringUtils.abbreviate(
             """
-                %s, %s
-                Drug id: %s
-                Package id: %s
-                %s
+                %s, %s;
+                %s;
+                Lægemiddel-id: %s;
+                Pakke-id: %s;
+                %s;
                 %s
                 """.formatted(
                 drugName,
                 drugForm,
+                packagedMedicinalProductDescription(cda),
                 drugId,
                 packageId,
                 atcDisplayName,
-                String.join("; ", ingredients)),
+                String.join(", ", ingredients)),
             400);
     }
 
