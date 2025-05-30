@@ -24,13 +24,17 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Organization;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageLayer;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Size;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -82,7 +86,7 @@ public class EPrescriptionL3Mapper {
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .product(product(prescription, input.packageFormCode()))
+            .product(product(prescription, input.packageFormCode(), input.numberOfSubPackages()))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
@@ -126,7 +130,7 @@ public class EPrescriptionL3Mapper {
                 .getFullName(), prescription.getIdentifier());
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) {
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, String numberOfSubPackages) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -139,9 +143,6 @@ public class EPrescriptionL3Mapper {
             .displayName(f.getText())
             .build();
 
-        var ps = prescription.getPackageRestriction().getPackageSize();
-        var size = new Size(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
-
         var packageNumber = prescription.getPackageRestriction().getPackageNumber().getValue();
         var packageCode = CdaCode.builder()
             .codeSystem(Oid.DK_VARENUMRE)
@@ -151,6 +152,28 @@ public class EPrescriptionL3Mapper {
             .codeSystem(Oid.DK_EMBALLAGETYPE)
             .code(packageFormCodeRaw)
             .build();
+        var ps = prescription.getPackageRestriction().getPackageSize();
+        var subpackagesParsed = NumberUtils.toInt(numberOfSubPackages, 1);
+
+        var outerLayer = PackageLayer.builder()
+            .unit(
+                subpackagesParsed > 1 ?
+                    new PackageUnit.WithCode("1") :
+                    PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+            .value(subpackagesParsed > 1 ? BigDecimal.valueOf(subpackagesParsed) : ps.getValue())
+            .description(productDescription(prescription))
+            .packageFormCode(packageFormCode)
+            .packageCode(packageCode)
+            .build();
+
+        var innerLayer = subpackagesParsed > 1 ?
+            PackageLayer.builder()
+                .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+                .value(ps.getValue().divide(BigDecimal.valueOf(subpackagesParsed), RoundingMode.HALF_DOWN))
+                .wrappedIn(outerLayer)
+                .build()
+            : null;
+
 
         var atc = prescription.getDrug().getATC();
         var atcCode = CdaCode.builder()
@@ -165,11 +188,8 @@ public class EPrescriptionL3Mapper {
             .name(prescription.getDrug().getName())
             .strength(drugStrengthText(prescription))
             .formCode(formCode)
-            .size(size)
-            .packageCode(packageCode)
-            .packageFormCode(packageFormCode)
+            .packageInfo(innerLayer != null ? innerLayer : outerLayer)
             .atcCode(atcCode)
-            .description(productDescription(prescription))
             .build();
     }
 

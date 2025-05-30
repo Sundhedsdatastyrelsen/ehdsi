@@ -176,7 +176,7 @@ public class PrescriptionService {
             return validPrescriptions.stream().map(pair -> {
                 try {
                     var prescription = pair.getRight();
-                    var packageFormCode = lmsDataProvider.packageFormCode(prescription
+                    var packageInfo = lmsDataProvider.packageInfo(prescription
                         .getPackageRestriction()
                         .getPackageNumber()
                         .getValue());
@@ -194,7 +194,8 @@ public class PrescriptionService {
                         pair.getLeft(),
                         drugMedications,
                         Optional.ofNullable(authorizations).orElse(List.of()),
-                        packageFormCode,
+                        packageInfo.packageFormCode(),
+                        packageInfo.numberOfSubPackages(),
                         manufacturerOrganizationName);
                 } catch (MapperException e) {
                     throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get packageFormCode.");

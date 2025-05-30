@@ -63,6 +63,7 @@ public class EPrescriptionCdaGenerator {
                 0,
                 medicationResponse,
                 "FIN", // Fyldt injektionssprøjte
+                "1",
                 "Manufacturer"
             ));
 
