@@ -15,10 +15,12 @@ class UtilsTest {
         assertThat(
             xgc1.toGregorianCalendar().toZonedDateTime().toOffsetDateTime(),
             is(equalTo(OffsetDateTime.parse("2012-09-19T00:00:00Z"))));
+        assertThat(Utils.utcOffsetDateTime(xgc1), is(OffsetDateTime.parse("2012-09-19T00:00:00Z")));
 
         var xgc2 = Utils.parseEpsosTime("20111113125600+0200");
         assertThat(
             xgc2.toGregorianCalendar().toZonedDateTime().toOffsetDateTime(),
             is(equalTo(OffsetDateTime.parse("2011-11-13T12:56:00+02:00"))));
+        assertThat(Utils.utcOffsetDateTime(xgc2), is(OffsetDateTime.parse("2011-11-13T10:56:00Z")));
     }
 }
