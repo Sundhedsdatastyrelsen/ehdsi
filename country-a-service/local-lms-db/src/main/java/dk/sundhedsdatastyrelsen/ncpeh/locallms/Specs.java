@@ -95,14 +95,15 @@ public class Specs {
                     )
                 ),
                 new Table(
-                  "LMS02",
-                  "/LMS/NYESTE/LMS02.txt",
-                  List.of(
-                      Field.textPrimaryKey("packageNumber", 11, 6),
-                      Field.text("drugId", 0, 11),
-                      Field.text("dispensationRegulationCode", 73, 5),
-                      Field.text("packageFormCode", 69, 4)
-                  )
+                    "LMS02",
+                    "/LMS/NYESTE/LMS02.txt",
+                    List.of(
+                        Field.textPrimaryKey("packageNumber", 11, 6),
+                        Field.text("drugId", 0, 11),
+                        Field.text("dispensationRegulationCode", 73, 5),
+                        Field.text("packageFormCode", 69, 4),
+                        Field.text("numberOfSubPackages", 26, 3)
+                    )
                 ),
                 new Table(
                     "LMS09",
