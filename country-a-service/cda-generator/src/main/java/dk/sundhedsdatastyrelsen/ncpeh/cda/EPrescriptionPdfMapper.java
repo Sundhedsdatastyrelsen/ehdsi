@@ -38,7 +38,7 @@ public class EPrescriptionPdfMapper {
     private static String packageLine(EPrescriptionL3 model) {
         var quantity = model.getPackageQuantityLong();
         var packagePlural = quantity > 1 ? "pakker" : "pakke";
-        var unit = switch (model.getProduct().getSize().getUnit()) {
+        var unit = switch (model.getProduct().getPackageInfo().getUnit()) {
             case PackageUnit.WithCode u -> u.getCode();
             case PackageUnit.WithTranslation u -> u.getTranslation();
         };
@@ -46,7 +46,8 @@ public class EPrescriptionPdfMapper {
             "%s %s à %s %s %s",
             quantity,
             packagePlural,
-            model.getProduct().getSize().getValue(),
+            // TODO Need to ensure that we get the right information here and with the unit. Should work as without inner packages.
+            model.getProduct().getPackageInfo().getValue(),
             unit,
             model.getProduct().getFormCode().getDisplayName());
     }
