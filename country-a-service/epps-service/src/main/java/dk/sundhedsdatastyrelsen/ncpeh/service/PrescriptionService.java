@@ -119,7 +119,7 @@ public class PrescriptionService {
                 .build();
             var fmkResponse = fmkClient.getPrescription(request, caller);
 
-            log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+            log.debug("Found {} prescriptions", fmkResponse.getPrescription().size());
 
             var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
             return validPrescriptions.stream()
