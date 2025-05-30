@@ -13,6 +13,7 @@ public record EPrescriptionL3Input(
     GetDrugMedicationResponseType fmkDrugMedicationResponse,
     @NonNull List<AuthorizationType> authorAuthorizations,
     String packageFormCode,
+    String numberOfSubPackages,
     String manufacturerOrganizationName
 ) {
     public EPrescriptionL3Input(
@@ -20,8 +21,9 @@ public record EPrescriptionL3Input(
         int prescriptionIndex,
         GetDrugMedicationResponseType fmkDrugMedicationResponse,
         String packageFormCode,
+        String numberOfSubPackages,
         String manufacturerOrganizationName
     ) {
-        this(fmkPrescriptionResponse, prescriptionIndex, fmkDrugMedicationResponse, List.of(), packageFormCode, manufacturerOrganizationName);
+        this(fmkPrescriptionResponse, prescriptionIndex, fmkDrugMedicationResponse, List.of(), packageFormCode, numberOfSubPackages, manufacturerOrganizationName);
     }
 }

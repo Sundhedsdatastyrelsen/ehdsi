@@ -27,11 +27,13 @@ class LocalLmsTest {
         assertThat(q.packageFormCode("005813"), is("BLI"));
         // FMK removes leading zeros, so it should work without them:
         assertThat(q.packageFormCode("5813"), is("BLI"));
-        assertThat(q.packageInfo("005813"), is(new PackageInfo(
-            "28100636073",
-            "HX18",
-            "BLI"
-        )));
+        assertThat(
+            q.packageInfo("005813"), is(new PackageInfo(
+                "28100636073",
+                "HX18",
+                "BLI",
+                "1"
+            )));
 
         // Querying unknown values should give null
         assertThat(q.manufacturerOrganizationName(0L), is(nullValue()));
