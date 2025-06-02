@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# In an empty directory this script can fetch the wsdl and xsd files for "Det Gode CPR Opslag".
+# In an empty directory this script can fetch the wsdl and xsd files
 #
 
 
