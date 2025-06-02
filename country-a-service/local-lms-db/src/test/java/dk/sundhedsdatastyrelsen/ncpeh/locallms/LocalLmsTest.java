@@ -32,7 +32,7 @@ class LocalLmsTest {
                 "28100636073",
                 "HX18",
                 "BLI",
-                "1"
+                1
             )));
         // Test what happens with empty subpackages
         assertThat(
@@ -40,7 +40,7 @@ class LocalLmsTest {
                 "28103023098",
                 "B",
                 "BLI",
-                ""
+                null
             )));
 
         // Querying unknown values should give null

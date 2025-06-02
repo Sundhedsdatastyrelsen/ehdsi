@@ -4,6 +4,6 @@ public record PackageInfo(
     String drugId,
     String dispensationRegulationCode,
     String packageFormCode,
-    String numberOfSubPackages
+    Integer numberOfSubPackages
 ) {
 }
