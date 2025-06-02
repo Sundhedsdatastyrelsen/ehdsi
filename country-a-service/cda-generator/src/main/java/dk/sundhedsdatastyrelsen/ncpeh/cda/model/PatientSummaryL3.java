@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 @With
 public class PatientSummaryL3 {
     /**
-     * Unique ID identifying the CDA document (not the prescription itself).
+     * Unique ID identifying the CDA document (not the summary itself).
      */
     @NonNull CdaId documentId;
     @NonNull String title;
