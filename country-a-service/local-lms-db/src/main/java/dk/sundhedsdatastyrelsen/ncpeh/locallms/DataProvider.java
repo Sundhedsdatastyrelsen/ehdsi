@@ -57,7 +57,11 @@ public class DataProvider {
             WHERE packageNumber = ?
             """;
         return queryRow(
-            rs -> new PackageInfo(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)),
+            rs -> new PackageInfo(
+                rs.getString(1),
+                rs.getString(2),
+                rs.getString(3),
+                (Integer) rs.getObject(4)),
             sql,
             canonicalizePackageNumber(packageNumber));
     }

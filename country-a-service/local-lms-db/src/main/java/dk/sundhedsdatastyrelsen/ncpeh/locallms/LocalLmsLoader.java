@@ -50,7 +50,14 @@ public class LocalLmsLoader {
                         while ((row = rdr.readLine()) != null) {
                             var parsed = table.parseRow(row);
                             for (var i = 0; i < parsed.size(); i++) {
-                                pstmt.setString(i + 1, parsed.get(i));
+                                pstmt.setObject(
+                                    i + 1,
+                                    switch (table.fields().get(i).type()) {
+                                        case "TEXT" -> parsed.get(i);
+                                        case "INTEGER" -> intOrNull(parsed.get(i));
+                                        default -> throw new IllegalArgumentException(
+                                            "Field type not supported: " + table.fields().get(i).type());
+                                    });
                             }
                             pstmt.executeUpdate();
                         }
@@ -90,5 +97,13 @@ public class LocalLmsLoader {
     private static BufferedReader reader(InputStream is) {
         // LMS files are encoded with charset cp850.
         return new BufferedReader(new InputStreamReader(is, Charset.forName("cp850")));
+    }
+
+    private static Integer intOrNull(String input) {
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
     }
 }

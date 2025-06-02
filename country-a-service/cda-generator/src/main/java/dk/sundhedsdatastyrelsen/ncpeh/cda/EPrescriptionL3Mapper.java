@@ -30,7 +30,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
@@ -130,7 +129,7 @@ public class EPrescriptionL3Mapper {
                 .getFullName(), prescription.getIdentifier());
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, String numberOfSubPackages) {
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, Integer numberOfSubPackages) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -153,23 +152,23 @@ public class EPrescriptionL3Mapper {
             .code(packageFormCodeRaw)
             .build();
         var ps = prescription.getPackageRestriction().getPackageSize();
-        var subpackagesParsed = NumberUtils.toInt(numberOfSubPackages, 1);
+        var subpackages = numberOfSubPackages == null ? 1 : numberOfSubPackages;
 
         var outerLayer = PackageLayer.builder()
             .unit(
-                subpackagesParsed > 1 ?
+                subpackages > 1 ?
                     new PackageUnit.WithCode("1") :
                     PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
-            .value(subpackagesParsed > 1 ? BigDecimal.valueOf(subpackagesParsed) : ps.getValue())
+            .value(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
             .description(productDescription(prescription))
             .packageFormCode(packageFormCode)
             .packageCode(packageCode)
             .build();
 
-        var innerLayer = subpackagesParsed > 1 ?
+        var innerLayer = subpackages > 1 ?
             PackageLayer.builder()
                 .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
-                .value(ps.getValue().divide(BigDecimal.valueOf(subpackagesParsed), RoundingMode.HALF_DOWN))
+                .value(ps.getValue().divide(BigDecimal.valueOf(subpackages), RoundingMode.HALF_DOWN))
                 .wrappedIn(outerLayer)
                 .build()
             : null;

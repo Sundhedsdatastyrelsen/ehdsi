@@ -20,6 +20,10 @@ public class Specs {
         public static Field text(String name, int startColumn, int size) {
             return new Field(name, startColumn, size, "TEXT", false);
         }
+
+        public static Field integer(String name, int startColumn, int size) {
+            return new Field(name, startColumn, size, "INTEGER", false);
+        }
     }
 
     public record Table(
@@ -102,7 +106,7 @@ public class Specs {
                         Field.text("drugId", 0, 11),
                         Field.text("dispensationRegulationCode", 73, 5),
                         Field.text("packageFormCode", 69, 4),
-                        Field.text("numberOfSubPackages", 26, 3)
+                        Field.integer("numberOfSubPackages", 26, 3)
                     )
                 ),
                 new Table(

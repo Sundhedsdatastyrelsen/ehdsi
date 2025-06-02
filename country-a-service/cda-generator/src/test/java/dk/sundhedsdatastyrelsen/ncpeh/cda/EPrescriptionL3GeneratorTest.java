@@ -32,7 +32,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", "1", "Manufacturer");
+        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", 1, "Manufacturer");
         var epL3 = EPrescriptionL3Mapper.model(input);
 
         //Generate prescription without null in packageCode
@@ -109,13 +109,13 @@ class EPrescriptionL3GeneratorTest {
         }
     }
 
-    record DrugInfo(String packageFormCode, String numberOfSubPackages, String manufacturerOrganization) {
+    record DrugInfo(String packageFormCode, Integer numberOfSubPackages, String manufacturerOrganization) {
     }
 
     static DrugInfo getDrugInfo(PrescriptionType prescription) {
         return switch (prescription.getPackageRestriction().getPackageNumber().getValue()) {
-            case "448060" -> new DrugInfo("INP", "5", "Eli Lilly");
-            default -> new DrugInfo("FIN", "1", "Manufacturer");
+            case "448060" -> new DrugInfo("INP", 5, "Eli Lilly");
+            default -> new DrugInfo("FIN", 1, "Manufacturer");
         };
     }
 }
