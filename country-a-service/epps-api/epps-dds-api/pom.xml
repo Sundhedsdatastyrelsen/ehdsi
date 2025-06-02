@@ -47,8 +47,8 @@
                         <arg>-verbose</arg>
                     </args>
 					<wsdlUrls>
-						<wsdlUrl>./src/main/resources/wsdl/ddsregistry/ddsregistry.wsdl</wsdlUrl>
-						<wsdlUrl>./src/main/resources/wsdl/ddsrepository/ddsrepository.wsdl</wsdlUrl>
+						<wsdlUrl>./src/main/resources/wsdl/ddsregistry.wsdl</wsdlUrl>
+						<wsdlUrl>./src/main/resources/wsdl/ddsrepository.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>
