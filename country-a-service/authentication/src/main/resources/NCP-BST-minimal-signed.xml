@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Assertion xmlns="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="_0392a772-df66-4b39-af93-54ed5c595454"
+    IssueInstant="2025-01-09T12:37:46Z" Version="2.0">
+    <Issuer>https://t-ncp.sundhedsdatastyrelsen.dk</Issuer>
+
+    <Subject>
+        <NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+            17486903-5ed0-4842-82e7-1f85cda996de</NameID>
+        <SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:holder-of-key">
+            <SubjectConfirmationData xsi:type="KeyInfoConfirmationDataType">
+                <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                    <X509Data>
+                        <X509Certificate>
+                            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
+                        </X509Certificate>
+                    </X509Data>
+                </KeyInfo>
+            </SubjectConfirmationData>
+        </SubjectConfirmation>
+    </Subject>
+    <Conditions NotOnOrAfter="2025-01-10T00:37:46Z">
+        <AudienceRestriction>
+            <Audience>https://sts.sosi.dk/</Audience>
+        </AudienceRestriction>
+    </Conditions>
+    <AttributeStatement>
+        <Attribute FriendlyName="XSPA Subject" Name="urn:oasis:names:tc:xspa:1.0:subject:subject-id">
+            <AttributeValue>Bernd Mustermann</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="XSPA Role" Name="urn:oasis:names:tc:xacml:2.0:subject:role">
+            <AttributeValue>
+                <Role xmlns="urn:hl7-org:v3" code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7"
+                    codeSystemName="ISCO" displayName="Medical Doctors" xsi:type="CE" />
+            </AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="XSPA Organization Id"
+            Name="urn:oasis:names:tc:xspa:1.0:subject:organization-id">
+            <AttributeValue>20155.1</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="eHealth DSI Healthcare Facility Type"
+            Name="urn:ehdsi:names:subject:healthcare-facility-type">
+            <AttributeValue>Resident Physician</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="XSPA Purpose Of Use"
+            Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse">
+            <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT"
+                codeSystem="urn:oasis:names:tc:xspa:1.0" xsi:type="CE" />
+        </Attribute>
+        <Attribute FriendlyName="XSPA Locality"
+            Name="urn:oasis:names:tc:xspa:1.0:environment:locality">
+            <AttributeValue>Klinik am Berg, 83242 Reit im Winkl</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="XUA Patient Id"
+            Name="urn:oasis:names:tc:xacml:2.0:resource:resource-id">
+            <AttributeValue>0205756078^^^&amp;1.2.208.176.1.2&amp;ISO</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="NSIS AssuranceLevel"
+            Name="https://data.gov.dk/concept/core/nsis/loa">
+            <AttributeValue>3</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="IDWS XUA SpecVersion" Name="urn:dk:healthcare:saml:SpecVersion">
+            <AttributeValue>eHDSI-IDWS-XUA-1.0</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="IDWS XUA IssuancePolicy"
+            Name="urn:dk:healthcare:saml:IssuancePolicy">
+            <AttributeValue>urn:dk:healthcare:ncp:eHDSI-strict</AttributeValue>
+        </Attribute>
+        <Attribute FriendlyName="EHDSI Country of Treatment"
+            Name="urn:dk:healthcare:saml:CountryOfTreatment">
+            <AttributeValue>DE</AttributeValue>
+        </Attribute>
+    </AttributeStatement>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+            <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+            <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+            <Reference URI="#_0392a772-df66-4b39-af93-54ed5c595454">
+                <Transforms>
+                    <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                    <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+                <DigestValue>6qrqEBXqR7X33Zb8qsudUfDwTsV1Lf5t+3LTqw2tvi4=</DigestValue>
+            </Reference>
+        </SignedInfo>
+        <SignatureValue>Nxcyv5XZYeZFEBskgTEO3pr5VnneXU8xHkAOhvHmu21W9ew6dVZF/Xox7kXyaOb9akO5NkEnzVBT&#13;
+            dKsv/M9UmrB3IWij4KJUGbq9xwgwwU7KkeqPTmV/yiCmIuCHKe9OuTQFbUcCxNYHLXaMMUZf4LvQ&#13;
+            8eYeyVfJFmqeYYLKmEpaj2SVIcp4V6bg47NgXmH7Q/40ZF7b3M/CLspxUoJ/wpH9DpWQE2BK/B0k&#13;
+            DKn9uM9sCQtLWjhmD4nejltaqU5sKE+vylTQ4dioM3lGF9/ThEZyl9Cf8xt6N+i/DtzPHhMk1fjp&#13;
+            0o77nchfcXFIkRKh6bmNzrn54YeEUDI9ZAM8V3T0Bl3Tx0LoICet6PXYWE0n8ES8zC23ZIYA6LWL&#13;
+            ClpI78TpJ2+aYwdxvc5SPG+sArMVovlQRY+SGlYbawBWySNBKjRhIE+pORmHfKZICs5mk2fRkArj&#13;
+            W8LeNN0sVPSXhdyFopnob1t1DWgjgXQ7I95FJZueMXBx0Ltp56kszYEV</SignatureValue>
+        <KeyInfo>
+            <X509Data>
+                <X509Certificate>MIIGjDCCBMCgAwIBAgIUfQnTm9ocm77Fhsdnyt1gC5OdDl0wQQYJKoZIhvcNAQEKMDSgDzANBglg&#13;
+                    hkgBZQMEAgEFAKEcMBoGCSqGSIb3DQEBCDANBglghkgBZQMEAgEFAKIDAgEgMGsxLTArBgNVBAMM&#13;
+                    JERlbiBEYW5za2UgU3RhdCBPQ0VTIHVkc3RlZGVuZGUtQ0EgMTETMBEGA1UECwwKVGVzdCAtIGN0&#13;
+                    aTEYMBYGA1UECgwPRGVuIERhbnNrZSBTdGF0MQswCQYDVQQGEwJESzAeFw0yNTAxMDkxMjE3NTJa&#13;
+                    Fw0yODAxMDkxMjE3NTFaMIGhMSAwHgYDVQQDDBdzaWduaW5nLXRlc3QtbmNwZWhlYWx0aDE3MDUG&#13;
+                    A1UEBRMuVUk6REstTzpHOjEzMGU0N2U0LTZiNWYtNDdmMi05MDA5LWFhMjg4N2Q0Y2YzZDEeMBwG&#13;
+                    A1UECgwVU3VuZGhlZHNkYXRhc3R5cmVsc2VuMRcwFQYDVQRhDA5OVFJESy0zMzI1Nzg3MjELMAkG&#13;
+                    A1UEBhMCREswggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQCj0/I0IXFQOlJK0Z2Kb2av&#13;
+                    DOa0wF72aLSbtI6DcwsMswnbGWyZAxUoDYoGXWp8qaQLYPQYCFfq5Nee0uguokQJxtTsceCbTYZ8&#13;
+                    hd7fXP1376AdppoZHl0Ddyd0OLFnTPJu2u3XyAtf+y87HM+SDWx2iOtuRppzPcS3dcK45+Cuei+/&#13;
+                    xdy6PrKYUBNJr0uXfnryFDflnlEO7UQ2I3j1ORYv9/ExjEVJ5ygCGnkOPvkLLdn4nW0orXGm/ux4&#13;
+                    IAMqPsTIXMJ8oN3D+Vs22xFKgoAum4alG+f5b33A0yE8QvyTRk7ditBVbtFDwWdck3EdItJ6RMcM&#13;
+                    s8doX4T+xYleWWpJpNgAZ2op9taGykpBMyg6qK7uGT41xYc5zTO+OG4HqcGqNg8h+4hBowzhy/U7&#13;
+                    T4VRNYrWWIxtV2n5ShCi5ryNWxY+morhUfUnhgVMWhqNENeArLnufu2SWnMTmcBGscfsBN8bojZM&#13;
+                    yjA/ub0yVinmI4SFwa6kBAgQ2pkQnwzu5UMCAwEAAaOCAYcwggGDMAwGA1UdEwEB/wQCMAAwHwYD&#13;
+                    VR0jBBgwFoAUfyif2XGZQuJ159c1di5NCCVtdl4wewYIKwYBBQUHAQEEbzBtMEMGCCsGAQUFBzAC&#13;
+                    hjdodHRwOi8vY2ExLmN0aS1nb3YuZGsvb2Nlcy9pc3N1aW5nLzEvY2FjZXJ0L2lzc3VpbmcuY2Vy&#13;
+                    MCYGCCsGAQUFBzABhhpodHRwOi8vY2ExLmN0aS1nb3YuZGsvb2NzcDAiBgNVHSAEGzAZMAgGBgQA&#13;
+                    j3oBATANBgsqgVCBKQEBAQMHATA7BggrBgEFBQcBAwQvMC0wKwYIKwYBBQUHCwIwHwYHBACL7EkB&#13;
+                    AjAUhhJodHRwczovL3VpZC5nb3YuZGswRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NhMS5jdGkt&#13;
+                    Z292LmRrL29jZXMvaXNzdWluZy8xL2NybC9pc3N1aW5nLmNybDAdBgNVHQ4EFgQUutSU3riTQ+5P&#13;
+                    UNZgxbAMaC9KG3wwDgYDVR0PAQH/BAQDAgWgMEEGCSqGSIb3DQEBCjA0oA8wDQYJYIZIAWUDBAIB&#13;
+                    BQChHDAaBgkqhkiG9w0BAQgwDQYJYIZIAWUDBAIBBQCiAwIBIAOCAYEAK1pezvjcWqUTRsN0Ztw7&#13;
+                    6Kx7I4jnUtmsJXCJmv6FCCb6JolsN883HqfHRVfvwSjBjmfSuwQeFdZUKYxSyaJ0KAD6H4Q+VIut&#13;
+                    PKgv6MbIcKJEsDl9Ovo8wFK171AKDNAcu0QFJGhJ9TQS7rKmU0X9pZla7DsZIkMYFqsfKxeR5d0g&#13;
+                    6m6dc4sYcH0XKjWrl+0Y2EQqE3MX4L1BwGLCPgSqiXf69eUtw7im3K9o8idfQMlxtU5XSbM0ehxu&#13;
+                    Y45xX94ucScAyUR1wb5BKZ/RFLrtH4IRPVrXdj1A2x6wJMPH/ibV2fUY0xrQG2/8AWV9rleEbJ+d&#13;
+                    0KQdCIBH74xJH5wng+LyeJ30UrlpHqD0tZfMlgEKFxweejR1sS2+OpSkh9JeBu/MCMqDl5Ai5ZVa&#13;
+                    ByE6l00T+R9mOMu4amd08dLaRTrThk1G8K1MCxT3LPm9wda+hr1J4xDAsIK+kYbN72EwU4svpzN+&#13;
+                    WlBtourWyyP8LAa58nV/cPwVX0xnqqjwe+Cx</X509Certificate>
+            </X509Data>
+        </KeyInfo>
+    </Signature>
+</Assertion>
