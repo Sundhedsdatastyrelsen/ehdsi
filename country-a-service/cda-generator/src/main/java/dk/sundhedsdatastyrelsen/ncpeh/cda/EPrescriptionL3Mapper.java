@@ -85,7 +85,7 @@ public class EPrescriptionL3Mapper {
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .product(product(prescription, input.packageFormCode(), input.numberOfSubPackages()))
+            .product(product(prescription, input.packageFormCode(), input.numberOfSubPackages(), input.manufacturerOrganizationName()))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
@@ -129,7 +129,7 @@ public class EPrescriptionL3Mapper {
                 .getFullName(), prescription.getIdentifier());
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, Integer numberOfSubPackages) {
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, Integer numberOfSubPackages, String manufacturer) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -189,6 +189,7 @@ public class EPrescriptionL3Mapper {
             .formCode(formCode)
             .innermostPackageLayer(innerLayer != null ? innerLayer : outerLayer)
             .atcCode(atcCode)
+            .manufacturerOrganizationName(manufacturer)
             .build();
     }
 
