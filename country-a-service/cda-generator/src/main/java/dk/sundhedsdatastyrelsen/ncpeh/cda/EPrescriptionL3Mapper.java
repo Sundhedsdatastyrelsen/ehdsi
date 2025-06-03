@@ -147,10 +147,10 @@ public class EPrescriptionL3Mapper {
             .codeSystem(Oid.DK_VARENUMRE)
             .code(packageNumber)
             .build();
-        var packageFormCode = CdaCode.builder()
+        var packageFormCode = packageFormCodeRaw != null ? CdaCode.builder()
             .codeSystem(Oid.DK_EMBALLAGETYPE)
             .code(packageFormCodeRaw)
-            .build();
+            .build() : null;
         var ps = prescription.getPackageRestriction().getPackageSize();
         var subpackages = numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages;
 
