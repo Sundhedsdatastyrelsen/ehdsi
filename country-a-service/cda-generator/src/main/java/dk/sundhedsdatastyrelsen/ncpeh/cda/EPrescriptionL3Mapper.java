@@ -208,7 +208,10 @@ public class EPrescriptionL3Mapper {
         }
 
         var a = response.getPatient().getAddress();
-        var address = new Address(List.of(String.format("%s %s", a.getStreetName(), a.getStreetBuildingIdentifier())), a.getDistrictName(), a.getPostCodeIdentifier(), null);
+        // There will be no address when the patient has address protection ("adressebeskyttelse")
+        var address = a != null
+            ? new Address(List.of(String.format("%s %s", a.getStreetName(), a.getStreetBuildingIdentifier())), a.getDistrictName(), a.getPostCodeIdentifier(), null)
+            : null;
 
         var genderCodeBuilder = CdaCode.builder()
             .codeSystem(Oid.ADMINISTRATIVE_GENDER)
