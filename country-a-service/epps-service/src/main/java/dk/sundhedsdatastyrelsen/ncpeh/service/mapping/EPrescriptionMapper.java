@@ -2,13 +2,15 @@ package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugFormCodeType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugFormType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
@@ -21,10 +23,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 public class EPrescriptionMapper {
@@ -53,8 +52,8 @@ public class EPrescriptionMapper {
     public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) {
         try {
             var model = makeModel(patientId, prescriptions, prescriptionIndex, packageInfo);
-            var l3Meta = generateMeta(patientId, model, DocumentLevel.LEVEL3);
-            var l1Meta = generateMeta(patientId, model, DocumentLevel.LEVEL1);
+            var l3Meta = generateMeta(model, DocumentLevel.LEVEL3);
+            var l1Meta = generateMeta(model, DocumentLevel.LEVEL1);
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
         } catch (Exception e) {
             log.error("An error occurred while mapping metadata.", e);
@@ -62,7 +61,7 @@ public class EPrescriptionMapper {
         }
     }
 
-    private static EPrescriptionDocumentMetadataDto generateMeta(String patientId, MetaModel model, DocumentLevel documentLevel) {
+    private static EPrescriptionDocumentMetadataDto generateMeta(MetaModel model, DocumentLevel documentLevel) {
         if (!documentLevel.equals(DocumentLevel.LEVEL1) && !documentLevel.equals(DocumentLevel.LEVEL3)) {
             throw new IllegalArgumentException("Does not support documentLevel: " + documentLevel);
         }
@@ -78,7 +77,7 @@ public class EPrescriptionMapper {
         };
 
         var meta = new EPrescriptionDocumentMetadataDto(documentId);
-        meta.setPatientId(patientId);
+        meta.setPatientId(model.patientId());
         meta.setEffectiveTime(model.effectiveTime());
         meta.setRepositoryId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value);
         meta.setAuthor(model.authorName());
@@ -118,33 +117,49 @@ public class EPrescriptionMapper {
         if (prescription == null) {
             throw new MapperException("Missing prescription");
         }
-        var atc = Optional.ofNullable(prescription.getDrug()).map(DrugType::getATC);
+        var atc = Optional.ofNullable(prescription.getDrug().getATC());
+        var drugForm = Optional.ofNullable(prescription.getDrug().getForm());
         return new MetaModel(
             patientId,
-            OffsetDateTime.now(),
+            // "Date and time when the ePrescription was created" 06.02
+            Utils.convertToOffsetDateTime(prescription.getCreated().getDateTime()),
             Long.toString(prescription.getIdentifier()),
+            // "Name of the prescriber" 06.02
             EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription).getName(),
             EPrescriptionL3Mapper.makeTitle(prescriptions, prescription),
-            makeDescription(prescription),
+            description(prescription),
             prescription.getPackageRestriction().getPackageNumber().getValue(),
             prescription.getDrug().getName(),
             atc.map(ATCType::getCode).map(ATCCodeType::getValue).orElse(null),
+            // "When communicated, the ATC text must be either in English or in (one of) the Country of affiliation national language(s)." 06.02
             atc.map(ATCType::getText).orElse(null),
-            prescription.getDrug().getForm().getCode().getValue(),
-            prescription.getDrug().getForm().getText(),
+            // This drug form code is in the local national code system, but the 06.02 requirements only say:
+            // "NCPeH of Country of affiliation **has the possibility** to provide English designations of the included coded data (based on the MTC)."
+            // and "has the possibility" is weaker than "shall", so we should be ok.
+            drugForm.map(DrugFormType::getCode).map(DrugFormCodeType::getValue).orElse(null),
+            // "When communicated, the Dose form text must be either in English or in (one of) the Country of affiliation national language(s)." 06.02
+            drugForm.map(DrugFormType::getText).orElse(null),
             EPrescriptionL3Mapper.drugStrengthText(prescription),
             DispensationAllowed.isDispensationAllowed(prescription, packageInfo)
         );
     }
 
-    static String makeDescription(PrescriptionType prescription) {
-        // Want to write something like "Pinex, 500mg, mod smerter"
-        return Stream.of(
-                prescription.getDrug().getName(),
-                EPrescriptionL3Mapper.drugStrengthText(prescription),
-                Optional.ofNullable(prescription.getIndication())
-                    .map(i -> i.getText() != null ? i.getText() : i.getFreeText())
-                    .orElse(null))
-            .filter(Objects::nonNull).collect(Collectors.joining(", "));
+    static String description(PrescriptionType prescription) {
+        // "Textual description that identifies the prescribed product, such as the product name or generic name (list of active ingredients)"
+        // Note: "Unless the extended fields are populated with relevant data, the description field should include as
+        // precise as possible a description of the prescribed product (strength, dose form, ...). If the ATC code is
+        // not provided in a separate field, the description field must start with the ATC code."
+        // from Requirements Catalogue 06.02
+        // https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?pageId=888398311&spaceKey=EHDSI&title=06.02.%2BTranscode%2Btranslate%2Band%2Bexchange%2Bcross-border%2Bthe%2BePrescription%2Bs
+
+        // Since we do populate the extended fields, we should not include the data in the description field.
+        // We do not support generic ordination in Denmark (see https://laegemiddelstyrelsen.dk/da/nyheder/2025/analyse-af-fordele-og-ulemper-ved-indfoerelse-af-generisk-ordination-i-danmark/)
+        // so we can always use the product name.  We also include the generic name/ATC code text, because the product
+        // names vary between countries, so the generic name might be more immediately useful for the user.
+        // For example: "Pinex (Paracetamol)"
+        return "%s (%s)".formatted(
+            prescription.getDrug().getName(),
+            Optional.ofNullable(prescription.getDrug().getATC()).map(ATCType::getText).orElse("no ATC code")
+        );
     }
 }

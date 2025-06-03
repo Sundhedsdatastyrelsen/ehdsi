@@ -324,7 +324,7 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator organization"));
     }
 
-    public static AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
+    public static @NonNull AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
         return prescriptionType.getCreated()
             .getBy()
             .getContent()
