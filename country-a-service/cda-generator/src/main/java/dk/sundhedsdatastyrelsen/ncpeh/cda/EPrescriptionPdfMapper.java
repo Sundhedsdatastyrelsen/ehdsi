@@ -42,7 +42,7 @@ public class EPrescriptionPdfMapper {
         var quantity = model.getPackageQuantityLong();
         var packagePlural = quantity > 1 ? "pakker" : "pakke";
         // Even in the case of inner/outer packages, the unit is always on the first element in the xml tree.
-        var unit = switch (model.getProduct().getPackageInfo().getUnit()) {
+        var unit = switch (model.getProduct().getInnermostPackageLayer().getUnit()) {
             case PackageUnit.WithCode u -> u.getCode();
             case PackageUnit.WithTranslation u -> u.getTranslation();
         };
@@ -50,10 +50,10 @@ public class EPrescriptionPdfMapper {
         // We want the total amount of things in the package. If there are multiple layers, we need to multiply them.
         // We could also try to display something useful using the wrapping mechanic, but I don't think we'll get
         // anywhere that would make sense for our users.
-        var wrappedInPackageValue = Optional.ofNullable(model.getProduct().getPackageInfo().getWrappedIn())
+        var wrappedInPackageValue = Optional.ofNullable(model.getProduct().getInnermostPackageLayer().getWrappedIn())
             .map(PackageLayer::getNumberValue)
             .orElse(BigDecimal.ONE);
-        var totalUnits = model.getProduct().getPackageInfo().getNumberValue().multiply(wrappedInPackageValue);
+        var totalUnits = model.getProduct().getInnermostPackageLayer().getNumberValue().multiply(wrappedInPackageValue);
 
         return String.format(
             "%s %s à %s %s %s",
