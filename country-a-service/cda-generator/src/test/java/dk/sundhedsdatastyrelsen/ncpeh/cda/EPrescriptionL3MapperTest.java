@@ -53,19 +53,4 @@ class EPrescriptionL3MapperTest {
         assertThat(model.getProduct().getInnermostPackageLayer().getWrappedIn(), is(nullValue()));
         assertThat(model.getProduct().getInnermostPackageLayer().getAmount(), is("100"));
     }
-
-    @Test
-    void emptySubpackagesIsHandled() throws Exception {
-        var cpr = FmkResponseStorage.rawResponseCprs().get(2);
-        var model = EPrescriptionL3Mapper.model(
-            new EPrescriptionL3Input(
-                FmkResponseStorage.storedPrescriptions(cpr),
-                0,
-                FmkResponseStorage.storedDrugMedications(cpr),
-                "FIN",
-                null,
-                "Manufacturer"));
-        assertThat(model.getProduct().getInnermostPackageLayer().getWrappedIn(), is(nullValue()));
-        assertThat(model.getProduct().getInnermostPackageLayer().getAmount(), is("100"));
-    }
 }

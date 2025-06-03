@@ -152,7 +152,7 @@ public class EPrescriptionL3Mapper {
             .code(packageFormCodeRaw)
             .build();
         var ps = prescription.getPackageRestriction().getPackageSize();
-        var subpackages = numberOfSubPackages == null ? 1 : numberOfSubPackages;
+        var subpackages = numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages;
 
         var outerLayer = PackageLayer.builder()
             .unit(
@@ -168,7 +168,7 @@ public class EPrescriptionL3Mapper {
         var innerLayer = subpackages > 1 ?
             PackageLayer.builder()
                 .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
-                .amount(ps.getValue().divide(BigDecimal.valueOf(subpackages), RoundingMode.HALF_DOWN))
+                .amount(calculateInnerPackageAmount(ps.getValue(), numberOfSubPackages))
                 .wrappedIn(outerLayer)
                 .build()
             : null;
@@ -190,6 +190,13 @@ public class EPrescriptionL3Mapper {
             .innermostPackageLayer(innerLayer != null ? innerLayer : outerLayer)
             .atcCode(atcCode)
             .build();
+    }
+
+    /// Public for testing
+    public static BigDecimal calculateInnerPackageAmount(BigDecimal numericalPackageSize, Integer numberOfSubPackages) {
+        return numericalPackageSize
+            .setScale(2, RoundingMode.UNNECESSARY)
+            .divide(BigDecimal.valueOf(numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages, 0), RoundingMode.UNNECESSARY);
     }
 
     private static Patient patient(GetPrescriptionResponseType response) throws MapperException {
