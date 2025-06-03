@@ -6,7 +6,9 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -42,6 +44,13 @@ class LocalLmsTest {
                 "BLI",
                 null
             )));
+        assertThat(
+            q.allSubpackagesAndPackageSizes(),
+            is(List.of(
+                // ie 10.00
+                new PackageSize("005813", BigDecimal.valueOf(1000, 2), 1),
+                // ie 20.00
+                new PackageSize("000005", BigDecimal.valueOf(2000, 2), null))));
 
         // Querying unknown values should give null
         assertThat(q.manufacturerOrganizationName(0L), is(nullValue()));
