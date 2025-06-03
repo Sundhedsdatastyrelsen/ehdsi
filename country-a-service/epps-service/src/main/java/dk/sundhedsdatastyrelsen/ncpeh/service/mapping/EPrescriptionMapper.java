@@ -10,6 +10,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
@@ -18,7 +19,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptio
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.DispensationAllowed;
-import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -122,7 +122,7 @@ public class EPrescriptionMapper {
         return new MetaModel(
             patientId,
             // "Date and time when the ePrescription was created" 06.02
-            Utils.utcOffsetDateTime(prescription.getCreated().getDateTime()),
+            Utils.convertToOffsetDateTime(prescription.getCreated().getDateTime()),
             Long.toString(prescription.getIdentifier()),
             // "Name of the prescriber" 06.02
             EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription).getName(),

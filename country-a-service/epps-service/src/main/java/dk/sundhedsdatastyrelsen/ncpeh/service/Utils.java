@@ -3,9 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
@@ -28,13 +26,6 @@ public class Utils {
             var parsed = DateTimeFormatter.ofPattern("yyyyMMddHHmmssX").parse(ts);
             return xmlGregorianCalendar(ZonedDateTime.from(parsed));
         }
-    }
-
-    /**
-     * Convert an XMLGregorianCalendar to an OffsetDateTime with UTC offset.
-     */
-    public static OffsetDateTime utcOffsetDateTime(XMLGregorianCalendar datetime) {
-        return datetime.toGregorianCalendar().toInstant().atOffset(ZoneOffset.UTC);
     }
 
     /**
