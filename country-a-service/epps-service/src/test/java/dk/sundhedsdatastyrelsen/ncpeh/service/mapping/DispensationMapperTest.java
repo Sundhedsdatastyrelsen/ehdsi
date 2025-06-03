@@ -37,7 +37,8 @@ class DispensationMapperTest {
             Arguments.of("CzRequest1.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
             Arguments.of("CzRequest2.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
             Arguments.of("CzRequest3.xml"), // One of the requests the CZ team sent us during the Spring 2025 test
-            Arguments.of("GrRequest1.xml") // One of the requests the GR team sent us during the Fall 2024 test
+            Arguments.of("GrRequest1.xml"), // One of the requests the GR team sent us during the Fall 2024 test
+            Arguments.of("PlRequest1.xml")  // One of the requests the PL team sent us during the Spring 2025 test
         );
     }
 
@@ -220,6 +221,39 @@ class DispensationMapperTest {
                 contains("LEVODOPA", "CARBIDOPA", "ENTACAPONE"));
         }
 
+    }
+
+    @Test
+    void packageIdTest() throws Exception {
+        {
+            var packageId = DispensationMapper.packageId(testDispensationCda("PlRequest1.xml"));
+            assertThat(packageId, is(notNullValue()));
+            assertThat(DispensationMapper.eval(packageId, "@code"), is("05909990773541"));
+            assertThat(DispensationMapper.eval(packageId, "@codeSystem"), is("1.3.160"));
+        }
+        {
+            var packageId = DispensationMapper.packageId(testDispensationCda("CzRequest3.xml"));
+            assertThat(packageId, is(nullValue()));
+        }
+        {
+            var packageId = DispensationMapper.packageId(testDispensationCda("dispensation2.xml"));
+            assertThat(packageId, is(notNullValue()));
+            assertThat(DispensationMapper.eval(packageId, "@code"), is("492285"));
+            assertThat(DispensationMapper.eval(packageId, "@codeSystem"), is("2.16.17.710.802.1000.990.1.20.2"));
+        }
+    }
+
+    @Test
+    void packageDescriptionTest() throws Exception {
+        {
+            var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("PlRequest1.xml"));
+            assertThat(packageDesc, containsString("Asubtela, film-coated tablet, 3 mg"));
+            assertThat(packageDesc, not(containsString("\n")));
+        }
+        {
+            var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("dispensation1.xml"));
+            assertThat(packageDesc, is(""));
+        }
     }
 
     @ParameterizedTest
