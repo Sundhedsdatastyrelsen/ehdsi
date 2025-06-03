@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class Patient {
     @NonNull CdaId id;
     @NonNull Name name;
-    @NonNull Address address;
+    Address address;
     @NonNull CdaCode genderCode;
     @NonNull LocalDate birthTime;
 
