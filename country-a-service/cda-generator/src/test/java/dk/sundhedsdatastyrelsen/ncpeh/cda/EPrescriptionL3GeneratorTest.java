@@ -42,7 +42,7 @@ class EPrescriptionL3GeneratorTest {
 
         //Set packageCode to null, and regenerate
         var productWithNullPackageCode = epL3.getProduct()
-            .withPackageInfo(epL3.getProduct().getPackageInfo().withPackageFormCode(null));
+            .withInnermostPackageLayer(epL3.getProduct().getInnermostPackageLayer().withPackageFormCode(null));
         var epL3NullPackageCode = epL3.withProduct(productWithNullPackageCode);
         var xmlStringWithNullPackageCode = EPrescriptionL3Generator.generate(epL3NullPackageCode);
         Assertions.assertNotNull(xmlStringWithNullPackageCode);

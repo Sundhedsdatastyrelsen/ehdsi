@@ -159,7 +159,7 @@ public class EPrescriptionL3Mapper {
                 subpackages > 1 ?
                     new PackageUnit.WithCode("1") :
                     PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
-            .value(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
+            .amount(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
             .description(productDescription(prescription))
             .packageFormCode(packageFormCode)
             .packageCode(packageCode)
@@ -168,7 +168,7 @@ public class EPrescriptionL3Mapper {
         var innerLayer = subpackages > 1 ?
             PackageLayer.builder()
                 .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
-                .value(ps.getValue().divide(BigDecimal.valueOf(subpackages), RoundingMode.HALF_DOWN))
+                .amount(ps.getValue().divide(BigDecimal.valueOf(subpackages), RoundingMode.HALF_DOWN))
                 .wrappedIn(outerLayer)
                 .build()
             : null;
@@ -187,7 +187,7 @@ public class EPrescriptionL3Mapper {
             .name(prescription.getDrug().getName())
             .strength(drugStrengthText(prescription))
             .formCode(formCode)
-            .packageInfo(innerLayer != null ? innerLayer : outerLayer)
+            .innermostPackageLayer(innerLayer != null ? innerLayer : outerLayer)
             .atcCode(atcCode)
             .build();
     }

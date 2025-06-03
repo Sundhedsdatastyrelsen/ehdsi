@@ -50,8 +50,8 @@ class EPrescriptionL3MapperTest {
                 "FIN",
                 null,
                 "Manufacturer"));
-        assertThat(model.getProduct().getPackageInfo().getWrappedIn(), is(nullValue()));
-        assertThat(model.getProduct().getPackageInfo().getValue(), is("100"));
+        assertThat(model.getProduct().getInnermostPackageLayer().getWrappedIn(), is(nullValue()));
+        assertThat(model.getProduct().getInnermostPackageLayer().getAmount(), is("100"));
     }
 
     @Test
@@ -65,7 +65,7 @@ class EPrescriptionL3MapperTest {
                 "FIN",
                 null,
                 "Manufacturer"));
-        assertThat(model.getProduct().getPackageInfo().getWrappedIn(), is(nullValue()));
-        assertThat(model.getProduct().getPackageInfo().getValue(), is("100"));
+        assertThat(model.getProduct().getInnermostPackageLayer().getWrappedIn(), is(nullValue()));
+        assertThat(model.getProduct().getInnermostPackageLayer().getAmount(), is("100"));
     }
 }

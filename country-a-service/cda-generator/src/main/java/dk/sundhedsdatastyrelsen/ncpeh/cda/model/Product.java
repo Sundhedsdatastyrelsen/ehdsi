@@ -15,6 +15,6 @@ public class Product {
     String strength;
     @NonNull CdaCode formCode;
     @NonNull CdaCode atcCode;
-    @NonNull PackageLayer packageInfo;
+    @NonNull PackageLayer innermostPackageLayer;
     String manufacturerOrganizationName;
 }
