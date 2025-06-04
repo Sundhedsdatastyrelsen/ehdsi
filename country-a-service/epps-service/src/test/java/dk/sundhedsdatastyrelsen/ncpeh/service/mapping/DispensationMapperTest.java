@@ -1,11 +1,15 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +17,16 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPathExpressionException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,7 +51,8 @@ class DispensationMapperTest {
             Arguments.of("CzRequest2.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
             Arguments.of("CzRequest3.xml"), // One of the requests the CZ team sent us during the Spring 2025 test
             Arguments.of("GrRequest1.xml"), // One of the requests the GR team sent us during the Fall 2024 test
-            Arguments.of("PlRequest1.xml")  // One of the requests the PL team sent us during the Spring 2025 test
+            Arguments.of("PlRequest1.xml"),  // One of the requests the PL team sent us during the Spring 2025 test
+            Arguments.of("PlRequest2.xml")  // One of the requests the PL team sent us during the Spring 2025 review phase
         );
     }
 
@@ -220,7 +234,6 @@ class DispensationMapperTest {
                 substances.getActiveSubstance().stream().map(ActiveSubstanceType::getFreeText).toList(),
                 contains("LEVODOPA", "CARBIDOPA", "ENTACAPONE"));
         }
-
     }
 
     @Test
@@ -258,7 +271,7 @@ class DispensationMapperTest {
 
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
-    void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {
+    void createPharmacyEffectuationRequestTest(String xmlFileName) throws Exception {
         var cda = testDispensationCda(xmlFileName);
         var packageRestriction = PackageRestrictionType.builder()
             .withPackageNumber(DispensationMapper.packageNumber())
@@ -278,5 +291,39 @@ class DispensationMapperTest {
 
         assertThat(result.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(result.getPrescription().getFirst().getOrderIdentifier() > 0L);
+
+        ///  This validates CreatePharmacyEffectuationRequest against the WSDL schema.
+        /// TODO:  validate StartEffectuationRequest too somewhere
+
+        StringWriter xmlOut = new StringWriter();
+
+        JAXBContext ctx = JAXBContext.newInstance(
+            dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory.class);
+        Marshaller m = ctx.createMarshaller();
+        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+        var of = new ObjectFactory();
+        var root = of.createCreatePharmacyEffectuationRequest(result);
+
+        JAXBContext.newInstance(CreatePharmacyEffectuationRequestType.class)
+            .createMarshaller()
+            .marshal(root, xmlOut);
+        var xml = xmlOut.toString();
+
+        var wsdl = this.getClass().getClassLoader().getResource("wsdl/MedicineCard-inline_2015_06_01_E6.wsdl");
+        assertThat(wsdl, is(notNullValue()));
+        var doc = DocumentBuilderFactory.newDefaultNSInstance()
+            .newDocumentBuilder()
+            .parse(wsdl.openStream());
+
+        var schemaNodes = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "schema");
+        var xsds = IntStream.range(0, schemaNodes.getLength())
+            .mapToObj(i -> new DOMSource(schemaNodes.item(i), wsdl.toString()))
+            .toArray(Source[]::new);
+        var schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+            .newSchema(xsds);
+        var validator = schema.newValidator();
+        Assertions.assertDoesNotThrow(() ->
+            validator.validate(new StreamSource(new StringReader(xml))));
     }
 }
