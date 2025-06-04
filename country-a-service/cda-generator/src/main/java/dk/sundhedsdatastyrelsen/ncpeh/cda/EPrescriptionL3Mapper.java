@@ -8,7 +8,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageSizeUnitCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
@@ -159,10 +158,7 @@ public class EPrescriptionL3Mapper {
             .unit(
                 subpackages > 1 ?
                     new PackageUnit.WithCode("1") :
-                    Optional.ofNullable(ps.getUnitCode())
-                        .map(PackageSizeUnitCodeType::getValue)
-                        .map(PackageUnitMapper::fromLms)
-                        .orElse(new PackageUnit.WithCode("1")))
+                    PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
             .amount(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
             .description(productDescription(prescription))
             .packageFormCode(packageFormCode)
