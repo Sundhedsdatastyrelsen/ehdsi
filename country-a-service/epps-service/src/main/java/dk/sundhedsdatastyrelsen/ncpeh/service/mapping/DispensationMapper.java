@@ -21,7 +21,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.dtm.ref.DTMNodeList;
@@ -183,8 +182,9 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         static final String packageQuantity =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:quantity";
-        static final String containerPackagedProductCode =
-            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:asContent/pharm:containerPackagedProduct/pharm:code";
+        static final String innermostContainerPackagedProduct =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial"
+                + "//pharm:containerPackagedProduct[not(pharm:asContent)]";
         static final String manufacturedMaterialName =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:name";
         static final String manufacturedMaterialCode =
@@ -199,6 +199,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:desc";
         static final String activeIngredients =
             "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:ingredient[@classCode = 'ACTI']";
+        static final String drugFormCodeDisplayName =
+            "/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section/hl7:entry/hl7:supply/hl7:product/hl7:manufacturedProduct/hl7:manufacturedMaterial/pharm:formCode/@displayName";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
@@ -227,7 +229,7 @@ public class DispensationMapper {
         return evalNodeMany(cda, xpathExpression).stream().map(Node::getTextContent).toList();
     }
 
-    private static String eval(Node node, String xpathExpression) throws XPathExpressionException {
+    static @NonNull String eval(Node node, String xpathExpression) throws XPathExpressionException {
         return xpath.get().evaluate(xpathExpression, node);
     }
 
@@ -446,23 +448,82 @@ public class DispensationMapper {
             .build();
     }
 
-    static String detailedDrugText(Document cda) {
-        String drugName;
-        try {
-            drugName = eval(cda, XPaths.manufacturedMaterialName);
-        } catch (XPathExpressionException e) {
-            throw new DataRequirementException(String.format("Could not find data at path: %s", XPaths.manufacturedMaterialName));
+    static Node packagedMedicinalProduct(Document cda) throws XPathExpressionException {
+        /// The Packaged Medicinal Product is found on the "containerPackagedProduct" element.  But there can be up to 3
+        /// containerPackagedProduct elements nested inside each other.
+        /// Our current understanding (2025-05-14) of the convoluted documentation in ART-DECOR
+        /// https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
+        /// is that it is the innermost (most deeply nested) containerPackagedProduct which represents the
+        /// packaged medicinal product.  I.e., the meaning of the element ".../manufacturedMaterial/asContent"
+        /// is dependent on whether it has a "/containerPackagedProduct/asContent" subelement (and also on whether
+        /// that subelement has a "/containerPackagedProduct/asContent" subelement).
+        return evalNode(cda, XPaths.innermostContainerPackagedProduct);
+    }
+
+    static Node packageId(Document cda) throws XPathExpressionException {
+        var pmp = packagedMedicinalProduct(cda);
+        if (pmp == null) return null;
+        return evalNode(pmp, "pharm:code");
+    }
+
+    static @NonNull String packagedMedicinalProductDescription(Document cda) throws XPathExpressionException {
+        var pmp = packagedMedicinalProduct(cda);
+        if (pmp == null) return "";
+        /// "If present, the element SHALL contain a sufficiently detailed description of the prescribed/dispensed
+        /// medicinal product/package. The description may contain information on the brand name, dose form, package
+        /// (including its type or brand name), strength, etc."
+        /// https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
+        var desc = eval(pmp, "pharm:name");
+        // normalize whitespace
+        return desc.replaceAll("\\s+", " ");
+    }
+
+    static String detailedDrugText(Document cda) throws XPathExpressionException {
+        var drugName = eval(cda, XPaths.manufacturedMaterialName);
+        var drugIdNode = evalNode(cda, XPaths.manufacturedMaterialCode);
+        var drugId = drugIdNode == null
+            ? "N/A"
+            : "code: %s, code system: %s".formatted(
+            eval(drugIdNode, "@code"),
+            eval(drugIdNode, "@codeSystem"));
+
+        var packageIdNode = packageId(cda);
+        var packageId = packageIdNode == null
+            ? "N/A"
+            : "code: %s, code system: %s".formatted(
+            eval(packageIdNode, "@code"),
+            eval(packageIdNode, "@codeSystem"));
+
+        var drugFormDisplayName = eval(cda, XPaths.drugFormCodeDisplayName);
+        var drugForm = StringUtils.isBlank(drugFormDisplayName)
+            ? "no form information"
+            : drugFormDisplayName;
+
+        var atcDisplayName = eval(cda, XPaths.atcCode + "/@displayName");
+
+        var ingredients = new ArrayList<String>();
+        for (var node : evalNodeMany(cda, XPaths.activeIngredients)) {
+            ingredients.add(eval(node, "pharm:ingredientSubstance/pharm:name"));
         }
-        String drugId;
-        try {
-            var node = evalNode(cda, XPaths.manufacturedMaterialCode);
-            var system = eval(node, "@codeSystem");
-            var id = eval(node, "@code");
-            drugId = String.format("%s^^^%s", system, id);
-        } catch (XPathExpressionException e) {
-            drugId = "unknown";
-        }
-        return String.format("%s - id: %s", drugName, drugId);
+
+        // The "DetailedDrugText" element in FMK has a max size of 400 chars.
+        return StringUtils.abbreviate(
+            """
+                %s, %s;
+                %s;
+                Lægemiddel-id: %s;
+                Pakke-id: %s;
+                %s;
+                %s
+                """.formatted(
+                drugName,
+                drugForm,
+                packagedMedicinalProductDescription(cda),
+                drugId,
+                packageId,
+                atcDisplayName,
+                String.join(", ", ingredients)),
+            400);
     }
 
     static PackageNumberType packageNumber() {

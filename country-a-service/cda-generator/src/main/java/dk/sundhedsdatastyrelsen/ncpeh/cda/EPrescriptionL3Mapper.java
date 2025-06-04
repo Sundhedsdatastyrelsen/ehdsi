@@ -8,6 +8,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageSizeUnitCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
@@ -85,7 +86,7 @@ public class EPrescriptionL3Mapper {
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .product(product(prescription, input.packageFormCode(), input.numberOfSubPackages()))
+            .product(product(prescription, input.packageFormCode(), input.numberOfSubPackages(), input.manufacturerOrganizationName()))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
@@ -129,7 +130,7 @@ public class EPrescriptionL3Mapper {
                 .getFullName(), prescription.getIdentifier());
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, Integer numberOfSubPackages) {
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, Integer numberOfSubPackages, String manufacturer) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -147,10 +148,10 @@ public class EPrescriptionL3Mapper {
             .codeSystem(Oid.DK_VARENUMRE)
             .code(packageNumber)
             .build();
-        var packageFormCode = CdaCode.builder()
+        var packageFormCode = packageFormCodeRaw != null ? CdaCode.builder()
             .codeSystem(Oid.DK_EMBALLAGETYPE)
             .code(packageFormCodeRaw)
-            .build();
+            .build() : null;
         var ps = prescription.getPackageRestriction().getPackageSize();
         var subpackages = numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages;
 
@@ -158,7 +159,10 @@ public class EPrescriptionL3Mapper {
             .unit(
                 subpackages > 1 ?
                     new PackageUnit.WithCode("1") :
-                    PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+                    Optional.ofNullable(ps.getUnitCode())
+                        .map(PackageSizeUnitCodeType::getValue)
+                        .map(PackageUnitMapper::fromLms)
+                        .orElse(new PackageUnit.WithCode("1")))
             .amount(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
             .description(productDescription(prescription))
             .packageFormCode(packageFormCode)
@@ -189,6 +193,7 @@ public class EPrescriptionL3Mapper {
             .formCode(formCode)
             .innermostPackageLayer(innerLayer != null ? innerLayer : outerLayer)
             .atcCode(atcCode)
+            .manufacturerOrganizationName(manufacturer)
             .build();
     }
 
@@ -207,7 +212,10 @@ public class EPrescriptionL3Mapper {
         }
 
         var a = response.getPatient().getAddress();
-        var address = new Address(List.of(String.format("%s %s", a.getStreetName(), a.getStreetBuildingIdentifier())), a.getDistrictName(), a.getPostCodeIdentifier(), null);
+        // There will be no address when the patient has address protection ("adressebeskyttelse")
+        var address = a != null
+            ? new Address(List.of(String.format("%s %s", a.getStreetName(), a.getStreetBuildingIdentifier())), a.getDistrictName(), a.getPostCodeIdentifier(), null)
+            : null;
 
         var genderCodeBuilder = CdaCode.builder()
             .codeSystem(Oid.ADMINISTRATIVE_GENDER)
