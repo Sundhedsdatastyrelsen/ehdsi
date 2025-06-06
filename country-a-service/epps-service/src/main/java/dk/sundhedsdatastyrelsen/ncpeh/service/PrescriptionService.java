@@ -36,7 +36,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMetadataMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
@@ -108,6 +108,10 @@ public class PrescriptionService {
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
+
+        public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+            return new PrescriptionFilter(EPrescriptionMetadataMapper.fromRootedId(rootedDocumentId), createdBefore, createdAfter);
+        }
     }
 
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
@@ -127,7 +131,7 @@ public class PrescriptionService {
 
             var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
             return validPrescriptions.stream()
-                .map(pair -> EPrescriptionMapper.mapMeta(
+                .map(pair -> EPrescriptionMetadataMapper.mapMeta(
                     patientId,
                     fmkResponse,
                     pair.getLeft(),
