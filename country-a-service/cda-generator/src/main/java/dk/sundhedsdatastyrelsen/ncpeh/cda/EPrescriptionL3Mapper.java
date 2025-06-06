@@ -153,22 +153,21 @@ public class EPrescriptionL3Mapper {
             .build() : null;
         var ps = prescription.getPackageRestriction().getPackageSize();
         var subpackages = numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages;
+        var layered = subpackages > 1;
 
         var outerLayer = PackageLayer.builder()
-            .unit(
-                subpackages > 1 ?
-                    new PackageUnit.WithCode("1") :
-                    PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
-            .amount(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
+            .unit(layered ? new PackageUnit.WithCode("1") : PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+            .amount(layered ? BigDecimal.valueOf(subpackages) : ps.getValue())
             .description(productDescription(prescription))
-            .packageFormCode(packageFormCode)
+            .packageFormCode(layered ? null : packageFormCode)
             .packageCode(packageCode)
             .build();
 
-        var innerLayer = subpackages > 1 ?
+        var innerLayer = layered ?
             PackageLayer.builder()
                 .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
                 .amount(calculateInnerPackageAmount(ps.getValue(), numberOfSubPackages))
+                .packageFormCode(packageFormCode)
                 .wrappedIn(outerLayer)
                 .build()
             : null;
