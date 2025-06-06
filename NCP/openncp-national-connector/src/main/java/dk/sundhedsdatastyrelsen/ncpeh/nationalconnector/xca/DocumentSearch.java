@@ -111,7 +111,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                             md.getLevel3().getDoseFormName(),
                             md.getLevel3().getStrength(),
                             new SubstitutionMetadata(md.getLevel3().getSubstitutionCode(),
-                                md.getLevel1().getSubstitutionDisplayName())),
+                                md.getLevel3().getSubstitutionDisplayName())),
                         SimpleConfidentialityEnum.findByCode(md.getLevel3().getConfidentiality().getConfidentialityCode()),
                         md.getLevel3().getLanguage(),
                         md.getLevel3().getSize(),
