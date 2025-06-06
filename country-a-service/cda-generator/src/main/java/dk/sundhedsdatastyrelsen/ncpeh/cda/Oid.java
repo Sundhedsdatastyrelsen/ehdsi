@@ -2,11 +2,11 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 public enum Oid {
     /**
-     * EPrescription document repository id. For now, we use the DK home OID.
-     * TODO Once the spring 2025 test is over, we should update this to 1.2.208.176.7.2.3.
-     * <a href="https://oid-base.com/get/1.2.208">Registered.</a>
+     * EPrescription document repository id.
+     * TODO not registered yet. I've written to semantics.
+     * <a href="https://oid-base.com/get/1.2.208.176.7.2.3">Not registered yet.</a>
      */
-    DK_EPRESCRIPTION_REPOSITORY_ID("1.2.208"),
+    DK_EPRESCRIPTION_REPOSITORY_ID("1.2.208.176.7.2.3"),
     /**
      * Registries used in the Danish health by data exchange.
      * <a href="https://oid-base.com/get/1.2.208.176.1">Registered.</a>
