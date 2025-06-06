@@ -385,16 +385,19 @@ public class EPrescriptionL3Mapper {
             if (text != null && codedStrength != null) {
                 structured.add(ActiveIngredient.builder()
                     .name(text)
-                        .quantity(ActiveIngredient.Quantity.builder()
-                            .numerator(strength.getValue())
-                            .numeratorUnit(codedStrength.numeratorUnit())
-                            .denominator(codedStrength.denominator())
-                            .denominatorUnit(codedStrength.denominatorUnit())
-                            .translation(codedStrength.translation())
-                            .build())
+                    .quantity(ActiveIngredient.Quantity.builder()
+                        .numerator(strength.getValue())
+                        .numeratorUnit(codedStrength.numeratorUnit())
+                        .denominator(codedStrength.denominator())
+                        .denominatorUnit(codedStrength.denominatorUnit())
+                        .translation(codedStrength.translation())
+                        .build())
                     .build());
             }
-        } else {
+        }
+
+        // If the single element could not be mapped, or there were more than one, add them all as simple names.
+        if (structured.isEmpty()) {
             structured.addAll(substances.getActiveSubstance().stream()
                 .map(EPrescriptionL3Mapper::getSubstanceText)
                 .filter(Objects::nonNull)
