@@ -11,6 +11,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
@@ -34,7 +35,7 @@ public class EPrescriptionMapper {
     private record MetaModel(
         String patientId,
         OffsetDateTime effectiveTime,
-        String prescriptionId,
+        CdaCode prescriptionId,
         String authorName,
         String title,
         String description,
@@ -66,9 +67,13 @@ public class EPrescriptionMapper {
             throw new IllegalArgumentException("Does not support documentLevel: " + documentLevel);
         }
 
-        String documentId = switch (documentLevel) {
-            case DocumentLevel.LEVEL1 -> EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId());
-            case DocumentLevel.LEVEL3 -> EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId());
+        CdaCode documentId = switch (documentLevel) {
+            case DocumentLevel.LEVEL1 -> model.prescriptionId()
+                .withCode(EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId().getCode()))
+                .withCodeSystem(Oid.DK_EPRESCRIPTION_REPOSITORY_ID);
+            case DocumentLevel.LEVEL3 -> model.prescriptionId()
+                .withCode(EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId().getCode()))
+                .withCodeSystem(Oid.DK_EPRESCRIPTION_REPOSITORY_ID);
         };
 
         DocumentFormatDto documentFormat = switch (documentLevel) {
@@ -76,7 +81,7 @@ public class EPrescriptionMapper {
             case DocumentLevel.LEVEL3 -> DocumentFormatDto.XML;
         };
 
-        var meta = new EPrescriptionDocumentMetadataDto(documentId);
+        var meta = new EPrescriptionDocumentMetadataDto(documentId.toSingleString());
         meta.setPatientId(model.patientId());
         meta.setEffectiveTime(model.effectiveTime());
         meta.setRepositoryId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value);
@@ -123,7 +128,10 @@ public class EPrescriptionMapper {
             patientId,
             // "Date and time when the ePrescription was created" 06.02
             Utils.convertToOffsetDateTime(prescription.getCreated().getDateTime()),
-            Long.toString(prescription.getIdentifier()),
+            CdaCode.builder()
+                .code(Long.toString(prescription.getIdentifier()))
+                .codeSystem(Oid.DK_FMK_PRESCRIPTION)
+                .build(),
             // "Name of the prescriber" 06.02
             EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription).getName(),
             EPrescriptionL3Mapper.makeTitle(prescriptions, prescription),

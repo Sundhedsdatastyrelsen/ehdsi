@@ -25,6 +25,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
@@ -87,7 +88,7 @@ public class PrescriptionService {
     }
 
     public record PrescriptionFilter(
-        String documentId,
+        CdaCode documentId,
         OffsetDateTime createdBefore,
         OffsetDateTime createdAfter
     ) {
@@ -104,7 +105,7 @@ public class PrescriptionService {
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = Utils.convertToOffsetDateTime(prescription.getAuthorisationDateTime());
             return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier()))
-                .contains(documentId))
+                .contains(documentId.getCode()))
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
@@ -146,7 +147,7 @@ public class PrescriptionService {
         var input = assembleEPrescriptionInput(patientId, filter, caller).findFirst().orElse(null);
         DocumentLevel documentLevel;
         try {
-            documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
+            documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId().getCode());
             var cda = switch (documentLevel) {
                 case LEVEL3 -> EPrescriptionL3Generator.generate(input);
                 case LEVEL1 -> EPrescriptionL1Generator.generate(input);
