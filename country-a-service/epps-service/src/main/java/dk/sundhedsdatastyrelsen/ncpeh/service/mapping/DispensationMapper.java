@@ -306,9 +306,10 @@ public class DispensationMapper {
             if (t.startsWith("mailto:")) email = t.substring(7);
         }
 
+        var name = eval(cda, XPaths.authorOrgName);
         var b = OrganisationType.builder()
             .withIdentifier(placeholderPharmacyId())
-            .withName(eval(cda, XPaths.authorOrgName))
+            .withName(StringUtils.isBlank(name) ? "(ukendt)" : name)
             .withType("Apotek")
             .addAddressLine(addressLines);
 
@@ -402,9 +403,20 @@ public class DispensationMapper {
             var substanceName = eval(node, "pharm:ingredientSubstance/pharm:name");
             if (StringUtils.isNotBlank(substanceName)) {
                 b.addActiveSubstance().withFreeText(substanceName);
+            } else {
+                var substanceCode = eval(node, "pharm:ingredientSubstance/pharm:code/@code");
+                var substanceDisplayName = eval(node, "pharm:ingredientSubstance/pharm:code/@displayName");
+                if (StringUtils.isNotBlank(substanceCode)) {
+                    b.addActiveSubstance().withFreeText("%s %s".formatted(substanceCode, substanceDisplayName).trim());
+                }
             }
         }
-        return b.build();
+        var result = b.build();
+        // if the data was weird (e.g. only substances with no name and no code) then we act as if there was no information.
+        if (result.getActiveSubstance().isEmpty()) {
+            return null;
+        }
+        return result;
     }
 
     static DrugStrengthType drugStrength(Document cda) throws XPathExpressionException {
@@ -418,10 +430,12 @@ public class DispensationMapper {
         if (StringUtils.isBlank(drugStrengthFreeText)) {
             return null;
         }
+        // FMK's DrugStrengthTextValueType has a max length of 20
+        var value = StringUtils.truncate(drugStrengthFreeText, 20);
         return DrugStrengthType.builder()
             .withText()
             .withSource("Local")
-            .withValue(drugStrengthFreeText)
+            .withValue(value)
             .end()
             .build();
     }
