@@ -327,12 +327,14 @@ class DispensationMapperTest {
      */
     private Schema fmk146E6Schema() {
         try {
+            // First we parse the XML document with a namespace-aware DocumentBuilder
             var wsdl = this.getClass().getClassLoader().getResource("wsdl/MedicineCard-inline_2015_06_01_E6.wsdl");
             assertThat(wsdl, is(notNullValue()));
             var doc = DocumentBuilderFactory.newDefaultNSInstance()
                 .newDocumentBuilder()
                 .parse(wsdl.openStream());
 
+            // Then we extract all the "xs:schema" nodes and massage them into a javax.xml.validation.Schema object
             var schemaNodes = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "schema");
             var xsds = IntStream.range(0, schemaNodes.getLength())
                 .mapToObj(i -> new DOMSource(schemaNodes.item(i), wsdl.toString()))
