@@ -168,7 +168,7 @@ public class EPrescriptionMetadataMapper {
     /// We found during the Spring test of 2025 that the countries that were already in production expected us to pass
     /// rooted ePrescription ids - so we do that now. The format is not documented anywhere I can find.
     public static String toRootedId(String id) {
-        return String.format("%s^%s", Oid.DK_EPRESCRIPTION_REPOSITORY_ID, id);
+        return String.format("%s^%s", Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value, id);
     }
 
     /// Try to get an id from a string also containing the correct root "1.2.208.176.7.2.3^123456L3" -> "123456L3". If
