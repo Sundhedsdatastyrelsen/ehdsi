@@ -110,7 +110,11 @@ public class PrescriptionService {
         }
 
         public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
-            return new PrescriptionFilter(EPrescriptionMetadataMapper.fromRootedId(rootedDocumentId), createdBefore, createdAfter);
+            var documentId = EPrescriptionMetadataMapper.fromRootedId(rootedDocumentId);
+            if (documentId == null) {
+                throw new IllegalArgumentException("Document ID could not be parsed. Document ID: " + rootedDocumentId);
+            }
+            return new PrescriptionFilter(documentId, createdBefore, createdAfter);
         }
     }
 
