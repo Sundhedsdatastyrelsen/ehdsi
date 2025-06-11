@@ -177,7 +177,7 @@ public class EPrescriptionMetadataMapper {
         if (input == null) {
             return null;
         }
-        var parts = input.split("\\^", 1);
+        var parts = input.split("\\^", 2);
         if (parts.length != 2) {
             return null;
         }
