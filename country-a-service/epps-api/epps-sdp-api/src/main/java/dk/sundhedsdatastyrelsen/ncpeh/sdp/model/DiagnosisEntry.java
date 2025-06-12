@@ -9,8 +9,7 @@ public record DiagnosisEntry(
     String Text, //Diagnosis text
     String TypeCode, //Short code for data, like "A" has a value in TypeText of Aktionsdiagnose
     String TypeText,
-    String LaterDisproven, //Values: Nej, Ja, Empty/Null
-    
+    String LaterDisproven //Values: Nej, Ja, Empty/Null
 ) {
 
 }

@@ -48,7 +48,8 @@
                     </args>
 					<wsdlUrls>
 						<wsdlUrl>./src/main/resources/wsdl/ddsregistry.wsdl</wsdlUrl>
-						<wsdlUrl>./src/main/resources/wsdl/ddsrepository.wsdl</wsdlUrl>
+                        <wsdlUrl>./src/main/resources/wsdl/ddsrepository.wsdl</wsdlUrl>
+                        <wsdlUrl>./src/main/resources/wsdl/sfskiti18.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>
