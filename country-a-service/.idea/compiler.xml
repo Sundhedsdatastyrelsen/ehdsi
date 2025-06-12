@@ -9,13 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="epps-ddv-api" />
         <module name="epps-sdp-api" />
+        <module name="epps-fsk-api" />
         <module name="epps-service" />
         <module name="integration-tests" />
         <module name="epps-cpr-api" />
         <module name="testing-tools" />
         <module name="autorisationsregister-model" />
         <module name="nsp-client" />
-        <module name="epps-dds-api" />
         <module name="epps-fmk-api" />
         <module name="epps-application" />
         <module name="local-lms-db" />
@@ -37,11 +37,11 @@
       <module name="epps-cpr-api" options="-parameters" />
       <module name="epps-cpr-mock" options="-parameters" />
       <module name="epps-cpr-mock-data" options="-parameters" />
-      <module name="epps-dds-api" options="-parameters" />
       <module name="epps-ddv-api" options="-parameters" />
       <module name="epps-fmk-api" options="-parameters" />
       <module name="epps-fmk-mock" options="-parameters" />
       <module name="epps-fmk-mock-data" options="-parameters" />
+      <module name="epps-fsk-api" options="-parameters" />
       <module name="epps-ncp-api" options="-parameters" />
       <module name="epps-sdp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />

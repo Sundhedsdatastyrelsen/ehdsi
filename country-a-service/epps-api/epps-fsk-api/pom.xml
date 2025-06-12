@@ -8,7 +8,7 @@
 	</parent>
 
 	<name>NCPeH DK integration service - DDS API</name>
-	<artifactId>epps-dds-api</artifactId>
+	<artifactId>epps-fsk-api</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
