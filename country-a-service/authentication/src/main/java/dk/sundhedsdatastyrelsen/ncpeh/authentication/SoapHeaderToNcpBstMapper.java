@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication.mapper;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -77,7 +77,7 @@ public class SoapHeaderToNcpBstMapper {
 
     private void addSubject(Document doc, Element assertion, Document inputDoc) {
         Element subject = doc.createElementNS(SAML_NS, "Subject");
-        
+
         // Add NameID
         Element nameId = doc.createElementNS(SAML_NS, "NameID");
         nameId.setAttribute("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
@@ -87,7 +87,7 @@ public class SoapHeaderToNcpBstMapper {
         // Add SubjectConfirmation
         Element subjectConfirmation = doc.createElementNS(SAML_NS, "SubjectConfirmation");
         subjectConfirmation.setAttribute("Method", "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key");
-        
+
         Element subjectConfirmationData = doc.createElementNS(SAML_NS, "SubjectConfirmationData");
         subjectConfirmationData.setAttribute("xsi:type", "KeyInfoConfirmationDataType");
         subjectConfirmation.appendChild(subjectConfirmationData);
@@ -113,8 +113,8 @@ public class SoapHeaderToNcpBstMapper {
         Element attributeStatement = doc.createElementNS(SAML_NS, "AttributeStatement");
 
         // Map required attributes from input to output
-        addAttribute(doc, attributeStatement, "XSPA Subject", 
-            "urn:oasis:names:tc:xspa:1.0:subject:subject-id", 
+        addAttribute(doc, attributeStatement, "XSPA Subject",
+            "urn:oasis:names:tc:xspa:1.0:subject:subject-id",
             getAttributeValue(inputDoc, "urn:oasis:names:tc:xspa:1.0:subject:subject-id"));
 
         addAttribute(doc, attributeStatement, "XSPA Role",
@@ -238,4 +238,4 @@ public class SoapHeaderToNcpBstMapper {
         }
         return "";
     }
-} 
+}
