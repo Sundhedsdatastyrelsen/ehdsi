@@ -1,7 +1,9 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- $Header: /cvsroot/ebxmlrr/ebxmlrr-spec/misc/3.0/schema/query.xsd,v 1.13 2005/03/29 08:52:10 farrukh_najmi Exp $ --><schema xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0">
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!-- $Header: /cvsroot/ebxmlrr/ebxmlrr-spec/misc/3.0/schema/query.xsd,v 1.13 2005/03/29 08:52:10 farrukh_najmi Exp $ -->
+<schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0">
   <!-- Import the rim.xsd file with XML schema mappaing from RIM -->
-  <import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" schemaLocation="./rim.xsd"/>
-  <import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" schemaLocation="./rs.xsd"/>
+  <import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" schemaLocation="rim.xsd"/>
+  <import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" schemaLocation="rs.xsd"/>
   <complexType name="ResponseOptionType">
     <attribute default="RegistryObject" name="returnType">
       <simpleType>
@@ -54,13 +56,13 @@
       </complexContent>
     </complexType>
   </element>
-  <complexType abstract="true" name="FilterQueryType">
+  <complexType name="FilterQueryType" abstract="true">
     <sequence>
       <element maxOccurs="1" minOccurs="0" name="PrimaryFilter" type="tns:FilterType"/>
     </sequence>
   </complexType>
   
-  <complexType abstract="true" name="BranchType">
+  <complexType name="BranchType" abstract="true">
     <complexContent>
       <extension base="tns:FilterQueryType">
       </extension>
@@ -70,7 +72,7 @@
     <complexContent>
       <extension base="tns:BranchType">
         <sequence>
-          <element maxOccurs="unbounded" minOccurs="0" name="LocalizedStringFilter" type="tns:FilterType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="LocalizedStringFilter" type="tns:FilterType" />
         </sequence>
       </extension>
     </complexContent>
@@ -91,7 +93,7 @@
           <element maxOccurs="unbounded" minOccurs="0" name="SlotBranch" type="tns:SlotBranchType"/>
           <element maxOccurs="1" minOccurs="0" name="NameBranch" type="tns:InternationalStringBranchType"/>
           <element maxOccurs="1" minOccurs="0" name="DescriptionBranch" type="tns:InternationalStringBranchType"/>
-          <element maxOccurs="1" minOccurs="0" name="VersionInfoFilter" type="tns:FilterType"/>          
+          <element maxOccurs="1" minOccurs="0" name="VersionInfoFilter" type="tns:FilterType" />          
           <element maxOccurs="unbounded" minOccurs="0" ref="tns:ClassificationQuery"/>
           <element maxOccurs="unbounded" minOccurs="0" ref="tns:ExternalIdentifierQuery"/>
           <element maxOccurs="1" minOccurs="0" name="ObjectTypeQuery" type="tns:ClassificationNodeQueryType"/>          
@@ -121,9 +123,9 @@
     <complexContent>
       <extension base="tns:RegistryObjectQueryType">
         <sequence>
-          <element maxOccurs="unbounded" minOccurs="0" name="AffectedObjectQuery" type="tns:RegistryObjectQueryType"/>          
-          <element maxOccurs="1" minOccurs="0" name="EventTypeQuery" type="tns:ClassificationNodeQueryType"/>
-          <element maxOccurs="1" minOccurs="0" name="UserQuery" type="tns:UserQueryType"/>
+          <element maxOccurs="unbounded" minOccurs="0" name="AffectedObjectQuery" type="tns:RegistryObjectQueryType" />          
+          <element maxOccurs="1" minOccurs="0" name="EventTypeQuery" type="tns:ClassificationNodeQueryType" />
+          <element maxOccurs="1" minOccurs="0" name="UserQuery" type="tns:UserQueryType" />
         </sequence>
       </extension>
     </complexContent>
@@ -153,7 +155,7 @@
       </extension>
     </complexContent>
   </complexType>
-  <element name="ClassificationNodeQuery" type="tns:ClassificationNodeQueryType"/>
+  <element name="ClassificationNodeQuery" type="tns:ClassificationNodeQueryType" />
     
   <complexType name="ClassificationSchemeQueryType">
     <complexContent>
@@ -171,7 +173,7 @@
     <complexContent>
       <extension base="tns:RegistryObjectQueryType">
         <sequence>
-          <element maxOccurs="1" minOccurs="0" ref="tns:RegistryObjectQuery"/>
+          <element maxOccurs="1" minOccurs="0" ref="tns:RegistryObjectQuery" />
           <element maxOccurs="1" minOccurs="0" name="IdentificationSchemeQuery" type="tns:ClassificationSchemeQueryType"/>
        </sequence>
       </extension>
@@ -370,10 +372,10 @@
       </extension>
     </complexContent>
   </complexType>  
-  <element name="CompoundFilter" type="tns:CompoundFilterType"/>
+  <element name="CompoundFilter"  type="tns:CompoundFilterType"/>
     
     
-  <complexType abstract="true" name="SimpleFilterType">
+  <complexType name="SimpleFilterType" abstract="true">
     <complexContent>
       <extension base="tns:FilterType">
         <attribute name="domainAttribute" type="string" use="required"/>
@@ -402,7 +404,7 @@
       </extension>
     </complexContent>
   </complexType>
-  <element name="BooleanFilter" type="tns:BooleanFilterType"/>
+  <element name="BooleanFilter"  type="tns:BooleanFilterType"/>
 
   
   <complexType name="IntegerFilterType">
@@ -412,7 +414,7 @@
       </extension>
     </complexContent>
   </complexType>
-  <element name="IntegerFilter" type="tns:IntegerFilterType"/>
+  <element name="IntegerFilter"  type="tns:IntegerFilterType"/>
   
   <complexType name="FloatFilterType">
     <complexContent>
@@ -421,7 +423,7 @@
       </extension>
     </complexContent>
   </complexType>
-  <element name="FloatFilter" type="tns:FloatFilterType"/>
+  <element name="FloatFilter"  type="tns:FloatFilterType"/>
   
   <complexType name="DateTimeFilterType">
     <complexContent>
@@ -430,7 +432,7 @@
       </extension>
     </complexContent>
   </complexType>
-  <element name="DateTimeFilter" type="tns:DateTimeFilterType"/>
+  <element name="DateTimeFilter"  type="tns:DateTimeFilterType"/>
   
   <complexType name="StringFilterType">
     <complexContent>
@@ -439,6 +441,6 @@
       </extension>
     </complexContent>
   </complexType>
-  <element name="StringFilter" type="tns:StringFilterType"/>
+  <element name="StringFilter"  type="tns:StringFilterType"/>
   
 </schema>

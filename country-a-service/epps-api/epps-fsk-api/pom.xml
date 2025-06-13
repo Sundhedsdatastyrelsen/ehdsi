@@ -26,6 +26,7 @@
 			<plugin>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>4.0.2</version>
 				<executions>
 					<execution>
 						<goals>
@@ -47,9 +48,9 @@
                         <arg>-verbose</arg>
                     </args>
 					<wsdlUrls>
-						<wsdlUrl>./src/main/resources/wsdl/ddsregistry.wsdl</wsdlUrl>
-                        <wsdlUrl>./src/main/resources/wsdl/ddsrepository.wsdl</wsdlUrl>
-                        <wsdlUrl>./src/main/resources/wsdl/sfskiti18.wsdl</wsdlUrl>
+						<wsdlUrl>${project.basedir}/src/main/resources/wsdl/ddsregistry.wsdl</wsdlUrl>
+                        <wsdlUrl>${project.basedir}/src/main/resources/wsdl/ddsrepository.wsdl</wsdlUrl>
+                        <wsdlUrl>${project.basedir}/src/main/resources/wsdl/sfskiti18.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>

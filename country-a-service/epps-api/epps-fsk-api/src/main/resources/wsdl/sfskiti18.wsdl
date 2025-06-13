@@ -65,6 +65,7 @@
                    wsam:Action="urn:ihe:iti:2007:RegistryStoredQuery"/>
             <output message="ihe:RegistryStoredQueryResponse_Message"
                     wsam:Action="urn:ihe:iti:2007:RegistryStoredQueryResponse"/>
+            <fault name="DGWSFault" message="ihe:DGWSFault"/>
         </operation>
     </portType>
 
