@@ -9,6 +9,10 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -32,9 +36,24 @@ public class NspClient {
                  .execute(soapBody, extraHeaders)) {
             var reply = sosiFactory.deserializeReply(IOUtils.toString(response.getResponse(), StandardCharsets.UTF_8));
             if (response.isFault()) {
+                response.getResponse().reset();
+                var fullText = convertStreamToString(response.getResponse());
                 throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
             }
             return reply;
         }
+    }
+
+    public static String convertStreamToString(InputStream bis) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (InputStreamReader reader = new InputStreamReader(bis, StandardCharsets.UTF_8)) {
+            int character;
+            while ((character = reader.read()) != -1) {
+                stringBuilder.append((char) character);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
     }
 }
