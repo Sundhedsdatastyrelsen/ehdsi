@@ -19,6 +19,10 @@ public class AuthenticationMain {
             System.out.println("Issuer: " + parsedData.getIssuer());
             System.out.println("Subject: " + parsedData.getSubject().getNameIdValue());
 
+            AssertionBuilder builder = new AssertionBuilder();
+            var outputXML = builder.buildAssertionXml(parsedData, "0123456789");
+            System.out.println("Assertion XML:\n\n" + outputXML);
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(2);

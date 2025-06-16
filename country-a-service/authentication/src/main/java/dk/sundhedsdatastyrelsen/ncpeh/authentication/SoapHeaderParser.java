@@ -73,7 +73,17 @@ public class SoapHeaderParser {
             NodeList attributeNodes = (NodeList) xPath.evaluate("saml2:AttributeStatement/saml2:Attribute", assertion, XPathConstants.NODESET);
             for (int i = 0; i < attributeNodes.getLength(); i++) {
                 Element attr = (Element) attributeNodes.item(i);
-                ParsedData.Attribute attribute = getAttribute(attr);
+                ParsedData.Attribute attribute = new ParsedData.Attribute();
+                attribute.setFriendlyName(attr.getAttribute("FriendlyName"));
+                attribute.setName(attr.getAttribute("Name"));
+
+                NodeList values = attr.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
+                List<String> valueList = new ArrayList<>();
+                for (int j = 0; j < values.getLength(); j++) {
+                    valueList.add(values.item(j).getTextContent().trim());
+                }
+
+                attribute.setValues(valueList);
                 attributes.add(attribute);
             }
             parsedData.setAttributes(attributes);
@@ -87,20 +97,5 @@ public class SoapHeaderParser {
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Could not evaluate XPath expression", e);
         }
-    }
-
-    private static ParsedData.Attribute getAttribute(Element attr) {
-        ParsedData.Attribute attribute = new ParsedData.Attribute();
-        attribute.setFriendlyName(attr.getAttribute("FriendlyName"));
-        attribute.setName(attr.getAttribute("Name"));
-
-        NodeList values = attr.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
-        List<String> valueList = new ArrayList<>();
-        for (int j = 0; j < values.getLength(); j++) {
-            valueList.add(values.item(j).getTextContent().trim());
-        }
-
-        attribute.setValues(valueList);
-        return attribute;
     }
 }
