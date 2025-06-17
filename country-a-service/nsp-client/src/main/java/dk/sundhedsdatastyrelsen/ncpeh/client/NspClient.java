@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NspClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClient.class);
@@ -36,13 +38,42 @@ public class NspClient {
                  .execute(soapBody, extraHeaders)) {
             response.getResponse().reset();
             var fullText = convertStreamToString(response.getResponse());
-            var reply = sosiFactory.deserializeReply(IOUtils.toString(response.getResponse(), StandardCharsets.UTF_8));
+            
+            // Check if response is MIME multipart
+            if (fullText.contains("--uuid:")) {
+                fullText = extractSoapFromMime(fullText);
+            }
+            
+            var reply = sosiFactory.deserializeReply(fullText);
             if (response.isFault()) {
-
                 throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
             }
             return reply;
         }
+    }
+
+    /**
+     * Extract SOAP message from MIME multipart response.
+     * The SOAP message is typically in the part with Content-Type: application/xop+xml
+     */
+    private static String extractSoapFromMime(String mimeResponse) {
+        // Pattern to match the SOAP part in MIME response
+        Pattern pattern = Pattern.compile(
+            "--uuid:[^\\r\\n]+\\r?\\n" +
+            "Content-Id: <root\\.message@cxf\\.apache\\.org>\\r?\\n" +
+            "Content-Type: application/xop\\+xml[^\\r\\n]*\\r?\\n" +
+            "Content-Transfer-Encoding: binary\\r?\\n\\r?\\n" +
+            "([\\s\\S]*?)" +
+            "--uuid:[^\\r\\n]+--",
+            Pattern.MULTILINE
+        );
+
+        Matcher matcher = pattern.matcher(mimeResponse);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        
+        throw new NspClientException("Could not extract SOAP message from MIME response");
     }
 
     public static String convertStreamToString(InputStream bis) {
