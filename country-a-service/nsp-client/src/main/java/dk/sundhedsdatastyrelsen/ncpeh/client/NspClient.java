@@ -67,8 +67,8 @@ public class NspClient {
         // Extract content between boundaries
         Pattern contentPattern = Pattern.compile(
             "--" + Pattern.quote(boundary) + "\\r?\\n" +
-            "([\\s\\S]*?)" +
-            "--" + Pattern.quote(boundary) + "--",
+                "([\\s\\S]*?)" +
+                "--" + Pattern.quote(boundary) + "--",
             Pattern.MULTILINE
         );
 

@@ -1,8 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.nsp.test.idp.OrganizationIdentities;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
-import dk.sundhedsdatastyrelsen.ncpeh.service.InformationRecordService;
+import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fsk;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class FskIT {
-    private final InformationRecordService service = new InformationRecordService(Fsk.apiClient());
+    private final InformationCardService service = new InformationCardService(Fsk.apiClient());
 
     /**
      * This test simply checks that we can connect and get an answer on the data.
@@ -28,17 +27,17 @@ public class FskIT {
     @Test
     void getDocument() throws Exception {
         var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse, OrganizationIdentities.sundhedsdatastyrelsen());
-        assertThat(informationCard,is(notNullValue()));
-        assertThat(informationCard,containsString("<ClinicalDocument"));
+        assertThat(informationCard, is(notNullValue()));
+        assertThat(informationCard, containsString("<ClinicalDocument"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {Fsk.cprJensJensenReadOnly})
-    void getInformationCardFromPerson(String cpr){
+    void getInformationCardFromPerson(String cpr) {
         var documentIdList = service.findInformationCardDetails(cpr, OrganizationIdentities.sundhedsdatastyrelsen());
         var documentId = documentIdList.getFirst();
-        var informationCard = service.getInformationCard(documentId,OrganizationIdentities.sundhedsdatastyrelsen());
-        assertThat(informationCard,is(notNullValue()));
-        assertThat(informationCard,containsString("<ClinicalDocument"));
+        var informationCard = service.getInformationCard(documentId, OrganizationIdentities.sundhedsdatastyrelsen());
+        assertThat(informationCard, is(notNullValue()));
+        assertThat(informationCard, containsString("<ClinicalDocument"));
     }
 }
