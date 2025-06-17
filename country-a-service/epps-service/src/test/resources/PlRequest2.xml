@@ -1,0 +1,313 @@
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.2"/>
+    <id extension="B6E6578A689643C28893EA" root="2.16.840.1.113883.3.4424.7.20.2.2.1.2.7.19.5.1"/>
+    <code code="60593-1" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="Medication dispensed.extended Document"/>
+    <title>eHDSI eDispensation Ulrik E2E Polen Kristensen</title>
+    <effectiveTime value="20250604124708+0100"/>
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" codeSystemVersion="2018-08-12" displayName="normal"/>
+    <languageCode code="pl-PL"/>
+    <setId extension="B6E6578A689643C28893EA" root="2.16.840.1.113883.3.4424.7.20.2.2.2.2.7.19.5.1"/>
+    <versionNumber value="1"/>
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="2205226691" root="1.2.208.176.1.2"/>
+            <addr>
+                <streetAddressLine>Randersvej 437</streetAddressLine>
+                <city>Toftlund</city>
+                <postalCode>6520</postalCode>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given>Ulrik</given>
+                    <given>E2E Polen</given>
+                    <family>Kristensen</family>
+                </name>
+                <administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender" codeSystemVersion="913-20091020" displayName="Male"/>
+                <birthTime value="20220522"/>
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author contextControlCode="OP" typeCode="AUT">
+        <functionCode code="2262" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" codeSystemVersion="2008" displayName="Pharmacists"/>
+        <time value="20250604124708+0100"/>
+        <assignedAuthor classCode="ASSIGNED">
+            <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1"/>
+            <addr>
+                <streetAddressLine nullFlavor="NI"/>
+                <city nullFlavor="NI"/>
+                <postalCode nullFlavor="NI"/>
+                <country>PL</country>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson classCode="PSN">
+                <name>
+                    <family>Testowy</family>
+                    <given>Farmaceuta</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6"/>
+                <name>Apteka porcelanowa</name>
+                <telecom use="WP" value="tel:+4832123456"/>
+                <addr>
+                    <country>PL</country>
+                    <postalCode>77-330</postalCode>
+                    <city>Kraków</city>
+                    <streetAddressLine>Wolności 7</streetAddressLine>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="2.16.840.1.113883.3.4424"/>
+                <name>Centrum e-Zdrowia</name>
+                <telecom use="WP" value="mailto:biuro@cez.gov.pl"/>
+                <addr>
+                    <streetAddressLine>ul. Stanisława Dubois 5A</streetAddressLine>
+                    <city>Warszawa</city>
+                    <postalCode>00-184</postalCode>
+                    <state>mazowieckie</state>
+                    <country>PL</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="20250604124708+0100"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1"/>
+            <addr>
+                <streetAddressLine nullFlavor="NI"/>
+                <city nullFlavor="NI"/>
+                <postalCode nullFlavor="NI"/>
+                <country>PL</country>
+            </addr>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson>
+                <name>
+                    <family>Testowy</family>
+                    <given>Farmaceuta</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6"/>
+                <name>Apteka porcelanowa</name>
+                <telecom use="WP" value="tel:+4832123456"/>
+                <addr>
+                    <country>PL</country>
+                    <postalCode>77-330</postalCode>
+                    <city>Kraków</city>
+                    <streetAddressLine>Wolności 7</streetAddressLine>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <inFulfillmentOf typeCode="FLFS">
+        <order classCode="ACT" moodCode="RQO">
+            <id extension="486725752664102" root="1.2.208.176.7.2.2"/>
+        </order>
+    </inFulfillmentOf>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id extension="B6E6578A689643C28893EA" root="2.16.840.1.113883.3.4424.2.7.19.5.1"/>
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody classCode="DOCBODY">
+            <component typeCode="COMP">
+                <section classCode="DOCSECT" moodCode="EVN">
+                    <templateId root="2.16.840.1.113883.10.20.1.8"/>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.2"/>
+                    <id extension="B6E6578A689643C28893EA" root="2.16.840.1.113883.3.4424.7.20.2.2.4.2.7.19.5.1"/>
+                    <code code="60590-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="Medication dispensed.brief Document"/>
+                    <title>Dispensation</title>
+                    <text mediaType="text/plain">
+                        <paragraph>
+                            <content>DANE RECEPTY ELEKTRONICZNEJ</content>
+                            <br/>
+                            <content>Pozycja recepty:</content>
+                            <content>1.2.208.176.7.2.2:486725752664102-1</content>
+                            <br/>
+                            <content>NPWZ ID:</content>
+                            <content styleCode="Bold">LKPGJ</content>
+                        </paragraph>
+                        <paragraph ID="SPLY_1">
+                            <content>WYDANO LEK GOTOWY</content>
+                            <br/>
+                            <content>Data realizacji:</content>
+                            <content styleCode="Bold">2025.06.04 12:47:08</content>
+                            <br/>
+                            <content>Numer leku nadany przez aptekę:</content>
+                            <content styleCode="Bold">100130515</content>
+                            <br/>
+                            <content>Kategoria dostępności:</content>
+                            <content styleCode="Bold">Rp</content>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <content>Nazwa</content>
+                            <content styleCode="Bold">Lantus</content>
+                            <br/>
+                            <content>Postać:</content>
+                            <content styleCode="Bold">Roztwór do wstrzykiwań</content>
+                            <br/>
+                            <content>Dawka:</content>
+                            <content styleCode="Bold">100 j.m./ml</content>
+                            <br/>
+                            <content>Opakowanie:</content>
+                            <content styleCode="Bold">1 wstrzykiwacz 3 ml</content>
+                            <br/>
+                            <content>Nr serii:</content>
+                            <content styleCode="Bold">XYZ123</content>
+                            <content>Data ważności:</content>
+                            <content styleCode="Bold">2026.06.04</content>
+                            <br/>
+                            <content>Identyfikator produktu:</content>
+                            <content>05909990617524 (GS1/EAN)</content>
+                            <br/>
+                            <content>Ilość:</content>
+                            <content styleCode="Bold">1.0</content>
+                            <br/>
+                            <content>Lek pierw. ordyn.:</content>
+                            <content styleCode="Bold">Abasaglar KwikPen, roztwór do wstrzykiwań we wstrzykiwaczu, 100 E/ml, 3 5 szt.</content>
+                            <br/>
+                            <content>Identyfikator produktu:</content>
+                            <content>28105484214 (Lægemiddelstyrelsens DrugID)</content>
+                        </paragraph>
+                        <paragraph ID="ACT_1">
+                            <content styleCode="Bold">Wydano zamiennik</content>
+                        </paragraph>
+                        <paragraph ID="ACT_2">
+                            <content styleCode="Bold">TAKSACJA</content>
+                            <br/>
+                            <content>Zapłacono:</content>
+                            <content styleCode="Bold">15,98 zł</content>
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <supply classCode="SPLY" moodCode="EVN">
+                            <templateId root="2.16.840.1.113883.10.20.1.34"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.3"/>
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3"/>
+                            <id extension="B6E6578A689643C28893EA-1" root="2.16.840.1.113883.3.4424.7.20.2.2.3.2.7.19.5.1"/>
+                            <quantity unit="1" value="1"/>
+                            <product typeCode="PRD">
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                        <code code="100506423" codeSystem="2.16.840.1.113883.3.4424.6.1" codeSystemName="Identyfikatory leków z bazy produktów leczniczych URPL" displayName="Lantus SoloStar"/>
+                                        <name>Lantus SoloStar</name>
+                                        <pharm:desc>100 j.m./ml</pharm:desc>
+                                        <pharm:formCode code="13068000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2025-01-07" displayName="Solution for injection in pre-filled injector"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="13068000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" displayName="Roztwór do wstrzykiwań we wstrzykiwaczu"/></pharm:formCode>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="mL" value="3"/>
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:formCode code="30050000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2025-01-07" displayName="Pre-filled pen"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="30050000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" displayName="wstrzykiwacz"/></pharm:formCode>
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="1" value="1"/>
+                                                    <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                        <pharm:code code="05909990617524" codeSystem="1.3.160" codeSystemName="GS1" displayName="Lantus SoloStar, solution for injection in pre-filled injector, 100 j.m./ml, 1 x pre-filled pen(s), 3 mL, (SoloStar), 05909990617524, EU/1/00/134/030 / insulin glargine, A10AE04"/>
+                                                        <pharm:name>Lantus SoloStar, solution for injection in pre-filled injector, 100 j.m./ml, 1 x pre-filled pen(s), 3 mL, (SoloStar), 05909990617524, EU/1/00/134/030 / insulin glargine, A10AE04</pharm:name>
+                                                        <pharm:formCode nullFlavor="NI"/>
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2025-01" displayName="insulin glargine"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="insulina glargina"/></pharm:code>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator unit="[IU]/mL" value="100" xsi:type="PQ"/>
+                                                <denominator unit="1" value="1" xsi:type="PQ"/>
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2025-01" displayName="insulin glargine"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="insulina glargina"/></pharm:code>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                    </manufacturedMaterial>
+                                    <manufacturerOrganization classCode="ORG" determinerCode="INSTANCE">
+                                        <name>Sanofi-Aventis Deutschland GmbH</name>
+                                    </manufacturerOrganization>
+                                </manufacturedProduct>
+                            </product>
+                            <performer typeCode="PRF">
+                                <time value="20250604124708+0100"/>
+                                <assignedEntity>
+                                    <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1"/>
+                                    <addr nullFlavor="NI"/>
+                                    <telecom nullFlavor="NI"/>
+                                    <assignedPerson>
+                                        <name>
+                                            <family>Testowy</family>
+                                            <given>Farmaceuta</given>
+                                        </name>
+                                    </assignedPerson>
+                                    <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                                        <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6"/>
+                                        <name>Apteka porcelanowa</name>
+                                        <telecom use="WP" value="tel:+4832123456"/>
+                                        <addr>
+                                            <country>PL</country>
+                                            <postalCode>77-330</postalCode>
+                                            <city>Kraków</city>
+                                            <streetAddressLine>Wolności 7</streetAddressLine>
+                                        </addr>
+                                    </representedOrganization>
+                                </assignedEntity>
+                            </performer>
+                            <entryRelationship typeCode="REFR">
+                                <substanceAdministration classCode="SBADM" moodCode="INT">
+                                    <id extension="486725752664102" root="1.2.208.176.7.2.2"/>
+                                    <consumable typeCode="CSM">
+                                        <manufacturedProduct classCode="MANU">
+                                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                            <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                                <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                                <code code="28105484214" codeSystem="1.2.208.176.3.1" codeSystemName="Lægemiddelstyrelsens DrugID"/>
+                                                <name>Abasaglar KwikPen</name>
+                                                <pharm:desc>100 E/ml</pharm:desc>
+                                                <pharm:formCode code="50060200" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2025-01-07" displayName="Roztwór do wstrzykiwań we wstrzykiwaczu"/>
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="mL" value="3"/>
+                                                    <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                        <pharm:formCode nullFlavor="UNK"/>
+                                                        <pharm:asContent classCode="CONT">
+                                                            <pharm:quantity unit="1" value="5"/>
+                                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                                <pharm:name>Abasaglar KwikPen, injektionsvæske, opløsning i fyldt pen, 100 E/ml, 5 x 3 ml (1-80E/Inj) (2care4)</pharm:name>
+                                                                <pharm:formCode code="30050000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2025-01-07" displayName="Wstrzykiwacz półautomatyczny napełniony"/>
+                                                            </pharm:containerPackagedProduct>
+                                                        </pharm:asContent>
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+                                                <pharm:asSpecializedKind classCode="GRIC">
+                                                    <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
+                                                        <pharm:code code="A10AE04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2025-01" displayName="insulina glargina"/>
+                                                    </pharm:generalizedMaterialKind>
+                                                </pharm:asSpecializedKind>
+                                            </manufacturedMaterial>
+                                        </manufacturedProduct>
+                                    </consumable>
+                                </substanceAdministration>
+                            </entryRelationship>
+                            <entryRelationship typeCode="COMP">
+                                <act classCode="ACT" moodCode="EVN">
+                                    <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="ActClass" displayName="Substitution"/>
+                                </act>
+                            </entryRelationship>
+                        </supply>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>

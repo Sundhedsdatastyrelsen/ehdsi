@@ -1,9 +1,12 @@
 package dk.sundhedsdatastyrelsen.ncpeh.locallms;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class DataProvider {
@@ -52,14 +55,35 @@ public class DataProvider {
 
     public PackageInfo packageInfo(String packageNumber) {
         var sql = """
-            SELECT drugId, dispensationRegulationCode, packageFormCode
+            SELECT drugId, dispensationRegulationCode, packageFormCode, numberOfSubPackages
             FROM LMS02
             WHERE packageNumber = ?
             """;
         return queryRow(
-            rs -> new PackageInfo(rs.getString(1), rs.getString(2), rs.getString(3)),
+            rs -> new PackageInfo(
+                rs.getString(1),
+                rs.getString(2),
+                rs.getString(3),
+                (Integer) rs.getObject(4)),
             sql,
             canonicalizePackageNumber(packageNumber));
+    }
+
+    public List<PackageSize> allSubpackagesAndPackageSizes() {
+        try (var conn = dataSource.getConnection();
+             var pstmt = conn.prepareStatement("SELECT packageNumber, numericalPackageSize, numberOfSubPackages FROM LMS02")) {
+            var resultSet = pstmt.executeQuery();
+            // As of June 2025, there are 12348 rows in LMS02. Streaming the contents is complex and unnecessary for data of this size.
+            var list = new ArrayList<PackageSize>(16000);
+            while (resultSet.next()) {
+                list.add(new PackageSize(
+                    resultSet.getString(1), BigDecimal.valueOf(resultSet.getInt(2), 2),
+                    (Integer) resultSet.getObject(3)));
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new IllegalStateException("SQLite query failed", e);
+        }
     }
 
     private String canonicalizePackageNumber(String packageNumber) {

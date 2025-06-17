@@ -24,13 +24,16 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Organization;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageLayer;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Size;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -82,7 +85,7 @@ public class EPrescriptionL3Mapper {
             .signatureTime(OffsetDateTime.now())
             .parentDocumentId(prescriptionId)
             .prescriptionId(prescriptionId)
-            .product(product(prescription, input.packageFormCode()))
+            .product(product(prescription, input.packageFormCode(), input.numberOfSubPackages(), input.manufacturerOrganizationName()))
             .packageQuantity((long) prescription.getPackageRestriction().getPackageQuantity())
             .substitutionAllowed(prescription.isSubstitutionAllowed())
             .indicationText(indicationText)
@@ -126,7 +129,7 @@ public class EPrescriptionL3Mapper {
                 .getFullName(), prescription.getIdentifier());
     }
 
-    private static Product product(PrescriptionType prescription, String packageFormCodeRaw) {
+    private static Product product(PrescriptionType prescription, String packageFormCodeRaw, Integer numberOfSubPackages, String manufacturer) {
         var drugId = prescription.getDrug().getIdentifier();
         var codedId = drugId != null ? CdaCode.builder()
             .codeSystem(Oid.DK_DRUG_ID)
@@ -139,18 +142,36 @@ public class EPrescriptionL3Mapper {
             .displayName(f.getText())
             .build();
 
-        var ps = prescription.getPackageRestriction().getPackageSize();
-        var size = new Size(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()), ps.getValue());
-
         var packageNumber = prescription.getPackageRestriction().getPackageNumber().getValue();
         var packageCode = CdaCode.builder()
             .codeSystem(Oid.DK_VARENUMRE)
             .code(packageNumber)
             .build();
-        var packageFormCode = CdaCode.builder()
+        var packageFormCode = packageFormCodeRaw != null ? CdaCode.builder()
             .codeSystem(Oid.DK_EMBALLAGETYPE)
             .code(packageFormCodeRaw)
+            .build() : null;
+        var ps = prescription.getPackageRestriction().getPackageSize();
+        var subpackages = numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages;
+        var layered = subpackages > 1;
+
+        var outerLayer = PackageLayer.builder()
+            .unit(layered ? new PackageUnit.WithCode("1") : PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+            .amount(layered ? BigDecimal.valueOf(subpackages) : ps.getValue())
+            .description(productDescription(prescription))
+            .packageFormCode(layered ? null : packageFormCode)
+            .packageCode(packageCode)
             .build();
+
+        var innerLayer = layered ?
+            PackageLayer.builder()
+                .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+                .amount(calculateInnerPackageAmount(ps.getValue(), numberOfSubPackages))
+                .packageFormCode(packageFormCode)
+                .wrappedIn(outerLayer)
+                .build()
+            : null;
+
 
         var atc = prescription.getDrug().getATC();
         var atcCode = CdaCode.builder()
@@ -165,12 +186,17 @@ public class EPrescriptionL3Mapper {
             .name(prescription.getDrug().getName())
             .strength(drugStrengthText(prescription))
             .formCode(formCode)
-            .size(size)
-            .packageCode(packageCode)
-            .packageFormCode(packageFormCode)
+            .innermostPackageLayer(innerLayer != null ? innerLayer : outerLayer)
             .atcCode(atcCode)
-            .description(productDescription(prescription))
+            .manufacturerOrganizationName(manufacturer)
             .build();
+    }
+
+    /// Public for testing
+    public static BigDecimal calculateInnerPackageAmount(BigDecimal numericalPackageSize, Integer numberOfSubPackages) {
+        return numericalPackageSize
+            .setScale(2, RoundingMode.UNNECESSARY)
+            .divide(BigDecimal.valueOf(numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages, 0), RoundingMode.UNNECESSARY);
     }
 
     private static Patient patient(GetPrescriptionResponseType response) throws MapperException {
@@ -181,7 +207,10 @@ public class EPrescriptionL3Mapper {
         }
 
         var a = response.getPatient().getAddress();
-        var address = new Address(List.of(String.format("%s %s", a.getStreetName(), a.getStreetBuildingIdentifier())), a.getDistrictName(), a.getPostCodeIdentifier(), null);
+        // There will be no address when the patient has address protection ("adressebeskyttelse")
+        var address = a != null
+            ? new Address(List.of(String.format("%s %s", a.getStreetName(), a.getStreetBuildingIdentifier())), a.getDistrictName(), a.getPostCodeIdentifier(), null)
+            : null;
 
         var genderCodeBuilder = CdaCode.builder()
             .codeSystem(Oid.ADMINISTRATIVE_GENDER)
@@ -324,7 +353,7 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator organization"));
     }
 
-    public static AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
+    public static @NonNull AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
         return prescriptionType.getCreated()
             .getBy()
             .getContent()
@@ -355,16 +384,19 @@ public class EPrescriptionL3Mapper {
             if (text != null && codedStrength != null) {
                 structured.add(ActiveIngredient.builder()
                     .name(text)
-                        .quantity(ActiveIngredient.Quantity.builder()
-                            .numerator(strength.getValue())
-                            .numeratorUnit(codedStrength.numeratorUnit())
-                            .denominator(codedStrength.denominator())
-                            .denominatorUnit(codedStrength.denominatorUnit())
-                            .translation(codedStrength.translation())
-                            .build())
+                    .quantity(ActiveIngredient.Quantity.builder()
+                        .numerator(strength.getValue())
+                        .numeratorUnit(codedStrength.numeratorUnit())
+                        .denominator(codedStrength.denominator())
+                        .denominatorUnit(codedStrength.denominatorUnit())
+                        .translation(codedStrength.translation())
+                        .build())
                     .build());
             }
-        } else {
+        }
+
+        // If the single element could not be mapped, or there were more than one, add them all as simple names.
+        if (structured.isEmpty()) {
             structured.addAll(substances.getActiveSubstance().stream()
                 .map(EPrescriptionL3Mapper::getSubstanceText)
                 .filter(Objects::nonNull)

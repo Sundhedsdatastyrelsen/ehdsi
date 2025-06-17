@@ -1,19 +1,36 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +54,9 @@ class DispensationMapperTest {
             Arguments.of("CzRequest1.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
             Arguments.of("CzRequest2.xml"), // One of the requests the CZ team sent us during the Fall 2024 test
             Arguments.of("CzRequest3.xml"), // One of the requests the CZ team sent us during the Spring 2025 test
-            Arguments.of("GrRequest1.xml") // One of the requests the GR team sent us during the Fall 2024 test
+            Arguments.of("GrRequest1.xml"), // One of the requests the GR team sent us during the Fall 2024 test
+            Arguments.of("PlRequest1.xml"),  // One of the requests the PL team sent us during the Spring 2025 test
+            Arguments.of("PlRequest2.xml")  // One of the requests the PL team sent us during the Spring 2025 review phase
         );
     }
 
@@ -50,6 +69,12 @@ class DispensationMapperTest {
         assertThat(req.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(req.getPrescription().getFirst().getIdentifier() > 0L);
         assertThat(req.getPersonIdentifier().getValue(), is(equalTo("1111111118")));
+
+        ///  Validate our StartEffectuationRequest against the WSDL schema.
+        var validator = fmk146E6Schema().newValidator();
+        var element = new dk.dkma.medicinecard.xml_schema._2015._06._01.e5.ObjectFactory().createStartEffectuationRequest(req);
+        Assertions.assertDoesNotThrow(() ->
+            validator.validate(prepareElementForValidation(element)));
     }
 
     @Test
@@ -219,12 +244,44 @@ class DispensationMapperTest {
                 substances.getActiveSubstance().stream().map(ActiveSubstanceType::getFreeText).toList(),
                 contains("LEVODOPA", "CARBIDOPA", "ENTACAPONE"));
         }
+    }
 
+    @Test
+    void packageIdTest() throws Exception {
+        {
+            var packageId = DispensationMapper.packageId(testDispensationCda("PlRequest1.xml"));
+            assertThat(packageId, is(notNullValue()));
+            assertThat(DispensationMapper.eval(packageId, "@code"), is("05909990773541"));
+            assertThat(DispensationMapper.eval(packageId, "@codeSystem"), is("1.3.160"));
+        }
+        {
+            var packageId = DispensationMapper.packageId(testDispensationCda("CzRequest3.xml"));
+            assertThat(packageId, is(nullValue()));
+        }
+        {
+            var packageId = DispensationMapper.packageId(testDispensationCda("dispensation2.xml"));
+            assertThat(packageId, is(notNullValue()));
+            assertThat(DispensationMapper.eval(packageId, "@code"), is("492285"));
+            assertThat(DispensationMapper.eval(packageId, "@codeSystem"), is("2.16.17.710.802.1000.990.1.20.2"));
+        }
+    }
+
+    @Test
+    void packageDescriptionTest() throws Exception {
+        {
+            var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("PlRequest1.xml"));
+            assertThat(packageDesc, containsString("Asubtela, film-coated tablet, 3 mg"));
+            assertThat(packageDesc, not(containsString("\n")));
+        }
+        {
+            var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("dispensation1.xml"));
+            assertThat(packageDesc, is(""));
+        }
     }
 
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
-    void createPharmacyEffectuationRequestTest(String xmlFileName) throws MapperException {
+    void createPharmacyEffectuationRequestTest(String xmlFileName) throws Exception {
         var cda = testDispensationCda(xmlFileName);
         var packageRestriction = PackageRestrictionType.builder()
             .withPackageNumber(DispensationMapper.packageNumber())
@@ -244,5 +301,48 @@ class DispensationMapperTest {
 
         assertThat(result.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(result.getPrescription().getFirst().getOrderIdentifier() > 0L);
+
+        ///  Validate our CreatePharmacyEffectuationRequest against the WSDL schema.
+        var validator = fmk146E6Schema().newValidator();
+        var element = new ObjectFactory().createCreatePharmacyEffectuationRequest(result);
+        Assertions.assertDoesNotThrow(() ->
+            validator.validate(prepareElementForValidation(element)));
+    }
+
+    private Source prepareElementForValidation(JAXBElement<?> element) throws JAXBException {
+        var sw = new StringWriter();
+        JAXBContext.newInstance(
+            "dk.dkma.medicinecard.xml_schema._2015._06._01"
+                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
+                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e5"
+                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
+                + ":dk.sdsd.dgws._2012._06")
+            .createMarshaller()
+            .marshal(element, sw);
+        return new StreamSource(new StringReader(sw.toString()));
+    }
+
+    /**
+     * Extract the XSD schema from the FMK WSDL file.
+     */
+    private Schema fmk146E6Schema() {
+        try {
+            // First we parse the XML document with a namespace-aware DocumentBuilder
+            var wsdl = this.getClass().getClassLoader().getResource("wsdl/MedicineCard-inline_2015_06_01_E6.wsdl");
+            assertThat(wsdl, is(notNullValue()));
+            var doc = DocumentBuilderFactory.newDefaultNSInstance()
+                .newDocumentBuilder()
+                .parse(wsdl.openStream());
+
+            // Then we extract all the "xs:schema" nodes and massage them into a javax.xml.validation.Schema object
+            var schemaNodes = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "schema");
+            var xsds = IntStream.range(0, schemaNodes.getLength())
+                .mapToObj(i -> new DOMSource(schemaNodes.item(i), wsdl.toString()))
+                .toArray(Source[]::new);
+            return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+                .newSchema(xsds);
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

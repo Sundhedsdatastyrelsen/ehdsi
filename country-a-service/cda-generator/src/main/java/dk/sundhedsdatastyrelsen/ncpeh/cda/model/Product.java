@@ -13,11 +13,8 @@ public class Product {
     CdaCode drugId;
     @NonNull String name;
     String strength;
-    @NonNull String description;
     @NonNull CdaCode formCode;
-    CdaCode packageCode;
-    CdaCode packageFormCode;
     @NonNull CdaCode atcCode;
-    @NonNull Size size;
+    @NonNull PackageLayer innermostPackageLayer;
     String manufacturerOrganizationName;
 }

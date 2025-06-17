@@ -75,6 +75,7 @@ jobs:
         env:
           LMSFTP_USERNAME: ${{ secrets.LMSFTP_USERNAME }}
           LMSFTP_PASSWORD: ${{ secrets.LMSFTP_PASSWORD }}
+          E2E_TRAINING_HOST: ${{ secrets.E2E_TRAINING_HOST }}
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4

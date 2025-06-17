@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import freemarker.template.TemplateException;
@@ -31,7 +32,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", "Manufacturer");
+        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", 1, "Manufacturer");
         var epL3 = EPrescriptionL3Mapper.model(input);
 
         //Generate prescription without null in packageCode
@@ -40,7 +41,8 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertFalse(xmlString.isBlank());
 
         //Set packageCode to null, and regenerate
-        var productWithNullPackageCode = epL3.getProduct().withPackageFormCode(null);
+        var productWithNullPackageCode = epL3.getProduct()
+            .withInnermostPackageLayer(epL3.getProduct().getInnermostPackageLayer().withPackageFormCode(null));
         var epL3NullPackageCode = epL3.withProduct(productWithNullPackageCode);
         var xmlStringWithNullPackageCode = EPrescriptionL3Generator.generate(epL3NullPackageCode);
         Assertions.assertNotNull(xmlStringWithNullPackageCode);
@@ -61,13 +63,20 @@ class EPrescriptionL3GeneratorTest {
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var prescriptions = prescription.getPrescription();
         for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
+            var drugInfo = getDrugInfo(prescriptions.get(prescriptionindex));
             var input = new EPrescriptionL3Input(
-                prescription, prescriptionindex, medication, List.of(AuthorizationType.builder()
-                .withSpeciale1("Kirurgi")
-                .withSpeciale2("Børnepsykiatri")
-                .withUddannelsesKode("7170")
-                .withAutorisationGyldig("1")
-                .build()), "FIN", "Manufacturer");
+                prescription,
+                prescriptionindex,
+                medication,
+                List.of(AuthorizationType.builder()
+                    .withSpeciale1("Kirurgi")
+                    .withSpeciale2("Børnepsykiatri")
+                    .withUddannelsesKode("7170")
+                    .withAutorisationGyldig("1")
+                    .build()),
+                drugInfo.packageFormCode(),
+                drugInfo.numberOfSubPackages(),
+                drugInfo.manufacturerOrganization());
             var xmlString = EPrescriptionL3Generator.generate(input);
 
             // 1. Test if well-formed XML (can be parsed)
@@ -98,5 +107,15 @@ class EPrescriptionL3GeneratorTest {
 //                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
 //            );
         }
+    }
+
+    record DrugInfo(String packageFormCode, Integer numberOfSubPackages, String manufacturerOrganization) {
+    }
+
+    static DrugInfo getDrugInfo(PrescriptionType prescription) {
+        return switch (prescription.getPackageRestriction().getPackageNumber().getValue()) {
+            case "448060" -> new DrugInfo("INP", 5, "Eli Lilly");
+            default -> new DrugInfo("FIN", 1, "Manufacturer");
+        };
     }
 }

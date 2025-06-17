@@ -6,7 +6,9 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -27,19 +29,37 @@ class LocalLmsTest {
         assertThat(q.packageFormCode("005813"), is("BLI"));
         // FMK removes leading zeros, so it should work without them:
         assertThat(q.packageFormCode("5813"), is("BLI"));
-        assertThat(q.packageInfo("005813"), is(new PackageInfo(
-            "28100636073",
-            "HX18",
-            "BLI"
-        )));
+        assertThat(
+            q.packageInfo("005813"), is(new PackageInfo(
+                "28100636073",
+                "HX18",
+                "BLI",
+                1
+            )));
+        // Test what happens with empty subpackages
+        assertThat(
+            q.packageInfo("000005"), is(new PackageInfo(
+                "28103023098",
+                "B",
+                "BLI",
+                null
+            )));
+        assertThat(
+            q.allSubpackagesAndPackageSizes(),
+            is(List.of(
+                // ie 10.00
+                new PackageSize("005813", BigDecimal.valueOf(1000, 2), 1),
+                // ie 20.00
+                new PackageSize("000005", BigDecimal.valueOf(2000, 2), null))));
 
         // Querying unknown values should give null
         assertThat(q.manufacturerOrganizationName(0L), is(nullValue()));
         assertThat(q.packageFormCode("00000"), is(nullValue()));
 
         // Querying malformed values should throw
-        assertThrows(IllegalArgumentException.class, () ->
-            q.packageInfo("abc"));
+        assertThrows(
+            IllegalArgumentException.class, () ->
+                q.packageInfo("abc"));
     }
 
     @Test

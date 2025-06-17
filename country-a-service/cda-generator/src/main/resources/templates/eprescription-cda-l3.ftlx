@@ -223,29 +223,66 @@
 </#if>
                                         <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
                                         <pharm:asContent classCode="CONT">
-<#if product.size.unit.tag == "WithCode">
-                                            <pharm:quantity unit="${ product.size.unit.code }" value="${ product.size.value }"/>
-<#elseif product.size.unit.tag == "WithTranslation">
-                                            <pharm:quantity unit="1" value="${ product.size.value }">
+<#if product.innermostPackageLayer.unit.tag == "WithCode">
+                                            <pharm:quantity unit="${ product.innermostPackageLayer.unit.code }" value="${ product.innermostPackageLayer.amount }"/>
+<#elseif product.innermostPackageLayer.unit.tag == "WithTranslation">
+                                            <pharm:quantity unit="1" value="${ product.innermostPackageLayer.amount }">
                                                 <translation>
-                                                    <originalText>${ product.size.unit.translation }</originalText>
+                                                    <originalText>${ product.innermostPackageLayer.unit.translation }</originalText>
                                                 </translation>
                                             </pharm:quantity>
 <#else>
-<#stop "Invalid product.size.unit.tag">
+<#stop "Invalid product.innermostPackageLayer.unit.tag">
 </#if>
                                             <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
-                                                <pharm:code <@common.cdaCodeAttrs product.packageCode/> />
+<#if product.innermostPackageLayer.packageCode??>
+                                                <pharm:code <@common.cdaCodeAttrs product.innermostPackageLayer.packageCode/> />
+</#if>
                                                 <#-- "If present, the element SHALL contain a sufficiently detailed description of
                                                 the prescribed medicinal product/package. The description may contain information
                                                 on the brand name, dose form, package (including its type or brand name), strength, etc.
 
                                                 If the detailed description of the product is not available, the element SHALL be skipped." -->
-                                                <pharm:name>${ product.description }</pharm:name>
-<#if (product.packageFormCode.code)?has_content>
-                                                <pharm:formCode <@common.cdaCodeAttrs product.packageFormCode/> />
+<#if product.innermostPackageLayer.description??>
+                                                <pharm:name>${ product.innermostPackageLayer.description }</pharm:name>
+</#if>
+<#if (product.innermostPackageLayer.packageFormCode.code)?has_content>
+                                                <pharm:formCode <@common.cdaCodeAttrs product.innermostPackageLayer.packageFormCode/> />
 <#else>
                                                 <pharm:formCode nullFlavor="UNK" />
+</#if>
+<#if (product.innermostPackageLayer.wrappedIn)??>
+                                                <pharm:asContent classCode="CONT">
+    <#if product.innermostPackageLayer.wrappedIn.unit.tag == "WithCode">
+                                                    <pharm:quantity unit="${ product.innermostPackageLayer.wrappedIn.unit.code }" value="${ product.innermostPackageLayer.wrappedIn.amount }"/>
+    <#elseif product.innermostPackageLayer.wrappedIn.unit.tag == "WithTranslation">
+                                                    <pharm:quantity unit="1" value="${ product.innermostPackageLayer.wrappedIn.amount }">
+                                                        <translation>
+                                                            <originalText>${ product.innermostPackageLayer.wrappedIn.unit.translation }</originalText>
+                                                        </translation>
+                                                    </pharm:quantity>
+    <#else>
+    <#stop "Invalid product.innermostPackageLayer.wrappedIn.unit.tag">
+    </#if>
+                                                    <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+    <#if product.innermostPackageLayer.wrappedIn.packageCode??>
+                                                        <pharm:code <@common.cdaCodeAttrs product.innermostPackageLayer.wrappedIn.packageCode/> />
+    </#if>
+                                                        <#-- "If present, the element SHALL contain a sufficiently detailed description of
+                                                        the prescribed medicinal product/package. The description may contain information
+                                                        on the brand name, dose form, package (including its type or brand name), strength, etc.
+
+                                                        If the detailed description of the product is not available, the element SHALL be skipped." -->
+    <#if product.innermostPackageLayer.wrappedIn.description??>
+                                                        <pharm:name>${ product.innermostPackageLayer.wrappedIn.description }</pharm:name>
+    </#if>
+    <#if (product.innermostPackageLayer.wrappedIn.packageFormCode.code)?has_content>
+                                                        <pharm:formCode <@common.cdaCodeAttrs product.innermostPackageLayer.wrappedIn.packageFormCode/> />
+    <#else>
+                                                        <pharm:formCode nullFlavor="UNK" />
+    </#if>
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
 </#if>
                                             </pharm:containerPackagedProduct>
                                         </pharm:asContent>

@@ -3,16 +3,19 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionPdf;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageLayer;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PdfField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class EPrescriptionPdfMapper {
@@ -38,15 +41,25 @@ public class EPrescriptionPdfMapper {
     private static String packageLine(EPrescriptionL3 model) {
         var quantity = model.getPackageQuantityLong();
         var packagePlural = quantity > 1 ? "pakker" : "pakke";
-        var unit = switch (model.getProduct().getSize().getUnit()) {
+        // Even in the case of inner/outer packages, the unit is always on the first element in the xml tree.
+        var unit = switch (model.getProduct().getInnermostPackageLayer().getUnit()) {
             case PackageUnit.WithCode u -> u.getCode();
             case PackageUnit.WithTranslation u -> u.getTranslation();
         };
+
+        // We want the total amount of things in the package. If there are multiple layers, we need to multiply them.
+        // We could also try to display something useful using the wrapping mechanic, but I don't think we'll get
+        // anywhere that would make sense for our users.
+        var wrappedInPackageValue = Optional.ofNullable(model.getProduct().getInnermostPackageLayer().getWrappedIn())
+            .map(PackageLayer::getNumberValue)
+            .orElse(BigDecimal.ONE);
+        var totalUnits = model.getProduct().getInnermostPackageLayer().getNumberValue().multiply(wrappedInPackageValue);
+
         return String.format(
             "%s %s à %s %s %s",
             quantity,
             packagePlural,
-            model.getProduct().getSize().getValue(),
+            totalUnits.stripTrailingZeros().toPlainString(),
             unit,
             model.getProduct().getFormCode().getDisplayName());
     }

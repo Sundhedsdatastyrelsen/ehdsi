@@ -3,10 +3,13 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -26,13 +29,14 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
+import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMetadataMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
@@ -104,6 +108,11 @@ public class PrescriptionService {
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
         }
+
+        public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+            var documentId = EPrescriptionMetadataMapper.fromRootedId(rootedDocumentId);
+            return new PrescriptionFilter(documentId, createdBefore, createdAfter);
+        }
     }
 
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
@@ -119,11 +128,11 @@ public class PrescriptionService {
                 .build();
             var fmkResponse = fmkClient.getPrescription(request, caller);
 
-            log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
+            log.debug("Found {} prescriptions", fmkResponse.getPrescription().size());
 
             var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
             return validPrescriptions.stream()
-                .map(pair -> EPrescriptionMapper.mapMeta(
+                .map(pair -> EPrescriptionMetadataMapper.mapMeta(
                     patientId,
                     fmkResponse,
                     pair.getLeft(),
@@ -176,13 +185,13 @@ public class PrescriptionService {
             return validPrescriptions.stream().map(pair -> {
                 try {
                     var prescription = pair.getRight();
-                    var packageFormCode = lmsDataProvider.packageFormCode(prescription
-                        .getPackageRestriction()
-                        .getPackageNumber()
-                        .getValue());
-                    var manufacturerOrganizationName = lmsDataProvider.manufacturerOrganizationName(
-                        prescription.getDrug().getIdentifier().getValue()
-                    );
+                    var packageInfo = Optional.ofNullable(prescription.getPackageRestriction())
+                        .map(PackageRestrictionType::getPackageNumber)
+                        .map(PackageNumberType::getValue)
+                        .map(lmsDataProvider::packageInfo);
+                    var manufacturerOrganizationName = Optional.ofNullable(prescription.getDrug().getIdentifier())
+                        .map(DrugIdentifierType::getValue)
+                        .map(lmsDataProvider::manufacturerOrganizationName);
                     var authorizations = authorizationRegistryCache.get(
                         EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription)
                             .getAuthorisationIdentifier(),
@@ -194,8 +203,9 @@ public class PrescriptionService {
                         pair.getLeft(),
                         drugMedications,
                         Optional.ofNullable(authorizations).orElse(List.of()),
-                        packageFormCode,
-                        manufacturerOrganizationName);
+                        packageInfo.map(PackageInfo::packageFormCode).orElse(null),
+                        packageInfo.map(PackageInfo::numberOfSubPackages).orElse(null),
+                        manufacturerOrganizationName.orElse(null));
                 } catch (MapperException e) {
                     throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get packageFormCode.");
                 }

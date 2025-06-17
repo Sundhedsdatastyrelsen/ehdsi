@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
+import lombok.NonNull;
 
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class EPrescriptionDocumentIdMapper {
         return Set.of(level1DocumentId(documentId), level3DocumentId(documentId));
     }
 
-    public static DocumentLevel parseDocumentLevel(String documentId) throws MapperException {
+    public static DocumentLevel parseDocumentLevel(@NonNull String documentId) throws MapperException {
         if (documentId.endsWith(level1Suffix)) {
             return DocumentLevel.LEVEL1;
         } else if (documentId.endsWith(level3Suffix)) {

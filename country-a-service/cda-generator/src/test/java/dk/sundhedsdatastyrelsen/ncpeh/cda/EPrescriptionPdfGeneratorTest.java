@@ -9,7 +9,7 @@ class EPrescriptionPdfGeneratorTest {
     void generateTest() throws Exception {
         var cpr = "0201909309";
         var fmkResponse = FmkResponseStorage.storedPrescriptions(cpr);
-        var modelL3 = EPrescriptionL3Mapper.model(new EPrescriptionL3Input(fmkResponse, 0, null, "FIN", "Manufacturer"));
+        var modelL3 = EPrescriptionL3Mapper.model(new EPrescriptionL3Input(fmkResponse, 0, null, "FIN", 1, "Manufacturer"));
         var modelL1 = EPrescriptionPdfMapper.map(modelL3);
         var pdf = EPrescriptionPdfGenerator.generate(modelL1);
         Assertions.assertNotNull(pdf);
