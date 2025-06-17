@@ -5,6 +5,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationRecordService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fsk;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class FskIT {
     private final InformationRecordService service = new InformationRecordService(Fsk.apiClient());
@@ -16,11 +21,24 @@ public class FskIT {
      */
     @Test
     void getListOfCards() throws Exception {
-        var adhocRequest = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, OrganizationIdentities.sundhedsdatastyrelsen());
+        var documentIdList = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, OrganizationIdentities.sundhedsdatastyrelsen());
+        assertThat(documentIdList.size(), is(1));
     }
 
     @Test
     void getDocument() throws Exception {
-        var adhocRequest = service.getInformationCard(Fsk.documentJensJensenFskResponse, OrganizationIdentities.sundhedsdatastyrelsen());
+        var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse, OrganizationIdentities.sundhedsdatastyrelsen());
+        assertThat(informationCard,is(notNullValue()));
+        assertThat(informationCard,containsString("<ClinicalDocument"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {Fsk.cprJensJensenReadOnly})
+    void getInformationCardFromPerson(String cpr){
+        var documentIdList = service.findInformationCardDetails(cpr, OrganizationIdentities.sundhedsdatastyrelsen());
+        var documentId = documentIdList.getFirst();
+        var informationCard = service.getInformationCard(documentId,OrganizationIdentities.sundhedsdatastyrelsen());
+        assertThat(informationCard,is(notNullValue()));
+        assertThat(informationCard,containsString("<ClinicalDocument"));
     }
 }

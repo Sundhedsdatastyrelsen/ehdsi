@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.util.Tuple;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class InformationRecordService {
         this.fskClient = fskClient;
     }
 
-    public String findInformationCardDetails(
+    public List<String> findInformationCardDetails(
         String patientId,
         Identity caller
     ) {
@@ -77,7 +78,8 @@ public class InformationRecordService {
                 .build();
 
             var fskResponse = fskClient.list(request, caller);
-            return fskResponse.toString();
+
+            return fskResponse.getRegistryObjectList().getIdentifiable().stream().map(identifiable -> identifiable.getValue().getId()).toList();
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
@@ -93,7 +95,8 @@ public class InformationRecordService {
                 .end().build();
 
             var fskResponse = fskClient.getDocument(request,caller);
-            return fskResponse.toString();
+            var document = fskResponse.getDocumentResponse().stream().map(dr -> new String(dr.getDocument(), StandardCharsets.UTF_8)).findFirst();
+            return document.orElse(null);
 
         } catch (IllegalArgumentException e){
             throw new CountryAException(HttpStatus.BAD_REQUEST,e);

@@ -89,7 +89,7 @@ public class NspClient {
         throw new NspClientException("Could not extract content from MIME response");
     }
 
-    public static String convertStreamToString(InputStream bis) {
+    private static String convertStreamToString(InputStream bis) {
         StringBuilder stringBuilder = new StringBuilder();
         try (InputStreamReader reader = new InputStreamReader(bis, StandardCharsets.UTF_8)) {
             int character;
