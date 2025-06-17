@@ -38,12 +38,12 @@ public class NspClient {
                  .execute(soapBody, extraHeaders)) {
             response.getResponse().reset();
             var fullText = convertStreamToString(response.getResponse());
-            
+
             // Check if response is MIME multipart
             if (fullText.contains("--uuid:")) {
                 fullText = extractSoapFromMime(fullText);
             }
-            
+
             var reply = sosiFactory.deserializeReply(fullText);
             if (response.isFault()) {
                 throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
@@ -54,26 +54,39 @@ public class NspClient {
 
     /**
      * Extract SOAP message from MIME multipart response.
-     * The SOAP message is typically in the part with Content-Type: application/xop+xml
      */
     private static String extractSoapFromMime(String mimeResponse) {
-        // Pattern to match the SOAP part in MIME response
-        Pattern pattern = Pattern.compile(
-            "--uuid:[^\\r\\n]+\\r?\\n" +
-            "Content-Id: <root\\.message@cxf\\.apache\\.org>\\r?\\n" +
-            "Content-Type: application/xop\\+xml[^\\r\\n]*\\r?\\n" +
-            "Content-Transfer-Encoding: binary\\r?\\n\\r?\\n" +
+        // Find the boundary marker
+        Pattern boundaryPattern = Pattern.compile("--(uuid:[^\\r\\n]+)");
+        Matcher boundaryMatcher = boundaryPattern.matcher(mimeResponse);
+        if (!boundaryMatcher.find()) {
+            throw new NspClientException("Could not find MIME boundary in response");
+        }
+        String boundary = boundaryMatcher.group(1);
+
+        // Extract content between boundaries
+        Pattern contentPattern = Pattern.compile(
+            "--" + Pattern.quote(boundary) + "\\r?\\n" +
             "([\\s\\S]*?)" +
-            "--uuid:[^\\r\\n]+--",
+            "--" + Pattern.quote(boundary) + "--",
             Pattern.MULTILINE
         );
 
-        Matcher matcher = pattern.matcher(mimeResponse);
-        if (matcher.find()) {
-            return matcher.group(1);
+        Matcher contentMatcher = contentPattern.matcher(mimeResponse);
+        if (contentMatcher.find()) {
+            String part = contentMatcher.group(1);
+            // Skip headers and get content after double newline
+            int contentStart = part.indexOf("\r\n\r\n");
+            if (contentStart == -1) {
+                contentStart = part.indexOf("\n\n");
+            }
+            if (contentStart == -1) {
+                throw new NspClientException("Could not find content in MIME part");
+            }
+            return part.substring(contentStart + 2).trim();
         }
-        
-        throw new NspClientException("Could not extract SOAP message from MIME response");
+
+        throw new NspClientException("Could not extract content from MIME response");
     }
 
     public static String convertStreamToString(InputStream bis) {
