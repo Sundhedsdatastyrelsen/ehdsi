@@ -1,20 +1,24 @@
-<?xml version='1.0' encoding='UTF-8'?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" targetNamespace="http://www.w3.org/2000/09/xmldsig#">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	targetNamespace="http://www.w3.org/2000/09/xmldsig#"
+	elementFormDefault="qualified">
 	<xs:element name="Signature">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="ds:SignedInfo"/>
-				<xs:element ref="ds:SignatureValue"/>
-				<xs:element ref="ds:KeyInfo"/>
+				<xs:element ref="ds:SignedInfo" />
+				<xs:element ref="ds:SignatureValue" />
+				<xs:element ref="ds:KeyInfo" />
 			</xs:sequence>
-			<xs:attribute name="id" type="xs:NCName" use="required"/>
+			<xs:attribute name="id" type="xs:NCName" use="required" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="SignedInfo">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="ds:CanonicalizationMethod"/>
-				<xs:element ref="ds:SignatureMethod"/>
-				<xs:element maxOccurs="unbounded" ref="ds:Reference"/>
+				<xs:element ref="ds:CanonicalizationMethod" />
+				<xs:element ref="ds:SignatureMethod" />
+				<xs:element ref="ds:Reference" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -23,8 +27,10 @@
 			<xs:attribute name="Algorithm" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:anyURI">
-						<xs:enumeration value="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
-						<xs:enumeration value="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+						<xs:enumeration
+							value="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+						<xs:enumeration
+							value="http://www.w3.org/2001/10/xml-exc-c14n#" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
@@ -35,7 +41,8 @@
 			<xs:attribute name="Algorithm" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:anyURI">
-						<xs:enumeration value="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+						<xs:enumeration
+							value="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
@@ -44,11 +51,11 @@
 	<xs:element name="Reference">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" ref="ds:Transforms"/>
-				<xs:element ref="ds:DigestMethod"/>
-				<xs:element ref="ds:DigestValue"/>
+				<xs:element ref="ds:Transforms" minOccurs="0" />
+				<xs:element ref="ds:DigestMethod" />
+				<xs:element ref="ds:DigestValue" />
 			</xs:sequence>
-			<xs:attribute name="URI" use="required"/>
+			<xs:attribute name="URI" use="required" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Transforms">
@@ -56,7 +63,7 @@
 			<xs:sequence maxOccurs="unbounded">
 				<xs:element name="Transform">
 					<xs:complexType>
-						<xs:attribute name="Algorithm" use="required"/>
+						<xs:attribute name="Algorithm" use="required" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
@@ -67,32 +74,33 @@
 			<xs:attribute name="Algorithm" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:anyURI">
-						<xs:enumeration value="http://www.w3.org/2000/09/xmldsig#sha1"/>
+						<xs:enumeration
+							value="http://www.w3.org/2000/09/xmldsig#sha1" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="DigestValue" type="xs:base64Binary"/>
-	<xs:element name="SignatureValue" type="xs:base64Binary"/>
+	<xs:element name="DigestValue" type="xs:base64Binary" />
+	<xs:element name="SignatureValue" type="xs:base64Binary" />
 	<xs:element name="KeyInfo">
 		<xs:complexType>
 			<xs:choice>
-				<xs:element ref="ds:KeyName"/>
+				<xs:element ref="ds:KeyName" />
 				<xs:sequence>
-					<xs:element ref="ds:X509Data"/>
+					<xs:element ref="ds:X509Data" />
 				</xs:sequence>
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="KeyName" type="xs:NMTOKEN"/>
+	<xs:element name="KeyName" type="xs:NMTOKEN" />
 	<xs:element name="X509Data">
 		<xs:complexType>
 			<xs:choice>
-				<xs:element ref="ds:X509Certificate"/>
-				<xs:element ref="ds:KeyName"/>
+				<xs:element ref="ds:X509Certificate" />
+				<xs:element ref="ds:KeyName" />
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="X509Certificate" type="xs:base64Binary"/>
+	<xs:element name="X509Certificate" type="xs:base64Binary" />
 </xs:schema>

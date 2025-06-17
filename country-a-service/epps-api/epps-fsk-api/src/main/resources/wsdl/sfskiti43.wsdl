@@ -13,23 +13,24 @@
 
 <definitions
         targetNamespace="urn:ihe:iti:xds-b:2007"
-        name="DocumentRegistry"
+        name="DocumentRepository"
         xmlns="http://schemas.xmlsoap.org/wsdl/"
-        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         xmlns:ihe="urn:ihe:iti:xds-b:2007"
-        xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
-        xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
-        xmlns:hsuid="http://www.nsi.dk/hsuid/2016/08/hsuid-1.1.xsd"
+        xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
         xmlns:medcom="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd"
         xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+        xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+        xmlns:hsuid="http://www.nsi.dk/hsuid/2016/08/hsuid-1.1.xsd"
 >
 
-    <documentation>IHE XDS.b Document Registry = ITI-18 adaptor = Registry Stored Query</documentation>
+    <documentation>IHE XDS.b Document Repository = ITI-43 adaptor = Retrieve Document Set</documentation>
 
     <types>
         <xsd:schema elementFormDefault="qualified">
-            <xsd:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" schemaLocation="./xsd/query.xsd"/>
+            <xsd:import namespace="urn:ihe:iti:xds-b:2007" schemaLocation="./xsd/IHEXDSB.xsd"/>
+            <xsd:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" schemaLocation="./xsd/rs.xsd"/>
             <xsd:import namespace="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd" schemaLocation="./xsd/medcom.xsd"/>
             <xsd:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" schemaLocation="./xsd/wsse.xsd"/>
             <xsd:import namespace="http://www.nsi.dk/hsuid/2016/08/hsuid-1.1.xsd" schemaLocation="./xsd/hsuid-1_1.xsd"/>
@@ -49,29 +50,31 @@
         <part name="DGWSFault" element="medcom:FaultCode"/>
     </message>
 
-    <message name="RegistryStoredQuery_Message">
-        <documentation>Registry Stored Query</documentation>
-        <part name="body" element="query:AdhocQueryRequest"/>
+    <message name="RetrieveDocumentSet_Message">
+        <documentation>Retrieve Document Set</documentation>
+        <part name="body" element="ihe:RetrieveDocumentSetRequest"/>
     </message>
 
-    <message name="RegistryStoredQueryResponse_Message">
-        <documentation>Registry Stored Query Response</documentation>
-        <part name="body" element="query:AdhocQueryResponse"/>
+    <message name="RetrieveDocumentSetResponse_Message">
+        <documentation>Retrieve Document Set Response</documentation>
+        <part name="body" element="ihe:RetrieveDocumentSetResponse"/>
     </message>
 
-    <portType name="DocumentRegistry_PortType">
-        <operation name="DocumentRegistry_RegistryStoredQuery">
-            <input message="ihe:RegistryStoredQuery_Message"
-                   wsam:Action="urn:ihe:iti:2007:RegistryStoredQuery"/>
-            <output message="ihe:RegistryStoredQueryResponse_Message"
-                    wsam:Action="urn:ihe:iti:2007:RegistryStoredQueryResponse"/>
-            <fault name="DGWSFault" message="ihe:DGWSFault"/>
+    <portType name="DocumentRepository_PortType">
+        <operation name="DocumentRepository_RetrieveDocumentSet">
+            <input message="ihe:RetrieveDocumentSet_Message"
+                   wsam:Action="urn:ihe:iti:2007:RetrieveDocumentSet"/>
+            <output message="ihe:RetrieveDocumentSetResponse_Message"
+                    wsam:Action="urn:ihe:iti:2007:RetrieveDocumentSetResponse"/>
+            <fault name="DGWSFault" message="ihe:DGWSFault">
+                <soap:fault name="DGWSFault" use="literal"/>
+            </fault>
         </operation>
     </portType>
 
-    <binding name="DocumentRegistry_Binding_Soap11" type="ihe:DocumentRegistry_PortType">
+    <binding name="DocumentRepository_Binding_Soap" type="ihe:DocumentRepository_PortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-        <operation name="DocumentRegistry_RegistryStoredQuery">
+        <operation name="DocumentRepository_RetrieveDocumentSet">
             <input>
                 <soap:header message="ihe:HsuidHeader" part="HsuidHeader" use="literal"/>
                 <soap:body use="literal"/>
@@ -79,15 +82,13 @@
             <output>
                 <soap:body use="literal"/>
             </output>
-            <fault name="DGWSFault">
-                <soap:fault name="DGWSFault" use="literal"/>
-            </fault>
         </operation>
     </binding>
 
-    <service name="DocumentRegistry_Service">
-        <port name="DocumentRegistry_Port_Soap11" binding="ihe:DocumentRegistry_Binding_Soap11">
-            <soap:address location="http://servicelocation/DocumentRegistry_Service11"/>
+    <service name="DocumentRepository_Service">
+        <port name="DocumentRepository_Port_Soap" binding="ihe:DocumentRepository_Binding_Soap">
+            <soap:address location="http://servicelocation/DocumentRepository_Service"/>
         </port>
     </service>
+
 </definitions>

@@ -1,10 +1,18 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- $Header: /cvsroot/ebxmlrr/ebxmlrr-spec/misc/3.0/schema/rs.xsd,v 1.9 2005/01/31 22:33:54 farrukh_najmi Exp $ --><schema xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0">
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!-- $Header: /cvsroot/ebxmlrr/ebxmlrr-spec/misc/3.0/schema/rs.xsd,v 1.9 2005/01/31 22:33:54 farrukh_najmi Exp $ -->
+<schema targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" 
+  xmlns="http://www.w3.org/2001/XMLSchema" 
+  xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" 
+  xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  >
   
   <annotation>
     <documentation xml:lang="en">The schema for OASIS ebXML Registry Services</documentation>
   </annotation>
   <!-- Import the rim.xsd file with XML schema mappaing from RIM -->
-  <import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" schemaLocation="./rim.xsd"/>
+  <import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" schemaLocation="rim.xsd"/>
   <complexType name="RegistryRequestType">
     <annotation>
       <documentation xml:lang="en">Base type for all ebXML Registry requests</documentation>
@@ -35,7 +43,7 @@
         <extension base="string">
           <attribute name="codeContext" type="string" use="required"/>
           <attribute name="errorCode" type="string" use="required"/>
-          <attribute default="urn:oasis:names:tc:ebxml-regrep:ErrorSeverityType:Error" name="severity" type="rim:referenceURI"/>
+          <attribute default="urn:oasis:names:tc:ebxml-regrep:ErrorSeverityType:Error" name="severity" type="rim:referenceURI" />
           <attribute name="location" type="string" use="optional"/>
         </extension>
       </simpleContent>

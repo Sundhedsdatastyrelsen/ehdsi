@@ -22,17 +22,17 @@ function fetchFile() {
 }
 
 
-initialUrl="https://test2-cnsp.ekstern-test.nspop.dk:8443/ddsrepository?wsdl"
-if [ ! -f "ddsrepository.wsdl" ]; then
+initialUrl="https://test2-cnsp.ekstern-test.nspop.dk:8443/sfsk/dgws-wsdl/iti43.wsdl"
+if [ ! -f "sfskiti43.wsdl" ]; then
 	echo "Fetching $initialUrl"
-	wget -q "$initialUrl" -O "ddsrepository.wsdl"
+	wget -q "$initialUrl" -O "sfskiti43.wsdl"
 fi
 if [ ! -d "xsd" ]; then
 	mkdir xsd
 fi
 
 
-initialFiles=$(grep -Po 'schemaLocation="\K.*?(?=")' ddsrepository.wsdl)
+initialFiles=$(grep -Po 'schemaLocation="\K.*?(?=")' sfskiti43.wsdl)
 
 for file in $initialFiles; do
 	fetchFile "$file"
@@ -40,7 +40,7 @@ done
 
 
 # Fix schemaLocation in main wsdl
-sed -Ei 's|schemaLocation="[^"]*/([^"]+)"|schemaLocation="./xsd/\1"|g;s|\?xsd=([0-9]+)|-\1.xsd|g' ddsrepository.wsdl
+sed -Ei 's|schemaLocation="[^"]*/([^"]+)"|schemaLocation="./xsd/\1"|g;s|\?xsd=([0-9]+)|-\1.xsd|g' sfskiti43.wsdl
 
 # Fix schemaLocation in xsds.
 for file in xsd/*; do

@@ -51,6 +51,7 @@
 						<wsdlUrl>${project.basedir}/src/main/resources/wsdl/ddsregistry.wsdl</wsdlUrl>
                         <wsdlUrl>${project.basedir}/src/main/resources/wsdl/ddsrepository.wsdl</wsdlUrl>
                         <wsdlUrl>${project.basedir}/src/main/resources/wsdl/sfskiti18.wsdl</wsdlUrl>
+                        <wsdlUrl>${project.basedir}/src/main/resources/wsdl/sfskiti43.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>
