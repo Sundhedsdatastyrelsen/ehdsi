@@ -36,8 +36,7 @@ public class NspClient {
              var response = client.request(uri, soapAction)
                  .as(caller)
                  .execute(soapBody, extraHeaders)) {
-            response.getResponse().reset();
-            var fullText = convertStreamToString(response.getResponse());
+            var fullText = new String(response.getResponse().readAllBytes(), StandardCharsets.UTF_8);
 
             // Check if response is MIME multipart
             if (fullText.contains("--uuid:")) {
@@ -87,18 +86,5 @@ public class NspClient {
         }
 
         throw new NspClientException("Could not extract content from MIME response");
-    }
-
-    private static String convertStreamToString(InputStream bis) {
-        StringBuilder stringBuilder = new StringBuilder();
-        try (InputStreamReader reader = new InputStreamReader(bis, StandardCharsets.UTF_8)) {
-            int character;
-            while ((character = reader.read()) != -1) {
-                stringBuilder.append((char) character);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
     }
 }
