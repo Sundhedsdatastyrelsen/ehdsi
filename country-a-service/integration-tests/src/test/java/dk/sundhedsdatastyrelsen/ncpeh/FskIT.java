@@ -18,4 +18,9 @@ public class FskIT {
     void getListOfCards() throws Exception {
         var adhocRequest = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, OrganizationIdentities.sundhedsdatastyrelsen());
     }
+
+    @Test
+    void getDocument() throws Exception {
+        var adhocRequest = service.getInformationCard(Fsk.documentJensJensenFskResponse, OrganizationIdentities.sundhedsdatastyrelsen());
+    }
 }

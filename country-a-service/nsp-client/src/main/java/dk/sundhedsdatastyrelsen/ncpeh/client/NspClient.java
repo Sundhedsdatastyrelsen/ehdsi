@@ -34,10 +34,11 @@ public class NspClient {
              var response = client.request(uri, soapAction)
                  .as(caller)
                  .execute(soapBody, extraHeaders)) {
+            response.getResponse().reset();
+            var fullText = convertStreamToString(response.getResponse());
             var reply = sosiFactory.deserializeReply(IOUtils.toString(response.getResponse(), StandardCharsets.UTF_8));
             if (response.isFault()) {
-                response.getResponse().reset();
-                var fullText = convertStreamToString(response.getResponse());
+
                 throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
             }
             return reply;

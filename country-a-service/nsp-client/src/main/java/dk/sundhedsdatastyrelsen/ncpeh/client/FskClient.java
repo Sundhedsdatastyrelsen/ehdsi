@@ -20,10 +20,12 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationRespons
 import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
-import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
+import ihe.iti.xds_b._2007.ObjectFactory;
+import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
+import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -45,6 +47,8 @@ public class FskClient {
     private static final oasis.names.tc.ebxml_regrep.xsd.query._3.ObjectFactory fac =
         new oasis.names.tc.ebxml_regrep.xsd.query._3.ObjectFactory();
 
+    private static final ihe.iti.xds_b._2007.ObjectFactory factory = new ObjectFactory();
+
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
 
@@ -53,6 +57,7 @@ public class FskClient {
         this.jaxbContext = JAXBContext.newInstance(
             "oasis.names.tc.ebxml_regrep.xsd.query._3"
                 + ":dk.sdsd.dgws._2012._06"
+                + ":ihe.iti.xds_b._2007"
         );
     }
 
@@ -73,6 +78,27 @@ public class FskClient {
             jaxbElement,
             "urn:ihe:iti:2007:RegistryStoredQuery",
             AdhocQueryResponse.class,
+            caller
+        );
+    }
+
+    public RetrieveDocumentSetResponseType getDocument(
+        RetrieveDocumentSetRequestType request,
+        Identity caller
+    ) throws JAXBException {
+        QName qname = new QName("urn:ihe:iti:xds-b:2007", "RetrieveDocumentSetRequest");
+
+        JAXBElement<RetrieveDocumentSetRequestType> jaxbElement = new JAXBElement<>(
+            qname,
+            RetrieveDocumentSetRequestType.class,
+            request
+        );
+
+        return makeFskRequest(
+            "/nspservices/sfskrep",
+            factory.createRetrieveDocumentSetRequest(request),
+            "urn:ihe:iti:2007:RetrieveDocumentSet",
+            RetrieveDocumentSetResponseType.class,
             caller
         );
     }

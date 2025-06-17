@@ -6,6 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptio
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
+import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryRequest;
@@ -15,6 +16,7 @@ import oasis.names.tc.ebxml_regrep.xsd.rim._3.SlotType1;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.ValueListType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +39,15 @@ public class InformationRecordService {
             String cpr = PatientIdMapper.toCpr(patientId);
 
             final var request = AdhocQueryRequest.builder()
+                /** Magic important setup, see https://www.nspop.dk/display/public/web/FSK+Registry+Adapter+-+Guide+til+Anvendere
+                 * Response type and AdHoc Query ID are set from here
+                 * **/
                 .withResponseOption(ResponseOptionType.builder()
                     .withReturnType("LeafClass")
                     .withReturnComposedObjects(true)
                     .build())
                 .withAdhocQuery(AdhocQueryType.builder()
-                    .withId("urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d")
+                    .withId("urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d") //See above
                     .withSlot(SlotType1.builder()
                         .withName("$XDSDocumentEntryPatientId")
                         .withValueList(ValueListType.builder()
@@ -76,6 +81,35 @@ public class InformationRecordService {
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
+    }
+
+    public String getInformationCard(String uniqueDocumentId, Identity caller) {
+        try {
+            var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
+            final var request = RetrieveDocumentSetRequestType.builder()
+                .addDocumentRequest()
+                .withRepositoryUniqueId(documentId._1())
+                .withDocumentUniqueId(uniqueDocumentId) //Yes, we need to use the whole unique document ID, as well as part of it earlier.
+                .end().build();
+
+            var fskResponse = fskClient.getDocument(request,caller);
+            return fskResponse.toString();
+
+        } catch (IllegalArgumentException e){
+            throw new CountryAException(HttpStatus.BAD_REQUEST,e);
+        } catch (JAXBException e){
+            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR,e);
+        }
+
+    }
+
+    private static Tuple<String,String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId){
+        //We assume the documentId follows this format: 1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d
+        String[] parts = uniqueDocumentId.split("\\^");
+        if(parts.length != 2){
+            throw new IllegalArgumentException(String.format("Cannot parse uniqueDocumentId: %s",uniqueDocumentId));
+        }
+        return new Tuple<>(parts[0],parts[1]); //Repository ID, Local document ID
     }
 
 }

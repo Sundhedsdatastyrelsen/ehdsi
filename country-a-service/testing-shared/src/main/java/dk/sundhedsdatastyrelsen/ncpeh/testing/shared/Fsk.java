@@ -12,6 +12,8 @@ public class Fsk {
      */
     public static final String cprJensJensenReadOnly = "0408801111";
 
+    public static final String documentJensJensenFskResponse = "1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d";
+
 
     private static FskClient fskClient;
 
