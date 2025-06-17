@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.nsp.test.idp.OrganizationIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationRecordService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fsk;
@@ -15,6 +16,6 @@ public class FskIT {
      */
     @Test
     void getListOfCards() throws Exception {
-        var adhocRequest = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, TestIdentities.apotekerJeppeMoeller);
+        var adhocRequest = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, OrganizationIdentities.sundhedsdatastyrelsen());
     }
 }
