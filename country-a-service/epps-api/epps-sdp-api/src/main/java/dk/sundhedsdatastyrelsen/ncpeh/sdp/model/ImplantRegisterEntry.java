@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.sdp.model;
 
 import java.time.OffsetDateTime;
 
+//Total rows: 2943536
 public record ImplantRegisterEntry(
     String cpr, // Patient ID
     String regionCode, //Regionskode

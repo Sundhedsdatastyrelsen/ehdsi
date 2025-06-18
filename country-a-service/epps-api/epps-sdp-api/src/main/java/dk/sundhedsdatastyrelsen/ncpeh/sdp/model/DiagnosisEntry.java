@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.sdp.model;
 
+//Total rows: 794310432
 public record DiagnosisEntry(
     String ekEncounter, //Reference to an Encounter with the patient (Original title: DW_EK_Kontakt)
     String skEncounter, //Reference to an Encounter with the patient (Original title: DW_SK_Kontakt)
