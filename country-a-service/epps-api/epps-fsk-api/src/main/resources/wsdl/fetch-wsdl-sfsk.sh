@@ -3,6 +3,9 @@
 #
 # Script to fetch WSDL and XSD files for both ITI18 and ITI43
 # Includes retry logic for failed downloads
+# Original file developed for "Det gode CPR opslag", which has some legacy functionality I don't dare replace, since
+# the script is already complicated enough that it is hard to parse.
+# Made a bit more readable with help from AI, as evident by the comments and echo statements
 #
 
 MAX_RETRIES=3
@@ -11,16 +14,16 @@ RETRY_DELAY=2  # seconds
 function resolve_url() {
     local base_url="$1"
     local relative_url="$2"
-    
+
     # If the URL is already absolute, return it as is
     if [[ "$relative_url" =~ ^https?:// ]]; then
         echo "$relative_url"
         return
     fi
-    
+
     # Get the directory part of the base URL
     local base_dir=$(dirname "$base_url")
-    
+
     # Handle different relative path cases
     if [[ "$relative_url" == /* ]]; then
         # Absolute path from domain root
@@ -114,7 +117,8 @@ function fetchWSDL() {
         done
 
         # Fix schemaLocation in main wsdl
-        sed -Ei 's|schemaLocation="[^"]*/([^"]+)"|schemaLocation="./xsd/\1"|g;s|\?xsd=([0-9]+)|-\1.xsd|g' "$wsdl_file"
+        sed -Ei 's|schemaLocation="[^"]*/([^"]+)"|schemaLocation="./xsd/\1"|g;s|\?
+        xsd=([0-9]+)|-\1.xsd|g' "$wsdl_file"
 
         # Fix schemaLocation in xsds
         for file in xsd/*; do
@@ -130,4 +134,4 @@ fi
 
 # Fetch both ITI18 and ITI43 WSDLs
 fetchWSDL "iti18"
-fetchWSDL "iti43" 
+fetchWSDL "iti43"
