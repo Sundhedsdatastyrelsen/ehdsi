@@ -13,6 +13,7 @@ import static dk.nsp.test.idp.builder.Builders.employee;
 import static dk.nsp.test.idp.builder.Builders.employeeIdentity;
 import static dk.nsp.test.idp.builder.Builders.identityProvider;
 import static dk.nsp.test.idp.builder.Builders.organization;
+import static dk.nsp.test.idp.builder.Builders.organizationIdentity;
 import static dk.nsp.test.idp.builder.Builders.securityTokenService;
 import static dk.nsp.test.idp.builder.Builders.serviceConsumer;
 
