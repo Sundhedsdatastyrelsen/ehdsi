@@ -13,6 +13,8 @@ public class AuthenticationMain {
         try {
             SoapHeaderParser parser = new SoapHeaderParser();
             ParsedData parsedData = parser.parse(new File(args[0]));
+            CertParser certParser = new CertParser();
+            var countryCode = certParser.parse(parsedData.getSignature().getCertificate());
 
             // You can log or process the parsed data here
             System.out.println("Parsed ID: " + parsedData.getId());
@@ -20,7 +22,7 @@ public class AuthenticationMain {
             System.out.println("Subject: " + parsedData.getSubject().getNameIdValue());
 
             AssertionBuilder builder = new AssertionBuilder();
-            var outputXML = builder.buildAssertionXml(parsedData, "0123456789");
+            var outputXML = builder.buildAssertionXml(parsedData, "0123456789", AssertionBuilder.Mode.MINIMAL);
             System.out.println("Assertion XML:\n\n" + outputXML);
 
         } catch (Exception e) {

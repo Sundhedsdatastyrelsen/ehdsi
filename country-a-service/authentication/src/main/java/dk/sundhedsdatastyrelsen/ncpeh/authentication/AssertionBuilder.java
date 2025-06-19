@@ -8,10 +8,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.util.List;
+
 public class AssertionBuilder {
 
-    public String buildAssertionXml(ParsedData data, String patientId) throws Exception {
+    public enum Mode {
+        MINIMAL,
+        MAXIMAL
+    }
+
+    public String buildAssertionXml(ParsedData data, String patientId, Mode mode) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -28,7 +33,7 @@ public class AssertionBuilder {
         issuer.setTextContent("https://t-ncp.sundhedsdatastyrelsen.dk");
         assertion.appendChild(issuer);
 
-        // Signature (placeholder - should be signed after serialization)
+        // Signature
         ParsedData.Signature sig = data.getSignature();
         Element signature = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
         Element signedInfo = doc.createElement("SignedInfo");
@@ -71,7 +76,6 @@ public class AssertionBuilder {
         assertion.appendChild(signature);
 
         // Subject
-        ParsedData.Subject subj = data.getSubject();
         Element subject = doc.createElement("Subject");
         Element nameId = doc.createElement("NameID");
         nameId.setAttribute("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
@@ -107,7 +111,9 @@ public class AssertionBuilder {
 
         // AttributeStatement
         Element attributeStatement = doc.createElement("AttributeStatement");
+
         for (ParsedData.Attribute attr : data.getAttributes()) {
+            if (mode == Mode.MINIMAL && isOptional(attr.getFriendlyName())) continue;
             Element attribute = doc.createElement("Attribute");
             attribute.setAttribute("FriendlyName", attr.getFriendlyName());
             attribute.setAttribute("Name", attr.getName());
@@ -119,7 +125,6 @@ public class AssertionBuilder {
             attributeStatement.appendChild(attribute);
         }
 
-        // Add required static attributes
         attributeStatement.appendChild(createSimpleAttribute(doc, "XUA Patient Id", "urn:oasis:names:tc:xacml:2.0:resource:resource-id", patientId));
         attributeStatement.appendChild(createSimpleAttribute(doc, "NSIS AssuranceLevel", "https://data.gov.dk/concept/core/nsis/loa", "3"));
         attributeStatement.appendChild(createSimpleAttribute(doc, "IDWS XUA SpecVersion", "urn:dk:healthcare:saml:SpecVersion", "eHDSI-IDWS-XUA-1.0"));
@@ -128,7 +133,6 @@ public class AssertionBuilder {
 
         assertion.appendChild(attributeStatement);
 
-        // Serialize
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         StringWriter writer = new StringWriter();
@@ -145,5 +149,13 @@ public class AssertionBuilder {
         attribute.appendChild(valueElement);
         return attribute;
     }
+
+    private boolean isOptional(String friendlyName) {
+        return switch (friendlyName) {
+            case "Hl7 Permissions", "EHDSI OnBehalfOf", "XSPA Organization", "XSPA Locality" -> true;
+            default -> false;
+        };
+    }
 }
+
 
