@@ -11,38 +11,33 @@ import java.io.StringWriter;
 
 public class AssertionBuilder {
 
-    public enum Mode {
-        MINIMAL,
-        MAXIMAL
-    }
-
-    public String buildAssertionXml(ParsedData data, String patientId, Mode mode) throws Exception {
+    public String buildAssertionXml(Token token) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
 
         Element assertion = doc.createElementNS("urn:oasis:names:tc:SAML:2.0:assertion", "Assertion");
-        assertion.setAttribute("ID", data.getId());
-        assertion.setAttribute("IssueInstant", data.getIssueInstant());
-        assertion.setAttribute("Version", data.getVersion());
+        assertion.setAttribute("ID", token.getId());
+        assertion.setAttribute("IssueInstant", token.getIssueInstant());
+        assertion.setAttribute("Version", token.getVersion());
         assertion.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         doc.appendChild(assertion);
 
         // Issuer
         Element issuer = doc.createElement("Issuer");
-        issuer.setTextContent("https://t-ncp.sundhedsdatastyrelsen.dk");
+        issuer.setTextContent(token.getIssuer());
         assertion.appendChild(issuer);
 
         // Signature
-        ParsedData.Signature sig = data.getSignature();
+        Token.Signature sig = token.getSignature();
         Element signature = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
         Element signedInfo = doc.createElement("SignedInfo");
         Element canonMethod = doc.createElement("CanonicalizationMethod");
         canonMethod.setAttribute("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#");
         Element sigMethod = doc.createElement("SignatureMethod");
-        sigMethod.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha256");
+        sigMethod.setAttribute("Algorithm", sig.getSignatureMethodAlgorithm());
         Element ref = doc.createElement("Reference");
-        ref.setAttribute("URI", "#" + data.getId());
+        ref.setAttribute("URI", "#" + token.getId());
         Element transforms = doc.createElement("Transforms");
         Element t1 = doc.createElement("Transform");
         t1.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature");
@@ -52,7 +47,7 @@ public class AssertionBuilder {
         transforms.appendChild(t2);
         ref.appendChild(transforms);
         Element digestMethod = doc.createElement("DigestMethod");
-        digestMethod.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha256");
+        digestMethod.setAttribute("Algorithm", sig.getDigestMethodAlgorithm());
         Element digestValue = doc.createElement("DigestValue");
         digestValue.setTextContent(sig.getDigestValue());
         ref.appendChild(digestMethod);
@@ -76,35 +71,36 @@ public class AssertionBuilder {
         assertion.appendChild(signature);
 
         // Subject
-        Element subject = doc.createElement("Subject");
+        Token.Subject subject = token.getSubject();
+        Element subjectElement = doc.createElement("Subject");
         Element nameId = doc.createElement("NameID");
-        nameId.setAttribute("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
-        nameId.setTextContent(patientId);
-        subject.appendChild(nameId);
+        nameId.setAttribute("Format", subject.getNameIdFormat());
+        nameId.setTextContent(subject.getNameIdValue());
+        subjectElement.appendChild(nameId);
 
         Element subjectConfirmation = doc.createElement("SubjectConfirmation");
-        subjectConfirmation.setAttribute("Method", "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key");
+        subjectConfirmation.setAttribute("Method", subject.getConfirmationMethod());
 
         Element subjectConfirmationData = doc.createElement("SubjectConfirmationData");
         subjectConfirmationData.setAttribute("xsi:type", "KeyInfoConfirmationDataType");
         Element keyInfo2 = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "KeyInfo");
         Element x509Data2 = doc.createElement("X509Data");
         Element x509Cert2 = doc.createElement("X509Certificate");
-        x509Cert2.setTextContent(sig.getCertificate());
+        x509Cert2.setTextContent(subject.getCertificate());
         x509Data2.appendChild(x509Cert2);
         keyInfo2.appendChild(x509Data2);
         subjectConfirmationData.appendChild(keyInfo2);
         subjectConfirmation.appendChild(subjectConfirmationData);
-        subject.appendChild(subjectConfirmation);
-        assertion.appendChild(subject);
+        subjectElement.appendChild(subjectConfirmation);
+        assertion.appendChild(subjectElement);
 
         // Conditions
-        ParsedData.Conditions cond = data.getConditions();
+        Token.Conditions cond = token.getConditions();
         Element conditions = doc.createElement("Conditions");
         conditions.setAttribute("NotOnOrAfter", cond.getNotOnOrAfter());
         Element audienceRestriction = doc.createElement("AudienceRestriction");
         Element audience = doc.createElement("Audience");
-        audience.setTextContent("https://sts.sosi.dk/");
+        audience.setTextContent(cond.getAudience());
         audienceRestriction.appendChild(audience);
         conditions.appendChild(audienceRestriction);
         assertion.appendChild(conditions);
@@ -112,8 +108,7 @@ public class AssertionBuilder {
         // AttributeStatement
         Element attributeStatement = doc.createElement("AttributeStatement");
 
-        for (ParsedData.Attribute attr : data.getAttributes()) {
-            if (mode == Mode.MINIMAL && isOptional(attr.getFriendlyName())) continue;
+        for (Token.Attribute attr : token.getAttributes()) {
             Element attribute = doc.createElement("Attribute");
             attribute.setAttribute("FriendlyName", attr.getFriendlyName());
             attribute.setAttribute("Name", attr.getName());
@@ -125,12 +120,6 @@ public class AssertionBuilder {
             attributeStatement.appendChild(attribute);
         }
 
-        attributeStatement.appendChild(createSimpleAttribute(doc, "XUA Patient Id", "urn:oasis:names:tc:xacml:2.0:resource:resource-id", patientId));
-        attributeStatement.appendChild(createSimpleAttribute(doc, "NSIS AssuranceLevel", "https://data.gov.dk/concept/core/nsis/loa", "3"));
-        attributeStatement.appendChild(createSimpleAttribute(doc, "IDWS XUA SpecVersion", "urn:dk:healthcare:saml:SpecVersion", "eHDSI-IDWS-XUA-1.0"));
-        attributeStatement.appendChild(createSimpleAttribute(doc, "IDWS XUA IssuancePolicy", "urn:dk:healthcare:saml:IssuancePolicy", "urn:dk:healthcare:ncp:eHDSI-strict"));
-        attributeStatement.appendChild(createSimpleAttribute(doc, "EHDSI Country of Treatment", "urn:dk:healthcare:saml:CountryOfTreatment", "DE"));
-
         assertion.appendChild(attributeStatement);
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -138,23 +127,6 @@ public class AssertionBuilder {
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         return writer.toString();
-    }
-
-    private Element createSimpleAttribute(Document doc, String friendlyName, String name, String value) {
-        Element attribute = doc.createElement("Attribute");
-        attribute.setAttribute("FriendlyName", friendlyName);
-        attribute.setAttribute("Name", name);
-        Element valueElement = doc.createElement("AttributeValue");
-        valueElement.setTextContent(value);
-        attribute.appendChild(valueElement);
-        return attribute;
-    }
-
-    private boolean isOptional(String friendlyName) {
-        return switch (friendlyName) {
-            case "Hl7 Permissions", "EHDSI OnBehalfOf", "XSPA Organization", "XSPA Locality" -> true;
-            default -> false;
-        };
     }
 }
 
