@@ -22,6 +22,7 @@ app:
   fmk.endpoint.url: "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"
   cpr.endpoint.url: "https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4"
   authorization-registry.endpoint.url: "https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105"
+  fsk.endpoint.url: "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"
 
 management:
   endpoint:
