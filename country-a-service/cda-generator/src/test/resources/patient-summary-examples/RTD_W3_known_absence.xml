@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file presents a theoretical clinical case that will be used as basis for creating the Critical Test Data needed for testing the eHDSI Patient Summary services.
+
+Critical Test Data comprises a set of well-formed and not-well formed documents in English based upon the eHDSI Schema and the MVC. Deploying countries have to transform these documents into their own CDA document format and language. Critical Test Data is created manually to cover the widest extent of the underlying standard/profile. While a system may create such data, much of the data serves the purpose of ensuring the robustness of the system under test and supporting the development and validation of the test tools (epSOS D3.C.1 Appendix B - Proof of Concept Testing Strategy Details, v1.6, December 28, 2012).
+
+This theoretical case refers to a 34-year-old pregnant woman with a past medical history of allergic asthma and thyroid cancer during adolescence; for the latter she had a surgical procedure done (thyroidectomy) and, as a consequence, suffers hypothyroidism which requires hormone replacement for life (levothyroxine). At the age of 31 she was diagnosed with a hereditary cardiac disorder - Brugada Syndrome- and had a cardioverter defibrillator implanted to control potentially lethal arrhythmias.
+During the pregnancy of her first child (C-section delivery), she suffered gestational diabetes that developed into type 2 diabetes after giving birth and needs now to receive subcutaneous insulin. As chronic treatment she also needs nebulizations three-time per day  for her asthma - this condition is condition is aggravated in her case by being a smoker (half pack per day) as included in the Social History Section.
+At this moment, she presents severe pre-eclampsia (hypertension during pregnancy) in treatment with two oral antihypertensive agents (a combination medication). Additionally, she is following a 14-day-course of antibiotic treatment due to an acute pyelonephritis (kidney infection more likely to be develop in pregnant women due to the physiological changes that may interfere with the flow of urine).
+Other sections of her Summary include allergies to latex and kiwi (which are very often associated) and to aspirin, and intolerance to lactose; immunizations administered during childhood and adolescence are also present.
+
+Although being real choices for the different diseases and conditions, the selection of the patient's current medication tries to present some easily described medication as well as not so easily ones: e.g. insulin degludec, amoxicilin+clavulanic acid, and the combination of ipratropium bromide+salbutamol for nebulization. For the oral treatment of the pre-eclampsia the agents selected would not be used in real practice during pregnancy.-->
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:epsos="urn:epsos-org:ep:medication" xmlns:hl7="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" classCode="DOCCLIN" moodCode="EVN">
+   <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040" />
+   <!-- Template ID for epSOS Patient Summary document -->
+   <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.3" />
+   <id root="1.2.752.129.2.1.2.1" extension="PS_Pivot_01_sv-SE" />
+   <!-- Determines the document type "epSOS Patient Summary Document" -->
+   <code code="60591-5" codeSystem="2.16.840.1.113883.6.1" displayName="Patient Summary" codeSystemName="LOINC" />
+   <!-- title used for display purposes -->
+   <title>Patient Summary</title>
+   <effectiveTime value="20170714194500+0200" />
+   <confidentialityCode displayName="normal" code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" />
+   <!-- document language code -->
+   <languageCode code="en-GB" />
+   <!-- setID (optional): remains unchanged among all the existing transformations -->
+   <setId root="2.999" extension="111" />
+   <!-- recordTarget: Patient Information -->
+   <recordTarget>
+      <patientRole>
+         <!-- Primary Patient Identifier -->
+         <id root="2.999" extension="PRT00000004" />
+         <addr>
+            <streetAddressLine>155, Avenida da Liberdade</streetAddressLine>
+            <postalCode>1250-141</postalCode>
+            <city>Lisbon</city>
+            <country>PT</country>
+         </addr>
+         <telecom value="tel:351211234567" use="H" />
+         <telecom value="mailto:paciente@gmail.com" />
+         <patient>
+            <name>
+               <family>Ferreira</family>
+               <given>Diana</given>
+            </name>
+            <administrativeGenderCode code="F" codeSystem="2.16.840.1.113883.5.1" displayName="Female" codeSystemName="AdministrativeGender" />
+            <birthTime value="19820508" />
+            <!-- guardian (optional) -->
+            <guardian classCode="GUARD">
+               <templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4" />
+               <addr>
+                  <streetAddressLine>155, Avenida da Liberdade</streetAddressLine>
+                  <city>Lisbon</city>
+                  <postalCode>1250-141</postalCode>
+                  <country>PT</country>
+               </addr>
+               <telecom value="mailto:guardian@gmail.com" />
+               <telecom value="tel:351211234569" />
+               <!--
+					<telecom nullFlavor="NI"/>
+					-->
+               <guardianPerson>
+                  <name>
+                     <family>Baptista</family>
+                     <given>Joaquim</given>
+                  </name>
+               </guardianPerson>
+            </guardian>
+            <!-- patient's language -->
+            <languageCommunication>
+               <languageCode code="pt-PT" />
+            </languageCommunication>
+         </patient>
+      </patientRole>
+   </recordTarget>
+   <!-- Author Information: Health Professional -->
+   <author>
+      <!-- start time of the author’s participation in the creation of the clinical document -->
+      <time value="20100701000000-0200" />
+      <assignedAuthor>
+         <!-- HCP identifier -->
+         <id root="2.999" extension="12345678" />
+         <code code="2211" displayName="Generalist medical practitioners" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" />
+         <addr>
+            <streetAddressLine>3, Alameda Santo António dos Capuchos</streetAddressLine>
+            <city>Lisbon</city>
+            <postalCode>1169-050</postalCode>
+            <country>PT</country>
+         </addr>
+         <telecom value="tel:351211234568" use="WP" />
+         <telecom value="mailto:medico@gmail.com" />
+         <!-- Author Information: Health Professional -->
+         <assignedPerson>
+            <name>
+               <family>Pereira</family>
+               <given>António</given>
+            </name>
+         </assignedPerson>
+         <!-- Author Information: Authoring Device -->
+         <!--
+			<assignedAuthoringDevice>
+				<softwareName>Apoteken Service</softwareName>
+			</assignedAuthoringDevice>
+			-->
+         <representedOrganization>
+            <id root="2.999" extension="12345678" />
+            <name>Centro Hospitalar de Lisboa Central</name>
+            <telecom value="mailto:hospital@gmail.com" use="WP" />
+            <addr>
+               <streetAddressLine>3, Alameda Santo António dos Capuchos</streetAddressLine>
+               <city>Lisbon</city>
+               <postalCode>1169-050</postalCode>
+               <country>PT</country>
+            </addr>
+         </representedOrganization>
+      </assignedAuthor>
+   </author>
+   <!-- custodian -->
+   <custodian>
+      <assignedCustodian>
+         <representedCustodianOrganization>
+            <id root="2.999" extension="12345678" />
+            <name>Centro Hospitalar de Lisboa Central</name>
+            <telecom value="mailto:hospital@gmail.com" use="WP" />
+            <addr>
+               <streetAddressLine>3, Alameda Santo António dos Capuchos</streetAddressLine>
+               <city>Lisbon</city>
+               <postalCode>1169-050</postalCode>
+               <country>PT</country>
+            </addr>
+         </representedCustodianOrganization>
+      </assignedCustodian>
+   </custodian>
+   <!-- legalAuthenticator -->
+   <legalAuthenticator typeCode="LA">
+      <!-- Time of signing the document -->
+      <time value="20101001000000-0200" />
+      <signatureCode code="S" />
+      <assignedEntity>
+         <id extension="nnn" root="2.999" />
+         <addr>
+            <streetAddressLine>3, Alameda Santo António dos Capuchos</streetAddressLine>
+            <city>Lisbon</city>
+            <postalCode>1169-050</postalCode>
+            <country>PT</country>
+         </addr>
+         <telecom value="tel:351211234568" use="WP" />
+         <telecom value="mailto:medico@gmail.com" />
+         <!-- Author Information: Health Professional -->
+         <assignedPerson>
+            <name>
+               <family>Pereira</family>
+               <given>António</given>
+            </name>
+         </assignedPerson>
+         <representedOrganization>
+            <id root="2.999" extension="12345678" />
+            <name>Centro Hospitalar de Lisboa Central</name>
+            <telecom value="mailto:hospital@gmail.com" use="WP" />
+            <addr>
+               <streetAddressLine>3, Alameda Santo António dos Capuchos</streetAddressLine>
+               <city>Lisbon</city>
+               <postalCode>1169-050</postalCode>
+               <country>PT</country>
+            </addr>
+         </representedOrganization>
+      </assignedEntity>
+   </legalAuthenticator>
+   <!-- Contact person / Preferred Health Professional to contact about patient -->
+   <participant typeCode="IND">
+      <templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4" />
+      <associatedEntity classCode="PRS">
+         <addr>
+            <streetAddressLine>147, Rua Augusta</streetAddressLine>
+            <city>Lisbon</city>
+            <postalCode>1100-049</postalCode>
+            <country>PT</country>
+         </addr>
+         <telecom value="mailto:paciente@gmail.com" />
+         <telecom value="tel:351211234570" />
+         <associatedPerson>
+            <name>
+               <given>Vitória</given>
+               <family>Silva</family>
+            </name>
+         </associatedPerson>
+      </associatedEntity>
+   </participant>
+   <!-- documentationOf -->
+   <documentationOf typeCode="DOC">
+      <serviceEvent classCode="PCPR" moodCode="EVN">
+         <effectiveTime>
+            <!-- latest summary update (10.3.8) -->
+            <high value="20101001" />
+         </effectiveTime>
+      </serviceEvent>
+   </documentationOf>
+   <!-- relatedDocument -->
+   <relatedDocument typeCode="XFRM">
+      <parentDocument>
+         <id root="2.999" extension="PS_PDF_01_sv-SE" />
+      </parentDocument>
+   </relatedDocument>
+   <!-- 
+		// END OF HEADER, START OF BODY
+	-->
+   <component>
+      <structuredBody>
+         <component>
+            <!-- History of medication use -->
+            <section>
+               <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.3" />
+               <!-- Medication Summary -->
+               <templateId root="2.16.840.1.113883.10.20.1.8" />
+               <id root="2.999.1" extension="__example only__"/>
+               <!-- CCD 3.9 -->
+               <code code="10160-0" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="History of Medication use Narrative" />
+               <!-- History of medication use -->
+               <title>History of Medication use</title>
+			      <text><paragraph ID="Medication_None">No registered medication</paragraph></text>
+               <entry>
+                  <substanceAdministration classCode="SBADM" moodCode="INT">
+                     <templateId root="2.16.840.1.113883.10.20.1.24" />
+                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4" />
+                     <id root="1.2.3.999.1.1" extension="--example only--" />
+                     <code code="no-known-medications" codeSystem="2.16.840.1.113883.5.1150.1" displayName="No known medications" />
+                     <statusCode code="completed" />
+                     <effectiveTime nullFlavor="NA" xsi:type="IVL_TS" />
+					 <effectiveTime operator="A" nullFlavor="NA" />
+					 <consumable>
+                        <manufacturedProduct classCode="MANU">
+                           <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1" />
+                           <manufacturedMaterial nullFlavor="NA" />
+                        </manufacturedProduct>
+                     </consumable>
+                  </substanceAdministration>
+               </entry>
+            </section>
+         </component>
+         <component>
+            <!-- Allergies, adverse reactions, alerts -->
+            <section moodCode="EVN">
+               <templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.13" />
+               <templateId root="2.16.840.1.113883.10.20.1.2" />
+			   <id root="2.999.2" extension="__example only__" />
+               <code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="Allergies and adverse reactions" />
+               <title>Allergies and Intolerances</title>
+               <text><paragraph ID="Allergies_None">No known allergies</paragraph></text>
+               <entry>
+                  <act classCode="ACT" moodCode="EVN">
+                     <templateId root="2.16.840.1.113883.10.20.1.27" />
+                     <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1" />
+                     <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.3" />
+                     <id root="2.999.2.1" extension="__example only__" />
+                     <code code="CONC" codeSystem="2.16.840.1.113883.5.6" />
+                     <statusCode code="active" />
+                     <effectiveTime>
+                        <low nullFlavor="NA" />
+                     </effectiveTime>
+                     <entryRelationship typeCode="SUBJ" inversionInd="false">
+                        <observation classCode="OBS" moodCode="EVN">
+                           <templateId root="2.16.840.1.113883.10.20.1.28" />
+                           <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6" />
+                           <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5" />
+                           <templateId root="2.16.840.1.113883.10.20.1.18" />
+                           <id root="2.999.2.1.1" extension="__example only__" />
+						   <code code="419199007" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="2016-07" displayName="Allergy to substance" />
+						   <text><reference value="#Allergies_None"/></text>
+                           <statusCode code="completed" />
+                           <effectiveTime>
+                              <low nullFlavor="NA" />
+                           </effectiveTime>
+                           <value xsi:type="CD" code="no-known-allergies" displayName="No known allergies" codeSystem="2.16.840.1.113883.5.1150.1"/>
+                        </observation>
+                     </entryRelationship>
+                  </act>
+               </entry>
+            </section>
+         </component>
+         <component>
+            <!-- History of Procedures -->
+            <section moodCode="EVN">
+               <templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.12" />
+               <templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.11" />
+			   <id root="2.999.3" extension="__example only__" />
+               <code code="47519-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="History of Procedures" />
+               <title>Coded List of Surgeries</title>
+			   <text><paragraph ID="Procedures_None">No known procedures</paragraph></text>
+               <entry>
+                  <procedure classCode="PROC" moodCode="EVN">
+                     <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.19" />
+                     <id root="2.999.3.1" extension="__example only__" />
+                     <code code="no-known-procedure" 
+						displayName="No known procedures" 
+						codeSystem="2.16.840.1.113883.5.1150.1"
+						codeSystemName="IPS Absent and Unknown Data"/>
+                     <text><reference value="#Procedures_None" /></text>
+                     <statusCode code="completed" />
+                     <effectiveTime nullFlavor="NA" xsi:type="IVL_TS" />
+                  </procedure>
+               </entry>
+            </section>
+         </component>
+         <component>
+            <!-- Problem list -->
+            <section moodCode="EVN">
+               <templateId root="2.16.840.1.113883.10.20.1.11" />
+               <templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.6" />
+			   <id root="2.999.4" extension="__example only__" />
+               <code code="11450-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="Problem list" />
+               <title>Problems</title>
+			   <text><paragraph ID="Problems_None">No known problems</paragraph></text>
+               <entry>
+                  <act classCode="ACT" moodCode="EVN">
+                     <templateId root="2.16.840.1.113883.10.20.1.27" />
+                     <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1" />
+                     <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2" />
+                     <id root="2.999.4.1" extension="__example only__" />
+                     <code nullFlavor="NA" />
+                     <statusCode code="active" />
+                     <entryRelationship inversionInd="false" typeCode="SUBJ">
+                        <observation classCode="OBS" moodCode="EVN">
+                           <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7" />
+                           <id root="2.999.4.1.1" extension="__example only__" />
+                           <code code="404684003" codeSystem="2.16.840.1.113883.6.96" displayName="Clinical finding" codeSystemName="SNOMED CT" />
+                           <text><reference value="#Problems_None" /></text>
+                           <value code="no-known-problems" displayName="No known problems" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data" xsi:type="CD"/>
+                        </observation>
+                     </entryRelationship>
+                  </act>
+               </entry>
+            </section>
+         </component>
+         <component>
+            <!-- History of medical device use -->
+            <section classCode="DOCSECT" moodCode="EVN">
+               <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.4" />
+               <templateId root="2.16.840.1.113883.10.20.1.7" />
+               <templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.5.3.5" />
+   			   <id root="2.999.5" extension="__example only__" />
+               <code code="46264-8" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="History of medical device use" />
+               <title>Medical Devices Coded</title>
+			   <text><paragraph ID="Medical_Devices_None">No known devices in use</paragraph></text>
+               <entry>
+                  <supply classCode="SPLY" moodCode="EVN">
+                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.5" />
+					 <id root="2.999.5.1" extension="__example only__" />
+                     <text><reference value="#Medical_Devices_None" /></text>
+                     <effectiveTime nullFlavor="NA" />
+                     <participant typeCode="DEV">
+                        <participantRole classCode="MANU">
+                           <playingDevice classCode="DEV" determinerCode="INSTANCE">
+                             <code code="no-known-devices" 
+									displayName="No known devices in use" 
+									codeSystem="2.16.840.1.113883.5.1150.1" 
+									codeSystemName="IPS Absent and Unknown Data"/>
+                           </playingDevice>
+                        </participantRole>
+                     </participant>
+                  </supply>
+               </entry>
+            </section>
+         </component>
+      </structuredBody>
+   </component>
+</ClinicalDocument>
