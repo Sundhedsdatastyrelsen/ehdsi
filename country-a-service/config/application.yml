@@ -10,7 +10,7 @@ spring:
     locations: "classpath:db/migration"
 
 server:
-  port: 8443
+  port: 4443
   ssl:
     key-store: ${COUNTRY_A_KEYSTORE_LOCATION}
     key-store-password: ${COUNTRY_A_KEYSTORE_PASSWORD}
