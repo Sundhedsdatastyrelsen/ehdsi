@@ -45,10 +45,88 @@
         </patientRole>
     </recordTarget>
 
+    <#-- There are two ways to write author of the patient summary. Either the author is one or more HPs, or the
+         author is the system compiling the information. The system is the simplest, so we'll go with that. -->
+    <author>
+        <#-- "The author/time element represents the start time of the author’s participation in the creation of the clinical document. The author/time element SHALL be present." -->
+        <time value="${ effectiveTime }"/>
+        <assignedAuthor>
+            <id root="1.2.208.176"/>
+            <addr>
+                <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                <city>København S</city>
+                <postalCode>2300</postalCode>
+                <country>DK</country>
+            </addr>
+            <telecom use="WP" value="tel:+4572216800"/>
+			<assignedAuthoringDevice>
+			    <#-- code not included because the values have to be drawn from value set "EntityCode", id
+			         2.16.840.1.113883.1.11.16040, url https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/voc-2.16.840.1.113883.1.11.16040-2014-03-26T000000.html
+			         And that value set has nothing that relates to author devices. -->
+			    <#-- <code></code> -->
+			    <#-- No examples of what this is supposed to mean, so skipped. -->
+			    <#-- <manufacturerModelName></manufacturerModelName> -->
+				<softwareName>NCPeH Denmark</softwareName>
+			</assignedAuthoringDevice>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+
+    <#-- This elements represents the organization that is in charge of maintaining the document. -->
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <#-- The person taking responsibility for the medical content of the document.
+    In Spain this is the regional authority in healthcare. This regional authority
+    healthcare organization will send this to the NCP. The definition of the legal
+    authenticator may vary according to the rules set up in the framework agreement
+    particular to each state. It may be a person or a regional authority, or an NCP.
+    -->
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="${ effectiveTime }"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id root="1.2.208.176"/>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson nullFlavor="NI"/>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+
     <#-- TODO -->
-    <#-- Author -->
-    <#-- Custodian -->
-    <#-- Legal authenticator -->
     <#-- Participant -->
     <#-- Documentation of -->
     <#-- RelatedDocument -->
