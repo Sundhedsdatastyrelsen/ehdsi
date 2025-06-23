@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:medcom="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd" elementFormDefault="qualified" targetNamespace="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd">
+  <xs:element name="Linking">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:FlowID"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="medcom:MessageID"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:InResponseToMessageID"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FlowID" type="xs:string"/>
+  <xs:element name="MessageID" type="xs:string"/>
+  <xs:element name="InResponseToMessageID" type="xs:string"/>
+  <xs:element name="Priority">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="AKUT"/>
+        <xs:enumeration value="HASTER"/>
+        <xs:enumeration value="RUTINE"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="RequireNonRepudiationReceipt">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="yes"/>
+        <xs:enumeration value="no"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="FlowStatus">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="flow_running"/>
+        <xs:enumeration value="flow_finalized_succesfully"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="SecurityLevel">
+    <xs:simpleType>
+      <xs:restriction base="xs:int">
+        <xs:enumeration value="1"/>
+        <xs:enumeration value="2"/>
+        <xs:enumeration value="3"/>
+        <xs:enumeration value="4"/>
+        <xs:enumeration value="5"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="TimeOut">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="5"/>
+        <xs:enumeration value="30"/>
+        <xs:enumeration value="480"/>
+        <xs:enumeration value="1440"/>
+        <xs:enumeration value="unbound"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Header">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:SecurityLevel"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:TimeOut"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="medcom:Linking"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:FlowStatus"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:Priority"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="medcom:RequireNonRepudiationReceipt"/>
+      </xs:sequence>
+      <!-- Added by SEAL -->
+	  <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+    <!-- Restriction added by eCPR webservice -->
+    <xs:element name="FaultCode">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="invalid_header"/>
+                <xs:enumeration value="missing_required_header"/>
+                <xs:enumeration value="security_level_failed"/>
+                <xs:enumeration value="invalid_idcard"/>
+                <xs:enumeration value="expired_idcard"/>
+                <xs:enumeration value="invalid_signature"/>
+                <xs:enumeration value="not_authorized"/>
+                <xs:enumeration value="internal_error"/>
+                <xs:enumeration value="invalid_input"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+</xs:schema>
