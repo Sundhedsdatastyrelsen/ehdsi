@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class PatientSummaryL3GeneratorTest {
     @Test
@@ -62,13 +63,15 @@ public class PatientSummaryL3GeneratorTest {
         String titlePath = "/hl7:ClinicalDocument/hl7:title";
         String creationTimestampPath = "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         String patientBirthTimePath = "/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value";
+        String softwareNamePath = "/hl7:ClinicalDocument/hl7:author//hl7:softwareName";
 
         var generatedCda = Input.fromString(cda).build();
 
-        assertEquals(oid.value, xpathEngine.evaluate(oidPath, generatedCda));
-        assertEquals(extension, xpathEngine.evaluate(idExtensionPath, generatedCda));
-        assertEquals(title, xpathEngine.evaluate(titlePath, generatedCda));
-        assertEquals(creationTimestamp, OffsetDateTime.parse(xpathEngine.evaluate(creationTimestampPath, generatedCda)));
-        assertEquals("19821103", xpathEngine.evaluate(patientBirthTimePath, generatedCda));
+        assertThat("oid matches", xpathEngine.evaluate(oidPath, generatedCda), is(oid.value));
+        assertThat("extension matches", xpathEngine.evaluate(idExtensionPath, generatedCda), is(extension));
+        assertThat("title matches", xpathEngine.evaluate(titlePath, generatedCda), is(title));
+        assertThat("creation time matches", OffsetDateTime.parse(xpathEngine.evaluate(creationTimestampPath, generatedCda)), is(creationTimestamp));
+        assertThat("patient birth time matches", xpathEngine.evaluate(patientBirthTimePath, generatedCda), is("19821103"));
+        assertThat("software name is there", xpathEngine.evaluate(softwareNamePath, generatedCda), is("NCPeH Denmark"));
     }
 }
