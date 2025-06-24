@@ -1,0 +1,2054 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:hl7-org:v3" >
+	<realmCode code="PT"/>
+	<typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+	<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.3"/>
+	<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.1"/>
+	<id root="2.16.840.1.113883.19.5" extension="898765392.1"/>
+	<code code="60591-5" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Patient Summary Document"/>
+	<title>Resumo clínico único do utente 898765392</title>
+	<effectiveTime value="20200227112137+0000"/>
+	<confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" displayName="normal"/>
+	<languageCode code="pt-PT"/>
+	<recordTarget typeCode="RCT" contextControlCode="OP">
+		<patientRole classCode="PAT">
+			<id root="2.16.620.1.101.10.1.1" extension="898765392"/>
+			<addr>
+				<streetAddressLine>RUA LUIS JORGE BORGES ,29</streetAddressLine>
+				<city>ADEGANHA</city>
+				<postalCode>5160-000</postalCode>
+				<country>PT</country>
+			</addr>
+			<telecom value="mailto:teste@teste.pt" use="HP"/>
+			<patient classCode="PSN" determinerCode="INSTANCE">
+				<name>
+					<given>ALFREDO JOSÉ</given>
+					<family>DA SILVA BELCHIOR</family>
+				</name>
+				<administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender" displayName="Masculino"/>
+				<birthTime value="19470202"/>
+				<languageCommunication>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.1"/>
+					<languageCode code="pt-PT"/>
+				</languageCommunication>
+			</patient>
+		</patientRole>
+	</recordTarget>
+	<author typeCode="AUT" contextControlCode="OP">
+		<time value="20200227"/>
+		<assignedAuthor classCode="ASSIGNED">
+			<id nullFlavor="NA"/>
+			<addr>
+				<streetAddressLine>Avenida da República, n.º 61</streetAddressLine>
+				<postalCode>1050-189</postalCode>
+				<city>Lisboa</city>
+				<country>PT</country>
+			</addr>
+			<telecom value="tel:+351211545600" use="WP"/>
+			<assignedAuthoringDevice classCode="DEV" determinerCode="INSTANCE">
+				<softwareName>RCU2</softwareName>
+			</assignedAuthoringDevice>
+			<representedOrganization>
+				<id root="2.16.620.1.101.10"/>
+				<name>Serviços Partilhados do Ministério da Saúde</name>
+				<telecom value="tel:+351211545600" use="WP"/>
+				<addr>
+					<streetAddressLine>Avenida da República, n.º 61</streetAddressLine>
+					<postalCode>1050-189</postalCode>
+					<city>Lisboa</city>
+					<country>PT</country>
+				</addr>
+			</representedOrganization>
+		</assignedAuthor>
+	</author>
+	<custodian typeCode="CST">
+		<assignedCustodian classCode="ASSIGNED">
+			<representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+				<id root="2.16.620.1.101.10"/>
+				<name>Serviços Partilhados do Ministério da Saúde</name>
+				<telecom value="tel:+351211545600" use="WP"/>
+				<addr>
+					<streetAddressLine>Avenida da República, n.º 61</streetAddressLine>
+					<postalCode>1050-189</postalCode>
+					<city>Lisboa</city>
+					<country>PT</country>
+				</addr>
+			</representedCustodianOrganization>
+		</assignedCustodian>
+	</custodian>
+	<legalAuthenticator>
+		<time value="20200227112137"/>
+		<signatureCode code="S"/>
+		<assignedEntity>
+			<id root="2.16.620.1.101.10" extension="1040900"/>
+			<addr>
+				<streetAddressLine>Avenida da República, n.º 61</streetAddressLine>
+				<postalCode>1050-189</postalCode>
+				<city>Lisboa</city>
+				<country>PT</country>
+			</addr>
+			<telecom value="tel:+351211545600" use="MC"/>
+			<assignedPerson>
+				<name>
+					<given>JOSE</given>
+					<family>CUNHA</family>
+				</name>
+			</assignedPerson>
+			<representedOrganization>
+				<id root="2.16.620.1.101.10" extension="1040900"/>
+				<name>TORRE DE MONCORVO</name>
+				<telecom value="tel:+351211545600" use="MC"/>
+				<addr>
+					<streetAddressLine>Avenida da República, n.º 61</streetAddressLine>
+					<postalCode>1050-189</postalCode>
+					<city>Lisboa</city>
+					<country>PT</country>
+				</addr>
+			</representedOrganization>
+		</assignedEntity>
+	</legalAuthenticator>
+	<participant typeCode="IND">
+		<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4"/>
+		<functionCode code="PCP" codeSystem="2.16.840.1.113883.5.88" codeSystemName="ParticipationFunction" displayName="Primary care physician"/>
+		<associatedEntity classCode="PRS">
+			<addr>
+				<streetAddressLine>Avenida da República, n.º 61</streetAddressLine>
+				<postalCode>1050-189</postalCode>
+				<city>Lisboa</city>
+				<country>PT</country>
+			</addr>
+			<telecom value="tel:+351211545600" use="MC"/>
+			<associatedPerson>
+				<name>
+					<given>JOSE</given>
+					<family>CUNHA</family>
+				</name>
+			</associatedPerson>
+		</associatedEntity>
+	</participant>
+	<documentationOf typeCode="DOC">
+		<templateId root="2.16.840.1.113883.3.1937.777.11.10.106"/>
+		<serviceEvent classCode="PCPR" moodCode="EVN">
+			<effectiveTime>
+				<high value="20200220"/>
+			</effectiveTime>
+		</serviceEvent>
+	</documentationOf>
+	<relatedDocument typeCode="APND">
+		<templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.7"/>
+		<parentDocument classCode="DOCCLIN" moodCode="EVN">
+			<id root="2.16.840.1.113883.19.5" extension="898765392"/>
+		</parentDocument>
+	</relatedDocument>
+	<component>
+		<structuredBody>
+			<component>
+				<section classCode="DOCSECT" moodCode="EVN">
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.13"/>
+					<templateId root="2.16.840.1.113883.10.20.1.2"/>
+					<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+					<title>Histórico de Alergias</title>
+					<text>
+						<table>
+							<tbody>
+								<tr>
+									<th>Classificação</th>
+									<th>Código</th>
+									<th>Descrição Alergénio</th>
+									<th>Reacção</th>
+									<th>Severidade</th>
+									<th>Categoria</th>
+									<th>Estado</th>
+									<th>Data Diagnóstico</th>
+								</tr>
+								<tr ID="allergy_0">
+									<td>Anatomical Therapeutic Chemical</td>
+									<td>N02BA01</td>
+									<td>acetylsalicylic acid</td>
+									<td>
+										<content ID="allergycontent_0">Anafilaxia</content>
+									</td>
+									<td>Grave</td>
+									<td>Alergia medicamentosa</td>
+									<td>ATIVO CONFIRMADO</td>
+									<td>2010-06-04</td>
+								</tr>
+								<tr ID="allergy_1">
+									<td>Anatomical Therapeutic Chemical</td>
+									<td>N02BB</td>
+									<td>Pyrazolones</td>
+									<td>
+										<content ID="allergycontent_1">Prurido</content>
+									</td>
+									<td>Ligeiro</td>
+									<td>Alergia medicamentosa</td>
+									<td>ATIVO CONFIRMADO</td>
+									<td>2000-07-01</td>
+								</tr>
+								<tr ID="allergy_2">
+									<td>SNOMED CT</td>
+									<td>278840001</td>
+									<td>Camarão</td>
+									<td>
+										<content ID="allergycontent_2">Edema da laringe</content>
+									</td>
+									<td>Grave</td>
+									<td>Alergia alimentar</td>
+									<td>ATIVO CONFIRMADO</td>
+									<td>1961-07-11</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.3"/>
+							<id root="46D48874-EC5B-4691-8A16-292F7F7AABFA"/>
+							<code nullFlavor="NA"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20100604"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN" negationInd="false">
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<templateId root="2.16.840.1.113883.10.20.1.18"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<id root="FB6E9D27-011B-4F8E-A2F8-3679A836006F"/>
+									<code code="416098002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Alergia medicamentosa"/>
+									<text>
+										<reference value="#allergy_0"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low value="20100604"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="N02BA01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="acetylsalicylic acid"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="N02BA01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="acetylsalicylic acid"/>
+												<name>acetylsalicylic acid</name>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.1.55"/>
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+											<id root="2532C904-7C9E-43E0-8022-2C474B98E733"/>
+											<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode" displayName="Severity"/>
+											<text>
+												<reference value="#allergy_0"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CD" code="24484000" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Grave"/>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="MFST">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+											<templateId root="2.16.840.1.113883.10.20.1.28"/>
+											<id root="3A9F1806-0D57-442D-8D36-78F1BB25A2AA"/>
+											<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+											<text>
+												<reference value="#allergy_0"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CD" nullFlavor="NI">
+												<originalText>
+													<reference value="#allergy_0"/>
+												</originalText>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<act classCode="ACT" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.1.40"/>
+													<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.2"/>
+													<code code="48767-8" codeSystem="2.16.840.1.113883.6.1"/>
+													<text>Alergias perfil médico<reference value="#allergycontent_0"/>
+													</text>
+													<statusCode code="completed"/>
+												</act>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.3"/>
+							<id root="894A45C8-B7C4-4F72-B560-BC3F8FFBFE31"/>
+							<code nullFlavor="NA"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20000701"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN" negationInd="false">
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<templateId root="2.16.840.1.113883.10.20.1.18"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<id root="1C7EEA01-98A6-4111-9872-80D4EF2FD51C"/>
+									<code code="416098002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Alergia medicamentosa"/>
+									<text>
+										<reference value="#allergy_1"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low value="20000701"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="N02BB" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Pyrazolones"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="N02BB" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Pyrazolones"/>
+												<name>Pyrazolones</name>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.1.55"/>
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+											<id root="E27DCF8A-085C-43B2-9ACD-6F10A905C2B5"/>
+											<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode" displayName="Severity"/>
+											<text>
+												<reference value="#allergy_1"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CD" code="255604002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Ligeiro"/>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="MFST">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+											<templateId root="2.16.840.1.113883.10.20.1.28"/>
+											<id root="C3617EB5-CADA-4067-B6AB-25A8BD9C83B7"/>
+											<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+											<text>
+												<reference value="#allergy_1"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CD" nullFlavor="NI">
+												<originalText>
+													<reference value="#allergy_1"/>
+												</originalText>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<act classCode="ACT" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.1.40"/>
+													<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.2"/>
+													<code code="48767-8" codeSystem="2.16.840.1.113883.6.1"/>
+													<text>Alergias perfil médico<reference value="#allergycontent_1"/>
+													</text>
+													<statusCode code="completed"/>
+												</act>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.3"/>
+							<id root="9AC376B2-EAA8-409B-93E6-F0FC3CD5A0E0"/>
+							<code nullFlavor="NA"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="19610711"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN" negationInd="false">
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<templateId root="2.16.840.1.113883.10.20.1.18"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.6"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<id root="9527D90A-4A5F-4213-9CE1-1ABA92D62F1A"/>
+									<code code="414285001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Alergia alimentar"/>
+									<text>
+										<reference value="#allergy_2"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low value="19610711"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="278840001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Camarão"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="278840001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Camarão"/>
+												<name>Camarão</name>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.1.55"/>
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.1"/>
+											<id root="627C90E3-5BDC-4162-A30A-5D6AF61006BC"/>
+											<code code="SEV" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode" displayName="Severity"/>
+											<text>
+												<reference value="#allergy_2"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CD" code="24484000" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Grave"/>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="MFST">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+											<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+											<templateId root="2.16.840.1.113883.10.20.1.28"/>
+											<id root="50DE656A-0550-4B3F-A89B-7DEE9295FEF2"/>
+											<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+											<text>
+												<reference value="#allergy_2"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CD" code="51599000" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Edema da laringe"/>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<act classCode="ACT" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.1.40"/>
+													<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.2"/>
+													<code code="48767-8" codeSystem="2.16.840.1.113883.6.1"/>
+													<text>Alergias perfil médico<reference value="#allergycontent_2"/>
+													</text>
+													<statusCode code="completed"/>
+												</act>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section classCode="DOCSECT">
+					<templateId root="2.16.840.1.113883.10.20.1.8"/>
+					<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.3"/>
+					<code code="10160-0" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="History of Medication use"/>
+					<title>Histórico de uso de Medicação</title>
+					<text>
+						<table>
+							<tbody>
+								<tr>
+									<th>Código ATC</th>
+									<th>Substância Activa</th>
+									<th>Descrição</th>
+									<th>Forma Farmacêutica</th>
+									<th>Posologia</th>
+									<th>Dosagem</th>
+									<th>Data Início</th>
+									<th>Data Fim</th>
+								</tr>
+								<tr ID="medication_0">
+									<td>A10AB04</td>
+									<td>Insulina lispro (solúvel)</td>
+									<td>Humalog KwikPen</td>
+									<td>Solução injetável em caneta pré-cheia</td>
+									<td>1 inj 2 vezes por dia, uma de manhã, outra ao deitar durante 5 dias</td>
+									<td>100 U/ml</td>
+									<td>2020-02-20</td>
+									<td>Sem informação</td>
+								</tr>
+								<tr ID="medication_1">
+									<td>C09AA05</td>
+									<td>Ramipril</td>
+									<td>Ramipril Generis Phar</td>
+									<td>Cápsula</td>
+									<td>1 de 8 em 8 horas durante 2 semanas</td>
+									<td>10 mg</td>
+									<td>2020-02-05</td>
+									<td>Sem informação</td>
+								</tr>
+								<tr ID="medication_2">
+									<td>B01AF01</td>
+									<td>Rivaroxabano</td>
+									<td>Xarelto</td>
+									<td>Comprimido revestido por película</td>
+									<td>1 comp. 2 vezes por dia</td>
+									<td>15 mg</td>
+									<td>2020-02-05</td>
+									<td>Sem informação</td>
+								</tr>
+								<tr ID="medication_3">
+									<td>A02BC01</td>
+									<td>Omeprazol</td>
+									<td>Omeprazol Generis</td>
+									<td>Cápsula gastrorresistente</td>
+									<td>2 de 12 em 12 horas</td>
+									<td>40 mg</td>
+									<td>2020-02-05</td>
+									<td>Sem informação</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+							<id root="CE9AED56-5D73-4A88-BFC1-3E9EF10AB853"/>
+							<statusCode code="active"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low value="20200220"/>
+								<high nullFlavor="NI"/>
+							</effectiveTime>
+							<effectiveTime nullFlavor="UNK"/>
+							<routeCode code="42" codeSystem="2.16.620.1.101.20.8" codeSystemName="VIASADMIN" displayName="Via intravenosa"/>
+							<doseQuantity nullFlavor="NI"/>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="50128655" codeSystem="CNPEM" codeSystemName="2.16.620.1.101.10.5.2.1" displayName="Humalog KwikPen">
+											<originalText>
+												<reference value="#medication_0"/>
+											</originalText>
+										</code>
+										<name>Humalog KwikPen</name>
+										<epsos:formCode code="907" codeSystem="2.16.620.1.101.20.9" codeSystemName="FORMFARM" displayName="Solução injetável em caneta pré-cheia" xmlns:epsos="urn:epsos-org:ep:medication"/>
+										<epsos:asContent classCode="CONT" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+												<epsos:name>Humalog KwikPen</epsos:name>
+												<epsos:formCode code="5" codeSystem="2.16.620.1.101.20.6" codeSystemName="EMB" displayName="Caneta pré-cheia"/>
+												<epsos:capacityQuantity unit="1" value="5"/>
+											</epsos:containerPackagedMedicine>
+										</epsos:asContent>
+										<epsos:ingredient classCode="ACTI" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:quantity>
+												<epsos:numerator unit="U" value="100" xsi:type="epsos:PQ"/>
+												<epsos:denominator unit="ml" value="1" xsi:type="epsos:PQ"/>
+											</epsos:quantity>
+											<epsos:ingredient classCode="MMAT" determinerCode="KIND">
+												<epsos:code code="A10AB04" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Insulina lispro (solúvel)"/>
+												<epsos:name>Insulina lispro (solúvel)</epsos:name>
+											</epsos:ingredient>
+										</epsos:ingredient>
+									</manufacturedMaterial>
+									<epsos:marketingAuthorizationHolder xmlns:epsos="urn:epsos-org:ep:medication" classCode="ORG" determinerCode="INSTANCE">
+										<epsos:id root="41B41889-50D6-4935-81DD-E0C07BC9E89C" extension="24437"/>
+										<epsos:name>Eli Lilly Nederland, B.V.</epsos:name>
+									</epsos:marketingAuthorizationHolder>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ" inversionInd="true">
+								<act classCode="ACT" moodCode="INT">
+									<templateId root="2.16.840.1.113883.10.20.1.49"/>
+									<id root="6FDB07E9-39AD-47CC-8D91-82D16CAF747D" extension="41294"/>
+									<code code="PINSTRUCT" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+									<text>1 inj 2 vezes por dia, uma de manhã, outra ao deitar durante 5 dias</text>
+									<statusCode code="completed"/>
+								</act>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+							<id root="1C511D03-681D-443D-B47A-4267538438B3"/>
+							<statusCode code="active"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low value="20200205"/>
+								<high nullFlavor="NI"/>
+							</effectiveTime>
+							<effectiveTime nullFlavor="UNK"/>
+							<routeCode code="48" codeSystem="2.16.620.1.101.20.8" codeSystemName="VIASADMIN" displayName="Via oral"/>
+							<doseQuantity nullFlavor="NI"/>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="50037510" codeSystem="CNPEM" codeSystemName="2.16.620.1.101.10.5.2.1" displayName="Ramipril Generis Phar">
+											<originalText>
+												<reference value="#medication_1"/>
+											</originalText>
+										</code>
+										<name>Ramipril Generis Phar</name>
+										<epsos:formCode code="29" codeSystem="2.16.620.1.101.20.9" codeSystemName="FORMFARM" displayName="Cápsula" xmlns:epsos="urn:epsos-org:ep:medication"/>
+										<epsos:asContent classCode="CONT" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+												<epsos:name>Ramipril Generis Phar</epsos:name>
+												<epsos:formCode code="7" codeSystem="2.16.620.1.101.20.6" codeSystemName="EMB" displayName="Blister"/>
+												<epsos:capacityQuantity unit="1" value="14"/>
+											</epsos:containerPackagedMedicine>
+										</epsos:asContent>
+										<epsos:ingredient classCode="ACTI" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:quantity>
+												<epsos:numerator unit="mg" value="10" xsi:type="epsos:PQ"/>
+												<epsos:denominator unit="1" value="1" xsi:type="epsos:PQ"/>
+											</epsos:quantity>
+											<epsos:ingredient classCode="MMAT" determinerCode="KIND">
+												<epsos:code code="C09AA05" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Ramipril"/>
+												<epsos:name>Ramipril</epsos:name>
+											</epsos:ingredient>
+										</epsos:ingredient>
+									</manufacturedMaterial>
+									<epsos:marketingAuthorizationHolder xmlns:epsos="urn:epsos-org:ep:medication" classCode="ORG" determinerCode="INSTANCE">
+										<epsos:id root="74EBD1EB-0F01-4864-B648-19A7A3BC026F" extension="17642"/>
+										<epsos:name>Generis Farmacêutica, S.A.</epsos:name>
+									</epsos:marketingAuthorizationHolder>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ" inversionInd="true">
+								<act classCode="ACT" moodCode="INT">
+									<templateId root="2.16.840.1.113883.10.20.1.49"/>
+									<id root="A8B2F1D3-162F-4F37-91FA-214857C5F8DE" extension="36410"/>
+									<code code="PINSTRUCT" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+									<text>1 de 8 em 8 horas durante 2 semanas</text>
+									<statusCode code="completed"/>
+								</act>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+							<id root="7C5148CA-0716-459A-82E8-B701E95FCC77"/>
+							<statusCode code="active"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low value="20200205"/>
+								<high nullFlavor="NI"/>
+							</effectiveTime>
+							<effectiveTime nullFlavor="UNK"/>
+							<routeCode code="48" codeSystem="2.16.620.1.101.20.8" codeSystemName="VIASADMIN" displayName="Via oral"/>
+							<doseQuantity nullFlavor="NI"/>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="50123220" codeSystem="CNPEM" codeSystemName="2.16.620.1.101.10.5.2.1" displayName="Xarelto">
+											<originalText>
+												<reference value="#medication_2"/>
+											</originalText>
+										</code>
+										<name>Xarelto</name>
+										<epsos:formCode code="39" codeSystem="2.16.620.1.101.20.9" codeSystemName="FORMFARM" displayName="Comprimido revestido por película" xmlns:epsos="urn:epsos-org:ep:medication"/>
+										<epsos:asContent classCode="CONT" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+												<epsos:name>Xarelto</epsos:name>
+												<epsos:formCode code="7" codeSystem="2.16.620.1.101.20.6" codeSystemName="EMB" displayName="Blister"/>
+												<epsos:capacityQuantity unit="1" value="14"/>
+											</epsos:containerPackagedMedicine>
+										</epsos:asContent>
+										<epsos:ingredient classCode="ACTI" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:quantity>
+												<epsos:numerator unit="mg" value="15" xsi:type="epsos:PQ"/>
+												<epsos:denominator unit="1" value="1" xsi:type="epsos:PQ"/>
+											</epsos:quantity>
+											<epsos:ingredient classCode="MMAT" determinerCode="KIND">
+												<epsos:code code="B01AF01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Rivaroxabano"/>
+												<epsos:name>Rivaroxabano</epsos:name>
+											</epsos:ingredient>
+										</epsos:ingredient>
+									</manufacturedMaterial>
+									<epsos:marketingAuthorizationHolder xmlns:epsos="urn:epsos-org:ep:medication" classCode="ORG" determinerCode="INSTANCE">
+										<epsos:id root="C54834A4-4CF1-4768-BF82-6CA9DF9155EE" extension="18129"/>
+										<epsos:name>Bayer Pharma A.G.</epsos:name>
+									</epsos:marketingAuthorizationHolder>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ" inversionInd="true">
+								<act classCode="ACT" moodCode="INT">
+									<templateId root="2.16.840.1.113883.10.20.1.49"/>
+									<id root="7AC8A276-FEBF-4146-94BF-E684213B6F76" extension="55106"/>
+									<code code="PINSTRUCT" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+									<text>1 comp. 2 vezes por dia</text>
+									<statusCode code="completed"/>
+								</act>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+							<id root="D02AE192-4A96-4E20-AFB4-5A17404DD481"/>
+							<statusCode code="active"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low value="20200205"/>
+								<high nullFlavor="NI"/>
+							</effectiveTime>
+							<effectiveTime nullFlavor="UNK"/>
+							<routeCode code="48" codeSystem="2.16.620.1.101.20.8" codeSystemName="VIASADMIN" displayName="Via oral"/>
+							<doseQuantity nullFlavor="NI"/>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.1"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="50019066" codeSystem="CNPEM" codeSystemName="2.16.620.1.101.10.5.2.1" displayName="Omeprazol Generis">
+											<originalText>
+												<reference value="#medication_3"/>
+											</originalText>
+										</code>
+										<name>Omeprazol Generis</name>
+										<epsos:formCode code="31" codeSystem="2.16.620.1.101.20.9" codeSystemName="FORMFARM" displayName="Cápsula gastrorresistente" xmlns:epsos="urn:epsos-org:ep:medication"/>
+										<epsos:asContent classCode="CONT" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:containerPackagedMedicine classCode="CONT" determinerCode="INSTANCE">
+												<epsos:name>Omeprazol Generis</epsos:name>
+												<epsos:formCode code="7" codeSystem="2.16.620.1.101.20.6" codeSystemName="EMB" displayName="Blister"/>
+												<epsos:capacityQuantity unit="1" value="14"/>
+											</epsos:containerPackagedMedicine>
+										</epsos:asContent>
+										<epsos:ingredient classCode="ACTI" xmlns:epsos="urn:epsos-org:ep:medication">
+											<epsos:quantity>
+												<epsos:numerator unit="mg" value="40" xsi:type="epsos:PQ"/>
+												<epsos:denominator unit="1" value="1" xsi:type="epsos:PQ"/>
+											</epsos:quantity>
+											<epsos:ingredient classCode="MMAT" determinerCode="KIND">
+												<epsos:code code="A02BC01" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Omeprazol"/>
+												<epsos:name>Omeprazol</epsos:name>
+											</epsos:ingredient>
+										</epsos:ingredient>
+									</manufacturedMaterial>
+									<epsos:marketingAuthorizationHolder xmlns:epsos="urn:epsos-org:ep:medication" classCode="ORG" determinerCode="INSTANCE">
+										<epsos:id root="13B93F3E-FB78-41FA-BF06-AE1D7C6D3C83" extension="17642"/>
+										<epsos:name>Generis Farmacêutica, S.A.</epsos:name>
+									</epsos:marketingAuthorizationHolder>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ" inversionInd="true">
+								<act classCode="ACT" moodCode="INT">
+									<templateId root="2.16.840.1.113883.10.20.1.49"/>
+									<id root="619DBE01-8886-4787-B631-771B89BF77D1" extension="38051"/>
+									<code code="PINSTRUCT" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+									<text>2 de 12 em 12 horas</text>
+									<statusCode code="completed"/>
+								</act>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section classCode="DOCSECT" moodCode="EVN">
+					<templateId root="2.16.840.1.113883.10.20.1.6"/>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.23"/>
+					<id root="D6B77011-807C-4FAA-BA96-4C19DEB1E189"/>
+					<code code="11369-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="History of immunizations"/>
+					<title>Histórico de Imunização</title>
+					<text>
+						<table>
+							<tbody>
+								<tr>
+									<th>Codificação</th>
+									<th>Código</th>
+									<th>Designação</th>
+									<th>Nome Comercial</th>
+									<th>Lote</th>
+									<th>Data Administração Inicial</th>
+								</tr>
+								<tr ID="immunization_0">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_0">Vacina contra a Gripe gratuita e administrada no SNS</content>
+									</td>
+									<td>Influvac Tetra SNS</td>
+									<td>T37A</td>
+									<td>2019-10-28</td>
+								</tr>
+								<tr ID="immunization_1">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_1">Vacina contra a Gripe gratuita e administrada no SNS</content>
+									</td>
+									<td>Istivac SNS</td>
+									<td>R3J682V</td>
+									<td>2018-10-22</td>
+								</tr>
+								<tr ID="immunization_2">
+									<td>SNOMED CT</td>
+									<td>350327004</td>
+									<td>
+										<content ID="immunizationcontent_2">Vacina contra a difteria e o tétano</content>
+									</td>
+									<td>D.T. Vax Adulto</td>
+									<td>m711613v</td>
+									<td>2018-03-27</td>
+								</tr>
+								<tr ID="immunization_3">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_3">Vacina contra a Gripe gratuita e administrada no SNS</content>
+									</td>
+									<td>Influvac SNS</td>
+									<td>N36NA</td>
+									<td>2017-10-20</td>
+								</tr>
+								<tr ID="immunization_4">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_4">Vacina contra a Gripe gratuita e administrada no SNS</content>
+									</td>
+									<td>Influvac SNS</td>
+									<td>l3on</td>
+									<td>2016-10-03</td>
+								</tr>
+								<tr ID="immunization_5">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_5">Vacina contra a Gripe gratuita e administrada no SNS</content>
+									</td>
+									<td>Istivac SNS</td>
+									<td>L0223-1</td>
+									<td>2014-10-13</td>
+								</tr>
+								<tr ID="immunization_6">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_6">Vacina contra a Gripe gratuita e administrada no SNS</content>
+									</td>
+									<td>Istivac SNS</td>
+									<td>K8321-2</td>
+									<td>2013-10-15</td>
+								</tr>
+								<tr ID="immunization_7">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_7">Vacina contra a gripe</content>
+									</td>
+									<td>Influvac</td>
+									<td>p04</td>
+									<td>2008-11-10</td>
+								</tr>
+								<tr ID="immunization_8">
+									<td>SNOMED CT</td>
+									<td>350327004</td>
+									<td>
+										<content ID="immunizationcontent_8">Vacina contra a difteria e o tétano</content>
+									</td>
+									<td>Ditanrix-Adulto</td>
+									<td>AC12BO2OAA</td>
+									<td>2008-07-17</td>
+								</tr>
+								<tr ID="immunization_9">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_9">Vacina contra a gripe</content>
+									</td>
+									<td>Influvac</td>
+									<td>K22</td>
+									<td>2006-11-07</td>
+								</tr>
+								<tr ID="immunization_10">
+									<td>SNOMED CT</td>
+									<td>46233009</td>
+									<td>
+										<content ID="immunizationcontent_10">Vacina contra a gripe</content>
+									</td>
+									<td>SOLVAY</td>
+									<td>H05</td>
+									<td>2005-10-12</td>
+								</tr>
+								<tr ID="immunization_11">
+									<td>SNOMED CT</td>
+									<td>333621002</td>
+									<td>
+										<content ID="immunizationcontent_11">Vacina contra o tétano</content>
+									</td>
+									<td>BERNA</td>
+									<td>97J29A</td>
+									<td>1998-04-20</td>
+								</tr>
+								<tr ID="immunization_12">
+									<td>SNOMED CT</td>
+									<td>333621002</td>
+									<td>
+										<content ID="immunizationcontent_12">Vacina contra o tétano</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1988-02-18</td>
+								</tr>
+								<tr ID="immunization_13">
+									<td>SNOMED CT</td>
+									<td>333621002</td>
+									<td>
+										<content ID="immunizationcontent_13">Vacina contra o tétano</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1981-05-18</td>
+								</tr>
+								<tr ID="immunization_14">
+									<td>SNOMED CT</td>
+									<td>333621002</td>
+									<td>
+										<content ID="immunizationcontent_14">Vacina contra o tétano</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1976-12-09</td>
+								</tr>
+								<tr ID="immunization_15">
+									<td>SNOMED CT</td>
+									<td>333621002</td>
+									<td>
+										<content ID="immunizationcontent_15">Vacina contra o tétano</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1974-11-11</td>
+								</tr>
+								<tr ID="immunization_16">
+									<td>SNOMED CT</td>
+									<td>333621002</td>
+									<td>
+										<content ID="immunizationcontent_16">Vacina contra o tétano</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1974-10-11</td>
+								</tr>
+								<tr ID="immunization_17">
+									<td>SNOMED CT</td>
+									<td>33234009</td>
+									<td>
+										<content ID="immunizationcontent_17">Vacina viva contra a varíola</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1974-10-11</td>
+								</tr>
+								<tr ID="immunization_18">
+									<td>SNOMED CT</td>
+									<td>33234009</td>
+									<td>
+										<content ID="immunizationcontent_18">Vacina viva contra a varíola</content>
+									</td>
+									<td>Sem informação</td>
+									<td>.</td>
+									<td>1967-01-04</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="45E0D104-B67A-48C3-8BA6-0759A23233DC"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_0"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20191028"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a Gripe gratuita e administrada no SNS">
+											<originalText>
+												<reference value="#immunizationcontent_0"/>
+											</originalText>
+										</code>
+										<name nullFlavor="OTH"/>
+										<lotNumberText>T37A</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="9"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="4244F350-49B0-43BC-BC82-7D896A89E16E"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_1"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20181022"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a Gripe gratuita e administrada no SNS">
+											<originalText>
+												<reference value="#immunizationcontent_1"/>
+											</originalText>
+										</code>
+										<name>Istivac SNS</name>
+										<lotNumberText>R3J682V</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="8"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="441ED968-0FAC-461D-96FA-A9D2EA33C744"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_2"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20180327"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="350327004" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a difteria e o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_2"/>
+											</originalText>
+										</code>
+										<name>D.T. Vax Adulto</name>
+										<lotNumberText>m711613v</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="8"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="C6019BB6-571A-4CE0-93DC-C4E2124DBDE7"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_3"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20171020"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a Gripe gratuita e administrada no SNS">
+											<originalText>
+												<reference value="#immunizationcontent_3"/>
+											</originalText>
+										</code>
+										<name>Influvac SNS</name>
+										<lotNumberText>N36NA</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="7"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="57F02D89-BE5C-48BD-AE5C-62EE6599738B"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_4"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20161003"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a Gripe gratuita e administrada no SNS">
+											<originalText>
+												<reference value="#immunizationcontent_4"/>
+											</originalText>
+										</code>
+										<name>Influvac SNS</name>
+										<lotNumberText>l3on</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="6"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="02AC2F22-07BE-463F-97B4-F556980F49FC"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_5"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20141013"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a Gripe gratuita e administrada no SNS">
+											<originalText>
+												<reference value="#immunizationcontent_5"/>
+											</originalText>
+										</code>
+										<name>Istivac SNS</name>
+										<lotNumberText>L0223-1</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="5"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="33862131-382D-4960-8D62-CDE9E6938268"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_6"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20131015"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a Gripe gratuita e administrada no SNS">
+											<originalText>
+												<reference value="#immunizationcontent_6"/>
+											</originalText>
+										</code>
+										<name>Istivac SNS</name>
+										<lotNumberText>K8321-2</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="4"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="F80BD33D-6A16-4ED6-97EC-4A59287E06F1"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_7"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20081110"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a gripe">
+											<originalText>
+												<reference value="#immunizationcontent_7"/>
+											</originalText>
+										</code>
+										<name>Influvac</name>
+										<lotNumberText>p04</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="3"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="D7AD5C0D-7EC9-4D84-8151-8D52485ABEC8"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_8"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20080717"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="350327004" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a difteria e o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_8"/>
+											</originalText>
+										</code>
+										<name nullFlavor="OTH"/>
+										<lotNumberText>AC12BO2OAA</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="7"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="D9F12F0B-2D74-42B7-81C1-60895223261B"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_9"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20061107"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a gripe">
+											<originalText>
+												<reference value="#immunizationcontent_9"/>
+											</originalText>
+										</code>
+										<name>Influvac</name>
+										<lotNumberText>K22</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="2"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="FB9D4699-3297-4FAF-9D1A-AE07CE874968"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_10"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="20051012"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="46233009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra a gripe">
+											<originalText>
+												<reference value="#immunizationcontent_10"/>
+											</originalText>
+										</code>
+										<name nullFlavor="OTH"/>
+										<lotNumberText>H05</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="1"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="F0612542-6441-40DB-8CF3-B1CE10793A4D"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_11"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19980420"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="333621002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_11"/>
+											</originalText>
+										</code>
+										<name nullFlavor="OTH"/>
+										<lotNumberText>97J29A</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="6"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="BD6E9FFB-AF12-47E3-91F8-85C420129DD0"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_12"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19880218"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="333621002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_12"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="5"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="08CECCF7-80DC-424E-954E-154A498A5275"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_13"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19810518"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="333621002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_13"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="4"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="9A98628F-07E8-47DF-BB7C-CC5879F6E861"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_14"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19761209"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="333621002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_14"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="3"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="C6127D17-324D-44FB-86F7-DBAB0DB4A213"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_15"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19741111"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="333621002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_15"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="2"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="9FB04C74-D681-4D4B-A04D-EB3A81EF6EA8"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_16"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19741011"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="333621002" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina contra o tétano">
+											<originalText>
+												<reference value="#immunizationcontent_16"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="1"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="242134CC-F011-49B8-A9AF-C78FF352E56B"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_17"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19741011"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="33234009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina viva contra a varíola">
+											<originalText>
+												<reference value="#immunizationcontent_17"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="2"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+					<entry>
+						<substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="false">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+							<templateId root="2.16.840.1.113883.10.20.1.24"/>
+							<id root="8DFBD714-7D50-4E7E-9E2E-9830411E018F"/>
+							<code code="IMMUNIZ" codeSystem="1.3.5.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+							<text>
+								<reference value="#immunization_18"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS" value="19670104"/>
+							<routeCode code="20035000" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.1" codeSystemName="epsos-codesystem2-1"/>
+							<consumable typeCode="CSM">
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.1.53"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+									<manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+										<code code="33234009" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vacina viva contra a varíola">
+											<originalText>
+												<reference value="#immunizationcontent_18"/>
+											</originalText>
+										</code>
+										<name nullFlavor="UNK"/>
+										<lotNumberText>.</lotNumberText>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.1.46"/>
+									<code code="30973-2" codeSystem="2.16.840.1.113883.6.1"/>
+									<statusCode code="completed"/>
+									<value xsi:type="INT" value="1"/>
+								</observation>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section classCode="DOCSECT">
+					<templateId root="2.16.840.1.113883.10.20.1.11"/>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.6"/>
+					<code code="11450-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Problem list"/>
+					<title>Lista de Problemas</title>
+					<text>
+						<table>
+							<tbody>
+								<tr>
+									<th>Classificação</th>
+									<th>Código</th>
+									<th>Descrição</th>
+									<th>Data Início</th>
+								</tr>
+								<tr ID="problem_0">
+									<td>ICD10-CM Hospitais</td>
+									<td>I442</td>
+									<td>
+										<content ID="problemcontent_0">Atrioventricular block, complete</content>
+									</td>
+									<td>2017-11-13</td>
+								</tr>
+								<tr ID="problem_1">
+									<td>ICD9-CM Hospitais</td>
+									<td>531</td>
+									<td>
+										<content ID="problemcontent_1">ULCERA GASTRICA</content>
+									</td>
+									<td>2005-07-28</td>
+								</tr>
+								<tr ID="problem_2">
+									<td>ICD9-CM Hospitais</td>
+									<td>4593</td>
+									<td>
+										<content ID="problemcontent_2">HIPERTENSAO VENOSA CRONICA (IDIOPATICA)</content>
+									</td>
+									<td>2005-07-15</td>
+								</tr>
+								<tr ID="problem_3">
+									<td>ICD9-CM Hospitais</td>
+									<td>278</td>
+									<td>
+										<content ID="problemcontent_3">PESO A MAIS, OBESIDADE E OUTRA HIPERALIMENTACAO</content>
+									</td>
+									<td>2004-01-02</td>
+								</tr>
+								<tr ID="problem_4">
+									<td>ICD9-CM Hospitais</td>
+									<td>402</td>
+									<td>
+										<content ID="problemcontent_4">DOENCA CARDIACA HIPERTENSIVA</content>
+									</td>
+									<td>2004-01-02</td>
+								</tr>
+								<tr ID="problem_5">
+									<td>ICD9-CM Hospitais</td>
+									<td>25001</td>
+									<td>
+										<content ID="problemcontent_5">DIABETES MELLITUS, S/MENCAO COMPLICACAO, TIPO I [ID] [JUVENIL], N/ESPEC.INCONTR.</content>
+									</td>
+									<td>2004-01-02</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+							<id root="8A6934DF-467B-45AD-8DD6-DCD90F49C732"/>
+							<code nullFlavor="NA"/>
+							<text>
+								<reference value="#problem_0"/>
+							</text>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20171113"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<id root="06B8DD15-631C-4A81-B79D-CC92B6A6D9E7"/>
+									<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+									<text>
+										<reference value="#problem_0"/>
+									</text>
+									<effectiveTime>
+										<low value="20171113"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="I44.2" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.44.2" codeSystemName="ICD-10" displayName="Atrioventricular block, complete"/>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+							<id root="E3730F0A-225F-4E96-A2D7-13B97CD36700"/>
+							<code nullFlavor="NA"/>
+							<text>
+								<reference value="#problem_1"/>
+							</text>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20050728"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<id root="A6BDBB12-9A1C-45BA-9C2D-E09877E24EEC"/>
+									<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+									<text>
+										<reference value="#problem_1"/>
+									</text>
+									<effectiveTime>
+										<low value="20050728"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="531" codeSystem="2.16.620.1.101.10.4.2" codeSystemName="ICD9-CM Hospitais" displayName="ULCERA GASTRICA"/>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+							<id root="1F957DAA-F5A9-4844-BD8C-8148A0E2BE8A"/>
+							<code nullFlavor="NA"/>
+							<text>
+								<reference value="#problem_2"/>
+							</text>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20050715"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<id root="18797D37-B085-40A8-A75F-C2515770E245"/>
+									<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+									<text>
+										<reference value="#problem_2"/>
+									</text>
+									<effectiveTime>
+										<low value="20050715"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="4593" codeSystem="2.16.620.1.101.10.4.2" codeSystemName="ICD9-CM Hospitais" displayName="HIPERTENSAO VENOSA CRONICA (IDIOPATICA)"/>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+							<id root="1998EC36-E9E0-407E-8117-28F698C8D5FE"/>
+							<code nullFlavor="NA"/>
+							<text>
+								<reference value="#problem_3"/>
+							</text>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20040102"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<id root="6A8D87B1-1039-496C-86E3-4F27EA3E5535"/>
+									<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+									<text>
+										<reference value="#problem_3"/>
+									</text>
+									<effectiveTime>
+										<low value="20040102"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="278" codeSystem="2.16.620.1.101.10.4.2" codeSystemName="ICD9-CM Hospitais" displayName="PESO A MAIS, OBESIDADE E OUTRA HIPERALIMENTACAO"/>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+							<id root="AFBE5F81-1E26-40A9-9DB3-787CE4010260"/>
+							<code nullFlavor="NA"/>
+							<text>
+								<reference value="#problem_4"/>
+							</text>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20040102"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<id root="1EF63F09-EE0E-40AA-B0BF-01492A456599"/>
+									<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+									<text>
+										<reference value="#problem_4"/>
+									</text>
+									<effectiveTime>
+										<low value="20040102"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="402" codeSystem="2.16.620.1.101.10.4.2" codeSystemName="ICD9-CM Hospitais" displayName="DOENCA CARDIACA HIPERTENSIVA"/>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry>
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.27"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.1"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5.2"/>
+							<id root="2865A438-3984-4A50-B63A-F0BEA81244E1"/>
+							<code nullFlavor="NA"/>
+							<text>
+								<reference value="#problem_5"/>
+							</text>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20040102"/>
+							</effectiveTime>
+							<entryRelationship typeCode="SUBJ">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+									<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.5"/>
+									<templateId root="2.16.840.1.113883.10.20.1.28"/>
+									<id root="1A262560-E9E8-4195-B0C3-2034362A5D1B"/>
+									<code code="404684003" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Clinical finding"/>
+									<text>
+										<reference value="#problem_5"/>
+									</text>
+									<effectiveTime>
+										<low value="20040102"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="25001" codeSystem="2.16.620.1.101.10.4.2" codeSystemName="ICD9-CM Hospitais" displayName="DIABETES MELLITUS, S/MENCAO COMPLICACAO, TIPO I [ID] [JUVENIL], N/ESPEC.INCONTR."/>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section classCode="DOCSECT">
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.11"/>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.12"/>
+					<code code="47519-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="History of procedures"/>
+					<title>Histórico de Procedimentos</title>
+					<text>
+						<table>
+							<tbody>
+								<tr>
+									<th>Classificacao</th>
+									<th>Codigo</th>
+									<th>Descricao</th>
+									<th>Data</th>
+								</tr>
+								<tr ID="procedure_0">
+									<td>ICD9-CM Procedimentos</td>
+									<td>3741</td>
+									<td>
+										<content ID="procedurecontent_0">IMPLANTACAO DISPOSITIVO PROTESICO SUPORTE CARD A VOLTA DO CORACA</content>
+									</td>
+									<td>2005-07-30</td>
+								</tr>
+								<tr ID="procedure_1">
+									<td>ICD9-CM Procedimentos</td>
+									<td>8151</td>
+									<td>
+										<content ID="procedurecontent_1">SUBSTITUICAO TOTAL DA ANCA</content>
+									</td>
+									<td>2004-01-14</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry>
+						<procedure classCode="PROC" moodCode="EVN" negationInd="true">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.19"/>
+							<templateId root="2.16.840.1.113883.10.20.1.29"/>
+							<id root="B62BAA47-DB6C-46AE-BCC9-01CEE6F76F25"/>
+							<code code="3741" codeSystem="2.16.620.1.101.10.4.3" codeSystemName="ICD9-CM Procedimentos" displayName="IMPLANTACAO DISPOSITIVO PROTESICO SUPORTE CARD A VOLTA DO CORACA"/>
+							<text>
+								<reference value="#procedure_0"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime value="20050730"/>
+						</procedure>
+					</entry>
+					<entry>
+						<procedure classCode="PROC" moodCode="EVN" negationInd="true">
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.19"/>
+							<templateId root="2.16.840.1.113883.10.20.1.29"/>
+							<id root="6D1CA2A1-00D3-4985-A56A-B8A4C837D6FA"/>
+							<code code="8151" codeSystem="2.16.620.1.101.10.4.3" codeSystemName="ICD9-CM Procedimentos" displayName="SUBSTITUICAO TOTAL DA ANCA"/>
+							<text>
+								<reference value="#procedure_1"/>
+							</text>
+							<statusCode code="completed"/>
+							<effectiveTime value="20040114"/>
+						</procedure>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section classCode="DOCSECT" moodCode="EVN">
+					<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.4"/>
+					<templateId root="2.16.840.1.113883.10.20.1.7"/>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.5.3.5"/>
+					<code code="46264-8" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Medical Equipment"/>
+					<title>Dispositivos Médicos</title>
+					<text>
+						<table>
+							<tbody>
+								<tr>
+									<th>Classificação</th>
+									<th>Código</th>
+									<th>Descrição</th>
+									<th>Data Início</th>
+								</tr>
+								<tr ID="medicaldevice_0">
+									<td>DISPMEDICOS</td>
+									<td>11587300</td>
+									<td>
+										<content ID="devicecontent_0">PACEMAKER - OUTROS (J010199)</content>
+									</td>
+									<td>2005-07-28</td>
+								</tr>
+								<tr ID="medicaldevice_1">
+									<td>DISPMEDICOS</td>
+									<td>11007206</td>
+									<td>
+										<content ID="devicecontent_1">PRÓTESE FEMORAL EM MONOBLOCO (TRONCO + CABEÇA)</content>
+									</td>
+									<td>2004-01-02</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry>
+						<supply classCode="SPLY" moodCode="EVN">
+							<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.5"/>
+							<id root="07E2A4A0-C498-471C-B2A0-36DFBB635732"/>
+							<code code="11587300" codeSystem="2.16.620.1.101.20.10" codeSystemName="DISPMEDICOS" displayName="PACEMAKER - OUTROS (J010199)"/>
+							<text>
+								<reference value="#medicaldevice_0"/>
+							</text>
+							<effectiveTime xsi:type="IVL_TS" value="20050728"/>
+							<participant typeCode="DEV">
+								<participantRole classCode="MANU">
+									<playingDevice classCode="DEV" determinerCode="INSTANCE">
+										<code code="11587300" codeSystem="2.16.620.1.101.20.10" codeSystemName="DISPMEDICOS" displayName="PACEMAKER - OUTROS (J010199)"/>
+									</playingDevice>
+								</participantRole>
+							</participant>
+						</supply>
+					</entry>
+					<entry>
+						<supply classCode="SPLY" moodCode="EVN">
+							<templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.5"/>
+							<id root="51008711-C9EC-46CE-BA9A-6E9CAF30A423"/>
+							<code code="11007206" codeSystem="2.16.620.1.101.20.10" codeSystemName="DISPMEDICOS" displayName="PRÓTESE FEMORAL EM MONOBLOCO (TRONCO + CABEÇA)"/>
+							<text>
+								<reference value="#medicaldevice_1"/>
+							</text>
+							<effectiveTime xsi:type="IVL_TS" value="20040102"/>
+							<participant typeCode="DEV">
+								<participantRole classCode="MANU">
+									<playingDevice classCode="DEV" determinerCode="INSTANCE">
+										<code code="11007206" codeSystem="2.16.620.1.101.20.10" codeSystemName="DISPMEDICOS" displayName="PRÓTESE FEMORAL EM MONOBLOCO (TRONCO + CABEÇA)"/>
+									</playingDevice>
+								</participantRole>
+							</participant>
+						</supply>
+					</entry>
+				</section>
+			</component>
+		</structuredBody>
+	</component>
+</ClinicalDocument>
