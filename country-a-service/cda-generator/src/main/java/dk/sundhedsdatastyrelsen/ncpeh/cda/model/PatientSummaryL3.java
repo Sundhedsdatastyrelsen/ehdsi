@@ -23,4 +23,7 @@ public class PatientSummaryL3 {
     @NonNull OffsetDateTime effectiveTime;
     @NonNull Patient patient;
 
+    /// Egen læge
+    /// TODO might be null?
+    @NonNull PreferredHealthProfessional preferredHp;
 }
