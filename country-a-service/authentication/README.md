@@ -1,139 +1,175 @@
 # Authentication Module
 
-This module provides functionality for parsing SOAP headers containing SAML 2.0 assertions and constructing NCP-BST (National Contact Point Bridge Service Token) tokens for the Danish eHDSI (electronic Health Data and Services Infrastructure) system.
+This module handles SOAP header parsing, token construction, WS-Trust interactions with a Security Token Service (STS), and XML signing for the eHDSI Country A Service.
 
 ## Overview
 
-The authentication module consists of several components:
+The authentication module provides a complete workflow for:
+1. Parsing SOAP headers from incoming requests
+2. Constructing NCP-BST tokens from parsed data
+3. Building WS-Trust requests to send to the STS
+4. Signing WS-Trust requests with a certificate
+5. Communicating with the STS to exchange tokens
+6. Parsing maximal token responses from the STS
 
-- **AuthenticationService**: Main service class that encapsulates all authentication logic
-- **SoapHeaderParser**: Parses SOAP headers and extracts SAML assertion data
-- **Token**: Data model for NCP-BST tokens with transformation logic
-- **AssertionBuilder**: Builds SAML assertions in XML format
-- **CertParser**: Extracts country codes from X.509 certificates
+## Components
 
-## Usage
+### Core Classes
 
-### As a Service (Recommended)
+- **`AuthenticationService`**: Main service class that orchestrates the complete authentication workflow
+- **`Token`**: Data model representing a SAML assertion with nested classes for Signature, Subject, Conditions, and Attributes
+- **`SoapHeaderParser`**: Parses SOAP headers and extracts SAML assertion data
+- **`AssertionBuilder`**: Builds minimal SAML assertion XML from Token objects
+- **`WsTrustRequestBuilder`**: Builds WS-Trust requests to send to the STS
+- **`MaximalTokenParser`**: Parses maximal token responses from the STS
+- **`XmlSigner`**: Signs WS-Trust requests using a PKCS12 certificate
+- **`StsClient`**: HTTP client for communicating with the STS
 
-The `AuthenticationService` can be injected into other Spring components:
+### Supporting Classes
 
-```java
-@Service
-public class MyService {
-    
-    private final AuthenticationService authenticationService;
-    
-    public MyService(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-    
-    public String processAuthentication(File soapHeaderFile, String patientId) {
-        try {
-            // Complete workflow: parse SOAP header and generate assertion XML
-            return authenticationService.processSoapHeaderToAssertion(soapHeaderFile, patientId);
-        } catch (AuthenticationException e) {
-            // Handle authentication errors
-            throw new RuntimeException("Authentication failed", e);
-        }
-    }
-}
-```
+- **`ParsedData`**: Intermediate data structure for parsed SOAP header information
+- **`CertParser`**: Extracts country codes from certificates
+- **`AuthenticationException`**: Custom exception for authentication-related errors
 
-### Standalone Usage
+## Authentication Flow
 
-You can also use the service directly without Spring:
-
+### 1. Parse SOAP Header
 ```java
 AuthenticationService authService = new AuthenticationService();
-
-// Parse SOAP header and construct token
 Token token = authService.parseAndConstructToken(soapHeaderFile, patientId);
+```
+
+### 2. Build WS-Trust Request
+```java
+String wsTrustRequest = authService.buildWsTrustRequest(token, targetService);
+```
+
+### 3. Sign WS-Trust Request
+```java
+String signedRequest = authService.signWsTrustRequest(wsTrustRequest, certificatePassword);
+```
+
+### 4. Send to STS
+```java
+String stsResponse = authService.sendWsTrustRequest(token, targetService, certificatePassword);
+```
+
+### 5. Parse STS Response
+```java
+MaximalTokenParser.MaximalTokenData maximalData = authService.parseMaximalToken(stsResponse);
+Token stsToken = maximalData.getAssertion();
+```
+
+## Complete Workflow
+
+The `AuthenticationService` provides convenience methods for complete workflows:
+
+### SOAP Header to STS Token
+```java
+MaximalTokenParser.MaximalTokenData maximalData = authService.processSoapHeaderToStsToken(
+    soapHeaderFile, patientId, targetService, certificatePassword
+);
+```
+
+### SOAP Header to Signed WS-Trust Request
+```java
+String signedRequest = authService.signWsTrustRequest(
+    authService.parseAndConstructToken(soapHeaderFile, patientId),
+    targetService,
+    certificatePassword
+);
+```
+
+## Certificate Configuration
+
+The module uses a PKCS12 certificate for signing WS-Trust requests:
+
+- **Certificate file**: `src/main/resources/signing-test-ncpehealth.p12`
+- **Password**: Provided at runtime (not hardcoded)
+- **Usage**: Signing WS-Trust requests before sending to STS
+
+## STS Configuration
+
+- **Endpoint**: `http://test1-cnsp.ekstern-test.nspop.dk:8080`
+- **Protocol**: WS-Trust 1.3
+- **Content-Type**: `text/xml; charset=utf-8`
+- **SOAP Action**: `http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue`
+
+## Usage Examples
+
+### Basic Token Construction
+```java
+// Parse SOAP header and construct token
+File soapHeaderFile = new File("soap-header.xml");
+Token token = authService.parseAndConstructToken(soapHeaderFile, "1234567890");
 
 // Build assertion XML
 String assertionXml = authService.buildAssertionXml(token);
-
-// Extract country code from certificate
-String countryCode = authService.extractCountryCode(token.getSignature().getCertificate());
 ```
 
-### Command Line Usage
+### WS-Trust Request with Signing
+```java
+// Build and sign WS-Trust request
+String signedRequest = authService.signWsTrustRequest(token, "https://fmk", "cert-password");
 
-The module includes a main class for command-line usage:
+// Send to STS
+String stsResponse = authService.sendWsTrustRequest(token, "https://fmk", "cert-password");
+```
+
+### Parse STS Response
+```java
+// Parse maximal token response
+MaximalTokenParser.MaximalTokenData maximalData = authService.parseMaximalToken(stsResponse);
+Token stsToken = maximalData.getAssertion();
+
+// Use the token in requests to other services
+```
+
+## Running the Demo
+
+The `AuthenticationMain` class demonstrates the complete workflow:
 
 ```bash
-# Basic usage with default patient ID
-java AuthenticationMain src/main/resources/soap-headers/soapHeader.xml
+# Run with certificate password
+java AuthenticationMain "your-certificate-password"
 
-# Specify custom patient ID
-java AuthenticationMain src/main/resources/soap-headers/soapHeader.xml "custom-patient-id"
+# Run with custom patient ID and target service
+java AuthenticationMain "your-certificate-password" "9876543210" "https://fmk"
 ```
 
-## Service Methods
+## Resource Files
 
-### `parseAndConstructToken(File soapHeaderFile, String patientId)`
-Parses a SOAP header file and constructs a Token from the parsed data.
-
-### `parseAndConstructToken(String soapHeaderContent, String patientId)`
-Parses a SOAP header from a string and constructs a Token.
-
-### `buildAssertionXml(Token token)`
-Builds an assertion XML from a Token.
-
-### `parseSoapHeader(File soapHeaderFile)`
-Parses a SOAP header and returns the parsed data without constructing a token.
-
-### `extractCountryCode(String base64Certificate)`
-Extracts country code from a certificate.
-
-### `processSoapHeaderToAssertion(File soapHeaderFile, String patientId)`
-Complete workflow: parse SOAP header, construct token, and build assertion XML.
-
-### `processSoapHeaderToAssertion(String soapHeaderContent, String patientId)`
-Complete workflow: parse SOAP header content, construct token, and build assertion XML.
+- **`soap-headers/soapHeader.xml`**: Example SOAP header for testing
+- **`maximal.xml`**: Example maximal token response from STS
+- **`NCP-BST-maximal.xml`**: Example NCP-BST token assertion
+- **`DRGFMKRequest.xml`**: Example request to FMK using a token
+- **`signing-test-ncpehealth.p12`**: PKCS12 certificate for signing
 
 ## Error Handling
 
-The service throws `AuthenticationException` for authentication-related errors:
+The module uses `AuthenticationException` for all authentication-related errors. Methods that can fail will throw this exception with descriptive error messages.
+
+## Security Considerations
+
+- Certificate passwords are never hardcoded and must be provided at runtime
+- All XML signing uses industry-standard algorithms (RSA-SHA256)
+- STS communication uses HTTPS (in production)
+- Token validation includes signature verification and expiration checks
+
+## Integration
+
+This module is designed to be easily integrated into other parts of the eHDSI Country A Service:
 
 ```java
-try {
-    Token token = authenticationService.parseAndConstructToken(soapHeaderFile, patientId);
-} catch (AuthenticationException e) {
-    // Handle authentication-specific errors
-    log.error("Authentication failed: {}", e.getMessage());
-} catch (Exception e) {
-    // Handle other unexpected errors
-    log.error("Unexpected error: {}", e.getMessage());
+@Autowired
+private AuthenticationService authenticationService;
+
+// Use in your service methods
+public void processRequest(File soapHeader, String patientId) {
+    MaximalTokenParser.MaximalTokenData tokenData = 
+        authenticationService.processSoapHeaderToStsToken(
+            soapHeader, patientId, "https://fmk", certificatePassword
+        );
+    // Use tokenData.getAssertion() in subsequent requests
 }
-```
-
-## Testing
-
-The module includes unit tests demonstrating how to use the service:
-
-```bash
-mvn test
-```
-
-## Dependencies
-
-- Spring Boot Starter (for service annotations and dependency injection)
-- Lombok (for reducing boilerplate code)
-- JUnit 5 (for testing)
-
-## Configuration
-
-The service currently uses hardcoded values for:
-- Issuer URL: `https://t-ncp.sundhedsdatastyrelsen.dk`
-- Audience: `https://sts.sosi.dk/`
-- Country of Treatment: `DK`
-
-These values are specific to the Danish NCP implementation and may need to be made configurable for other environments.
-
-## Sample Files
-
-The module includes sample SOAP headers and expected output formats:
-- `src/main/resources/soap-headers/soapHeader.xml` - Example input SOAP header
-- `src/main/resources/NCP-BST-minimal.xml` - Expected output format
-- `src/main/resources/NCP-BST-maximal.xml` - Extended format with more attributes 
+``` 

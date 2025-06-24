@@ -1,6 +1,9 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.parser;
 
 import java.io.File;
+
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.util.NamespaceContextMap;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.ParsedData;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;

@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.parser;
 
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;

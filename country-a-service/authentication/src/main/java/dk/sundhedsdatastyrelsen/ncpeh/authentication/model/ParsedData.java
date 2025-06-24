@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.model;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

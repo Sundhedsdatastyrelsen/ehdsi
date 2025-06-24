@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.model;
 
 /**
  * Exception thrown when authentication-related operations fail.
@@ -16,4 +16,4 @@ public class AuthenticationException extends Exception {
     public AuthenticationException(Throwable cause) {
         super(cause);
     }
-} 
+}

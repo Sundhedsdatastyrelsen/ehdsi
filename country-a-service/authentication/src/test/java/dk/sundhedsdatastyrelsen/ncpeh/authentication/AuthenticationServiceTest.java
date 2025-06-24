@@ -1,5 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.AuthenticationException;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Token;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -14,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthenticationServiceTest {
 
     private AuthenticationService authenticationService;
-    
+
     @TempDir
     Path tempDir;
 
@@ -28,12 +31,12 @@ class AuthenticationServiceTest {
         // Create a minimal SOAP header file for testing
         String soapHeaderContent = createMinimalSoapHeader();
         File soapHeaderFile = createTempSoapHeaderFile(soapHeaderContent);
-        
+
         String patientId = "test-patient-123";
-        
+
         // Test the service
         Token token = authenticationService.parseAndConstructToken(soapHeaderFile, patientId);
-        
+
         // Verify the token was constructed correctly
         assertNotNull(token);
         assertEquals("test-assertion-id", token.getId());
@@ -41,10 +44,10 @@ class AuthenticationServiceTest {
         assertEquals(patientId, token.getSubject().getNameIdValue());
         assertNotNull(token.getSignature());
         assertNotNull(token.getAttributes());
-        
+
         // Verify that required attributes are present
         boolean hasPatientIdAttribute = token.getAttributes().stream()
-            .anyMatch(attr -> "XUA Patient Id".equals(attr.getFriendlyName()) && 
+            .anyMatch(attr -> "XUA Patient Id".equals(attr.getFriendlyName()) &&
                              attr.getValues().contains(patientId));
         assertTrue(hasPatientIdAttribute, "Token should contain patient ID attribute");
     }
@@ -53,9 +56,9 @@ class AuthenticationServiceTest {
     void testParseAndConstructToken_WithStringContent() throws Exception {
         String soapHeaderContent = createMinimalSoapHeader();
         String patientId = "test-patient-456";
-        
+
         Token token = authenticationService.parseAndConstructToken(soapHeaderContent, patientId);
-        
+
         assertNotNull(token);
         assertEquals(patientId, token.getSubject().getNameIdValue());
     }
@@ -65,10 +68,10 @@ class AuthenticationServiceTest {
         // Create a minimal SOAP header file for testing
         String soapHeaderContent = createMinimalSoapHeader();
         File soapHeaderFile = createTempSoapHeaderFile(soapHeaderContent);
-        
+
         Token token = authenticationService.parseAndConstructToken(soapHeaderFile, "test-patient");
         String xml = authenticationService.buildAssertionXml(token);
-        
+
         assertNotNull(xml);
         assertTrue(xml.contains("<Assertion"));
         assertTrue(xml.contains("test-assertion-id"));
@@ -79,9 +82,9 @@ class AuthenticationServiceTest {
     void testProcessSoapHeaderToAssertion() throws Exception {
         String soapHeaderContent = createMinimalSoapHeader();
         File soapHeaderFile = createTempSoapHeaderFile(soapHeaderContent);
-        
+
         String xml = authenticationService.processSoapHeaderToAssertion(soapHeaderFile, "test-patient");
-        
+
         assertNotNull(xml);
         assertTrue(xml.contains("<Assertion"));
         assertTrue(xml.contains("test-patient"));
@@ -92,7 +95,7 @@ class AuthenticationServiceTest {
         // This is a minimal test - in a real scenario you'd use a real certificate
         String fakeCertificate = "fake-base64-certificate";
         String countryCode = authenticationService.extractCountryCode(fakeCertificate);
-        
+
         // Should return null for invalid certificate
         assertNull(countryCode);
     }
@@ -100,8 +103,9 @@ class AuthenticationServiceTest {
     @Test
     void testParseSoapHeader_WithInvalidFile() {
         File nonExistentFile = new File("non-existent-file.xml");
-        
-        assertThrows(AuthenticationException.class, () -> {
+
+        assertThrows(
+            AuthenticationException.class, () -> {
             authenticationService.parseSoapHeader(nonExistentFile);
         });
     }
@@ -161,4 +165,4 @@ class AuthenticationServiceTest {
         Files.write(tempFile, content.getBytes());
         return tempFile.toFile();
     }
-} 
+}

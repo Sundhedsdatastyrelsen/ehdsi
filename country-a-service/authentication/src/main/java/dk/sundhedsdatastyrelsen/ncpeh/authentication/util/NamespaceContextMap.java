@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.util;
 
 import javax.xml.namespace.NamespaceContext;
 import java.util.Iterator;
