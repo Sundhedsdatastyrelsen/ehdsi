@@ -1,104 +1,112 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication.parser;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Assertion;
+import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.util.NamespaceContextMap;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.ParsedData;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
-import javax.xml.xpath.*;
-import java.util.*;
-
-
-
+@Slf4j
 public class SoapHeaderParser {
 
-    public ParsedData parse(File soapHeaderFile) throws Exception {
-        // Load document
+    public Assertion parse(File soapHeaderFile) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(soapHeaderFile);
 
-        // XPath with namespace support
         XPathFactory xPathFactory = XPathFactory.newInstance();
-        XPath xpath = xPathFactory.newXPath();
-        Map<String, String> ns = Map.of(
-            "soapenv", "http://www.w3.org/2003/05/soap-envelope",
-            "wsse",    "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
-            "saml2",   "urn:oasis:names:tc:SAML:2.0:assertion",
-            "ds",      "http://www.w3.org/2000/09/xmldsig#"
-        );
-        xpath.setNamespaceContext(new NamespaceContextMap(ns));
+        XPath xPath = xPathFactory.newXPath();
+        xPath.setNamespaceContext(new SoapNamespaceContext());
 
-        ParsedData parsed = new ParsedData();
-        extractAssertionNode(xpath, doc, parsed);
-        return parsed;
+        Assertion assertion = Assertion.builder().build();
+        extractAssertionNode(xPath, doc, assertion);
+        return assertion;
     }
 
-    private void extractAssertionNode(XPath xPath, Document doc, ParsedData parsedData) {
+    private void extractAssertionNode(XPath xPath, Document doc, Assertion assertion) {
         try {
-            Node assertion = (Node) xPath.evaluate("//saml2:Assertion", doc, XPathConstants.NODE);
-            if (assertion == null) throw new IllegalArgumentException("No <saml2:Assertion> found");
+            Node assertionNode = (Node) xPath.evaluate("//saml2:Assertion", doc, XPathConstants.NODE);
+            if (assertionNode == null) throw new IllegalArgumentException("No <saml2:Assertion> found");
 
-            Element assertionEl = (Element) assertion;
+            Element assertionEl = (Element) assertionNode;
 
-            parsedData.setId(assertionEl.getAttribute("ID"));
-            parsedData.setIssueInstant(assertionEl.getAttribute("IssueInstant"));
-            parsedData.setVersion(assertionEl.getAttribute("Version"));
+            assertion.setId(assertionEl.getAttribute("ID"));
+            assertion.setIssueInstant(assertionEl.getAttribute("IssueInstant"));
+            assertion.setVersion(assertionEl.getAttribute("Version"));
 
-            parsedData.setIssuer(xPath.evaluate("saml2:Issuer", assertion));
+            assertion.setIssuer(xPath.evaluate("saml2:Issuer", assertionNode));
 
             // Signature
-            ParsedData.Signature signature = new ParsedData.Signature();
-            signature.setSignatureMethodAlgorithm(xPath.evaluate("//ds:SignatureMethod/@Algorithm", doc));
-            signature.setDigestMethodAlgorithm(xPath.evaluate("//ds:DigestMethod/@Algorithm", doc));
-            signature.setDigestValue(xPath.evaluate("//ds:DigestValue", doc));
-            signature.setSignatureValue(xPath.evaluate("//ds:SignatureValue", doc));
-            signature.setCertificate(xPath.evaluate("//ds:X509Certificate", doc));
-            parsedData.setSignature(signature);
+            Assertion.Signature signature = Assertion.Signature.builder()
+                .signatureMethodAlgorithm(xPath.evaluate("//ds:SignatureMethod/@Algorithm", doc))
+                .digestMethodAlgorithm(xPath.evaluate("//ds:DigestMethod/@Algorithm", doc))
+                .digestValue(xPath.evaluate("//ds:DigestValue", doc))
+                .signatureValue(xPath.evaluate("//ds:SignatureValue", doc))
+                .certificate(xPath.evaluate("//ds:X509Certificate", doc))
+                .build();
+            assertion.setSignature(signature);
 
             // Subject
-            ParsedData.Subject subject = new ParsedData.Subject();
-            subject.setNameIdFormat(xPath.evaluate("saml2:Subject/saml2:NameID/@Format", assertion));
-            subject.setNameIdValue(xPath.evaluate("saml2:Subject/saml2:NameID", assertion));
-            subject.setConfirmationMethod(xPath.evaluate("saml2:Subject/saml2:SubjectConfirmation/@Method", assertion));
-            parsedData.setSubject(subject);
+            Assertion.Subject subject = Assertion.Subject.builder()
+                .nameIdFormat(xPath.evaluate("saml2:Subject/saml2:NameID/@Format", assertionNode))
+                .nameIdValue(xPath.evaluate("saml2:Subject/saml2:NameID", assertionNode))
+                .confirmationMethod(xPath.evaluate("saml2:Subject/saml2:SubjectConfirmation/@Method", assertionNode))
+                .certificate(xPath.evaluate("//ds:X509Certificate", doc)) // Use same certificate for subject
+                .build();
+            assertion.setSubject(subject);
 
             // Conditions
-            ParsedData.Conditions conditions = new ParsedData.Conditions();
-            conditions.setNotBefore(xPath.evaluate("saml2:Conditions/@NotBefore", assertion));
-            conditions.setNotOnOrAfter(xPath.evaluate("saml2:Conditions/@NotOnOrAfter", assertion));
-            parsedData.setConditions(conditions);
+            Assertion.Conditions conditions = Assertion.Conditions.builder()
+                .notBefore(xPath.evaluate("saml2:Conditions/@NotBefore", assertionNode))
+                .notOnOrAfter(xPath.evaluate("saml2:Conditions/@NotOnOrAfter", assertionNode))
+                .audience(xPath.evaluate("saml2:Conditions/saml2:AudienceRestriction/saml2:Audience", assertionNode))
+                .build();
+            assertion.setConditions(conditions);
 
             // Attributes
-            List<ParsedData.Attribute> attributes = new ArrayList<>();
-            NodeList attributeNodes = (NodeList) xPath.evaluate("saml2:AttributeStatement/saml2:Attribute", assertion, XPathConstants.NODESET);
-            for (int i = 0; i < attributeNodes.getLength(); i++) {
-                Element attr = (Element) attributeNodes.item(i);
-                ParsedData.Attribute attribute = new ParsedData.Attribute();
-                attribute.setFriendlyName(attr.getAttribute("FriendlyName"));
-                attribute.setName(attr.getAttribute("Name"));
+            List<Assertion.Attribute> attributes = new ArrayList<>();
+            NodeList attributeNodes = (NodeList) xPath.evaluate("saml2:AttributeStatement/saml2:Attribute", assertionNode, XPathConstants.NODESET);
 
-                NodeList values = attr.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
-                List<String> valueList = new ArrayList<>();
-                for (int j = 0; j < values.getLength(); j++) {
-                    valueList.add(values.item(j).getTextContent().trim());
+            for (int i = 0; i < attributeNodes.getLength(); i++) {
+                Element attrEl = (Element) attributeNodes.item(i);
+                String friendlyName = attrEl.getAttribute("FriendlyName");
+                String name = attrEl.getAttribute("Name");
+
+                List<String> values = new ArrayList<>();
+                NodeList valueNodes = attrEl.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
+                
+                for (int j = 0; j < valueNodes.getLength(); j++) {
+                    Node valueNode = valueNodes.item(j);
+                    String value = valueNode.getTextContent();
+                    if (value != null && !value.trim().isEmpty()) {
+                        values.add(value.trim());
+                    }
                 }
 
-                attribute.setValues(valueList);
+                Assertion.Attribute attribute = Assertion.Attribute.builder()
+                    .friendlyName(friendlyName)
+                    .name(name)
+                    .values(values)
+                    .build();
                 attributes.add(attribute);
             }
-            parsedData.setAttributes(attributes);
 
-            // HL7 permissions
-            parsedData.setPermissions(attributes.stream()
-                .filter(a -> "urn:oasis:names:tc:xspa:1.0:subject:hl7:permission".equals(a.getName()))
-                .flatMap(a -> a.getValues().stream())
-                .toList());
+            assertion.setAttributes(attributes);
 
-        } catch (XPathExpressionException e) {
-            throw new RuntimeException("Could not evaluate XPath expression", e);
+        } catch (Exception e) {
+            log.error("Failed to extract assertion data", e);
+            throw new RuntimeException("Failed to extract assertion data", e);
         }
     }
 }

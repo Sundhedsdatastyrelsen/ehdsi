@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication.builder;
 
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Token;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Assertion;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,13 +13,13 @@ import java.io.StringWriter;
 
 public class SoapEnvelopeBuilder {
 
-    private final AssertionBuilder assertionBuilder;
+    private final AssertionXmlBuilder assertionXmlBuilder;
 
     public SoapEnvelopeBuilder() {
-        this.assertionBuilder = new AssertionBuilder();
+        this.assertionXmlBuilder = new AssertionXmlBuilder();
     }
 
-    public String buildSoapEnvelope(Token token) throws Exception {
+    public String build(Assertion assertion) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -53,11 +53,11 @@ public class SoapEnvelopeBuilder {
         security.appendChild(timestamp);
 
         Element created = doc.createElementNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "wsu:Created");
-        created.setTextContent(token.getIssueInstant());
+        created.setTextContent(assertion.getIssueInstant());
         timestamp.appendChild(created);
 
         // Add Signature to Security (this would be the SOAP-level signature)
-        Element soapSignature = createSoapSignature(doc, token);
+        Element soapSignature = createSoapSignature(doc, assertion);
         security.appendChild(soapSignature);
 
         // Add WS-Addressing elements to header
@@ -98,8 +98,8 @@ public class SoapEnvelopeBuilder {
         Element requestedToken = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "wst:RequestedSecurityToken");
         response.appendChild(requestedToken);
 
-        // Get the SAML assertion from AssertionBuilder
-        String assertionXml = assertionBuilder.buildAssertionXml(token);
+        // Get the SAML assertion from AssertionXmlBuilder
+        String assertionXml = assertionXmlBuilder.build(assertion);
         
         // Parse the assertion XML and import it into our document
         DocumentBuilder assertionBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -126,11 +126,11 @@ public class SoapEnvelopeBuilder {
         response.appendChild(lifetime);
 
         Element createdLifetime = doc.createElementNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "wsu:Created");
-        createdLifetime.setTextContent(token.getIssueInstant());
+        createdLifetime.setTextContent(assertion.getIssueInstant());
         lifetime.appendChild(createdLifetime);
 
         Element expires = doc.createElementNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "wsu:Expires");
-        expires.setTextContent(token.getConditions().getNotOnOrAfter());
+        expires.setTextContent(assertion.getConditions().getNotOnOrAfter());
         lifetime.appendChild(expires);
 
         // Transform to string
@@ -141,7 +141,7 @@ public class SoapEnvelopeBuilder {
         return writer.toString();
     }
 
-    private Element createSoapSignature(Document doc, Token token) {
+    private Element createSoapSignature(Document doc, Assertion assertion) {
         Element signature = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:Signature");
         
         Element signedInfo = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:SignedInfo");
@@ -170,7 +170,7 @@ public class SoapEnvelopeBuilder {
         Element keyInfo = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:KeyInfo");
         Element x509Data = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:X509Data");
         Element x509Certificate = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:X509Certificate");
-        x509Certificate.setTextContent(token.getSignature().getCertificate());
+        x509Certificate.setTextContent(assertion.getSignature().getCertificate());
         x509Data.appendChild(x509Certificate);
         keyInfo.appendChild(x509Data);
         signature.appendChild(keyInfo);

@@ -1,5 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication.builder;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Token;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Assertion;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -10,30 +10,30 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 
-public class AssertionBuilder {
+public class AssertionXmlBuilder {
 
-    public String buildAssertionXml(Token token) throws Exception {
+    public String build(Assertion assertion) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
 
         // Create assertion with proper namespaces for NCP-BST format
-        Element assertion = doc.createElement("Assertion");
-        assertion.setAttribute("ID", token.getId());
-        assertion.setAttribute("IssueInstant", token.getIssueInstant());
-        assertion.setAttribute("Version", token.getVersion());
-        assertion.setAttribute("xmlns", "urn:oasis:names:tc:SAML:2.0:assertion");
-        assertion.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        doc.appendChild(assertion);
+        Element assertionElement = doc.createElement("Assertion");
+        assertionElement.setAttribute("ID", assertion.getId());
+        assertionElement.setAttribute("IssueInstant", assertion.getIssueInstant());
+        assertionElement.setAttribute("Version", assertion.getVersion());
+        assertionElement.setAttribute("xmlns", "urn:oasis:names:tc:SAML:2.0:assertion");
+        assertionElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        doc.appendChild(assertionElement);
 
         // Issuer
         Element issuer = doc.createElement("Issuer");
-        issuer.setTextContent(token.getIssuer());
-        assertion.appendChild(issuer);
+        issuer.setTextContent(assertion.getIssuer());
+        assertionElement.appendChild(issuer);
 
         // Signature
-        Token.Signature sig = token.getSignature();
+        Assertion.Signature sig = assertion.getSignature();
         Element signature = doc.createElement("Signature");
         signature.setAttribute("xmlns", "http://www.w3.org/2000/09/xmldsig#");
         
@@ -46,7 +46,7 @@ public class AssertionBuilder {
         sigMethod.setAttribute("Algorithm", sig.getSignatureMethodAlgorithm());
         
         Element ref = doc.createElement("Reference");
-        ref.setAttribute("URI", "#" + token.getId());
+        ref.setAttribute("URI", "#" + assertion.getId());
         
         Element transforms = doc.createElement("Transforms");
         Element t1 = doc.createElement("Transform");
@@ -81,10 +81,10 @@ public class AssertionBuilder {
         x509Data.appendChild(x509Certificate);
         keyInfo.appendChild(x509Data);
         signature.appendChild(keyInfo);
-        assertion.appendChild(signature);
+        assertionElement.appendChild(signature);
 
         // Subject
-        Token.Subject subject = token.getSubject();
+        Assertion.Subject subject = assertion.getSubject();
         Element subjectElement = doc.createElement("Subject");
         
         Element nameId = doc.createElement("NameID");
@@ -108,24 +108,29 @@ public class AssertionBuilder {
         subjectConfirmationData.appendChild(keyInfo2);
         subjectConfirmation.appendChild(subjectConfirmationData);
         subjectElement.appendChild(subjectConfirmation);
-        assertion.appendChild(subjectElement);
+        assertionElement.appendChild(subjectElement);
 
         // Conditions
-        Token.Conditions cond = token.getConditions();
+        Assertion.Conditions cond = assertion.getConditions();
         Element conditions = doc.createElement("Conditions");
+        if (cond.getNotBefore() != null) {
+            conditions.setAttribute("NotBefore", cond.getNotBefore());
+        }
         conditions.setAttribute("NotOnOrAfter", cond.getNotOnOrAfter());
         
-        Element audienceRestriction = doc.createElement("AudienceRestriction");
-        Element audience = doc.createElement("Audience");
-        audience.setTextContent(cond.getAudience());
-        audienceRestriction.appendChild(audience);
-        conditions.appendChild(audienceRestriction);
-        assertion.appendChild(conditions);
+        if (cond.getAudience() != null) {
+            Element audienceRestriction = doc.createElement("AudienceRestriction");
+            Element audience = doc.createElement("Audience");
+            audience.setTextContent(cond.getAudience());
+            audienceRestriction.appendChild(audience);
+            conditions.appendChild(audienceRestriction);
+        }
+        assertionElement.appendChild(conditions);
 
         // AttributeStatement
         Element attributeStatement = doc.createElement("AttributeStatement");
 
-        for (Token.Attribute attr : token.getAttributes()) {
+        for (Assertion.Attribute attr : assertion.getAttributes()) {
             Element attribute = doc.createElement("Attribute");
             attribute.setAttribute("FriendlyName", attr.getFriendlyName());
             attribute.setAttribute("Name", attr.getName());
@@ -135,20 +140,20 @@ public class AssertionBuilder {
                 
                 // Check if this is a complex attribute value (like Role or PurposeOfUse)
                 if (attr.getFriendlyName().equals("XSPA Role")) {
-                    // Create complex Role element using the actual value from token
+                    // Create complex Role element using the actual value from assertion
                     Element roleElement = doc.createElement("Role");
                     roleElement.setAttribute("xmlns", "urn:hl7-org:v3");
-                    roleElement.setAttribute("code", val); // Use the actual value from token
+                    roleElement.setAttribute("code", val); // Use the actual value from assertion
                     roleElement.setAttribute("codeSystem", "2.16.840.1.113883.2.9.6.2.7");
                     roleElement.setAttribute("codeSystemName", "ISCO");
                     roleElement.setAttribute("displayName", "Health professionals not elsewhere classified");
                     roleElement.setAttribute("xsi:type", "CE");
                     attrValue.appendChild(roleElement);
                 } else if (attr.getFriendlyName().equals("XSPA Purpose Of Use")) {
-                    // Create complex PurposeOfUse element using the actual value from token
+                    // Create complex PurposeOfUse element using the actual value from assertion
                     Element purposeElement = doc.createElement("PurposeOfUse");
                     purposeElement.setAttribute("xmlns", "urn:hl7-org:v3");
-                    purposeElement.setAttribute("code", val); // Use the actual value from token
+                    purposeElement.setAttribute("code", val); // Use the actual value from assertion
                     purposeElement.setAttribute("codeSystem", "urn:oasis:names:tc:xspa:1.0");
                     purposeElement.setAttribute("xsi:type", "CE");
                     attrValue.appendChild(purposeElement);
@@ -163,7 +168,7 @@ public class AssertionBuilder {
                     onBehalfOfElement.setAttribute("xsi:type", "CE");
                     attrValue.appendChild(onBehalfOfElement);
                 } else {
-                    // Simple string attribute - use the actual value from token
+                    // Simple string attribute - use the actual value from assertion
                     attrValue.setTextContent(val);
                 }
                 
@@ -172,7 +177,7 @@ public class AssertionBuilder {
             attributeStatement.appendChild(attribute);
         }
 
-        assertion.appendChild(attributeStatement);
+        assertionElement.appendChild(attributeStatement);
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -180,6 +185,4 @@ public class AssertionBuilder {
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         return writer.toString();
     }
-}
-
-
+} 
