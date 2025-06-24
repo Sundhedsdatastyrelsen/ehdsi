@@ -8,6 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="epps-ddv-api" />
+        <module name="epps-sdp-api" />
+        <module name="epps-fsk-api" />
         <module name="epps-service" />
         <module name="integration-tests" />
         <module name="epps-cpr-api" />
@@ -41,7 +43,9 @@
       <module name="epps-fmk-api" options="-parameters" />
       <module name="epps-fmk-mock" options="-parameters" />
       <module name="epps-fmk-mock-data" options="-parameters" />
+      <module name="epps-fsk-api" options="-parameters" />
       <module name="epps-ncp-api" options="-parameters" />
+      <module name="epps-sdp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />
       <module name="integration-tests" options="-parameters" />
       <module name="local-lms-db" options="-parameters" />

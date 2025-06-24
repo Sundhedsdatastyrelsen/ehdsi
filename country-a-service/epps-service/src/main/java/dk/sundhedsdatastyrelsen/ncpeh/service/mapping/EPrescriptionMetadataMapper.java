@@ -26,9 +26,9 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Slf4j
-public class EPrescriptionMapper {
+public class EPrescriptionMetadataMapper {
 
-    private EPrescriptionMapper() {
+    private EPrescriptionMetadataMapper() {
     }
 
     private record MetaModel(
@@ -67,8 +67,10 @@ public class EPrescriptionMapper {
         }
 
         String documentId = switch (documentLevel) {
-            case DocumentLevel.LEVEL1 -> EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId());
-            case DocumentLevel.LEVEL3 -> EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId());
+            case DocumentLevel.LEVEL1 ->
+                toRootedId(EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId()));
+            case DocumentLevel.LEVEL3 ->
+                toRootedId(EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId()));
         };
 
         DocumentFormatDto documentFormat = switch (documentLevel) {
@@ -161,5 +163,31 @@ public class EPrescriptionMapper {
             prescription.getDrug().getName(),
             Optional.ofNullable(prescription.getDrug().getATC()).map(ATCType::getText).orElse("no ATC code")
         );
+    }
+
+    /// We found during the Spring test of 2025 that the countries that were already in production expected us to pass
+    /// rooted ePrescription ids - so we do that now. The format is not documented anywhere I can find.
+    public static String toRootedId(String id) {
+        return String.format("%s^%s", Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value, id);
+    }
+
+    /// Try to get an id from a string also containing the correct root "1.2.208.176.7.2.3^123456L3" -> "123456L3". If
+    /// it cannot be parsed, null is returned. See also the comment on [EPrescriptionMetadataMapper#toRootedId].
+    public static String fromRootedId(String input) {
+        if (input == null) {
+            return null;
+        }
+        var parts = input.split("\\^", 2);
+        if (parts.length != 2) {
+            return null;
+        }
+
+        var oidString = parts[0];
+        var id = parts[1];
+        if (id.trim().isEmpty() || !oidString.equals(Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
+            return null;
+        }
+
+        return id;
     }
 }

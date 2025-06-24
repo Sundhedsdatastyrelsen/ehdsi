@@ -8,7 +8,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageSizeUnitCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
@@ -154,25 +153,21 @@ public class EPrescriptionL3Mapper {
             .build() : null;
         var ps = prescription.getPackageRestriction().getPackageSize();
         var subpackages = numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages;
+        var layered = subpackages > 1;
 
         var outerLayer = PackageLayer.builder()
-            .unit(
-                subpackages > 1 ?
-                    new PackageUnit.WithCode("1") :
-                    Optional.ofNullable(ps.getUnitCode())
-                        .map(PackageSizeUnitCodeType::getValue)
-                        .map(PackageUnitMapper::fromLms)
-                        .orElse(new PackageUnit.WithCode("1")))
-            .amount(subpackages > 1 ? BigDecimal.valueOf(subpackages) : ps.getValue())
+            .unit(layered ? new PackageUnit.WithCode("1") : PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
+            .amount(layered ? BigDecimal.valueOf(subpackages) : ps.getValue())
             .description(productDescription(prescription))
-            .packageFormCode(packageFormCode)
+            .packageFormCode(layered ? null : packageFormCode)
             .packageCode(packageCode)
             .build();
 
-        var innerLayer = subpackages > 1 ?
+        var innerLayer = layered ?
             PackageLayer.builder()
                 .unit(PackageUnitMapper.fromLms(ps.getUnitCode().getValue()))
                 .amount(calculateInnerPackageAmount(ps.getValue(), numberOfSubPackages))
+                .packageFormCode(packageFormCode)
                 .wrappedIn(outerLayer)
                 .build()
             : null;
@@ -389,16 +384,19 @@ public class EPrescriptionL3Mapper {
             if (text != null && codedStrength != null) {
                 structured.add(ActiveIngredient.builder()
                     .name(text)
-                        .quantity(ActiveIngredient.Quantity.builder()
-                            .numerator(strength.getValue())
-                            .numeratorUnit(codedStrength.numeratorUnit())
-                            .denominator(codedStrength.denominator())
-                            .denominatorUnit(codedStrength.denominatorUnit())
-                            .translation(codedStrength.translation())
-                            .build())
+                    .quantity(ActiveIngredient.Quantity.builder()
+                        .numerator(strength.getValue())
+                        .numeratorUnit(codedStrength.numeratorUnit())
+                        .denominator(codedStrength.denominator())
+                        .denominatorUnit(codedStrength.denominatorUnit())
+                        .translation(codedStrength.translation())
+                        .build())
                     .build());
             }
-        } else {
+        }
+
+        // If the single element could not be mapped, or there were more than one, add them all as simple names.
+        if (structured.isEmpty()) {
             structured.addAll(substances.getActiveSubstance().stream()
                 .map(EPrescriptionL3Mapper::getSubstanceText)
                 .filter(Objects::nonNull)
