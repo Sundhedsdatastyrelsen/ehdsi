@@ -33,12 +33,7 @@
             <@common.address patient.address />
             <telecom nullFlavor="NI"/>
             <patient classCode="PSN" determinerCode="INSTANCE">
-                <name>
-<#list patient.name.givens as given>
-                    <given>${ given }</given>
-</#list>
-                    <family>${ patient.name.family }</family>
-                </name>
+                <@common.name patient.name />
                 <administrativeGenderCode <@common.cdaCodeAttrs patient.genderCode /> />
                 <birthTime value="${ patient.birthTime }"/>
             </patient>
@@ -98,6 +93,7 @@
             </representedCustodianOrganization>
         </assignedCustodian>
     </custodian>
+
     <#-- The person taking responsibility for the medical content of the document.
     In Spain this is the regional authority in healthcare. This regional authority
     healthcare organization will send this to the NCP. The definition of the legal
@@ -126,8 +122,33 @@
         </assignedEntity>
     </legalAuthenticator>
 
+    <participant typeCode="IND">
+        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4" />
+        <#-- I am in doubt about these. The code and codeSystem are fixed, and could be left out. The name and
+             displayName I've taken from an example, but they are not mentioned in art-decor. -->
+        <#-- "The element is mandatory when this participant is the preferred HP" -->
+        <functionCode code="PCP" codeSystem="2.16.840.1.113883.5.88" codeSystemName="ParticipationFunction" displayName="Primary care physician"/>
+        <#-- time - skipped because it doesn't make sense for the preferred HP. -->
+        <#-- "The element identifies the type of contact. The classCode attribute shall be present, and contains a value from the eHDSIRoleClass value set when used for the patient contacts; ‘PRS’ when used for “Preferred HP / Legal Organization”." -->
+        <associatedEntity classCode="PRS">
+            <#-- code - skipped as it's not that kind of relation. The values are all family and friends. -->
+            <#-- TODO do we even have the address? -->
+            <@common.address preferredHp.address />
+            <#-- TODO do we even have the telephone? -->
+<#if preferredHp.telecoms?has_content>
+    <#list preferredHp.telecoms as telecom>
+            <telecom value="${ telecom.value }" use="${ telecom.use }"/>
+    </#list>
+<#else>
+            <telecom nullFlavor="NI" />
+</#if>
+            <associatedPerson>
+                <@common.name preferredHp.name />
+            </associatedPerson>
+        </associatedEntity>
+    </participant>
+
     <#-- TODO -->
-    <#-- Participant -->
     <#-- Documentation of -->
     <#-- RelatedDocument -->
     <component>
