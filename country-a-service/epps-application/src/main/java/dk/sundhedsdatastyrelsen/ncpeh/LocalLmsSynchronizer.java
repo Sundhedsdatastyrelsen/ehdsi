@@ -37,7 +37,7 @@ public class LocalLmsSynchronizer {
         this.dataSource = dataSource;
         this.dataProvider = new DataProvider(dataSource);
         this.skipSync = skipSync;
-            initialize();
+        initialize();
     }
 
     private void initialize() {

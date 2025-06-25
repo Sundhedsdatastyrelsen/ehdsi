@@ -1,11 +1,15 @@
 package dk.sundhedsdatastyrelsen.ncpeh.config;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * This class validates the configuration of the application.
+ * The purpose is to fail early if the configuration is invalid.
+ */
+// @Component ensures that the bean is created on startup.
 @Component
 public class ConfigurationValidator {
 
@@ -13,9 +17,9 @@ public class ConfigurationValidator {
 
     public ConfigurationValidator(Environment env) {
         this.env = env;
+        validate();
     }
 
-    @PostConstruct
     public void validate() {
         final var nonBlankVals = List.of(
             "app.authorization-registry.endpoint.url",
