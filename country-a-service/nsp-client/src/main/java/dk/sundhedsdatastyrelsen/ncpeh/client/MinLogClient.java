@@ -4,7 +4,6 @@ import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
-import ihe.iti.xds_b._2007.ObjectFactory;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
 import jakarta.xml.bind.JAXBContext;
@@ -23,7 +22,7 @@ import java.net.URISyntaxException;
 public class MinLogClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(MinLogClient.class);
 
-    private static final ihe.iti.xds_b._2007.ObjectFactory factory = new ObjectFactory();
+    private static final dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.ObjectFactory factory = new dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.ObjectFactory();
 
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
@@ -31,9 +30,8 @@ public class MinLogClient {
     public MinLogClient(@Value("${app.minlog.endpoint.url}") String minlogEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(minlogEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
-            "oasis.names.tc.ebxml_regrep.xsd.query._3"
-                + ":dk.sdsd.dgws._2012._06"
-                + ":ihe.iti.xds_b._2007"
+            "dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration"
+            +":oasis.names.tc.ebxml_regrep.xsd.rs._3"
         );
     }
 
@@ -41,17 +39,12 @@ public class MinLogClient {
         RegistrationRequestType request,
         Identity caller
     ) throws JAXBException {
-        QName qname = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0", "RegistrationRequest");
 
-        JAXBElement<RegistrationRequestType> jaxbElement = new JAXBElement<>(
-            qname,
-            RegistrationRequestType.class,
-            request
-        );
+        var jaxbElement = factory.createRegistrationRequest(request);
 
         return makeMinlogRequest(
             jaxbElement,
-            "urn:ihe:iti:2007:RegistryStoredQuery",
+            "AddRegistrations",
             RegistryResponseType.class,
             caller
         );

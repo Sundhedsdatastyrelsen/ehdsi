@@ -23,9 +23,11 @@ import java.util.List;
 @Service
 public class InformationCardService {
     private final FskClient fskClient;
+    private final MinLogService minLogService;
 
-    public InformationCardService(FskClient fskClient) {
+    public InformationCardService(FskClient fskClient, MinLogService minLogService) {
         this.fskClient = fskClient;
+        this.minLogService = minLogService;
     }
 
     public List<String> findInformationCardDetails(
@@ -76,6 +78,8 @@ public class InformationCardService {
                 .build();
 
             var fskResponse = fskClient.list(request, caller);
+
+            minLogService.logEventOnPatient(cpr,"FSK Opslag - Stamkort",caller);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()
