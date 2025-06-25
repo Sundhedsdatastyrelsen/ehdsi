@@ -79,7 +79,7 @@ public class InformationCardService {
 
             var fskResponse = fskClient.list(request, caller);
 
-            minLogService.logEventOnPatient(cpr,"FSK Opslag - Stamkort",caller);
+            minLogService.logEventOnPatient(cpr, "FSK Opslag - Stamkort", caller);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()

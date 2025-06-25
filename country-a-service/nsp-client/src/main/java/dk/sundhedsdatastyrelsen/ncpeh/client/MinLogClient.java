@@ -4,18 +4,13 @@ import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
-import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
-import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
-import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryRequest;
-import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryResponse;
 import oasis.names.tc.ebxml_regrep.xsd.rs._3.RegistryResponseType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.xml.namespace.QName;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -31,7 +26,7 @@ public class MinLogClient {
         this.serviceUri = new URI(minlogEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
             "dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration"
-            +":oasis.names.tc.ebxml_regrep.xsd.rs._3"
+                + ":oasis.names.tc.ebxml_regrep.xsd.rs._3"
         );
     }
 

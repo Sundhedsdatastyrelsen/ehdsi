@@ -12,9 +12,7 @@ import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.ZonedDateTime;
 
 @Slf4j
 @Service
@@ -31,11 +29,28 @@ public class MinLogService {
         Identity caller
     ) {
         var source = SourceForEntryType.builder().withSystemName("eHDSI").withSource().withSystemName("eHDSI").build();
-        var destination = DestinationForEntryForRegistrationType.builder().withSystemName("TestSystem").withActivity(eventText).withDateTime(Utils.xmlGregorianCalendar(LocalDate.now())).withPersonIdentifier().withSource(PersonIdSourceType.CPR).withValue(cpr).end().withUserPersonIdentifier().withSource(UserPersonIdSourceType.CPR).withValue(cpr).end().build();
-        var registration = RegistrationRequestType.builder().addLogDataEntry(LogDataEntryForRegistrationType.builder().withSource(source).withDestination(destination).build()).build();
+        var destination = DestinationForEntryForRegistrationType.builder()
+            .withSystemName("TestSystem")
+            .withActivity(eventText)
+            .withDateTime(Utils.xmlGregorianCalendar(ZonedDateTime.now()))
+            .withPersonIdentifier()
+            .withSource(PersonIdSourceType.CPR)
+            .withValue(cpr)
+            .end()
+            .withUserPersonIdentifier()
+            .withSource(UserPersonIdSourceType.CPR)
+            .withValue(cpr)
+            .end()
+            .build();
+        var registration = RegistrationRequestType.builder()
+            .addLogDataEntry(LogDataEntryForRegistrationType.builder()
+                .withSource(source)
+                .withDestination(destination)
+                .build())
+            .build();
 
         try {
-            var response = minLogClient.register(registration,caller);
+            var response = minLogClient.register(registration, caller);
             var test = 12;
         } catch (JAXBException e) {
             throw new RuntimeException(e);
