@@ -29,6 +29,13 @@ management:
       show-details: always
       probes:
         enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+      base-path: /actuator
   health:
     diskspace:
       enabled: false

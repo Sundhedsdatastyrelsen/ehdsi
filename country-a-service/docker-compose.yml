@@ -4,6 +4,7 @@ networks:
     external: true
   monitoring:
     name: monitoring
+    external: true
 
 services:
   epps-country-a:
@@ -42,60 +43,3 @@ services:
     networks:
       - epps-backend
       - monitoring
-    depends_on:
-      - jaeger
-
-  # Jaeger for distributed tracing
-  jaeger:
-    image: jaegertracing/all-in-one:1.70.0
-    container_name: jaeger
-    restart: unless-stopped
-    ports:
-      - "16686:16686"  # Web UI
-      - "4317:4317"    # OTLP gRPC
-      - "4318:4318"    # OTLP HTTP
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    networks:
-      - monitoring
-
-  # Prometheus for metrics collection
-  prometheus:
-    image: prom/prometheus:v3.4.1
-    container_name: prometheus
-    restart: unless-stopped
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./config/prometheus:/etc/prometheus
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    networks:
-      - monitoring
-
-  # Grafana for visualization
-  grafana:
-    image: grafana/grafana:12.0.2
-    container_name: grafana
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./config/grafana/provisioning:/etc/grafana/provisioning
-    networks:
-      - monitoring
-    depends_on:
-      - prometheus
-
-volumes:
-  prometheus_data:
-  grafana_data:

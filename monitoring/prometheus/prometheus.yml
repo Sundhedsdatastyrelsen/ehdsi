@@ -5,5 +5,8 @@ global:
 scrape_configs:
   - job_name: 'country-a-service'
     metrics_path: '/actuator/prometheus'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
     static_configs:
-      - targets: ['epps-country-a:8080']
+      - targets: ['epps-country-a:4443']
