@@ -12,17 +12,16 @@ spring:
 server:
   port: 4443
   ssl:
-    key-store: ${COUNTRY_A_KEYSTORE_LOCATION}
-    key-store-password: ${COUNTRY_A_KEYSTORE_PASSWORD}
-    key-alias: ${COUNTRY_A_CERTIFICATE_ALIAS}
-    key-password: ${COUNTRY_A_KEY_PASSWORD}
-
+    key-store: config/dev-keystore.jks
+    key-store-password: Test.1234
+    key-alias: epps-country-a
+    key-password: Test.1234
 
 app:
-  fmk.endpoint.url: "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"
-  cpr.endpoint.url: "https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4"
-  authorization-registry.endpoint.url: "https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105"
-  fsk.endpoint.url: "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"
+  fmk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+  cpr.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4
+  authorization-registry.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
+  fsk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
 
 management:
   endpoint:
@@ -39,8 +38,9 @@ logging:
     root: info
     org.springframework.web: info
     dk.sundhedsdatastyrelsen.ncpeh: info
+
 lmsftp:
   server: "ftp.medicinpriser.dk"
   port: 21
-  username: ${LMSFTP_USERNAME}
-  password: ${LMSFTP_PASSWORD}
+  username: ${LMSFTP_USERNAME:}
+  password: ${LMSFTP_PASSWORD:}
