@@ -33,7 +33,8 @@ services:
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
       OTEL_TRACES_SAMPLER: "always_on"
-      OTEL_METRICS_EXPORTER: "none"
+      OTEL_METRICS_EXPORTER: "prometheus"
+      OTEL_METRICS_EXPORTER_PROMETHEUS_PORT: "9464"
       OTEL_LOGS_EXPORTER: "none"
       OTEL_PROPAGATORS: "tracecontext,baggage"
 

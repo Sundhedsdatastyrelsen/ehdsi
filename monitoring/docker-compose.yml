@@ -12,6 +12,8 @@ services:
       - "16686:16686"  # Web UI
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+    volumes:
+      - jaeger_data:/tmp
     networks:
       - monitoring
 
@@ -55,3 +57,4 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
+  jaeger_data:
