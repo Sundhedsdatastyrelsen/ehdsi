@@ -12,7 +12,7 @@ services:
     container_name: epps-country-a
     restart: unless-stopped
     ports:
-      - "8180:8080"
+      - "4443:4443"
       # - "5008:5008"
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
@@ -29,7 +29,12 @@ services:
       COUNTRY_A_KEYSTORE_LOCATION: "${COUNTRY_A_KEYSTORE_LOCATION}"
       OTEL_SERVICE_NAME: "country-a-service"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
+      OTEL_TRACES_SAMPLER: "always_on"
+      OTEL_METRICS_EXPORTER: "none"
+      OTEL_LOGS_EXPORTER: "none"
+      OTEL_PROPAGATORS: "tracecontext,baggage"
 
     volumes:
       - ./config:/app/config:ro

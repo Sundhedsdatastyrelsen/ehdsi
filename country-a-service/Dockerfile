@@ -14,20 +14,25 @@ FROM eclipse-temurin:21-jre
 RUN apt-get update \
     && apt-get install -y \
     ttf-mscorefonts-installer \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # refresh system font cache
 RUN fc-cache -f -v
 
+WORKDIR /app
+
+# Download OpenTelemetry Java agent
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar -o /app/opentelemetry-javaagent.jar
+
 # https://github.com/hexops-graveyard/dockerfile#do-not-use-a-uid-below-10000
 RUN groupadd -g 10001 app && \
     useradd -r -u 10001 -g app app
 
-WORKDIR /app
 
 COPY --from=builder /usr/src/build/epps-application/target/epps-application.jar .
 RUN chown -R app:app .
 
 USER app
-CMD ["java", "-Duser.timezone=UTC", "-jar", "epps-application.jar"]
+CMD ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-Duser.timezone=UTC", "-jar", "epps-application.jar"]
 EXPOSE 8080
