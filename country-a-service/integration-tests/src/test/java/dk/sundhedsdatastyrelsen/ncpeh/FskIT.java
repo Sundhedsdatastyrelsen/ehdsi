@@ -32,7 +32,9 @@ class FskIT {
     void getDocument() throws Exception {
         var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse);
         assertThat(informationCard, is(notNullValue()));
-        assertThat(informationCard, containsString("<ClinicalDocument"));
+        assertThat(
+            "the clinical document tag is there", informationCard.getElementsByTagName("ClinicalDocument")
+                .getLength(), is(greaterThan(0)));
     }
 
     @ParameterizedTest
@@ -42,6 +44,9 @@ class FskIT {
         var documentId = documentIdList.getFirst();
         var informationCard = service.getInformationCard(documentId);
         assertThat(informationCard, is(notNullValue()));
-        assertThat(informationCard, containsString("<ClinicalDocument"));
+        assertThat(
+            "the clinical document tag is there",
+            informationCard.getElementsByTagName("ClinicalDocument").getLength(),
+            is(greaterThan(0)));
     }
 }

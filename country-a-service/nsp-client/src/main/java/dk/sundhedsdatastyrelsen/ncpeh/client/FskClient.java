@@ -1,26 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.ConsentHeaderType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreateDrugMedicationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsp.test.idp.model.Identity;
-import dk.sdsd.dgws._2010._08.NameFormat;
-import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
-import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import ihe.iti.xds_b._2007.ObjectFactory;
@@ -34,7 +14,6 @@ import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.net.URI;
@@ -89,14 +68,6 @@ public class FskClient {
         RetrieveDocumentSetRequestType request,
         Identity caller
     ) throws JAXBException {
-        QName qname = new QName("urn:ihe:iti:xds-b:2007", "RetrieveDocumentSetRequest");
-
-        JAXBElement<RetrieveDocumentSetRequestType> jaxbElement = new JAXBElement<>(
-            qname,
-            RetrieveDocumentSetRequestType.class,
-            request
-        );
-
         return makeFskRequest(
             "/nspservices/sfskrep",
             factory.createRetrieveDocumentSetRequest(request),
