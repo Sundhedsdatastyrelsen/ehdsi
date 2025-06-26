@@ -32,6 +32,7 @@ RUN apt-get update \
     && apt-get install -y \
     gettext \
     socat \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # https://github.com/hexops-graveyard/dockerfile#do-not-use-a-uid-below-10000
@@ -41,12 +42,15 @@ RUN groupadd -g 10001 tomcat && \
 COPY ./openncp-configuration/ /opt/openncp-configuration
 COPY ./atna-resources/ /opt/atna-resources
 
+# Download OpenTelemetry Java agent
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
+
 # Make it possible to use environment variables in server.xml:
 RUN echo \
     "org.apache.tomcat.util.digester.PROPERTY_SOURCE=org.apache.tomcat.util.digester.EnvironmentPropertySource" \
     >> conf/catalina.properties
 
-RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources
+RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources /opt/opentelemetry-javaagent.jar
 
 # This env var needs to be present at runtime for the openncp containers to function
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
@@ -153,12 +157,16 @@ FROM eclipse-temurin:11-jre-jammy AS tsam-synchronizer
 RUN apt-get update \
     && apt-get install -y \
     default-mysql-client \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/openncp-tsam-sync
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsam-sync.jar .
 COPY ./tsam-synchronizer/application.yml .
 COPY ./tsam-synchronizer/entrypoint.sh /usr/local/bin/
+
+# Download OpenTelemetry Java agent
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]

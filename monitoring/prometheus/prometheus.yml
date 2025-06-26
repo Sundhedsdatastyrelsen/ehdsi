@@ -10,3 +10,27 @@ scrape_configs:
       insecure_skip_verify: true
     static_configs:
       - targets: ['epps-country-a:4443']
+
+  - job_name: 'openncp-server'
+    static_configs:
+      - targets: ['openncp-server:9464']
+
+  - job_name: 'openncp-client'
+    static_configs:
+      - targets: ['openncp-client:9464']
+
+  - job_name: 'openncp-openatna'
+    static_configs:
+      - targets: ['openncp-openatna:9464']
+
+  - job_name: 'openncp-trc-sts'
+    static_configs:
+      - targets: ['openncp-trc-sts:9464']
+
+  - job_name: 'openncp-translations-and-mappings'
+    static_configs:
+      - targets: ['openncp-translations-and-mappings:9464']
+
+  - job_name: 'openncp-web-manager'
+    static_configs:
+      - targets: ['openncp-web-manager:9464']
