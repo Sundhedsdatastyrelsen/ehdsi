@@ -38,3 +38,5 @@ _merged_spec.yaml
 .env
 
 dependency-reduced-pom.xml
+
+/data

@@ -29,6 +29,11 @@ management:
       show-details: always
       probes:
         enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
   health:
     diskspace:
       enabled: false
