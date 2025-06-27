@@ -3,17 +3,13 @@ networks:
     name: monitoring
 
 services:
-  # Jaeger for distributed tracing
+  # Jaeger for distributed tracing in an all-in-one configuration with in-memory storage (default configuration)
   jaeger:
-    image: jaegertracing/all-in-one:1.70.0
+    image: jaegertracing/jaeger:2.7.0
     container_name: jaeger
     restart: unless-stopped
     ports:
       - "16686:16686"  # Web UI
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    volumes:
-      - jaeger_data:/tmp
     networks:
       - monitoring
 
@@ -57,4 +53,3 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
-  jaeger_data:
