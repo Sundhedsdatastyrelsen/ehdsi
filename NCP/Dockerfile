@@ -157,16 +157,12 @@ FROM eclipse-temurin:11-jre-jammy AS tsam-synchronizer
 RUN apt-get update \
     && apt-get install -y \
     default-mysql-client \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/openncp-tsam-sync
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsam-sync.jar .
 COPY ./tsam-synchronizer/application.yml .
 COPY ./tsam-synchronizer/entrypoint.sh /usr/local/bin/
-
-# Download OpenTelemetry Java agent
-RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
