@@ -35,7 +35,7 @@ secrets:
   tls_truststore_password:
     file: tls_truststore_password.txt
 
-# Define the configuration once
+# OpenTelemetry configuration as a YAML anchor for merging into service configurations
 x-opentelemetry-config: &opentelemetry-config
   OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
   OTEL_EXPORTER_OTLP_PROTOCOL: grpc

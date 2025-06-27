@@ -43,7 +43,7 @@ COPY ./openncp-configuration/ /opt/openncp-configuration
 COPY ./atna-resources/ /opt/atna-resources
 
 # Download OpenTelemetry Java agent
-RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
 
 # Make it possible to use environment variables in server.xml:
 RUN echo \
@@ -166,7 +166,7 @@ COPY ./tsam-synchronizer/application.yml .
 COPY ./tsam-synchronizer/entrypoint.sh /usr/local/bin/
 
 # Download OpenTelemetry Java agent
-RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
