@@ -3,16 +3,6 @@ networks:
     name: monitoring
 
 services:
-  # Jaeger for distributed tracing in an all-in-one configuration with in-memory storage (default configuration)
-  jaeger:
-    image: jaegertracing/jaeger:2.7.0
-    container_name: jaeger
-    restart: unless-stopped
-    ports:
-      - "16686:16686"  # Web UI
-    networks:
-      - monitoring
-
   # Prometheus for metrics collection
   prometheus:
     image: prom/prometheus:v3.4.1
@@ -75,14 +65,13 @@ services:
     volumes:
       - tempo_data:/var/tempo
 
-
   # Grafana Tempo for distributed tracing with local storage
   tempo:
     image: *tempoImage
     container_name: tempo
     restart: unless-stopped
     ports:
-      - "16687:16686" # tempo query frontend (avoiding conflict with jaeger)
+      - "16686:16686" # tempo query frontend
     command: [ "-config.file=/etc/tempo/tempo.yaml" ]
     volumes:
       - ./tempo:/etc/tempo

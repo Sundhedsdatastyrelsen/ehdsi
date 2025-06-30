@@ -10,12 +10,6 @@ datasources:
     jsonData:
       timeInterval: 15s
 
-  - name: Jaeger
-    type: jaeger
-    access: proxy
-    url: http://jaeger:16686
-    editable: true
-
   - name: Tempo
     type: tempo
     access: proxy
