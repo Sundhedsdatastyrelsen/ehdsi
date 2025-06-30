@@ -37,7 +37,7 @@ secrets:
 
 # OpenTelemetry configuration as a YAML anchor for merging into service configurations
 x-opentelemetry-config: &opentelemetry-config
-  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
   OTEL_EXPORTER_OTLP_PROTOCOL: grpc
   OTEL_TRACES_SAMPLER: always_on
   OTEL_METRICS_EXPORTER: prometheus

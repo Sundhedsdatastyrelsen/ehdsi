@@ -15,3 +15,9 @@ datasources:
     access: proxy
     url: http://jaeger:16686
     editable: true
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    editable: true

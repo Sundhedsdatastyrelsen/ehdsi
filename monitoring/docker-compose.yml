@@ -50,6 +50,50 @@ services:
     depends_on:
       - prometheus
 
+  # Memcached for Tempo caching
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: memcached
+    restart: unless-stopped
+    ports:
+      - "11211:11211"
+    environment:
+      - MEMCACHED_MAX_MEMORY=64m  # Set the maximum memory usage
+      - MEMCACHED_THREADS=4       # Number of threads to use
+    networks:
+      - monitoring
+
+  # Tempo runs as user 10001, and docker compose creates the volume as root.
+  # As such, we need to chown the volume in order for Tempo to start correctly.
+  tempo-init:
+    image: &tempoImage grafana/tempo:2.8.1
+    user: root
+    entrypoint:
+      - "chown"
+      - "10001:10001"
+      - "/var/tempo"
+    volumes:
+      - tempo_data:/var/tempo
+
+
+  # Grafana Tempo for distributed tracing with local storage
+  tempo:
+    image: *tempoImage
+    container_name: tempo
+    restart: unless-stopped
+    ports:
+      - "16687:16686" # tempo query frontend (avoiding conflict with jaeger)
+    command: [ "-config.file=/etc/tempo/tempo.yaml" ]
+    volumes:
+      - ./tempo:/etc/tempo
+      - tempo_data:/var/tempo
+    networks:
+      - monitoring
+    depends_on:
+      - memcached
+      - tempo-init
+
 volumes:
   prometheus_data:
   grafana_data:
+  tempo_data:

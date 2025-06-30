@@ -30,3 +30,7 @@ scrape_configs:
   - job_name: 'openncp-web-manager'
     static_configs:
       - targets: ['openncp-web-manager:9464']
+
+  - job_name: 'tempo'
+    static_configs:
+      - targets: ['tempo:3200']

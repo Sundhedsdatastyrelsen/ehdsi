@@ -29,7 +29,7 @@ services:
       COUNTRY_A_KEY_PASSWORD: "${COUNTRY_A_KEY_PASSWORD}"
       COUNTRY_A_KEYSTORE_LOCATION: "${COUNTRY_A_KEYSTORE_LOCATION}"
       OTEL_SERVICE_NAME: "country-a-service"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
       OTEL_TRACES_SAMPLER: "always_on"
