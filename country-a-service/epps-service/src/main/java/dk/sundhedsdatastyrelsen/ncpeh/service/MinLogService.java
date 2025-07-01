@@ -1,12 +1,12 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.nsp.test.idp.model.Identity;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.DestinationForEntryForRegistrationType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.LogDataEntryForRegistrationType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.PersonIdSourceType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.RegistrationRequestType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.SourceForEntryType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.UserPersonIdSourceType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.DestinationForEntryForRegistrationType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.LogDataEntryForRegistrationType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.PersonIdSourceType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.SourceForEntryType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;

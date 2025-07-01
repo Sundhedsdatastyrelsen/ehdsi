@@ -2,7 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.RegistrationRequestType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 public class MinLogClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(MinLogClient.class);
 
-    private static final dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.ObjectFactory factory = new dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration.ObjectFactory();
+    private static final dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.ObjectFactory factory = new dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.ObjectFactory();
 
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
@@ -25,7 +25,7 @@ public class MinLogClient {
     public MinLogClient(@Value("${app.minlog.endpoint.url}") String minlogEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(minlogEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
-            "dk.sundhedsdatastyrelsen.minlog.xml_schema._2023._04._25.minlog2_registration"
+            "dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration"
                 + ":oasis.names.tc.ebxml_regrep.xsd.rs._3"
         );
     }

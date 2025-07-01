@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
 
 public class MinLog {
-    private static final String minlogEndpointUri = "http://test1.ekstern-test.nspop.dk:8080/decoupling";
+    private static final String minlogEndpointUri = "http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService";
     /**
      * Jens Jensen is a test person vi can see in the test person overview. Do not edit.
      */
