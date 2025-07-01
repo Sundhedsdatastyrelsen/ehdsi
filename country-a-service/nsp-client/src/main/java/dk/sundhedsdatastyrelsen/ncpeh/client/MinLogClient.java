@@ -10,10 +10,12 @@ import jakarta.xml.bind.JAXBException;
 import oasis.names.tc.ebxml_regrep.xsd.rs._3.RegistryResponseType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@Component
 public class MinLogClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(MinLogClient.class);
 
