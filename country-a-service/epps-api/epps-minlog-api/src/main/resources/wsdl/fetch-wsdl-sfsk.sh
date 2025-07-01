@@ -47,7 +47,7 @@ function fetchFile() {
     local url="$1"
     local base_url="$2"
     local resolved_url=$(resolve_url "$base_url" "$url")
-    
+
     # Extract filename from URL, handling query parameters that contain filenames
     local filename
     if [[ "$url" == *"?xsd="* ]]; then
@@ -58,7 +58,7 @@ function fetchFile() {
         filename=$(echo "${url##*/}" | sed -E 's|\?.*$||')
     fi
     local file="xsd/${filename}"
-    
+
     local retry_count=0
     local success=false
 
@@ -91,7 +91,7 @@ function fetchFile() {
 
 function fetchWSDL() {
     local wsdl_file="minlog.wsdl"
-    local initial_url="https://wsdl.nspop.dk/minlog2-registration/20230425/RegisterService?wsdl"
+    local initial_url="http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService?wsdl"
     local retry_count=0
     local success=false
 
@@ -146,4 +146,4 @@ if [ ! -d "xsd" ]; then
 fi
 
 # Fetch both ITI18 and ITI43 WSDLs
-fetchWSDL 
+fetchWSDL

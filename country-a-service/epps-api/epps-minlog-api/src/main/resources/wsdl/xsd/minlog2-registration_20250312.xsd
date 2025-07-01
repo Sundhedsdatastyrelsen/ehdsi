@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:minlog="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2023/04/25/minlog2-registration.xsd" elementFormDefault="unqualified" targetNamespace="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2023/04/25/minlog2-registration.xsd" version="1.0">
+<?xml version='1.0' encoding='UTF-8'?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:minlog="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd" elementFormDefault="unqualified" targetNamespace="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd" version="1.0">
 
     <!-- Root elements, one for the request and one for the response, also one for a failing registration.
 	     Note that there no longer is both a bulk and single registration service, all registrations are
@@ -132,7 +132,7 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="minlog:OrganisationIdValueType">
-                <xs:attribute name="source" type="minlog:OrganisationIdSourceType" use="required"/>
+                <xs:attribute name="source" type="minlog:OrganisationIdSourcePredefinedType" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -149,24 +149,12 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="OrganisationIdSourceType">
-        <xs:annotation>
-            <xs:documentation>
-                Union allowing either a predefined value for the organisation source attribute or an
-                undefined value.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:union memberTypes="minlog:OrganisationIdSourcePredefinedType minlog:SourceUndefinedType"/>
-    </xs:simpleType>
-
     <xs:simpleType name="OrganisationIdSourcePredefinedType">
         <xs:restriction base="minlog:SourceUndefinedType">
             <xs:enumeration value="SOR"/>
-            <xs:enumeration value="SKS"/>
-            <xs:enumeration value="Yder"/>
-            <xs:enumeration value="CVR-P"/>
+            <xs:enumeration value="YDER"/>
             <xs:enumeration value="CVR"/>
-            <xs:enumeration value="Kommunekode"/>
+            <xs:enumeration value="EuropeanHealthcareOrganisation"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -268,6 +256,7 @@
         <xs:restriction base="minlog:SourceUndefinedType">
             <xs:enumeration value="CPR"/>
             <xs:enumeration value="Autorisation"/>
+            <xs:enumeration value="EuropeanHealthcareProfessional"/>
         </xs:restriction>
     </xs:simpleType>
 
