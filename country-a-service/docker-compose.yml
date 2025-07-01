@@ -1,6 +1,3 @@
-#
-# Network definitions
-#
 networks:
   epps-backend:
     name: epps
@@ -17,9 +14,11 @@ services:
       # - "5008:5008"
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
-      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-dev}"
+      SPRING_PROFILES_ACTIVE: "docker"
       CPR_ENDPOINT_URL: "${CPR_ENDPOINT_URL}"
       FMK_ENDPOINT_URL: "${FMK_ENDPOINT_URL}"
+      FSK_ENDPOINT_URL: "${FSK_ENDPOINT_URL}"
+      AUTH_REGISTRY_ENDPOINT_URL: "${AUTH_REGISTRY_ENDPOINT_URL}"
       LMSFTP_USERNAME: "${LMSFTP_USERNAME}"
       LMSFTP_PASSWORD: "${LMSFTP_PASSWORD}"
       COUNTRY_A_KEYSTORE_PASSWORD: "${COUNTRY_A_KEYSTORE_PASSWORD}"

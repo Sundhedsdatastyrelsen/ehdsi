@@ -123,13 +123,16 @@ services:
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
+      - ./heapdumps/tomcat_node_a:/heapdumps
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
-      NC_DK_COUNTRY_A_HOST: "https://epps-country-a:8443"
+      NC_DK_COUNTRY_A_HOST: "https://epps-country-a:4443"
       JAVA_OPTS: "
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -157,6 +160,7 @@ services:
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
+      - ./heapdumps/tomcat_node_b:/heapdumps
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -164,7 +168,9 @@ services:
       JAVA_OPTS: "
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -193,11 +199,14 @@ services:
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
+      - ./heapdumps/openncp-openatna:/heapdumps
     environment:
       JAVA_OPTS: "
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -224,12 +233,15 @@ services:
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
+      - ./heapdumps/openncp-trc-sts:/heapdumps
     environment:
       JAVA_OPTS: "
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
-        -Dorg.apache.cxf.stax.allowInsecureParser=true"
+        -Dorg.apache.cxf.stax.allowInsecureParser=true
+        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -251,16 +263,20 @@ services:
     ports:
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}"
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
+      # - 9090:9090
     volumes:
       - ./keystore:/opt/openncp-configuration/keystore
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
+      - ./heapdumps/openncp-translations-and-mappings:/heapdumps
     environment:
       JAVA_OPTS: "
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
@@ -288,6 +304,7 @@ services:
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
+      - ./heapdumps/openncp-web-manager:/heapdumps
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -296,7 +313,9 @@ services:
       JAVA_OPTS: "
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp

@@ -18,8 +18,12 @@ public class PatientSummaryL3 {
     @NonNull String title;
 
     /**
-    * "[...] the date and time at which this document was created as an electronic document."
-    */
+     * "[...] the date and time at which this document was created as an electronic document."
+     */
     @NonNull OffsetDateTime effectiveTime;
+    @NonNull Patient patient;
 
+    /// Egen læge
+    /// TODO might be null?
+    @NonNull PreferredHealthProfessional preferredHp;
 }
