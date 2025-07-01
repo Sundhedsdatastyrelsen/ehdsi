@@ -26,6 +26,7 @@ public class ConfigurationValidator {
             "app.cpr.endpoint.url",
             "app.fmk.endpoint.url",
             "app.fsk.endpoint.url",
+            "app.minlog.endpoint.url",
             "server.ssl.key-alias",
             "server.ssl.key-password",
             "server.ssl.key-store",
