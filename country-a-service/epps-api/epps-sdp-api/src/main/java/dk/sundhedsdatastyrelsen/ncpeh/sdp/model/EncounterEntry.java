@@ -17,8 +17,20 @@ public record EncounterEntry(
     String reasonText, //(Original title: Kont_aarsag_tekst)
     String diagnosisCode, //(Original title: Adiag)
     String diagnosisText, //(Original title: Adiag_tekst)
-    String patientTypeCode, //(Original title: Kont_patient_type)
-    String patientTypeText, //(Original title: Kont_patient_type_text)
+
+    /**
+     * (NB: I know this is more than the options in the type code. The mappings are likely caused by a change in the system over time to new wording.
+     * Mappings are:
+     * NULL -> NULL
+     * 0 -> Heldøgspatient, Indlagt patient
+     * 1 -> Deldøgnspatient
+     * 2 -> Ambulatoriepatient, Natpatient
+     * 3 -> Skadestuepatient
+     *
+     * We should probably support more than just these, in case they expand
+     */
+    String patientTypeCode, //(Original title: Kont_patient_type) //Values: NULL,0,1,2,3
+    String patientTypeText, //(Original title: Kont_patient_type_tekst) //Values: NULL, Heldøgspatient, Skadestuepatient, Natpatient, Deldøgspatient, Ambulatoriepatient, Indlagt patient
     OffsetDateTime birthday, //(Original title: Borger_foedselsdato)
     String gender, //(Original title: Borger_koen) //Single Letter, M or F (or "Unknown" - 7 letters)
     String treatmentType //(Original title: Kont_beh_type)

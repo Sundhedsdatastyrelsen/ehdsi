@@ -7,9 +7,9 @@ public record ProcedureEntry(
     String skProcedure, //Some kind of key, not primary key, as it is not distinct at all. 111587 distinct values (seems to be mostly integers) out of 1227867950 rows
     OffsetDateTime start, //(Proc_starttidspunkt)
     OffsetDateTime end, //(Proc_sluttidspunkt)
-    String code, //Proc_kode
+    String code, //Proc_kode SKS-Code (https://medinfo.dk/sks/brows.php)
     String codeText, //Proc_kode_tekst
-    String codeType, //Proc_kode_type
+    String codeType, //Proc_kode_type SKS-Code-Type (https://medinfo.dk/sks/brows.php)
     String codeTypeText, //Proc_kode_type_tekst
     String cpr //Cprnummer //Maybe we can skip kontakt if this is on all views
     /* All fields, some are mapped
