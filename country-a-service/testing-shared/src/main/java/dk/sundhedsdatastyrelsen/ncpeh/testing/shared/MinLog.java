@@ -8,7 +8,7 @@ public class MinLog {
      * Jens Jensen is a test person vi can see in the test person overview. Do not edit.
      */
     public static final String cprJensJensenReadOnly = "0408801111";
-    public static final String maltaHealtcareOfficialId = "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1"; //This is just copied from a CDA Malta sent us
+    public static final String maltaHealtcareOfficialId = "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1"; //Country-Code Author ID
 
     private static MinLogClient minLogClient;
 
