@@ -10,6 +10,6 @@ public class MinLogIT {
 
     @Test
     void testEvent() {
-        service.logEventOnPatient(MinLog.cprJensJensenReadOnly, "integrationstest", OrganizationIdentities.sundhedsdatastyrelsen());
+        service.logEventOnPatient(MinLog.cprJensJensenReadOnly, "integrationstest", MinLog.maltaHealtcareOfficialId, OrganizationIdentities.sundhedsdatastyrelsen());
     }
 }

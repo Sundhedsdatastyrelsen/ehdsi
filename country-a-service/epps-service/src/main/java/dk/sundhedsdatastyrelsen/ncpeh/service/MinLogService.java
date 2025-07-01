@@ -26,6 +26,7 @@ public class MinLogService {
     public void logEventOnPatient(
         String cpr,
         String eventText,
+        String callerIdentification,
         Identity caller
     ) {
         var source = SourceForEntryType.builder().withSystemName("eHDSI").withSource().withSystemName("eHDSI").build();
@@ -38,8 +39,8 @@ public class MinLogService {
             .withValue(cpr)
             .end()
             .withUserPersonIdentifier()
-            .withSource(UserPersonIdSourceType.CPR)
-            .withValue(cpr)
+            .withSource(UserPersonIdSourceType.EUROPEAN_HEALTHCARE_PROFESSIONAL)
+            .withValue(callerIdentification)
             .end()
             .build();
         var registration = RegistrationRequestType.builder()
@@ -50,8 +51,7 @@ public class MinLogService {
             .build();
 
         try {
-            var response = minLogClient.register(registration, caller);
-            var test = 12;
+            minLogClient.register(registration, caller);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }

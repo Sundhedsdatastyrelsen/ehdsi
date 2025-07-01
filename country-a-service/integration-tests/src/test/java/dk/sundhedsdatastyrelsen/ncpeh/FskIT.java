@@ -22,7 +22,7 @@ public class FskIT {
      */
     @Test
     void getListOfCards() throws Exception {
-        var documentIdList = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, OrganizationIdentities.sundhedsdatastyrelsen());
+        var documentIdList = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, Fsk.maltaHealtcareOfficialId, OrganizationIdentities.sundhedsdatastyrelsen());
         assertThat(documentIdList.size(), is(1));
     }
 
@@ -36,7 +36,7 @@ public class FskIT {
     @ParameterizedTest
     @ValueSource(strings = {Fsk.cprJensJensenReadOnly})
     void getInformationCardFromPerson(String cpr) {
-        var documentIdList = service.findInformationCardDetails(cpr, OrganizationIdentities.sundhedsdatastyrelsen());
+        var documentIdList = service.findInformationCardDetails(cpr, Fsk.maltaHealtcareOfficialId, OrganizationIdentities.sundhedsdatastyrelsen());
         var documentId = documentIdList.getFirst();
         var informationCard = service.getInformationCard(documentId, OrganizationIdentities.sundhedsdatastyrelsen());
         assertThat(informationCard, is(notNullValue()));

@@ -32,6 +32,7 @@ public class InformationCardService {
 
     public List<String> findInformationCardDetails(
         String patientId,
+        String healthcareOfficialId,
         Identity caller
     ) {
         try {
@@ -79,7 +80,7 @@ public class InformationCardService {
 
             var fskResponse = fskClient.list(request, caller);
 
-            minLogService.logEventOnPatient(cpr, "FSK Opslag - Stamkort", caller);
+            minLogService.logEventOnPatient(cpr, "FSK Opslag - Stamkort", healthcareOfficialId, caller);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()
