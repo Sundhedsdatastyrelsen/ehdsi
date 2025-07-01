@@ -15,6 +15,7 @@ To sfskiti18.wsdl at the bottom of the `<operation name="DocumentRegistry_Regist
 ## sfskiti43.wsdl
 This file has the correct tag, but is missing the "message" attribute in the tag, in the same location as before,
 at the bottom of the `<operation name="DocumentRegistry_RegistryStoredQuery">` tag, inside the `<portType>` tag. Add the
-message attribute
+message attribute to the tag
 ```
+message="ihe:DGWSFault"
 ```
