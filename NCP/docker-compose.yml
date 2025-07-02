@@ -7,6 +7,9 @@
 networks:
   ncp:
     name: epps
+  monitoring:
+    name: monitoring
+    external: true
 
 volumes:
   db-data:
@@ -31,6 +34,16 @@ secrets:
     file: seal_keystore_password.txt
   tls_truststore_password:
     file: tls_truststore_password.txt
+
+# OpenTelemetry configuration as a YAML anchor for merging into service configurations
+x-opentelemetry-config: &opentelemetry-config
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+  OTEL_TRACES_SAMPLER: always_on
+  OTEL_METRICS_EXPORTER: prometheus
+  OTEL_METRICS_EXPORTER_PROMETHEUS_PORT: 9464
+  OTEL_LOGS_EXPORTER: none
+  OTEL_PROPAGATORS: tracecontext,baggage
 
 services:
   mysql:
@@ -97,6 +110,7 @@ services:
       - ./tsam-synchronizer/application.yml:/usr/local/openncp-tsam-sync/application.yml
     networks:
       - ncp
+      - monitoring
     secrets:
       - db_username
       - db_password
@@ -125,9 +139,12 @@ services:
       - ./common/logback.xml:/opt/logging/logback.xml
       - ./heapdumps/tomcat_node_a:/heapdumps
     environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: openncp-server
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
       NC_DK_COUNTRY_A_HOST: "https://epps-country-a:4443"
       JAVA_OPTS: "
+        -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -136,6 +153,7 @@ services:
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
+      - monitoring
     secrets:
       - tls_keystore_password
       - tls_truststore_password
@@ -164,8 +182,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: openncp-client
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5006,server=y,suspend=n"
       JAVA_OPTS: "
+        -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -174,6 +195,7 @@ services:
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
+      - monitoring
     secrets:
       - tls_keystore_password
       - tls_truststore_password
@@ -201,7 +223,10 @@ services:
       - ./common/logback.xml:/opt/logging/logback.xml
       - ./heapdumps/openncp-openatna:/heapdumps
     environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: openncp-openatna
       JAVA_OPTS: "
+        -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -210,6 +235,7 @@ services:
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
+      - monitoring
     secrets:
       - tls_keystore_password
       - tls_truststore_password
@@ -235,7 +261,10 @@ services:
       - ./common/logback.xml:/opt/logging/logback.xml
       - ./heapdumps/openncp-trc-sts:/heapdumps
     environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: openncp-trc-sts
       JAVA_OPTS: "
+        -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -245,6 +274,7 @@ services:
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
+      - monitoring
     secrets:
       - tls_keystore_password
       - tls_truststore_password
@@ -271,7 +301,10 @@ services:
       - ./common/logback.xml:/opt/logging/logback.xml
       - ./heapdumps/openncp-translations-and-mappings:/heapdumps
     environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: openncp-translations-and-mappings
       JAVA_OPTS: "
+        -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -280,6 +313,7 @@ services:
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
+      - monitoring
     secrets:
       - tls_keystore_password
       - tls_truststore_password
@@ -308,9 +342,12 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: openncp-web-manager
       SPRING_PROFILES_ACTIVE: production
       SPRING_CONFIG_ADDITIONAL-LOCATION: file:/opt/config/application-docker.yml
       JAVA_OPTS: "
+        -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -319,6 +356,7 @@ services:
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
       - ncp
+      - monitoring
     secrets:
       - tls_keystore_password
       - tls_truststore_password

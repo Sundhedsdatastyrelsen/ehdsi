@@ -19,3 +19,5 @@ target/
 /seal_keystore_password.txt
 /tls_truststore_password.txt
 hs_err_pid*
+
+/heapdumps
