@@ -9,4 +9,5 @@ export DB_PASSWORD; DB_PASSWORD=$(</run/secrets/db_password)
 export TSAM_SYNC_USERNAME; TSAM_SYNC_USERNAME=$(</run/secrets/cts_username)
 export TSAM_SYNC_PASSWORD; TSAM_SYNC_PASSWORD=$(</run/secrets/cts_password)
 
+# Execute the original command
 exec "$@"

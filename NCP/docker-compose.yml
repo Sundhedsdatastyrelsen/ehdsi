@@ -141,8 +141,8 @@ services:
     environment:
       <<: *opentelemetry-config
       OTEL_SERVICE_NAME: openncp-server
-      NC_DK_COUNTRY_A_HOST: "https://epps-country-a:4443"
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+      NC_DK_COUNTRY_A_HOST: "https://epps-country-a:4443"
       JAVA_OPTS: "
         -javaagent:/opt/opentelemetry-javaagent.jar
         -Dlogging.config=/opt/logging/logback.xml

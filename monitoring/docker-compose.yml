@@ -84,7 +84,6 @@ services:
 
   # node-exporter for host VM metrics
   node-exporter:
-    # privileged: true # Required for access to host PID namespace
     image: prom/node-exporter:v1.9.1
     container_name: node-exporter
     restart: unless-stopped
