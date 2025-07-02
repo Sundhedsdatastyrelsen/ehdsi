@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -o errexit
+set -o nounset
+set -o pipefail
+
 #
 # Script to fetch WSDL and XSD files
 # Includes retry logic for failed downloads

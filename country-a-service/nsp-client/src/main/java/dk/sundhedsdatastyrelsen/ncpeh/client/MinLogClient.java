@@ -66,7 +66,7 @@ public class MinLogClient {
                 caller
             );
         } catch (Exception e) {
-            throw new NspClientException("FSK request failed", e);
+            throw new NspClientException("MinLog request failed", e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
     }
