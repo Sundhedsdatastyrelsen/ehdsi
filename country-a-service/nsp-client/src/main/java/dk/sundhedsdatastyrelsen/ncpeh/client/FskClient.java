@@ -40,6 +40,10 @@ import javax.xml.namespace.QName;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * Client for calling FSK SOAP endpoints.
+ * Documentation is here: https://www.nspop.dk/display/public/web/FSK+-+Guide+til+anvendere
+ */
 @Component
 public class FskClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FskClient.class);

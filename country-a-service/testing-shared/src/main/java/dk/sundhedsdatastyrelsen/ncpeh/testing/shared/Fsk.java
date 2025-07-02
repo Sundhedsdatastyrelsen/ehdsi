@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 
 /**
- * API client for FMK test environment
+ * API client for FSK test environment
  */
 public class Fsk {
     private static final String fskEndpointUri = "http://test1.ekstern-test.nspop.dk:8080/decoupling";
