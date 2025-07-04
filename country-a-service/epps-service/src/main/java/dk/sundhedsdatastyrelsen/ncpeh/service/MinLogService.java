@@ -35,9 +35,11 @@ public class MinLogService {
         String eventText,
         EuropeanHealthcareProfessional europeanHealthcareProfessional
     ) {
+        // See https://www.nspop.dk/pages/releaseview.action?pageId=98456923#MinLog2MinLogRegistreringGuidetilanvendere-Skemabeskrivelse
+        // for schema description
         var source = SourceForEntryType.builder().withSystemName("eHDSI").withSource().withSystemName("eHDSI").build();
         var destination = DestinationForEntryForRegistrationType.builder()
-            .withSystemName("TestSystem")
+            .withSystemName("NCPeH")
             .withActivity(eventText)
             .withDateTime(Utils.xmlGregorianCalendar(ZonedDateTime.now()))
             .withPersonIdentifier()

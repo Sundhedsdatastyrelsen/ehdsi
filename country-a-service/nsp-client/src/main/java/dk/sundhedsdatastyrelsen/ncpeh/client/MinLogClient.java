@@ -24,12 +24,18 @@ public class MinLogClient {
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
 
-    public MinLogClient(@Value("${app.minlog.endpoint.url}") String minlogEndpointUrl) throws URISyntaxException, JAXBException {
-        this.serviceUri = new URI(minlogEndpointUrl);
-        this.jaxbContext = JAXBContext.newInstance(
-            "dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration"
-                + ":oasis.names.tc.ebxml_regrep.xsd.rs._3"
-        );
+    public MinLogClient(@Value("${app.minlog.endpoint.url}") String minlogEndpointUrl) {
+        try {
+            this.serviceUri = new URI(minlogEndpointUrl);
+            this.jaxbContext = JAXBContext.newInstance(
+                "dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration"
+                    + ":oasis.names.tc.ebxml_regrep.xsd.rs._3"
+            );
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Bad URI", e);
+        } catch (JAXBException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public RegistryResponseType register(
@@ -39,7 +45,7 @@ public class MinLogClient {
 
         var jaxbElement = factory.createRegistrationRequest(request);
 
-        return makeMinlogRequest(
+        return makeMinLogRequest(
             jaxbElement,
             "AddRegistrations",
             RegistryResponseType.class,
@@ -50,10 +56,15 @@ public class MinLogClient {
     /**********************
      * Private
      ***********************/
-    private <RequestType, ResponseType> ResponseType makeMinlogRequest(
-        JAXBElement<RequestType> request,
+
+    /**
+     * @param <A> Request type
+     * @param <B> Response type
+     */
+    private <A, B> B makeMinLogRequest(
+        JAXBElement<A> request,
         String soapAction,
-        Class<ResponseType> clazz,
+        Class<B> clazz,
         Identity caller
     ) throws JAXBException {
         final Reply reply;

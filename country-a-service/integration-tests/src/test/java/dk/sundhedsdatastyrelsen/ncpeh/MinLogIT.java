@@ -6,11 +6,15 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.MinLogService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.MinLog;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 class MinLogIT {
     private final MinLogService service = new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen());
 
     @Test
     void testEvent() {
-        service.logEventOnPatient(MinLog.cprJensJensenReadOnly, "integrationstest", TestIdentities.foreignPharmacistChrisChristoffersen);
+        assertDoesNotThrow(() ->
+            service.logEventOnPatient(MinLog.CPR_JENS_JENSEN_READ_ONLY, "integrationstest", TestIdentities.foreignPharmacistChrisChristoffersen)
+        );
     }
 }
