@@ -1,5 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.nsp.test.idp.OrganizationIdentities;
+import dk.nsp.test.idp.model.OrganizationIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -29,6 +31,17 @@ public class Beans {
     @Bean
     public UndoDispensationRepository undoDispensationRepository() {
         return new UndoDispensationRepository(undoDataSource());
+    }
+
+    /**
+     * This object is used to identify the system for services expecting FOCES/VOCES certificates, as opposed to
+     * IDWS or DGWS services that require personal access tokens representing the foreign healthcare professional.
+     * For now, we use dk.nsp.test.idp.model.OrganizationIdentity.
+     * This should be changed so we can phase out this dependency.
+     */
+    @Bean
+    public OrganizationIdentity systemIdentity() {
+        return OrganizationIdentities.sundhedsdatastyrelsen();
     }
 
     @Bean

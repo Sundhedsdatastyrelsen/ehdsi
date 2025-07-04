@@ -13,13 +13,13 @@ import static dk.nsp.test.idp.builder.Builders.employee;
 import static dk.nsp.test.idp.builder.Builders.employeeIdentity;
 import static dk.nsp.test.idp.builder.Builders.identityProvider;
 import static dk.nsp.test.idp.builder.Builders.organization;
-import static dk.nsp.test.idp.builder.Builders.organizationIdentity;
 import static dk.nsp.test.idp.builder.Builders.securityTokenService;
 import static dk.nsp.test.idp.builder.Builders.serviceConsumer;
 
 public class TestIdentities {
+    private TestIdentities() {}
 
-    public static Identity apotekerJeppeMoeller = employeeIdentity()
+    public static final Identity apotekerJeppeMoeller = employeeIdentity()
         .representing(employee()
             .identifiedBy(UUID.fromString("00798849-effe-4733-bcc4-670093830511")))
         .employedAt(organization()
@@ -38,7 +38,7 @@ public class TestIdentities {
     /**
      * Chris Christoffersen, apoteker, CPR: 3001010033
      */
-    public static Identity apotekerChrisChristoffersen = employeeIdentity()
+    public static final Identity apotekerChrisChristoffersen = employeeIdentity()
         .representing(employee()
             .identifiedBy(UUID.fromString("1fdff71e-2697-4f84-8611-e890a422cef8")))
         .employedAt(organization()
@@ -55,9 +55,16 @@ public class TestIdentities {
         .build();
 
     /**
+     * Chris Christoffersen, but with a foreign healthcare professional ID
+     */
+    public static final EuropeanHealthcareProfessional foreignPharmacistChrisChristoffersen = EuropeanHealthcareProfessional.fromIdentity(
+        apotekerChrisChristoffersen,
+        "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1");
+
+    /**
      * Delivery site - for effectuating a prescription
      */
-    public static OrganisationType deliverySiteRyApotek =
+    public static final OrganisationType deliverySiteRyApotek =
         OrganisationType.builder()
             .withName("Ry Apoteksudsalg")
             .withType("Apotek")
@@ -66,7 +73,7 @@ public class TestIdentities {
             .withValue("1008648049")
             .end()
             .build();
-    public static OrganisationIdentifierType skanderborgApotek =
+    public static final OrganisationIdentifierType skanderborgApotek =
         OrganisationIdentifierType.builder()
             .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
             .withValue("5790000170609") //This is a test value found on wiki.fmk-teknik.dk

@@ -1,7 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.nsp.test.idp.model.Identity;
+import dk.nsp.test.idp.model.OrganizationIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
@@ -24,16 +25,21 @@ import java.util.List;
 public class InformationCardService {
     private final FskClient fskClient;
     private final MinLogService minLogService;
+    /**
+     * The system (FOCES/VOCES) which makes the service request, i.e., certificates representing the NCPeH DK.
+     * This is not the same as the parent request caller, i.e., the foreign healthcare professional.
+     */
+    private final OrganizationIdentity systemCaller;
 
-    public InformationCardService(FskClient fskClient, MinLogService minLogService) {
+    public InformationCardService(FskClient fskClient, MinLogService minLogService, OrganizationIdentity systemCaller) {
         this.fskClient = fskClient;
         this.minLogService = minLogService;
+        this.systemCaller = systemCaller;
     }
 
     public List<String> findInformationCardDetails(
         String patientId,
-        String healthcareOfficialId,
-        Identity caller
+        EuropeanHealthcareProfessional caller
     ) {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
@@ -77,9 +83,9 @@ public class InformationCardService {
                     .build())
                 .build();
 
-            var fskResponse = fskClient.list(request, caller);
+            var fskResponse = fskClient.list(request, systemCaller);
 
-            minLogService.logEventOnPatient(cpr, "FSK Opslag - Stamkort", healthcareOfficialId, caller);
+            minLogService.logEventOnPatient(cpr, "FSK Opslag - Stamkort", caller);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()
@@ -91,7 +97,7 @@ public class InformationCardService {
         }
     }
 
-    public String getInformationCard(String uniqueDocumentId, Identity caller) {
+    public String getInformationCard(String uniqueDocumentId) {
         try {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
@@ -102,7 +108,7 @@ public class InformationCardService {
 
             //TODO: We should log that we did this to MinLog, since we do it as an organisation
             //The endpoints does not (in the near future) support IDWS, so we have to use the organisatorial endpoint.
-            var fskResponse = fskClient.getDocument(request, caller);
+            var fskResponse = fskClient.getDocument(request, systemCaller);
             var document = fskResponse.getDocumentResponse()
                 .stream()
                 .map(dr -> new String(dr.getDocument(), StandardCharsets.UTF_8))
