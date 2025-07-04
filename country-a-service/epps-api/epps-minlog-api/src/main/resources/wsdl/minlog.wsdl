@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:minlog20250312="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd" targetNamespace="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.wsdl">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:minlog20250312="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd" targetNamespace="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd">
+            
+  <xs:include schemaLocation="./xsd/minlog2-registration_20250312.xsd"/>
+        
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="RegistrationResponseOut">
+    <wsdl:part element="minlog20250312:RegistrationResponse" name="RegistrationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RegistrationRequestIn">
+    <wsdl:part element="minlog20250312:RegistrationRequest" name="RegistrationRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="RegisterServicePort">
+    <wsdl:operation name="AddRegistrations">
+      <wsdl:input message="tns:RegistrationRequestIn" name="addRegistrationRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:RegistrationResponseOut" name="addRegistrationResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RegisterServiceBinding" type="tns:RegisterServicePort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="AddRegistrations">
+      <soap:operation soapAction="AddRegistrations" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RegisterService">
+    <wsdl:port binding="tns:RegisterServiceBinding" name="RegisterServicePort">
+      <soap:address location="http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

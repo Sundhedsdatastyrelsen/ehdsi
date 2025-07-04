@@ -117,8 +117,7 @@ function fetchWSDL() {
         done
 
         # Fix schemaLocation in main wsdl
-        sed -Ei 's|schemaLocation="[^"]*/([^"]+)"|schemaLocation="./xsd/\1"|g;s|\?
-        xsd=([0-9]+)|-\1.xsd|g' "$wsdl_file"
+        sed -Ei 's|schemaLocation="[^"]*/([^"]+)"|schemaLocation="./xsd/\1"|g;s|\?xsd=([0-9]+)|-\1.xsd|g' "$wsdl_file"
 
         # Fix schemaLocation in xsds
         for file in xsd/*; do

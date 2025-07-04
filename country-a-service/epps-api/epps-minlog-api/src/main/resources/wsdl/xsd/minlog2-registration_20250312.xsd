@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='UTF-8'?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:minlog="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd" elementFormDefault="unqualified" targetNamespace="http://www.sundhedsdatastyrelsen.dk/minlog/xml.schema/2025/03/12/minlog2-registration.xsd" version="1.0">
+
+    <!-- Root elements, one for the request and one for the response, also one for a failing registration.
+	     Note that there no longer is both a bulk and single registration service, all registrations are
+	     bulk (but a bulk of one is accepted). -->
+    <xs:element name="RegistrationRequest" type="minlog:RegistrationRequestType"/>
+    <xs:element name="RegistrationResponse" type="minlog:RegistrationResponseType"/>
+
+    <!-- Types, first upper complex types -->
+    <xs:complexType name="RegistrationRequestType">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="LogDataEntry" type="minlog:LogDataEntryForRegistrationType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LogDataEntryForRegistrationType">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Source" type="minlog:SourceForEntryType"/>
+            <xs:element name="Destination" type="minlog:DestinationForEntryForRegistrationType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DestinationForEntryForRegistrationType">
+        <xs:sequence>
+            <xs:element name="SystemName" type="minlog:SystemNameType"/>
+            <xs:element name="Activity" type="minlog:ActivityType"/>
+            <xs:element minOccurs="0" name="Reason" type="minlog:ReasonType"/>
+            <xs:element minOccurs="0" name="Addition" type="minlog:AdditionType"/>
+            <xs:element minOccurs="0" name="Criticality" type="minlog:CriticalityType"/>
+            <xs:choice>
+                <xs:element name="DateTime" type="minlog:RestrictedDateTimeType"/>
+                <xs:sequence>
+                    <xs:element name="FromDateTime" type="minlog:RestrictedDateTimeType"/>
+                    <xs:element name="ToDateTime" type="minlog:RestrictedDateTimeType"/>
+                </xs:sequence>
+            </xs:choice>
+            <xs:element minOccurs="0" name="OrganisationId" type="minlog:OrganisationIdType"/>
+            <xs:element minOccurs="0" name="OrganisationName" type="minlog:OrganisationNameType"/>
+            <xs:element name="PersonIdentifier" type="minlog:PersonIdType"/>
+            <xs:element minOccurs="0" name="PersonName" type="minlog:PersonNameType"/>
+            <xs:element minOccurs="0" name="CorrelationId" type="minlog:CorrelationIdType"/>
+            <xs:element minOccurs="0" name="SequenceNumber" type="minlog:SequenceNumberType"/>
+            <xs:element name="UserPersonIdentifier" type="minlog:UserPersonIdType"/>
+            <xs:element minOccurs="0" name="UserPersonName" type="minlog:PersonNameType"/>
+            <xs:element minOccurs="0" name="UserRole" type="minlog:RoleType"/>
+            <xs:element minOccurs="0" name="OnBehalfOfPersonIdentifier" type="minlog:OnBehalfOfPersonIdType"/>
+            <xs:element minOccurs="0" name="OnBehalfOfPersonName" type="minlog:PersonNameType"/>
+            <xs:element minOccurs="0" name="OnBehalfOfUserRole" type="minlog:RoleType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Filter" type="minlog:FilterRelevanceType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SourceForEntryType">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="CorrelationId" type="minlog:CorrelationIdType"/>
+            <xs:element minOccurs="0" name="SystemName" type="minlog:SystemNameType"/>
+            <xs:element minOccurs="0" name="Source" type="minlog:SourceForEntryType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RegistrationResponseType">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="FailedLogDataEntries" type="minlog:FailedLogDataEntryType"/>
+            <xs:element name="NumberAdded" type="xs:int"/>
+            <xs:element name="NumberFailed" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="FailedLogDataEntryType">
+        <xs:sequence>
+            <xs:element name="FaultCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="FaultText" type="xs:string"/>
+            <xs:element minOccurs="0" name="SequenceNumber" type="minlog:SequenceNumberType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!-- Addition type -->
+
+    <xs:simpleType name="AdditionType">
+        <xs:union memberTypes="minlog:AdditionPredefinedType minlog:AdditionUndefinedType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="AdditionPredefinedType">
+        <xs:restriction base="minlog:AdditionUndefinedType">
+            <xs:enumeration value="Samtykke"/>
+            <xs:enumeration value="Værdispring"/>
+            <xs:enumeration value="Ingen"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AdditionUndefinedType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <!-- Criticality type -->
+
+    <xs:simpleType name="CriticalityType">
+        <xs:union memberTypes="minlog:CriticalityPredefinedType minlog:CriticalityUndefinedType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="CriticalityPredefinedType">
+        <xs:restriction base="minlog:CriticalityUndefinedType">
+            <xs:enumeration value="Ingen"/>
+            <xs:enumeration value="Privatmarkeret"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CriticalityUndefinedType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <!-- OrganisationId elements and attributes -->
+
+    <xs:complexType name="OrganisationIdType">
+        <xs:annotation>
+            <xs:documentation>
+                OrganisationId is defined as a simple string with a source attribute. The source attribute defines the
+                "type"
+                of the id in this element. The source can be either one of a predefined values or an "undefined" string
+                value,
+                the latter allows the list to be extended without changing the schema.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="minlog:OrganisationIdValueType">
+                <xs:attribute name="source" type="minlog:OrganisationIdSourcePredefinedType" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="OrganisationIdValueType">
+        <xs:annotation>
+            <xs:documentation>
+                Value for OrganisationId, e.g. a SOR code for a hospital.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="200"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OrganisationIdSourcePredefinedType">
+        <xs:restriction base="minlog:SourceUndefinedType">
+            <xs:enumeration value="SOR"/>
+            <xs:enumeration value="YDER"/>
+            <xs:enumeration value="CVR"/>
+            <xs:enumeration value="EuropeanHealthcareOrganisation"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SourceUndefinedType">
+        <xs:annotation>
+            <xs:documentation>
+                Base type for the source attribute. Just a string, but possibly restricted through an enumeration.
+                undefined value.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="200"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <!-- PersonId elements and attributes -->
+
+    <xs:complexType name="PersonIdType">
+        <xs:annotation>
+            <xs:documentation>
+                PersonId is defined as a simple string with a source attribute. The source attribute defines the "type"
+                of the id in this element. The source can be either one of a predefined values or an "undefined" string
+                value,
+                the latter allows the list to be extended without changing the schema.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="minlog:PersonIdValueType">
+                <xs:attribute name="source" type="minlog:PersonIdSourceType" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="PersonIdValueType">
+        <xs:annotation>
+            <xs:documentation>
+                Value for PersonId, typically a CPR number but eCPR (replacement or "erstanings" CPR)
+                could also be possible.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PersonIdSourceType">
+        <xs:annotation>
+            <xs:documentation>
+                Union allowing either a predefined value for the PersonId source attribute or an
+                undefined value.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="minlog:SourceUndefinedType">
+            <xs:enumeration value="CPR"/>
+            <xs:enumeration value="eCPR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- UserPersonId elements and attributes -->
+
+    <xs:complexType name="UserPersonIdType">
+        <xs:annotation>
+            <xs:documentation>
+                UserPersonId is defined as a simple string with a source attribute. The source attribute defines the "type"
+                of the id in this element. The source can be either one of a predefined values or an "undefined" string
+                value,
+                the latter allows the list to be extended without changing the schema.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="minlog:UserPersonIdValueType">
+                <xs:attribute name="source" type="minlog:UserPersonIdSourceType" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="UserPersonIdValueType">
+        <xs:annotation>
+            <xs:documentation>
+                Value for UserPersonId, typically a CPR number but Autorisation is also allowed
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UserPersonIdSourceType">
+        <xs:annotation>
+            <xs:documentation>
+                Union allowing either a predefined value for the PersonId source attribute or an
+                undefined value.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="minlog:SourceUndefinedType">
+            <xs:enumeration value="CPR"/>
+            <xs:enumeration value="Autorisation"/>
+            <xs:enumeration value="EuropeanHealthcareProfessional"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- OnBehalfOfPersonId elements and attributes -->
+
+    <xs:complexType name="OnBehalfOfPersonIdType">
+        <xs:annotation>
+            <xs:documentation>
+                OnBehalfOfPersonId is defined as a simple string with a source attribute. The source attribute defines the "type"
+                of the id in this element. The source can be either one of a predefined values or an "undefined" string
+                value,
+                the latter allows the list to be extended without changing the schema.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="minlog:OnBehalfOfPersonIdValueType">
+                <xs:attribute name="source" type="minlog:OnBehalfOfPersonIdSourceType" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="OnBehalfOfPersonIdValueType">
+        <xs:annotation>
+            <xs:documentation>
+                Value for OnBehalfOfPersonId, typically a CPR number but Autorisation is also allowed
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OnBehalfOfPersonIdSourceType">
+        <xs:annotation>
+            <xs:documentation>
+                Union allowing either a predefined value for the PersonId source attribute or an
+                undefined value.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="minlog:SourceUndefinedType">
+            <xs:enumeration value="CPR"/>
+            <xs:enumeration value="Autorisation"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Filter type for relevance type, not to be mistaken for filter type for FilterPass or FilterStop -->
+
+    <xs:simpleType name="FilterRelevanceType">
+        <xs:union memberTypes="minlog:FilterRelevancerPreefinedType minlog:FilterRelevanceUndefinedType"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="FilterRelevancerPreefinedType">
+        <xs:restriction base="minlog:FilterRelevanceUndefinedType">
+            <xs:enumeration value="Ikke borger"/>
+            <xs:enumeration value="Ikke forældremyndigheds-indehaver"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="FilterRelevanceUndefinedType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <!-- Simple types -->
+
+    <xs:simpleType name="CorrelationIdType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="46"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SystemNameType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="25"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ActivityType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="75"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OrganisationNameType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="200"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SequenceNumberType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="36"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RoleType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="200"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RestrictedDateTimeType">
+        <xs:restriction base="xs:dateTime">
+            <xs:minInclusive value="2015-01-01T00:00:00Z"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PersonNameType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ReasonType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

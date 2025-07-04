@@ -7,12 +7,12 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>NCPeH DK integration service - FSK API</name>
-	<artifactId>epps-fsk-api</artifactId>
+	<name>NCPeH DK integration service - MinLog API</name>
+	<artifactId>epps-minlog-api</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<description>NCPeH DK integration service - FSK API</description>
+	<description>NCPeH DK integration service - MinLog API</description>
 
 	<dependencies>
 		<dependency>
@@ -48,8 +48,7 @@
                         <arg>-verbose</arg>
                     </args>
 					<wsdlUrls>
-                        <wsdlUrl>${project.basedir}/src/main/resources/wsdl/sfskiti18.wsdl</wsdlUrl>
-                        <wsdlUrl>${project.basedir}/src/main/resources/wsdl/sfskiti43.wsdl</wsdlUrl>
+                        <wsdlUrl>${project.basedir}/src/main/resources/wsdl/minlog.wsdl</wsdlUrl>
 					</wsdlUrls>
 					<sourceDestDir>${sourcesDir}</sourceDestDir>
 					<destDir>${classesDir}</destDir>
