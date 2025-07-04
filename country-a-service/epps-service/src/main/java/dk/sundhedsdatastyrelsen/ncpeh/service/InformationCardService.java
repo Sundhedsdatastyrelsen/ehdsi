@@ -39,9 +39,8 @@ public class InformationCardService {
             String cpr = PatientIdMapper.toCpr(patientId);
 
             final var request = AdhocQueryRequest.builder()
-                /** Magic important setup, see https://www.nspop.dk/display/public/web/FSK+Registry+Adapter+-+Guide+til+Anvendere
-                 * Response type and AdHoc Query ID are set from here
-                 * **/
+                // Magic important setup, see https://www.nspop.dk/display/public/web/FSK+Registry+Adapter+-+Guide+til+Anvendere
+                // Response type and AdHoc Query ID are set from here
                 .withResponseOption(ResponseOptionType.builder()
                     .withReturnType("LeafClass")
                     .withReturnComposedObjects(true)
@@ -128,5 +127,3 @@ public class InformationCardService {
     }
 
 }
-
-
