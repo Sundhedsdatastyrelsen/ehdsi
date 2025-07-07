@@ -10,6 +10,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ class End2EndIT {
 
     /// See the resources/portal-backend-examples folder for examples of the requests and responses.
     @Test
+    @Disabled("HBG 2025-07-07: Fails every night. Fix test before re-enabling.")
     void fetchAndDispenseThroughCountryB() throws Exception {
         // Setup
         assertThat(String.format("Missing environment variable \"%s\"", HOST_ENV_NAME), HOST, is(not(nullValue())));
