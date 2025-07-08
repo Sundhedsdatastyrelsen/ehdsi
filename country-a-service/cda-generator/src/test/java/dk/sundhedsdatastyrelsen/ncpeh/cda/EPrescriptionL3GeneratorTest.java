@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 class EPrescriptionL3GeneratorTest {
     @Test
     void generateTest() throws TemplateException, IOException {
@@ -57,13 +60,15 @@ class EPrescriptionL3GeneratorTest {
 
     @ParameterizedTest
     @MethodSource("e2eTestCprs")
-    public void testCdaValidity(String cpr) throws Exception {
+    void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
         var medication = FmkResponseStorage.getTestMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var prescriptions = prescription.getPrescription();
         for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
-            var drugInfo = getDrugInfo(prescriptions.get(prescriptionindex));
+            var p = prescriptions.get(prescriptionindex);
+
+            var drugInfo = getDrugInfo(p);
             var input = new EPrescriptionL3Input(
                 prescription,
                 prescriptionindex,
@@ -77,6 +82,13 @@ class EPrescriptionL3GeneratorTest {
                 drugInfo.packageFormCode(),
                 drugInfo.numberOfSubPackages(),
                 drugInfo.manufacturerOrganization());
+
+            if (EPrescriptionL3Mapper.isMagistral(p)) {
+                var ex = Assertions.assertThrows(MapperException.class, () ->
+                    EPrescriptionL3Generator.generate(input));
+                assertThat(ex.getMessage(), containsString("magistral"));
+                continue;
+            }
             var xmlString = EPrescriptionL3Generator.generate(input);
 
             // 1. Test if well-formed XML (can be parsed)
@@ -115,6 +127,7 @@ class EPrescriptionL3GeneratorTest {
     static DrugInfo getDrugInfo(PrescriptionType prescription) {
         return switch (prescription.getPackageRestriction().getPackageNumber().getValue()) {
             case "448060" -> new DrugInfo("INP", 5, "Eli Lilly");
+            case "701" -> new DrugInfo("", 1, "Manufacturer");
             default -> new DrugInfo("FIN", 1, "Manufacturer");
         };
     }
