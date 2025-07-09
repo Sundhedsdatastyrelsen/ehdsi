@@ -329,22 +329,6 @@ public class SAMLSigner {
         System.out.println("SOAP header elements signed successfully");
     }
 
-    private static void cleanupSignatureOutput(Document doc) {
-        // Remove whitespace from signature values
-        NodeList sigValueList = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "SignatureValue");
-        for (int i = 0; i < sigValueList.getLength(); i++) {
-            Node sigValueNode = sigValueList.item(i);
-            sigValueNode.setTextContent(sigValueNode.getTextContent().replaceAll("\\s+", ""));
-        }
-
-        // Remove whitespace from certificates
-        NodeList certNodes = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "X509Certificate");
-        for (int i = 0; i < certNodes.getLength(); i++) {
-            Node certNode = certNodes.item(i);
-            certNode.setTextContent(certNode.getTextContent().replaceAll("\\s+", ""));
-        }
-    }
-
     private static Element findElementById(Document doc, String id) {
         NodeList all = doc.getElementsByTagNameNS("*", "*");
         for (int i = 0; i < all.getLength(); i++) {

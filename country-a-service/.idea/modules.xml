@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/epps-api/epps-ddv-api/epps-ddv-api.iml" filepath="$PROJECT_DIR$/epps-api/epps-ddv-api/epps-ddv-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/epps-root.iml" filepath="$PROJECT_DIR$/epps-root.iml" />
     </modules>
   </component>
 </project>

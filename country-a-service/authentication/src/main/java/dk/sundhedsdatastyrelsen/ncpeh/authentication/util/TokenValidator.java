@@ -1,17 +1,15 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication.security;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.util;
 
 
 import org.w3c.dom.*;
 
 import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
-import javax.xml.crypto.dsig.keyinfo.*;
 import javax.xml.parsers.*;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 
 public class TokenValidator {
 

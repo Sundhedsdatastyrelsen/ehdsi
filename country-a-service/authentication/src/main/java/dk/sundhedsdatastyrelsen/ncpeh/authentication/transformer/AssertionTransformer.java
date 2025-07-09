@@ -93,10 +93,10 @@ public class AssertionTransformer {
             friendlyName.equals("Hl7 Permissions") ||
             friendlyName.equals("EHDSI OnBehalfOf") ||
             friendlyName.equals("XSPA Organization") ||
-            friendlyName.equals("XSPA Organization Id") ||
+            friendlyName.equals("XSPA Organization ID") ||
             friendlyName.equals("eHealth DSI Healthcare Facility Type") ||
             friendlyName.equals("XSPA Purpose Of Use") ||
             friendlyName.equals("XSPA Locality")
         );
     }
-} 
+}
