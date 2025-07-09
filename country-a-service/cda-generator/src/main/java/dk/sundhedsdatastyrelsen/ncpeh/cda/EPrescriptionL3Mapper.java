@@ -61,6 +61,11 @@ public class EPrescriptionL3Mapper {
         var drugMedicationResponse = input.fmkDrugMedicationResponse();
 
         var prescription = response.getPrescription().get(prescriptionIndex);
+
+        if (isMagistral(prescription)) {
+            throw new MapperException("Cannot map magistral prescriptions");
+        }
+
         Optional<DrugMedicationType> medication = Optional.empty();
         if (drugMedicationResponse != null) {
             medication = drugMedicationResponse.getDrugMedication()
@@ -120,6 +125,16 @@ public class EPrescriptionL3Mapper {
         }
 
         return prescriptionBuilder.build();
+    }
+
+    public static boolean isMagistral(PrescriptionType prescription) {
+        // A prescription is magistral (based on a recipe) if there is a DetailedDrugText on it.
+        // This is the only way to tell if a drug is magistral.
+        // See also https://github.com/trifork/fmk-schemas/blob/e84edbebfeb17c1b9a98eb3acfdc62706e20f4c8/etc/schemas/2015/01/01/DetailedDrugText.xsd.
+        return Optional.ofNullable(prescription)
+            .map(PrescriptionType::getDrug)
+            .map(DrugType::getDetailedDrugText)
+            .isPresent();
     }
 
     public static String makeTitle(GetPrescriptionResponseType response, PrescriptionType prescription) {
