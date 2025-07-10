@@ -21,7 +21,6 @@ import java.nio.file.Path;
  * injected into other modules.
  */
 @Slf4j
-@Service
 public class AuthenticationService {
 
     private final SoapHeaderParser soapHeaderParser;
