@@ -21,6 +21,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.dtm.ref.DTMNodeList;
@@ -580,7 +581,7 @@ public class DispensationMapper {
             var node = evalNode(cda, XPaths.cdaId);
             var root = eval(node, "@root");
             var ext = eval(node, "@extension");
-            return ext == null
+            return StringUtils.isBlank(ext)
                 ? root
                 : root + "^^^" + ext;
         } catch (XPathExpressionException e) {
@@ -588,6 +589,7 @@ public class DispensationMapper {
         }
     }
 
+    @WithSpan
     public static StartEffectuationRequestType startEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda
@@ -612,6 +614,7 @@ public class DispensationMapper {
         }
     }
 
+    @WithSpan
     public static CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
@@ -636,6 +639,7 @@ public class DispensationMapper {
         }
     }
 
+    @WithSpan
     public static UndoEffectuationRequestType createUndoEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
