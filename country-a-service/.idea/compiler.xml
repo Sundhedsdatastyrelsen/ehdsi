@@ -12,6 +12,7 @@
         <module name="epps-sdp-api" />
         <module name="epps-service" />
         <module name="integration-tests" />
+        <module name="epps-minlog-api" />
         <module name="epps-cpr-api" />
         <module name="testing-tools" />
         <module name="autorisationsregister-model" />
@@ -44,6 +45,7 @@
       <module name="epps-fmk-mock" options="-parameters" />
       <module name="epps-fmk-mock-data" options="-parameters" />
       <module name="epps-fsk-api" options="-parameters" />
+      <module name="epps-minlog-api" options="-parameters" />
       <module name="epps-ncp-api" options="-parameters" />
       <module name="epps-sdp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />

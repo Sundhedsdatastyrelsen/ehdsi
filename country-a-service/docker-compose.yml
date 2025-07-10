@@ -1,9 +1,9 @@
-#
-# Network definitions
-#
 networks:
   epps-backend:
     name: epps
+    external: true
+  monitoring:
+    name: monitoring
     external: true
 
 services:
@@ -13,22 +13,35 @@ services:
     container_name: epps-country-a
     restart: unless-stopped
     ports:
-      - "8180:8080"
+      - "4443:4443"
       # - "5008:5008"
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
-      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-dev}"
+      SPRING_PROFILES_ACTIVE: "docker"
       CPR_ENDPOINT_URL: "${CPR_ENDPOINT_URL}"
       FMK_ENDPOINT_URL: "${FMK_ENDPOINT_URL}"
+      FSK_ENDPOINT_URL: "${FSK_ENDPOINT_URL}"
+      MINLOG_ENDPOINT_URL: "${MINLOG_ENDPOINT_URL}"
+      AUTH_REGISTRY_ENDPOINT_URL: "${AUTH_REGISTRY_ENDPOINT_URL}"
       LMSFTP_USERNAME: "${LMSFTP_USERNAME}"
       LMSFTP_PASSWORD: "${LMSFTP_PASSWORD}"
       COUNTRY_A_KEYSTORE_PASSWORD: "${COUNTRY_A_KEYSTORE_PASSWORD}"
       COUNTRY_A_CERTIFICATE_ALIAS: "${COUNTRY_A_CERTIFICATE_ALIAS}"
       COUNTRY_A_KEY_PASSWORD: "${COUNTRY_A_KEY_PASSWORD}"
       COUNTRY_A_KEYSTORE_LOCATION: "${COUNTRY_A_KEYSTORE_LOCATION}"
+      OTEL_SERVICE_NAME: "country-a-service"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
+      OTEL_TRACES_SAMPLER: "always_on"
+      OTEL_METRICS_EXPORTER: "prometheus"
+      OTEL_METRICS_EXPORTER_PROMETHEUS_PORT: "9464"
+      OTEL_LOGS_EXPORTER: "none"
+      OTEL_PROPAGATORS: "tracecontext,baggage"
 
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
     networks:
       - epps-backend
+      - monitoring

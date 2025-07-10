@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+server:
+  ssl:
+    key-store: ${COUNTRY_A_KEYSTORE_LOCATION}
+    key-store-password: ${COUNTRY_A_KEYSTORE_PASSWORD}
+    key-alias: ${COUNTRY_A_CERTIFICATE_ALIAS}
+    key-password: ${COUNTRY_A_KEY_PASSWORD}
+
+app:
+  fmk.endpoint.url: ${FMK_ENDPOINT_URL}
+  cpr.endpoint.url: ${CPR_ENDPOINT_URL}
+  fsk.endpoint.url: ${FSK_ENDPOINT_URL}
+  minlog.endpoint.url: ${MINLOG_ENDPOINT_URL}
+  authorization-registry.endpoint.url: ${AUTH_REGISTRY_ENDPOINT_URL}

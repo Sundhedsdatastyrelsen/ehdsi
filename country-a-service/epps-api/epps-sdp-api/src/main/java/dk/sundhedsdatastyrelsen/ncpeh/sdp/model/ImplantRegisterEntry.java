@@ -20,10 +20,10 @@ public record ImplantRegisterEntry(
     String batchNumber, //Same rules as above
     String serialNumber,
     String registryStandard, //Contains free text description of how it was registered. Sometimes references to standards like GS1, or DS1, but numerous spelling errors denote that this is not a coded field.
-    OffsetDateTime registryTime,
-    OffsetDateTime productionTime,
+    OffsetDateTime registryTime, //TODO: Clarify, registration of the data or the implant
+    OffsetDateTime implantProductionTime,
     OffsetDateTime expiryTime, //Expiry for the implant, not the data
-    Boolean error
+    Boolean error //TODO: Clarify: What is this?
 ) {
 
 }

@@ -2,229 +2,6 @@
 <ns2:GetDrugMedicationResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
     <ns2:PersonIdentifier source="CPR">0410009234</ns2:PersonIdentifier>
     <ns2:DrugMedication>
-        <ns2:Identifier>32757830</ns2:Identifier>
-        <ns2:Version>1733318393043001001</ns2:Version>
-        <ns2:Created>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>ZB1ZV</AuthorisationIdentifier>
-                    <Name>Igor Ingvardsen</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>DFS Plus</Name>
-                    <AddressLine>Skagensgade 39</AddressLine>
-                    <AddressLine>2630 Taastrup</AddressLine>
-                    <TelephoneNumber>60264810</TelephoneNumber>
-                    <EmailAddress>kontakt@dfs-plus.com</EmailAddress>
-                    <Type>hjemmeplejeenhed</Type>
-                    <Identifier source="SOR">929621000016005</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2024-12-04T13:19:52Z</DateTime>
-        </ns2:Created>
-        <ns2:Modified>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>ZB1ZV</AuthorisationIdentifier>
-                    <Name>Igor Ingvardsen</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>DFS Plus</Name>
-                    <AddressLine>Skagensgade 39</AddressLine>
-                    <AddressLine>2630 Taastrup</AddressLine>
-                    <TelephoneNumber>60264810</TelephoneNumber>
-                    <EmailAddress>kontakt@dfs-plus.com</EmailAddress>
-                    <Type>hjemmeplejeenhed</Type>
-                    <Identifier source="SOR">929621000016005</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2024-12-04T13:19:52Z</DateTime>
-        </ns2:Modified>
-        <ns2:Type>Lægeordineret</ns2:Type>
-        <ns2:BeginEndDate>
-            <CreatedDateTime>2024-12-04T13:19:52Z</CreatedDateTime>
-            <TreatmentStartDate>2024-12-04</TreatmentStartDate>
-            <TreatmentEndDate>2025-03-12</TreatmentEndDate>
-        </ns2:BeginEndDate>
-        <ns2:Indication>
-            <Code source="Medicinpriser" date="2024-12-04">31</Code>
-            <Text>mod diabetes</Text>
-        </ns2:Indication>
-        <ns2:RouteOfAdministration>
-            <Code source="Medicinpriser" date="2024-12-04">SC</Code>
-            <Text>Subkutan anvendelse</Text>
-        </ns2:RouteOfAdministration>
-        <ns2:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2024-12-04">A10AE04</Code>
-                <Text>Insulin glargin</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2024-12-04">28105484214</Identifier>
-            <Name>Abasaglar KwikPen</Name>
-            <Form>
-                <Code source="Medicinpriser" date="2024-12-04">INJVOP</Code>
-                <Text>injektionsvæske, opløsning i fyldt pen</Text>
-            </Form>
-            <Strength>
-                <Value>100.0</Value>
-                <UnitCode source="Medicinpriser" date="2024-12-04">UML</UnitCode>
-                <UnitText>enheder/ml</UnitText>
-                <Text source="Medicinpriser" date="2024-12-04">100 E/ml</Text>
-            </Strength>
-            <Substances>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2024-12-04">Insulin glargin</SubstanceText>
-                </ActiveSubstance>
-            </Substances>
-        </ns2:Drug>
-        <ns2:Dosage>
-            <ns2:UnitTexts>
-                <ns2:Singular>enhed</ns2:Singular>
-                <ns2:Plural>enheder</ns2:Plural>
-            </ns2:UnitTexts>
-            <ns2:StructuresFixed>
-                <Structure>
-                    <IterationInterval>1</IterationInterval>
-                    <StartDate>2024-12-04</StartDate>
-                    <EndDate>2025-02-04</EndDate>
-                    <Day>
-                        <Number>1</Number>
-                        <Dose>
-                            <Time>morning</Time>
-                            <Quantity>1</Quantity>
-                        </Dose>
-                        <Dose>
-                            <Time>noon</Time>
-                            <Quantity>1</Quantity>
-                        </Dose>
-                        <Dose>
-                            <Time>evening</Time>
-                            <Quantity>1</Quantity>
-                        </Dose>
-                        <Dose>
-                            <Time>night</Time>
-                            <Quantity>1</Quantity>
-                        </Dose>
-                    </Day>
-                    <DosageTranslation>
-                        <ShortText>1 enhed morgen, middag, aften og nat</ShortText>
-                        <LongText>Dosering fra d. 4. dec. 2024 til d. 4. feb. 2025:
-1 enhed morgen, 1 enhed middag, 1 enhed aften og 1 enhed nat - hver dag</LongText>
-                    </DosageTranslation>
-                </Structure>
-                <DosageTranslationCombined>
-                    <ShortText>1 enhed morgen, middag, aften og nat</ShortText>
-                    <LongText>Dosering fra d. 4. dec. 2024 til d. 4. feb. 2025:
-1 enhed morgen, 1 enhed middag, 1 enhed aften og 1 enhed nat - hver dag</LongText>
-                </DosageTranslationCombined>
-            </ns2:StructuresFixed>
-            <ns2:Type>fast</ns2:Type>
-        </ns2:Dosage>
-        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
-    </ns2:DrugMedication>
-    <ns2:DrugMedication>
-        <ns2:Identifier>36680133</ns2:Identifier>
-        <ns2:Version>1740599876338001002</ns2:Version>
-        <ns2:Created>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
-                    <Name>Charles Babbage</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>22222222</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">990027</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2025-02-26T19:57:56Z</DateTime>
-        </ns2:Created>
-        <ns2:Modified>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
-                    <Name>Charles Babbage</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>22222222</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">990027</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2025-02-26T19:57:56Z</DateTime>
-        </ns2:Modified>
-        <ns2:Type>Lægeordineret</ns2:Type>
-        <ns2:BeginEndDate>
-            <CreatedDateTime>2025-02-26T19:57:56Z</CreatedDateTime>
-            <TreatmentStartDate>2025-02-26</TreatmentStartDate>
-            <TreatmentEndingUndetermined/>
-        </ns2:BeginEndDate>
-        <ns2:Indication>
-            <Code source="Medicinpriser" date="2025-02-26">94</Code>
-            <Text>P-piller</Text>
-        </ns2:Indication>
-        <ns2:RouteOfAdministration>
-            <Code source="Medicinpriser" date="2025-02-26">OR</Code>
-            <Text>Oral anvendelse</Text>
-        </ns2:RouteOfAdministration>
-        <ns2:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2025-02-26">G03AA07</Code>
-                <Text>Levonorgestrel og ethinylestradiol</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2025-02-26">28103087599</Identifier>
-            <Name>Loette 28</Name>
-            <Form>
-                <Code source="Medicinpriser" date="2025-02-26">TABFILM</Code>
-                <Text>filmovertrukne tabletter</Text>
-            </Form>
-            <Strength>
-                <Text source="Medicinpriser" date="2025-02-26">0,10+0,02 mg</Text>
-            </Strength>
-            <Substances>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2025-02-26">Ethinylestradiol</SubstanceText>
-                </ActiveSubstance>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2025-02-26">LEVONORGESTREL</SubstanceText>
-                </ActiveSubstance>
-            </Substances>
-        </ns2:Drug>
-        <ns2:Dosage>
-            <ns2:UnitTexts>
-                <ns2:Singular>tablet</ns2:Singular>
-                <ns2:Plural>tabletter</ns2:Plural>
-            </ns2:UnitTexts>
-            <ns2:StructuresFixed>
-                <Structure>
-                    <IterationInterval>1</IterationInterval>
-                    <StartDate>2025-02-26</StartDate>
-                    <DosageEndingUndetermined/>
-                    <Day>
-                        <Number>1</Number>
-                        <Dose>
-                            <Quantity>1</Quantity>
-                        </Dose>
-                    </Day>
-                    <DosageTranslation>
-                        <ShortText>1 tablet daglig</ShortText>
-                        <LongText>Dosering fra d. 26. feb. 2025:
-1 tablet hver dag</LongText>
-                    </DosageTranslation>
-                </Structure>
-                <DosageTranslationCombined>
-                    <ShortText>1 tablet daglig</ShortText>
-                    <LongText>Dosering fra d. 26. feb. 2025:
-1 tablet hver dag</LongText>
-                </DosageTranslationCombined>
-            </ns2:StructuresFixed>
-            <ns2:Type>fast</ns2:Type>
-        </ns2:Dosage>
-        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
-    </ns2:DrugMedication>
-    <ns2:DrugMedication>
         <ns2:Identifier>36680134</ns2:Identifier>
         <ns2:Version>1740600233339001002</ns2:Version>
         <ns2:Created>
@@ -433,53 +210,53 @@
                     <DosageTranslation>
                         <ShortText>1 tablet daglig i 3 uger, herefter en uges pause</ShortText>
                         <LongText>Dosering fra d. 26. feb. 2025 - gentages hver 28. dag:
-Dag 1: 1 tablet
-Dag 2: 1 tablet
-Dag 3: 1 tablet
-Dag 4: 1 tablet
-Dag 5: 1 tablet
-Dag 6: 1 tablet
-Dag 7: 1 tablet
-Dag 8: 1 tablet
-Dag 9: 1 tablet
-Dag 10: 1 tablet
-Dag 11: 1 tablet
-Dag 12: 1 tablet
-Dag 13: 1 tablet
-Dag 14: 1 tablet
-Dag 15: 1 tablet
-Dag 16: 1 tablet
-Dag 17: 1 tablet
-Dag 18: 1 tablet
-Dag 19: 1 tablet
-Dag 20: 1 tablet
-Dag 21: 1 tablet</LongText>
+                            Dag 1: 1 tablet
+                            Dag 2: 1 tablet
+                            Dag 3: 1 tablet
+                            Dag 4: 1 tablet
+                            Dag 5: 1 tablet
+                            Dag 6: 1 tablet
+                            Dag 7: 1 tablet
+                            Dag 8: 1 tablet
+                            Dag 9: 1 tablet
+                            Dag 10: 1 tablet
+                            Dag 11: 1 tablet
+                            Dag 12: 1 tablet
+                            Dag 13: 1 tablet
+                            Dag 14: 1 tablet
+                            Dag 15: 1 tablet
+                            Dag 16: 1 tablet
+                            Dag 17: 1 tablet
+                            Dag 18: 1 tablet
+                            Dag 19: 1 tablet
+                            Dag 20: 1 tablet
+                            Dag 21: 1 tablet</LongText>
                     </DosageTranslation>
                 </Structure>
                 <DosageTranslationCombined>
                     <ShortText>1 tablet daglig i 3 uger, herefter en uges pause</ShortText>
                     <LongText>Dosering fra d. 26. feb. 2025 - gentages hver 28. dag:
-Dag 1: 1 tablet
-Dag 2: 1 tablet
-Dag 3: 1 tablet
-Dag 4: 1 tablet
-Dag 5: 1 tablet
-Dag 6: 1 tablet
-Dag 7: 1 tablet
-Dag 8: 1 tablet
-Dag 9: 1 tablet
-Dag 10: 1 tablet
-Dag 11: 1 tablet
-Dag 12: 1 tablet
-Dag 13: 1 tablet
-Dag 14: 1 tablet
-Dag 15: 1 tablet
-Dag 16: 1 tablet
-Dag 17: 1 tablet
-Dag 18: 1 tablet
-Dag 19: 1 tablet
-Dag 20: 1 tablet
-Dag 21: 1 tablet</LongText>
+                        Dag 1: 1 tablet
+                        Dag 2: 1 tablet
+                        Dag 3: 1 tablet
+                        Dag 4: 1 tablet
+                        Dag 5: 1 tablet
+                        Dag 6: 1 tablet
+                        Dag 7: 1 tablet
+                        Dag 8: 1 tablet
+                        Dag 9: 1 tablet
+                        Dag 10: 1 tablet
+                        Dag 11: 1 tablet
+                        Dag 12: 1 tablet
+                        Dag 13: 1 tablet
+                        Dag 14: 1 tablet
+                        Dag 15: 1 tablet
+                        Dag 16: 1 tablet
+                        Dag 17: 1 tablet
+                        Dag 18: 1 tablet
+                        Dag 19: 1 tablet
+                        Dag 20: 1 tablet
+                        Dag 21: 1 tablet</LongText>
                 </DosageTranslationCombined>
             </ns2:StructuresFixed>
             <ns2:Type>fast</ns2:Type>
@@ -487,8 +264,8 @@ Dag 21: 1 tablet</LongText>
         <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
     </ns2:DrugMedication>
     <ns2:DrugMedication>
-        <ns2:Identifier>36755255</ns2:Identifier>
-        <ns2:Version>1740644244385001001</ns2:Version>
+        <ns2:Identifier>38974934</ns2:Identifier>
+        <ns2:Version>1744102217775001002</ns2:Version>
         <ns2:Created>
             <By>
                 <AuthorisedHealthcareProfessional>
@@ -497,12 +274,12 @@ Dag 21: 1 tablet</LongText>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>22222222</TelephoneNumber>
+                    <TelephoneNumber>87654321</TelephoneNumber>
                     <Type>Yder</Type>
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2025-02-27T08:17:24Z</DateTime>
+            <DateTime>2025-04-08T08:50:17Z</DateTime>
         </ns2:Created>
         <ns2:Modified>
             <By>
@@ -512,82 +289,288 @@ Dag 21: 1 tablet</LongText>
                 </AuthorisedHealthcareProfessional>
                 <Organisation>
                     <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>22222222</TelephoneNumber>
+                    <TelephoneNumber>87654321</TelephoneNumber>
                     <Type>Yder</Type>
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </By>
-            <DateTime>2025-02-27T08:17:24Z</DateTime>
+            <DateTime>2025-04-08T08:50:17Z</DateTime>
         </ns2:Modified>
         <ns2:Type>Lægeordineret</ns2:Type>
         <ns2:BeginEndDate>
-            <CreatedDateTime>2025-02-27T08:17:24Z</CreatedDateTime>
-            <TreatmentStartDate>2025-02-27</TreatmentStartDate>
-            <TreatmentEndDate>2025-03-05</TreatmentEndDate>
+            <CreatedDateTime>2025-04-08T08:50:17Z</CreatedDateTime>
+            <TreatmentStartDate>2025-04-08</TreatmentStartDate>
+            <TreatmentEndingUndetermined/>
         </ns2:BeginEndDate>
         <ns2:Indication>
-            <Code source="Medicinpriser" date="2025-02-27">121</Code>
-            <Text>mod mellemørebetændelse</Text>
+            <FreeText>Mod onde onder</FreeText>
         </ns2:Indication>
         <ns2:RouteOfAdministration>
-            <Code source="Medicinpriser" date="2025-02-27">OR</Code>
-            <Text>Oral anvendelse</Text>
+            <Code source="Medicinpriser" date="2025-04-08">IK</Code>
+            <Text>Administrationsvej ikke angivet</Text>
         </ns2:RouteOfAdministration>
         <ns2:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2025-02-27">J01CA04</Code>
-                <Text>Amoxicillin</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2025-02-27">28101137283</Identifier>
-            <Name>Imacillin</Name>
+            <DetailedDrugText>8 haletudser og 1 sprællende frø</DetailedDrugText>
             <Form>
-                <Code source="Medicinpriser" date="2025-02-27">ORAGRAS</Code>
-                <Text>granulat til oral suspension</Text>
+                <Code source="Medicinpriser" date="2025-04-08">BLAVSK</Code>
+                <Text>blæreskyllevæske</Text>
             </Form>
             <Strength>
-                <Value>50.0</Value>
-                <UnitCode source="Medicinpriser" date="2025-02-27">MGM</UnitCode>
-                <UnitText>mg/ml</UnitText>
-                <Text source="Medicinpriser" date="2025-02-27">50 mg/ml</Text>
+                <Value>8.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-04-08">UN</UnitCode>
+                <UnitText>enheder</UnitText>
             </Strength>
             <Substances>
                 <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2025-02-27">AMOXICILLINTRIHYDRAT</SubstanceText>
+                    <FreeText>Haletudse</FreeText>
+                </ActiveSubstance>
+                <ActiveSubstance>
+                    <FreeText>Frø</FreeText>
                 </ActiveSubstance>
             </Substances>
         </ns2:Drug>
         <ns2:Dosage>
             <ns2:UnitTexts>
-                <ns2:Singular>ml</ns2:Singular>
-                <ns2:Plural>ml</ns2:Plural>
+                <ns2:Singular>dråbe</ns2:Singular>
+                <ns2:Plural>dråber</ns2:Plural>
             </ns2:UnitTexts>
             <ns2:StructuresFixed>
                 <Structure>
                     <IterationInterval>1</IterationInterval>
-                    <StartDate>2025-02-27</StartDate>
-                    <EndDate>2025-03-05</EndDate>
+                    <StartDate>2025-04-08</StartDate>
+                    <EndDate>2025-04-10</EndDate>
                     <Day>
                         <Number>1</Number>
                         <Dose>
-                            <Quantity>5</Quantity>
-                        </Dose>
-                        <Dose>
-                            <Quantity>5</Quantity>
-                        </Dose>
-                        <Dose>
-                            <Quantity>5</Quantity>
+                            <Time>night</Time>
+                            <Quantity>1</Quantity>
                         </Dose>
                     </Day>
                     <DosageTranslation>
-                        <ShortText>5 ml 3 gange daglig</ShortText>
-                        <LongText>Dosering fra d. 27. feb. 2025 til d. 5. mar. 2025:
-5 ml 3 gange hver dag</LongText>
+                        <ShortText>1 dråbe nat</ShortText>
+                        <LongText>Dosering fra d. 8. apr. 2025 til d. 10. apr. 2025:
+                            1 dråbe hver nat</LongText>
                     </DosageTranslation>
                 </Structure>
                 <DosageTranslationCombined>
-                    <ShortText>5 ml 3 gange daglig</ShortText>
-                    <LongText>Dosering fra d. 27. feb. 2025 til d. 5. mar. 2025:
-5 ml 3 gange hver dag</LongText>
+                    <ShortText>1 dråbe nat</ShortText>
+                    <LongText>Dosering fra d. 8. apr. 2025 til d. 10. apr. 2025:
+                        1 dråbe hver nat</LongText>
+                </DosageTranslationCombined>
+            </ns2:StructuresFixed>
+            <ns2:Type>fast</ns2:Type>
+        </ns2:Dosage>
+        <ns2:SubstitutionAllowed>false</ns2:SubstitutionAllowed>
+    </ns2:DrugMedication>
+    <ns2:DrugMedication>
+        <ns2:Identifier>42149492</ns2:Identifier>
+        <ns2:Version>1748965678097001001</ns2:Version>
+        <ns2:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>87654321</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-06-03T15:47:58Z</DateTime>
+        </ns2:Created>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>87654321</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-06-03T15:47:58Z</DateTime>
+        </ns2:Modified>
+        <ns2:Type>Lægeordineret</ns2:Type>
+        <ns2:BeginEndDate>
+            <CreatedDateTime>2025-06-03T15:47:58Z</CreatedDateTime>
+            <TreatmentStartDate>2025-06-03</TreatmentStartDate>
+            <TreatmentEndDate>2025-06-20</TreatmentEndDate>
+        </ns2:BeginEndDate>
+        <ns2:Indication>
+            <Code source="Medicinpriser" date="2025-06-03">691</Code>
+            <Text>mod akromegali</Text>
+        </ns2:Indication>
+        <ns2:RouteOfAdministration>
+            <Code source="Medicinpriser" date="2025-06-03">SC</Code>
+            <Text>Subkutan anvendelse</Text>
+        </ns2:RouteOfAdministration>
+        <ns2:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-06-03">H01AX01</Code>
+                <Text>Pegvisomant</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-06-03">28103247401</Identifier>
+            <Name>Somavert</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-06-03">INJPSO</Code>
+                <Text>pulver og solvens til injektionsvæske, opløsning</Text>
+            </Form>
+            <Strength>
+                <Value>15.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-06-03">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2025-06-03">15 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-06-03">PEGVISOMANT</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns2:Drug>
+        <ns2:Dosage>
+            <ns2:UnitTexts>
+                <ns2:Singular>hætteglas</ns2:Singular>
+                <ns2:Plural>hætteglas</ns2:Plural>
+            </ns2:UnitTexts>
+            <ns2:StructuresFixed>
+                <Structure>
+                    <IterationInterval>1</IterationInterval>
+                    <StartDate>2025-06-03</StartDate>
+                    <EndDate>2025-06-20</EndDate>
+                    <Day>
+                        <Number>1</Number>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                    </Day>
+                    <DosageTranslation>
+                        <ShortText>1 hætteglas daglig</ShortText>
+                        <LongText>Dosering fra d. 3. juni 2025 til d. 20. juni 2025:
+                            1 hætteglas hver dag</LongText>
+                    </DosageTranslation>
+                </Structure>
+                <DosageTranslationCombined>
+                    <ShortText>1 hætteglas daglig</ShortText>
+                    <LongText>Dosering fra d. 3. juni 2025 til d. 20. juni 2025:
+                        1 hætteglas hver dag</LongText>
+                </DosageTranslationCombined>
+            </ns2:StructuresFixed>
+            <ns2:Type>fast</ns2:Type>
+        </ns2:Dosage>
+        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+    </ns2:DrugMedication>
+    <ns2:DrugMedication>
+        <ns2:Identifier>44054561</ns2:Identifier>
+        <ns2:Version>1751978973353001001</ns2:Version>
+        <ns2:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>88888888</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-07-08T12:49:33Z</DateTime>
+        </ns2:Created>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>88888888</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-07-08T12:49:33Z</DateTime>
+        </ns2:Modified>
+        <ns2:Type>Lægeordineret</ns2:Type>
+        <ns2:BeginEndDate>
+            <CreatedDateTime>2025-07-08T12:49:33Z</CreatedDateTime>
+            <TreatmentStartDate>2025-07-08</TreatmentStartDate>
+            <TreatmentEndingUndetermined/>
+        </ns2:BeginEndDate>
+        <ns2:Indication>
+            <Code source="Medicinpriser" date="2025-07-08">224</Code>
+            <Text>mod infektion på huden</Text>
+        </ns2:Indication>
+        <ns2:RouteOfAdministration>
+            <Code source="Medicinpriser" date="2025-07-08">KU</Code>
+            <Text>Kutan anvendelse</Text>
+        </ns2:RouteOfAdministration>
+        <ns2:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2025-07-08">D06AX09</Code>
+                <Text>Mupirocin</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2025-07-08">28103065199</Identifier>
+            <Name>Bactroban</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2025-07-08">CREME</Code>
+                <Text>creme</Text>
+            </Form>
+            <Strength>
+                <Value>2.0</Value>
+                <UnitCode source="Medicinpriser" date="2025-07-08">PC</UnitCode>
+                <UnitText>procent</UnitText>
+                <Text source="Medicinpriser" date="2025-07-08">2 %</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2025-07-08">Mupirocincalcium</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns2:Drug>
+        <ns2:Dosage>
+            <ns2:UnitTexts>
+                <ns2:Singular>påsmøring</ns2:Singular>
+                <ns2:Plural>påsmøringer</ns2:Plural>
+            </ns2:UnitTexts>
+            <ns2:StructuresFixed>
+                <Structure>
+                    <IterationInterval>1</IterationInterval>
+                    <StartDate>2025-07-08</StartDate>
+                    <DosageEndingUndetermined/>
+                    <SupplementaryText>1 påsmøring i hvert næsebor</SupplementaryText>
+                    <Day>
+                        <Number>1</Number>
+                        <Dose>
+                            <Quantity>2</Quantity>
+                        </Dose>
+                        <Dose>
+                            <Quantity>2</Quantity>
+                        </Dose>
+                        <Dose>
+                            <Quantity>2</Quantity>
+                        </Dose>
+                    </Day>
+                    <DosageTranslation>
+                        <ShortText>2 påsmøringer 3 gange daglig.
+                            Bemærk: 1 påsmøring i hvert næsebor</ShortText>
+                        <LongText>Dosering fra d. 8. juli 2025:
+                            2 påsmøringer 3 gange hver dag
+                            Bemærk: 1 påsmøring i hvert næsebor</LongText>
+                    </DosageTranslation>
+                </Structure>
+                <DosageTranslationCombined>
+                    <ShortText>2 påsmøringer 3 gange daglig.
+                        Bemærk: 1 påsmøring i hvert næsebor</ShortText>
+                    <LongText>Dosering fra d. 8. juli 2025:
+                        2 påsmøringer 3 gange hver dag
+                        Bemærk: 1 påsmøring i hvert næsebor</LongText>
                 </DosageTranslationCombined>
             </ns2:StructuresFixed>
             <ns2:Type>fast</ns2:Type>

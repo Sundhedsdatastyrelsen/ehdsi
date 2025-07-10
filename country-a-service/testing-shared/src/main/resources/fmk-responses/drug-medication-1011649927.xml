@@ -15,7 +15,7 @@
                     <AddressLine>Bispensgade 37</AddressLine>
                     <AddressLine>9800 Hjørring</AddressLine>
                     <TelephoneNumber>97640000</TelephoneNumber>
-                    <EmailAddress>rhnordjylland@rn.dk</EmailAddress>
+                    <EmailAddress>Akutafdelingen_RHN@rn.dk</EmailAddress>
                     <Type>Sygehus</Type>
                     <Identifier source="SKS">8003469</Identifier>
                 </Organisation>
@@ -33,7 +33,7 @@
                     <AddressLine>Bispensgade 37</AddressLine>
                     <AddressLine>9800 Hjørring</AddressLine>
                     <TelephoneNumber>97640000</TelephoneNumber>
-                    <EmailAddress>rhnordjylland@rn.dk</EmailAddress>
+                    <EmailAddress>Akutafdelingen_RHN@rn.dk</EmailAddress>
                     <Type>Sygehus</Type>
                     <Identifier source="SKS">8003469</Identifier>
                 </Organisation>
@@ -427,108 +427,6 @@ Bemærk: 1 dråbe i hvert øje</LongText>
                     <ShortText>1 påsmøring 2 gange daglig</ShortText>
                     <LongText>Dosering fra d. 29. jan. 2025:
 1 påsmøring 2 gange hver dag</LongText>
-                </DosageTranslationCombined>
-            </ns2:StructuresFixed>
-            <ns2:Type>fast</ns2:Type>
-        </ns2:Dosage>
-        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
-    </ns2:DrugMedication>
-    <ns2:DrugMedication>
-        <ns2:Identifier>35226612</ns2:Identifier>
-        <ns2:Version>1738153568071001002</ns2:Version>
-        <ns2:Created>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
-                    <Name>Charles Babbage</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>33767630</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">990027</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2025-01-29T12:26:07Z</DateTime>
-        </ns2:Created>
-        <ns2:Modified>
-            <By>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
-                    <Name>Charles Babbage</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Udenfor organisation</Name>
-                    <TelephoneNumber>33767630</TelephoneNumber>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">990027</Identifier>
-                </Organisation>
-            </By>
-            <DateTime>2025-01-29T12:26:07Z</DateTime>
-        </ns2:Modified>
-        <ns2:Type>Lægeordineret</ns2:Type>
-        <ns2:BeginEndDate>
-            <CreatedDateTime>2025-01-29T12:26:07Z</CreatedDateTime>
-            <TreatmentStartDate>2025-01-29</TreatmentStartDate>
-            <TreatmentEndDate>2025-04-01</TreatmentEndDate>
-        </ns2:BeginEndDate>
-        <ns2:Indication>
-            <Code source="Medicinpriser" date="2025-01-29">96</Code>
-            <Text>hormontilskud</Text>
-        </ns2:Indication>
-        <ns2:RouteOfAdministration>
-            <Code source="Medicinpriser" date="2025-01-29">TD</Code>
-            <Text>Transdermal anvendelse</Text>
-        </ns2:RouteOfAdministration>
-        <ns2:Drug>
-            <ATC>
-                <Code source="Medicinpriser" date="2025-01-29">G03CA03</Code>
-                <Text>Estradiol</Text>
-            </ATC>
-            <Identifier source="Medicinpriser" date="2025-01-29">28101577993</Identifier>
-            <Name>Estrogel</Name>
-            <Form>
-                <Code source="Medicinpriser" date="2025-01-29">GEL</Code>
-                <Text>gel</Text>
-            </Form>
-            <Strength>
-                <Value>0.6</Value>
-                <UnitCode source="Medicinpriser" date="2025-01-29">MGG</UnitCode>
-                <UnitText>mg/g</UnitText>
-                <Text source="Medicinpriser" date="2025-01-29">0,6 mg/g</Text>
-            </Strength>
-            <Substances>
-                <ActiveSubstance>
-                    <SubstanceText source="Medicinpriser" date="2025-01-29">ESTRADIOL</SubstanceText>
-                </ActiveSubstance>
-            </Substances>
-        </ns2:Drug>
-        <ns2:Dosage>
-            <ns2:UnitTexts>
-                <ns2:Singular>pump</ns2:Singular>
-                <ns2:Plural>pump</ns2:Plural>
-            </ns2:UnitTexts>
-            <ns2:StructuresFixed>
-                <Structure>
-                    <IterationInterval>1</IterationInterval>
-                    <StartDate>2025-01-29</StartDate>
-                    <EndDate>2025-04-01</EndDate>
-                    <Day>
-                        <Number>1</Number>
-                        <Dose>
-                            <Quantity>3</Quantity>
-                        </Dose>
-                    </Day>
-                    <DosageTranslation>
-                        <ShortText>3 pump 1 gang daglig</ShortText>
-                        <LongText>Dosering fra d. 29. jan. 2025 til d. 1. apr. 2025:
-3 pump hver dag</LongText>
-                    </DosageTranslation>
-                </Structure>
-                <DosageTranslationCombined>
-                    <ShortText>3 pump 1 gang daglig</ShortText>
-                    <LongText>Dosering fra d. 29. jan. 2025 til d. 1. apr. 2025:
-3 pump hver dag</LongText>
                 </DosageTranslationCombined>
             </ns2:StructuresFixed>
             <ns2:Type>fast</ns2:Type>

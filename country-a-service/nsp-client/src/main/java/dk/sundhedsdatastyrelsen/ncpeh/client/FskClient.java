@@ -40,6 +40,10 @@ import javax.xml.namespace.QName;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * Client for calling FSK SOAP endpoints.
+ * Documentation is here: https://www.nspop.dk/display/public/web/FSK+-+Guide+til+anvendere
+ */
 @Component
 public class FskClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FskClient.class);
@@ -55,9 +59,8 @@ public class FskClient {
     public FskClient(@Value("${app.fsk.endpoint.url}") String fskEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fskEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
-            "oasis.names.tc.ebxml_regrep.xsd.query._3"
-                + ":dk.sdsd.dgws._2012._06"
-                + ":ihe.iti.xds_b._2007"
+            "ihe.iti.xds_b._2007"
+            + ":oasis.names.tc.ebxml_regrep.xsd.query._3"
         );
     }
 
