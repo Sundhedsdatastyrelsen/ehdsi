@@ -8,8 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="epps-ddv-api" />
-        <module name="epps-sdp-api" />
         <module name="epps-fsk-api" />
+        <module name="epps-sdp-api" />
         <module name="epps-service" />
         <module name="integration-tests" />
         <module name="epps-cpr-api" />
