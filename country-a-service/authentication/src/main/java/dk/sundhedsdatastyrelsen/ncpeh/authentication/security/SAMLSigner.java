@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Base64;
 
+// TODO Refactor to work on Assertion class
 public class SAMLSigner {
 
     public static void main(String[] args) throws Exception {

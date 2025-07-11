@@ -12,18 +12,36 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class SoapHeaderParser {
 
-    public Assertion parse(File soapHeaderFile) throws Exception {
+    // Used for testing from file
+    public Assertion parseFromFile(File soapHeaderFile) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(soapHeaderFile);
+
+        XPathFactory xPathFactory = XPathFactory.newInstance();
+        XPath xPath = xPathFactory.newXPath();
+        xPath.setNamespaceContext(new SoapNamespaceContext());
+
+        Assertion assertion = Assertion.builder().build();
+        extractAssertionNode(xPath, doc, assertion);
+        return assertion;
+    }
+
+    public Assertion parse(String soapHeaderXml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(soapHeaderXml.getBytes(StandardCharsets.UTF_8)));
 
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xPath = xPathFactory.newXPath();
@@ -85,7 +103,7 @@ public class SoapHeaderParser {
 
                 List<String> values = new ArrayList<>();
                 NodeList valueNodes = attrEl.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
-                
+
                 for (int j = 0; j < valueNodes.getLength(); j++) {
                     Node valueNode = valueNodes.item(j);
                     String value = valueNode.getTextContent();

@@ -7,7 +7,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-
+// TODO Refactor, move to README
 public class SoapClient {
 
     private static final String ENDPOINT = "https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws";

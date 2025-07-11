@@ -11,6 +11,8 @@ import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 
+// TODO: Move to test
+
 public class TokenValidator {
 
     private static final String P12_PATH = "/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/epps-sosi-sts-client.p12";

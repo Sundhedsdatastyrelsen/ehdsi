@@ -9,7 +9,7 @@ public class AssertionTransformer {
     /**
      * Transforms an assertion to NCP-BST format with the specified patient ID
      */
-    public static Assertion transformToNcpBst(Assertion originalAssertion, String patientId) {
+    public static Assertion transformToNcpBst(Assertion originalAssertion, String patientId, String countryCode) {
         return Assertion.builder()
             .id(originalAssertion.getId())
             .issueInstant(originalAssertion.getIssueInstant())
@@ -33,11 +33,11 @@ public class AssertionTransformer {
                 .notOnOrAfter(originalAssertion.getConditions().getNotOnOrAfter())
                 .audience("https://sts.sosi.dk/") // Hardcoded for NCP-BST
                 .build())
-            .attributes(buildNcpBstAttributes(originalAssertion, patientId))
+            .attributes(buildNcpBstAttributes(originalAssertion, patientId, countryCode))
             .build();
     }
 
-    private static List<Assertion.Attribute> buildNcpBstAttributes(Assertion originalAssertion, String patientId) {
+    private static List<Assertion.Attribute> buildNcpBstAttributes(Assertion originalAssertion, String patientId, String countryCode) {
         List<Assertion.Attribute> attributes = new java.util.ArrayList<>();
 
         // Map required attributes from original assertion
@@ -80,7 +80,7 @@ public class AssertionTransformer {
         attributes.add(Assertion.Attribute.builder()
             .friendlyName("EHDSI Country of Treatment")
             .name("urn:dk:healthcare:saml:CountryOfTreatment")
-            .values(List.of("DK")) // Changed from DE to DK for Danish NCP
+            .values(List.of(countryCode)) // Changed from DE to DK for Danish NCP
             .build());
 
         return attributes;

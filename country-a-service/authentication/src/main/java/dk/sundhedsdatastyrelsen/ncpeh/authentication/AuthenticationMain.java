@@ -1,15 +1,19 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.model.Assertion;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.parser.SoapHeaderParser;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * Main class demonstrating the authentication workflow.
  * This shows how to parse SOAP headers, transform assertions, build XML, and create SOAP envelopes.
  */
+
+// TODO Move to test
 @Slf4j
 public class AuthenticationMain {
 
@@ -32,30 +36,27 @@ public class AuthenticationMain {
         log.info("  Target service: {}", targetService);
 
         try {
-            AuthenticationService authService = new AuthenticationService();
-
-            // Example 1: Parse SOAP header and get original assertion
-            log.info("\n=== Example 1: Parse SOAP header and get original assertion ===");
             File soapHeaderFile = new File("/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/soap-headers/SoapHeader.xml");
-            Assertion originalAssertion = authService.parseAssertion(soapHeaderFile);
-            log.info("Successfully parsed assertion with ID: {}", originalAssertion.getId());
+            String soapheader = Files.readString(soapHeaderFile.toPath());
+            AuthenticationService.createSosiRequestBody(soapheader, patientId);
+
 
             // Example 2: Transform to NCP-BST format
-            log.info("\n=== Example 2: Transform to NCP-BST format ===");
-            Assertion ncpAssertion = authService.transformToNcpBst(originalAssertion, patientId); // TODO check if we should remove signature in builder
-            log.info("Successfully transformed assertion for patient: {}", patientId);
+            //log.info("\n=== Example 2: Transform to NCP-BST format ===");
+            //Assertion ncpAssertion = authService.transformToNcpBst(originalAssertion, patientId); // TODO check if we should remove signature in builder
+            //log.info("Successfully transformed assertion for patient: {}", patientId);
 
             // Example 3: Build assertion XML
-            log.info("\n=== Example 3: Build assertion XML ===");
-            String assertionXml = authService.buildAssertionXml(ncpAssertion);
-            log.info("Successfully built assertion XML ({} characters)", assertionXml.length());
-            log.debug("Assertion XML: {}", assertionXml);
+            //log.info("\n=== Example 3: Build assertion XML ===");
+            //String assertionXml = authService.buildAssertionXml(ncpAssertion);
+            //log.info("Successfully built assertion XML ({} characters)", assertionXml.length());
+            //log.debug("Assertion XML: {}", assertionXml);
 
             // Example 4: Build SOAP envelope
-            log.info("\n=== Example 4: Build SOAP envelope ===");
-            String soapEnvelope = authService.buildSoapEnvelope(ncpAssertion);
-            log.info("Successfully built SOAP envelope ({} characters)", soapEnvelope.length());
-            log.debug("SOAP envelope: {}", soapEnvelope);
+            //log.info("\n=== Example 4: Build SOAP envelope ===");
+            //String soapEnvelope = authService.buildSoapEnvelope(ncpAssertion);
+            //log.info("Successfully built SOAP envelope ({} characters)", soapEnvelope.length());
+            //log.debug("SOAP envelope: {}", soapEnvelope);
 
         } catch (Exception e) {
             log.error("Authentication workflow failed", e);
