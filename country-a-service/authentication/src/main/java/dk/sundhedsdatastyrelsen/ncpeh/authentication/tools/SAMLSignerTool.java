@@ -29,7 +29,7 @@ public class SAMLSignerTool {
 
         // Use the existing P12 keystore files
         String p12Path = "/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/epps-sosi-sts-client.p12";
-        String p12Password = "R_d9ZzEQ93ry";
+        String p12Password = System.getProperty("KEYSTORE_PASSWORD");
         String alias = "epps-sosi-sts-client";
 
         String inputFile = "/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/envelope/soap_envelope.xml"; // DRG WORKING REQUEST
