@@ -64,5 +64,9 @@
             <artifactId>commons-text</artifactId>
             <version>1.12.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+        </dependency>
     </dependencies>
 </project>

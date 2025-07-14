@@ -41,6 +41,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
 import freemarker.template.TemplateException;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -115,6 +116,7 @@ public class PrescriptionService {
         }
     }
 
+    @WithSpan
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         String patientId,
         PrescriptionFilter filter,
@@ -147,6 +149,7 @@ public class PrescriptionService {
         }
     }
 
+    @WithSpan
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
         var input = assembleEPrescriptionInput(patientId, filter, caller).findFirst().orElse(null);
         DocumentLevel documentLevel;
@@ -163,6 +166,7 @@ public class PrescriptionService {
         }
     }
 
+    @WithSpan
     private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, Identity caller) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
@@ -223,6 +227,7 @@ public class PrescriptionService {
         }
     }
 
+    @WithSpan
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) {
         StartEffectuationResponseType response;
         String eDispensationCdaId;
@@ -300,6 +305,7 @@ public class PrescriptionService {
         }
     }
 
+    @WithSpan
     public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) {
         String eDispensationCdaId;
         try {
@@ -351,6 +357,7 @@ public class PrescriptionService {
         undoDispensationRepository.deleteByCdaId(eDispensationCdaId);
     }
 
+    @WithSpan
     public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, Identity caller) throws JAXBException {
         var drugMedicationRequest = GetDrugMedicationRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()

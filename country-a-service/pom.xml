@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.3</version>
         <relativePath/>
     </parent>
 
@@ -43,6 +43,7 @@
         <skipUTs>false</skipUTs>
         <sonar.organization>sundhedsdatastyrelsen</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.exclusions>**/generated/**/*.java</sonar.exclusions>
     </properties>
 
     <!-- Dependencies that all projects get -->
@@ -155,13 +156,11 @@
                 <artifactId>jackson-databind-nullable</artifactId>
                 <version>0.2.6</version>
             </dependency>
-
             <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>4.0.3</version>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+                <version>2.15.0</version>
             </dependency>
-
             <dependency>
                 <groupId>dk.sosi.seal</groupId>
                 <artifactId>seal</artifactId>

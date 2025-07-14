@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
 import freemarker.template.TemplateException;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -17,6 +18,7 @@ public class EPrescriptionL3Generator {
         return writer.toString();
     }
 
+    @WithSpan
     public static String generate(EPrescriptionL3Input input) throws MapperException, TemplateException, IOException {
         var model = EPrescriptionL3Mapper.model(input);
         return generate(model);
