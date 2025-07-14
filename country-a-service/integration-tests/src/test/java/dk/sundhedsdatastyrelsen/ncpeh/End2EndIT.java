@@ -10,7 +10,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,11 +20,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 @Slf4j
 class End2EndIT {
@@ -36,7 +31,6 @@ class End2EndIT {
 
     /// See the resources/portal-backend-examples folder for examples of the requests and responses.
     @Test
-    @Disabled("HBG 2025-07-07: Fails every night. Fix test before re-enabling.")
     void fetchAndDispenseThroughCountryB() throws Exception {
         // Setup
         assertThat(String.format("Missing environment variable \"%s\"", HOST_ENV_NAME), HOST, is(not(nullValue())));
@@ -55,13 +49,13 @@ class End2EndIT {
         log.info("Found {} prescriptions in country B", prescriptions.get("clinicalDocuments").size());
         assertThat(
             prescriptions.at("/clinicalDocuments/0/identifier")
-                .textValue(), is(equalTo(prescriptionId + "L1")));
+                .textValue(), is(equalTo("1.2.208.176.7.2.3^" + prescriptionId + "L1")));
 
-        var l1Prescription = fetchCountryBSinglePrescription(patientIdentifier, prescriptionId + "L1");
+        var l1Prescription = fetchCountryBSinglePrescription(patientIdentifier, "1.2.208.176.7.2.3^" + prescriptionId + "L1");
         log.info("Fetched L1 prescription.");
         assertThat(l1Prescription.get("content").textValue(), is(not(emptyOrNullString())));
 
-        var l3Prescription = fetchCountryBSinglePrescription(patientIdentifier, prescriptionId + "L3");
+        var l3Prescription = fetchCountryBSinglePrescription(patientIdentifier, "1.2.208.176.7.2.3^" + prescriptionId + "L3");
         log.info("Fetched L3 prescription.");
         var dispensation = dispenseThroughCountryB(l3Prescription, patient);
 
