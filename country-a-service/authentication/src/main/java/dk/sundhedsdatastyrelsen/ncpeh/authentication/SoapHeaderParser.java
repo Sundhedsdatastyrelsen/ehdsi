@@ -1,0 +1,156 @@
+package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+
+import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+public class SoapHeaderParser {
+
+    private SoapHeaderParser() {
+        // Private constructor
+    }
+
+    public static Assertion parse(String soapHeaderXml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(soapHeaderXml.getBytes(StandardCharsets.UTF_8)));
+
+        XPathFactory xPathFactory = XPathFactory.newInstance();
+        XPath xPath = xPathFactory.newXPath();
+        xPath.setNamespaceContext(new SoapNamespaceContext());
+
+        Assertion assertion = Assertion.builder().build();
+        extractAssertionNode(xPath, doc, assertion);
+        return assertion;
+    }
+
+    private static void extractAssertionNode(XPath xPath, Document doc, Assertion assertion) {
+        try {
+            Node assertionNode = (Node) xPath.evaluate("//saml2:Assertion", doc, XPathConstants.NODE);
+            if (assertionNode == null) throw new IllegalArgumentException("No <saml2:Assertion> found");
+
+            Element assertionEl = (Element) assertionNode;
+
+            assertion.setId(assertionEl.getAttribute("ID"));
+            assertion.setIssueInstant(assertionEl.getAttribute("IssueInstant"));
+            assertion.setVersion(assertionEl.getAttribute("Version"));
+
+            assertion.setIssuer(xPath.evaluate("saml2:Issuer", assertionNode));
+
+            // Signature
+            Assertion.Signature signature = Assertion.Signature.builder()
+                .signatureMethodAlgorithm(xPath.evaluate("//ds:SignatureMethod/@Algorithm", doc))
+                .digestMethodAlgorithm(xPath.evaluate("//ds:DigestMethod/@Algorithm", doc))
+                .digestValue(xPath.evaluate("//ds:DigestValue", doc))
+                .signatureValue(xPath.evaluate("//ds:SignatureValue", doc))
+                .certificate(xPath.evaluate("//ds:X509Certificate", doc))
+                .build();
+            assertion.setSignature(signature);
+
+            // Subject
+            Assertion.Subject subject = Assertion.Subject.builder()
+                .nameIdFormat(xPath.evaluate("saml2:Subject/saml2:NameID/@Format", assertionNode))
+                .nameIdValue(xPath.evaluate("saml2:Subject/saml2:NameID", assertionNode))
+                .confirmationMethod(xPath.evaluate("saml2:Subject/saml2:SubjectConfirmation/@Method", assertionNode))
+                .certificate(xPath.evaluate("//ds:X509Certificate", doc)) // Use same certificate for subject
+                .build();
+            assertion.setSubject(subject);
+
+            // Conditions
+            Assertion.Conditions conditions = Assertion.Conditions.builder()
+                .notBefore(xPath.evaluate("saml2:Conditions/@NotBefore", assertionNode))
+                .notOnOrAfter(xPath.evaluate("saml2:Conditions/@NotOnOrAfter", assertionNode))
+                .audience(xPath.evaluate("saml2:Conditions/saml2:AudienceRestriction/saml2:Audience", assertionNode))
+                .build();
+            assertion.setConditions(conditions);
+
+            List<Assertion.Attribute> attributes = new ArrayList<>();
+            NodeList attributeNodes = (NodeList) xPath.evaluate("saml2:AttributeStatement/saml2:Attribute", assertionNode, XPathConstants.NODESET);
+
+            for (int i = 0; i < attributeNodes.getLength(); i++) {
+                Element attrEl = (Element) attributeNodes.item(i);
+                String friendlyName = attrEl.getAttribute("FriendlyName");
+                String name = attrEl.getAttribute("Name");
+
+                List<String> values = new ArrayList<>();
+                NodeList valueNodes = attrEl.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
+
+                for (int j = 0; j < valueNodes.getLength(); j++) {
+                    Node valueNode = valueNodes.item(j);
+                    String value = valueNode.getTextContent();
+                    if (value != null && !value.trim().isEmpty()) {
+                        values.add(value.trim());
+                    }
+                }
+
+                Assertion.Attribute attribute = Assertion.Attribute.builder()
+                    .friendlyName(friendlyName)
+                    .name(name)
+                    .values(values)
+                    .build();
+                attributes.add(attribute);
+            }
+
+            assertion.setAttributes(attributes);
+
+        } catch (Exception e) {
+            log.error("Failed to extract assertion data", e);
+            throw new RuntimeException("Failed to extract assertion data", e);
+        }
+    }
+
+    private static class SoapNamespaceContext implements NamespaceContext {
+
+        private final Map<String, String> namespaces;
+
+        public SoapNamespaceContext() {
+            namespaces = new HashMap<>();
+            namespaces.put("soapenv", "http://www.w3.org/2003/05/soap-envelope");
+            namespaces.put("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+            namespaces.put("saml2", "urn:oasis:names:tc:SAML:2.0:assertion");
+            namespaces.put("ds", "http://www.w3.org/2000/09/xmldsig#");
+        }
+
+        @Override
+        public String getNamespaceURI(String prefix) {
+            return namespaces.get(prefix);
+        }
+
+        @Override
+        public String getPrefix(String uri) {
+            for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+                if (entry.getValue().equals(uri)) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public Iterator<String> getPrefixes(String uri) {
+            return namespaces.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(uri))
+                .map(Map.Entry::getKey)
+                .iterator();
+        }
+    }
+}
