@@ -1,6 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: true
----
-We are ONLY making changes to the Authentication module. No changes are allowed under ANY circumstances in other modules
