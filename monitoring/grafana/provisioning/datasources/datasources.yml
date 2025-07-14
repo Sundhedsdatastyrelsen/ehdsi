@@ -11,6 +11,13 @@ datasources:
     jsonData:
       timeInterval: 15s
 
+  - name: Loki
+    uid: loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+
   - name: Tempo
     uid: tempo
     type: tempo
@@ -18,6 +25,8 @@ datasources:
     url: http://tempo:3200
     editable: true
     jsonData:
+      tracesToLogs:
+        datasourceUid: loki
       tracesToProfiles:
         datasourceUid: pyroscope
         tags:
