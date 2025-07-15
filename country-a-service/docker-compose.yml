@@ -10,7 +10,7 @@ services:
   epps-country-a:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest
     build: .
-    container_name: epps-country-a
+    container_name: country-a-service
     restart: unless-stopped
     ports:
       - "4443:4443"

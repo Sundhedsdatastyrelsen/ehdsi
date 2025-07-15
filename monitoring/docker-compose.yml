@@ -40,8 +40,8 @@ services:
     volumes:
       - ./promtail:/etc/promtail
       - promtail_data:/tmp # for the "positions" file that remembers what logs are sent to loki
-      - /var/log:/var/log:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - monitoring
     depends_on:
@@ -53,10 +53,12 @@ services:
     container_name: grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      # - GF_SECURITY_ADMIN_USER=admin
+      # - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_INSTALL_PLUGINS=grafana-pyroscope-app
     volumes:
