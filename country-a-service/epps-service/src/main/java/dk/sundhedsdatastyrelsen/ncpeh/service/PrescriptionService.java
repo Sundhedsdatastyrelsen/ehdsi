@@ -25,7 +25,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
@@ -152,9 +151,8 @@ public class PrescriptionService {
     @WithSpan
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
         var input = assembleEPrescriptionInput(patientId, filter, caller).findFirst().orElse(null);
-        DocumentLevel documentLevel;
         try {
-            documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
+            var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
             var cda = switch (documentLevel) {
                 case LEVEL3 -> EPrescriptionL3Generator.generate(input);
                 case LEVEL1 -> EPrescriptionL1Generator.generate(input);
