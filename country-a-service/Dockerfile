@@ -38,7 +38,6 @@ CMD ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-Duser.timezone=UTC
 EXPOSE 8080
 
 # Configure Pyroscope profiling
-ENV PYROSCOPE_APPLICATION_NAME=my-app
 ENV PYROSCOPE_FORMAT=jfr
 ENV PYROSCOPE_PROFILING_INTERVAL=10ms
 ENV PYROSCOPE_PROFILER_EVENT=itimer

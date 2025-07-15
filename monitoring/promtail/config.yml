@@ -20,7 +20,7 @@ scrape_configs:
     pipeline_stages:
       - cri: {}
       - multiline:
-          firstline: ^\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2},\d{3}
+          firstline: ^\S
           max_wait_time: 3s
       # https://grafana.com/docs/loki/latest/clients/promtail/stages/json/
       - json:
