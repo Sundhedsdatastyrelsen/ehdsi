@@ -4,20 +4,25 @@ server:
   http_listen_port: 3100
 
 common:
+  # Base path for Loki data and config (should be mounted as a volume for persistence)
   path_prefix: /loki
+  # Single-node setup, no replication
   replication_factor: 1
   ring:
     kvstore:
+      # Use in-memory storage for hash ring store (suitable for single-node setup)
       store: inmemory
 
 storage_config:
   filesystem:
+    # Directory to store log chunks
     directory: /loki/chunks
 
 schema_config:
   configs:
   - from: 2020-05-15
     store: tsdb
+    # Store chunks on local filesystem
     object_store: filesystem
     schema: v13
     index:

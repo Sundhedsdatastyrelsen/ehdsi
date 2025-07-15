@@ -22,9 +22,9 @@ RUN fc-cache -f -v
 
 WORKDIR /app
 
-# Download OpenTelemetry Java agent and Pyroscope extension
-RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /app/opentelemetry-javaagent.jar
-RUN curl -L https://github.com/grafana/otel-profiling-java/releases/download/v1.0.4/pyroscope-otel.jar -o /app/pyroscope-otel.jar
+# Download OpenTelemetry Java agent (for tracing) and Pyroscope extension (for profiling)
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /app/opentelemetry-javaagent.jar && \
+    curl -L https://github.com/grafana/otel-profiling-java/releases/download/v1.0.4/pyroscope-otel.jar -o /app/pyroscope-otel.jar
 
 # https://github.com/hexops-graveyard/dockerfile#do-not-use-a-uid-below-10000
 RUN groupadd -g 10001 app && \
