@@ -32,6 +32,8 @@ Tools for collecting and visualizing distributed traces.
 
 Tempo is a tracing backend. Selected over Jaeger because of lower resource usage and simpler configuration.
 
+The services push tracing data to Tempo. We use the OpenTelemetry Java Agent to instrument the services.
+
 ## Metrics
 
 Tools for collecting and storing metrics data.
@@ -39,6 +41,9 @@ Tools for collecting and storing metrics data.
 ### [Prometheus](https://prometheus.io/)
 
 Prometheus is the industry standard metrics backend, scraping data from configured sources at regular intervals.
+
+The services should expose a metrics endpoint for Prometheus to scrape.
+We use the OpenTelemetry Java Agent to provide metrics for the Java services.
 
 ### [Node Exporter](https://prometheus.io/docs/guides/node-exporter/)
 
@@ -51,3 +56,6 @@ Tools for application performance profiling and flamegraphs.
 ### [Pyroscope](https://pyroscope.io/)
 
 Pyroscope is a backend for collecting and visualizing profiling data.
+
+We are only interested in profiling our own code, so we only enable profiling on country-a-service.
+Here we use a Pyroscope extension to the OpenTelemetry Java Agent to push profiling data to Pyroscope.
