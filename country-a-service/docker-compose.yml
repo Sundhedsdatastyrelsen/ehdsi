@@ -10,7 +10,7 @@ services:
   epps-country-a:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest
     build: .
-    container_name: epps-country-a
+    container_name: country-a-service
     restart: unless-stopped
     ports:
       - "4443:4443"
@@ -38,6 +38,8 @@ services:
       OTEL_METRICS_EXPORTER_PROMETHEUS_PORT: "9464"
       OTEL_LOGS_EXPORTER: "none"
       OTEL_PROPAGATORS: "tracecontext,baggage"
+      PYROSCOPE_SERVER_ADDRESS: "http://pyroscope:4040"
+      PYROSCOPE_APPLICATION_NAME: "country-a-service"
 
     volumes:
       - ./config:/app/config:ro
