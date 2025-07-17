@@ -44,20 +44,20 @@ public class SAMLSigner {
 
     public SAMLSigner(AuthenticationConfig config) throws Exception {
         KeyStore ks = KeyStore.getInstance("PKCS12");
-        try (InputStream fis = getClass().getClassLoader().getResourceAsStream(config.getKeyStorePath())) {
+        try (InputStream fis = getClass().getClassLoader().getResourceAsStream(config.keyStorePath())) {
             if (fis == null) {
-                throw new FileNotFoundException("Keystore not found in resources " + config.getKeyStorePath());
+                throw new FileNotFoundException("Keystore not found in resources " + config.keyStorePath());
             }
-            ks.load(fis, config.getKeyStorePassword().toCharArray());
+            ks.load(fis, config.keyStorePassword().toCharArray());
         }
 
-        String alias = config.getKeyAlias();
+        String alias = config.keyAlias();
         if (!ks.containsAlias(alias)) {
             alias = Collections.list(ks.aliases()).stream().findFirst()
                 .orElseThrow(() -> new IllegalStateException("No alias found in keystore"));
         }
 
-        this.privateKey = (PrivateKey) ks.getKey(alias, config.getKeyStorePassword().toCharArray());
+        this.privateKey = (PrivateKey) ks.getKey(alias, config.keyStorePassword().toCharArray());
         this.certificate = (X509Certificate) ks.getCertificate(alias);
 
         if (this.privateKey == null || this.certificate == null) {

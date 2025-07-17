@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class AuthenticationService {
-
-
     private final AuthenticationConfig config;
 
     // Default config constructor
@@ -36,7 +34,7 @@ public class AuthenticationService {
         Assertion ncpAssertion = SoapHeaderParser.parse(soapHeader);
         String countryCode = CertParser.parse(soapHeader);
         Assertion bootstrapToken = AssertionTransformer.transformToNcpBst(ncpAssertion, patientID, countryCode);
-        String requestTemplate = fillTemplate(config.getTemplatePath(), buildTemplateMapFromAssertion(bootstrapToken));
+        String requestTemplate = fillTemplate(config.templatePath(), buildTemplateMapFromAssertion(bootstrapToken));
         return samlSigner.sign(requestTemplate);
    }
 

@@ -17,9 +17,9 @@ class AuthenticationConfigTest {
     void shouldLoadDefaultConfigurationValues() {
         AuthenticationConfig config = new AuthenticationConfig();
 
-        assertThat(config.getTemplatePath(), is("envelope/soap_template.xml"));
-        assertThat(config.getKeyStorePath(), is("epps-sosi-sts-client.p12"));
-        assertThat(config.getKeyStorePassword(), is("testpw123")); // TODO to be removed
-        assertThat(config.getKeyAlias(), is("epps-sosi-sts-client"));
+        assertThat(config.templatePath(), is("envelope/soap_template.xml"));
+        assertThat(config.keyStorePath(), is("epps-sosi-sts-client.p12"));
+        assertThat(config.keyStorePassword(), is("testpw123")); // TODO to be removed
+        assertThat(config.keyAlias(), is("epps-sosi-sts-client"));
     }
 }
