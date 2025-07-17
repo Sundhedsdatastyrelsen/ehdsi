@@ -6,7 +6,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class AuthenticationServiceTest {
 
@@ -24,8 +25,10 @@ public class AuthenticationServiceTest {
         String soapHeader = readResourceFile("SoapHeader.xml");
         String signedXml = service.createSosiRequestBody(soapHeader, "1234567890");
 
-        assertTrue(signedXml.contains("ds:Signature"), "Output should contain SAML signature");
-        assertTrue(signedXml.contains("X509Certificate"), "Output should contain certificate");
+        assertThat(signedXml, allOf(
+            containsString("ds:Signature"),
+            containsString("X509Certificate")
+        ));
     }
 
     private String readResourceFile(String resourceName) {

@@ -1,8 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 class AssertionTransformerTest {
 
@@ -46,29 +49,29 @@ class AssertionTransformerTest {
         Assertion result = AssertionTransformer.transformToNcpBst(input, patientId, countryCode);
 
         // Then
-        assertEquals("https://t-ncp.sundhedsdatastyrelsen.dk", result.getIssuer());
-        assertEquals(patientId, result.getSubject().getNameIdValue());
-        assertEquals("https://sts.sosi.dk/", result.getConditions().getAudience());
+        assertThat(result.getIssuer(), is("https://t-ncp.sundhedsdatastyrelsen.dk"));
+        assertThat(result.getSubject().getNameIdValue(), is(patientId));
+        assertThat(result.getConditions().getAudience(), is("https://sts.sosi.dk/"));
 
-        assertTrue(result.getAttributes().stream().anyMatch(a ->
-            a.getFriendlyName().equals("XUA Patient Id") &&
-                a.getValues().contains(patientId)
-        ));
+        assertThat(result.getAttributes(), hasItem(allOf(
+            hasProperty("friendlyName", is("XUA Patient Id")),
+            hasProperty("values", hasItem(patientId))
+        )));
 
-        assertTrue(result.getAttributes().stream().anyMatch(a ->
-            a.getFriendlyName().equals("EHDSI Country of Treatment") &&
-                a.getValues().contains(countryCode)
-        ));
+        assertThat(result.getAttributes(), hasItem(allOf(
+            hasProperty("friendlyName", is("EHDSI Country of Treatment")),
+            hasProperty("values", hasItem(countryCode))
+        )));
 
-        assertTrue(result.getAttributes().stream().anyMatch(a ->
-            a.getFriendlyName().equals("XSPA Role") &&
-                a.getValues().get(0).contains("Medical Doctors")
-        ));
+        assertThat(result.getAttributes(), hasItem(allOf(
+            hasProperty("friendlyName", is("XSPA Role")),
+            hasProperty("values", hasItem(containsString("Medical Doctors")))
+        )));
 
-        assertTrue(result.getAttributes().stream().anyMatch(a ->
-            a.getFriendlyName().equals("XSPA Purpose Of Use") &&
-                a.getValues().get(0).contains("TREATMENT")
-        ));
+        assertThat(result.getAttributes(), hasItem(allOf(
+            hasProperty("friendlyName", is("XSPA Purpose Of Use")),
+            hasProperty("values", hasItem(containsString("TREATMENT")))
+        )));
     }
 
     private Assertion.Attribute buildAttr(String friendlyName, String name, List<String> values) {
