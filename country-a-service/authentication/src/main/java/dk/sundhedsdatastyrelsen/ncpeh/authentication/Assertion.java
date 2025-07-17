@@ -1,66 +1,66 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
 
 import java.util.List;
 
-@Data
+@Value
 @Builder
 public class Assertion {
 
     // Assertion attributes
-    private String id;
-    private String issueInstant;
-    private String version;
+    String id;
+    String issueInstant;
+    String version;
 
     // Issuer
-    private String issuer;
+    String issuer;
 
     // Signature information
-    private Signature signature;
+    Signature signature;
 
     // Subject information
-    private Subject subject;
+    Subject subject;
 
     // Conditions
-    private Conditions conditions;
+    Conditions conditions;
 
     // Attributes
-    private List<Attribute> attributes;
+    List<Attribute> attributes;
 
-    @Data
+    @Value
     @Builder
     public static class Signature {
-        private String signatureMethodAlgorithm;
-        private String digestMethodAlgorithm;
-        private String digestValue;
-        private String signatureValue;
-        private String certificate;
+        String signatureMethodAlgorithm;
+        String digestMethodAlgorithm;
+        String digestValue;
+        String signatureValue;
+        String certificate;
     }
 
-    @Data
+    @Value
     @Builder
     public static class Subject {
-        private String nameIdFormat;
-        private String nameIdValue;
-        private String confirmationMethod;
-        private String certificate; // For SubjectConfirmationData
+        String nameIdFormat;
+        String nameIdValue;
+        String confirmationMethod;
+        String certificate; // For SubjectConfirmationData
     }
 
-    @Data
+    @Value
     @Builder
     public static class Conditions {
-        private String notBefore;
-        private String notOnOrAfter;
-        private String audience;
+        String notBefore;
+        String notOnOrAfter;
+        String audience;
     }
 
-    @Data
+    @Value
     @Builder
     public static class Attribute {
-        private String friendlyName;
-        private String name;
-        private List<String> values;
+        String friendlyName;
+        String name;
+        List<String> values;
     }
 }
