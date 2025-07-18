@@ -9,26 +9,26 @@ public class AssertionTransformer {
      */
     public static Assertion transformToNcpBst(Assertion originalAssertion, String patientId, String countryCode) {
         return Assertion.builder()
-            .id(originalAssertion.getId())
-            .issueInstant(originalAssertion.getIssueInstant())
-            .version(originalAssertion.getVersion())
+            .id(originalAssertion.id())
+            .issueInstant(originalAssertion.issueInstant())
+            .version(originalAssertion.version())
             .issuer("https://t-ncp.sundhedsdatastyrelsen.dk") // Hardcoded for NCP-BST
             .signature(Assertion.Signature.builder()
                 .signatureMethodAlgorithm("http://www.w3.org/2000/09/xmldsig#rsa-sha256")
                 .digestMethodAlgorithm("http://www.w3.org/2000/09/xmldsig#sha256")
-                .digestValue(originalAssertion.getSignature().getDigestValue())
-                .signatureValue(originalAssertion.getSignature().getSignatureValue())
-                .certificate(originalAssertion.getSignature().getCertificate())
+                .digestValue(originalAssertion.signature().digestValue())
+                .signatureValue(originalAssertion.signature().signatureValue())
+                .certificate(originalAssertion.signature().certificate())
                 .build())
             .subject(Assertion.Subject.builder()
                 .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
                 .nameIdValue(patientId) // Use provided patientId instead of original
                 .confirmationMethod("urn:oasis:names:tc:SAML:2.0:cm:holder-of-key")
-                .certificate(originalAssertion.getSignature().getCertificate())
+                .certificate(originalAssertion.signature().certificate())
                 .build())
             .conditions(Assertion.Conditions.builder()
-                .notBefore(originalAssertion.getConditions().getNotBefore())
-                .notOnOrAfter(originalAssertion.getConditions().getNotOnOrAfter())
+                .notBefore(originalAssertion.conditions().notBefore())
+                .notOnOrAfter(originalAssertion.conditions().notOnOrAfter())
                 .audience("https://sts.sosi.dk/") // Hardcoded for NCP-BST
                 .build())
             .attributes(buildNcpBstAttributes(originalAssertion, patientId, countryCode))
@@ -39,24 +39,24 @@ public class AssertionTransformer {
         List<Assertion.Attribute> attributes = new java.util.ArrayList<>();
 
         // Map required attributes from original assertion
-        for (Assertion.Attribute attr : originalAssertion.getAttributes()) {
+        for (Assertion.Attribute attr : originalAssertion.attributes()) {
             // Only include mandatory attributes for minimal mode
-            if (isMandatoryAttribute(attr.getFriendlyName())) {
-                List<String> values = attr.getValues();
+            if (isMandatoryAttribute(attr.friendlyName())) {
+                List<String> values = attr.values();
 
                 // TODO: Figure out how to determine role and purpose of use from assertion in soapheader
 
-                if ("XSPA Role".equals(attr.getFriendlyName())) {
+                if ("XSPA Role".equals(attr.friendlyName())) {
                     values = List.of("<Role xmlns=\"urn:hl7-org:v3\" code=\"221\" codeSystem=\"2.16.840.1.113883.2.9.6.2.7\" " +
                         "codeSystemName=\"ISCO\" displayName=\"Medical Doctors\" xsi:type=\"CE\"/>");
-                } else if ("XSPA Purpose Of Use".equals(attr.getFriendlyName())) {
+                } else if ("XSPA Purpose Of Use".equals(attr.friendlyName())) {
                     values = List.of( "<PurposeOfUse xmlns=\"urn:hl7-org:v3\" code=\"TREATMENT\" " +
                         "codeSystem=\"urn:oasis:names:tc:xspa:1.0\" xsi:type=\"CE\"/>");
                 }
 
                 attributes.add(Assertion.Attribute.builder()
-                    .friendlyName(attr.getFriendlyName())
-                    .name(attr.getName())
+                    .friendlyName(attr.friendlyName())
+                    .name(attr.name())
                     .values(values)
                     .build());
             }

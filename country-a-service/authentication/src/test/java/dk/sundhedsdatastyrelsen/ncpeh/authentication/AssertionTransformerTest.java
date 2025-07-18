@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static dk.sundhedsdatastyrelsen.ncpeh.authentication.FunMatcher.where;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -49,28 +50,28 @@ class AssertionTransformerTest {
         Assertion result = AssertionTransformer.transformToNcpBst(input, patientId, countryCode);
 
         // Then
-        assertThat(result.getIssuer(), is("https://t-ncp.sundhedsdatastyrelsen.dk"));
-        assertThat(result.getSubject().getNameIdValue(), is(patientId));
-        assertThat(result.getConditions().getAudience(), is("https://sts.sosi.dk/"));
+        assertThat(result.issuer(), is("https://t-ncp.sundhedsdatastyrelsen.dk"));
+        assertThat(result.subject().nameIdValue(), is(patientId));
+        assertThat(result.conditions().audience(), is("https://sts.sosi.dk/"));
 
-        assertThat(result.getAttributes(), hasItem(allOf(
-            hasProperty("friendlyName", is("XUA Patient Id")),
-            hasProperty("values", hasItem(patientId))
+        assertThat(result.attributes(), hasItem(allOf(
+            where(Assertion.Attribute::friendlyName, is("XUA Patient Id")),
+            where(Assertion.Attribute::values, hasItem(patientId))
         )));
 
-        assertThat(result.getAttributes(), hasItem(allOf(
-            hasProperty("friendlyName", is("EHDSI Country of Treatment")),
-            hasProperty("values", hasItem(countryCode))
+        assertThat(result.attributes(), hasItem(allOf(
+            where(Assertion.Attribute::friendlyName, is("EHDSI Country of Treatment")),
+            where(Assertion.Attribute::values, hasItem(countryCode))
         )));
 
-        assertThat(result.getAttributes(), hasItem(allOf(
-            hasProperty("friendlyName", is("XSPA Role")),
-            hasProperty("values", hasItem(containsString("Medical Doctors")))
+        assertThat(result.attributes(), hasItem(allOf(
+            where(Assertion.Attribute::friendlyName, is("XSPA Role")),
+            where(Assertion.Attribute::values, hasItem(containsString("Medical Doctors")))
         )));
 
-        assertThat(result.getAttributes(), hasItem(allOf(
-            hasProperty("friendlyName", is("XSPA Purpose Of Use")),
-            hasProperty("values", hasItem(containsString("TREATMENT")))
+        assertThat(result.attributes(), hasItem(allOf(
+            where(Assertion.Attribute::friendlyName, is("XSPA Purpose Of Use")),
+            where(Assertion.Attribute::values, hasItem(containsString("TREATMENT")))
         )));
     }
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static dk.sundhedsdatastyrelsen.ncpeh.authentication.FunMatcher.where;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -22,20 +23,22 @@ class SoapHeaderParserTest {
         Assertion assertion = SoapHeaderParser.parse(soapXml);
 
         // Verify some key fields
-        assertThat(assertion, allOf(
-            hasProperty("id", is(notNullValue())),
-            hasProperty("issueInstant", is(notNullValue())),
-            hasProperty("version", is("2.0")),
-            hasProperty("issuer", is(notNullValue())),
-            hasProperty("signature", is(notNullValue())),
-            hasProperty("subject", is(notNullValue())),
-            hasProperty("conditions", is(notNullValue())),
-            hasProperty("attributes", is(not(empty())))
-        ));
+        assertThat(
+            assertion, allOf(
+                where(Assertion::id, is(notNullValue())),
+                where(Assertion::issueInstant, is(notNullValue())),
+                where(Assertion::version, is("2.0")),
+                where(Assertion::issuer, is(notNullValue())),
+                where(Assertion::signature, is(notNullValue())),
+                where(Assertion::subject, is(notNullValue())),
+                where(Assertion::conditions, is(notNullValue())),
+                where(Assertion::attributes, is(not(empty())))
+            ));
 
         // Check presence of specific attributes
-        assertThat(assertion.getAttributes(), hasItem(
-            hasProperty("friendlyName", is("XSPA Subject"))
-        ));
+        assertThat(
+            assertion.attributes(), hasItem(
+                where(Assertion.Attribute::friendlyName, is("XSPA Subject"))
+            ));
     }
 }

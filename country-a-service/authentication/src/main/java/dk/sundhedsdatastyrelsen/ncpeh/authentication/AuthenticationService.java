@@ -53,9 +53,9 @@ public class AuthenticationService {
         map.put("XSPA_LOCALITY", "");
         map.put("XSPA_PERMISSIONS", "");
 
-        for (Assertion.Attribute attr : assertion.getAttributes()) {
-            String friendlyName = attr.getFriendlyName();
-            List<String> values = attr.getValues();
+        for (Assertion.Attribute attr : assertion.attributes()) {
+            String friendlyName = attr.friendlyName();
+            List<String> values = attr.values();
 
             if (friendlyName == null || values == null || values.isEmpty()) continue;
 
