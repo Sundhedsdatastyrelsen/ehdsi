@@ -3,8 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.tools;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Main class demonstrating the authentication workflow.
@@ -23,11 +22,11 @@ public class AuthenticationMain {
         log.info("  Patient ID: {}", patientId);
         log.info("  Target service: {}", targetService);
 
-        try {
-            File soapHeaderFile = new File("/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/soap-headers/SoapHeader.xml");
-            String soapheader = Files.readString(soapHeaderFile.toPath());
+        try (var is = AuthenticationMain.class.getClassLoader().getResourceAsStream("soap-headers/SoapHeader.xml")) {
+            assert is != null;
+            var soapHeader = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             AuthenticationService service = new AuthenticationService();
-            service.createSosiRequestBody(soapheader, patientId);
+            service.createSosiRequestBody(soapHeader, patientId);
 
         } catch (Exception e) {
             log.error("Authentication workflow failed", e);

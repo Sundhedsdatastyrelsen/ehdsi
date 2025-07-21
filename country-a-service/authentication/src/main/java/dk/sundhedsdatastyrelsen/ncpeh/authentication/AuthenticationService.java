@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ public class AuthenticationService {
         this.config = config;
     }
 
-    public String createSosiRequestBody(String soapHeader, String patientID) throws Exception {
+    public String createSosiRequestBody(String soapHeader, String patientID) throws AuthenticationException {
         SAMLSigner samlSigner = new SAMLSigner(config);
         Assertion ncpAssertion = SoapHeaderParser.parse(soapHeader);
         String countryCode = CertParser.parse(soapHeader);
@@ -90,19 +90,16 @@ public class AuthenticationService {
             .replace("'", "&apos;");
     }
 
-    private String fillTemplate(String classpathResource, Map<String, String> values) throws IOException {
-        // TODO: Using classloader to fetch the template, we can improve on this, we might not want the template in the classpath
-        InputStream in = AuthenticationService.class.getClassLoader().getResourceAsStream(classpathResource);
-        if (in == null) {
-            throw new IllegalArgumentException("Template not found in resources: " + classpathResource);
+    private String fillTemplate(URI templatePath, Map<String, String> values) throws AuthenticationException {
+        String result;
+        try (var is = templatePath.toURL().openStream()) {
+            result = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new AuthenticationException("Cannot open template file", e);
         }
-
-        String template = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-
-        for (Map.Entry<String, String> entry : values.entrySet()) {
-            template = template.replace("{{" + entry.getKey() + "}}", entry.getValue());
+        for (var entry : values.entrySet()) {
+            result = result.replace("{{" + entry.getKey() + "}}", entry.getValue());
         }
-
-        return template;
+        return result;
     }
 }

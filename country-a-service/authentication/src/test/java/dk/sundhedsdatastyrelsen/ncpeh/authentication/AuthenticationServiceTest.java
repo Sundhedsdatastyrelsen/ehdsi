@@ -9,13 +9,13 @@ import java.util.Scanner;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class AuthenticationServiceTest {
+class AuthenticationServiceTest {
 
     @Test
     void testCreateSosiRequestBody_withValidInputs_shouldSignSuccessfully() throws Exception {
         AuthenticationConfig config = new AuthenticationConfig(
-            "soap_template.xml",
-            "test-signer.p12",
+            this.getClass().getClassLoader().getResource("soap_template.xml").toURI(),
+            this.getClass().getClassLoader().getResource("test-signer.p12").toURI(),
             "test123",
             "test-signer"
         );
@@ -39,4 +39,3 @@ public class AuthenticationServiceTest {
         }
     }
 }
-

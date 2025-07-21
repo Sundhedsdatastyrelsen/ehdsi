@@ -13,7 +13,11 @@ class SAMLSignerTest {
     @Test
     void signsTemplateSuccessfully() throws Exception {
         // Load test config (adapt path or use constructor that allows overrides if needed)
-        AuthenticationConfig config = new AuthenticationConfig("soap_template.xml", "test-signer.p12", "test123", "test-signer");
+        AuthenticationConfig config = new AuthenticationConfig(
+            this.getClass().getClassLoader().getResource("soap_template.xml").toURI(),
+            this.getClass().getClassLoader().getResource("test-signer.p12").toURI(),
+            "test123",
+            "test-signer");
 
         // Load template from test resources
         InputStream is = getClass().getClassLoader().getResourceAsStream("soap_template.xml");

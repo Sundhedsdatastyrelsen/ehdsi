@@ -28,66 +28,69 @@ public class SoapHeaderParser {
     private SoapHeaderParser() {
     }
 
-    public static Assertion parse(String soapHeaderXml) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
-        var builder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
-        var doc = builder.parse(new ByteArrayInputStream(soapHeaderXml.getBytes(StandardCharsets.UTF_8)));
+    public static Assertion parse(String soapHeaderXml) throws AuthenticationException {
+        try {
+            var builder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
+            var doc = builder.parse(new ByteArrayInputStream(soapHeaderXml.getBytes(StandardCharsets.UTF_8)));
 
-        var xpath = xpath();
+            var xpath = xpath();
 
-        Node assertionNode = (Node) xpath.evaluate("//saml2:Assertion", doc, XPathConstants.NODE);
-        if (assertionNode == null) throw new IllegalArgumentException("No <saml2:Assertion> found");
+            var assertionEl = (Element) xpath.evaluate("//saml2:Assertion", doc, XPathConstants.NODE);
 
-        Element assertionEl = (Element) assertionNode;
+            var ab = Assertion.builder()
+                .id(assertionEl.getAttribute("ID"))
+                .issueInstant(assertionEl.getAttribute("IssueInstant"))
+                .version(assertionEl.getAttribute("Version"))
+                .issuer(xpath.evaluate("saml2:Issuer", assertionEl));
 
-        var ab = Assertion.builder()
-            .id(assertionEl.getAttribute("ID"))
-            .issueInstant(assertionEl.getAttribute("IssueInstant"))
-            .version(assertionEl.getAttribute("Version"))
-            .issuer(xpath.evaluate("saml2:Issuer", assertionNode));
-
-        // Signature
-        var signature = Assertion.Signature.builder()
-            .signatureMethodAlgorithm(xpath.evaluate("//ds:SignatureMethod/@Algorithm", doc))
-            .digestMethodAlgorithm(xpath.evaluate("//ds:DigestMethod/@Algorithm", doc))
-            .digestValue(xpath.evaluate("//ds:DigestValue", doc))
-            .signatureValue(xpath.evaluate("//ds:SignatureValue", doc))
-            .certificate(xpath.evaluate("//ds:X509Certificate", doc))
-            .build();
-        ab.signature(signature);
-
-        // Subject
-        var subject = Assertion.Subject.builder()
-            .nameIdFormat(xpath.evaluate("saml2:Subject/saml2:NameID/@Format", assertionNode))
-            .nameIdValue(xpath.evaluate("saml2:Subject/saml2:NameID", assertionNode))
-            .confirmationMethod(xpath.evaluate("saml2:Subject/saml2:SubjectConfirmation/@Method", assertionNode))
-            .certificate(xpath.evaluate("//ds:X509Certificate", doc)) // Use same certificate for subject
-            .build();
-        ab.subject(subject);
-
-        // Conditions
-        var conditions = Assertion.Conditions.builder()
-            .notBefore(xpath.evaluate("saml2:Conditions/@NotBefore", assertionNode))
-            .notOnOrAfter(xpath.evaluate("saml2:Conditions/@NotOnOrAfter", assertionNode))
-            .audience(xpath.evaluate("saml2:Conditions/saml2:AudienceRestriction/saml2:Audience", assertionNode))
-            .build();
-        ab.conditions(conditions);
-
-        var attributeNodes = (NodeList) xpath.evaluate("saml2:AttributeStatement/saml2:Attribute", assertionNode, XPathConstants.NODESET);
-
-        var attributes = new ArrayList<Assertion.Attribute>();
-        for (int i = 0; i < attributeNodes.getLength(); i++) {
-            var el = (Element) attributeNodes.item(i);
-            var attribute = Assertion.Attribute.builder()
-                .friendlyName(el.getAttribute("FriendlyName"))
-                .name(el.getAttribute("Name"))
-                .values(attributeValues(el))
+            // Signature
+            var signature = Assertion.Signature.builder()
+                .signatureMethodAlgorithm(xpath.evaluate("//ds:SignatureMethod/@Algorithm", doc))
+                .digestMethodAlgorithm(xpath.evaluate("//ds:DigestMethod/@Algorithm", doc))
+                .digestValue(xpath.evaluate("//ds:DigestValue", doc))
+                .signatureValue(xpath.evaluate("//ds:SignatureValue", doc))
+                .certificate(xpath.evaluate("//ds:X509Certificate", doc))
                 .build();
-            attributes.add(attribute);
+            ab.signature(signature);
+
+            // Subject
+            var subject = Assertion.Subject.builder()
+                .nameIdFormat(xpath.evaluate("saml2:Subject/saml2:NameID/@Format", assertionEl))
+                .nameIdValue(xpath.evaluate("saml2:Subject/saml2:NameID", assertionEl))
+                .confirmationMethod(xpath.evaluate("saml2:Subject/saml2:SubjectConfirmation/@Method", assertionEl))
+                .certificate(xpath.evaluate("//ds:X509Certificate", doc)) // Use same certificate for subject
+                .build();
+            ab.subject(subject);
+
+            // Conditions
+            var conditions = Assertion.Conditions.builder()
+                .notBefore(xpath.evaluate("saml2:Conditions/@NotBefore", assertionEl))
+                .notOnOrAfter(xpath.evaluate("saml2:Conditions/@NotOnOrAfter", assertionEl))
+                .audience(xpath.evaluate("saml2:Conditions/saml2:AudienceRestriction/saml2:Audience", assertionEl))
+                .build();
+            ab.conditions(conditions);
+
+            var attributeNodes = (NodeList) xpath.evaluate("saml2:AttributeStatement/saml2:Attribute", assertionEl, XPathConstants.NODESET);
+
+            var attributes = new ArrayList<Assertion.Attribute>();
+            for (int i = 0; i < attributeNodes.getLength(); i++) {
+                var el = (Element) attributeNodes.item(i);
+                var attribute = Assertion.Attribute.builder()
+                    .friendlyName(el.getAttribute("FriendlyName"))
+                    .name(el.getAttribute("Name"))
+                    .values(attributeValues(el))
+                    .build();
+                attributes.add(attribute);
+            }
+
+            ab.attributes(attributes);
+
+            return ab.build();
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("Could not create XML parser", e);
+        } catch (IOException | SAXException | XPathExpressionException e) {
+            throw new AuthenticationException("Error when parsing XML input", e);
         }
-
-        ab.attributes(attributes);
-
-        return ab.build();
     }
 
     private static List<String> attributeValues(Element attribute) {
@@ -115,6 +118,7 @@ public class SoapHeaderParser {
                 "ds", "http://www.w3.org/2000/09/xmldsig#"
 
             );
+
             @Override
             public String getNamespaceURI(String prefix) {
                 return namespaces.get(prefix);

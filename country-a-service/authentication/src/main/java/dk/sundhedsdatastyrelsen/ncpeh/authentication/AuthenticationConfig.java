@@ -1,19 +1,38 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import java.net.URI;
+import java.nio.file.Path;
+
 public record AuthenticationConfig(
-    String templatePath,
-    String keyStorePath,
+    URI templatePath,
+    URI keyStorePath,
     String keyStorePassword,
     String keyAlias
 ) {
 
-    // Default constructor - load from system properties or fall back
+    /**
+     * @deprecated
+     */
     public AuthenticationConfig() {
         this(
-            System.getProperty("TEMPLATE_PATH", "envelope/soap_template.xml"),
-            System.getProperty("KEYSTORE_PATH", "epps-sosi-sts-client.p12"),
+            Path.of(System.getProperty("TEMPLATE_PATH", "envelope/soap_template.xml")).toUri(),
+            Path.of(System.getProperty("KEYSTORE_PATH", "epps-sosi-sts-client.p12")).toUri(),
             getRequiredKeyStorePassword(),
             System.getProperty("KEYSTORE_ALIAS", "epps-sosi-sts-client")
+        );
+    }
+
+    public static AuthenticationConfig ofFilePaths(
+            String templatePath,
+            String keyStorePath,
+            String keyStorePassword,
+            String keyAlias
+    ) {
+        return new AuthenticationConfig(
+                Path.of(templatePath).toUri(),
+                Path.of(keyStorePath).toUri(),
+                keyStorePassword,
+                keyAlias
         );
     }
 

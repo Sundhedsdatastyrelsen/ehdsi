@@ -63,8 +63,7 @@ public class SAMLSignerTool {
         System.out.println("Loaded private key algorithm: " + privateKey.getAlgorithm());
 
         // Parse the input XML
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newDefaultNSInstance();
         DocumentBuilder builder = dbf.newDocumentBuilder();
         Document doc = builder.parse(new File(inputFile));
 
@@ -90,7 +89,7 @@ public class SAMLSignerTool {
         //cleanupSignatureOutput(doc);
 
         // Write the signed document
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Transformer transformer = TransformerFactory.newDefaultInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -342,4 +341,3 @@ public class SAMLSignerTool {
         return null;
     }
 }
-
