@@ -3,7 +3,7 @@ name: Nightly integration test
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 01 * * *"
+    - cron: "30 04 * * *"
 
 jobs:
   integration-tests:
