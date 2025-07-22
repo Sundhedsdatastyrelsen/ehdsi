@@ -1,10 +1,12 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,27 +18,35 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class AuthenticationService {
-    private final AuthenticationConfig config;
+    private static final String SOAP_TEMPLATE;
 
-    /// @deprecated
-    public AuthenticationService() {
-        this.config = new AuthenticationConfig();
+    static {
+        try (var is = AuthenticationService.class.getClassLoader().getResourceAsStream("envelope/soap_template.xml")) {
+            if (is == null) {
+                throw new IllegalStateException("Could not locate SOAP template on classpath");
+            }
+            SOAP_TEMPLATE = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    /// @deprecated
-    public AuthenticationService(AuthenticationConfig config) {
-        this.config = config;
-    }
+    private final X509Certificate certificate;
+    private final PrivateKey privateKey;
 
+    public AuthenticationService(@NonNull X509Certificate certificate, @NonNull PrivateKey privateKey) {
+        this.certificate = certificate;
+        this.privateKey = privateKey;
+    }
 
     public String createSosiRequestBody(String soapHeader, String patientID) throws AuthenticationException {
-        var samlSigner = new SAMLSigner(config);
+        var samlSigner = new SAMLSigner(certificate, privateKey);
         var soapHeaderDoc = XmlUtils.parse(soapHeader);
         var ncpAssertion = SoapHeader.extractAssertion(soapHeaderDoc);
         var cert = CertificateUtils.fromBase64(ncpAssertion.signature().certificate());
         var countryCode = CertificateUtils.extractCountryCode(cert);
         var bootstrapToken = AssertionTransformer.transformToNcpBst(ncpAssertion, patientID, countryCode);
-        var requestTemplate = fillTemplate(config.templatePath(), buildTemplateMapFromAssertion(bootstrapToken));
+        var requestTemplate = fillTemplate(buildTemplateMapFromAssertion(bootstrapToken));
         return samlSigner.sign(requestTemplate);
     }
 
@@ -94,13 +104,8 @@ public class AuthenticationService {
                 .replace("'", "&apos;");
     }
 
-    private String fillTemplate(URI templatePath, Map<String, String> values) throws AuthenticationException {
-        String result;
-        try (var is = templatePath.toURL().openStream()) {
-            result = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new AuthenticationException("Cannot open template file", e);
-        }
+    private String fillTemplate(Map<String, String> values) throws AuthenticationException {
+        var result = SOAP_TEMPLATE;
         for (var entry : values.entrySet()) {
             result = result.replace("{{" + entry.getKey() + "}}", entry.getValue());
         }

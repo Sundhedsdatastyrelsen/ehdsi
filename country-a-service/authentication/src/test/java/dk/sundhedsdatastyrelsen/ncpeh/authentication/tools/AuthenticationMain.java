@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication.tools;
 
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -25,9 +24,8 @@ public class AuthenticationMain {
         try (var is = AuthenticationMain.class.getClassLoader().getResourceAsStream("SoapHeader.xml")) {
             assert is != null;
             var soapHeader = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            AuthenticationService service = new AuthenticationService();
-            service.createSosiRequestBody(soapHeader, patientId);
-
+//            AuthenticationService service = new AuthenticationService();
+//            service.createSosiRequestBody(soapHeader, patientId);
         } catch (Exception e) {
             log.error("Authentication workflow failed", e);
             System.exit(1);

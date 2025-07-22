@@ -9,20 +9,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 class AuthenticationServiceTest {
+    CertificateUtils.CertificateWithPrivateKey testCert() throws AuthenticationException {
+        var keystore = this.getClass().getClassLoader().getResourceAsStream("test-signer.p12");
+        assertThat(keystore, notNullValue());
+        return CertificateUtils.loadCertificateFromKeystore(keystore, "test-signer", "test123");
+    }
 
     @Test
     void testCreateSosiRequestBody_withValidInputs_shouldSignSuccessfully() throws Exception {
-        AuthenticationConfig config = new AuthenticationConfig(
-            this.getClass().getClassLoader().getResource("soap_template.xml").toURI(),
-            this.getClass().getClassLoader().getResource("test-signer.p12").toURI(),
-            "test123",
-            "test-signer"
-        );
-
-        AuthenticationService service = new AuthenticationService(config);
-
-        String soapHeader = readResourceFile("SoapHeader.xml");
-        String signedXml = service.createSosiRequestBody(soapHeader, "1234567890");
+        var testCert = testCert();
+        var service = new AuthenticationService(testCert.certificate(), testCert.privateKey());
+        var soapHeader = readResourceFile("SoapHeader.xml");
+        var signedXml = service.createSosiRequestBody(soapHeader, "1234567890");
 
         assertThat(signedXml, allOf(
             containsString("ds:Signature"),

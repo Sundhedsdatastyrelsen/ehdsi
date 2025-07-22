@@ -13,10 +13,10 @@ class AssertionTransformerTest {
     @Test
     void shouldTransformToNcpBstWithExpectedFields() {
         // Given
-        String patientId = "1234567890";
-        String countryCode = "DK";
+        var patientId = "1234567890";
+        var countryCode = "DK";
 
-        Assertion input = Assertion.builder()
+        var input = Assertion.builder()
             .id("test-id")
             .issueInstant("2025-07-13T12:00:00Z")
             .version("2.0")
@@ -47,7 +47,7 @@ class AssertionTransformerTest {
             .build();
 
         // When
-        Assertion result = AssertionTransformer.transformToNcpBst(input, patientId, countryCode);
+        var result = AssertionTransformer.transformToNcpBst(input, patientId, countryCode);
 
         // Then
         assertThat(result.issuer(), is("https://t-ncp.sundhedsdatastyrelsen.dk"));
