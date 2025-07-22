@@ -30,13 +30,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -59,48 +55,6 @@ public class SAMLSigner {
     public SAMLSigner(@NonNull X509Certificate certificate, @NonNull PrivateKey privateKey) {
         this.certificate = certificate;
         this.privateKey = privateKey;
-    }
-
-    public static SAMLSigner fromAuthConfig(AuthenticationConfig config) throws AuthenticationException {
-        KeyStore ks;
-        try (var is = config.keyStorePath().toURL().openStream()) {
-            ks = KeyStore.getInstance("PKCS12");
-            ks.load(is, config.keyStorePassword().toCharArray());
-
-            var privateKey = (PrivateKey) ks.getKey(config.keyAlias(), config.keyStorePassword().toCharArray());
-            var certificate = (X509Certificate) ks.getCertificate(config.keyAlias());
-            if (privateKey == null || certificate == null) {
-                throw new AuthenticationException("Failed to load key or certificate from keystore");
-            }
-            return new SAMLSigner(certificate, privateKey);
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException |
-                 UnrecoverableKeyException e) {
-            if (e instanceof UnrecoverableKeyException || e.getCause() instanceof UnrecoverableKeyException) {
-                throw new AuthenticationException("Invalid password for keystore", e);
-            }
-            throw new AuthenticationException("Cannot load keystore: " + config.keyStorePath(), e);
-        }
-    }
-
-    public SAMLSigner(AuthenticationConfig config) throws AuthenticationException {
-        KeyStore ks;
-        try (var is = config.keyStorePath().toURL().openStream()) {
-            ks = KeyStore.getInstance("PKCS12");
-            ks.load(is, config.keyStorePassword().toCharArray());
-
-            this.privateKey = (PrivateKey) ks.getKey(config.keyAlias(), config.keyStorePassword().toCharArray());
-            this.certificate = (X509Certificate) ks.getCertificate(config.keyAlias());
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException |
-                 UnrecoverableKeyException e) {
-            if (e instanceof UnrecoverableKeyException || e.getCause() instanceof UnrecoverableKeyException) {
-                throw new AuthenticationException("Invalid password for keystore", e);
-            }
-            throw new AuthenticationException("Cannot load keystore: " + config.keyStorePath(), e);
-        }
-
-        if (this.privateKey == null || this.certificate == null) {
-            throw new AuthenticationException("Failed to load key or certificate from keystore");
-        }
     }
 
     public String sign(String filledXml) throws AuthenticationException {

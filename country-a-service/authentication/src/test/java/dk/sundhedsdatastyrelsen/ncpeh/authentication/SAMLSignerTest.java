@@ -2,7 +2,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,23 +11,16 @@ class SAMLSignerTest {
 
     @Test
     void signsTemplateSuccessfully() throws Exception {
-        // Load test config (adapt path or use constructor that allows overrides if needed)
-        AuthenticationConfig config = new AuthenticationConfig(
-            this.getClass().getClassLoader().getResource("soap_template.xml").toURI(),
-            this.getClass().getClassLoader().getResource("test-signer.p12").toURI(),
-            "test123",
-            "test-signer");
-
         // Load template from test resources
-        InputStream is = getClass().getClassLoader().getResourceAsStream("soap_template.xml");
+        var is = getClass().getClassLoader().getResourceAsStream("soap_template.xml");
         assertThat("soap_template.xml should be on the test classpath", is, is(notNullValue()));
-
-        String template = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        var template = new String(is.readAllBytes(), StandardCharsets.UTF_8);
         assertThat("Template must not be empty", template, is(not(emptyString())));
 
+        var testCert = AuthenticationServiceTest.testCert();
         // Sign the template
-        SAMLSigner signer = new SAMLSigner(config);
-        String signedXml = signer.sign(template);
+        var signer = new SAMLSigner(testCert.certificate(), testCert.privateKey());
+        var signedXml = signer.sign(template);
 
         // Basic assertion
         assertThat(

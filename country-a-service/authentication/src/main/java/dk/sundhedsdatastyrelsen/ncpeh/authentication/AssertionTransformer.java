@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AssertionTransformer {
+    private AssertionTransformer() {
+    }
+
     private static final Set<String> mandatoryAttributes = Set.of(
         "XSPA Subject",
         "XSPA Role",
@@ -51,7 +54,7 @@ public class AssertionTransformer {
         List<Assertion.Attribute> attributes = new java.util.ArrayList<>();
 
         // Map required attributes from original assertion
-        for (Assertion.Attribute attr : originalAssertion.attributes()) {
+        for (var attr : originalAssertion.attributes()) {
             // Only include mandatory attributes for minimal mode
             if (mandatoryAttributes.contains(attr.friendlyName())) {
                 List<String> values = attr.values();

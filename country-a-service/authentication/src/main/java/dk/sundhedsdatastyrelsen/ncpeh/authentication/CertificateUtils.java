@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.naming.InvalidNameException;
@@ -29,8 +30,8 @@ public class CertificateUtils {
     }
 
     public record CertificateWithPrivateKey(
-        X509Certificate certificate,
-        PrivateKey privateKey
+        @NonNull X509Certificate certificate,
+        @NonNull PrivateKey privateKey
     ) {
     }
 
@@ -43,7 +44,7 @@ public class CertificateUtils {
      * @param password password for JKS and certificate pair
      * @throws AuthenticationException if the keystore cannot be loaded
      */
-    public static CertificateWithPrivateKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
+    @NonNull public static CertificateWithPrivateKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
         try {
             var ks = KeyStore.getInstance("PKCS12");
             ks.load(is, password.toCharArray());
@@ -60,8 +61,8 @@ public class CertificateUtils {
         }
     }
 
-    public static CertificateWithPrivateKey loadCertificateFromKeystore(Path keystoreUri, String keyAlias, String password) throws AuthenticationException {
-        try (var is = new BufferedInputStream(Files.newInputStream(keystoreUri))) {
+    public static CertificateWithPrivateKey loadCertificateFromKeystore(Path keystore, String keyAlias, String password) throws AuthenticationException {
+        try (var is = new BufferedInputStream(Files.newInputStream(keystore))) {
             return loadCertificateFromKeystore(is, keyAlias, password);
         } catch (IOException e) {
             throw new AuthenticationException("Could not open keystore URI", e);

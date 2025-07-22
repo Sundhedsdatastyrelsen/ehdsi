@@ -33,4 +33,9 @@ class FunMatcher<T, U> extends TypeSafeMatcher<T> {
     public void describeTo(Description description) {
         description.appendText("object that matches ").appendDescriptionOf(matcher);
     }
+
+    @Override
+    public void describeMismatchSafely(T item, Description mismatchDescription) {
+        matcher.describeMismatch(f.apply(item), mismatchDescription);
+    }
 }
