@@ -14,7 +14,7 @@ import java.security.cert.X509Certificate;
 public class TokenValidator {
 
     private static final String P12_PATH = "/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/epps-sosi-sts-client.p12";
-    private static final String P12_PASSWORD = "R_d9ZzEQ93ry"; // Replace with real password
+    private static final String P12_PASSWORD = "";
 
     public static void main(String[] args) throws Exception {
         System.setProperty("org.jcp.xml.dsig.secureValidation", "false");
@@ -88,4 +88,3 @@ public class TokenValidator {
         return null;
     }
 }
-

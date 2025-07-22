@@ -20,7 +20,7 @@ class FunMatcher<T, U> extends TypeSafeMatcher<T> {
     }
 
     public static <T, U> Matcher<T> where(Function<T, U> f, Matcher<? super U> m) {
-        return new FunMatcher<T, U>(f, m);
+        return new FunMatcher<>(f, m);
     }
 
     @Override

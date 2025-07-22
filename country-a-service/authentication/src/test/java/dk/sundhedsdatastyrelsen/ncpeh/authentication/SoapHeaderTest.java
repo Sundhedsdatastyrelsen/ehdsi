@@ -2,25 +2,21 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
 import static dk.sundhedsdatastyrelsen.ncpeh.authentication.FunMatcher.where;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-class SoapHeaderParserTest {
+class SoapHeaderTest {
 
     @Test
     void shouldParseAssertionFromSoapHeader() throws Exception {
         // Load the test SOAP header from resources
-        InputStream in = getClass().getClassLoader().getResourceAsStream("soap-headers/SoapHeader.xml");
-        assertThat("SOAP header file should be present in test resources", in, is(notNullValue()));
-
-        String soapXml = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        var is = getClass().getClassLoader().getResourceAsStream("SoapHeader.xml");
+        assertThat("SOAP header file should be present in test resources", is, is(notNullValue()));
+        var soapHeader = XmlUtils.parse(is);
 
         // Parse the assertion
-        Assertion assertion = SoapHeaderParser.parse(soapXml);
+        var assertion = SoapHeader.extractAssertion(soapHeader);
 
         // Verify some key fields
         assertThat(

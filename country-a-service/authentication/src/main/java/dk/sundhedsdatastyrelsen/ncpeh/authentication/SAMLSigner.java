@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,6 +55,32 @@ public class SAMLSigner {
 
     private final PrivateKey privateKey;
     private final X509Certificate certificate;
+
+    public SAMLSigner(@NonNull X509Certificate certificate, @NonNull PrivateKey privateKey) {
+        this.certificate = certificate;
+        this.privateKey = privateKey;
+    }
+
+    public static SAMLSigner fromAuthConfig(AuthenticationConfig config) throws AuthenticationException {
+        KeyStore ks;
+        try (var is = config.keyStorePath().toURL().openStream()) {
+            ks = KeyStore.getInstance("PKCS12");
+            ks.load(is, config.keyStorePassword().toCharArray());
+
+            var privateKey = (PrivateKey) ks.getKey(config.keyAlias(), config.keyStorePassword().toCharArray());
+            var certificate = (X509Certificate) ks.getCertificate(config.keyAlias());
+            if (privateKey == null || certificate == null) {
+                throw new AuthenticationException("Failed to load key or certificate from keystore");
+            }
+            return new SAMLSigner(certificate, privateKey);
+        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException |
+                 UnrecoverableKeyException e) {
+            if (e instanceof UnrecoverableKeyException || e.getCause() instanceof UnrecoverableKeyException) {
+                throw new AuthenticationException("Invalid password for keystore", e);
+            }
+            throw new AuthenticationException("Cannot load keystore: " + config.keyStorePath(), e);
+        }
+    }
 
     public SAMLSigner(AuthenticationConfig config) throws AuthenticationException {
         KeyStore ks;

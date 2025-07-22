@@ -22,7 +22,7 @@ public class AuthenticationMain {
         log.info("  Patient ID: {}", patientId);
         log.info("  Target service: {}", targetService);
 
-        try (var is = AuthenticationMain.class.getClassLoader().getResourceAsStream("soap-headers/SoapHeader.xml")) {
+        try (var is = AuthenticationMain.class.getClassLoader().getResourceAsStream("SoapHeader.xml")) {
             assert is != null;
             var soapHeader = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             AuthenticationService service = new AuthenticationService();

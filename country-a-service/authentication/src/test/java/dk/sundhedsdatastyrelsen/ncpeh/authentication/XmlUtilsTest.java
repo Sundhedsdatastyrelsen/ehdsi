@@ -1,0 +1,32 @@
+package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+class XmlUtilsTest {
+    @Test
+    void parseExample() throws Exception {
+        var example = getClass().getClassLoader().getResourceAsStream("SoapHeader.xml");
+        assertThat(example, is(notNullValue()));
+
+        var xml = XmlUtils.parse(example);
+
+        assertThat(xml.getFirstChild().getLocalName(), is("Header"));
+    }
+
+    @Test
+    void parseString() throws Exception {
+        var goodXml = "<Envelope><GoodXml/></Envelope>";
+        var result = XmlUtils.parse(goodXml);
+        assertThat(result.getFirstChild().getNodeName(), is("Envelope"));
+    }
+
+    @Test
+    void shouldFailOnBadXml() {
+        var brokenSoap = "<Envelope><BadXml></Envelope>";
+        Assertions.assertThrows(AuthenticationException.class, () -> XmlUtils.parse(brokenSoap));
+    }
+}

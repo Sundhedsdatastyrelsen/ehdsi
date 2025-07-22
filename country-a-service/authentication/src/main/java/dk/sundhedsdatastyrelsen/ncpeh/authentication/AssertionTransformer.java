@@ -1,8 +1,20 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import java.util.List;
+import java.util.Set;
 
 public class AssertionTransformer {
+    private static final Set<String> mandatoryAttributes = Set.of(
+        "XSPA Subject",
+        "XSPA Role",
+        "Hl7 Permissions",
+        "EHDSI OnBehalfOf",
+        "XSPA Organization",
+        "XSPA Organization ID",
+        "eHealth DSI Healthcare Facility Type",
+        "XSPA Purpose Of Use",
+        "XSPA Locality"
+    );
 
     /**
      * Transforms an assertion to NCP-BST format with the specified patient ID
@@ -41,7 +53,7 @@ public class AssertionTransformer {
         // Map required attributes from original assertion
         for (Assertion.Attribute attr : originalAssertion.attributes()) {
             // Only include mandatory attributes for minimal mode
-            if (isMandatoryAttribute(attr.friendlyName())) {
+            if (mandatoryAttributes.contains(attr.friendlyName())) {
                 List<String> values = attr.values();
 
                 // TODO: Figure out how to determine role and purpose of use from assertion in soapheader
@@ -50,7 +62,7 @@ public class AssertionTransformer {
                     values = List.of("<Role xmlns=\"urn:hl7-org:v3\" code=\"221\" codeSystem=\"2.16.840.1.113883.2.9.6.2.7\" " +
                         "codeSystemName=\"ISCO\" displayName=\"Medical Doctors\" xsi:type=\"CE\"/>");
                 } else if ("XSPA Purpose Of Use".equals(attr.friendlyName())) {
-                    values = List.of( "<PurposeOfUse xmlns=\"urn:hl7-org:v3\" code=\"TREATMENT\" " +
+                    values = List.of("<PurposeOfUse xmlns=\"urn:hl7-org:v3\" code=\"TREATMENT\" " +
                         "codeSystem=\"urn:oasis:names:tc:xspa:1.0\" xsi:type=\"CE\"/>");
                 }
 
@@ -96,19 +108,5 @@ public class AssertionTransformer {
             .build());
 
         return attributes;
-    }
-
-    private static boolean isMandatoryAttribute(String friendlyName) {
-        return friendlyName != null && (
-            friendlyName.equals("XSPA Subject") ||
-            friendlyName.equals("XSPA Role") ||
-            friendlyName.equals("Hl7 Permissions") ||
-            friendlyName.equals("EHDSI OnBehalfOf") ||
-            friendlyName.equals("XSPA Organization") ||
-            friendlyName.equals("XSPA Organization ID") ||
-            friendlyName.equals("eHealth DSI Healthcare Facility Type") ||
-            friendlyName.equals("XSPA Purpose Of Use") ||
-            friendlyName.equals("XSPA Locality")
-        );
     }
 }
