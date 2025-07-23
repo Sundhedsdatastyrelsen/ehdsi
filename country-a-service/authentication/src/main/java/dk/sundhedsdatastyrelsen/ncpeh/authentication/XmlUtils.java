@@ -46,17 +46,14 @@ public class XmlUtils {
         var xPathFactory = XPathFactory.newInstance();
         var xPath = xPathFactory.newXPath();
         xPath.setNamespaceContext(new NamespaceContext() {
-            @SuppressWarnings("java:S116")
-            private final Map<String, String> _namespaces = namespaces;
-
             @Override
             public String getNamespaceURI(String prefix) {
-                return _namespaces.get(prefix);
+                return namespaces.get(prefix);
             }
 
             @Override
             public String getPrefix(String uri) {
-                for (var entry : _namespaces.entrySet()) {
+                for (var entry : namespaces.entrySet()) {
                     if (entry.getValue().equals(uri)) {
                         return entry.getKey();
                     }
@@ -66,7 +63,7 @@ public class XmlUtils {
 
             @Override
             public Iterator<String> getPrefixes(String uri) {
-                return _namespaces.entrySet().stream()
+                return namespaces.entrySet().stream()
                     .filter(entry -> entry.getValue().equals(uri))
                     .map(Map.Entry::getKey)
                     .iterator();
