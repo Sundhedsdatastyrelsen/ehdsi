@@ -20,14 +20,9 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -45,10 +40,6 @@ import java.util.Set;
 
 @Slf4j
 public class SAMLSigner {
-    private static final String NS_WSS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
-    private static final String NS_SAML2 = "urn:oasis:names:tc:SAML:2.0:assertion";
-    private static final String NS_WSS_SECEXT = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
-
     private final PrivateKey privateKey;
     private final X509Certificate certificate;
 
@@ -69,7 +60,7 @@ public class SAMLSigner {
             signSamlAssertion(doc, privateKey, certificate);
             signSoapHeaderElements(doc, privateKey, certificate);
 
-            return writeDocumentToString(doc);
+            return XmlUtils.writeDocumentToString(doc);
         } catch (IOException | ParserConfigurationException | TransformerException e) {
             // Should never happen.
             // - IOException: because we read from string
@@ -79,17 +70,6 @@ public class SAMLSigner {
         } catch (SAXException e) {
             throw new AuthenticationException("XML parse error", e);
         }
-    }
-
-    private static String writeDocumentToString(Document doc) throws TransformerException {
-        var transformer = TransformerFactory.newDefaultInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        var writer = new StringWriter();
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
-        return writer.toString();
     }
 
     // Can be removed if we update the template at a later stage
@@ -114,14 +94,14 @@ public class SAMLSigner {
             .format(DateTimeFormatter.ISO_INSTANT);
 
         // Update SOAP header timestamp
-        var timestampNodes = doc.getElementsByTagNameNS(NS_WSS, "Timestamp");
+        var timestampNodes = doc.getElementsByTagNameNS(XmlNamespaces.WSU.uri(), "Timestamp");
 
         if (timestampNodes.getLength() > 0) {
             var timestampElement = (Element) timestampNodes.item(0);
 
             // Find the Created element
             var createdNodes = timestampElement.getElementsByTagNameNS(
-                NS_WSS,
+                XmlNamespaces.WSU.uri(),
                 "Created"
             );
 
@@ -132,14 +112,14 @@ public class SAMLSigner {
         }
 
         // Update SAML Assertion timestamps
-        var assertion = (Element) doc.getElementsByTagNameNS(NS_SAML2, "Assertion")
+        var assertion = (Element) doc.getElementsByTagNameNS(XmlNamespaces.SAML.uri(), "Assertion")
             .item(0);
         if (assertion != null) {
             // Update IssueInstant
             assertion.setAttribute("IssueInstant", currentTime);
 
             // Update Conditions
-            var conditionsNodes = assertion.getElementsByTagNameNS(NS_SAML2, "Conditions");
+            var conditionsNodes = assertion.getElementsByTagNameNS(XmlNamespaces.SAML.uri(), "Conditions");
             if (conditionsNodes.getLength() > 0) {
                 var conditionsElement = (Element) conditionsNodes.item(0);
                 conditionsElement.setAttribute("NotBefore", currentTime);
@@ -147,7 +127,7 @@ public class SAMLSigner {
             }
 
             // Update AuthnStatement
-            var authnStatementNodes = assertion.getElementsByTagNameNS(NS_SAML2, "AuthnStatement");
+            var authnStatementNodes = assertion.getElementsByTagNameNS(XmlNamespaces.SAML.uri(), "AuthnStatement");
             if (authnStatementNodes.getLength() > 0) {
                 var authnStatementElement = (Element) authnStatementNodes.item(0);
                 authnStatementElement.setAttribute("AuthnInstant", currentTime);
@@ -181,7 +161,7 @@ public class SAMLSigner {
         for (var id : idsToSign) {
             var el = findElementById(doc, id);
             if (el != null) {
-                el.setIdAttributeNS(NS_WSS, "Id", true);
+                el.setIdAttributeNS(XmlNamespaces.WSU.uri(), "Id", true);
             } else {
                 log.warn("Element with wsu:Id '{}' not found", id);
             }
@@ -193,7 +173,7 @@ public class SAMLSigner {
         Element assertion = null;
 
         // First try with namespace
-        var assertionNodes = doc.getElementsByTagNameNS(NS_SAML2, "Assertion");
+        var assertionNodes = doc.getElementsByTagNameNS(XmlNamespaces.SAML.uri(), "Assertion");
         if (assertionNodes.getLength() > 0) {
             assertion = (Element) assertionNodes.item(0);
         } else {
@@ -247,7 +227,7 @@ public class SAMLSigner {
             );
 
             // Find the Issuer element to insert signature after it
-            var issuer = (Element) assertion.getElementsByTagNameNS(NS_SAML2, "Issuer")
+            var issuer = (Element) assertion.getElementsByTagNameNS(XmlNamespaces.SAML.uri(), "Issuer")
                 .item(0);
 
             // Create signature context
@@ -299,7 +279,7 @@ public class SAMLSigner {
                 )
             );
             var securityElement = (Element) doc.getElementsByTagNameNS(
-                NS_WSS_SECEXT,
+                XmlNamespaces.WSSE.uri(),
                 "Security"
             ).item(0);
             if (securityElement == null) {
@@ -312,7 +292,7 @@ public class SAMLSigner {
             for (var id : idsToSign) {
                 var el = findElementById(doc, id);
                 if (el != null) {
-                    signContext.setIdAttributeNS(el, NS_WSS, "Id");
+                    signContext.setIdAttributeNS(el, XmlNamespaces.WSU.uri(), "Id");
                 }
             }
 
@@ -336,8 +316,8 @@ public class SAMLSigner {
         var all = doc.getElementsByTagNameNS("*", "*");
         for (var i = 0; i < all.getLength(); i++) {
             var el = (Element) all.item(i);
-            if (el.hasAttributeNS(NS_WSS, "Id") &&
-                el.getAttributeNS(NS_WSS, "Id")
+            if (el.hasAttributeNS(XmlNamespaces.WSU.uri(), "Id") &&
+                el.getAttributeNS(XmlNamespaces.WSU.uri(), "Id")
                     .equals(id)) {
                 return el;
             }
