@@ -90,23 +90,34 @@ public class XmlUtils {
         return writer.toString();
     }
 
-    public static Element appendChild(Document parent, XmlNamespaces nsPrefix, String name) {
-        var child = parent.createElementNS(nsPrefix.uri(), name);
-        child.setPrefix(nsPrefix.prefix());
+    public static String writeDocumentToStringPretty(Document doc) throws TransformerException {
+        var transformer = TransformerFactory.newDefaultInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        var writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        return writer.toString();
+    }
+
+    public static Element appendChild(Document parent, XmlNamespaces ns, String name) {
+        var child = parent.createElementNS(ns.uri(), name);
+        child.setPrefix(ns.prefix());
         parent.appendChild(child);
         return child;
     }
 
-    public static Element appendChild(Element parent, XmlNamespaces nsPrefix, String name) {
-        var child = parent.getOwnerDocument().createElementNS(nsPrefix.uri(), name);
-        child.setPrefix(nsPrefix.prefix());
+    public static Element appendChild(Element parent, XmlNamespaces ns, String name) {
+        var child = parent.getOwnerDocument().createElementNS(ns.uri(), name);
+        child.setPrefix(ns.prefix());
         parent.appendChild(child);
         return child;
     }
 
-    public static Element appendChild(Element parent, XmlNamespaces nsPrefix, String name, String textValue) {
-        var child = parent.getOwnerDocument().createElementNS(nsPrefix.uri(), name);
-        child.setPrefix(nsPrefix.prefix());
+    public static Element appendChild(Element parent, XmlNamespaces ns, String name, String textValue) {
+        var child = parent.getOwnerDocument().createElementNS(ns.uri(), name);
+        child.setPrefix(ns.prefix());
         child.setTextContent(textValue);
         parent.appendChild(child);
         return child;

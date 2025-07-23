@@ -1,13 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
-import lombok.NonNull;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -16,29 +14,21 @@ import java.util.Base64;
 import java.util.UUID;
 
 public class BootstrapToken {
-    private static final String ISSUER_URI = "https://ehdsi-idp.testkald.nspop.dk";
+    private static Clock clock = Clock.systemUTC();
 
-    private final X509Certificate certificate;
-    private final PrivateKey privateKey;
-    private final Clock clock;
+    private BootstrapToken() {}
 
-    public BootstrapToken(@NonNull X509Certificate certificate, PrivateKey privateKey, @NonNull Clock clock) {
-        this.certificate = certificate;
-        this.privateKey = privateKey;
-        this.clock = clock;
-    }
-
-    public BootstrapToken(@NonNull X509Certificate certificate, PrivateKey privateKey) {
-        this(certificate, privateKey, Clock.systemUTC());
+    /**
+     * Set clock. Only for test use!
+     */
+    protected static void setClock(Clock clock) {
+        BootstrapToken.clock = clock;
     }
 
     /**
-     * Create a OIO SAML bootstrap token, meant for exchanging with an STS to get an IDWS token.
-     *
-     * @param audience where do we want access (e.g. "https://fmk")
-     * @param nameId   ??? TODO
+     * Create a OIO SAML bootstrap token XML element, meant for exchanging with an STS to get an IDWS token.
      */
-    public Element createBootstrapToken(String audience, String nameId) throws ParserConfigurationException, CertificateEncodingException {
+    public static Element createBootstrapToken(BootstrapTokenParams bst) throws ParserConfigurationException, CertificateEncodingException {
         // we don't want higher resolution than seconds
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
 
@@ -53,17 +43,17 @@ public class BootstrapToken {
         assertion.setAttribute("ID", assertionId);
         assertion.setIdAttribute("ID", true);
 
-        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", ISSUER_URI);
+        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", bst.issuerUri());
         var subject = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Subject");
 
-        var nameID = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "NameID", nameId);
-        nameID.setAttribute("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        var nameID = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "NameID", bst.nameId());
+        nameID.setAttribute("Format", bst.nameIdFormat());
 
         var subjectConfirmation = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "SubjectConfirmation");
         subjectConfirmation.setAttribute("Method", "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key");
         var subjectConfirmationData = XmlUtils.appendChild(subjectConfirmation, XmlNamespaces.SAML, "SubjectConfirmationData");
         var keyInfo = XmlUtils.appendChild(subjectConfirmationData, XmlNamespaces.DS, "KeyInfo");
-        var certB64 = Base64.getEncoder().encodeToString(certificate.getEncoded());
+        var certB64 = Base64.getEncoder().encodeToString(bst.certificate().getEncoded());
         XmlUtils.appendChild(
             XmlUtils.appendChild(keyInfo, XmlNamespaces.DS, "X509Data"),
             XmlNamespaces.DS,
@@ -72,19 +62,47 @@ public class BootstrapToken {
 
         var conditions = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Conditions");
         conditions.setAttribute(
-            "NotBefore", DateTimeFormatter
-                .ISO_INSTANT.format(now));
+            "NotBefore", DateTimeFormatter.ISO_INSTANT.format(now));
         conditions.setAttribute(
-            "NotOnOrAfter", DateTimeFormatter
-                .ISO_INSTANT.format(now.plus(2, ChronoUnit.HOURS)));
+            "NotOnOrAfter", DateTimeFormatter.ISO_INSTANT.format(now.plus(2, ChronoUnit.HOURS)));
 
         XmlUtils.appendChild(
             XmlUtils.appendChild(conditions, XmlNamespaces.SAML, "AudienceRestriction"),
             XmlNamespaces.SAML,
             "Audience",
-            audience);
+            bst.audience());
+
+        var authnStatement = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "AuthnStatement");
+        authnStatement.setAttribute("AuthnInstant", DateTimeFormatter.ISO_INSTANT.format(now));
+        authnStatement.setAttribute("SessionIndex", assertionId);
+        XmlUtils.appendChild(
+            XmlUtils.appendChild(authnStatement, XmlNamespaces.SAML, "AuthnContext"),
+            XmlNamespaces.SAML,
+            "AuthnContextClassRef",
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:X509");
+
+        var attributeStatement = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "AttributeStatement");
+        for (var attribute : bst.attributes()) {
+            if (attribute.values().isEmpty()) {
+                continue;
+            }
+            var attrEl = XmlUtils.appendChild(attributeStatement, XmlNamespaces.SAML, "Attribute");
+            attrEl.setAttribute("FriendlyName", attribute.friendlyName());
+            attrEl.setAttribute("Name", attribute.name());
+            for (var v : attribute.values()) {
+                var value = XmlUtils.appendChild(attrEl, XmlNamespaces.SAML, "AttributeValue");
+                switch (v) {
+                    case BootstrapTokenParams.AttributeValue.XmlNode(var node) -> value.appendChild(node);
+                    case BootstrapTokenParams.AttributeValue.Text(var text) -> value.setTextContent(text);
+                }
+            }
+        }
 
         return assertion;
+    }
+
+    public static Element createBootstrapExchangeRequest(BootstrapTokenParams bst) throws CertificateEncodingException, ParserConfigurationException {
+        return createBootstrapExchangeRequest(bst.audience(), createBootstrapToken(bst));
     }
 
     /**
@@ -93,7 +111,7 @@ public class BootstrapToken {
      * @param audience       where do we want access (e.g. "https://fmk")
      * @param bootstrapToken the bootstrap token
      */
-    public Element createBootstrapExchangeRequest(String audience, Element bootstrapToken)
+    public static Element createBootstrapExchangeRequest(String audience, Element bootstrapToken)
         throws ParserConfigurationException {
 
         var dbf = DocumentBuilderFactory.newDefaultNSInstance();
@@ -147,5 +165,9 @@ public class BootstrapToken {
             XmlNamespaces.WSA, "Address", audience);
 
         return envelope;
+    }
+
+    public static Document signRequest(Element soapEnvelope) {
+        throw new IllegalArgumentException("not implemented yet");
     }
 }

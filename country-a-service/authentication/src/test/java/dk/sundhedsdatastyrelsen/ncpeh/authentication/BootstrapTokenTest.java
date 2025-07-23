@@ -15,11 +15,14 @@ class BootstrapTokenTest {
 
     @Test
     void canGenerateTokenAndTokenRequest() throws Exception {
-        var sut = new BootstrapToken(testCert().certificate(), null);
-
-        var bst = sut.createBootstrapToken("https://fmk", "1234567890");
-        var bstRequest = sut.createBootstrapExchangeRequest("https://fmk", bst);
-        var xml = XmlUtils.writeDocumentToString(bstRequest.getOwnerDocument());
+        var bstInput = BootstrapTokenParams.builderWithDefaults()
+            .certificate(testCert().certificate())
+            .audience("https://fmk")
+            .nameId("1234567890")
+            .build();
+        var bst = BootstrapToken.createBootstrapToken(bstInput);
+        var bstRequest = BootstrapToken.createBootstrapExchangeRequest("https://fmk", bst);
+        var xml = XmlUtils.writeDocumentToStringPretty(bstRequest.getOwnerDocument());
 
         assertThat(xml, stringContainsInOrder(
             "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",
@@ -27,5 +30,8 @@ class BootstrapTokenTest {
             "<saml:Audience>https://fmk</saml:Audience>"
         ));
         System.out.println(xml);
+
+        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapToken.createBootstrapExchangeRequest(bstInput).getOwnerDocument());
+        assertThat(xml2, hasLength(xml.length()));
     }
 }
