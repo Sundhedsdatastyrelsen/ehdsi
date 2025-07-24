@@ -16,45 +16,107 @@ class BootstrapTokenTest {
         }
     }
 
+    private static final String ASSERTION_STATEMENT = """
+        <saml:AttributeStatement xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <saml:Attribute FriendlyName="XSPA Subject" Name="urn:oasis:names:tc:xspa:1.0:subject:subject-id" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">Georg Friedrich Bernhard Riemann</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XSPA Role" Name="urn:oasis:names:tc:xacml:2.0:subject:role">
+                <saml:AttributeValue>
+                    <Role xmlns="urn:hl7-org:v3" code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Medical Doctors" xsi:type="CE" />
+                </saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XSPA Organization Id" Name="urn:oasis:names:tc:xspa:1.0:subject:organization-id" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">95444960</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="EHDSI Healthcare Facility Type" Name="urn:ehdsi:names:subject:healthcare-facility-type" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">Hospital</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XSPA Purpose of Use" Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse">
+                <saml:AttributeValue>
+                    <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT"
+                        codeSystem="urn:oasis:names:tc:xspa:1.0" xsi:type="CE" />
+                </saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XSPA Locality" Name="urn:oasis:names:tc:xspa:1.0:environment:locality" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">University of Göttingen</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XUA Patient Id" Name="urn:oasis:names:tc:xacml:2.0:resource:resource-id" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">
+                    0501077860^^^&amp;1.2.208.176.1.2&amp;ISO</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="IDWS XUA SpecVersion" Name="urn:dk:healthcare:saml:SpecVersion" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">eHDSI-IDWS-XUA-1.0</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="IDWS XUA IssuancePolicy" Name="urn:dk:healthcare:saml:IssuancePolicy" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">urn:dk:ncp:eHDSI-default</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="EHDSI Country of Treatment" Name="urn:dk:healthcare:saml:CountryOfTreatment" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">DE</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="NSIS AssuranceLevel" Name="https://data.gov.dk/concept/core/nsis/loa" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">Substantial</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XSPA permissions" Name="urn:oasis:names:tc:xspa:1.0:subject:hl7:permission" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-004</saml:AttributeValue>
+                <saml:AttributeValue xsi:type="xs:string">urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-010</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="EHDSI OnBehalfOf" Name="urn:ehdsi:names:subject:on-behalf-of">
+                <saml:AttributeValue>
+                    <Role xmlns="urn:hl7-org:v3" code="42" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Astronaut" xsi:type="CE" />
+                </saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute FriendlyName="XSPA Organization" Name="urn:oasis:names:tc:xspa:1.0:subject:organization" NameFormat="">
+                <saml:AttributeValue xsi:type="xs:string">Testorganisation 95444960</saml:AttributeValue>
+            </saml:Attribute>
+        </saml:AttributeStatement>
+        """;
+
     @Test
     void canGenerateTokenAndTokenRequest() throws Exception {
-        var bstInput = BootstrapTokenParams.builderWithDefaults()
+        var d = XmlUtils.parse(ASSERTION_STATEMENT);
+        d.normalizeDocument();
+        var bstInput = BootstrapTokenParams.builder()
             .certificate(testCert().certificate())
             .audience("https://fmk")
+            .attributeStatement(d.getFirstChild())
             .nameId("1234567890")
+            .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();
-        var bst = BootstrapToken.createBootstrapToken(bstInput);
+        var bst = BootstrapToken.createBootstrapToken(bstInput, "https://ehdsi-idp.testkald.nspop.dk");
         var bstRequest = BootstrapToken.createBootstrapExchangeRequest("https://fmk", bst);
         var xml = XmlUtils.writeDocumentToStringPretty(bstRequest);
 
-        assertThat(xml, stringContainsInOrder(
-            "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",
-            "<wst13:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst13:RequestType>",
-            "<saml:Audience>https://fmk</saml:Audience>"
-        ));
+        assertThat(
+            xml, stringContainsInOrder(
+                "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",
+                "<wst13:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst13:RequestType>",
+                "<saml:Audience>https://fmk</saml:Audience>"
+            ));
         System.out.println(xml);
 
-        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapToken.createBootstrapExchangeRequest(bstInput));
+        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapToken.createBootstrapExchangeRequest(bstInput, "https://ehdsi-idp.testkald.nspop.dk"));
         assertThat(xml2, hasLength(xml.length()));
     }
 
     @Test
     void fromHcpAssertion() throws Exception {
         var bstParams = SoapHeader.fromHcpAssertion(SoapHeader.hcpAssertion(soapHeader()), testCert().certificate(), "https://fmk");
-        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams);
+        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams, "https://ehdsi-idp.testkald.nspop.dk");
 
-        var xml = XmlUtils.writeDocumentToStringPretty(bstRequest);
-        assertThat(xml, stringContainsInOrder(
-            "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",
-            "<wst13:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst13:RequestType>",
-            "<saml:Audience>https://fmk</saml:Audience>"
-        ));
+        var xml = XmlUtils.writeDocumentToString(bstRequest);
+        assertThat(
+            xml, stringContainsInOrder(
+                "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",
+                "<wst13:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst13:RequestType>",
+                "<saml:Audience>https://fmk</saml:Audience>"
+            ));
         System.out.println(xml);
     }
 
     private String soapHeader() {
         try (var is = BootstrapTokenTest.class.getClassLoader().getResourceAsStream("SoapHeader.xml")) {
-            assertThat(is, notNullValue() );
+            assertThat(is, notNullValue());
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new IllegalStateException(e);

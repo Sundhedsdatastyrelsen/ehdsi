@@ -3,7 +3,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathConstants;
@@ -35,35 +34,16 @@ public class SoapHeader {
      */
     public static BootstrapTokenParams fromHcpAssertion(Element hcpAssertion, X509Certificate certificate, String audience) throws AuthenticationException {
         try {
-            var attrs = xpath.evalNodeSet("saml:AttributeStatement/saml:Attribute", hcpAssertion);
-            List<BootstrapTokenParams.Attribute> attributes = new ArrayList<>();
-            for (var a : attrs) {
-                var attr = (Element) a;
-                attributes.add(new BootstrapTokenParams.Attribute(
-                    attr.getAttribute("Name"),
-                    attr.getAttribute("FriendlyName"),
-                    attributeValues(attr)
-                ));
-            }
-
-            return BootstrapTokenParams.builderWithDefaults()
+            return BootstrapTokenParams.builder()
                 .certificate(certificate)
                 .audience(audience)
                 .nameIdFormat(xpath.evalString("saml:Subject/saml:NameID/@Format", hcpAssertion))
                 .nameId(xpath.evalString("saml:Subject/saml:NameID", hcpAssertion))
-                .attributes(attributes)
+                .attributeStatement(xpath.evalNode("saml:AttributeStatement", hcpAssertion))
                 .build();
         } catch (XPathExpressionException e) {
             throw new AuthenticationException("Error when parsing HCP assertion", e);
         }
-    }
-
-    private static List<BootstrapTokenParams.AttributeValue> attributeValues(Element attr) throws XPathExpressionException {
-            return xpath.evalNodeSet("saml:AttributeValue/* | saml:AttributeValue/text()[normalize-space()]", attr).stream()
-                .map(node -> (BootstrapTokenParams.AttributeValue) (node.getNodeType() == Node.TEXT_NODE
-                    ? new BootstrapTokenParams.AttributeValue.Text(node.getNodeValue().trim())
-                    : new BootstrapTokenParams.AttributeValue.XmlNode(node)))
-                .toList();
     }
 
     @Deprecated

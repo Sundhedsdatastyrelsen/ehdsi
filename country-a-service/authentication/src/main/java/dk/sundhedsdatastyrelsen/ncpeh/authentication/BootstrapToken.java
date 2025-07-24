@@ -28,7 +28,7 @@ public class BootstrapToken {
     /**
      * Create a OIO SAML bootstrap token XML element, meant for exchanging with an STS to get an IDWS token.
      */
-    public static Element createBootstrapToken(BootstrapTokenParams bst) throws ParserConfigurationException, CertificateEncodingException {
+    public static Element createBootstrapToken(BootstrapTokenParams bst, String issuer) throws ParserConfigurationException, CertificateEncodingException {
         // we don't want higher resolution than seconds
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
 
@@ -43,7 +43,7 @@ public class BootstrapToken {
         assertion.setAttribute("ID", assertionId);
         assertion.setIdAttribute("ID", true);
 
-        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", bst.issuerUri());
+        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", issuer);
         var subject = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Subject");
 
         var nameID = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "NameID", bst.nameId());
@@ -81,28 +81,13 @@ public class BootstrapToken {
             "AuthnContextClassRef",
             "urn:oasis:names:tc:SAML:2.0:ac:classes:X509");
 
-        var attributeStatement = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "AttributeStatement");
-        for (var attribute : bst.attributes()) {
-            if (attribute.values().isEmpty()) {
-                continue;
-            }
-            var attrEl = XmlUtils.appendChild(attributeStatement, XmlNamespaces.SAML, "Attribute");
-            attrEl.setAttribute("FriendlyName", attribute.friendlyName());
-            attrEl.setAttribute("Name", attribute.name());
-            for (var v : attribute.values()) {
-                var value = XmlUtils.appendChild(attrEl, XmlNamespaces.SAML, "AttributeValue");
-                switch (v) {
-                    case BootstrapTokenParams.AttributeValue.XmlNode(var node) -> value.appendChild(doc.importNode(node, true));
-                    case BootstrapTokenParams.AttributeValue.Text(var text) -> value.setTextContent(text);
-                }
-            }
-        }
-
+        // we copy the AttributeStatement directly from the HCP assertion
+        assertion.appendChild(doc.importNode(bst.attributeStatement(), true));
         return assertion;
     }
 
-    public static Document createBootstrapExchangeRequest(BootstrapTokenParams bst) throws CertificateEncodingException, ParserConfigurationException {
-        return createBootstrapExchangeRequest(bst.audience(), createBootstrapToken(bst));
+    public static Document createBootstrapExchangeRequest(BootstrapTokenParams bst, String issuer) throws CertificateEncodingException, ParserConfigurationException {
+        return createBootstrapExchangeRequest(bst.audience(), createBootstrapToken(bst, issuer));
     }
 
     /**
