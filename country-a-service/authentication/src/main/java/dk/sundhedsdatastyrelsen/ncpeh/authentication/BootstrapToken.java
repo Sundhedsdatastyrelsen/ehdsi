@@ -2,15 +2,31 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.Transform;
+import javax.xml.crypto.dsig.XMLSignatureException;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 public class BootstrapToken {
@@ -28,7 +44,7 @@ public class BootstrapToken {
     /**
      * Create a OIO SAML bootstrap token XML element, meant for exchanging with an STS to get an IDWS token.
      */
-    public static Element createBootstrapToken(BootstrapTokenParams bst, String issuer) throws ParserConfigurationException, CertificateEncodingException {
+    public static Element createBootstrapToken(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate) throws ParserConfigurationException, CertificateEncodingException, AuthenticationException {
         // we don't want higher resolution than seconds
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
 
@@ -83,11 +99,13 @@ public class BootstrapToken {
 
         // we copy the AttributeStatement directly from the HCP assertion
         assertion.appendChild(doc.importNode(bst.attributeStatement(), true));
+
+        signAssertion(assertion, idpCertificate);
         return assertion;
     }
 
-    public static Document createBootstrapExchangeRequest(BootstrapTokenParams bst, String issuer) throws CertificateEncodingException, ParserConfigurationException {
-        return createBootstrapExchangeRequest(bst.audience(), createBootstrapToken(bst, issuer));
+    public static Document createBootstrapExchangeRequest(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate, CertificateAndKey spCertificate) throws CertificateEncodingException, ParserConfigurationException, AuthenticationException {
+        return createBootstrapExchangeRequest(bst.audience(), createBootstrapToken(bst, issuer, idpCertificate), spCertificate);
     }
 
     /**
@@ -96,8 +114,8 @@ public class BootstrapToken {
      * @param audience       where do we want access (e.g. "https://fmk")
      * @param bootstrapToken the bootstrap token
      */
-    public static Document createBootstrapExchangeRequest(String audience, Element bootstrapToken)
-        throws ParserConfigurationException {
+    public static Document createBootstrapExchangeRequest(String audience, Element bootstrapToken, CertificateAndKey spCertificate)
+        throws ParserConfigurationException, AuthenticationException {
 
         var dbf = DocumentBuilderFactory.newDefaultNSInstance();
         var doc = dbf.newDocumentBuilder().newDocument();
@@ -149,10 +167,61 @@ public class BootstrapToken {
                 XmlNamespaces.WSA, "EndpointReference"),
             XmlNamespaces.WSA, "Address", audience);
 
+        signSoapRequest(security, spCertificate);
         return doc;
     }
 
-    public static Document signRequest(Element soapEnvelope) {
-        throw new IllegalArgumentException("not implemented yet");
+    private static void signAssertion(Element assertion, CertificateAndKey idpCertificate) throws AuthenticationException {
+        var id = "#" + assertion.getAttribute("ID");
+        // "Subject" is the second child element, put the signature before that.
+        var subject = assertion.getChildNodes().item(1);
+        sign(assertion, subject, List.of(id), idpCertificate);
+    }
+
+    public static void signSoapRequest(Element security, CertificateAndKey certificate) throws AuthenticationException {
+        sign(security, null, List.of("#body", "#ts", "#messageID", "#action"), certificate);
+    }
+
+    private static void sign(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
+        try {
+            var sigFactory = XMLSignatureFactory.getInstance("DOM");
+            rootElement.getOwnerDocument().normalizeDocument();
+            var transforms = List.of(
+                sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null),
+                sigFactory.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null));
+
+            List<Reference> references = new ArrayList<>();
+            for (var id : referenceUris) {
+                references.add(sigFactory.newReference(
+                    id,
+                    sigFactory.newDigestMethod(DigestMethod.SHA1, null),
+                    transforms,
+                    null,
+                    null));
+            }
+
+            var signedInfo = sigFactory.newSignedInfo(
+                sigFactory.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, (C14NMethodParameterSpec) null),
+                sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null), // SOSI team has been notified that SHA1 should be updated. Probable change to SHA256.
+                references
+            );
+
+            var keyInfoFactory = sigFactory.getKeyInfoFactory();
+            var keyInfo = keyInfoFactory.newKeyInfo(List.of(keyInfoFactory.newX509Data(List.of(certificate.certificate()))));
+//
+//            var securityElement = (Element) soapEnvelope.getElementsByTagNameNS(
+//                XmlNamespaces.WSSE.uri(),
+//                "Security"
+//            ).item(0);
+
+            var signContext = new DOMSignContext(certificate.privateKey(), rootElement);
+            if (nextSibling != null) {
+                signContext.setNextSibling(nextSibling);
+            }
+            var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
+            signature.sign(signContext);
+        } catch (MarshalException | XMLSignatureException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+            throw new AuthenticationException("Signing failed", e);
+        }
     }
 }

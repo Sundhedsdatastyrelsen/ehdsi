@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 class BootstrapTokenTest {
-    CertificateUtils.CertificateWithPrivateKey testCert() throws Exception {
+    CertificateAndKey testCert() throws Exception {
         try (var keystore = getClass().getClassLoader().getResourceAsStream("test-signer.p12")) {
             assertThat(keystore, notNullValue());
             return CertificateUtils.loadCertificateFromKeystore(keystore, "test-signer", "test123");
@@ -74,17 +74,18 @@ class BootstrapTokenTest {
 
     @Test
     void canGenerateTokenAndTokenRequest() throws Exception {
+        var cert = testCert();
         var d = XmlUtils.parse(ASSERTION_STATEMENT);
         d.normalizeDocument();
         var bstInput = BootstrapTokenParams.builder()
-            .certificate(testCert().certificate())
+            .certificate(cert.certificate())
             .audience("https://fmk")
             .attributeStatement(d.getFirstChild())
             .nameId("1234567890")
             .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();
-        var bst = BootstrapToken.createBootstrapToken(bstInput, "https://ehdsi-idp.testkald.nspop.dk");
-        var bstRequest = BootstrapToken.createBootstrapExchangeRequest("https://fmk", bst);
+        var bst = BootstrapToken.createBootstrapToken(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert);
+        var bstRequest = BootstrapToken.createBootstrapExchangeRequest("https://fmk", bst, cert);
         var xml = XmlUtils.writeDocumentToStringPretty(bstRequest);
 
         assertThat(
@@ -95,16 +96,17 @@ class BootstrapTokenTest {
             ));
         System.out.println(xml);
 
-        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapToken.createBootstrapExchangeRequest(bstInput, "https://ehdsi-idp.testkald.nspop.dk"));
+        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapToken.createBootstrapExchangeRequest(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert, cert));
         assertThat(xml2, hasLength(xml.length()));
     }
 
     @Test
     void fromHcpAssertion() throws Exception {
-        var bstParams = SoapHeader.fromHcpAssertion(SoapHeader.hcpAssertion(soapHeader()), testCert().certificate(), "https://fmk");
-        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams, "https://ehdsi-idp.testkald.nspop.dk");
+        var cert = testCert();
+        var bstParams = SoapHeader.fromHcpAssertion(SoapHeader.hcpAssertion(soapHeader()), cert.certificate(), "https://fmk");
+        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
 
-        var xml = XmlUtils.writeDocumentToString(bstRequest);
+        var xml = XmlUtils.writeDocumentToStringPretty(bstRequest);
         assertThat(
             xml, stringContainsInOrder(
                 "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",

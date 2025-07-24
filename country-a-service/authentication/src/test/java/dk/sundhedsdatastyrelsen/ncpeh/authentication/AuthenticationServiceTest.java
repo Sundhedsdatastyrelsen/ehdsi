@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 class AuthenticationServiceTest {
-    static CertificateUtils.CertificateWithPrivateKey testCert() throws AuthenticationException {
+    static CertificateAndKey testCert() throws AuthenticationException {
         var keystore = AuthenticationServiceTest.class.getClassLoader().getResourceAsStream("test-signer.p12");
         assertThat(keystore, notNullValue());
         return CertificateUtils.loadCertificateFromKeystore(keystore, "test-signer", "test123");

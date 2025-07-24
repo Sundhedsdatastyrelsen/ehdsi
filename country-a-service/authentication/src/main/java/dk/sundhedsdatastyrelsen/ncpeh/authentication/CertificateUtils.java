@@ -29,12 +29,6 @@ public class CertificateUtils {
     private CertificateUtils() {
     }
 
-    public record CertificateWithPrivateKey(
-        @NonNull X509Certificate certificate,
-        @NonNull PrivateKey privateKey
-    ) {
-    }
-
     /**
      * Extract a certificate/key pair from a JKS.  The password is both used for unlocking the JKS and for unlocking the
      * key in the keystore (they must be the same).
@@ -44,11 +38,11 @@ public class CertificateUtils {
      * @param password password for JKS and certificate pair
      * @throws AuthenticationException if the keystore cannot be loaded
      */
-    @NonNull public static CertificateWithPrivateKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
+    @NonNull public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
         try {
             var ks = KeyStore.getInstance("PKCS12");
             ks.load(is, password.toCharArray());
-            return new CertificateWithPrivateKey(
+            return new CertificateAndKey(
                 (X509Certificate) ks.getCertificate(keyAlias),
                 (PrivateKey) ks.getKey(keyAlias, password.toCharArray())
             );
@@ -61,7 +55,7 @@ public class CertificateUtils {
         }
     }
 
-    public static CertificateWithPrivateKey loadCertificateFromKeystore(Path keystore, String keyAlias, String password) throws AuthenticationException {
+    public static CertificateAndKey loadCertificateFromKeystore(Path keystore, String keyAlias, String password) throws AuthenticationException {
         try (var is = new BufferedInputStream(Files.newInputStream(keystore))) {
             return loadCertificateFromKeystore(is, keyAlias, password);
         } catch (IOException e) {
