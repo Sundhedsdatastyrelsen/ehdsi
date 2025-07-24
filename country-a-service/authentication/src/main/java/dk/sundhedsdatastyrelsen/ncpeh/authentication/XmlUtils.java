@@ -19,12 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class XmlUtils {
-    private XmlUtils() {
-    }
+    private XmlUtils() {}
 
     public static Document parse(String xml) throws AuthenticationException {
         try {
@@ -77,6 +78,11 @@ public class XmlUtils {
             }
         });
         return xPath;
+    }
+
+    public static XPath xpath(XmlNamespaces... namespaces) {
+        var m = Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaces::prefix, XmlNamespaces::uri));
+        return xpath(m);
     }
 
     public static String writeDocumentToString(Document doc) throws TransformerException {

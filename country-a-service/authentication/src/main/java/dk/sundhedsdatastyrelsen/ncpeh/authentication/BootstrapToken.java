@@ -92,7 +92,7 @@ public class BootstrapToken {
             for (var v : attribute.values()) {
                 var value = XmlUtils.appendChild(attrEl, XmlNamespaces.SAML, "AttributeValue");
                 switch (v) {
-                    case BootstrapTokenParams.AttributeValue.XmlNode(var node) -> value.appendChild(node);
+                    case BootstrapTokenParams.AttributeValue.XmlNode(var node) -> value.appendChild(doc.importNode(node, true));
                     case BootstrapTokenParams.AttributeValue.Text(var text) -> value.setTextContent(text);
                 }
             }
@@ -101,7 +101,7 @@ public class BootstrapToken {
         return assertion;
     }
 
-    public static Element createBootstrapExchangeRequest(BootstrapTokenParams bst) throws CertificateEncodingException, ParserConfigurationException {
+    public static Document createBootstrapExchangeRequest(BootstrapTokenParams bst) throws CertificateEncodingException, ParserConfigurationException {
         return createBootstrapExchangeRequest(bst.audience(), createBootstrapToken(bst));
     }
 
@@ -111,7 +111,7 @@ public class BootstrapToken {
      * @param audience       where do we want access (e.g. "https://fmk")
      * @param bootstrapToken the bootstrap token
      */
-    public static Element createBootstrapExchangeRequest(String audience, Element bootstrapToken)
+    public static Document createBootstrapExchangeRequest(String audience, Element bootstrapToken)
         throws ParserConfigurationException {
 
         var dbf = DocumentBuilderFactory.newDefaultNSInstance();
@@ -164,7 +164,7 @@ public class BootstrapToken {
                 XmlNamespaces.WSA, "EndpointReference"),
             XmlNamespaces.WSA, "Address", audience);
 
-        return envelope;
+        return doc;
     }
 
     public static Document signRequest(Element soapEnvelope) {
