@@ -34,6 +34,11 @@ public class BootstrapToken {
 
     private BootstrapToken() {}
 
+    static {
+        // avoid <CR><LF> in signature values
+        System.setProperty("com.sun.org.apache.xml.internal.security.ignoreLineBreaks", "true");
+    }
+
     /**
      * Set clock. Only for test use!
      */

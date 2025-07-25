@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -85,14 +86,18 @@ public class XmlUtils {
         return xpath(m);
     }
 
-    public static String writeDocumentToString(Document doc) throws TransformerException {
+    public static void writeDocument(Document doc, Writer writer) throws TransformerException {
         var transformer = TransformerFactory.newDefaultInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        var writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
+    }
+
+    public static String writeDocumentToString(Document doc) throws TransformerException {
+        var writer = new StringWriter();
+        writeDocument(doc, writer);
         return writer.toString();
     }
 

@@ -4,13 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 class BootstrapTokenTest {
-    CertificateAndKey testCert() throws Exception {
-        try (var keystore = getClass().getClassLoader().getResourceAsStream("test-signer.p12")) {
+    static CertificateAndKey testCert() throws Exception {
+        try (var keystore = BootstrapTokenTest.class.getClassLoader().getResourceAsStream("test-signer.p12")) {
             assertThat(keystore, notNullValue());
             return CertificateUtils.loadCertificateFromKeystore(keystore, "test-signer", "test123");
         }
@@ -116,12 +119,28 @@ class BootstrapTokenTest {
         System.out.println(xml);
     }
 
-    private String soapHeader() {
+    private static String soapHeader() {
         try (var is = BootstrapTokenTest.class.getClassLoader().getResourceAsStream("SoapHeader.xml")) {
             assertThat(is, notNullValue());
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Write a request to the file system for test purposes.  To be invoked manually.
+     */
+    public static void main(String... args) throws Exception {
+        var password = System.getenv("KEYSTORE_PASSWORD");
+        assertThat(password, notNullValue());
+        var cert = CertificateUtils.loadCertificateFromKeystore(Path.of("config/epps-sosi-sts-client.p12"), "epps-sosi-sts-client", password);
+        var bstParams = SoapHeader.fromHcpAssertion(SoapHeader.hcpAssertion(soapHeader()), cert.certificate(), "https://fmk");
+        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
+
+        Files.createDirectories(Path.of("temp"));
+        try (var w = Files.newBufferedWriter(Path.of("temp", "request.xml"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            XmlUtils.writeDocument(bstRequest, w);
         }
     }
 }

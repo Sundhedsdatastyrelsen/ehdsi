@@ -9,8 +9,7 @@ import java.nio.file.Files;
 public class SOSIClientTool {
 
     private static final String ENDPOINT = "https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws";
-    //private static final String ENVELOPE = "/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/envelope/soap_envelope.xml";
-    private static final String ENVELOPE = "/home/jls/repos/work/sds/ehdsi/country-a-service/authentication/src/main/resources/envelope/self_signed_soap_envelope.xml"; // SELF SIGNED
+    private static final String ENVELOPE = "temp/request.xml";
 
     public static void main(String[] args) throws Exception {
         String soapXml = loadSoapTemplate(ENVELOPE);
@@ -42,4 +41,3 @@ public class SOSIClientTool {
         return new String(Files.readAllBytes(new File(path).toPath()));
     }
 }
-
