@@ -30,16 +30,52 @@ public class SoapHeader {
     }
 
     /**
+     * TODO: We need intermediate model of HCP, TRC, CountryCode
+     * that we extract from soapHeader.
+     * The SoapHeader.xml we have checked in right now *is not* relevant because it has no TRC, and would not become
+     * an IDWS anyway (for now).
+     *
+     * From TRC we extract patient id.
+     *
+     * Country code we get from the certificate in HCP.
+     *
+     * So the flow will be:
+     *
+     *                           String soapHeader
+     *                                   |
+     *                                   |
+     *                                   v
+     *  IntermediateModel(Element hcpAssertion, Element trcAssertion, String countryCode)
+     *             |
+     *             |
+     *             |
+     *             v                   /------- X509Certificate cert
+     *    BootstrapTokenParams  <------
+     *                                 \------  String audience
+     *             |
+     *             |
+     *             v
+     *                                    /--- String issuer
+     *        Element bootstrapToken  <---
+     *                                    \--- CertificateAndKey idpCert
+     */
+
+    /**
      * Extract parameters for generating a bootstrap token from a european HCP assertion
      */
     public static BootstrapTokenParams fromHcpAssertion(Element hcpAssertion, X509Certificate certificate, String audience) throws AuthenticationException {
         try {
+            var attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", hcpAssertion).stream()
+                .map(BootstrapTokenParams.SamlAttribute.Raw::new)
+                .map(x -> (BootstrapTokenParams.SamlAttribute) x);
+
+            var attributes = attributesFromHcp.toList();
             return BootstrapTokenParams.builder()
                 .certificate(certificate)
                 .audience(audience)
                 .nameIdFormat(xpath.evalString("saml:Subject/saml:NameID/@Format", hcpAssertion))
                 .nameId(xpath.evalString("saml:Subject/saml:NameID", hcpAssertion))
-                .attributeStatement(xpath.evalNode("saml:AttributeStatement", hcpAssertion))
+                .attributes(attributes)
                 .build();
         } catch (XPathExpressionException e) {
             throw new AuthenticationException("Error when parsing HCP assertion", e);

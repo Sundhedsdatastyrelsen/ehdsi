@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -78,12 +79,17 @@ class BootstrapTokenTest {
     @Test
     void canGenerateTokenAndTokenRequest() throws Exception {
         var cert = testCert();
-        var d = XmlUtils.parse(ASSERTION_STATEMENT);
-        d.normalizeDocument();
+        var hcpAssertions = XmlUtils.parse(ASSERTION_STATEMENT).getChildNodes();
+        var attrs = IntStream.range(0, hcpAssertions.getLength())
+            .mapToObj(hcpAssertions::item)
+            .map(BootstrapTokenParams.SamlAttribute.Raw::new)
+            .map(x -> (BootstrapTokenParams.SamlAttribute) x)
+            .toList();
+
         var bstInput = BootstrapTokenParams.builder()
             .certificate(cert.certificate())
             .audience("https://fmk")
-            .attributeStatement(d.getFirstChild())
+            .attributes(attrs)
             .nameId("1234567890")
             .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();

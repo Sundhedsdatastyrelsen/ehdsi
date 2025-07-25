@@ -144,4 +144,8 @@ public class XmlUtils {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + name, value);
         elm.setIdAttributeNS(ns.uri(), name, true);
     }
+
+    public static void setAttribute(Element elm, XmlNamespaces ns, String localName, String value) {
+        elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
+    }
 }

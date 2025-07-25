@@ -102,8 +102,24 @@ public class BootstrapToken {
             "AuthnContextClassRef",
             "urn:oasis:names:tc:SAML:2.0:ac:classes:X509");
 
-        // we copy the AttributeStatement directly from the HCP assertion
-        assertion.appendChild(doc.importNode(bst.attributeStatement(), true));
+        for (var attr : bst.attributes()) {
+            switch (attr) {
+                case BootstrapTokenParams.SamlAttribute.Raw(var node): {
+                    assertion.appendChild(doc.importNode(node, true));
+                    break;
+                }
+                case BootstrapTokenParams.SamlAttribute.New(var name, var friendlyName, var vals): {
+                    var attrEl = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Attribute");
+                    attrEl.setAttribute("FriendlyName", friendlyName);
+                    attrEl.setAttribute("Name", name);
+                    for (var val : vals) {
+                        var valEl = XmlUtils.appendChild(attrEl, XmlNamespaces.SAML, "AttributeValue", val);
+                        XmlUtils.setAttribute(valEl, XmlNamespaces.XSI, "type", "xs:string");
+                    }
+                    break;
+                }
+            }
+        }
 
         signAssertion(assertion, idpCertificate);
         return assertion;
