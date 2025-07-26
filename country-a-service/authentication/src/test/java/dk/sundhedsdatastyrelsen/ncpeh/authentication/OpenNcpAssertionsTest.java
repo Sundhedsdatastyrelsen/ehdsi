@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.*;
 
 class OpenNcpAssertionsTest {
     private static String soapHeader() {
-        try (var is = BootstrapTokenTest.class.getClassLoader().getResourceAsStream("openncp_soap_header_3.xml")) {
+        try (var is = BootstrapTokenTest.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {
             assertThat(is, notNullValue());
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {

@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.*;
 class XmlUtilsTest {
     @Test
     void parseExample() throws Exception {
-        var example = getClass().getClassLoader().getResourceAsStream("SoapHeader.xml");
+        var example = getClass().getClassLoader().getResourceAsStream("openncp_soap_header.xml");
         assertThat(example, is(notNullValue()));
 
         var xml = XmlUtils.parse(example);
