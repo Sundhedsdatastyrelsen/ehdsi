@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -64,6 +65,10 @@ public class XPathWrapper {
 
     public Node evalNode(String expression, Object item) throws XPathExpressionException {
         return (Node) xpath.get().evaluate(expression, item, XPathConstants.NODE);
+    }
+
+    public Element evalEl(String expression, Object item) throws XPathExpressionException {
+        return (Element) evalNode(expression, item);
     }
 
     public List<Node> evalNodeSet(String expression, Object item) throws XPathExpressionException {

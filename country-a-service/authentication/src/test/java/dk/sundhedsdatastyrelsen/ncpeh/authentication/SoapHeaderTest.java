@@ -11,7 +11,7 @@ class SoapHeaderTest {
     @Test
     void shouldParseAssertionFromSoapHeader() throws Exception {
         // Load the test SOAP header from resources
-        var is = getClass().getClassLoader().getResourceAsStream("SoapHeader.xml");
+        var is = getClass().getClassLoader().getResourceAsStream("openncp_soap_header_3.xml");
         assertThat("SOAP header file should be present in test resources", is, is(notNullValue()));
         var soapHeader = XmlUtils.parse(is);
 

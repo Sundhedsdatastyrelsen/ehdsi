@@ -7,27 +7,19 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class SoapHeader {
-    private static final XPathWrapper xpath = new XPathWrapper(
-        XmlNamespaces.WSSE,
-        XmlNamespaces.DS,
-        XmlNamespaces.SAML);
+    static {
+        new XPathWrapper(
+            XmlNamespaces.WSSE,
+            XmlNamespaces.DS,
+            XmlNamespaces.SAML);
+    }
 
     private SoapHeader() {}
-
-    public static Element hcpAssertion(String soapHeader) throws AuthenticationException {
-        var doc = XmlUtils.parse(soapHeader);
-        try {
-            return (Element) xpath.evalNode("//saml:Assertion", doc);
-        } catch (XPathExpressionException e) {
-            throw new AuthenticationException("Error when parsing HCP assertion", e);
-        }
-    }
 
     /**
      * TODO: We need intermediate model of HCP, TRC, CountryCode
@@ -45,7 +37,7 @@ public class SoapHeader {
      *                                   |
      *                                   |
      *                                   v
-     *  IntermediateModel(Element hcpAssertion, Element trcAssertion, String countryCode)
+     *  IntermediateModel(Element hcpAssertion, Element trcAssertion, String countryOfTreatment)
      *             |
      *             |
      *             |
@@ -59,28 +51,6 @@ public class SoapHeader {
      *        Element bootstrapToken  <---
      *                                    \--- CertificateAndKey idpCert
      */
-
-    /**
-     * Extract parameters for generating a bootstrap token from a european HCP assertion
-     */
-    public static BootstrapTokenParams fromHcpAssertion(Element hcpAssertion, X509Certificate certificate, String audience) throws AuthenticationException {
-        try {
-            var attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", hcpAssertion).stream()
-                .map(BootstrapTokenParams.SamlAttribute.Raw::new)
-                .map(x -> (BootstrapTokenParams.SamlAttribute) x);
-
-            var attributes = attributesFromHcp.toList();
-            return BootstrapTokenParams.builder()
-                .certificate(certificate)
-                .audience(audience)
-                .nameIdFormat(xpath.evalString("saml:Subject/saml:NameID/@Format", hcpAssertion))
-                .nameId(xpath.evalString("saml:Subject/saml:NameID", hcpAssertion))
-                .attributes(attributes)
-                .build();
-        } catch (XPathExpressionException e) {
-            throw new AuthenticationException("Error when parsing HCP assertion", e);
-        }
-    }
 
     @Deprecated
     public static Assertion extractAssertion(Document soapHeader) throws AuthenticationException {
