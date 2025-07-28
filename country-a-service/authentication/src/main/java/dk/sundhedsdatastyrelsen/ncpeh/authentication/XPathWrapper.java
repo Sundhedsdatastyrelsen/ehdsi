@@ -20,19 +20,10 @@ import java.util.stream.IntStream;
  * Thread-safe convenience wrapper around javax.xml.XPath.
  */
 public class XPathWrapper {
-    private final ThreadLocal<javax.xml.xpath.XPath> xpath;
+    private final NamespaceContext nsCtx;
 
     public XPathWrapper(Map<String, String> namespaces) {
-        this.xpath = ThreadLocal.withInitial(() -> xpath(namespaces));
-    }
-
-    public XPathWrapper(XmlNamespaces... namespaces) {
-        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaces::prefix, XmlNamespaces::uri)));
-    }
-
-    private static XPath xpath(Map<String, String> namespaces) {
-        var xpath = XPathFactory.newDefaultInstance().newXPath();
-        xpath.setNamespaceContext(new NamespaceContext() {
+        this.nsCtx = new NamespaceContext() {
             @Override
             public String getNamespaceURI(String prefix) {
                 return namespaces.get(prefix);
@@ -55,16 +46,30 @@ public class XPathWrapper {
                     .map(Map.Entry::getKey)
                     .iterator();
             }
-        });
+        };
+    }
+
+    public XPathWrapper(XmlNamespaces... namespaces) {
+        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaces::prefix, XmlNamespaces::uri)));
+    }
+
+    private XPath xpath() {
+        // XPathFactory and XPath are both not thread-safe, so we create a new one for each invocation.
+        // I've (HBG) benchmarked it against a more complicated optimized solution with ThreadLocals, and the
+        // difference was very small (1-2%) for the individual XPathWrapper method invocations, and immeasurable in
+        // a larger context (e.g. bootstrap token generation). So I'm going with this simple version which doesn't have
+        // space leak issues. Note: XPathFactory.newInstance() is significantly slower because it uses reflection.
+        var xpath = XPathFactory.newDefaultInstance().newXPath();
+        xpath.setNamespaceContext(this.nsCtx);
         return xpath;
     }
 
     public String evalString(String expression, Object item) throws XPathExpressionException {
-        return xpath.get().evaluate(expression, item);
+        return xpath().evaluate(expression, item);
     }
 
     public Node evalNode(String expression, Object item) throws XPathExpressionException {
-        return (Node) xpath.get().evaluate(expression, item, XPathConstants.NODE);
+        return (Node) xpath().evaluate(expression, item, XPathConstants.NODE);
     }
 
     public Element evalEl(String expression, Object item) throws XPathExpressionException {
@@ -72,13 +77,9 @@ public class XPathWrapper {
     }
 
     public List<Node> evalNodeSet(String expression, Object item) throws XPathExpressionException {
-        var nodeList = (NodeList) xpath.get().evaluate(expression, item, XPathConstants.NODESET);
+        var nodeList = (NodeList) xpath().evaluate(expression, item, XPathConstants.NODESET);
         return IntStream.range(0, nodeList.getLength())
             .mapToObj(nodeList::item)
             .toList();
-    }
-
-    public void cleanup() {
-        xpath.remove();
     }
 }

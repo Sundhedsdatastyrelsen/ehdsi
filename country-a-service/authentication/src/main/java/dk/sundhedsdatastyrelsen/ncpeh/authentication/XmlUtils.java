@@ -21,6 +21,13 @@ import java.nio.charset.StandardCharsets;
 public class XmlUtils {
     private XmlUtils() {}
 
+    /**
+     * Parses XML string into a Document.
+     *
+     * @param xml the XML string to parse
+     * @return the parsed Document
+     * @throws AuthenticationException if parsing fails
+     */
     public static Document parse(String xml) throws AuthenticationException {
         try {
             return parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
@@ -29,6 +36,14 @@ public class XmlUtils {
         }
     }
 
+    /**
+     * Parses XML InputStream into a Document.
+     *
+     * @param xml the XML InputStream to parse
+     * @return the parsed Document
+     * @throws AuthenticationException if parsing fails
+     * @throws IOException             if I/O error occurs
+     */
     public static Document parse(InputStream xml) throws AuthenticationException, IOException {
         try (xml) {
             var builder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
@@ -40,32 +55,60 @@ public class XmlUtils {
         }
     }
 
+    /**
+     * Writes Document to a Writer without indentation.
+     *
+     * @param doc    the Document to write
+     * @param writer the target Writer
+     * @throws TransformerException if transformation fails
+     */
     public static void writeDocument(Document doc, Writer writer) throws TransformerException {
-        var transformer = TransformerFactory.newDefaultInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        writeDocument(doc, writer, false);
     }
 
+    /**
+     * Converts Document to String without indentation.
+     *
+     * @param doc the Document to convert
+     * @return the XML as String
+     * @throws TransformerException if transformation fails
+     */
     public static String writeDocumentToString(Document doc) throws TransformerException {
         var writer = new StringWriter();
         writeDocument(doc, writer);
         return writer.toString();
     }
 
+    /**
+     * Converts Document to String with indentation.
+     *
+     * @param doc the Document to convert
+     * @return the formatted XML as String
+     * @throws TransformerException if transformation fails
+     */
     public static String writeDocumentToStringPretty(Document doc) throws TransformerException {
-        var transformer = TransformerFactory.newDefaultInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         var writer = new StringWriter();
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        writeDocument(doc, writer, true);
         return writer.toString();
     }
 
+    private static void writeDocument(Document doc, Writer writer, boolean shouldIndent) throws TransformerException {
+        var transformer = TransformerFactory.newDefaultInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, shouldIndent ? "yes" : "no");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+    }
+
+    /**
+     * Creates and appends a namespaced child element to a Document.
+     *
+     * @param parent the parent Document
+     * @param ns     the XML namespace
+     * @param name   the element name
+     * @return the created Element
+     */
     public static Element appendChild(Document parent, XmlNamespaces ns, String name) {
         var child = parent.createElementNS(ns.uri(), name);
         child.setPrefix(ns.prefix());
@@ -73,6 +116,14 @@ public class XmlUtils {
         return child;
     }
 
+    /**
+     * Creates and appends a namespaced child element to an Element.
+     *
+     * @param parent the parent Element
+     * @param ns     the XML namespace
+     * @param name   the element name
+     * @return the created Element
+     */
     public static Element appendChild(Element parent, XmlNamespaces ns, String name) {
         var child = parent.getOwnerDocument().createElementNS(ns.uri(), name);
         child.setPrefix(ns.prefix());
@@ -80,6 +131,15 @@ public class XmlUtils {
         return child;
     }
 
+    /**
+     * Creates and appends a namespaced child element with text content to an Element.
+     *
+     * @param parent    the parent Element
+     * @param ns        the XML namespace
+     * @param name      the element name
+     * @param textValue the text content
+     * @return the created Element
+     */
     public static Element appendChild(Element parent, XmlNamespaces ns, String name, String textValue) {
         var child = parent.getOwnerDocument().createElementNS(ns.uri(), name);
         child.setPrefix(ns.prefix());
@@ -88,17 +148,39 @@ public class XmlUtils {
         return child;
     }
 
+    /**
+     * Declares XML namespaces on an Element by setting the xmlns:prefix attributes.
+     *
+     * @param element    the Element to declare namespaces on
+     * @param namespaces the namespaces to declare
+     */
     public static void declareNamespaces(Element element, XmlNamespaces... namespaces) {
         for (var ns : namespaces) {
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + ns.prefix(), ns.uri());
         }
     }
 
+    /**
+     * Sets an attribute with namespace on an Element and registers it as an ID attribute.
+     *
+     * @param elm   the Element to set the ID attribute on
+     * @param ns    the XML namespace
+     * @param name  the attribute name
+     * @param value the attribute value
+     */
     public static void setIdAttribute(Element elm, XmlNamespaces ns, String name, String value) {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + name, value);
         elm.setIdAttributeNS(ns.uri(), name, true);
     }
 
+    /**
+     * Sets a namespaced attribute on an Element.
+     *
+     * @param elm       the Element to set the attribute on
+     * @param ns        the XML namespace
+     * @param localName the local attribute name
+     * @param value     the attribute value
+     */
     public static void setAttribute(Element elm, XmlNamespaces ns, String localName, String value) {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
     }
