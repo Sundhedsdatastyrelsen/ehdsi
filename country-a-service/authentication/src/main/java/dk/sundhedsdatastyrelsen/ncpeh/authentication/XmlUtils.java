@@ -2,8 +2,20 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.Transform;
+import javax.xml.crypto.dsig.XMLSignatureException;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -17,6 +29,10 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class XmlUtils {
     private XmlUtils() {}
@@ -52,6 +68,17 @@ public class XmlUtils {
             throw new AuthenticationException("Parse error", e);
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("should not happen", e);
+        }
+    }
+
+    /**
+     * Create a new, empty Document object.
+     */
+    public static Document newDocument() {
+        try {
+            return DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder().newDocument();
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -183,5 +210,57 @@ public class XmlUtils {
      */
     public static void setAttribute(Element elm, XmlNamespaces ns, String localName, String value) {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
+    }
+
+    /// Signs an XML element with the specified certificate and key.
+    ///
+    /// The signature is inserted into the document at the specified location, either as a child
+    /// of the root element or as a sibling to the specified nextSibling node.
+    ///
+    /// **Note:** The SOSI team has been notified that SHA1 should be updated.
+    ///
+    /// @param rootElement the root element of the XML document to be signed
+    /// @param nextSibling the node after which the signature should be inserted, or null to append as child of rootElement
+    /// @param referenceUris list of element IDs to be included in the signature (typically "#id" format)
+    /// @param certificate the certificate and private key pair used for signing
+    /// @throws AuthenticationException if signing fails due to cryptographic or XML processing errors
+    /// @throws IllegalArgumentException if any of the parameters are invalid
+    public static void sign(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
+        try {
+            var sigFactory = XMLSignatureFactory.getInstance("DOM");
+            rootElement.getOwnerDocument().normalizeDocument();
+            var transforms = List.of(
+                sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null),
+                sigFactory.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null));
+
+            List<Reference> references = new ArrayList<>();
+            for (var id : referenceUris) {
+                references.add(sigFactory.newReference(
+                    id,
+                    sigFactory.newDigestMethod(DigestMethod.SHA1, null),
+                    transforms,
+                    null,
+                    null));
+            }
+
+            var signedInfo = sigFactory.newSignedInfo(
+                sigFactory.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, (C14NMethodParameterSpec) null),
+                sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null), // SOSI team has been notified that SHA1 should be updated. Probable change to SHA256.
+                references
+            );
+
+            var keyInfoFactory = sigFactory.getKeyInfoFactory();
+            var keyInfo = keyInfoFactory.newKeyInfo(List.of(keyInfoFactory.newX509Data(List.of(certificate.certificate()))));
+
+            var signContext = new DOMSignContext(certificate.privateKey(), rootElement);
+            if (nextSibling != null) {
+                signContext.setNextSibling(nextSibling);
+            }
+            var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
+            signature.sign(signContext);
+        } catch (MarshalException | XMLSignatureException | NoSuchAlgorithmException |
+                 InvalidAlgorithmParameterException e) {
+            throw new AuthenticationException("Signing failed", e);
+        }
     }
 }

@@ -91,9 +91,9 @@ public class BootstrapTokenTest {
             .nameId("1234567890")
             .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();
-        var bst = BootstrapToken.createBootstrapToken(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert);
-        var bstRequest = BootstrapToken.createBootstrapExchangeRequest("https://fmk", bst, cert);
-        var xml = XmlUtils.writeDocumentToStringPretty(bstRequest);
+        var bst = BootstrapToken.of(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of("https://fmk", bst, cert);
+        var xml = XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody());
 
         assertThat(
             xml, stringContainsInOrder(
@@ -103,7 +103,7 @@ public class BootstrapTokenTest {
             ));
         System.out.println(xml);
 
-        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapToken.createBootstrapExchangeRequest(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert, cert));
+        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapTokenExchangeRequest.of(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert, cert).soapBody());
         assertThat(xml2, hasLength(xml.length()));
     }
 
@@ -112,9 +112,9 @@ public class BootstrapTokenTest {
         var cert = testCert();
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader());
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, cert.certificate(), "https://fmk");
-        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
 
-        var xml = XmlUtils.writeDocumentToString(bstRequest);
+        var xml = XmlUtils.writeDocumentToString(bstRequest.soapBody());
         assertThat(
             xml, stringContainsInOrder(
                 "<wsse:Security mustUnderstand=\"1\" wsu:Id=\"security\">",
@@ -139,7 +139,7 @@ public class BootstrapTokenTest {
             xml,
             containsString("""
                 <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="urn:oasis:names:tc:xspa:1.0" codeSystemName="eHDSI XSPA PurposeOfUse" displayName="TREATMENT" xsi:type="CE"/>"""));
-        System.out.println(XmlUtils.writeDocumentToStringPretty(bstRequest));
+        System.out.println(XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody()));
     }
 
     private static String soapHeader() {
@@ -158,11 +158,11 @@ public class BootstrapTokenTest {
             cert.certificate(),
             "https://fmk"
         );
-        var bstRequest = BootstrapToken.createBootstrapExchangeRequest(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
 
         Files.createDirectories(Path.of("temp"));
         try (var w = Files.newBufferedWriter(Path.of("temp", "request.xml"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            XmlUtils.writeDocument(bstRequest, w);
+            XmlUtils.writeDocument(bstRequest.soapBody(), w);
         }
     }
 }
