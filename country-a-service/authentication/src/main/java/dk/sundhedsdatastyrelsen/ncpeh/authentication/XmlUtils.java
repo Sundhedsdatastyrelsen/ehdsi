@@ -4,7 +4,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -12,18 +11,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class XmlUtils {
     private XmlUtils() {}
@@ -45,45 +38,6 @@ public class XmlUtils {
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("should not happen", e);
         }
-
-    }
-
-    /**
-     * Create an XPath instance with the given namespace mapping.
-     */
-    public static XPath xpath(Map<String, String> namespaces) {
-        var xPathFactory = XPathFactory.newInstance();
-        var xPath = xPathFactory.newXPath();
-        xPath.setNamespaceContext(new NamespaceContext() {
-            @Override
-            public String getNamespaceURI(String prefix) {
-                return namespaces.get(prefix);
-            }
-
-            @Override
-            public String getPrefix(String uri) {
-                for (var entry : namespaces.entrySet()) {
-                    if (entry.getValue().equals(uri)) {
-                        return entry.getKey();
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public Iterator<String> getPrefixes(String uri) {
-                return namespaces.entrySet().stream()
-                    .filter(entry -> entry.getValue().equals(uri))
-                    .map(Map.Entry::getKey)
-                    .iterator();
-            }
-        });
-        return xPath;
-    }
-
-    public static XPath xpath(XmlNamespaces... namespaces) {
-        var m = Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaces::prefix, XmlNamespaces::uri));
-        return xpath(m);
     }
 
     public static void writeDocument(Document doc, Writer writer) throws TransformerException {
