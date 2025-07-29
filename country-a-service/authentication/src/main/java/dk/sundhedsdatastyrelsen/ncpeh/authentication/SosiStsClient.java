@@ -25,10 +25,8 @@ public class SosiStsClient {
     private final URI serviceUri;
     private final HttpClient httpClient;
 
-
     public SosiStsClient(URI serviceUri) {
         this.serviceUri = serviceUri;
-        // URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws");
 
         this.httpClient = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.NORMAL)
@@ -63,7 +61,7 @@ public class SosiStsClient {
 
             var requestSecurityTokenResponse = xpath.evalEl(
                 "/soap:Envelope/soap:Body/wst13:RequestSecurityTokenResponseCollection" +
-                "/wst13:RequestSecurityTokenResponse",
+                    "/wst13:RequestSecurityTokenResponse",
                 document);
 
             var assertion = xpath.evalEl("wst13:RequestedSecurityToken/saml:Assertion", requestSecurityTokenResponse);
@@ -83,7 +81,7 @@ public class SosiStsClient {
         }
     }
 
-    public InputStream sendRequest(String xml) throws IOException, AuthenticationException {
+    private InputStream sendRequest(String xml) throws IOException, AuthenticationException {
         var httpRequest = HttpRequest.newBuilder()
             .uri(serviceUri)
             .POST(HttpRequest.BodyPublishers.ofString(xml))

@@ -38,7 +38,8 @@ public class CertificateUtils {
      * @param password password for JKS and certificate pair
      * @throws AuthenticationException if the keystore cannot be loaded
      */
-    @NonNull public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
+    @NonNull
+    public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
         try {
             var ks = KeyStore.getInstance("PKCS12");
             ks.load(is, password.toCharArray());
@@ -80,6 +81,9 @@ public class CertificateUtils {
         }
     }
 
+    /**
+     * Extract the country code from a certificate by locating the "C=..." distinguished name.
+     */
     public static String extractCountryCode(X509Certificate cert) throws AuthenticationException {
         try {
             var ldapName = new LdapName(cert.getSubjectX500Principal().getName());

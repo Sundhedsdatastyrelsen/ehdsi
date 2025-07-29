@@ -40,25 +40,12 @@ public class BootstrapToken {
     /**
      * Create and sign an OIO SAML bootstrap token XML element, meant for exchanging with an STS to get an IDWS token.
      *
-     * @param bst            the parameters for the bootstrap token
-     * @param issuer         the URI of the token issuer
-     * @param idpCertificate the certificate and key used to sign the token, i.e. the SAML assertion element.
+     * @param bst the parameters for the bootstrap token
      * @return the Bootstrap token object
      * @throws AuthenticationException if token generation fails
      */
-    public static BootstrapToken of(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate) throws AuthenticationException {
-        return createToken(bst, issuer, idpCertificate, Clock.systemUTC());
-    }
-
-    /**
-     * @hidden
-     * inject the clock, for test purposes
-     */
-    public static BootstrapToken of(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate, Clock clock) throws AuthenticationException {
-        return createToken(bst, issuer, idpCertificate, clock);
-    }
-
-    private static BootstrapToken createToken(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate, Clock clock) throws AuthenticationException {
+    public static BootstrapToken of(BootstrapTokenParams bst) throws AuthenticationException {
+        var clock = Clock.systemUTC();
         // we don't want higher resolution than seconds
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
 
@@ -72,7 +59,7 @@ public class BootstrapToken {
         assertion.setAttribute("ID", assertionId);
         assertion.setIdAttribute("ID", true);
 
-        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", issuer);
+        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", bst.issuer());
         var subject = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Subject");
 
         var nameID = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "NameID", bst.nameId());
@@ -83,7 +70,7 @@ public class BootstrapToken {
         var subjectConfirmationData = XmlUtils.appendChild(subjectConfirmation, XmlNamespaces.SAML, "SubjectConfirmationData");
         var keyInfo = XmlUtils.appendChild(subjectConfirmationData, XmlNamespaces.DS, "KeyInfo");
         try {
-            var certB64 = Base64.getEncoder().encodeToString(bst.certificate().getEncoded());
+            var certB64 = Base64.getEncoder().encodeToString(bst.idpCert().certificate().getEncoded());
             XmlUtils.appendChild(
                 XmlUtils.appendChild(keyInfo, XmlNamespaces.DS, "X509Data"),
                 XmlNamespaces.DS,
@@ -134,7 +121,7 @@ public class BootstrapToken {
             }
         }
 
-        signAssertion(assertion, idpCertificate);
+        signAssertion(assertion, bst.idpCert());
         return new BootstrapToken(assertion);
     }
 
@@ -144,5 +131,4 @@ public class BootstrapToken {
         var subject = assertion.getChildNodes().item(1);
         XmlUtils.sign(assertion, subject, List.of(id), idpCertificate);
     }
-
 }

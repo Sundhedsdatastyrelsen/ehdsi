@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
@@ -9,17 +10,20 @@ import lombok.NonNull;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPathExpressionException;
-import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * An intermediate model containing the elements necessary for generating and signing a bootstrap token.
+ */
 @Builder
 public record BootstrapTokenParams(
-    @NonNull X509Certificate certificate,
+    @NonNull CertificateAndKey idpCert,
     @NonNull String nameId,
     @NonNull String nameIdFormat,
     List<SamlAttribute> attributes,
-    @NonNull String audience
+    @NonNull String audience,
+    @NonNull String issuer
 ) {
     private static final XPathWrapper xpath = new XPathWrapper(
         XmlNamespaces.WSSE,
@@ -34,15 +38,14 @@ public record BootstrapTokenParams(
         record New(String name, String friendlyName, List<String> values) implements SamlAttribute {}
     }
 
-    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, X509Certificate certificate, String audience) throws AuthenticationException {
+    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, CertificateAndKey idpCert, String audience, String issuer) throws AuthenticationException {
         try {
             var attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
-                // Workaround for SOSI-STS bugs:
+                // Workaround for SOSI STS bugs/eHDSI IDWS XUA Token Profile bugs:
                 //  - The STS requires that all element values have xsi:type="CE".  That is not a requirement in eHDSI,
                 //    so we add it manually.
                 //  - The STS does not accept codeSystem="3bc18518-d305-46c2-a8d6-94bd59856e9e" for PurposeOfUse elements.
-                //
                 .map(e -> {
                     try {
                         // match all element-children (i.e. not text nodes) of AttributeValue
@@ -57,7 +60,7 @@ public record BootstrapTokenParams(
                         }
                         return e;
                     } catch (XPathExpressionException ex) {
-                        throw new RuntimeException(ex);
+                        throw new IllegalArgumentException("HCP attribute parsing failed", ex);
                     }
                 })
                 .map(BootstrapTokenParams.SamlAttribute.Raw::new)
@@ -96,8 +99,9 @@ public record BootstrapTokenParams(
             );
             var attributes = Stream.concat(attributesFromHcp, ncpBstSpecificAttributes).toList();
             return BootstrapTokenParams.builder()
-                .certificate(certificate)
+                .idpCert(idpCert)
                 .audience(audience)
+                .issuer(issuer)
                 .nameIdFormat(xpath.evalString("saml:Subject/saml:NameID/@Format", openNcpAssertions.hcpAssertion()))
                 .nameId(xpath.evalString("saml:Subject/saml:NameID", openNcpAssertions.hcpAssertion()))
                 .attributes(attributes)

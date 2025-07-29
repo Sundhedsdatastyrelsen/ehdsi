@@ -6,7 +6,7 @@ public enum XmlNamespaces {
     SOAP("soap", "http://schemas.xmlsoap.org/soap/envelope/"),
     WSSE("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"),
     WSA("wsa", "http://www.w3.org/2005/08/addressing"),
-    WSP("wsp","http://schemas.xmlsoap.org/ws/2004/09/policy"),
+    WSP("wsp", "http://schemas.xmlsoap.org/ws/2004/09/policy"),
     WST("wst", "http://schemas.xmlsoap.org/ws/2005/02/trust"),
     WST13("wst13", "http://docs.oasis-open.org/ws-sx/ws-trust/200512"),
     WST14("wst14", "http://docs.oasis-open.org/ws-sx/ws-trust/200802"),

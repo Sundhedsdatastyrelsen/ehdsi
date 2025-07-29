@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -92,13 +89,14 @@ public class BootstrapTokenTest {
             .toList();
 
         var bstInput = BootstrapTokenParams.builder()
-            .certificate(cert.certificate())
+            .idpCert(cert)
             .audience("https://fmk")
+            .issuer("https://ehdsi-idp.testkald.nspop.dk")
             .attributes(attrs)
             .nameId("1234567890")
             .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();
-        var bst = BootstrapToken.of(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert);
+        var bst = BootstrapToken.of(bstInput);
         var bstRequest = BootstrapTokenExchangeRequest.of("https://fmk", bst, cert);
         var xml = XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody());
 
@@ -110,7 +108,7 @@ public class BootstrapTokenTest {
             ));
         System.out.println(xml);
 
-        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapTokenExchangeRequest.of(bstInput, "https://ehdsi-idp.testkald.nspop.dk", cert, cert).soapBody());
+        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapTokenExchangeRequest.of(bstInput, cert).soapBody());
         assertThat(xml2, hasLength(xml.length()));
     }
 
@@ -118,8 +116,8 @@ public class BootstrapTokenTest {
     void fromOpenNcpAssertion() throws Exception {
         var cert = testCert();
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader());
-        var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, cert.certificate(), "https://fmk");
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
+        var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, cert, "https://fmk", "https://ehdsi-idp.testkald.nspop.dk");
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert);
 
         var xml = XmlUtils.writeDocumentToString(bstRequest.soapBody());
         assertThat(
@@ -152,6 +150,7 @@ public class BootstrapTokenTest {
     private static String soapHeader() {
         return TestUtils.resource("openncp_soap_header.xml");
     }
+
     /**
      * Write a request to the file system for test purposes.  To be invoked manually.
      */
@@ -161,11 +160,11 @@ public class BootstrapTokenTest {
         var cert = CertificateUtils.loadCertificateFromKeystore(Path.of("config/epps-sosi-sts-client.p12"), "epps-sosi-sts-client", password);
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(
             OpenNcpAssertions.fromSoapHeader(soapHeader()),
-            cert.certificate(),
-            "https://fmk"
+            cert,
+            "https://fmk",
+            "https://ehdsi-idp.testkald.nspop.dk"
         );
-        var clock = Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.of("UTC"));
-        var bst = BootstrapToken.of(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, clock);
+        var bst = BootstrapToken.of(bstParams);
         var bstRequest = BootstrapTokenExchangeRequest.of(bstParams.audience(), bst, cert);
 
         Files.createDirectories(Path.of("temp"));

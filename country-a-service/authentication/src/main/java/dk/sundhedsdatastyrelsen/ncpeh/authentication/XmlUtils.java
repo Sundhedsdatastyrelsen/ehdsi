@@ -27,7 +27,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -96,17 +95,6 @@ public class XmlUtils {
     }
 
     /**
-     * Writes Document to an OutputStream without indentation.
-     *
-     * @param doc the Document to write
-     * @param os  the output stream
-     * @throws TransformerException if transformation fails
-     */
-    public static void writeDocument(Document doc, OutputStream os) throws TransformerException {
-        writeDocument(doc, os, false);
-    }
-
-    /**
      * Converts Document to String without indentation.
      *
      * @param doc the Document to convert
@@ -143,10 +131,6 @@ public class XmlUtils {
 
     private static void writeDocument(Document doc, Writer writer, boolean shouldIndent) throws TransformerException {
         writeDocument(doc, new StreamResult(writer), shouldIndent);
-    }
-
-    private static void writeDocument(Document doc, OutputStream os, boolean shouldIndent) throws TransformerException {
-        writeDocument(doc, new StreamResult(os), shouldIndent);
     }
 
     /**

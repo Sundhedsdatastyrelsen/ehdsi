@@ -31,12 +31,10 @@ public class BootstrapTokenExchangeRequest {
      * Create an bootstrap-to-IDWS SOAP request for the STS.
      *
      * @param bst             the parameters for the bootstrap token
-     * @param issuer          the URI of the token issuer
-     * @param idpCertificate  the certificate and key used to sign the token, i.e. the SAML assertion element.
      * @param soapCertificate the certificate and key used to sign the SOAP request body
      */
-    public static BootstrapTokenExchangeRequest of(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate, CertificateAndKey soapCertificate) throws AuthenticationException {
-        return of(bst.audience(), BootstrapToken.of(bst, issuer, idpCertificate), soapCertificate);
+    public static BootstrapTokenExchangeRequest of(BootstrapTokenParams bst, CertificateAndKey soapCertificate) throws AuthenticationException {
+        return of(bst.audience(), BootstrapToken.of(bst), soapCertificate);
     }
 
     /**
