@@ -113,10 +113,15 @@ public class PrescriptionService {
 
         public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
             var documentId = CdaId.fromDocumentId(rootedDocumentId);
-            if (documentId.getRootOid() != Oid.DK_EPRESCRIPTION_REPOSITORY_ID) {
+            if (documentId != null && documentId.getRootOid() != Oid.DK_EPRESCRIPTION_REPOSITORY_ID) {
                 throw new CountryAException(HttpStatus.BAD_REQUEST, "Document repository in document ID is not ePrescription.");
             }
-            return new PrescriptionFilter(documentId.getExtension(), createdBefore, createdAfter);
+            return new PrescriptionFilter(
+                Optional.ofNullable(documentId)
+                    .map(CdaId::getExtension)
+                    .orElse(null),
+                createdBefore,
+                createdAfter);
         }
     }
 
