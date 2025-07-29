@@ -24,7 +24,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
@@ -110,8 +112,11 @@ public class PrescriptionService {
         }
 
         public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
-            var documentId = EPrescriptionMetadataMapper.fromRootedId(rootedDocumentId);
-            return new PrescriptionFilter(documentId, createdBefore, createdAfter);
+            var documentId = CdaId.fromDocumentId(rootedDocumentId);
+            if (documentId.getRootOid() != Oid.DK_EPRESCRIPTION_REPOSITORY_ID) {
+                throw new CountryAException(HttpStatus.BAD_REQUEST, "Document repository in document ID is not ePrescription.");
+            }
+            return new PrescriptionFilter(documentId.getExtension(), createdBefore, createdAfter);
         }
     }
 

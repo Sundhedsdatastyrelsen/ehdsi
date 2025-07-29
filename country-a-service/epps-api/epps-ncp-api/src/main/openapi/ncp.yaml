@@ -73,7 +73,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  # 38
   /api/find-eprescription-documents/:
     post:
       summary: |
@@ -86,9 +85,9 @@ paths:
           application/json:
             schema:
               allOf:
-                - $ref: '#/components/schemas/FindEprescriptionDocumentsRequest'
+                - $ref: '#/components/schemas/FindDocumentsRequest'
                 - $ref: '#/components/schemas/SoapHeader'
-              x-all-of-name: "FindEprescriptionDocumentsRequest"
+              x-all-of-name: "FindDocumentsRequest"
       responses:
         200:
           description: ePrescription document metadata matching criteria.
@@ -98,6 +97,35 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DocumentAssociationForEPrescriptionDocumentMetadata'
+        400:
+          description: 400 BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/find-patient-summary-document/:
+    post:
+      summary: |
+        Search for a patient summary matching the given search criteria.
+        Corresponds to XCA ITI-38 endpoint.
+      operationId: postFindPatientSummaryDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/FindDocumentsRequest'
+                - $ref: '#/components/schemas/SoapHeader'
+              x-all-of-name: "FindDocumentsRequest"
+      responses:
+        200:
+          description: Patient summary document metadata matching criteria.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAssociationForPatientSummaryDocumentMetadata'
         400:
           description: 400 BadRequest
           content:
@@ -215,7 +243,7 @@ components:
           type: string
           format: date-time
 
-    FindEprescriptionDocumentsRequest:
+    FindDocumentsRequest:
       type: object
       required:
         - patientId
@@ -380,6 +408,18 @@ components:
             substitutionDisplayName:
               type: string
 
+    DocumentAssociationForPatientSummaryDocumentMetadata:
+      type: object
+      description: Document association for metadata for a patient summary document (both L1 and L3).
+      required:
+        - level1
+        - level3
+      properties:
+        level3:
+          $ref: '#/components/schemas/EpsosDocumentMetadata'
+        level1:
+          $ref: '#/components/schemas/EpsosDocumentMetadata'
+
     ConfidentialityMetadata:
       type: object
       properties:
@@ -392,8 +432,10 @@ components:
       description: LOINC code for the document type.
       type: string
       enum:
+        # These were taken from https://webgate.ec.europa.eu/fpfis/wikis/spaces/EHDSI/pages/912791653/Enable+the+exchange+of+original+clinical+documents
         # For PoC we only support ePrescriptions and eDispensations:
         - "57833-6" # Prescription for medication https://loinc.org/57833-6
+        - "60591-5" # Patient Summary https://loinc.org/60591-5
         - "60593-1" # Medication dispensed.extended Document https://loinc.org/60593-1
 
     DocumentFormat:

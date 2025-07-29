@@ -1,13 +1,17 @@
 package dk.sundhedsdatastyrelsen.ncpeh.controller;
 
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
+import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindDocumentsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFetchDocumentRequestDto;
-import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import jakarta.validation.Valid;
@@ -18,30 +22,56 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
-public class PrescriptionController {
+public class Controller {
     private final PrescriptionService prescriptionService;
+    private final PatientSummaryService patientSummaryService;
 
-    public PrescriptionController(PrescriptionService prescriptionService) {
+    public Controller(PrescriptionService prescriptionService, PatientSummaryService patientSummaryService) {
         this.prescriptionService = prescriptionService;
+        this.patientSummaryService = patientSummaryService;
     }
 
     @PostMapping(path = "/api/find-eprescription-documents/")
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
-        @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
+        @Valid @RequestBody FindDocumentsRequestDto params
     ) {
         var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
+    }
+
+    /// There is only one patient summary per patient, but the MyHealth@EU api functions like a document repository, so
+    /// we have to let them search for that one document. We could also have returned it directly in the NCP adapter,
+    /// but we want all the business logic in this application.
+    @PostMapping(path = "/api/find-patient-summary-document/")
+    public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
+        @Valid @RequestBody FindDocumentsRequestDto params
+    ) {
+        return patientSummaryService.getDocumentMetadata(params.getPatientId(), TestIdentities.apotekerChrisChristoffersen);
     }
 
     @PostMapping(path = "/api/fetch-document/")
     public List<EpsosDocumentDto> fetchDocument(
         @Valid @RequestBody PostFetchDocumentRequestDto params
     ) {
-        var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
-        return prescriptionService.getPrescriptions(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
+        var repoId = params.getRepositoryId();
+        if (Objects.equals(repoId, Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
+            var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
+            return prescriptionService.getPrescriptions(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
+        } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
+            return patientSummaryService.getPatientSummary(
+                params.getPatientId(),
+                params.getDocumentId(),
+                TestIdentities.apotekerChrisChristoffersen,
+                // TODO pick out the right identity from the soap header.
+                EuropeanHealthcareProfessional.fromIdentity(TestIdentities.apotekerChrisChristoffersen, ""));
+        }
+
+        // TODO better exception
+        throw new RuntimeException("Unknown repository id " + repoId);
     }
 
     @PostMapping(path = "/api/edispensation/submit")

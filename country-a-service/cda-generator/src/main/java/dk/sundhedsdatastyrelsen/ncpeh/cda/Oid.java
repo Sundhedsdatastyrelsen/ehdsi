@@ -8,6 +8,11 @@ public enum Oid {
      */
     DK_EPRESCRIPTION_REPOSITORY_ID("1.2.208.176.7.2.3"),
     /**
+     * Patient summary document repository id.
+     * TODO get a real oid here.
+     */
+    DK_PATIENT_SUMMARY_REPOSITORY_ID("1.2.208.176.7.2.987654321"),
+    /**
      * Registries used in the Danish health by data exchange.
      * <a href="https://oid-base.com/get/1.2.208.176.1">Registered.</a>
      */

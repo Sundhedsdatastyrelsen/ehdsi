@@ -47,7 +47,7 @@ public class FskMapper {
     }
 
     // XPath is not thread safe, so callers have to create a new one.
-    static XPath getXpath() {
+    public static XPath getXpath() {
         var xp = XPathFactory.newInstance().newXPath();
         var nsCtx = new SimpleNamespaceContext();
         nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
@@ -79,7 +79,7 @@ public class FskMapper {
         return (Node) xpath.evaluate(xpathExpression, node, XPathConstants.NODE);
     }
 
-    static PreferredHealthProfessional preferredHealthProfessional(XPath xpath, Document cda) throws XPathExpressionException {
+    public static PreferredHealthProfessional preferredHealthProfessional(XPath xpath, Document cda) throws XPathExpressionException {
         var name = eval(xpath, cda, XPaths.preferredHpName);
         var telecoms = telecomNodesToTelecoms(xpath, evalNodeMany(xpath, cda, XPaths.preferredHpTelecoms));
         var address = addressNodeToAddress(xpath, evalNode(xpath, cda, XPaths.preferredHpAddress));
