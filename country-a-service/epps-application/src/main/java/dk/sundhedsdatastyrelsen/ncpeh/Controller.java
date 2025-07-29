@@ -1,6 +1,5 @@
-package dk.sundhedsdatastyrelsen.ncpeh.controller;
+package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
@@ -9,8 +8,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptio
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindDocumentsRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFetchDocumentRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindPatientsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
@@ -29,10 +31,19 @@ import java.util.Objects;
 public class Controller {
     private final PrescriptionService prescriptionService;
     private final PatientSummaryService patientSummaryService;
+    private final CprService cprService;
 
-    public Controller(PrescriptionService prescriptionService, PatientSummaryService patientSummaryService) {
+    public Controller(PrescriptionService prescriptionService, PatientSummaryService patientSummaryService, CprService cprService) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
+        this.cprService = cprService;
+    }
+
+    @PostMapping(path = "/api/find-patients/")
+    public FindPatientsResponseDto findPatients(
+        @Valid @RequestBody PostFindPatientsRequestDto params
+    ) {
+        return cprService.findPatients(params.getPatientIds());
     }
 
     @PostMapping(path = "/api/find-eprescription-documents/")

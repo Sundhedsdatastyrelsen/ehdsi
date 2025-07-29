@@ -31,7 +31,7 @@ public class FskMapper {
 
     // Example of FSK information card CDA (look for the CDA V3 example):
     // https://www.nspop.dk/display/public/web/FSK+-+Guide+til+anvendere
-    static class XPaths {
+    private static class XPaths {
         private XPaths() {
             throw new IllegalStateException("Static utility class should not be instantiated");
         }
@@ -70,8 +70,8 @@ public class FskMapper {
         return evalNodeMany(xpath, cda, xpathExpression).stream().map(Node::getTextContent).toList();
     }
 
-    static @NonNull String eval(XPath xpath, Node node, String xpathExpression) throws XPathExpressionException {
-        // TODO this trim was necessary in the test data we got. But why? Should that not be handled by xml?
+    private static @NonNull String eval(XPath xpath, Node node, String xpathExpression) throws XPathExpressionException {
+        // XML doesn't handle whitespace, so we need to trim.
         return xpath.evaluate(xpathExpression, node).trim();
     }
 
@@ -91,7 +91,7 @@ public class FskMapper {
             .build();
     }
 
-    static Address addressNodeToAddress(XPath xpath, Node addressNode) throws XPathExpressionException {
+    private static Address addressNodeToAddress(XPath xpath, Node addressNode) throws XPathExpressionException {
         var addressLines = evalMany(xpath, addressNode, "hl7:addressLine");
         var city = eval(xpath, addressNode, "hl7:city");
         var postalCode = eval(xpath, addressNode, "hl7:postalCode");
@@ -99,7 +99,7 @@ public class FskMapper {
         return new Address(addressLines, city, postalCode, countryCode);
     }
 
-    static List<Telecom> telecomNodesToTelecoms(XPath xpath, List<Node> telecomNodes) throws XPathExpressionException {
+    private static List<Telecom> telecomNodesToTelecoms(XPath xpath, List<Node> telecomNodes) throws XPathExpressionException {
         List<Telecom> list = new ArrayList<>();
         for (Node node : telecomNodes) {
             var reportedUse = eval(xpath, node, "@use");
