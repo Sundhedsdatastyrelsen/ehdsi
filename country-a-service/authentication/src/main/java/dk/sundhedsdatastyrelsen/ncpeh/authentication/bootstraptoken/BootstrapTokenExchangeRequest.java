@@ -1,5 +1,9 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -1,5 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenTest;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 

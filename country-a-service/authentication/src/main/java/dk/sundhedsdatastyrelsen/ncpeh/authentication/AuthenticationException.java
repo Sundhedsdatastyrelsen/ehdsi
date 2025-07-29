@@ -16,4 +16,10 @@ public class AuthenticationException extends Exception {
     public AuthenticationException(Throwable cause) {
         super(cause);
     }
+
+    public static class SosiStsException extends AuthenticationException {
+        public SosiStsException(String faultCode, String faultString, String faultActor) {
+            super("%s: %s, actor: %s".formatted(faultCode, faultString, faultActor));
+        }
+    }
 }

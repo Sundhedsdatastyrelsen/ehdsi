@@ -1,5 +1,9 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.security.cert.CertificateEncodingException;
@@ -43,8 +47,19 @@ public class BootstrapToken {
      * @throws AuthenticationException if token generation fails
      */
     public static BootstrapToken of(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate) throws AuthenticationException {
+        return createToken(bst, issuer, idpCertificate, Clock.systemUTC());
+    }
+
+    /**
+     * @hidden
+     * inject the clock, for test purposes
+     */
+    public static BootstrapToken of(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate, Clock clock) throws AuthenticationException {
+        return createToken(bst, issuer, idpCertificate, clock);
+    }
+
+    private static BootstrapToken createToken(BootstrapTokenParams bst, String issuer, CertificateAndKey idpCertificate, Clock clock) throws AuthenticationException {
         // we don't want higher resolution than seconds
-        var clock = Clock.systemUTC();
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
 
         var doc = XmlUtils.newDocument();

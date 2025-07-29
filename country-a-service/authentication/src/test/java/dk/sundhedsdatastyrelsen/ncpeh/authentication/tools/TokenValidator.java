@@ -80,11 +80,4 @@ public class TokenValidator {
         return (X509Certificate) keystore.getCertificate(alias);
     }
 
-    private static String extractCertBase64(Element container) {
-        NodeList certs = container.getElementsByTagNameNS(XMLSignature.XMLNS, "X509Certificate");
-        if (certs.getLength() > 0) {
-            return certs.item(0).getTextContent().replaceAll("\\s+", "");
-        }
-        return null;
-    }
 }

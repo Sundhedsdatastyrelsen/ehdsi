@@ -1,10 +1,17 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.TestUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -108,7 +115,7 @@ public class BootstrapTokenTest {
     }
 
     @Test
-    void fromHcpAssertion() throws Exception {
+    void fromOpenNcpAssertion() throws Exception {
         var cert = testCert();
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader());
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, cert.certificate(), "https://fmk");
@@ -145,7 +152,6 @@ public class BootstrapTokenTest {
     private static String soapHeader() {
         return TestUtils.resource("openncp_soap_header.xml");
     }
-
     /**
      * Write a request to the file system for test purposes.  To be invoked manually.
      */
@@ -158,7 +164,9 @@ public class BootstrapTokenTest {
             cert.certificate(),
             "https://fmk"
         );
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, cert);
+        var clock = Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.of("UTC"));
+        var bst = BootstrapToken.of(bstParams, "https://ehdsi-idp.testkald.nspop.dk", cert, clock);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams.audience(), bst, cert);
 
         Files.createDirectories(Path.of("temp"));
         try (var w = Files.newBufferedWriter(Path.of("temp", "request.xml"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {

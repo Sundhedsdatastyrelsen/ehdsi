@@ -19,6 +19,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -26,6 +27,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -94,6 +96,17 @@ public class XmlUtils {
     }
 
     /**
+     * Writes Document to an OutputStream without indentation.
+     *
+     * @param doc the Document to write
+     * @param os  the output stream
+     * @throws TransformerException if transformation fails
+     */
+    public static void writeDocument(Document doc, OutputStream os) throws TransformerException {
+        writeDocument(doc, os, false);
+    }
+
+    /**
      * Converts Document to String without indentation.
      *
      * @param doc the Document to convert
@@ -119,13 +132,21 @@ public class XmlUtils {
         return writer.toString();
     }
 
-    private static void writeDocument(Document doc, Writer writer, boolean shouldIndent) throws TransformerException {
+    private static void writeDocument(Document doc, Result result, boolean shouldIndent) throws TransformerException {
         var transformer = TransformerFactory.newDefaultInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, shouldIndent ? "yes" : "no");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        transformer.transform(new DOMSource(doc), result);
+    }
+
+    private static void writeDocument(Document doc, Writer writer, boolean shouldIndent) throws TransformerException {
+        writeDocument(doc, new StreamResult(writer), shouldIndent);
+    }
+
+    private static void writeDocument(Document doc, OutputStream os, boolean shouldIndent) throws TransformerException {
+        writeDocument(doc, new StreamResult(os), shouldIndent);
     }
 
     /**
@@ -219,11 +240,11 @@ public class XmlUtils {
     ///
     /// **Note:** The SOSI team has been notified that SHA1 should be updated.
     ///
-    /// @param rootElement the root element of the XML document to be signed
-    /// @param nextSibling the node after which the signature should be inserted, or null to append as child of rootElement
+    /// @param rootElement   the root element of the XML document to be signed
+    /// @param nextSibling   the node after which the signature should be inserted, or null to append as child of rootElement
     /// @param referenceUris list of element IDs to be included in the signature (typically "#id" format)
-    /// @param certificate the certificate and private key pair used for signing
-    /// @throws AuthenticationException if signing fails due to cryptographic or XML processing errors
+    /// @param certificate   the certificate and private key pair used for signing
+    /// @throws AuthenticationException  if signing fails due to cryptographic or XML processing errors
     /// @throws IllegalArgumentException if any of the parameters are invalid
     public static void sign(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
         try {

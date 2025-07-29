@@ -1,5 +1,6 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 
