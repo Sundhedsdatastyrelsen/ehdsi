@@ -11,12 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AuthenticationIT {
     static AuthenticationService.Config config() {
+        var keystorePath = System.getenv("KEYSTORE_PATH");
+        assertThat("KEYSTORE_PATH env var should be set", keystorePath, notNullValue());
+        var keyAlias = System.getenv("KEY_ALIAS");
+        assertThat("KEY_ALIAS env var should be set", keyAlias, notNullValue());
         var password = System.getenv("KEYSTORE_PASSWORD");
-        assertThat("KEYSTORE_PASSWORD env var should be set for test to work", password, notNullValue());
+        assertThat("KEYSTORE_PASSWORD env var should be set", password, notNullValue());
         return new AuthenticationService.Config(
             URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
-            Path.of("../config/epps-sosi-sts-client.p12"),
-            "epps-sosi-sts-client",
+            Path.of(keystorePath),
+            keyAlias,
             password,
             "https://ehdsi-idp.testkald.nspop.dk"
         );
