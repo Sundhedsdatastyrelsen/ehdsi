@@ -11,6 +11,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
@@ -68,9 +69,9 @@ public class EPrescriptionMetadataMapper {
 
         String documentId = switch (documentLevel) {
             case DocumentLevel.LEVEL1 ->
-                toRootedId(EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId()));
+                CdaId.toDocumentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId())));
             case DocumentLevel.LEVEL3 ->
-                toRootedId(EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId()));
+                CdaId.toDocumentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId())));
         };
 
         DocumentFormatDto documentFormat = switch (documentLevel) {
@@ -163,31 +164,5 @@ public class EPrescriptionMetadataMapper {
             prescription.getDrug().getName(),
             Optional.ofNullable(prescription.getDrug().getATC()).map(ATCType::getText).orElse("no ATC code")
         );
-    }
-
-    /// We found during the Spring test of 2025 that the countries that were already in production expected us to pass
-    /// rooted ePrescription ids - so we do that now. The format is not documented anywhere I can find.
-    public static String toRootedId(String id) {
-        return String.format("%s^%s", Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value, id);
-    }
-
-    /// Try to get an id from a string also containing the correct root "1.2.208.176.7.2.3^123456L3" -> "123456L3". If
-    /// it cannot be parsed, null is returned. See also the comment on [EPrescriptionMetadataMapper#toRootedId].
-    public static String fromRootedId(String input) {
-        if (input == null) {
-            return null;
-        }
-        var parts = input.split("\\^", 2);
-        if (parts.length != 2) {
-            return null;
-        }
-
-        var oidString = parts[0];
-        var id = parts[1];
-        if (id.trim().isEmpty() || !oidString.equals(Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
-            return null;
-        }
-
-        return id;
     }
 }

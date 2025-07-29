@@ -1,11 +1,13 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.nsp.test.idp.model.OrganizationIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
+import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryRequest;
@@ -15,9 +17,12 @@ import oasis.names.tc.ebxml_regrep.xsd.rim._3.SlotType1;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.ValueListType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 import org.yaml.snakeyaml.util.Tuple;
 
-import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -37,6 +42,7 @@ public class InformationCardService {
         this.systemCaller = systemCaller;
     }
 
+    /// @return A list of ids of information cards.
     public List<String> findInformationCardDetails(
         String patientId,
         EuropeanHealthcareProfessional caller
@@ -97,7 +103,7 @@ public class InformationCardService {
         }
     }
 
-    public String getInformationCard(String uniqueDocumentId) {
+    public Document getInformationCard(String uniqueDocumentId) {
         try {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
@@ -109,18 +115,17 @@ public class InformationCardService {
             //TODO: We should log that we did this to MinLog, since we do it as an organisation
             //The endpoints does not (in the near future) support IDWS, so we have to use the organisatorial endpoint.
             var fskResponse = fskClient.getDocument(request, systemCaller);
-            var document = fskResponse.getDocumentResponse()
+            byte[] documentBytes = fskResponse.getDocumentResponse()
                 .stream()
-                .map(dr -> new String(dr.getDocument(), StandardCharsets.UTF_8))
-                .findFirst();
-            return document.orElse(null);
-
+                .map(RetrieveDocumentSetResponseType.DocumentResponse::getDocument)
+                .findFirst()
+                .orElse(null);
+            return documentBytes == null ? null : Utils.readXmlDocument(new ByteArrayInputStream(documentBytes));
         } catch (IllegalArgumentException e) {
             throw new CountryAException(HttpStatus.BAD_REQUEST, e);
-        } catch (JAXBException e) {
+        } catch (JAXBException | SAXException | IOException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
-
     }
 
     private static Tuple<String, String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId) {

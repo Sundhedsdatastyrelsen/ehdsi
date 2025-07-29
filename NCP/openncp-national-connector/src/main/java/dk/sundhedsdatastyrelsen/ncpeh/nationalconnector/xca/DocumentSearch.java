@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
-import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindEPrescriptionDocumentsRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import eu.europa.ec.sante.openncp.common.ClassCode;
@@ -10,7 +10,6 @@ import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
 import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SimpleConfidentialityEnum;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SubstitutionCodeEnum;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.*;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
 import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
@@ -76,7 +75,56 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
 
     @Override
     public DocumentAssociation<PSDocumentMetaData> getPSDocumentList(SearchCriteria searchCriteria) throws NIException, InsufficientRightsException {
-        throw new UnsupportedOperationException();
+        try {
+            final var soapHeader = this.soapHeader;
+            logger.info("Querying Country A service for patient summary documents...");
+            // Patient summary has the same arguments as EP, so we use the same class.
+            final var request = new PostFindEPrescriptionDocumentsRequest()
+                .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
+                .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
+                .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))
+                .maximumSize(Utils.parseLong(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.MAXIMUM_SIZE)))
+                .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
+                .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
+                .soapHeader(Utils.elementToString(soapHeader));
+            final var md = CountryAService.api().postFindPatientSummaryDocument(request);
+            logger.info("Got well-formed response from Country A service.");
+            return DocumentFactory.createDocumentAssociation(
+                    DocumentFactory.createPSDocumentXML(
+                        md.getLevel3().getId(),
+                        md.getLevel3().getPatientId(),
+                        Utils.offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
+                        md.getLevel3().getRepositoryId(),
+                        md.getLevel3().getTitle(),
+                        md.getLevel3().getAuthor(),
+                        SimpleConfidentialityEnum.findByCode(md.getLevel3().getConfidentiality().getConfidentialityCode()),
+                        md.getLevel3().getLanguage(),
+                        md.getLevel3().getSize(),
+                        md.getLevel3().getHash()
+                    ),
+                    DocumentFactory.createPSDocumentPDF(
+                        md.getLevel1().getId(),
+                        md.getLevel1().getPatientId(),
+                        Utils.offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
+                        md.getLevel1().getRepositoryId(),
+                        md.getLevel1().getTitle(),
+                        md.getLevel1().getAuthor(),
+                        SimpleConfidentialityEnum.findByCode(md.getLevel1().getConfidentiality().getConfidentialityCode()),
+                        md.getLevel1().getLanguage(),
+                        md.getLevel1().getSize(),
+                        md.getLevel1().getHash()
+                    ));
+        } catch (ApiException e) {
+            if (e.getCode() == 0) {
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
+            } else {
+                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
+                    "Error, status: %s, body: %s",
+                    e.getCode(),
+                    e.getResponseBody()
+                ));
+            }
+        }
     }
 
     static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
