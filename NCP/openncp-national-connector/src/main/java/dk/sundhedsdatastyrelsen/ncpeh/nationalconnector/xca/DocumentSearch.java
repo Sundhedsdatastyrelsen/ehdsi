@@ -89,30 +89,33 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                 .soapHeader(Utils.elementToString(soapHeader));
             final var md = CountryAService.api().postFindPatientSummaryDocument(request);
             logger.info("Got well-formed response from Country A service.");
+            final var l3 = md.getLevel3();
+            // TODO L1 should not be the same as L3, fix once we've implemented L1
+            final var l1 = md.getLevel3();
             return DocumentFactory.createDocumentAssociation(
                     DocumentFactory.createPSDocumentXML(
-                        md.getLevel3().getId(),
-                        md.getLevel3().getPatientId(),
-                        Utils.offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
-                        md.getLevel3().getRepositoryId(),
-                        md.getLevel3().getTitle(),
-                        md.getLevel3().getAuthor(),
-                        SimpleConfidentialityEnum.findByCode(md.getLevel3().getConfidentiality().getConfidentialityCode()),
-                        md.getLevel3().getLanguage(),
-                        md.getLevel3().getSize(),
-                        md.getLevel3().getHash()
+                        l3.getId(),
+                        l3.getPatientId(),
+                        Utils.offsetDateTimeToDate(l3.getEffectiveTime()),
+                        l3.getRepositoryId(),
+                        l3.getTitle(),
+                        l3.getAuthor(),
+                        SimpleConfidentialityEnum.findByCode(l3.getConfidentiality().getConfidentialityCode()),
+                        l3.getLanguage(),
+                        l3.getSize(),
+                        l3.getHash()
                     ),
                     DocumentFactory.createPSDocumentPDF(
-                        md.getLevel1().getId(),
-                        md.getLevel1().getPatientId(),
-                        Utils.offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
-                        md.getLevel1().getRepositoryId(),
-                        md.getLevel1().getTitle(),
-                        md.getLevel1().getAuthor(),
-                        SimpleConfidentialityEnum.findByCode(md.getLevel1().getConfidentiality().getConfidentialityCode()),
-                        md.getLevel1().getLanguage(),
-                        md.getLevel1().getSize(),
-                        md.getLevel1().getHash()
+                        l1.getId(),
+                        l1.getPatientId(),
+                        Utils.offsetDateTimeToDate(l1.getEffectiveTime()),
+                        l1.getRepositoryId(),
+                        l1.getTitle(),
+                        l1.getAuthor(),
+                        SimpleConfidentialityEnum.findByCode(l1.getConfidentiality().getConfidentialityCode()),
+                        l1.getLanguage(),
+                        l1.getSize(),
+                        l1.getHash()
                     ));
         } catch (ApiException e) {
             if (e.getCode() == 0) {

@@ -10,6 +10,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     -X request-builder/build \
     :hcp-template     "\"$SCRIPT_DIR/templates/xca/hcp.xml\"" \
     :trc-template     "\"$SCRIPT_DIR/templates/xca/trc.xml\"" \
-    :request-template "\"$SCRIPT_DIR/templates/xca/query/request.xml\"" \
+    :request-template "\"$SCRIPT_DIR/templates/xca/query/request-ps.xml\"" \
     :private-key      "\"$SCRIPT_DIR/testcert.p8.pem\"" \
     :cert             "\"$SCRIPT_DIR/testcert.cer\""

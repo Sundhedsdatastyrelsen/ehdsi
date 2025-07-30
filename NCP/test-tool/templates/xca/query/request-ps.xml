@@ -17,7 +17,7 @@
       <AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
         <Slot name="$XDSDocumentEntryPatientId">
           <ValueList>
-            <Value>'0201909309^^^&amp;1.2.208.176.1.2&amp;ISO'</Value>
+            <Value>'0410009234^^^&amp;1.2.208.176.1.2&amp;ISO'</Value>
           </ValueList>
         </Slot>
         <Slot name="$XDSDocumentEntryStatus">
@@ -27,7 +27,7 @@
         </Slot>
         <Slot name="$XDSDocumentEntryClassCode">
           <ValueList>
-            <Value>('57833-6^^2.16.840.1.113883.6.1')</Value>
+            <Value>('60591-5^^2.16.840.1.113883.6.1')</Value>
           </ValueList>
         </Slot>
       </AdhocQuery>
