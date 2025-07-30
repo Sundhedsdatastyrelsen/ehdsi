@@ -161,6 +161,9 @@ public class PrescriptionService {
     @WithSpan
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
         var input = assembleEPrescriptionInput(patientId, filter, caller).findFirst().orElse(null);
+        if (input == null) {
+            throw new CountryAException(HttpStatus.NOT_FOUND, "Requested prescription not found.");
+        }
         try {
             var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
             var cda = switch (documentLevel) {
