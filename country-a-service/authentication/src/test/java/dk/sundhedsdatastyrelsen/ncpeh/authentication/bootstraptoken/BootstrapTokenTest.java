@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@SuppressWarnings("java:S125")
 public class BootstrapTokenTest {
     static CertificateAndKey testCert() throws Exception {
         try (var keystore = BootstrapTokenTest.class.getClassLoader().getResourceAsStream("test-signer.p12")) {
@@ -106,7 +107,7 @@ public class BootstrapTokenTest {
                 "<wst13:RequestType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue</wst13:RequestType>",
                 "<saml:Audience>https://fmk</saml:Audience>"
             ));
-        System.out.println(xml);
+//        System.out.println(xml);
 
         var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapTokenExchangeRequest.of(bstInput, cert).soapBody());
         assertThat(xml2, hasLength(xml.length()));
@@ -144,7 +145,8 @@ public class BootstrapTokenTest {
             xml,
             containsString("""
                 <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="urn:oasis:names:tc:xspa:1.0" codeSystemName="eHDSI XSPA PurposeOfUse" displayName="TREATMENT" xsi:type="CE"/>"""));
-        System.out.println(XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody()));
+
+        // System.out.println(XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody()));
     }
 
     private static String soapHeader() {

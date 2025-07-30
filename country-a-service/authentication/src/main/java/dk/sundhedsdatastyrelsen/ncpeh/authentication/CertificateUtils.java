@@ -57,6 +57,7 @@ public class CertificateUtils {
     }
 
     public static CertificateAndKey loadCertificateFromKeystore(Path keystore, String keyAlias, String password) throws AuthenticationException {
+        log.info("Loading certificate with alias {} from keystore {}", keyAlias, keystore);
         try (var is = new BufferedInputStream(Files.newInputStream(keystore))) {
             return loadCertificateFromKeystore(is, keyAlias, password);
         } catch (IOException e) {

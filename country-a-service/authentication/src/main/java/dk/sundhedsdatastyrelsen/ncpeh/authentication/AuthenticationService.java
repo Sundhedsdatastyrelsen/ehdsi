@@ -3,6 +3,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenExchangeRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenParams;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAssertions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -11,6 +13,8 @@ import java.nio.file.Path;
  * The public API for authentication actions, such as bootstrap-to-IDWS exchanges.
  */
 public class AuthenticationService {
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+
     public record Config(
             URI sosiStsUri,
             Path keystorePath,
@@ -52,6 +56,7 @@ public class AuthenticationService {
                 certificateAndKey,
                 audience,
                 config.issuer());
+        log.info("Requesting IDWS token from SOSI STS for {}", audience);
         // we use the same certificate for the bootstrap tokens and the soap envelopes
         var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, certificateAndKey);
         return sosiStsClient.exchangeBootstrapToken(bstRequest);

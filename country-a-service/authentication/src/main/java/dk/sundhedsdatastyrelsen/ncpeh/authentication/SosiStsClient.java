@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenExchangeRequest;
+import org.slf4j.Logger;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
@@ -14,6 +15,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class SosiStsClient {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClient.class);
     private static final XPathWrapper xpath = new XPathWrapper(
         XmlNamespaces.SAML,
         XmlNamespaces.SOAP,
@@ -90,6 +92,7 @@ public class SosiStsClient {
             .build();
 
         try {
+            log.debug("Sending SOAP request to SOSI STS at {}", serviceUri);
             var result = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofInputStream());
             if (result.statusCode() != 200 && result.statusCode() != 500) {
                 throw new AuthenticationException("Unexpected HTTP status code from SOSI STS: " + result.statusCode());
@@ -100,5 +103,4 @@ public class SosiStsClient {
             throw new AuthenticationException("Thread interrupted", e);
         }
     }
-
 }
