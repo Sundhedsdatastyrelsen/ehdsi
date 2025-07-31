@@ -134,7 +134,7 @@ class End2EndIT {
 
     static JsonNode fetchCountryBSinglePrescription(String patientIdentifier, String documentIdentifier) throws IOException, InterruptedException {
         var jsonBody = mapper.readTree("""
-            {"nextOfKin":false,"countryCode":"DK","patientIdentifier":"?","purposeOfUse":"TREATMENT","repositoryId":"1.2.208","documentIdentifier":"?","homeCommunityId":"urn:oid:1.2.208"}""");
+            {"nextOfKin":false,"countryCode":"DK","patientIdentifier":"?","purposeOfUse":"TREATMENT","repositoryId":"1.2.208.176.7.2.3","documentIdentifier":"?","homeCommunityId":"urn:oid:1.2.208"}""");
         jsonBody.withObject("")
             .put("patientIdentifier", patientIdentifier)
             .put("documentIdentifier", documentIdentifier);
