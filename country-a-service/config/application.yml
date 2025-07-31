@@ -5,6 +5,8 @@ spring:
     jdbcUrl: jdbc:sqlite:data/undo-db.sqlite
   local-lms-datasource:
     jdbcUrl: jdbc:sqlite:data/local-lms-db.sqlite
+  job-queue-datasource:
+    jdbcUrl: jdbc:sqlite:data/job-queue.sqlite
   flyway:
     enabled: true
     locations: "classpath:db/migration"

@@ -28,6 +28,12 @@ public class Beans {
         return DataSourceBuilder.create().build();
     }
 
+    @Bean("jobQueueDataSource")
+    @ConfigurationProperties("spring.job-queue-datasource")
+    public DataSource jobQueueDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
     @Bean
     public UndoDispensationRepository undoDispensationRepository() {
         return new UndoDispensationRepository(undoDataSource());

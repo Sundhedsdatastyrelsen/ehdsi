@@ -28,6 +28,7 @@
         <module>testing-tools</module>
         <module>local-lms-db</module>
         <module>authentication</module>
+        <module>job-queue</module>
     </modules>
 
     <properties>

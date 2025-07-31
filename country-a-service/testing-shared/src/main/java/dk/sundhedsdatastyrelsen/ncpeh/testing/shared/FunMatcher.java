@@ -1,0 +1,44 @@
+package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+
+import java.util.function.Function;
+
+/// Hamcrest matcher that asserts on the result of calling with a function, e.g.
+/// `where(Foo::getName, equalTo("Donald Duck"))`.
+///
+/// This is useful when combining matchers, e.g.:
+/// ```
+/// assertThat(fooList, hasItem(where(Foo::bar, is(42))));
+/// ```
+public class FunMatcher<T, U> extends TypeSafeMatcher<T> {
+    Function<T, U> f;
+    Matcher<? super U> matcher;
+
+    public FunMatcher(Function<T, U> f, Matcher<? super U> matcher) {
+        this.f = f;
+        this.matcher = matcher;
+    }
+
+    public static <T, U> Matcher<T> where(Function<T, U> f, Matcher<? super U> m) {
+        return new FunMatcher<>(f, m);
+    }
+
+    @Override
+    protected boolean matchesSafely(T item) {
+        var x = f.apply(item);
+        return matcher.matches(x);
+    }
+
+    @Override
+    public void describeTo(Description description) {
+        description.appendText("object that matches ").appendDescriptionOf(matcher);
+    }
+
+    @Override
+    public void describeMismatchSafely(T item, Description mismatchDescription) {
+        matcher.describeMismatch(f.apply(item), mismatchDescription);
+    }
+}
