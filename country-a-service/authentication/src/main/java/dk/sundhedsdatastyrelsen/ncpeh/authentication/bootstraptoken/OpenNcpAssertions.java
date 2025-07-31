@@ -34,8 +34,10 @@ public record OpenNcpAssertions(
             var trcAssertion = xpath.evalEl("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:trc']]", doc);
 
             if (trcAssertion == null) {
-                throw new AuthenticationException("Missing TRC assertion. We cannot generate bootstrap tokens for XCPD requests.");
+                throw new AuthenticationException("Missing TRC assertion. Cannot generate bootstrap token.");
             }
+            // We determine the country of treatment by extracting the country code from the signing certificate.
+            // This is similar to how OpenNCP determines country of treatment.
             var hcpCertB64 = xpath.evalString("//ds:X509Certificate", hcpAssertion);
             var countryOfTreatment = CertificateUtils.extractCountryCode(CertificateUtils.fromBase64(hcpCertB64));
 

@@ -52,6 +52,8 @@ public class SosiStsClient {
     private EuropeanHcpIdwsToken parseResponse(InputStream result) throws AuthenticationException {
         try {
             var document = XmlUtils.parse(result);
+
+            // Was it an error response?
             var fault = xpath.evalEl("/soap:Envelope/soap:Body/soap:Fault", document);
             if (fault != null) {
                 throw new AuthenticationException.SosiStsException(
@@ -61,6 +63,7 @@ public class SosiStsClient {
                 );
             }
 
+            // Otherwise we assume it was a success
             var requestSecurityTokenResponse = xpath.evalEl(
                 "/soap:Envelope/soap:Body/wst13:RequestSecurityTokenResponseCollection" +
                     "/wst13:RequestSecurityTokenResponse",
@@ -94,9 +97,12 @@ public class SosiStsClient {
         try {
             log.debug("Sending SOAP request to SOSI STS at {}", serviceUri);
             var result = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofInputStream());
+            // the service should return 500 and an error response on failure, but it currently returns 200 and an
+            // error response on failure.
             if (result.statusCode() != 200 && result.statusCode() != 500) {
                 throw new AuthenticationException("Unexpected HTTP status code from SOSI STS: " + result.statusCode());
             }
+            // we do not yet know whether the request failed, this is indicated in the body.
             return result.body();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
