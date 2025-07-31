@@ -49,8 +49,8 @@ public class XPathWrapper {
         };
     }
 
-    public XPathWrapper(XmlNamespaces... namespaces) {
-        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaces::prefix, XmlNamespaces::uri)));
+    public XPathWrapper(XmlNamespace... namespaces) {
+        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespace::prefix, XmlNamespace::uri)));
     }
 
     private XPath xpath() {

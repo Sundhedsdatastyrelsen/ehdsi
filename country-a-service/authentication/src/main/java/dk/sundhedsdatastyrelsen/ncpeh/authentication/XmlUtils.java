@@ -141,7 +141,7 @@ public class XmlUtils {
      * @param name   the element name
      * @return the created Element
      */
-    public static Element appendChild(Document parent, XmlNamespaces ns, String name) {
+    public static Element appendChild(Document parent, XmlNamespace ns, String name) {
         var child = parent.createElementNS(ns.uri(), name);
         child.setPrefix(ns.prefix());
         parent.appendChild(child);
@@ -156,7 +156,7 @@ public class XmlUtils {
      * @param name   the element name
      * @return the created Element
      */
-    public static Element appendChild(Element parent, XmlNamespaces ns, String name) {
+    public static Element appendChild(Element parent, XmlNamespace ns, String name) {
         var child = parent.getOwnerDocument().createElementNS(ns.uri(), name);
         child.setPrefix(ns.prefix());
         parent.appendChild(child);
@@ -172,7 +172,7 @@ public class XmlUtils {
      * @param textValue the text content
      * @return the created Element
      */
-    public static Element appendChild(Element parent, XmlNamespaces ns, String name, String textValue) {
+    public static Element appendChild(Element parent, XmlNamespace ns, String name, String textValue) {
         var child = parent.getOwnerDocument().createElementNS(ns.uri(), name);
         child.setPrefix(ns.prefix());
         child.setTextContent(textValue);
@@ -186,7 +186,7 @@ public class XmlUtils {
      * @param element    the Element to declare namespaces on
      * @param namespaces the namespaces to declare
      */
-    public static void declareNamespaces(Element element, XmlNamespaces... namespaces) {
+    public static void declareNamespaces(Element element, XmlNamespace... namespaces) {
         for (var ns : namespaces) {
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + ns.prefix(), ns.uri());
         }
@@ -200,7 +200,7 @@ public class XmlUtils {
      * @param name  the attribute name
      * @param value the attribute value
      */
-    public static void setIdAttribute(Element elm, XmlNamespaces ns, String name, String value) {
+    public static void setIdAttribute(Element elm, XmlNamespace ns, String name, String value) {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + name, value);
         elm.setIdAttributeNS(ns.uri(), name, true);
     }
@@ -213,7 +213,7 @@ public class XmlUtils {
      * @param localName the local attribute name
      * @param value     the attribute value
      */
-    public static void setAttribute(Element elm, XmlNamespaces ns, String localName, String value) {
+    public static void setAttribute(Element elm, XmlNamespace ns, String localName, String value) {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
     }
 

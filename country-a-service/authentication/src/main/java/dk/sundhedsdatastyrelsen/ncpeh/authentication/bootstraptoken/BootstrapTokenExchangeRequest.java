@@ -2,7 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,52 +42,52 @@ public class BootstrapTokenExchangeRequest {
         var clock = Clock.systemUTC();
         var doc = XmlUtils.newDocument();
 
-        var envelope = XmlUtils.appendChild(doc, XmlNamespaces.SOAP, "Envelope");
+        var envelope = XmlUtils.appendChild(doc, XmlNamespace.SOAP, "Envelope");
         XmlUtils.declareNamespaces(
             envelope,
-            XmlNamespaces.SOAP,
-            XmlNamespaces.DS,
-            XmlNamespaces.SAML,
-            XmlNamespaces.XSI,
-            XmlNamespaces.WSSE,
-            XmlNamespaces.WST,
-            XmlNamespaces.WST13,
-            XmlNamespaces.WST14,
-            XmlNamespaces.WSA,
-            XmlNamespaces.WSP,
-            XmlNamespaces.WSU);
+            XmlNamespace.SOAP,
+            XmlNamespace.DS,
+            XmlNamespace.SAML,
+            XmlNamespace.XSI,
+            XmlNamespace.WSSE,
+            XmlNamespace.WST,
+            XmlNamespace.WST13,
+            XmlNamespace.WST14,
+            XmlNamespace.WSA,
+            XmlNamespace.WSP,
+            XmlNamespace.WSU);
 
-        var soapHeader = XmlUtils.appendChild(envelope, XmlNamespaces.SOAP, "Header");
-        var action = XmlUtils.appendChild(soapHeader, XmlNamespaces.WSA, "Action", "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue");
-        XmlUtils.setIdAttribute(action, XmlNamespaces.WSU, "Id", "action");
+        var soapHeader = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Header");
+        var action = XmlUtils.appendChild(soapHeader, XmlNamespace.WSA, "Action", "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue");
+        XmlUtils.setIdAttribute(action, XmlNamespace.WSU, "Id", "action");
 
-        var messageID = XmlUtils.appendChild(soapHeader, XmlNamespaces.WSA, "MessageID", "urn:uuid:" + UUID.randomUUID());
-        XmlUtils.setIdAttribute(messageID, XmlNamespaces.WSU, "Id", "messageID");
+        var messageID = XmlUtils.appendChild(soapHeader, XmlNamespace.WSA, "MessageID", "urn:uuid:" + UUID.randomUUID());
+        XmlUtils.setIdAttribute(messageID, XmlNamespace.WSU, "Id", "messageID");
 
-        var security = XmlUtils.appendChild(soapHeader, XmlNamespaces.WSSE, "Security");
-        XmlUtils.setIdAttribute(security, XmlNamespaces.WSU, "Id", "security");
+        var security = XmlUtils.appendChild(soapHeader, XmlNamespace.WSSE, "Security");
+        XmlUtils.setIdAttribute(security, XmlNamespace.WSU, "Id", "security");
         security.setAttribute("mustUnderstand", "1");
 
-        var timestamp = XmlUtils.appendChild(security, XmlNamespaces.WSU, "Timestamp");
-        XmlUtils.setIdAttribute(timestamp, XmlNamespaces.WSU, "Id", "ts");
-        XmlUtils.appendChild(timestamp, XmlNamespaces.WSU, "Created", DateTimeFormatter.ISO_INSTANT.format(Instant.now(clock)));
+        var timestamp = XmlUtils.appendChild(security, XmlNamespace.WSU, "Timestamp");
+        XmlUtils.setIdAttribute(timestamp, XmlNamespace.WSU, "Id", "ts");
+        XmlUtils.appendChild(timestamp, XmlNamespace.WSU, "Created", DateTimeFormatter.ISO_INSTANT.format(Instant.now(clock)));
 
-        var soapBody = XmlUtils.appendChild(envelope, XmlNamespaces.SOAP, "Body");
-        XmlUtils.setIdAttribute(soapBody, XmlNamespaces.WSU, "Id", "body");
+        var soapBody = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Body");
+        XmlUtils.setIdAttribute(soapBody, XmlNamespace.WSU, "Id", "body");
 
-        var requestSecurityToken = XmlUtils.appendChild(soapBody, XmlNamespaces.WST13, "RequestSecurityToken");
+        var requestSecurityToken = XmlUtils.appendChild(soapBody, XmlNamespace.WST13, "RequestSecurityToken");
         requestSecurityToken.setAttribute("Context", "urn:uuid:" + UUID.randomUUID());
-        XmlUtils.appendChild(requestSecurityToken, XmlNamespaces.WST13, "TokenType", "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0");
-        XmlUtils.appendChild(requestSecurityToken, XmlNamespaces.WST13, "RequestType", "http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue");
+        XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST13, "TokenType", "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0");
+        XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST13, "RequestType", "http://docs.oasis-open.org/ws-sx/ws-trust/200512/Issue");
 
-        var actAs = XmlUtils.appendChild(requestSecurityToken, XmlNamespaces.WST14, "ActAs");
+        var actAs = XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST14, "ActAs");
         actAs.appendChild(doc.importNode(bootstrapToken.element(), true));
 
         XmlUtils.appendChild(
             XmlUtils.appendChild(
-                XmlUtils.appendChild(requestSecurityToken, XmlNamespaces.WSP, "AppliesTo"),
-                XmlNamespaces.WSA, "EndpointReference"),
-            XmlNamespaces.WSA, "Address", audience);
+                XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WSP, "AppliesTo"),
+                XmlNamespace.WSA, "EndpointReference"),
+            XmlNamespace.WSA, "Address", audience);
 
         signSoapRequest(security, soapCertificate);
         return new BootstrapTokenExchangeRequest(doc);

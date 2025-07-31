@@ -2,7 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.w3c.dom.Element;
 
@@ -51,57 +51,57 @@ public class BootstrapToken {
 
         var doc = XmlUtils.newDocument();
 
-        var assertion = XmlUtils.appendChild(doc, XmlNamespaces.SAML, "Assertion");
+        var assertion = XmlUtils.appendChild(doc, XmlNamespace.SAML, "Assertion");
         var assertionId = "_" + UUID.randomUUID();
-        XmlUtils.declareNamespaces(assertion, XmlNamespaces.XSD, XmlNamespaces.XSI);
+        XmlUtils.declareNamespaces(assertion, XmlNamespace.XSD, XmlNamespace.XSI);
         assertion.setAttribute("IssueInstant", DateTimeFormatter.ISO_INSTANT.format(now));
         assertion.setAttribute("Version", "2.0");
         assertion.setAttribute("ID", assertionId);
         assertion.setIdAttribute("ID", true);
 
-        XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Issuer", bst.issuer());
-        var subject = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Subject");
+        XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Issuer", bst.issuer());
+        var subject = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Subject");
 
-        var nameID = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "NameID", bst.nameId());
+        var nameID = XmlUtils.appendChild(subject, XmlNamespace.SAML, "NameID", bst.nameId());
         nameID.setAttribute("Format", bst.nameIdFormat());
 
-        var subjectConfirmation = XmlUtils.appendChild(subject, XmlNamespaces.SAML, "SubjectConfirmation");
+        var subjectConfirmation = XmlUtils.appendChild(subject, XmlNamespace.SAML, "SubjectConfirmation");
         subjectConfirmation.setAttribute("Method", "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key");
-        var subjectConfirmationData = XmlUtils.appendChild(subjectConfirmation, XmlNamespaces.SAML, "SubjectConfirmationData");
-        var keyInfo = XmlUtils.appendChild(subjectConfirmationData, XmlNamespaces.DS, "KeyInfo");
+        var subjectConfirmationData = XmlUtils.appendChild(subjectConfirmation, XmlNamespace.SAML, "SubjectConfirmationData");
+        var keyInfo = XmlUtils.appendChild(subjectConfirmationData, XmlNamespace.DS, "KeyInfo");
         try {
             var certB64 = Base64.getEncoder().encodeToString(bst.idpCert().certificate().getEncoded());
             XmlUtils.appendChild(
-                XmlUtils.appendChild(keyInfo, XmlNamespaces.DS, "X509Data"),
-                XmlNamespaces.DS,
+                XmlUtils.appendChild(keyInfo, XmlNamespace.DS, "X509Data"),
+                XmlNamespace.DS,
                 "X509Certificate",
                 certB64);
         } catch (CertificateEncodingException e) {
             throw new IllegalArgumentException("Could not encode certificate", e);
         }
 
-        var conditions = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "Conditions");
+        var conditions = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Conditions");
         conditions.setAttribute(
             "NotBefore", DateTimeFormatter.ISO_INSTANT.format(now));
         conditions.setAttribute(
             "NotOnOrAfter", DateTimeFormatter.ISO_INSTANT.format(now.plus(2, ChronoUnit.HOURS)));
 
         XmlUtils.appendChild(
-            XmlUtils.appendChild(conditions, XmlNamespaces.SAML, "AudienceRestriction"),
-            XmlNamespaces.SAML,
+            XmlUtils.appendChild(conditions, XmlNamespace.SAML, "AudienceRestriction"),
+            XmlNamespace.SAML,
             "Audience",
             bst.audience());
 
-        var authnStatement = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "AuthnStatement");
+        var authnStatement = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "AuthnStatement");
         authnStatement.setAttribute("AuthnInstant", DateTimeFormatter.ISO_INSTANT.format(now));
         authnStatement.setAttribute("SessionIndex", assertionId);
         XmlUtils.appendChild(
-            XmlUtils.appendChild(authnStatement, XmlNamespaces.SAML, "AuthnContext"),
-            XmlNamespaces.SAML,
+            XmlUtils.appendChild(authnStatement, XmlNamespace.SAML, "AuthnContext"),
+            XmlNamespace.SAML,
             "AuthnContextClassRef",
             "urn:oasis:names:tc:SAML:2.0:ac:classes:X509");
 
-        var attributeStatement = XmlUtils.appendChild(assertion, XmlNamespaces.SAML, "AttributeStatement");
+        var attributeStatement = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "AttributeStatement");
         for (var attr : bst.attributes()) {
             switch (attr) {
                 case BootstrapTokenParams.SamlAttribute.Raw(var node): {
@@ -109,12 +109,12 @@ public class BootstrapToken {
                     break;
                 }
                 case BootstrapTokenParams.SamlAttribute.New(var name, var friendlyName, var vals): {
-                    var attrEl = XmlUtils.appendChild(attributeStatement, XmlNamespaces.SAML, "Attribute");
+                    var attrEl = XmlUtils.appendChild(attributeStatement, XmlNamespace.SAML, "Attribute");
                     attrEl.setAttribute("FriendlyName", friendlyName);
                     attrEl.setAttribute("Name", name);
                     for (var val : vals) {
-                        var valEl = XmlUtils.appendChild(attrEl, XmlNamespaces.SAML, "AttributeValue", val);
-                        XmlUtils.setAttribute(valEl, XmlNamespaces.XSI, "type", "xsd:string");
+                        var valEl = XmlUtils.appendChild(attrEl, XmlNamespace.SAML, "AttributeValue", val);
+                        XmlUtils.setAttribute(valEl, XmlNamespace.XSI, "type", "xsd:string");
                     }
                     break;
                 }

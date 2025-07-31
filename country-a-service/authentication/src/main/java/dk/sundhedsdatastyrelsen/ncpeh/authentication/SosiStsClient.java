@@ -17,12 +17,12 @@ import java.time.Instant;
 public class SosiStsClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClient.class);
     private static final XPathWrapper xpath = new XPathWrapper(
-        XmlNamespaces.SAML,
-        XmlNamespaces.SOAP,
-        XmlNamespaces.WST13,
-        XmlNamespaces.WSA,
-        XmlNamespaces.WSP,
-        XmlNamespaces.WSU);
+        XmlNamespace.SAML,
+        XmlNamespace.SOAP,
+        XmlNamespace.WST13,
+        XmlNamespace.WSA,
+        XmlNamespace.WSP,
+        XmlNamespace.WSU);
 
     private final URI serviceUri;
     private final HttpClient httpClient;

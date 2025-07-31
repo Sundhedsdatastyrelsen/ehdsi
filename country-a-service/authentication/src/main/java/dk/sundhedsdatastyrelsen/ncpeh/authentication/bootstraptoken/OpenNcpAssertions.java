@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import lombok.NonNull;
 import org.w3c.dom.Element;
@@ -23,9 +23,9 @@ public record OpenNcpAssertions(
     @NonNull String countryOfTreatment
 ) {
     private static final XPathWrapper xpath = new XPathWrapper(
-        XmlNamespaces.WSSE,
-        XmlNamespaces.DS,
-        XmlNamespaces.SAML);
+        XmlNamespace.WSSE,
+        XmlNamespace.DS,
+        XmlNamespace.SAML);
 
     public static OpenNcpAssertions fromSoapHeader(String soapHeader) throws AuthenticationException {
         try {

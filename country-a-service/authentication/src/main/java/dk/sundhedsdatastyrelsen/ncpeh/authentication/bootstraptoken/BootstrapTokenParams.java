@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespaces;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import lombok.Builder;
 import lombok.NonNull;
@@ -26,9 +26,9 @@ public record BootstrapTokenParams(
     @NonNull String issuer
 ) {
     private static final XPathWrapper xpath = new XPathWrapper(
-        XmlNamespaces.WSSE,
-        XmlNamespaces.DS,
-        XmlNamespaces.SAML);
+        XmlNamespace.WSSE,
+        XmlNamespace.DS,
+        XmlNamespace.SAML);
 
     public sealed interface SamlAttribute {
         /// Attribute element copied from e.g. HCP assertion
@@ -52,7 +52,7 @@ public record BootstrapTokenParams(
                         var valueElement = xpath.evalEl("./saml:AttributeValue/*", e);
                         if (valueElement != null) {
                             // xsi:type="CE" is what the Dynamic Request Generator uses
-                            XmlUtils.setAttribute(valueElement, XmlNamespaces.XSI, "type", "CE");
+                            XmlUtils.setAttribute(valueElement, XmlNamespace.XSI, "type", "CE");
                             if ("PurposeOfUse".equals(valueElement.getTagName())) {
                                 // workaround for the codeSystem bug:
                                 valueElement.setAttribute("codeSystem", "urn:oasis:names:tc:xspa:1.0");
