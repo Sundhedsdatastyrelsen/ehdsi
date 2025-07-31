@@ -222,7 +222,8 @@ public class XmlUtils {
     /// The signature is inserted into the document at the specified location, either as a child
     /// of the root element or as a sibling to the specified nextSibling node.
     ///
-    /// **Note:** The SOSI team has been notified that SHA1 should be updated.
+    /// The elements matching the `referenceUris` should have their ID attributes marked as IdAttributes,
+    /// otherwise validation might fail.
     ///
     /// @param rootElement   the root element of the XML document to be signed
     /// @param nextSibling   the node after which the signature should be inserted, or null to append as child of rootElement
@@ -232,25 +233,33 @@ public class XmlUtils {
     /// @throws IllegalArgumentException if any of the parameters are invalid
     public static void sign(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
         try {
-            var sigFactory = XMLSignatureFactory.getInstance("DOM");
+            // Make the internal representation of the DOM consistent before signing, by
+            // e.g. merging adjacent text-nodes.
             rootElement.getOwnerDocument().normalizeDocument();
+            var sigFactory = XMLSignatureFactory.getInstance("DOM");
+
+            // Define the transforms to be applied to each referenced element
+            // - ENVELOPED: Removes the signature element itself from the signed content
+            // - EXCLUSIVE: Applies exclusive canonicalization to normalize whitespace and namespace handling
             var transforms = List.of(
                 sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null),
                 sigFactory.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null));
 
+            // Each reference specifies which part of the document is included in the signature.
             List<Reference> references = new ArrayList<>();
             for (var id : referenceUris) {
                 references.add(sigFactory.newReference(
                     id,
-                    sigFactory.newDigestMethod(DigestMethod.SHA1, null),
+                    sigFactory.newDigestMethod(DigestMethod.SHA256, null),
                     transforms,
                     null,
                     null));
             }
 
+            // This is the core of the XML signature that describes what and how it was signed
             var signedInfo = sigFactory.newSignedInfo(
                 sigFactory.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, (C14NMethodParameterSpec) null),
-                sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null), // SOSI team has been notified that SHA1 should be updated. Probable change to SHA256.
+                sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA256, null),
                 references
             );
 
@@ -259,8 +268,12 @@ public class XmlUtils {
 
             var signContext = new DOMSignContext(certificate.privateKey(), rootElement);
             if (nextSibling != null) {
+                // Insert signature before the specified sibling node
                 signContext.setNextSibling(nextSibling);
             }
+            // Otherwise, the signature will be appended as a child of the root element
+
+            // Create and apply the XML signature
             var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
             signature.sign(signContext);
         } catch (MarshalException | XMLSignatureException | NoSuchAlgorithmException |

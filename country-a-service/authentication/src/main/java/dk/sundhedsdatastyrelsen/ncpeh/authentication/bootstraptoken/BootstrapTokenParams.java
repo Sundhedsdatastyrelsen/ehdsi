@@ -40,7 +40,7 @@ public record BootstrapTokenParams(
 
     public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, CertificateAndKey idpCert, String audience, String issuer) throws AuthenticationException {
         try {
-            var attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
+            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
                 // Workaround for SOSI STS bugs/eHDSI IDWS XUA Token Profile bugs:
                 //  - The STS requires that all element values have xsi:type="CE".  That is not a requirement in eHDSI,
@@ -63,8 +63,7 @@ public record BootstrapTokenParams(
                         throw new IllegalArgumentException("HCP attribute parsing failed", ex);
                     }
                 })
-                .map(BootstrapTokenParams.SamlAttribute.Raw::new)
-                .map(x -> (SamlAttribute) x);
+                .map(BootstrapTokenParams.SamlAttribute.Raw::new);
 
             var patientId = xpath.evalString(
                 "saml:AttributeStatement/saml:Attribute[@Name='urn:oasis:names:tc:xspa:1.0:subject:subject-id']/saml:AttributeValue",

@@ -28,7 +28,7 @@ public class BootstrapTokenExchangeRequest {
     }
 
     /**
-     * Create an bootstrap-to-IDWS SOAP request for the STS.
+     * Create a bootstrap-to-IDWS SOAP request for the STS.
      *
      * @param bst             the parameters for the bootstrap token
      * @param soapCertificate the certificate and key used to sign the SOAP request body
@@ -37,14 +37,7 @@ public class BootstrapTokenExchangeRequest {
         return of(bst.audience(), BootstrapToken.of(bst), soapCertificate);
     }
 
-    /**
-     * Create a bootstrap-to-IDWS SOAP request for the STS.
-     *
-     * @param audience        where do we want access (e.g. "https://fmk")
-     * @param bootstrapToken  the bootstrap token
-     * @param soapCertificate the certificate and key used to sign the SOAP request body
-     */
-    public static BootstrapTokenExchangeRequest of(String audience, BootstrapToken bootstrapToken, CertificateAndKey soapCertificate)
+    private static BootstrapTokenExchangeRequest of(String audience, BootstrapToken bootstrapToken, CertificateAndKey soapCertificate)
         throws AuthenticationException {
         var clock = Clock.systemUTC();
         var doc = XmlUtils.newDocument();

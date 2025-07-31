@@ -89,7 +89,7 @@ public class BootstrapTokenTest {
             .map(x -> (BootstrapTokenParams.SamlAttribute) x)
             .toList();
 
-        var bstInput = BootstrapTokenParams.builder()
+        var bstParams = BootstrapTokenParams.builder()
             .idpCert(cert)
             .audience("https://fmk")
             .issuer("https://ehdsi-idp.testkald.nspop.dk")
@@ -97,8 +97,7 @@ public class BootstrapTokenTest {
             .nameId("1234567890")
             .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();
-        var bst = BootstrapToken.of(bstInput);
-        var bstRequest = BootstrapTokenExchangeRequest.of("https://fmk", bst, cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert);
         var xml = XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody());
 
         assertThat(
@@ -108,9 +107,6 @@ public class BootstrapTokenTest {
                 "<saml:Audience>https://fmk</saml:Audience>"
             ));
 //        System.out.println(xml);
-
-        var xml2 = XmlUtils.writeDocumentToStringPretty(BootstrapTokenExchangeRequest.of(bstInput, cert).soapBody());
-        assertThat(xml2, hasLength(xml.length()));
     }
 
     @Test
@@ -166,8 +162,7 @@ public class BootstrapTokenTest {
             "https://fmk",
             "https://ehdsi-idp.testkald.nspop.dk"
         );
-        var bst = BootstrapToken.of(bstParams);
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams.audience(), bst, cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert);
 
         Files.createDirectories(Path.of("temp"));
         try (var w = Files.newBufferedWriter(Path.of("temp", "request.xml"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
