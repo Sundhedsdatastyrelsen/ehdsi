@@ -1,10 +1,10 @@
 package dk.sundhedsdatastyrelsen.ncpeh.jobqueue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.slf4j.Logger;
 import org.sqlite.SQLiteDataSource;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -43,7 +43,7 @@ public class JobQueue<T> implements AutoCloseable {
      * @param sqliteDatasource
      * @param queueName
      * @param payloadType
-     * @param visibilityTimeout
+     * @param visibilityTimeout timeout before a job becomes available again after reservation. Resolution in milliseconds.
      * @param <T>
      * @return
      * @throws SQLException
@@ -63,7 +63,7 @@ public class JobQueue<T> implements AutoCloseable {
 
     ///  Put payload in job queue.
     public JobId enqueue(T payload) {
-        var sql = "INSERT INTO jobs (queue, payload, available_at) VALUES (?, ?, datetime('now'))";
+        var sql = "INSERT INTO jobs (queue, payload, available_at) VALUES (?, ?, datetime('now', 'subsecond'))";
         try (var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             var json = mapper.writeValueAsString(payload);
             stmt.setString(1, queueName);
@@ -100,14 +100,14 @@ public class JobQueue<T> implements AutoCloseable {
             SELECT id, payload, attempt
             FROM jobs
             WHERE queue = ?
-            AND available_at <= datetime('now')
+            AND available_at <= datetime('now', 'subsecond')
             ORDER BY created_at
             LIMIT ?""";
         List<ReservedJob<T>> result = new ArrayList<>();
         try (var pstmt = conn.prepareStatement(sql);
              var update = conn.prepareStatement("""
                  UPDATE jobs
-                 SET available_at=datetime('now', ?),
+                 SET available_at=datetime('now', 'subsecond', ?),
                      attempt=attempt+1
                  WHERE id=?""")) {
             pstmt.setString(1, queueName);
@@ -120,12 +120,12 @@ public class JobQueue<T> implements AutoCloseable {
                 var payload = rs.getString("payload");
                 var obj = mapper.readValue(payload, type);
 
-                update.setString(1, plusSeconds(visibilityTimeout));
+                update.setString(1, durationModifier(visibilityTimeout));
                 update.setLong(2, id);
                 update.addBatch();
                 result.add(new ReservedJob<>(new JobId(id), obj, attempt));
             }
-            update.executeUpdate();
+            update.executeBatch();
             conn.commit();
         } catch (Exception e) {
             try {
@@ -133,13 +133,16 @@ public class JobQueue<T> implements AutoCloseable {
             } catch (SQLException ignored) {
                 // ignore
             }
+            if (e instanceof MismatchedInputException) {
+                throw new JobQueueException("Could not deserialize job payload to " + type, e);
+            }
             throw new JobQueueException("Could not fetch jobs from queue", e);
         }
         return result;
     }
 
-    private static String plusSeconds(Duration duration) {
-        return "+%d seconds".formatted(duration.toSeconds());
+    private static String durationModifier(Duration duration) {
+        return "+%s seconds".formatted(duration.toMillis() / 1000.0);
     }
 
     ///  Remove jobs from queue.
@@ -165,15 +168,22 @@ public class JobQueue<T> implements AutoCloseable {
     public void nack(List<JobId> ids) {
         try (PreparedStatement stmt = conn.prepareStatement("""
             UPDATE jobs
-            SET available_at=datetime('now')
+            SET available_at=datetime('now', 'subsecond')
             WHERE id=?
             """)) {
             for (var id : ids) {
                 stmt.setLong(1, id.value());
                 stmt.addBatch();
             }
-            stmt.executeBatch();
+            var res = stmt.executeBatch();
             conn.commit();
+            if (log.isWarnEnabled()) {
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i] == 0) {
+                        log.warn("Could not return job to queue, it has most likely already been marked as completed: {}", ids.get(i));
+                    }
+                }
+            }
         } catch (Exception e) {
             try {
                 conn.rollback();
@@ -204,12 +214,8 @@ public class JobQueue<T> implements AutoCloseable {
     }
 
     @Override
-    public void close() throws IOException {
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            throw new IOException(e);
-        }
+    public void close() throws SQLException {
+        conn.close();
     }
 
     private static void ensureSchema(Connection conn) throws SQLException {
@@ -219,8 +225,8 @@ public class JobQueue<T> implements AutoCloseable {
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         queue TEXT NOT NULL,
                         payload TEXT NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        available_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        created_at TIMESTAMP DEFAULT (datetime('now', 'subsecond')),
+                        available_at TIMESTAMP DEFAULT (datetime('now', 'subsecond')),
                         attempt INTEGER DEFAULT 0
                     )
                 """);

@@ -1,8 +1,12 @@
 package dk.sundhedsdatastyrelsen.ncpeh.jobqueue;
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.jupiter.api.Test;
 import org.sqlite.SQLiteDataSource;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
@@ -10,6 +14,8 @@ import java.util.List;
 import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FunMatcher.where;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JobQueueTest {
     static SQLiteDataSource ds() {
@@ -18,16 +24,28 @@ class JobQueueTest {
         return ds;
     }
 
+    static SQLiteDataSource ds(Path db) {
+        var ds = new SQLiteDataSource();
+        ds.setUrl("jdbc:sqlite:" + db.toAbsolutePath());
+        return ds;
+    }
+
+    static JobQueue<TestPayload> jobQueue() throws SQLException {
+        return jobQueue(ds());
+    }
+
     static JobQueue<TestPayload> jobQueue(SQLiteDataSource ds) throws SQLException {
         return JobQueue.open(ds, "test-queue", TestPayload.class, Duration.ofSeconds(30));
     }
 
     record TestPayload(String foo, long bar) {}
+    record TestPayloadIncompatible(int foo, long bar, boolean baz) {}
+    record TestPayloadConservativeExtension(String foo, long bar, boolean baz) {}
 
     @Test
     void testEnqueueAndReserve() throws Exception {
         var payload = new TestPayload("test-data", 42);
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             var jobId = q.enqueue(payload);
             assertThat(jobId, is(notNullValue()));
 
@@ -44,7 +62,7 @@ class JobQueueTest {
             new TestPayload("third", 3)
         );
 
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             payloads.stream().map(q::enqueue).toList();
             assertThat(q.size(), is(3L));
 
@@ -52,8 +70,48 @@ class JobQueueTest {
             assertThat(reservedJobs, hasSize(3));
             assertThat(reservedJobs.stream().map(JobQueue.ReservedJob::payload).toList(),
                       contains(payloads.toArray()));
+        }
+    }
 
-            assertThat(reservedJobs, hasItem(where()));
+    @Test
+    void testPersistence() throws SQLException, IOException {
+        var db = Files.createTempFile("job-queue", ".sqlite");
+        try {
+            var payload = new TestPayload("foo", 1313L);
+            try (var jq1 = jobQueue(ds(db))) {
+                jq1.enqueue(payload);
+            }
+
+            try (var jq2 = jobQueue(ds(db))) {
+                var res = jq2.reserve(1);
+                assertThat(res, contains(where(JobQueue.ReservedJob::payload, equalTo(payload))));
+            }
+        } finally {
+            Files.delete(db);
+        }
+    }
+
+    @Test
+    void testWrongDeserializationClass() throws SQLException, IOException {
+        var db = Files.createTempFile("job-queue", ".sqlite");
+        try {
+            var payload = new TestPayload("foo", 1313L);
+            try (var jq1 = JobQueue.open(ds(db), "test-queue", TestPayload.class, Duration.ofSeconds(30))) {
+                jq1.enqueue(payload);
+            }
+            // reserving jobs fails with incompatible deserialization class
+            try (var jq2 = JobQueue.open(ds(db), "test-queue", TestPayloadIncompatible.class, Duration.ofSeconds(30))) {
+                var ex = assertThrows(JobQueueException.class, () -> jq2.reserve(1));
+                assertThat(ex.getCause(), instanceOf(MismatchedInputException.class));
+                assertThat(ex.getMessage(), containsStringIgnoringCase("could not deserialize"));
+            }
+            // the job should be available with a different but compatible deserialization class
+            try (var jq3 = JobQueue.open(ds(db), "test-queue", TestPayloadConservativeExtension.class, Duration.ofSeconds(30))) {
+                var res = jq3.reserve(1);
+                assertThat(res, contains(where(JobQueue.ReservedJob::payload, equalTo(new TestPayloadConservativeExtension("foo", 1313L, false)))));
+            }
+        } finally {
+            Files.delete(db);
         }
     }
 
@@ -65,7 +123,7 @@ class JobQueueTest {
             new TestPayload("c", 3)
         );
 
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             payloads.forEach(q::enqueue);
 
             var reservedJobs = q.reserve(2);
@@ -82,7 +140,7 @@ class JobQueueTest {
             new TestPayload("ack2", 2)
         );
 
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             var jobIds = payloads.stream().map(q::enqueue).toList();
             var reservedJobs = q.reserve(10);
             assertThat(reservedJobs, hasSize(2));
@@ -103,16 +161,17 @@ class JobQueueTest {
             new TestPayload("nack2", 2)
         );
 
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             var jobIds = payloads.stream().map(q::enqueue).toList();
             var reservedJobs = q.reserve(10);
             assertThat(reservedJobs, hasSize(2));
+            assertThat(reservedJobs, everyItem(where(JobQueue.ReservedJob::attempt, is(0))));
 
             q.nack(jobIds);
 
             var reReservedJobs = q.reserve(10);
             assertThat(reReservedJobs, hasSize(2));
-            assertThat(reReservedJobs, everyItem(where(JobQueue.ReservedJob::attempt, is(2))));
+            assertThat(reReservedJobs, everyItem(where(JobQueue.ReservedJob::attempt, is(1))));
         }
     }
 
@@ -124,12 +183,13 @@ class JobQueueTest {
             new TestPayload("keep2", 3)
         );
 
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             var jobIds = payloads.stream().map(q::enqueue).toList();
             var reservedJobs = q.reserve(10);
             assertThat(reservedJobs, hasSize(3));
 
             q.ack(List.of(jobIds.get(1))); // ack only the middle one
+            q.nack(jobIds);
 
             var remainingJobs = q.reserve(10);
             assertThat(remainingJobs, hasSize(2));
@@ -142,7 +202,7 @@ class JobQueueTest {
 
     @Test
     void testEmptyQueue() throws Exception {
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             var reservedJobs = q.reserve(10);
             assertThat(reservedJobs, is(empty()));
         }
@@ -150,11 +210,9 @@ class JobQueueTest {
 
     @Test
     void testReserveZeroJobs() throws Exception {
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             q.enqueue(new TestPayload("data", 1));
-
-            var reservedJobs = q.reserve(0);
-            assertThat(reservedJobs, is(empty()));
+            assertThrows(IllegalArgumentException.class, () -> q.reserve(0));
         }
     }
 
@@ -193,29 +251,27 @@ class JobQueueTest {
 
             var reReservedJobs = q.reserve(10);
             assertThat(reReservedJobs, hasSize(1));
-            assertThat(reReservedJobs, contains(where(JobQueue.ReservedJob::attempt, is(2))));
+            assertThat(reReservedJobs, contains(where(JobQueue.ReservedJob::attempt, is(1))));
         }
     }
 
     @Test
     void testAckEmptyList() throws Exception {
-        try (var q = jobQueue(ds())) {
-            q.ack(List.of());
-            // Should not throw exception
+        try (var q = jobQueue()) {
+            assertDoesNotThrow(() -> q.ack(List.of()));
         }
     }
 
     @Test
     void testNackEmptyList() throws Exception {
-        try (var q = jobQueue(ds())) {
-            q.nack(List.of());
-            // Should not throw exception
+        try (var q = jobQueue()) {
+            assertDoesNotThrow(() -> q.nack(List.of()));
         }
     }
 
     @Test
     void testJobIdValues() throws Exception {
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             var jobId1 = q.enqueue(new TestPayload("first", 1));
             var jobId2 = q.enqueue(new TestPayload("second", 2));
 
@@ -226,23 +282,23 @@ class JobQueueTest {
 
     @Test
     void testAttemptCounting() throws Exception {
-        try (var q = jobQueue(ds())) {
+        try (var q = JobQueue.open(ds(), "test-queue", TestPayload.class, Duration.ofMillis(100))) {
             var payload = new TestPayload("retry-test", 1);
             var jobId = q.enqueue(payload);
 
             // First reservation
             var reserved1 = q.reserve(10);
-            assertThat(reserved1, contains(where(JobQueue.ReservedJob::attempt, is(1))));
+            assertThat(reserved1, contains(where(JobQueue.ReservedJob::attempt, is(0))));
 
             // Nack and reserve again
             q.nack(List.of(jobId));
             var reserved2 = q.reserve(10);
-            assertThat(reserved2, contains(where(JobQueue.ReservedJob::attempt, is(2))));
+            assertThat(reserved2, contains(where(JobQueue.ReservedJob::attempt, is(1))));
 
-            // Nack and reserve again
-            q.nack(List.of(jobId));
+            // Wait for timeout and reserve again
+            Thread.sleep(150);
             var reserved3 = q.reserve(10);
-            assertThat(reserved3, contains(where(JobQueue.ReservedJob::attempt, is(3))));
+            assertThat(reserved3, contains(where(JobQueue.ReservedJob::attempt, is(2))));
         }
     }
 
@@ -254,7 +310,7 @@ class JobQueueTest {
             new TestPayload("third", 3)
         );
 
-        try (var q = jobQueue(ds())) {
+        try (var q = jobQueue()) {
             payloads.forEach(q::enqueue);
 
                         var reservedJobs = q.reserve(10);
