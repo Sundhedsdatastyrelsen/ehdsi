@@ -27,6 +27,7 @@
         <module>testing-shared</module>
         <module>testing-tools</module>
         <module>local-lms-db</module>
+        <module>authentication</module>
     </modules>
 
     <properties>

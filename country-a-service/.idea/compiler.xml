@@ -8,8 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="epps-ddv-api" />
-        <module name="epps-sdp-api" />
         <module name="epps-fsk-api" />
+        <module name="epps-sdp-api" />
         <module name="epps-service" />
         <module name="integration-tests" />
         <module name="epps-minlog-api" />
@@ -23,6 +23,7 @@
         <module name="cda-generator" />
         <module name="testing-shared" />
         <module name="epps-ncp-api" />
+        <module name="authentication" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -31,6 +32,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="authentication" options="-parameters" />
       <module name="autorisationsregister-model" options="-parameters" />
       <module name="cda-generator" options="-parameters" />
       <module name="country-b-mock" options="-parameters" />
