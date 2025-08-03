@@ -53,6 +53,7 @@ public class MinLogService implements AutoCloseable {
         this.systemCaller = systemCaller;
         this.jobQueue = JobQueue.open(jobQueueDatasource, MINLOG_QUEUE_NAME, LogEvent.class, Duration.ofMinutes(3));
 
+        log.info("Starting MinLog service with job queue datasource: {}", jobQueueDatasource);
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         // https://www.nspop.dk/spaces/web/pages/98456923/MinLog2+-+Min+Log+Registrering+-+Guide+til+anvendere#MinLog2MinLogRegistreringGuidetilanvendere-Operationer
         // "Det anbefalede antal logentries er 500 entries pr. request, og den anbefalede kaldefrekvens er op til 20 requests i timen."
@@ -68,6 +69,7 @@ public class MinLogService implements AutoCloseable {
     /// Send the next batch of log entries to MinLog.
     ///
     /// Public for testing purposes.
+    ///
     /// @hidden
     public void sendBatch() {
         List<JobQueue.JobId> jobIds = null;

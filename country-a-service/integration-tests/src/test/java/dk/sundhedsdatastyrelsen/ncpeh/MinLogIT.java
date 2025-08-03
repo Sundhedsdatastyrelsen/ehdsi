@@ -31,8 +31,8 @@ class MinLogIT {
     @Test
     void testEvent() throws Exception {
         try (var ds = ds();
-             var service = minLogService(ds);
-             var q = JobQueue.open(ds, "minlog", null, null)) {
+             var service = minLogService(ds);) {
+            var q = JobQueue.open(ds, "minlog", null, null);
             service.logEventOnPatient(MinLog.CPR_JENS_JENSEN_READ_ONLY, "integrationstest", TestIdentities.foreignPharmacistChrisChristoffersen);
             assertThat(q.size(), is(1L));
             assertDoesNotThrow(service::sendBatch);
