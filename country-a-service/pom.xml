@@ -153,6 +153,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>job-queue</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.openapitools</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
                 <version>0.2.6</version>

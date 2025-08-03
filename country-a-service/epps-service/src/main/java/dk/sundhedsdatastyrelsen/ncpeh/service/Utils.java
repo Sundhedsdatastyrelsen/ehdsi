@@ -2,8 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
@@ -33,6 +35,13 @@ public class Utils {
      */
     public static XMLGregorianCalendar xmlGregorianCalendar(ZonedDateTime zdt) {
         return DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar(GregorianCalendar.from(zdt));
+    }
+
+    /**
+     * Convert an Instant to XMLGregorianCalendar.
+     */
+    public static XMLGregorianCalendar xmlGregorianCalendar(Instant instant) {
+        return xmlGregorianCalendar(ZonedDateTime.ofInstant(instant, ZoneOffset.UTC));
     }
 
     /**

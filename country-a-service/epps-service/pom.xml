@@ -32,6 +32,10 @@
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
             <artifactId>local-lms-db</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>job-queue</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-parameter-names</artifactId>

@@ -9,6 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FunMatcher.where;
@@ -41,6 +46,7 @@ class JobQueueTest {
     record TestPayload(String foo, long bar) {}
     record TestPayloadIncompatible(int foo, long bar, boolean baz) {}
     record TestPayloadConservativeExtension(String foo, long bar, boolean baz) {}
+    record TestPayloadInstant(Instant instant, OffsetDateTime odt, LocalDate ld) {}
 
     @Test
     void testEnqueueAndReserve() throws Exception {
@@ -320,6 +326,20 @@ class JobQueueTest {
                 where(JobQueue.ReservedJob::payload, is(payloads.get(1))),
                 where(JobQueue.ReservedJob::payload, is(payloads.get(2)))
             ));
+        }
+    }
+
+    @Test
+    void testInstantPayload() throws SQLException {
+        var payload = new TestPayloadInstant(
+                Instant.now(),
+                OffsetDateTime.now(ZoneOffset.ofHours(-8)),
+                LocalDate.of(1989, Month.NOVEMBER, 9));
+        try (var q = JobQueue.open(ds(), "test-queue", TestPayloadInstant.class, Duration.ofSeconds(30))) {
+            var jobId = q.enqueue(payload);
+            assertThat(jobId, is(notNullValue()));
+            var reservedJobs = q.reserve(10);
+            assertThat(reservedJobs, contains(where(JobQueue.ReservedJob::payload, is(payload))));
         }
     }
 }

@@ -1,10 +1,13 @@
 package dk.sundhedsdatastyrelsen.ncpeh.jobqueue;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
-import org.sqlite.SQLiteDataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,11 +16,11 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-/// A job queue.
+/// A persistent, SQLite-backed job queue.
+///
 /// Not thread-safe.
 public class JobQueue<T> implements AutoCloseable {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(JobQueue.class);
-    private static final int POLL_WAIT_DURATION_MS = 100;
 
     private final Connection conn;
     private final String queueName;
@@ -38,19 +41,19 @@ public class JobQueue<T> implements AutoCloseable {
     public record ReservedJob<T>(JobId id, T payload, int attempt) {}
 
     /**
-     * TODO
+     * Open (or create) a named job queue.
      *
-     * @param sqliteDatasource
-     * @param queueName
-     * @param payloadType
+     * @param sqliteDatasource the connection info for the underlying sqlite db
+     * @param queueName the name of the queue
+     * @param payloadType the reified type of the payload (same as T)
      * @param visibilityTimeout timeout before a job becomes available again after reservation. Resolution in milliseconds.
-     * @param <T>
-     * @return
-     * @throws SQLException
+     * @param <T> the type of the payload (same as payloadType)
+     * @return the job queue object.
+     * @throws SQLException if something goes wrong when opening the queue.
      */
     @SuppressWarnings("java:S2095")
     public static <T> JobQueue<T> open(
-        SQLiteDataSource sqliteDatasource,
+        DataSource sqliteDatasource,
         String queueName,
         Class<T> payloadType,
         Duration visibilityTimeout
@@ -58,7 +61,12 @@ public class JobQueue<T> implements AutoCloseable {
         var conn = sqliteDatasource.getConnection();
         conn.setAutoCommit(false);
         ensureSchema(conn);
-        return new JobQueue<>(conn, queueName, payloadType, new ObjectMapper(), visibilityTimeout);
+        var objectMapper = new ObjectMapper();
+        // enable and fix handling of java.time values
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new JobQueue<>(conn, queueName, payloadType, objectMapper, visibilityTimeout);
     }
 
     ///  Put payload in job queue.
@@ -195,10 +203,10 @@ public class JobQueue<T> implements AutoCloseable {
     }
 
     /// Count how many jobs are in queue.
-    public long size() {
-        try (PreparedStatement stmt = conn.prepareStatement("""
-            SELECT COUNT(1) FROM jobs WHERE queue=?
-            """)) {
+    ///
+    /// Synchronized, so it can be run by multiple threads.
+    public synchronized long size() {
+        try (var stmt = conn.prepareStatement("SELECT COUNT(1) FROM jobs WHERE queue=?")) {
             stmt.setString(1, queueName);
             var rs = stmt.executeQuery();
             rs.next();
@@ -209,7 +217,7 @@ public class JobQueue<T> implements AutoCloseable {
             } catch (SQLException ignored) {
                 // ignore
             }
-            throw new JobQueueException("Failed when returning jobs to queue", e);
+            throw new JobQueueException("Could not retrieve queue size", e);
         }
     }
 
@@ -219,6 +227,10 @@ public class JobQueue<T> implements AutoCloseable {
     }
 
     private static void ensureSchema(Connection conn) throws SQLException {
+        // Be careful here!
+        // When updating the schema, it is crucial that the existing sqlite files be updated to reflect the new schema.
+        // Otherwise, the queue will likely crash.  The simplest would be to make sure the db is empty, delete it, and
+        // restart the service.
         try (var stmt = conn.createStatement()) {
             stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS jobs (

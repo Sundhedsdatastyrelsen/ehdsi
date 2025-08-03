@@ -3,11 +3,11 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 import dk.nsp.test.idp.model.Identity;
 import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
-import oasis.names.tc.ebxml_regrep.xsd.rs._3.RegistryResponseType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,35 +38,26 @@ public class MinLogClient {
         }
     }
 
-    public RegistryResponseType register(
+    public RegistrationResponseType register(
         RegistrationRequestType request,
         Identity caller
-    ) throws JAXBException {
-
+    ) {
         var jaxbElement = factory.createRegistrationRequest(request);
 
         return makeMinLogRequest(
             jaxbElement,
             "AddRegistrations",
-            RegistryResponseType.class,
+            RegistrationResponseType.class,
             caller
         );
     }
 
-    /**********************
-     * Private
-     ***********************/
-
-    /**
-     * @param <A> Request type
-     * @param <B> Response type
-     */
     private <A, B> B makeMinLogRequest(
         JAXBElement<A> request,
         String soapAction,
         Class<B> clazz,
         Identity caller
-    ) throws JAXBException {
+    ) {
         final Reply reply;
         try {
             log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
@@ -79,6 +70,10 @@ public class MinLogClient {
         } catch (Exception e) {
             throw new NspClientException("MinLog request failed", e);
         }
-        return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+        try {
+            return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+        } catch (JAXBException e) {
+            throw new NspClientException("Could not deserialize response from MinLog", e);
+        }
     }
 }
