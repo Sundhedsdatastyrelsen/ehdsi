@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class MinLogIT {
-    public static MinLogService minLogService() throws SQLException {
+    public static MinLogService minLogService() {
         return minLogService(ds());
     }
 
