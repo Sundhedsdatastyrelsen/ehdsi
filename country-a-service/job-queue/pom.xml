@@ -37,6 +37,7 @@
         <dependency>
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
             <artifactId>testing-shared</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
