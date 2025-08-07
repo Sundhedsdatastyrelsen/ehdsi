@@ -20,8 +20,12 @@ class MinLogIT {
         return minLogService(ds());
     }
 
-    public static MinLogService minLogService(DataSource ds) throws SQLException {
-        return new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen(), ds);
+    public static MinLogService minLogService(DataSource ds) {
+        try {
+            return new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen(), ds);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load MinLogService",e);
+        }
     }
 
     static SingleConnectionDataSource ds() {
@@ -29,7 +33,7 @@ class MinLogIT {
     }
 
     @Test
-    void testEvent() throws Exception {
+    void testEvent(){
         try (var ds = ds();
              var service = minLogService(ds);) {
             var q = JobQueue.open(ds, "minlog", null, null);
@@ -37,6 +41,8 @@ class MinLogIT {
             assertThat(q.size(), is(1L));
             assertDoesNotThrow(service::sendBatch);
             assertThat(q.size(), is(0L));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to open JobQueue", e);
         }
     }
 }
