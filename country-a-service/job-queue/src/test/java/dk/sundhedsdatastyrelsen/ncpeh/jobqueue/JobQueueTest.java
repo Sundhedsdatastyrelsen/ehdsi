@@ -235,6 +235,25 @@ class JobQueueTest {
     }
 
     @Test
+    void testReserveBlocks() throws Exception {
+        var q = JobQueue.open(ds(), "queue", TestPayload.class, Duration.ofSeconds(30));
+        var payload = new TestPayload("blocking-test", 1);
+        q.enqueue(payload);
+
+        var reservedJobs = q.reserve(10);
+        assertThat(reservedJobs, hasSize(1));
+
+        // Check that while we have the first job reserved, we get no results
+        var emptyReservedJobs = q.reserve(10);
+        assertThat(emptyReservedJobs,hasSize(0));
+
+        // We return the job, and retry reserving it
+        q.nack(reservedJobs.stream().map(JobQueue.ReservedJob::id).toList());
+        var reReservedJobs = q.reserve(10);
+        assertThat(reReservedJobs,hasSize(1));
+    }
+
+    @Test
     void testVisibilityTimeout() throws Exception {
         var q = JobQueue.open(ds(), "timeout-queue", TestPayload.class, Duration.ofMillis(100));
         var payload = new TestPayload("timeout-test", 1);
