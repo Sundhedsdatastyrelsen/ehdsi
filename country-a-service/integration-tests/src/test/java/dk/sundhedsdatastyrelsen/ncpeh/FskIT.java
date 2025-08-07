@@ -18,9 +18,7 @@ class FskIT {
         Fsk.apiClient(),
         MinLogIT.minLogService(),
         OrganizationIdentities.sundhedsdatastyrelsen());
-
-    FskIT() throws SQLException {}
-
+    
     /**
      * This test simply checks that we can connect and get an answer on the data.
      */
