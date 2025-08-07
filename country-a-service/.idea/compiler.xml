@@ -16,6 +16,7 @@
         <module name="epps-cpr-api" />
         <module name="testing-tools" />
         <module name="autorisationsregister-model" />
+        <module name="job-queue" />
         <module name="nsp-client" />
         <module name="epps-fmk-api" />
         <module name="epps-application" />
@@ -50,6 +51,7 @@
       <module name="epps-sdp-api" options="-parameters" />
       <module name="epps-service" options="-parameters" />
       <module name="integration-tests" options="-parameters" />
+      <module name="job-queue" options="-parameters" />
       <module name="local-lms-db" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
       <module name="testing-shared" options="-parameters" />

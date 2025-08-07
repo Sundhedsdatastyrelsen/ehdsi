@@ -3,9 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import dk.nsp.test.idp.OrganizationIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
-import dk.sundhedsdatastyrelsen.ncpeh.service.MinLogService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fsk;
-import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.MinLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,7 +14,7 @@ import static org.hamcrest.Matchers.*;
 class FskIT {
     private final InformationCardService service = new InformationCardService(
         Fsk.apiClient(),
-        new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen()),
+        MinLogIT.minLogService(),
         OrganizationIdentities.sundhedsdatastyrelsen());
 
     /**
