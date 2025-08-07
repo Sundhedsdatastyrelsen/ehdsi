@@ -112,12 +112,12 @@ public class MinLogService implements AutoCloseable {
         var requestBuilder = RegistrationRequestType.builder();
         for (var ev : events) {
             var source = SourceForEntryType.builder()
-                .withSystemName("eHDSI")
+                .withSystemName("DK-NCPeH")
                 .withSource()
-                .withSystemName("eHDSI")
+                .withSystemName("DK-NCPeH")
                 .build();
             var destination = DestinationForEntryForRegistrationType.builder()
-                .withSystemName("NCPeH")
+                .withSystemName("NCPeH") // TODO Replace with actual country we sent it to?
                 .withActivity(ev.eventText())
                 .withDateTime(Utils.xmlGregorianCalendar(ev.timestamp()))
                 .withPersonIdentifier()
