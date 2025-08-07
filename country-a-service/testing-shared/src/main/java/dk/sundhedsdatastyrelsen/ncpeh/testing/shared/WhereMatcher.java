@@ -13,17 +13,17 @@ import java.util.function.Function;
 /// ```
 /// assertThat(fooList, hasItem(where(Foo::bar, is(42))));
 /// ```
-public class FunMatcher<T, U> extends TypeSafeMatcher<T> {
+public class WhereMatcher<T, U> extends TypeSafeMatcher<T> {
     Function<T, U> f;
     Matcher<? super U> matcher;
 
-    public FunMatcher(Function<T, U> f, Matcher<? super U> matcher) {
+    public WhereMatcher(Function<T, U> f, Matcher<? super U> matcher) {
         this.f = f;
         this.matcher = matcher;
     }
 
     public static <T, U> Matcher<T> where(Function<T, U> f, Matcher<? super U> m) {
-        return new FunMatcher<>(f, m);
+        return new WhereMatcher<>(f, m);
     }
 
     @Override

@@ -17,7 +17,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
-import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FunMatcher.where;
+import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.WhereMatcher.where;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
