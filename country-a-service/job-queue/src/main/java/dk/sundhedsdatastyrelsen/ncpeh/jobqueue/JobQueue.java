@@ -68,7 +68,11 @@ public class JobQueue<T> {
         var objectMapper = new ObjectMapper();
         // enable and fix handling of java.time values
         objectMapper.registerModule(new JavaTimeModule());
+
+        //Preserve original time zone information for deserialization
         objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+
+        //Write dates in a human readable format instead of epoch
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         var jq = new JobQueue<>(sqliteDatasource, queueName, payloadType, objectMapper, visibilityTimeout);
         jq.ensureSchema();
@@ -167,7 +171,8 @@ public class JobQueue<T> {
         });
     }
 
-    /// Return jobs to queue (increments attempts).
+    /// Return jobs to queue (increments attempts, indirectly, by returning them to available in the queue (attempts
+    /// are incremented during reservation)).
     public void nack(List<JobId> ids) {
         withTx(conn -> {
             try (var stmt = conn.prepareStatement("""
@@ -240,7 +245,6 @@ public class JobQueue<T> {
         U run(Connection conn) throws Exception;
     }
 
-    @SuppressWarnings("java:S1141")
     private <U> U withTx(DbAction<U> action, Consumer<Exception> exceptionHandler) {
         try {
             try (var conn = ds.getConnection()) {
@@ -253,6 +257,7 @@ public class JobQueue<T> {
                     try {
                         conn.rollback();
                     } catch (SQLException e2) {
+                        log.debug("Rollback during error failed - ignoring exception");
                         // ignore
                     }
                     exceptionHandler.accept(e);
