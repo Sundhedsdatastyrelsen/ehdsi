@@ -243,6 +243,10 @@ class JobQueueTest {
         var reservedJobs = q.reserve(10);
         assertThat(reservedJobs, hasSize(1));
 
+        //Check that job is not available while reserved
+        var moreReservedJobs = q.reserve(10);
+        assertThat(moreReservedJobs, hasSize(0));
+
         Thread.sleep(150); // Wait for timeout
 
         var reReservedJobs = q.reserve(10);
