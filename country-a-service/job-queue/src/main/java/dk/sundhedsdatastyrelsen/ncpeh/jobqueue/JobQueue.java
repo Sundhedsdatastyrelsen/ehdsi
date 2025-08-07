@@ -244,7 +244,8 @@ public class JobQueue<T> {
     private interface DbAction<U> {
         U run(Connection conn) throws Exception;
     }
-
+    
+    @SuppressWarnings("java:S1141") //Ignore SonarQube warnings about nested try/catch construction
     private <U> U withTx(DbAction<U> action, Consumer<Exception> exceptionHandler) {
         try {
             try (var conn = ds.getConnection()) {

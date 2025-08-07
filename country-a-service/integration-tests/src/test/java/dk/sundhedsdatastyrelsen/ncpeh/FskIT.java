@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.sql.SQLException;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -18,7 +16,7 @@ class FskIT {
         Fsk.apiClient(),
         MinLogIT.minLogService(),
         OrganizationIdentities.sundhedsdatastyrelsen());
-    
+
     /**
      * This test simply checks that we can connect and get an answer on the data.
      */
