@@ -15,6 +15,7 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.ObservableLongUpDownCounter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -30,13 +31,16 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MinLogService implements AutoCloseable {
     private static final String MINLOG_QUEUE_NAME = "minlog";
+    private static final String MINLOG_FAILED_QUEUE_NAME = "minlog_errors";
 
     private final MinLogClient minLogClient;
     private final JobQueue<LogEvent> jobQueue;
+    private final JobQueue<LogEvent> failedJobQueue;
 
     private final ScheduledExecutorService scheduler;
 
     private final ObservableLongUpDownCounter queueSizeCounter;
+    private final ObservableLongUpDownCounter failedQueueSizeCounter;
 
     /**
      * The system (FOCES/VOCES) which makes the service request, i.e., certificates representing the NCPeH DK.
@@ -44,16 +48,24 @@ public class MinLogService implements AutoCloseable {
      */
     private final OrganizationIdentity systemCaller;
 
+    /**
+     * Maximum number of attempts for processing a job before moving it to the failed queue
+     */
+    private final int maxAttempts;
+
     public MinLogService(
         MinLogClient minLogClient,
         OrganizationIdentity systemCaller,
-        @Qualifier("jobQueueDataSource") DataSource jobQueueDatasource
+        @Qualifier("jobQueueDataSource") DataSource jobQueueDatasource,
+        @Value("${app.minlog.max-attempts:3}") int maxAttempts
     ) throws SQLException {
         this.minLogClient = minLogClient;
         this.systemCaller = systemCaller;
+        this.maxAttempts = maxAttempts;
         this.jobQueue = JobQueue.open(jobQueueDatasource, MINLOG_QUEUE_NAME, LogEvent.class, Duration.ofMinutes(3));
+        this.failedJobQueue = JobQueue.open(jobQueueDatasource, MINLOG_FAILED_QUEUE_NAME, LogEvent.class, Duration.ofMinutes(3));
 
-        log.info("Starting MinLog service with job queue datasource: {}", jobQueueDatasource);
+        log.info("Starting MinLog service with job queue datasource: {} and max attempts: {}", jobQueueDatasource, maxAttempts);
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         // https://www.nspop.dk/spaces/web/pages/98456923/MinLog2+-+Min+Log+Registrering+-+Guide+til+anvendere#MinLog2MinLogRegistreringGuidetilanvendere-Operationer
         // "Det anbefalede antal logentries er 500 entries pr. request, og den anbefalede kaldefrekvens er op til 20 requests i timen."
@@ -64,6 +76,11 @@ public class MinLogService implements AutoCloseable {
         var meter = GlobalOpenTelemetry.meterBuilder("dk.sundhedsdatastyrelsen.ncpeh.service").build();
         this.queueSizeCounter = meter.upDownCounterBuilder("minlog.job_queue.size")
             .buildWithCallback(m -> m.record(jobQueue.size()));
+
+        // We use otel metrics (prometheus) to keep track of the queue size.  There should be alerts if this number is too high.
+        var failedMeter = GlobalOpenTelemetry.meterBuilder("dk.sundhedsdatastyrelsen.ncpeh.service").build();
+        this.failedQueueSizeCounter = failedMeter.upDownCounterBuilder("minlog.job_queue_failed.size")
+            .buildWithCallback(m -> m.record(failedJobQueue.size()));
     }
 
     /// Send the next batch of log entries to MinLog.
@@ -72,10 +89,10 @@ public class MinLogService implements AutoCloseable {
     ///
     /// @hidden
     public void sendBatch() {
-        List<JobQueue.JobId> jobIds = null;
+        List<JobQueue.ReservedJob<LogEvent>> jobs = null;
         try {
-            var jobs = jobQueue.reserve(500);
-            jobIds = jobs.stream().map(JobQueue.ReservedJob::id).toList();
+            jobs = jobQueue.reserve(500);
+            List<JobQueue.JobId> jobIds = jobs.stream().map(JobQueue.ReservedJob::id).toList();
             if (!jobs.isEmpty()) {
                 log.info("Sending {} log entries to MinLog", jobs.size());
                 logEventsSync(jobs.stream().map(JobQueue.ReservedJob::payload).toList());
@@ -85,9 +102,33 @@ public class MinLogService implements AutoCloseable {
             }
         } catch (Exception e) {
             // we should not rethrow, otherwise our scheduler will stop on the first error.
-            log.error("Something went wrong while sending log entries to MinLog.  Will retry.", e);
-            if (jobIds != null) {
-                jobQueue.nack(jobIds);
+            log.error("Something went wrong while sending log entries to MinLog. Will retry.", e);
+            if (jobs != null) {
+                // Check if any jobs have exceeded max attempts and move them to failed queue
+                List<JobQueue.JobId> jobsToNack = new java.util.ArrayList<>();
+                List<JobQueue.JobId> jobsToMoveToFailed = new java.util.ArrayList<>();
+                
+                for (JobQueue.ReservedJob<LogEvent> job : jobs) {
+                    if (job.attempt() >= maxAttempts) {
+                        // Move to failed queue
+                        failedJobQueue.enqueue(job.payload());
+                        jobsToMoveToFailed.add(job.id());
+                        log.warn("Job {} exceeded max attempts ({}), moving to failed queue", job.id(), maxAttempts);
+                    } else {
+                        // Nack for retry
+                        jobsToNack.add(job.id());
+                    }
+                }
+                
+                // Nack jobs that should be retried
+                if (!jobsToNack.isEmpty()) {
+                    jobQueue.nack(jobsToNack);
+                }
+                
+                // Remove jobs that were moved to failed queue
+                if (!jobsToMoveToFailed.isEmpty()) {
+                    jobQueue.ack(jobsToMoveToFailed);
+                }
             }
         }
     }
@@ -169,5 +210,6 @@ public class MinLogService implements AutoCloseable {
     public void close() {
         scheduler.close();
         queueSizeCounter.close();
+        failedQueueSizeCounter.close();
     }
 }
