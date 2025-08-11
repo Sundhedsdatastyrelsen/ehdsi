@@ -22,6 +22,8 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -93,41 +95,48 @@ public class MinLogService implements AutoCloseable {
             List<JobQueue.JobId> jobIds = jobs.stream().map(JobQueue.ReservedJob::id).toList();
             if (!jobs.isEmpty()) {
                 log.info("Sending {} log entries to MinLog", jobs.size());
-                logEventsSync(jobs.stream().map(JobQueue.ReservedJob::payload).toList());
-                jobQueue.ack(jobIds);
+                var failedJobs = logEventsSync(jobs);
+                if(failedJobs.isEmpty()){
+                    jobQueue.ack(jobIds);
+                } else {
+                    var failedJobIds = failedJobs.stream().map(JobQueue.ReservedJob::id).map(JobQueue.JobId::value).toList();
+                    var succeededJobs = jobIds.stream().filter(ji -> !failedJobIds.contains(ji.value())).toList();
+
+                    // Check if any jobs have exceeded max attempts and move them to failed queue
+                    List<JobQueue.JobId> jobsToNack = new java.util.ArrayList<>();
+                    List<JobQueue.JobId> jobsToMoveToFailed = new java.util.ArrayList<>();
+
+                    for (var job : failedJobs) {
+                        if (job.attempt() >= maxAttempts) {
+                            // Move to failed queue
+                            failedJobQueue.enqueue(job.payload());
+                            jobsToMoveToFailed.add(job.id());
+                            log.warn("Job {} exceeded max attempts ({}), moving to failed queue", job.id(), maxAttempts);
+                        } else {
+                            // Nack for retry
+                            jobsToNack.add(job.id());
+                        }
+                    }
+
+                    // Nack jobs that should be retried
+                    if (!jobsToNack.isEmpty()) {
+                        jobQueue.nack(jobsToNack);
+                    }
+
+                    // Remove jobs that were moved to failed queue
+                    if (!jobsToMoveToFailed.isEmpty()) {
+                        jobQueue.ack(jobsToMoveToFailed);
+                    }
+
+                    jobQueue.ack(succeededJobs);
+                }
+
             } else {
                 log.debug("Found no pending MinLog entries.");
             }
         } catch (Exception e) {
             // we should not rethrow, otherwise our scheduler will stop on the first error.
-            log.error("Something went wrong while sending log entries to MinLog. Will retry.", e);
-            if (jobs != null) {
-                // Check if any jobs have exceeded max attempts and move them to failed queue
-                List<JobQueue.JobId> jobsToNack = new java.util.ArrayList<>();
-                List<JobQueue.JobId> jobsToMoveToFailed = new java.util.ArrayList<>();
-
-                for (JobQueue.ReservedJob<LogEvent> job : jobs) {
-                    if (job.attempt() >= maxAttempts) {
-                        // Move to failed queue
-                        failedJobQueue.enqueue(job.payload());
-                        jobsToMoveToFailed.add(job.id());
-                        log.warn("Job {} exceeded max attempts ({}), moving to failed queue", job.id(), maxAttempts);
-                    } else {
-                        // Nack for retry
-                        jobsToNack.add(job.id());
-                    }
-                }
-
-                // Nack jobs that should be retried
-                if (!jobsToNack.isEmpty()) {
-                    jobQueue.nack(jobsToNack);
-                }
-
-                // Remove jobs that were moved to failed queue
-                if (!jobsToMoveToFailed.isEmpty()) {
-                    jobQueue.ack(jobsToMoveToFailed);
-                }
-            }
+            log.error("Something went wrong while sending log entries to MinLog. Reserved jobs should rotate back into pool of available jobs.", e);
         }
     }
 
@@ -145,11 +154,15 @@ public class MinLogService implements AutoCloseable {
         Instant timestamp
     ) {}
 
-    private void logEventsSync(List<LogEvent> events) {
+    /// A method to send logevents to MinLog. Since this is the last step for the events that succeed, we return the failed statements
+    ///
+    /// NOTE: Return list is a list of failed events
+    private List<JobQueue.ReservedJob<LogEvent>> logEventsSync(List<JobQueue.ReservedJob<LogEvent>> logEventJobs) {
         // See https://www.nspop.dk/pages/releaseview.action?pageId=98456923#MinLog2MinLogRegistreringGuidetilanvendere-Skemabeskrivelse
         // for schema description
         var requestBuilder = RegistrationRequestType.builder();
-        for (var ev : events) {
+        for (var job : logEventJobs) {
+            var payload = job.payload();
             var source = SourceForEntryType.builder()
                 .withSystemName("DK-NCPeH")
                 .withSource()
@@ -157,17 +170,18 @@ public class MinLogService implements AutoCloseable {
                 .build();
             var destination = DestinationForEntryForRegistrationType.builder()
                 .withSystemName("NCPeH") // TODO Replace with actual country we sent it to?
-                .withActivity(ev.eventText())
-                .withDateTime(Utils.xmlGregorianCalendar(ev.timestamp()))
+                .withActivity(payload.eventText())
+                .withDateTime(Utils.xmlGregorianCalendar(payload.timestamp()))
                 .withPersonIdentifier()
                 .withSource(PersonIdSourceType.CPR)
-                .withValue(ev.citizenCpr())
+                .withValue(payload.citizenCpr())
                 .end()
                 .withUserPersonName("TODO") // TODO include name which must be max 50 chars long (bytes? unicode code points?)
                 .withUserPersonIdentifier()
                 .withSource(UserPersonIdSourceType.EUROPEAN_HEALTHCARE_PROFESSIONAL)
-                .withValue(ev.hcpId()) // TODO react to id's exceeding the 200 char limit
+                .withValue(payload.hcpId()) // TODO react to id's exceeding the 200 char limit
                 .end()
+                .withSequenceNumber(job.id().toString())
                 .build();
             requestBuilder.addLogDataEntry(LogDataEntryForRegistrationType.builder()
                 .withSource(source)
@@ -176,15 +190,25 @@ public class MinLogService implements AutoCloseable {
         }
         var response = minLogClient.register(requestBuilder.build(), systemCaller);
         if (response.getNumberFailed() > 0) {
+            var failedJobList = new ArrayList<JobQueue.ReservedJob<LogEvent>>(); //List of jobs that are failed
+            var failedFoundIds = new ArrayList<String>(); //List of IDs we could not find in our record of sent jobs
             for (var failedEntry : response.getFailedLogDataEntries()) {
                 log.error("MinLog error: {}: {}", failedEntry.getFaultCode(), failedEntry.getFaultText());
+                var failedJob = logEventJobs.stream().filter(j -> j.id().toString().equals(failedEntry.getSequenceNumber())).findFirst();
+                if(!failedJob.isPresent()){
+                    failedFoundIds.add(failedEntry.getSequenceNumber()); //Record that we couldn't find the returned ID in our list of jobs
+                    continue;
+                }
+                failedJobList.add(failedJob.get());
             }
-            // TODO[hbg]: We need better error handling.  If some registrations fail, but not all, then we should re-queue the failing ones only.
-            throw new NspClientException(
-                "MinLog registration failed. Failed entries: %d, Succeeded entries: %d".formatted(
-                    response.getNumberFailed(),
-                    response.getNumberAdded()));
+            if(!failedFoundIds.isEmpty()){
+                throw new NspClientException(
+                    "MinLog registration failed. The following job IDs couldn't be nack'ed: %s".formatted(
+                        String.join(",",failedFoundIds)));
+            }
+            return failedJobList;
         }
+        return Collections.emptyList(); //If nothing failed, we return an empty list of failed LogEvents
     }
 
     /// Register MinLog event.  The event will be added to a queue and handled in a separate thread.
