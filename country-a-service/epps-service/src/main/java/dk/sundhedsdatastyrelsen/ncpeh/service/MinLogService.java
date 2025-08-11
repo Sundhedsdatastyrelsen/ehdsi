@@ -77,9 +77,7 @@ public class MinLogService implements AutoCloseable {
         this.queueSizeCounter = meter.upDownCounterBuilder("minlog.job_queue.size")
             .buildWithCallback(m -> m.record(jobQueue.size()));
 
-        // We use otel metrics (prometheus) to keep track of the queue size.  There should be alerts if this number is too high.
-        var failedMeter = GlobalOpenTelemetry.meterBuilder("dk.sundhedsdatastyrelsen.ncpeh.service").build();
-        this.failedQueueSizeCounter = failedMeter.upDownCounterBuilder("minlog.job_queue_failed.size")
+        this.failedQueueSizeCounter = meter.upDownCounterBuilder("minlog.job_queue_failed.size")
             .buildWithCallback(m -> m.record(failedJobQueue.size()));
     }
 
@@ -107,7 +105,7 @@ public class MinLogService implements AutoCloseable {
                 // Check if any jobs have exceeded max attempts and move them to failed queue
                 List<JobQueue.JobId> jobsToNack = new java.util.ArrayList<>();
                 List<JobQueue.JobId> jobsToMoveToFailed = new java.util.ArrayList<>();
-                
+
                 for (JobQueue.ReservedJob<LogEvent> job : jobs) {
                     if (job.attempt() >= maxAttempts) {
                         // Move to failed queue
@@ -119,12 +117,12 @@ public class MinLogService implements AutoCloseable {
                         jobsToNack.add(job.id());
                     }
                 }
-                
+
                 // Nack jobs that should be retried
                 if (!jobsToNack.isEmpty()) {
                     jobQueue.nack(jobsToNack);
                 }
-                
+
                 // Remove jobs that were moved to failed queue
                 if (!jobsToMoveToFailed.isEmpty()) {
                     jobQueue.ack(jobsToMoveToFailed);
