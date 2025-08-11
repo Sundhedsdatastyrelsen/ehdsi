@@ -189,6 +189,12 @@
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>3.47.0.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.ws.security</groupId>
+                <artifactId>wss4j</artifactId>
+                <version>1.6.4</version>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Solve convergence errors -->
             <dependency>
