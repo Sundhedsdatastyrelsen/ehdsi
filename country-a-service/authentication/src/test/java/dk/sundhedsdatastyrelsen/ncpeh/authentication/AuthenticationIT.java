@@ -73,12 +73,18 @@ class AuthenticationIT {
         // I'll just try using the same one we use for communicating with the STS.
 
         WSSConfig.init();
-        var config = config();
-        var service = new AuthenticationService(config);
+        var service = new AuthenticationService(config());
         // Create a valid bootstrap token, see the test above.
         var idwsToken = service.xcaSoapHeaderToIdwsToken(
             TestUtils.resource("openncp_soap_header.xml"),
             "https://fmk");
+
+        var fmkKeystorePath = System.getenv("FMK_KEYSTORE_PATH");
+        assertThat("FMK_KEYSTORE_PATH env var should be set", fmkKeystorePath, notNullValue());
+        var fmkAlias = System.getenv("FMK_KEY_ALIAS");
+        assertThat("FMK_KEY_ALIAS env var should be set", fmkAlias, notNullValue());
+        var fmkPassword = System.getenv("FMK_KEYSTORE_PASSWORD");
+        assertThat("FMK_KEYSTORE_PASSWORD env var should be set", fmkPassword, notNullValue());
 
         // Create a valid request to one of the endpoints that should work. It should be GetPrescriptions.
         // Available services:
@@ -213,9 +219,9 @@ class AuthenticationIT {
 
         // TODO Unsure what certificate to use here.
         var cert = CertificateUtils.loadCertificateFromKeystore(
-            config.keystorePath(),
-            config.keyAlias(),
-            config.keystorePassword());
+            Path.of(fmkKeystorePath),
+            fmkAlias,
+            fmkPassword);
         var signContext = new DOMSignContext(cert.privateKey(), security);
 
         // Create and apply the XML signature
