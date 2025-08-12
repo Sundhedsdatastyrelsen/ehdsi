@@ -19,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -121,7 +122,7 @@ class AuthenticationIT {
         // > offset from local time. Absent other guidance, a value of 5 minutes MAY be used.
         // TODO I'm unsure what that means. Is this correct?
         XmlUtils.appendChild(
-            ts, XmlNamespace.WSU, "Created", OffsetDateTime.now()
+            ts, XmlNamespace.WSU, "Created", OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_INSTANT));
 
         var importedToken = requestDocument.importNode(idwsToken.assertion(), true);
