@@ -99,38 +99,19 @@ public class MinLogService implements AutoCloseable {
                 if(failedJobs.isEmpty()){
                     jobQueue.ack(jobIds);
                 } else {
+                    //Find successful jobs and get those IDs
                     var failedJobIds = failedJobs.stream().map(JobQueue.ReservedJob::id).map(JobQueue.JobId::value).toList();
                     var succeededJobs = jobIds.stream().filter(ji -> !failedJobIds.contains(ji.value())).toList();
 
-                    // Check if any jobs have exceeded max attempts and move them to failed queue
-                    List<JobQueue.JobId> jobsToNack = new java.util.ArrayList<>();
-                    List<JobQueue.JobId> jobsToMoveToFailed = new java.util.ArrayList<>();
+                    //Split failed jobs into abandoned jobs and jobs for retrying
+                    var failedJobsRetry = failedJobs.stream().filter(j -> j.attempt() < maxAttempts).map(JobQueue.ReservedJob::id).toList();
+                    var failedJobsAbandoned = failedJobs.stream().filter(j -> j.attempt() >= maxAttempts).toList();
 
-                    for (var job : failedJobs) {
-                        if (job.attempt() >= maxAttempts) {
-                            // Move to failed queue
-                            failedJobQueue.enqueue(job.payload());
-                            jobsToMoveToFailed.add(job.id());
-                            log.warn("Job {} exceeded max attempts ({}), moving to failed queue", job.id(), maxAttempts);
-                        } else {
-                            // Nack for retry
-                            jobsToNack.add(job.id());
-                        }
-                    }
-
-                    // Nack jobs that should be retried
-                    if (!jobsToNack.isEmpty()) {
-                        jobQueue.nack(jobsToNack);
-                    }
-
-                    // Remove jobs that were moved to failed queue
-                    if (!jobsToMoveToFailed.isEmpty()) {
-                        jobQueue.ack(jobsToMoveToFailed);
-                    }
-
+                    failedJobsAbandoned.forEach(j -> failedJobQueue.enqueue(j.payload()));
+                    jobQueue.ack(failedJobsAbandoned.stream().map(JobQueue.ReservedJob::id).toList());
+                    jobQueue.nack(failedJobsRetry);
                     jobQueue.ack(succeededJobs);
                 }
-
             } else {
                 log.debug("Found no pending MinLog entries.");
             }
