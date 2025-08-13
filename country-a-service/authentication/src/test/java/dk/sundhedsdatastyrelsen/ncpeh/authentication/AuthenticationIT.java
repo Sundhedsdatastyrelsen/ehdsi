@@ -106,7 +106,8 @@ class AuthenticationIT {
         // Can probably create the body some better way. This is OK for now.
         var dkmaNamespace = new XmlNamespace("dkma", "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01");
         var presReq = XmlUtils.appendChild(body, dkmaNamespace, "GetPrescriptionRequest");
-        XmlUtils.appendChild(presReq, dkmaNamespace, "PersonIdentifier", "1111111118");
+        var personIdentifier = XmlUtils.appendChild(presReq, dkmaNamespace, "PersonIdentifier", "1111111118");
+        personIdentifier.setAttribute("source", "CPR");
         XmlUtils.appendChild(presReq, dkmaNamespace, "IncludeOpenPrescriptions");
         XmlUtils.appendChild(presReq, dkmaNamespace, "IncludeEffectuations", "false");
 
