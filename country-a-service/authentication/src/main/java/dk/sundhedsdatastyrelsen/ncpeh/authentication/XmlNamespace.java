@@ -10,7 +10,7 @@ public record XmlNamespace(String prefix, String uri) {
     public static final XmlNamespace WSA = new XmlNamespace("wsa", "http://www.w3.org/2005/08/addressing");
     public static final XmlNamespace WSP = new XmlNamespace("wsp", "http://schemas.xmlsoap.org/ws/2004/09/policy");
     public static final XmlNamespace WSSE = new XmlNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
-    public static final XmlNamespace WSSE11 = new XmlNamespace("wsse11", "https://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd");
+    public static final XmlNamespace WSSE11 = new XmlNamespace("wsse11", "http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd");
     public static final XmlNamespace WST = new XmlNamespace("wst", "http://schemas.xmlsoap.org/ws/2005/02/trust");
     public static final XmlNamespace WST13 = new XmlNamespace("wst13", "http://docs.oasis-open.org/ws-sx/ws-trust/200512");
     public static final XmlNamespace WST14 = new XmlNamespace("wst14", "http://docs.oasis-open.org/ws-sx/ws-trust/200802");

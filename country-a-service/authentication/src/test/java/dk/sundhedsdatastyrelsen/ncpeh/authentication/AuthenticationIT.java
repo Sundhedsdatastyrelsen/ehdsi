@@ -110,6 +110,9 @@ class AuthenticationIT {
         XmlUtils.appendChild(presReq, dkmaNamespace, "IncludeOpenPrescriptions");
         XmlUtils.appendChild(presReq, dkmaNamespace, "IncludeEffectuations", "false");
 
+        var actionEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "Action", "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription");
+        XmlUtils.setIdAttribute(actionEl, XmlNamespace.WSU, "Id", "action");
+
         var msgIdEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "MessageID", UUID.randomUUID().toString());
         XmlUtils.setIdAttribute(msgIdEl, XmlNamespace.WSU, "Id", "mid");
         // TODO probably remove this. This was trying to use the apache wss4j classes to do it, but I don't think that's necessary.
@@ -195,6 +198,7 @@ class AuthenticationIT {
 
         // Each reference specifies which part of the document is included in the signature.
         var references = List.of(
+            sigFactory.newReference("#action", sha256Digest, List.of(excTransform), null, null),
             sigFactory.newReference("#mid", sha256Digest, List.of(excTransform), null, null),
             sigFactory.newReference("#ts", sha256Digest, List.of(excTransform), null, null),
             sigFactory.newReference("#body", sha256Digest, List.of(excTransform), null, null),
