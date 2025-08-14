@@ -226,7 +226,7 @@ public class XmlUtils {
     /// otherwise validation might fail.
     ///
     /// @param rootElement   the root element of the XML document to be signed
-    /// @param nextSibling   the node after which the signature should be inserted, or null to append as child of rootElement
+    /// @param nextSibling   the node before which the signature should be inserted, or null to append as child of rootElement
     /// @param referenceUris list of element IDs to be included in the signature (typically "#id" format)
     /// @param certificate   the certificate and private key pair used for signing
     /// @throws AuthenticationException  if signing fails due to cryptographic or XML processing errors
