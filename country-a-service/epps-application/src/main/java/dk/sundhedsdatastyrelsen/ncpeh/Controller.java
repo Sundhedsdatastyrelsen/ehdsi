@@ -1,5 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
@@ -10,14 +13,17 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindDocumentsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFetchDocumentRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindPatientsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
+import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,11 +38,13 @@ public class Controller {
     private final PrescriptionService prescriptionService;
     private final PatientSummaryService patientSummaryService;
     private final CprService cprService;
+    private final AuthenticationService authenticationService;
 
-    public Controller(PrescriptionService prescriptionService, PatientSummaryService patientSummaryService, CprService cprService) {
+    public Controller(PrescriptionService prescriptionService, PatientSummaryService patientSummaryService, CprService cprService, AuthenticationService authenticationService) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
         this.cprService = cprService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping(path = "/api/find-patients/")
@@ -48,10 +56,13 @@ public class Controller {
 
     @PostMapping(path = "/api/find-eprescription-documents/")
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
-        @Valid @RequestBody FindDocumentsRequestDto params
+        @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) {
         var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
-        return prescriptionService.findEPrescriptionDocuments(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
+        return prescriptionService.findEPrescriptionDocuments(
+            params.getPatientId(),
+            filter,
+            this.getFmkToken(params.getSoapHeader()));
     }
 
     /// There is only one patient summary per patient, but the MyHealth@EU api functions like a document repository, so
@@ -71,7 +82,7 @@ public class Controller {
         var repoId = params.getRepositoryId();
         if (Objects.equals(repoId, Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
             var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
-            return prescriptionService.getPrescriptions(params.getPatientId(), filter, TestIdentities.apotekerChrisChristoffersen);
+            return prescriptionService.getPrescriptions(params.getPatientId(), filter, this.getFmkToken(params.getSoapHeader()));
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),
@@ -90,7 +101,10 @@ public class Controller {
         @Valid @RequestBody SubmitDispensationRequestDto request
     ) {
         try {
-            prescriptionService.submitDispensation(request.getPatientId(), Utils.readXmlDocument(request.getDocument()), TestIdentities.apotekerChrisChristoffersen);
+            prescriptionService.submitDispensation(
+                request.getPatientId(),
+                Utils.readXmlDocument(request.getDocument()),
+                this.getFmkToken(request.getSoapHeader()));
         } catch (SAXException e) {
             log.error("Could not read XML document in request", e);
         } catch (Exception e) {
@@ -113,7 +127,7 @@ public class Controller {
             prescriptionService.undoDispensation(
                 request.getDisardDispenseDetails()
                     .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
-                    .getDocument()), TestIdentities.apotekerChrisChristoffersen);
+                    .getDocument()), this.getFmkToken(request.getSoapHeader()));
         } catch (SAXException e) {
             log.error("Could not read XML document in request");
         } catch (Exception e) {
@@ -126,6 +140,14 @@ public class Controller {
             log.error("SOAP Header: {}", request.getSoapHeader());
             log.error("Request document: {}", request.getDispensationToDiscard().getDocument());
             throw e;
+        }
+    }
+
+    private EuropeanHcpIdwsToken getFmkToken(String soapHeader) {
+        try {
+            return this.authenticationService.xcaSoapHeaderToIdwsToken(soapHeader, "https://fmk");
+        } catch (AuthenticationException e) {
+            throw new CountryAException(HttpStatus.UNAUTHORIZED, "Could not authenticate.", e);
         }
     }
 }

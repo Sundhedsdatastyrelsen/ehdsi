@@ -74,6 +74,11 @@
         <dependencies>
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>authentication</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>epps-fmk-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -193,7 +198,6 @@
                 <groupId>org.apache.ws.security</groupId>
                 <artifactId>wss4j</artifactId>
                 <version>1.6.4</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- Solve convergence errors -->
@@ -216,6 +220,11 @@
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
+            </dependency>
+            <dependency><!-- seal -->
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version>
             </dependency>
             <!-- Solve convergence errors -->
         </dependencies>

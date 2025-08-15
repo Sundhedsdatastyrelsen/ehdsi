@@ -1,8 +1,15 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import org.apache.ws.security.WSSConfig;
+import dk.sosi.seal.SOSIFactory;
+import dk.sosi.seal.model.Reply;
+import dk.sosi.seal.pki.SOSITestFederation;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.apache.ws.security.transform.STRTransform;
-import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -21,71 +28,40 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+public class NspClientIdws {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientIdws.class);
 
-class AuthenticationIT {
-    static AuthenticationService.Config config() {
-        var keystorePath = System.getenv("KEYSTORE_PATH");
-        assertThat("KEYSTORE_PATH env var should be set", keystorePath, notNullValue());
-        var keyAlias = System.getenv("KEY_ALIAS");
-        assertThat("KEY_ALIAS env var should be set", keyAlias, notNullValue());
-        var password = System.getenv("KEYSTORE_PASSWORD");
-        assertThat("KEYSTORE_PASSWORD env var should be set", password, notNullValue());
-        return new AuthenticationService.Config(
-            URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
-            Path.of(keystorePath),
-            keyAlias,
-            password,
-            "https://ehdsi-idp.testkald.nspop.dk"
-        );
+    private static final SOSIFactory sosiFactory =
+        new SOSIFactory(new SOSITestFederation(new Properties()), new Properties());
+
+    private NspClientIdws() {
     }
 
-    @Test
-    void exchangeToken() throws AuthenticationException {
-        var service = new AuthenticationService(config());
-        var idwsToken = service.xcaSoapHeaderToIdwsToken(TestUtils.resource("openncp_soap_header.xml"), "https://fmk");
-
-        assertThat(idwsToken.audience(), is("https://fmk"));
-        assertThat(idwsToken.assertion(), notNullValue());
-    }
-
-    @Test
-    void exchangeTokenWithError() {
-        var service = new AuthenticationService(config());
-        assertThrows(
-            AuthenticationException.SosiStsException.class,
-            () -> service.xcaSoapHeaderToIdwsToken(TestUtils.resource("openncp_soap_header_bad.xml"), "https://fmk"));
-    }
-
-    public static void main(String[] args) throws Exception {
-        // The token we receive from STS is a holder-of-key token.
-        // There's a specification of what's required published by Digitaliseringsstyrelsen. They also have a reference
-        // implementation.
-        // Root of them: https://digst.dk/it-loesninger/standarder/oio-identity-based-web-services-oio-idws/
-        // Follow the links there to the specification and the reference.
-
-        // wss4j is necessary because we need a STRTransform in the header, which is not supported natively. And in
-        // order to register that with the built in signing, we have to call the init function.
-        WSSConfig.init();
-        var service = new AuthenticationService(config());
-        // Create a valid bootstrap token, see the test above.
-        var idwsToken = service.xcaSoapHeaderToIdwsToken(
-            TestUtils.resource("openncp_soap_header.xml"),
-            "https://fmk");
-
+    /**
+     * Send a SOAP request to an NSP service.
+     */
+    public static Reply request(URI uri, Element soapBody, String soapAction, EuropeanHcpIdwsToken token, Element... extraHeaders) throws Exception {
+        // TODO should probably take a keystore argument instead. Not use FMK directly here.
         // Currently, we use the same certificate for STS and FMK, but that's not necessarily true always, so we allow
         // other values to be specified.
         var fmkKeystorePathRaw = System.getenv("FMK_KEYSTORE_PATH");
-        assertThat("FMK_KEYSTORE_PATH env var should be set", fmkKeystorePathRaw, notNullValue());
+        if (fmkKeystorePathRaw == null)
+            throw new IllegalArgumentException("FMK_KEYSTORE_PATH must be set to send IDWS calls to FMK.");
         var fmkKeystorePath = Path.of(fmkKeystorePathRaw);
         var fmkAlias = System.getenv("FMK_KEY_ALIAS");
-        assertThat("FMK_KEY_ALIAS env var should be set", fmkAlias, notNullValue());
+        if (fmkAlias == null)
+            throw new IllegalArgumentException("FMK_KEY_ALIAS must be set to send IDWS calls to FMK.");
         var fmkPassword = System.getenv("FMK_KEYSTORE_PASSWORD");
-        assertThat("FMK_KEYSTORE_PASSWORD env var should be set", fmkPassword, notNullValue());
+        if (fmkPassword == null)
+            throw new IllegalArgumentException("FMK_KEYSTORE_PASSWORD must be set to send IDWS calls to FMK.");
+        var cert = CertificateUtils.loadCertificateFromKeystore(
+            fmkKeystorePath,
+            fmkAlias,
+            fmkPassword);
 
         // Create a valid request to one of the endpoints that should work. It should be GetPrescriptions.
         var requestDocument = XmlUtils.newDocument();
@@ -96,16 +72,9 @@ class AuthenticationIT {
         var header = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Header");
         var body = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Body");
         XmlUtils.setIdAttribute(body, XmlNamespace.WSU, "Id", "body");
+        body.appendChild(requestDocument.importNode(soapBody, true));
 
-        // Can probably create the body some better way. This is OK for now.
-        var dkmaNamespace = new XmlNamespace("dkma", "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01");
-        var presReq = XmlUtils.appendChild(body, dkmaNamespace, "GetPrescriptionRequest");
-        var personIdentifier = XmlUtils.appendChild(presReq, dkmaNamespace, "PersonIdentifier", "1111111118");
-        personIdentifier.setAttribute("source", "CPR");
-        XmlUtils.appendChild(presReq, dkmaNamespace, "IncludeOpenPrescriptions");
-        XmlUtils.appendChild(presReq, dkmaNamespace, "IncludeEffectuations", "false");
-
-        var actionEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "Action", "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription");
+        var actionEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "Action", soapAction);
         XmlUtils.setIdAttribute(actionEl, XmlNamespace.WSU, "Id", "action");
 
         var msgIdEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "MessageID", UUID.randomUUID().toString());
@@ -123,10 +92,14 @@ class AuthenticationIT {
             ts, XmlNamespace.WSU, "Created", OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_INSTANT));
 
-        var importedToken = requestDocument.importNode(idwsToken.assertion(), true);
+        // > If the sender has obtained a SAML holder-of-key Assertion vouching for the
+        // > signing key (see next section) it SHOULD be included in the security header
+        // > Include any security tokens (SAML Assertions and/or
+        // > BinarySecurityTokens containing X.509 certificates) in the security
+        // > header block. Ensure that they have unique id attributes so they
+        // > can be referenced (e.g. saml2:ID or wsu:Id).
+        var importedToken = requestDocument.importNode(token.assertion(), true);
         security.appendChild(importedToken);
-
-        // Signing
 
         // > The sender MUST create and include a single <ds:Signature> element in the
         // > <wsse:Security> header block and this signature MUST reference:
@@ -136,7 +109,6 @@ class AuthenticationIT {
         // > • All SOAP header blocks in the message defined in this profile. The
         // >   signature MAY reference other elements including header blocks not
         // >   mentioned in this profile.
-
         // This is the SecurityTokenReference we go "via"
         var secTokenRef = XmlUtils.appendChild(security, XmlNamespace.WSSE, "SecurityTokenReference");
         var importedTokenId = importedToken.getAttributes()
@@ -152,6 +124,8 @@ class AuthenticationIT {
             secTokenRef, XmlNamespace.WSSE, "KeyIdentifier", importedTokenId);
         keyIdentifier.setAttribute("ValueType", "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLID");
 
+        // Signing
+
         // Make the internal representation of the DOM consistent before signing, by
         // e.g. merging adjacent text-nodes.
         requestDocument.normalizeDocument();
@@ -162,6 +136,17 @@ class AuthenticationIT {
         // - EXCLUSIVE: Applies exclusive canonicalization to normalize whitespace and namespace handling
         var excTransform = sigFactory.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null);
         var sha256Digest = sigFactory.newDigestMethod(DigestMethod.SHA256, null);
+
+        // > Authentication assertions MUST be signed by the senders message by including
+        // > first a <wsse:SecurityTokenReference> in <wsse:Security> header block,
+        // > and then referencing the STR from the message signature using a
+        // > <ds:Reference> element. The security token reference MUST include a
+        // > <wsse:KeyIdentifier> with a ValueType of http://docs.oasis-
+        // > open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLID and specify
+        // > the ID of the SAML assertion. The <ds:Reference> element MUST use a
+        // > transform algorithm set to “http://docs.oasis-
+        // > open.org/wss/2004/01/oasis-200401-wsssoap-message-security-
+        // > 1.0#STR-Transform”.
         // STRTransform requires its child to be added to the document and passed as a parameter. I dug this up by reading the code.
         var strTransformChild = requestDocument.createElementNS(XmlNamespace.WSSE.uri(), "TransformationParameters");
         strTransformChild.setPrefix(XmlNamespace.WSSE.prefix());
@@ -185,6 +170,20 @@ class AuthenticationIT {
             references
         );
 
+        // > In this profile, a holder-of-key Assertion MUST in the
+        // > <SubjectConfirmationData> element include a key that can be used to verify
+        // > the message signature. Thus, the same key used for message authentication and
+        // > integrity is used to confirm the right to use the assertion for message
+        // > authorization purposes.
+        // > The message signature (i.e. the <ds:Signature> element) MUST refer to the
+        // > token with the subject confirmation key within the <ds:KeyInfo> element
+        //
+        // > Create a <wsse:SecurityTokenReference> element (including
+        // > a wsu:Id attribute) for each embedded SAML assertion. Add a
+        // > TokenType attribute stating the type of token
+        // > (http://docs.oasis-open.org/wss/oasis-wss-saml-
+        // > token-profile-1.1#SAMLV2.0) and a <wsse:KeyIdentifier>
+        // > sub-element containing the ID of the assertion.
         // Add the reference to the original key
         var keyInfoFactory = sigFactory.getKeyInfoFactory();
         var secRef = requestDocument.createElementNS(XmlNamespace.WSSE.uri(), "SecurityTokenReference");
@@ -194,61 +193,71 @@ class AuthenticationIT {
         inSigKeyIdentifier.setAttribute("ValueType", "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLID");
         var keyInfo = keyInfoFactory.newKeyInfo(List.of(new DOMStructure(secRef)));
 
-        var cert = CertificateUtils.loadCertificateFromKeystore(
-            fmkKeystorePath,
-            fmkAlias,
-            fmkPassword);
         var signContext = new DOMSignContext(cert.privateKey(), security);
 
         // Create and apply the XML signature
         var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
         signature.sign(signContext);
-        // Have to sign it.
-        //
-        // If the sender has obtained a SAML holder-of-key Assertion vouching for the
-        //signing key (see next section) it SHOULD be included in the security header
-        // Authentication assertions MUST be signed by the senders message by including
-        //first a <wsse:SecurityTokenReference> in <wsse:Security> header block,
-        //and then referencing the STR from the message signature using a
-        //<ds:Reference> element. The security token reference MUST include a
-        //<wsse:KeyIdentifier> with a ValueType of http://docs.oasis-
-        //open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLID and specify
-        //the ID of the SAML assertion. The <ds:Reference> element MUST use a
-        //transform algorithm set to “http://docs.oasis-
-        //open.org/wss/2004/01/oasis-200401-wsssoap-message-security-
-        //1.0#STR-Transform”.
-        // In this profile, a holder-of-key Assertion MUST in the
-        //<SubjectConfirmationData> element include a key that can be used to verify
-        //the message signature. Thus, the same key used for message authentication and
-        //integrity is used to confirm the right to use the assertion for message
-        //authorization purposes.
-        //The message signature (i.e. the <ds:Signature> element) MUST refer to the
-        //token with the subject confirmation key within the <ds:KeyInfo> element
-        // Also need to do this: Include any security tokens (SAML Assertions and/or
-        //BinarySecurityTokens containing X.509 certificates) in the security
-        //header block. Ensure that they have unique id attributes so they
-        //can be referenced (e.g. saml2:ID or wsu:Id).
-        //Create a <wsse:SecurityTokenReference> element (including
-        //a wsu:Id attribute) for each embedded SAML assertion. Add a
-        //TokenType attribute stating the type of token
-        //(http://docs.oasis-open.org/wss/oasis-wss-saml-
-        //token-profile-1.1#SAMLV2.0) and a <wsse:KeyIdentifier>
-        //sub-element containing the ID of the assertion.
 
         var reqBody = XmlUtils.writeDocumentToString(requestDocument);
-        System.out.println(reqBody);
 
-        // Put it into a soap envelope and send it to fmk
-        // endpoint: https://test1.fmk.netic.dk/idws_xua/fmk_xua_146_E6
-        // previous endpoint: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+        // Put it all into a soap envelope and send it to the endpoint.
         try (var httpClient = HttpClient.newBuilder().build()) {
-            var request = HttpRequest.newBuilder(URI.create("https://test1.fmk.netic.dk/idws_xua/fmk_xua_146_E6"))
+            var request = HttpRequest.newBuilder(uri)
                 .header("Content-Type", "application/soap+xml; charset=utf-8")
-                .header("SOAPAction", "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#GetPrescription")
+                .header("SOAPAction", soapAction)
                 .POST(HttpRequest.BodyPublishers.ofString(reqBody))
                 .build();
             var res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.printf("Code: %d. Body: %s", res.statusCode(), res.body());
+            var fullText = res.body();
+
+            // Check if response is MIME multipart
+            if (fullText.contains("--uuid:")) {
+                fullText = extractSoapFromMime(fullText);
+            }
+
+            var reply = sosiFactory.deserializeReply(fullText);
+            if (res.statusCode() >= 400) {
+                throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
+            }
+            return reply;
         }
+    }
+
+    /**
+     * Extract SOAP message from MIME multipart response.
+     */
+    private static String extractSoapFromMime(String mimeResponse) {
+        // Find the boundary marker
+        var boundaryPattern = Pattern.compile("--(uuid:[^\\r\\n]+)");
+        var boundaryMatcher = boundaryPattern.matcher(mimeResponse);
+        if (!boundaryMatcher.find()) {
+            throw new NspClientException("Could not find MIME boundary in response");
+        }
+        var boundary = boundaryMatcher.group(1);
+
+        // Extract content between boundaries
+        var contentPattern = Pattern.compile(
+            "--" + Pattern.quote(boundary) + "\\r?\\n" +
+                "([\\s\\S]*?)" +
+                "--" + Pattern.quote(boundary) + "--",
+            Pattern.MULTILINE
+        );
+
+        var contentMatcher = contentPattern.matcher(mimeResponse);
+        if (contentMatcher.find()) {
+            var part = contentMatcher.group(1);
+            // Skip headers and get content after double newline
+            var contentStart = part.indexOf("\r\n\r\n");
+            if (contentStart == -1) {
+                contentStart = part.indexOf("\n\n");
+            }
+            if (contentStart == -1) {
+                throw new NspClientException("Could not find content in MIME part");
+            }
+            return part.substring(contentStart + 2).trim();
+        }
+
+        throw new NspClientException("Could not extract content from MIME response");
     }
 }
