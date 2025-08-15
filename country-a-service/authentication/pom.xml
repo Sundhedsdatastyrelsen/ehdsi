@@ -23,12 +23,5 @@
             <version>2.0.17</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.ws.security</groupId>
-            <artifactId>wss4j</artifactId>
-            <!-- Need to use this archaic version because we already use apache santuario because of seal. Would love to update it. -->
-            <version>1.6.4</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

@@ -22,6 +22,8 @@ import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sosi.seal.model.Reply;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
@@ -34,6 +36,8 @@ import org.w3c.dom.Element;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.security.PrivateKey;
 
 
 // TODO were some of these supposed to be system calls?
@@ -53,8 +57,9 @@ public class FmkClientIdws {
 
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
+    private final PrivateKey fmkSigningKey;
 
-    public FmkClientIdws(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException {
+    public FmkClientIdws(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException, AuthenticationException {
         this.serviceUri = new URI(fmkEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
             "dk.dkma.medicinecard.xml_schema._2015._06._01"
@@ -63,6 +68,24 @@ public class FmkClientIdws {
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
                 + ":dk.sdsd.dgws._2012._06"
         );
+
+        // Currently, we use the same certificate for STS and FMK, but that's not necessarily true always, so we allow
+        // other values to be specified.
+        var fmkKeystorePathRaw = System.getenv("FMK_KEYSTORE_PATH");
+        if (fmkKeystorePathRaw == null)
+            throw new IllegalArgumentException("FMK_KEYSTORE_PATH must be set to send IDWS calls to FMK.");
+        var fmkKeystorePath = Path.of(fmkKeystorePathRaw);
+        var fmkAlias = System.getenv("FMK_KEY_ALIAS");
+        if (fmkAlias == null)
+            throw new IllegalArgumentException("FMK_KEY_ALIAS must be set to send IDWS calls to FMK.");
+        var fmkPassword = System.getenv("FMK_KEYSTORE_PASSWORD");
+        if (fmkPassword == null)
+            throw new IllegalArgumentException("FMK_KEYSTORE_PASSWORD must be set to send IDWS calls to FMK.");
+        var cert = CertificateUtils.loadCertificateFromKeystore(
+            fmkKeystorePath,
+            fmkAlias,
+            fmkPassword);
+        this.fmkSigningKey = cert.privateKey();
     }
 
     private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
@@ -272,6 +295,7 @@ public class FmkClientIdws {
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
                 token,
+                this.fmkSigningKey,
                 extraHeaders
             );
         } catch (Exception e) {

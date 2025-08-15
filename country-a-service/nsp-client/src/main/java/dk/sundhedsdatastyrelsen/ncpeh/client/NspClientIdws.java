@@ -3,7 +3,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 import dk.sosi.seal.SOSIFactory;
 import dk.sosi.seal.model.Reply;
 import dk.sosi.seal.pki.SOSITestFederation;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
@@ -23,7 +22,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
+import java.security.PrivateKey;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -44,25 +43,14 @@ public class NspClientIdws {
     /**
      * Send a SOAP request to an NSP service.
      */
-    public static Reply request(URI uri, Element soapBody, String soapAction, EuropeanHcpIdwsToken token, Element... extraHeaders) throws Exception {
-        // TODO should probably take a keystore argument instead. Not use FMK directly here.
-        // Currently, we use the same certificate for STS and FMK, but that's not necessarily true always, so we allow
-        // other values to be specified.
-        var fmkKeystorePathRaw = System.getenv("FMK_KEYSTORE_PATH");
-        if (fmkKeystorePathRaw == null)
-            throw new IllegalArgumentException("FMK_KEYSTORE_PATH must be set to send IDWS calls to FMK.");
-        var fmkKeystorePath = Path.of(fmkKeystorePathRaw);
-        var fmkAlias = System.getenv("FMK_KEY_ALIAS");
-        if (fmkAlias == null)
-            throw new IllegalArgumentException("FMK_KEY_ALIAS must be set to send IDWS calls to FMK.");
-        var fmkPassword = System.getenv("FMK_KEYSTORE_PASSWORD");
-        if (fmkPassword == null)
-            throw new IllegalArgumentException("FMK_KEYSTORE_PASSWORD must be set to send IDWS calls to FMK.");
-        var cert = CertificateUtils.loadCertificateFromKeystore(
-            fmkKeystorePath,
-            fmkAlias,
-            fmkPassword);
-
+    public static Reply request(
+        URI uri,
+        Element soapBody,
+        String soapAction,
+        EuropeanHcpIdwsToken token,
+        PrivateKey signingKey,
+        Element... extraHeaders
+    ) throws Exception {
         // Create a valid request to one of the endpoints that should work. It should be GetPrescriptions.
         var requestDocument = XmlUtils.newDocument();
         var envelope = XmlUtils.appendChild(requestDocument, XmlNamespace.SOAP, "Envelope");
@@ -188,12 +176,16 @@ public class NspClientIdws {
         var keyInfoFactory = sigFactory.getKeyInfoFactory();
         var secRef = requestDocument.createElementNS(XmlNamespace.WSSE.uri(), "SecurityTokenReference");
         secRef.setPrefix(XmlNamespace.WSSE.prefix());
-        XmlUtils.setAttribute(secRef, XmlNamespace.WSSE11, "TokenType", "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0");
+        XmlUtils.setAttribute(
+            secRef,
+            XmlNamespace.WSSE11,
+            "TokenType",
+            "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0");
         var inSigKeyIdentifier = XmlUtils.appendChild(secRef, XmlNamespace.WSSE, "KeyIdentifier", importedTokenId);
         inSigKeyIdentifier.setAttribute("ValueType", "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLID");
         var keyInfo = keyInfoFactory.newKeyInfo(List.of(new DOMStructure(secRef)));
 
-        var signContext = new DOMSignContext(cert.privateKey(), security);
+        var signContext = new DOMSignContext(signingKey, security);
 
         // Create and apply the XML signature
         var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
