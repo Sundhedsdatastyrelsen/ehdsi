@@ -8,12 +8,15 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.apache.ws.security.transform.STRTransform;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
@@ -22,10 +25,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -40,9 +46,7 @@ public class NspClientIdws {
     private NspClientIdws() {
     }
 
-    /**
-     * Send a SOAP request to an NSP service.
-     */
+    /// Send an IDWS SOAP request to an NSP service.
     public static Reply request(
         URI uri,
         Element soapBody,
@@ -51,7 +55,43 @@ public class NspClientIdws {
         PrivateKey signingKey,
         Element... extraHeaders
     ) throws Exception {
-        // Create a valid request to one of the endpoints that should work. It should be GetPrescriptions.
+        var envelope = createEnvelope(soapBody, soapAction, token, signingKey, extraHeaders);
+        var reqBody = XmlUtils.writeDocumentToString(envelope);
+
+        // Send it to the endpoint.
+        try (var httpClient = HttpClient.newBuilder().build()) {
+            var request = HttpRequest.newBuilder(uri)
+                .header("Content-Type", "application/soap+xml; charset=utf-8")
+                .header("SOAPAction", soapAction)
+                .POST(HttpRequest.BodyPublishers.ofString(reqBody))
+                .build();
+            var res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var fullText = res.body();
+
+            // Check if response is MIME multipart
+            // Some NSP services respond with multipart. DDV is one of them.
+            if (fullText.contains("--uuid:")) {
+                fullText = extractSoapFromMime(fullText);
+            }
+
+            var reply = sosiFactory.deserializeReply(fullText);
+            if (res.statusCode() >= 400) {
+                throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
+            }
+            return reply;
+        }
+    }
+
+    /// Wrap the body in an envelope and sign it.
+    ///
+    /// Quotes are references to the SOAP profile maintained by Digitaliseringsstyrelsen.
+    ///
+    /// [Root page for the profiles](https://digst.dk/it-loesninger/standarder/oio-identity-based-web-services-oio-idws/).
+    ///
+    /// [The specific profile](https://digst.dk/media/exmdt52l/oio-idws-soap-profile-v11.pdf).
+    private static Document createEnvelope(Element soapBody, String soapAction, EuropeanHcpIdwsToken token, PrivateKey signingKey, Element[] extraHeaders) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, MarshalException, XMLSignatureException {
+        // Structure
+
         var requestDocument = XmlUtils.newDocument();
         var envelope = XmlUtils.appendChild(requestDocument, XmlNamespace.SOAP, "Envelope");
         XmlUtils.declareNamespaces(
@@ -60,22 +100,33 @@ public class NspClientIdws {
         var header = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Header");
         var body = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Body");
         XmlUtils.setIdAttribute(body, XmlNamespace.WSU, "Id", "body");
+
+        // Add the passed in body.
         body.appendChild(requestDocument.importNode(soapBody, true));
 
+        // Header
+
+        // Add the required header attributes.
+        // I found out that these were required by calling an endpoint in FMK.
         var actionEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "Action", soapAction);
         XmlUtils.setIdAttribute(actionEl, XmlNamespace.WSU, "Id", "action");
 
         var msgIdEl = XmlUtils.appendChild(header, XmlNamespace.WSA, "MessageID", UUID.randomUUID().toString());
         XmlUtils.setIdAttribute(msgIdEl, XmlNamespace.WSU, "Id", "mid");
 
+        // Add any extra headers
+        Arrays.stream(extraHeaders).forEach(header::appendChild);
+
+        // Security
+
+        // Add the security section. This needs the token we got from STS, a few other fields, and a signature.
         var security = XmlUtils.appendChild(header, XmlNamespace.WSSE, "Security");
         security.setAttribute("mustUnderstand", "1");
 
-
-        var ts = XmlUtils.appendChild(security, XmlNamespace.WSU, "Timestamp");
-        XmlUtils.setIdAttribute(ts, XmlNamespace.WSU, "Id", "ts");
         // > The value of the <wsu:Created> element SHOULD be within an appropriate
         // > offset from local time. Absent other guidance, a value of 5 minutes MAY be used.
+        var ts = XmlUtils.appendChild(security, XmlNamespace.WSU, "Timestamp");
+        XmlUtils.setIdAttribute(ts, XmlNamespace.WSU, "Id", "ts");
         XmlUtils.appendChild(
             ts, XmlNamespace.WSU, "Created", OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_INSTANT));
@@ -120,6 +171,7 @@ public class NspClientIdws {
 
         var sigFactory = XMLSignatureFactory.getInstance("DOM");
 
+        // When signing, we need to reference what parts of the document we're including in the signature.
         // Define the transforms to be applied to each referenced element
         // - EXCLUSIVE: Applies exclusive canonicalization to normalize whitespace and namespace handling
         var excTransform = sigFactory.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null);
@@ -151,7 +203,7 @@ public class NspClientIdws {
             sigFactory.newReference("#str1", sha256Digest, List.of(strTransform), null, null)
         );
 
-        // This is the core of the XML signature that describes what and how it was signed
+        // Add information on what is signed and how it is signed.
         var signedInfo = sigFactory.newSignedInfo(
             sigFactory.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, (C14NMethodParameterSpec) null),
             sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA256, null),
@@ -190,35 +242,11 @@ public class NspClientIdws {
         // Create and apply the XML signature
         var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
         signature.sign(signContext);
-
-        var reqBody = XmlUtils.writeDocumentToString(requestDocument);
-
-        // Put it all into a soap envelope and send it to the endpoint.
-        try (var httpClient = HttpClient.newBuilder().build()) {
-            var request = HttpRequest.newBuilder(uri)
-                .header("Content-Type", "application/soap+xml; charset=utf-8")
-                .header("SOAPAction", soapAction)
-                .POST(HttpRequest.BodyPublishers.ofString(reqBody))
-                .build();
-            var res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            var fullText = res.body();
-
-            // Check if response is MIME multipart
-            if (fullText.contains("--uuid:")) {
-                fullText = extractSoapFromMime(fullText);
-            }
-
-            var reply = sosiFactory.deserializeReply(fullText);
-            if (res.statusCode() >= 400) {
-                throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
-            }
-            return reply;
-        }
+        return requestDocument;
     }
 
-    /**
-     * Extract SOAP message from MIME multipart response.
-     */
+    /// Extract SOAP message from MIME multipart response.
+    /// This is a copy of the one in NspClient.java.
     private static String extractSoapFromMime(String mimeResponse) {
         // Find the boundary marker
         var boundaryPattern = Pattern.compile("--(uuid:[^\\r\\n]+)");
