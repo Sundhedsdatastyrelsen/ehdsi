@@ -1,6 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * API client for FMK test environment
@@ -31,5 +36,26 @@ public class Fmk {
             }
         }
         return fmkClient;
+    }
+
+    private static FmkClientIdws idwsFmkClient;
+
+    public static FmkClientIdws idwsApiClient() {
+        if (idwsFmkClient == null) {
+            try {
+                var config = new FmkClientIdws.Config(
+                    Base64.getDecoder()
+                        .wrap(new ByteArrayInputStream(System.getenv("FMK_CERT_BASE_64")
+                            .getBytes(StandardCharsets.UTF_8))),
+                    System.getenv("FMK_CERT_ALIAS"),
+                    System.getenv("FMK_CERT_PASSWORD"),
+                    fmkEndpointUri
+                );
+                idwsFmkClient = new FmkClientIdws(config);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return idwsFmkClient;
     }
 }

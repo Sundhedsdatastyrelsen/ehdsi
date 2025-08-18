@@ -6,6 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
+import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -23,6 +24,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFi
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,17 +36,23 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
+@EnableConfigurationProperties(AuthenticationServiceConfig.class)
 public class Controller {
     private final PrescriptionService prescriptionService;
     private final PatientSummaryService patientSummaryService;
     private final CprService cprService;
     private final AuthenticationService authenticationService;
 
-    public Controller(PrescriptionService prescriptionService, PatientSummaryService patientSummaryService, CprService cprService, AuthenticationService authenticationService) {
+    public Controller(
+        PrescriptionService prescriptionService,
+        PatientSummaryService patientSummaryService,
+        CprService cprService,
+        AuthenticationServiceConfig authServiceConfig
+    ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
         this.cprService = cprService;
-        this.authenticationService = authenticationService;
+        this.authenticationService = new AuthenticationService(authServiceConfig);
     }
 
     @PostMapping(path = "/api/find-patients/")

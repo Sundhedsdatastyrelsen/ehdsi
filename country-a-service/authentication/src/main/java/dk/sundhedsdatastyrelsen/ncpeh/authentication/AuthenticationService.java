@@ -6,8 +6,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAsser
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Path;
 
 /**
  * The public API for authentication actions, such as bootstrap-to-IDWS exchanges.
@@ -15,13 +16,17 @@ import java.nio.file.Path;
 public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public record Config(
-            URI sosiStsUri,
-            Path keystorePath,
-            String keyAlias,
-            String keystorePassword,
-            String issuer
-    ) {}
+    public interface Config {
+        URI sosiStsUri();
+
+        InputStream keystore();
+
+        String keyAlias();
+
+        String keystorePassword();
+
+        String issuer();
+    }
 
     private final Config config;
     private final SosiStsClient sosiStsClient;
@@ -30,12 +35,12 @@ public class AuthenticationService {
     public AuthenticationService(Config config) {
         this.config = config;
         this.sosiStsClient = new SosiStsClient(config.sosiStsUri());
-        try {
+        try (var is = config.keystore()) {
             this.certificateAndKey = CertificateUtils.loadCertificateFromKeystore(
-                    config.keystorePath(),
-                    config.keyAlias(),
-                    config.keystorePassword());
-        } catch (AuthenticationException e) {
+                is,
+                config.keyAlias(),
+                config.keystorePassword());
+        } catch (AuthenticationException | IOException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -52,10 +57,10 @@ public class AuthenticationService {
     public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(String soapHeader, String audience) throws AuthenticationException {
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(
-                openNcpAssertions,
-                certificateAndKey,
-                audience,
-                config.issuer());
+            openNcpAssertions,
+            certificateAndKey,
+            audience,
+            config.issuer());
         log.info("Requesting IDWS token from SOSI STS for {}", audience);
         // we use the same certificate for the bootstrap tokens and the soap envelopes
         var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, certificateAndKey);

@@ -30,17 +30,19 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.PrivateKey;
-
-
-// TODO were some of these supposed to be system calls?
 
 @Component
 public class FmkClientIdws {
@@ -59,8 +61,26 @@ public class FmkClientIdws {
     private final JAXBContext jaxbContext;
     private final PrivateKey fmkSigningKey;
 
-    public FmkClientIdws(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException, AuthenticationException {
-        this.serviceUri = new URI(fmkEndpointUrl);
+    @Component
+    public record Config(
+        InputStream keystore,
+        String keystoreAlias,
+        String keystorePassword,
+        String endpoint
+    ) {
+        @Autowired
+        public Config(
+            @Value("${app.fmk.keystore.path}") String keystorePath,
+            @Value("${app.fmk.keystore.alias}") String keystoreAlias,
+            @Value("${app.fmk.keystore.password}") String keystorePassword,
+            @Value("${app.fmk.endpoint.url}") String endpoint
+        ) throws IOException {
+            this(new BufferedInputStream(Files.newInputStream(Path.of(keystorePath))), keystoreAlias, keystorePassword, endpoint);
+        }
+    }
+
+    public FmkClientIdws(Config config) throws URISyntaxException, JAXBException, AuthenticationException, IOException {
+        this.serviceUri = new URI(config.endpoint());
         this.jaxbContext = JAXBContext.newInstance(
             "dk.dkma.medicinecard.xml_schema._2015._06._01"
                 + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
@@ -71,37 +91,18 @@ public class FmkClientIdws {
 
         // Currently, we use the same certificate for STS and FMK, but that's not necessarily true always, so we allow
         // other values to be specified.
-        var fmkKeystorePathRaw = System.getenv("FMK_KEYSTORE_PATH");
-        if (fmkKeystorePathRaw == null)
-            throw new IllegalArgumentException("FMK_KEYSTORE_PATH must be set to send IDWS calls to FMK.");
-        var fmkKeystorePath = Path.of(fmkKeystorePathRaw);
-        var fmkAlias = System.getenv("FMK_KEY_ALIAS");
+        var fmkAlias = config.keystoreAlias();
         if (fmkAlias == null)
-            throw new IllegalArgumentException("FMK_KEY_ALIAS must be set to send IDWS calls to FMK.");
-        var fmkPassword = System.getenv("FMK_KEYSTORE_PASSWORD");
+            throw new IllegalArgumentException("Keystore alias must be set to send IDWS calls to FMK.");
+        var fmkPassword = config.keystorePassword();
         if (fmkPassword == null)
-            throw new IllegalArgumentException("FMK_KEYSTORE_PASSWORD must be set to send IDWS calls to FMK.");
+            throw new IllegalArgumentException("Keystore password must be set to send IDWS calls to FMK.");
         var cert = CertificateUtils.loadCertificateFromKeystore(
-            fmkKeystorePath,
+            config.keystore(),
             fmkAlias,
             fmkPassword);
         this.fmkSigningKey = cert.privateKey();
-    }
-
-    private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
-        final var header = WhitelistingHeader.builder()
-            .withSystemName("ePPS PoC")
-            .withSystemOwnerName("Sundhedsdatastyrelsen")
-            .withSystemVersion("0.1.0")
-            .withOrgResponsibleName("Sundhedsdatastyrelsen")
-            .withOrgUsingName("Sundhedsdatastyrelsen")
-            .withOrgUsingID()
-            // TODO: Don't use Region Hovedstaden's location number:
-            .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
-            .withRequestedRole(requestedRole.value())
-            .build();
-
-        return new ObjectFactory().createWhitelistingHeader(header);
+        config.keystore.close();
     }
 
     private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {
@@ -302,5 +303,21 @@ public class FmkClientIdws {
             throw new NspClientException("FMK request failed", e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+    }
+
+    private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
+        final var header = WhitelistingHeader.builder()
+            .withSystemName("ePPS PoC")
+            .withSystemOwnerName("Sundhedsdatastyrelsen")
+            .withSystemVersion("0.1.0")
+            .withOrgResponsibleName("Sundhedsdatastyrelsen")
+            .withOrgUsingName("Sundhedsdatastyrelsen")
+            .withOrgUsingID()
+            // TODO: Don't use Region Hovedstaden's location number:
+            .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
+            .withRequestedRole(requestedRole.value())
+            .build();
+
+        return new ObjectFactory().createWhitelistingHeader(header);
     }
 }
