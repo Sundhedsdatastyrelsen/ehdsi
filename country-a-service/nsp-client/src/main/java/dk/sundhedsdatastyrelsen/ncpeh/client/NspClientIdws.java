@@ -115,7 +115,7 @@ public class NspClientIdws {
         XmlUtils.setIdAttribute(msgIdEl, XmlNamespace.WSU, "Id", "mid");
 
         // Add any extra headers
-        Arrays.stream(extraHeaders).forEach(header::appendChild);
+        Arrays.stream(extraHeaders).map(eh -> requestDocument.importNode(eh, true)).forEach(header::appendChild);
 
         // Security
 

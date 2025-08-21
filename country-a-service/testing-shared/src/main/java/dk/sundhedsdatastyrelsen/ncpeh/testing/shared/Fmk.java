@@ -2,15 +2,20 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
+import org.apache.axis.utils.StringUtils;
+import org.apache.ws.security.WSSConfig;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
  * API client for FMK test environment
  */
 public class Fmk {
+    static {
+        WSSConfig.init();
+    }
+
     private static final String fmkEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
     /**
      * Helle Bonde is a test persona which we do *not* own, so we should only perform read operations on her.
@@ -43,12 +48,16 @@ public class Fmk {
     public static FmkClientIdws idwsApiClient() {
         if (idwsFmkClient == null) {
             try {
+                var base64 = System.getenv("FMK_CERT_BASE_64");
+                var alias = System.getenv("FMK_CERT_ALIAS");
+                var password = System.getenv("FMK_CERT_PASSWORD");
+                if (StringUtils.isEmpty(base64) || StringUtils.isEmpty(alias) || StringUtils.isEmpty(password)) {
+                    throw new IllegalArgumentException("FMK_CERT_BASE_64, FMK_CERT_ALIAS and FMK_CERT_PASSWORD must all be set for the integration test to work.");
+                }
                 var config = new FmkClientIdws.Config(
-                    Base64.getDecoder()
-                        .wrap(new ByteArrayInputStream(System.getenv("FMK_CERT_BASE_64")
-                            .getBytes(StandardCharsets.UTF_8))),
-                    System.getenv("FMK_CERT_ALIAS"),
-                    System.getenv("FMK_CERT_PASSWORD"),
+                    new ByteArrayInputStream(Base64.getDecoder().decode(base64)),
+                    alias,
+                    password,
                     fmkEndpointUri
                 );
                 idwsFmkClient = new FmkClientIdws(config);
