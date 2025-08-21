@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
@@ -13,13 +14,17 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ws.security.WSSConfig;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -30,6 +35,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
+
     private final DataSource lmsDataSource = lmsDataSource();
 
     private final PrescriptionService prescriptionService = new PrescriptionService(
@@ -61,6 +67,7 @@ class FmkIT {
      *
      * @throws Exception
      */
+
     @Test
     void getPrescriptionAndMedicationTest() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
@@ -141,6 +148,7 @@ class FmkIT {
      * So this test can only run if the prerequisite scripts have run, and an eDispensation CDA
      * is available at the path given by the system property eDispensationITPath.
      */
+
     @Test
     void submitDispensationTest() throws Exception {
         var cpr = Fmk.cprKarl;
@@ -171,5 +179,33 @@ class FmkIT {
             patientId(cpr),
             eDispensation,
             token);
+    }
+
+
+
+    record Config(
+        URI sosiStsUri,
+        InputStream keystore,
+        String keyAlias,
+        String keystorePassword,
+        String issuer
+    ) implements AuthenticationService.Config {}
+
+    @Test
+    void openKeystore() throws Exception {
+        WSSConfig.init();
+        var keystorePath = "../data/fmk-client.jks";
+        var keyAlias = "epps-sosi-sts-client";
+        var password = ""; //TODO Same as before...
+        var config = new Config(
+            URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
+            new BufferedInputStream(Files.newInputStream(Path.of(keystorePath))),
+            keyAlias,
+            password,
+            "https://ehdsi-idp.testkald.nspop.dk"
+        );
+
+        var service = new AuthenticationService(config);
+
     }
 }

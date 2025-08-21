@@ -41,7 +41,7 @@ public class CertificateUtils {
     @NonNull
     public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
         try {
-            var ks = KeyStore.getInstance("PKCS12");
+            var ks = KeyStore.getInstance("JKS");
             ks.load(is, password.toCharArray());
             return new CertificateAndKey(
                 (X509Certificate) ks.getCertificate(keyAlias),
