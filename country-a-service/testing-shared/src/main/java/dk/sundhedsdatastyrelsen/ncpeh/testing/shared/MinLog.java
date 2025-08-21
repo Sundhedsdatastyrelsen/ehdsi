@@ -6,7 +6,7 @@ public class MinLog {
     private MinLog() {
     }
 
-    private static final String MINLOG_ENDPOINT_URI = "http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService";
+    private static final String MINLOG_ENDPOINT_URI = "https://test1.ekstern-test.nspop.dk:8443/decoupling/service/minlog20250312";
     /**
      * Jens Jensen is a test person we can see in the test person overview. Do not edit.
      */
