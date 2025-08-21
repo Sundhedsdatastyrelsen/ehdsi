@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
@@ -22,6 +23,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -47,6 +49,23 @@ class FmkIT {
         var ds = lmsDataSource();
         if (new DataProvider(ds).lastImport().isEmpty()) {
             LocalLmsLoader.fetchData(lmsServerInfo(), ds);
+        }
+    }
+
+    @Test
+    void loadTestCertAndPrivateKeyFromFile() throws Exception {
+        var tempFile = Files.createTempFile("keystore", "p12");
+        try (var keystore = getClass().getClassLoader().getResourceAsStream("test-signer.p12")) {
+            assertThat(keystore, notNullValue());
+            Files.copy(keystore, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+            var result = CertificateUtils.loadCertificateFromKeystore(tempFile, "test-signer", "test123");
+            assertThat(
+                result.certificate().getSubjectX500Principal().getName(),
+                equalTo("CN=Test Certificate,OU=UnitTest,O=TestOrg,L=Copenhagen,ST=DK,C=DK"));
+            assertThat(CertificateUtils.extractCountryCode(result.certificate()), is("DK"));
+        } finally {
+            Files.delete(tempFile);
         }
     }
 

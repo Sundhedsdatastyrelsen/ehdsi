@@ -5,8 +5,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import org.apache.axis.utils.StringUtils;
 import org.apache.ws.security.WSSConfig;
 
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
+import java.io.BufferedInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * API client for FMK test environment
@@ -55,7 +56,8 @@ public class Fmk {
                     throw new IllegalArgumentException("FMK_CERT_BASE_64, FMK_CERT_ALIAS and FMK_CERT_PASSWORD must all be set for the integration test to work.");
                 }
                 var config = new FmkClientIdws.Config(
-                    new ByteArrayInputStream(Base64.getDecoder().decode(base64)),
+                    new BufferedInputStream(Files.newInputStream(Path.of("../data/fmk-client.p12"))),
+                    // new ByteArrayInputStream(Base64.getDecoder().decode(base64))),
                     alias,
                     password,
                     fmkEndpointUri
