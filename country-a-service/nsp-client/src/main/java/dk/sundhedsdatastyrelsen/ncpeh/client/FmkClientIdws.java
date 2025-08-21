@@ -21,7 +21,6 @@ import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
-import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
@@ -283,7 +282,7 @@ public class FmkClientIdws {
         boolean requiresMedicineCardConsent
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-        final Reply reply;
+        final Element body;
         Element[] extraHeaders;
         if (requiresMedicineCardConsent) {
             extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole)), ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
@@ -291,7 +290,7 @@ public class FmkClientIdws {
             extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
         }
         try {
-            reply = NspClientIdws.request(
+            body = NspClientIdws.request(
                 serviceUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
@@ -302,7 +301,7 @@ public class FmkClientIdws {
         } catch (Exception e) {
             throw new NspClientException("FMK request failed", e);
         }
-        return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+        return jaxbContext.createUnmarshaller().unmarshal(body, clazz).getValue();
     }
 
     private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {

@@ -1,11 +1,10 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.sosi.seal.SOSIFactory;
-import dk.sosi.seal.model.Reply;
-import dk.sosi.seal.pki.SOSITestFederation;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.transform.STRTransform;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -33,21 +32,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class NspClientIdws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientIdws.class);
-
-    private static final SOSIFactory sosiFactory =
-        new SOSIFactory(new SOSITestFederation(new Properties()), new Properties());
+    private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
 
     private NspClientIdws() {
     }
 
     /// Send an IDWS SOAP request to an NSP service.
-    public static Reply request(
+    public static Element request(
         URI uri,
         Element soapBody,
         String soapAction,
@@ -74,11 +70,12 @@ public class NspClientIdws {
                 fullText = extractSoapFromMime(fullText);
             }
 
-            var reply = sosiFactory.deserializeReply(fullText);
+            var responseDoc = XmlUtils.parse(fullText);
+
             if (res.statusCode() >= 400) {
-                throw new NspClientException(String.format("Request failed with message: %s", reply.getFaultString()));
+                throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
             }
-            return reply;
+            return (Element) xpath.evalEl("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
         }
     }
 
@@ -90,6 +87,13 @@ public class NspClientIdws {
     ///
     /// [The specific profile](https://digst.dk/media/exmdt52l/oio-idws-soap-profile-v11.pdf).
     private static Document createEnvelope(Element soapBody, String soapAction, EuropeanHcpIdwsToken token, PrivateKey signingKey, Element[] extraHeaders) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, MarshalException, XMLSignatureException {
+        // Setup
+
+        // WSS init is idempotent.
+        // Remark though that loading keys from keystores after this initialization has been called will fail. So we
+        // need to make sure all keystores are loaded up front. Also why would they do that.
+        WSSConfig.init();
+
         // Structure
 
         var requestDocument = XmlUtils.newDocument();
@@ -115,7 +119,7 @@ public class NspClientIdws {
         XmlUtils.setIdAttribute(msgIdEl, XmlNamespace.WSU, "Id", "mid");
 
         // Add any extra headers
-        Arrays.stream(extraHeaders).forEach(header::appendChild);
+        Arrays.stream(extraHeaders).map(eh -> requestDocument.importNode(eh, true)).forEach(header::appendChild);
 
         // Security
 
