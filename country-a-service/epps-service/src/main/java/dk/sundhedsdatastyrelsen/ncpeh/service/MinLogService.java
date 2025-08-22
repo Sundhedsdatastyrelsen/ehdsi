@@ -89,8 +89,8 @@ public class MinLogService implements AutoCloseable {
     ///
     /// @hidden
     public void sendBatch() {
-        List<JobQueue.ReservedJob<LogEvent>> jobs = null;
         try {
+            List<JobQueue.ReservedJob<LogEvent>> jobs = null;
             jobs = jobQueue.reserve(500);
             List<JobQueue.JobId> jobIds = jobs.stream().map(JobQueue.ReservedJob::id).toList();
             if (!jobs.isEmpty()) {
@@ -176,16 +176,15 @@ public class MinLogService implements AutoCloseable {
             for (var failedEntry : response.getFailedLogDataEntries()) {
                 log.error("MinLog error: {}: {}", failedEntry.getFaultCode(), failedEntry.getFaultText());
                 var failedJob = logEventJobs.stream().filter(j -> j.id().toString().equals(failedEntry.getSequenceNumber())).findFirst();
-                if(!failedJob.isPresent()){
+                if(failedJob.isEmpty()){
                     failedFoundIds.add(failedEntry.getSequenceNumber()); //Record that we couldn't find the returned ID in our list of jobs
-                    continue;
+                } else {
+                    failedJobList.add(failedJob.get());
                 }
-                failedJobList.add(failedJob.get());
             }
             if(!failedFoundIds.isEmpty()){
-                throw new NspClientException(
-                    "MinLog registration failed. The following job IDs couldn't be nack'ed: %s".formatted(
-                        String.join(",",failedFoundIds)));
+                log.error("MinLog registration failed. The following job IDs couldn't be nack'ed: %s".formatted(
+                    String.join(",",failedFoundIds)));
             }
             return failedJobList;
         }
