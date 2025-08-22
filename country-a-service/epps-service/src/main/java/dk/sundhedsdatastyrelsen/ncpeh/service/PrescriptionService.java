@@ -18,6 +18,7 @@ import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.nsp.test.idp.OrganizationIdentities;
 import dk.nsp.test.idp.model.Identity;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
@@ -28,7 +29,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
@@ -67,7 +68,7 @@ import java.util.stream.Stream;
 @Service
 public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
-    private final FmkClient fmkClient;
+    private final FmkClientIdws fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
     private final DataProvider lmsDataProvider;
     private final AuthorizationRegistryClient authorizationRegistry;
@@ -77,7 +78,7 @@ public class PrescriptionService {
         .build();
 
     public PrescriptionService(
-        FmkClient fmkClient,
+        FmkClientIdws fmkClient,
         UndoDispensationRepository undoDispensationRepository,
         @Qualifier("localLmsDataSource") DataSource lmsDataSource,
         AuthorizationRegistryClient authorizationRegistry
@@ -129,7 +130,7 @@ public class PrescriptionService {
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         String patientId,
         PrescriptionFilter filter,
-        Identity caller
+        EuropeanHcpIdwsToken token
     ) {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
@@ -137,7 +138,7 @@ public class PrescriptionService {
                 .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
                 .withIncludeOpenPrescriptions().end()
                 .build();
-            var fmkResponse = fmkClient.getPrescription(request, caller);
+            var fmkResponse = fmkClient.getPrescription(request, token);
 
             log.debug("Found {} prescriptions", fmkResponse.getPrescription().size());
 
@@ -159,8 +160,8 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, Identity caller) {
-        var input = assembleEPrescriptionInput(patientId, filter, caller).findFirst().orElse(null);
+    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
+        var input = assembleEPrescriptionInput(patientId, filter, token).findFirst().orElse(null);
         if (input == null) {
             throw new CountryAException(HttpStatus.NOT_FOUND, "Requested prescription not found.");
         }
@@ -178,14 +179,14 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, Identity caller) {
+    private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
         String cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
         try {
-            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, caller);
+            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, token);
 
             log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
 
@@ -195,7 +196,7 @@ public class PrescriptionService {
                 .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
                 .toList();
 
-            var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, caller);
+            var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, token);
 
             return validPrescriptions.stream().map(pair -> {
                 try {
@@ -239,7 +240,7 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, Identity caller) {
+    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, EuropeanHcpIdwsToken token) {
         StartEffectuationResponseType response;
         String eDispensationCdaId;
         try {
@@ -255,7 +256,7 @@ public class PrescriptionService {
                     .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
                     .withIncludeOpenPrescriptions().end()
                     .build(),
-                caller);
+                token);
             var prescription = prescriptionResponse.getPrescription()
                 .stream()
                 .filter(p -> p.getIdentifier() == prescriptionId)
@@ -277,7 +278,7 @@ public class PrescriptionService {
             log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
                 DispensationMapper.startEffectuationRequest(patientId, dispensationCda),
-                caller);
+                token);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
         } catch (MapperException e) {
@@ -292,7 +293,7 @@ public class PrescriptionService {
                     patientId,
                     dispensationCda,
                     response),
-                caller);
+                token);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
         } catch (MapperException e) {
@@ -317,7 +318,7 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, Identity caller) {
+    public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, EuropeanHcpIdwsToken token) {
         String eDispensationCdaId;
         try {
             eDispensationCdaId = DispensationMapper.cdaId(cdaToDiscard);
@@ -344,7 +345,7 @@ public class PrescriptionService {
         log.info("Requesting effectuation undo");
         UndoEffectuationResponseType undoResponse;
         try {
-            undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, caller);
+            undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, token);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "UndoEffectuation call to FMK failed", e);
         }
@@ -369,7 +370,7 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, Identity caller) throws JAXBException {
+    public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, EuropeanHcpIdwsToken token) throws JAXBException {
         var drugMedicationRequest = GetDrugMedicationRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIdentifier(drugMedicationId)
@@ -378,7 +379,7 @@ public class PrescriptionService {
             .build();
 
         log.debug("Looking up DrugMedication  info for {}", cpr);
-        GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, caller);
+        GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, token);
         log.debug(
             "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
                 .size(), drugMedicationId);

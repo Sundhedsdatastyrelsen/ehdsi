@@ -4,7 +4,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
@@ -12,6 +11,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import org.apache.commons.lang3.tuple.Pair;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,18 +26,14 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.blankString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
     private final DataSource lmsDataSource = lmsDataSource();
 
     private final PrescriptionService prescriptionService = new PrescriptionService(
-        Fmk.apiClient(),
+        Fmk.idwsApiClient(),
         undoDispensationRepository(),
         lmsDataSource,
         authorizationRegistryClient());
@@ -76,8 +72,10 @@ class FmkIT {
             .end()
             .build();
 
-        var prescriptions = Fmk.apiClient()
-            .getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
+        var token = Sosi.getToken();
+
+        var prescriptions = Fmk.idwsApiClient()
+            .getPrescription(getPrescriptionRequest, token);
 
         var validPrescriptions = PrescriptionService.PrescriptionFilter.none()
             .validPrescriptionIndexes(prescriptions.getPrescription())
@@ -87,7 +85,7 @@ class FmkIT {
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
 
-        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprHelleReadOnly, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
+        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprHelleReadOnly, drugMedicationIds, token);
         assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
         assertThat(drugMedications.getPersonIdentifier().getValue(), is(Fmk.cprHelleReadOnly));
     }
@@ -103,8 +101,10 @@ class FmkIT {
             .end()
             .build();
 
-        var prescriptions = Fmk.apiClient()
-            .getPrescription(getPrescriptionRequest, TestIdentities.apotekerJeppeMoeller);
+        var token = Sosi.getToken();
+
+        var prescriptions = Fmk.idwsApiClient()
+            .getPrescription(getPrescriptionRequest, token);
 
         var validPrescriptions = PrescriptionService.PrescriptionFilter.none()
             .validPrescriptionIndexes(prescriptions.getPrescription())
@@ -115,7 +115,7 @@ class FmkIT {
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
 
-        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprKarl, drugMedicationIds, TestIdentities.apotekerJeppeMoeller);
+        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprKarl, drugMedicationIds, token);
         assertThat(validPrescriptions.size(), is(drugMedications.getDrugMedication().size()));
     }
 
@@ -155,20 +155,21 @@ class FmkIT {
             eDispensationPath.toFile(),
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
+        var token = Sosi.getToken();
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
             patientId(cpr),
             eDispensation,
-            TestIdentities.apotekerChrisChristoffersen);
+            token);
 
         // shouldn't throw:
-        prescriptionService.undoDispensation(patientId(cpr), eDispensation, TestIdentities.apotekerChrisChristoffersen);
+        prescriptionService.undoDispensation(patientId(cpr), eDispensation, token);
 
         // we perform the dispensation again to clean up after ourselves:
         prescriptionService.submitDispensation(
             patientId(cpr),
             eDispensation,
-            TestIdentities.apotekerChrisChristoffersen);
+            token);
     }
 }
