@@ -22,7 +22,7 @@ class MinLogIT {
 
     public static MinLogService minLogService(DataSource ds) {
         try {
-            return new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen(), ds);
+            return new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen(), ds, 3);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to load MinLogService",e);
         }
