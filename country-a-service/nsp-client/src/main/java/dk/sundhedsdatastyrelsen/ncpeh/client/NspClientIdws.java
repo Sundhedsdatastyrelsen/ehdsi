@@ -39,6 +39,14 @@ public class NspClientIdws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientIdws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
 
+    static {
+        // WSS init is idempotent, but not threadsafe, so we make sure we only do it once.
+        // Loading keys from pkcs12 keystores after this initialization has been called will fail in the version of
+        // wss4j we're using (1.6.4). So we need to use jks. Once we can update wss4j, we should test if it works with
+        // pkcs12.
+        WSSConfig.init();
+    }
+
     private NspClientIdws() {
     }
 
@@ -87,13 +95,6 @@ public class NspClientIdws {
     ///
     /// [The specific profile](https://digst.dk/media/exmdt52l/oio-idws-soap-profile-v11.pdf).
     private static Document createEnvelope(Element soapBody, String soapAction, EuropeanHcpIdwsToken token, PrivateKey signingKey, Element[] extraHeaders) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, MarshalException, XMLSignatureException {
-        // Setup
-
-        // WSS init is idempotent.
-        // Remark though that loading keys from keystores after this initialization has been called will fail. So we
-        // need to make sure all keystores are loaded up front. Also why would they do that.
-        WSSConfig.init();
-
         // Structure
 
         var requestDocument = XmlUtils.newDocument();
