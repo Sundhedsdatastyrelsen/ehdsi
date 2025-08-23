@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindEPrescriptionDocumentsRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientSummaryDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
@@ -79,7 +80,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             final var soapHeader = this.soapHeader;
             logger.info("Querying Country A service for patient summary documents...");
             // Patient summary has the same arguments as EP, so we use the same class.
-            final var request = new PostFindEPrescriptionDocumentsRequest()
+            final var request = new PostFindPatientSummaryDocumentRequest()
                 .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
                 .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
                 .documentId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.DOCUMENT_ID))

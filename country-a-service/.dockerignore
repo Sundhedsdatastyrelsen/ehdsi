@@ -6,4 +6,5 @@ Dockerfile
 docker-compose.yml
 README.md
 config/
+!config/dev-keystore.jks
 FMK-soapui-project.xml
