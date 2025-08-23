@@ -4,9 +4,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import org.apache.ws.security.WSDocInfo;
 import org.apache.ws.security.WSSConfig;
-import org.apache.ws.security.WSSecurityEngine;
-import org.apache.ws.security.transform.STRTransform;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,6 +27,7 @@ import java.net.http.HttpResponse;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -46,7 +46,11 @@ public class NspClientIdws {
         // wss4j we're using (1.6.4). So we need to use jks. Once we can update wss4j, we should test if it works with
         // pkcs12.
         WSSConfig.getDefaultWSConfig();
-        WSSecurityEngine.getInstance();
+        var cp = Security.getProvider("STRTransform");
+        if (cp != null) {
+            Security.removeProvider("STRTransform");
+        }
+        Security.addProvider(new STRTransformProvider());
     }
 
     private NspClientIdws() {
@@ -199,7 +203,7 @@ public class NspClientIdws {
         strTransformChild.setPrefix(XmlNamespace.WSSE.prefix());
         var strTransformCanonicalization = XmlUtils.appendChild(strTransformChild, XmlNamespace.DS, "CanonicalizationMethod");
         strTransformCanonicalization.setAttribute("Algorithm", CanonicalizationMethod.EXCLUSIVE);
-        var strTransform = sigFactory.newTransform(STRTransform.implementedTransformURI, new DOMStructure(strTransformChild));
+        var strTransform = sigFactory.newTransform(STRTransform.TRANSFORM_URI, new DOMStructure(strTransformChild));
 
         // Each reference specifies which part of the document is included in the signature.
         var references = List.of(
@@ -245,6 +249,7 @@ public class NspClientIdws {
         var keyInfo = keyInfoFactory.newKeyInfo(List.of(new DOMStructure(secRef)));
 
         var signContext = new DOMSignContext(signingKey, security);
+        signContext.setProperty(STRTransform.TRANSFORM_WS_DOC_INFO, new WSDocInfo(requestDocument));
 
         // Create and apply the XML signature
         var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
