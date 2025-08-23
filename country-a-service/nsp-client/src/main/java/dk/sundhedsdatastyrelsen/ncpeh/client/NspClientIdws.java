@@ -5,6 +5,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
 import org.apache.ws.security.WSSConfig;
+import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.transform.STRTransform;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -40,11 +41,12 @@ public class NspClientIdws {
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
 
     static {
-        // WSS init is idempotent, but not threadsafe, so we make sure we only do it once.
+        // WSS initialization is static and idempotent, but not threadsafe, so we make sure we only do it once.
         // Loading keys from pkcs12 keystores after this initialization has been called will fail in the version of
         // wss4j we're using (1.6.4). So we need to use jks. Once we can update wss4j, we should test if it works with
         // pkcs12.
-        WSSConfig.init();
+        WSSConfig.getDefaultWSConfig();
+        WSSecurityEngine.getInstance();
     }
 
     private NspClientIdws() {
@@ -197,7 +199,7 @@ public class NspClientIdws {
         strTransformChild.setPrefix(XmlNamespace.WSSE.prefix());
         var strTransformCanonicalization = XmlUtils.appendChild(strTransformChild, XmlNamespace.DS, "CanonicalizationMethod");
         strTransformCanonicalization.setAttribute("Algorithm", CanonicalizationMethod.EXCLUSIVE);
-        var strTransform = sigFactory.newTransform(STRTransform.TRANSFORM_URI, new DOMStructure(strTransformChild));
+        var strTransform = sigFactory.newTransform(STRTransform.implementedTransformURI, new DOMStructure(strTransformChild));
 
         // Each reference specifies which part of the document is included in the signature.
         var references = List.of(
