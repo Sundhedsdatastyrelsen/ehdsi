@@ -20,7 +20,19 @@ server:
     key-password: Test.1234
 
 app:
-  fmk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+  fmk:
+    endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+    keystore:
+      path: "data/fmk-client.jks"
+      alias: "epps-sosi-sts-client"
+      password: ${FMK_KEYSTORE_PASSWORD:}
+  sosi:
+    endpoint.url: "https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"
+    issuer: "https://ehdsi-idp.testkald.nspop.dk"
+    keystore:
+      path: "data/epps-sosi-sts-client.jks"
+      alias: "epps-sosi-sts-client"
+      password: ${SOSI_KEYSTORE_PASSWORD:}
   cpr.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4
   minlog.endpoint.url: http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService
   authorization-registry.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
