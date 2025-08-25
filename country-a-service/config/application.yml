@@ -20,11 +20,15 @@ server:
     key-password: Test.1234
 
 app:
-  fmk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
   cpr.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4
   minlog.endpoint.url: http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService
   authorization-registry.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
   fsk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+  fmk:
+    endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+    keystore.path: config/fmk-client-test.jks
+    keystore.alias: dummy-fmk-cert
+    keystore.password: Test.1234
   minlog:
     max-attempts: 3
 
