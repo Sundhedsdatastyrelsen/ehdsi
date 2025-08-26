@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -86,7 +86,7 @@ class End2EndIT {
     /// This is used in order to not create new prescriptions if there is already one open, and in order to check that
     /// the dispensation actually closes the prescription on the DK side.
     static GetPrescriptionResponseType fetchFmkPrescriptions(String cpr) throws JAXBException {
-        return Fmk.apiClient()
+        return Fmk.idwsApiClient()
             .getPrescription(
                 GetPrescriptionRequestType.builder()
                     .withPersonIdentifier()
@@ -96,7 +96,7 @@ class End2EndIT {
                     .withIncludeOpenPrescriptions()
                     .end()
                     .build(),
-                TestIdentities.apotekerChrisChristoffersen);
+                Sosi.getToken());
     }
 
     static String fetchOrCreatePrescriptionId(GetPrescriptionResponseType existingPrescriptions, String cpr) throws Exception {

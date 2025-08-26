@@ -1,9 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.nsp.test.idp.model.OrganizationIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
@@ -34,9 +33,9 @@ public class InformationCardService {
      * The system (FOCES/VOCES) which makes the service request, i.e., certificates representing the NCPeH DK.
      * This is not the same as the parent request caller, i.e., the foreign healthcare professional.
      */
-    private final OrganizationIdentity systemCaller;
+    private final NspDgwsIdentity systemCaller;
 
-    public InformationCardService(FskClient fskClient, MinLogService minLogService, OrganizationIdentity systemCaller) {
+    public InformationCardService(FskClient fskClient, MinLogService minLogService, NspDgwsIdentity systemCaller) {
         this.fskClient = fskClient;
         this.minLogService = minLogService;
         this.systemCaller = systemCaller;
@@ -45,7 +44,7 @@ public class InformationCardService {
     /// @return A list of ids of information cards.
     public List<String> findInformationCardDetails(
         String patientId,
-        EuropeanHealthcareProfessional caller
+        String europeanHealthProfessionalId
     ) {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
@@ -91,7 +90,7 @@ public class InformationCardService {
 
             var fskResponse = fskClient.list(request, systemCaller);
 
-            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", caller);
+            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", europeanHealthProfessionalId);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()

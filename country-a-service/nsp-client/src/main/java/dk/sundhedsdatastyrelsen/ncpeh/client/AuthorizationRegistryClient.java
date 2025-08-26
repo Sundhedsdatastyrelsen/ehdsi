@@ -1,8 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
-import dk.nsp.test.idp.model.Identity;
-import dk.sosi.seal.model.Reply;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
@@ -40,11 +38,11 @@ public class AuthorizationRegistryClient {
         return rootElement;
     }
 
-    public AuthorizationResponseType requestByAuthorizationCode(String authorizationCode, Identity caller) throws JAXBException {
-        final Reply response;
+    public AuthorizationResponseType requestByAuthorizationCode(String authorizationCode, NspDgwsIdentity caller) throws JAXBException {
+        final Element response;
         try {
             log.info("Calling AuthorizationCodeService at {}", serviceUri);
-            response = NspClient.request(
+            response = NspClientDgws.request(
                 serviceUri,
                 authorizationCodeRequestType(authorizationCode),
                 "http://nsi.dk/sdm/Gateway",
@@ -55,7 +53,7 @@ public class AuthorizationRegistryClient {
         }
 
         final var unmarshaller = JAXBContext.newInstance(AuthorizationResponseType.class).createUnmarshaller();
-        final var jaxbResponse = unmarshaller.unmarshal(response.getBody(), AuthorizationResponseType.class);
+        final var jaxbResponse = unmarshaller.unmarshal(response, AuthorizationResponseType.class);
         return jaxbResponse.getValue();
     }
 }

@@ -6,10 +6,10 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.xml.dtm.ref.DTMNodeList;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -57,7 +57,7 @@ public class FskMapper {
     }
 
     private static List<Node> evalNodeMany(XPath xpath, Node cda, String xpathExpression) throws XPathExpressionException {
-        var nodeList = (DTMNodeList) xpath.evaluate(xpathExpression, cda, XPathConstants.NODESET);
+        var nodeList = (NodeList) xpath.evaluate(xpathExpression, cda, XPathConstants.NODESET);
         var l = nodeList.getLength();
         var result = new ArrayList<Node>();
         for (var i = 0; i < l; i++) {

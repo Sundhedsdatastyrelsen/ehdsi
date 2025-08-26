@@ -1,10 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.nsp.test.idp.OrganizationIdentities;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
 import dk.sundhedsdatastyrelsen.ncpeh.service.MinLogService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.MinLog;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
@@ -22,9 +21,9 @@ class MinLogIT {
 
     public static MinLogService minLogService(DataSource ds) {
         try {
-            return new MinLogService(MinLog.apiClient(), OrganizationIdentities.sundhedsdatastyrelsen(), ds, 3);
+            return new MinLogService(MinLog.apiClient(), TestIdentities.systemIdentity, ds, 3);
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to load MinLogService",e);
+            throw new RuntimeException("Failed to load MinLogService", e);
         }
     }
 
@@ -33,11 +32,11 @@ class MinLogIT {
     }
 
     @Test
-    void testEvent(){
+    void testEvent() {
         try (var ds = ds();
              var service = minLogService(ds);) {
             var q = JobQueue.open(ds, "minlog", null, null);
-            service.logEventOnPatient(MinLog.CPR_JENS_JENSEN_READ_ONLY, "integrationstest", TestIdentities.foreignPharmacistChrisChristoffersen);
+            service.logEventOnPatient(MinLog.CPR_JENS_JENSEN_READ_ONLY, "integrationstest", "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9");
             assertThat(q.size(), is(1L));
             assertDoesNotThrow(service::sendBatch);
             assertThat(q.size(), is(0L));

@@ -1,8 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.nsp.test.idp.OrganizationIdentities;
-import dk.nsp.test.idp.model.OrganizationIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.service.SigningCertificate;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
+import java.net.URI;
 import java.time.Clock;
 
 @Configuration
@@ -42,12 +44,13 @@ public class Beans {
     /**
      * This object is used to identify the system for services expecting FOCES/VOCES certificates, as opposed to
      * IDWS or DGWS services that require personal access tokens representing the foreign healthcare professional.
-     * For now, we use dk.nsp.test.idp.model.OrganizationIdentity.
-     * This should be changed so we can phase out this dependency.
      */
     @Bean
-    public OrganizationIdentity systemIdentity() {
-        return OrganizationIdentities.sundhedsdatastyrelsen();
+    public NspDgwsIdentity.System systemIdentity(
+        @Value("app.sosi.endpoint.url") String systemStsUri,
+        SigningCertificate signingCertificate
+    ) {
+        return new NspDgwsIdentity.System(URI.create(systemStsUri), signingCertificate.getCertificateAndKey());
     }
 
     @Bean

@@ -1,11 +1,10 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.nsp.test.idp.model.Identity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
-import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -38,7 +37,7 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    public DocumentAssociationForPatientSummaryDocumentMetadataDto getDocumentMetadata(String patientId, Identity identity) {
+    public DocumentAssociationForPatientSummaryDocumentMetadataDto getDocumentMetadata(String patientId, NspDgwsIdentity identity) {
         // We generate a new id every time, as we cannot tell when the underlying data is updated. The drawback is that
         // if clients ask for an old ID, they will still get the most recent data. Other options were considered.
         // We could have returned the same id every time, and just used the patient id in the request to figure out who
@@ -77,8 +76,8 @@ public class PatientSummaryService {
 
     // TODO Left in the caller, because I think we will need it later.
     @WithSpan
-    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, Identity caller, EuropeanHealthcareProfessional hcp) {
-        var input = assembleInput(patientId, caller, hcp, rootedDocumentId);
+    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, String europeanHealthProfessionalId) {
+        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId);
         try {
             // TODO Commented out, as we're focusing on the L3 model first.
 //            var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(rootedDocumentId);
@@ -95,8 +94,8 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    private PatientSummaryInput assembleInput(String patientId, Identity caller, EuropeanHealthcareProfessional hcp, String docId) {
-        var availableInformationCards = informationCardService.findInformationCardDetails(patientId, hcp);
+    private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId) {
+        var availableInformationCards = informationCardService.findInformationCardDetails(patientId, europeanHealthProfessionalId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst());
         var xpath = FskMapper.getXpath();
         try {

@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.nsp.test.idp.OrganizationIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PatientDemographicsDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.CrossGatewayPatientDiscoveryMapper;
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CprService {
     private final CprClient cprClient;
+    private final NspDgwsIdentity.System systemIdentity;
 
     public FindPatientsResponseDto findPatients(List<String> patientIds) {
         final List<PatientDemographicsDto> found = new ArrayList<>();
@@ -30,7 +31,7 @@ public class CprService {
             try {
                 GetPersonInformationOut response = cprClient.getPersonInformation(
                     PatientIdMapper.toCpr(patientId),
-                    OrganizationIdentities.sundhedsdatastyrelsen());
+                    systemIdentity);
                 found.add(CrossGatewayPatientDiscoveryMapper.mapResponse(response));
             } catch (Exception e) {
                 log.warn(e.getMessage(), e);

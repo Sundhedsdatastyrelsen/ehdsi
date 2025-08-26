@@ -12,9 +12,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequ
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
-import dk.nsp.test.idp.EmployeeIdentities;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -35,17 +35,18 @@ public class FmkPrescriptionCreator {
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
     public static CreatePrescriptionResponseType createNewPrecriptionForCpr(String cpr) throws Exception {
+        var token = Sosi.getToken();
         var personIdentifier = PersonIdentifierType.builder()
             .withSource("CPR")
             .withValue(cpr)
             .build();
 
-        var medicineCard = Fmk.apiClient().getMedicineCard(
+        var medicineCard = Fmk.idwsApiClient().getMedicineCard(
             GetMedicineCardRequestType.builder()
                 .withPersonIdentifier(personIdentifier)
                 .withIncludePrescriptions(true)
                 .build(),
-            EmployeeIdentities.lægeCharlesBabbage(),
+            token,
             PredefinedRequestedRole.LÆGE
         ).getMedicineCard().getFirst();
         var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
@@ -54,10 +55,10 @@ public class FmkPrescriptionCreator {
             .withCreatedBy(prescriptionCreatedBy())
             .addDrugMedication(drugMedication())
             .build();
-        var drugMedicationResponse = Fmk.apiClient()
+        var drugMedicationResponse = Fmk.idwsApiClient()
             .createDrugMedication(
                 createDrugMedicationRequest,
-                EmployeeIdentities.lægeCharlesBabbage(),
+                token,
                 PredefinedRequestedRole.LÆGE);
 
         var medicineCardVersion = drugMedicationResponse.getMedicineCardVersion();
@@ -87,9 +88,9 @@ public class FmkPrescriptionCreator {
             .end()
             .build();
 
-        var createPrescriptionResponse = Fmk.apiClient().createPrescription(
+        var createPrescriptionResponse = Fmk.idwsApiClient().createPrescription(
             createPrescriptionRequest,
-            EmployeeIdentities.lægeCharlesBabbage(),
+            token,
             PredefinedRequestedRole.LÆGE);
 
         return createPrescriptionResponse;
@@ -124,9 +125,7 @@ public class FmkPrescriptionCreator {
 
     private static ModificatorType prescriptionCreatedBy() {
         var authorisedHCP = AuthorisedHealthcareProfessionalType.builder()
-            .withAuthorisationIdentifier(EmployeeIdentities.lægeCharlesBabbage()
-                .getEmployee()
-                .getAuthorizationCode())
+            .withAuthorisationIdentifier("6QF17")
             .withName("Charles Babbage")
             .build();
         return ModificatorType.builder()

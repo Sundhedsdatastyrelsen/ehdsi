@@ -3,9 +3,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
-import org.apache.axis.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
@@ -34,18 +33,6 @@ public class Fmk {
      * Karl Læge ePPS is a test persona which we own, so we can perform read and write operations on him.
      */
     public static final String cprKarl = "0201909309";
-    private static FmkClient fmkClient;
-
-    public static FmkClient apiClient() {
-        if (fmkClient == null) {
-            try {
-                fmkClient = new FmkClient(FMK_ENDPOINT_URI);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return fmkClient;
-    }
 
     private static FmkClientIdws idwsFmkClient;
     private static CertificateAndKey signingKey;

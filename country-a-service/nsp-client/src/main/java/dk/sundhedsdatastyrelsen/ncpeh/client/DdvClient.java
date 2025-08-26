@@ -1,10 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.nsp.test.idp.model.Identity;
 import dk.sdsd.ddv.dgws._2010._08.NameFormat;
 import dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.ddv.dgws._2012._06.WhiteListingHeader;
-import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
@@ -41,7 +39,7 @@ public class DdvClient {
      * "GetVaccinationCard".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:ddv:1.4.0:getvaccinationcard">DDV documentation.</a>
      */
-    public GetVaccinationCardResponseType getVaccinationCard(GetVaccinationCardRequestType request, Identity caller) throws JAXBException {
+    public GetVaccinationCardResponseType getVaccinationCard(GetVaccinationCardRequestType request, NspDgwsIdentity caller) throws JAXBException {
         return makeDdvRequest(
             requestFactory.createGetVaccinationCardRequest(request),
             "http://vaccinationsregister.dk/schemas/2013/12/01#GetVaccinationCard",
@@ -74,7 +72,7 @@ public class DdvClient {
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
-        Identity caller
+        NspDgwsIdentity caller
     ) throws JAXBException {
         return makeDdvRequest(request, soapAction, clazz, caller, PredefinedRequestedRole.LÆGE);
     }
@@ -83,17 +81,17 @@ public class DdvClient {
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
-        Identity caller,
+        NspDgwsIdentity caller,
         PredefinedRequestedRole requestedRole
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-        final Reply reply;
+        final Element reply;
         Element[] extraHeaders;
 
         extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
 
         try {
-            reply = NspClient.request(
+            reply = NspClientDgws.request(
                 serviceUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
@@ -103,6 +101,6 @@ public class DdvClient {
         } catch (Exception e) {
             throw new NspClientException("DDV request failed", e);
         }
-        return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+        return jaxbContext.createUnmarshaller().unmarshal(reply, clazz).getValue();
     }
 }

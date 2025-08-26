@@ -5,9 +5,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.nsp.test.idp.model.Identity;
-import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -49,7 +48,7 @@ public class FmkResponseStorage {
     private static final List<String> testCprs = List.of("0201909309", "0410009234", "1011649927");
 
     @NonNull
-    private final FmkClient fmkClient;
+    private final FmkClientIdws fmkClient;
 
     private static final List<String> rawResponseCprs = List.of("1111111118", "0101010000", "0201909309", "0410009234", "1011649927");
 
@@ -61,7 +60,7 @@ public class FmkResponseStorage {
         return testCprs;
     }
 
-    public FmkResponseStorage(@NonNull FmkClient fmkClient) {
+    public FmkResponseStorage(@NonNull FmkClientIdws fmkClient) {
         this.fmkClient = fmkClient;
     }
 
@@ -90,7 +89,7 @@ public class FmkResponseStorage {
      * Copied wholesale from PrescriptionService
      * Not referenced to avoid dependency problems. Should probably be fixed, but this was way easier.
      */
-    public GetPrescriptionResponseType getPrescriptionResponse(String cpr, Identity caller) throws JAXBException {
+    public GetPrescriptionResponseType getPrescriptionResponse(String cpr, EuropeanHcpIdwsToken caller) throws JAXBException {
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
@@ -102,7 +101,7 @@ public class FmkResponseStorage {
      * Copied wholesale from PrescriptionService
      * Not referenced to avoid dependency problems. Should probably be fixed, but this was way easier.
      */
-    public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, Identity caller) throws JAXBException {
+    public GetDrugMedicationResponseType getDrugMedicationResponse(String cpr, List<Long> drugMedicationId, EuropeanHcpIdwsToken caller) throws JAXBException {
         var drugMedicationRequest = GetDrugMedicationRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIdentifier(drugMedicationId)
@@ -203,12 +202,13 @@ public class FmkResponseStorage {
      * Download and replace the existing stored FMK responses.
      */
     public static void main(String[] args) throws Exception {
-        var frs = new FmkResponseStorage(Fmk.apiClient());
+        var frs = new FmkResponseStorage(Fmk.idwsApiClient());
+        var token = Sosi.getToken();
         var dir = Files.createDirectories(
             Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
         for (var cpr : rawResponseCprs) {
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
-            var prescriptions = frs.getPrescriptionResponse(cpr, TestIdentities.apotekerChrisChristoffersen);
+            var prescriptions = frs.getPrescriptionResponse(cpr, token);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
             System.out.printf("Wrote prescriptions to %s%n", f.getAbsolutePath());
 
@@ -217,7 +217,7 @@ public class FmkResponseStorage {
                 .stream()
                 .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
                 .toList();
-            var drugMedications = frs.getDrugMedicationResponse(cpr, medicationIds, TestIdentities.apotekerChrisChristoffersen);
+            var drugMedications = frs.getDrugMedicationResponse(cpr, medicationIds, token);
             serializeToFile(frs.createXmlFromDrugMedication(drugMedications), dmf);
             System.out.printf("Wrote drug-medications to %s", dmf.getAbsolutePath());
         }

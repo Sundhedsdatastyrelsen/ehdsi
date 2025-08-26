@@ -1,7 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.nsp.test.idp.model.Identity;
-import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import ihe.iti.xds_b._2007.ObjectFactory;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
@@ -14,6 +12,7 @@ import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.net.URI;
@@ -39,13 +38,13 @@ public class FskClient {
         this.serviceUri = new URI(fskEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
             "ihe.iti.xds_b._2007"
-            + ":oasis.names.tc.ebxml_regrep.xsd.query._3"
+                + ":oasis.names.tc.ebxml_regrep.xsd.query._3"
         );
     }
 
     public AdhocQueryResponse list(
         AdhocQueryRequest request,
-        Identity caller
+        NspDgwsIdentity caller
     ) throws JAXBException {
         QName qname = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0", "AdhocQueryRequest");
 
@@ -66,7 +65,7 @@ public class FskClient {
 
     public RetrieveDocumentSetResponseType getDocument(
         RetrieveDocumentSetRequestType request,
-        Identity caller
+        NspDgwsIdentity caller
     ) throws JAXBException {
         return makeFskRequest(
             "/nspservices/sfskrep",
@@ -85,13 +84,13 @@ public class FskClient {
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
-        Identity caller
+        NspDgwsIdentity caller
     ) throws JAXBException {
-        final Reply reply;
+        final Element reply;
         try {
             var fullUri = new URI(new StringBuilder().append(serviceUri).append(specificEndpoint).toString());
             log.info("Calling '{}' with a SOAP action '{}'", fullUri, soapAction);
-            reply = NspClient.request(
+            reply = NspClientDgws.request(
                 fullUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
@@ -100,6 +99,6 @@ public class FskClient {
         } catch (Exception e) {
             throw new NspClientException("FSK request failed", e);
         }
-        return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+        return jaxbContext.createUnmarshaller().unmarshal(reply, clazz).getValue();
     }
 }
