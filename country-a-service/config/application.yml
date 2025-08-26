@@ -23,9 +23,9 @@ app:
   fmk:
     endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
     keystore:
-      path: "data/fmk-client.jks"
+      path: "data/epps-sosi-sts-client.jks"
       alias: "epps-sosi-sts-client"
-      password: ${FMK_KEYSTORE_PASSWORD:}
+      password: ${SOSI_KEYSTORE_PASSWORD:}
   sosi:
     endpoint.url: "https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"
     issuer: "https://ehdsi-idp.testkald.nspop.dk"
