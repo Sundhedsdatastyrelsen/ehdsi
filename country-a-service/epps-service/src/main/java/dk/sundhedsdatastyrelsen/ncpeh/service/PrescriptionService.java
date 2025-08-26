@@ -49,6 +49,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -56,6 +57,7 @@ import org.w3c.dom.Document;
 import javax.sql.DataSource;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -78,12 +80,17 @@ public class PrescriptionService {
         .build();
 
     public PrescriptionService(
-        FmkClientIdws fmkClient,
+        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl,
+        SigningCertificate signingCertificate,
         UndoDispensationRepository undoDispensationRepository,
         @Qualifier("localLmsDataSource") DataSource lmsDataSource,
         AuthorizationRegistryClient authorizationRegistry
     ) {
-        this.fmkClient = fmkClient;
+        try {
+            this.fmkClient = new FmkClientIdws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Malformed FMK endpoint", e);
+        }
         this.undoDispensationRepository = undoDispensationRepository;
         this.lmsDataProvider = new DataProvider(lmsDataSource);
         this.authorizationRegistry = authorizationRegistry;

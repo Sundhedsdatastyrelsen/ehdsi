@@ -21,29 +21,18 @@ import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.PrivateKey;
 
-@Component
 public class FmkClientIdws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FmkClientIdws.class);
 
@@ -60,48 +49,24 @@ public class FmkClientIdws {
     private final JAXBContext jaxbContext;
     private final PrivateKey fmkSigningKey;
 
-    @Component
-    public record Config(
-        InputStream keystore,
-        String keystoreAlias,
-        String keystorePassword,
+    public FmkClientIdws(
+        PrivateKey fmkSigningKey,
         String endpoint
-    ) {
-        @Autowired
-        public Config(
-            @Value("${app.fmk.keystore.path}") String keystorePath,
-            @Value("${app.fmk.keystore.alias}") String keystoreAlias,
-            @Value("${app.fmk.keystore.password}") String keystorePassword,
-            @Value("${app.fmk.endpoint.url}") String endpoint
-        ) throws IOException {
-            this(new BufferedInputStream(Files.newInputStream(Path.of(keystorePath))), keystoreAlias, keystorePassword, endpoint);
+    ) throws URISyntaxException {
+        this.serviceUri = new URI(endpoint);
+        try {
+            this.jaxbContext = JAXBContext.newInstance(
+                "dk.dkma.medicinecard.xml_schema._2015._06._01"
+                    + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
+                    + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e5"
+                    + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
+                    + ":dk.sdsd.dgws._2012._06"
+            );
+        } catch (JAXBException e) {
+            throw new IllegalStateException(e);
         }
-    }
 
-    public FmkClientIdws(Config config) throws URISyntaxException, JAXBException, AuthenticationException, IOException {
-        this.serviceUri = new URI(config.endpoint());
-        this.jaxbContext = JAXBContext.newInstance(
-            "dk.dkma.medicinecard.xml_schema._2015._06._01"
-                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
-                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e5"
-                + ":dk.dkma.medicinecard.xml_schema._2015._06._01.e6"
-                + ":dk.sdsd.dgws._2012._06"
-        );
-
-        // Currently, we use the same certificate for STS and FMK, but that's not necessarily true always, so we allow
-        // other values to be specified.
-        var fmkAlias = config.keystoreAlias();
-        if (fmkAlias == null)
-            throw new IllegalArgumentException("Keystore alias must be set to send IDWS calls to FMK.");
-        var fmkPassword = config.keystorePassword();
-        if (fmkPassword == null)
-            throw new IllegalArgumentException("Keystore password must be set to send IDWS calls to FMK.");
-        var cert = CertificateUtils.loadCertificateFromKeystore(
-            config.keystore(),
-            fmkAlias,
-            fmkPassword);
-        this.fmkSigningKey = cert.privateKey();
-        config.keystore.close();
+        this.fmkSigningKey = fmkSigningKey;
     }
 
     private JAXBElement<ConsentHeaderType> getMedicineReviewConsent() {

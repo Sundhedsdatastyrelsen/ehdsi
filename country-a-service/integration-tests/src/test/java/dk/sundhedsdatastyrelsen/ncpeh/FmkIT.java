@@ -9,6 +9,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
+import dk.sundhedsdatastyrelsen.ncpeh.service.SigningCertificate;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
@@ -33,7 +34,8 @@ class FmkIT {
     private final DataSource lmsDataSource = lmsDataSource();
 
     private final PrescriptionService prescriptionService = new PrescriptionService(
-        Fmk.idwsApiClient(),
+        Fmk.FMK_IDWS_ENDPOINT_URI,
+        new SigningCertificate(Fmk.getSigningKey()),
         undoDispensationRepository(),
         lmsDataSource,
         authorizationRegistryClient());
