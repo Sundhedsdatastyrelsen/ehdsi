@@ -46,7 +46,7 @@ public class MinLogClient {
 
         return makeMinLogRequest(
             jaxbElement,
-            "AddRegistrations",
+            "AddRegistrations_20250312",
             RegistrationResponseType.class,
             caller
         );
