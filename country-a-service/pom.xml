@@ -221,11 +221,6 @@
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
             </dependency>
-            <dependency><!-- seal -->
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1.1</version>
-            </dependency>
             <!-- Solve convergence errors -->
         </dependencies>
     </dependencyManagement>

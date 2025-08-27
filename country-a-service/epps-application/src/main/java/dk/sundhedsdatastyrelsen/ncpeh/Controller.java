@@ -24,19 +24,18 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFi
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 @RestController
-@EnableConfigurationProperties(AuthenticationServiceConfig.class)
 public class Controller {
     private final PrescriptionService prescriptionService;
     private final PatientSummaryService patientSummaryService;
@@ -52,7 +51,11 @@ public class Controller {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
         this.cprService = cprService;
-        this.authenticationService = new AuthenticationService(authServiceConfig);
+        this.authenticationService = new AuthenticationService(
+            URI.create(authServiceConfig.sosiStsUri()),
+            authServiceConfig.signingCertificate().getCertificateAndKey(),
+            authServiceConfig.issuer()
+        );
     }
 
     @PostMapping(path = "/api/find-patients/")

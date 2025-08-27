@@ -6,8 +6,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAsser
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 /**
@@ -16,33 +14,14 @@ import java.net.URI;
 public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public interface Config {
-        URI sosiStsUri();
-
-        InputStream keystore();
-
-        String keyAlias();
-
-        String keystorePassword();
-
-        String issuer();
-    }
-
-    private final Config config;
+    private final String issuer;
     private final SosiStsClient sosiStsClient;
     private final CertificateAndKey certificateAndKey;
 
-    public AuthenticationService(Config config) {
-        this.config = config;
-        this.sosiStsClient = new SosiStsClient(config.sosiStsUri());
-        try (var is = config.keystore()) {
-            this.certificateAndKey = CertificateUtils.loadCertificateFromKeystore(
-                is,
-                config.keyAlias(),
-                config.keystorePassword());
-        } catch (AuthenticationException | IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+    public AuthenticationService(URI sosiStsUri, CertificateAndKey signingKey, String issuer) {
+        this.sosiStsClient = new SosiStsClient(sosiStsUri);
+        this.certificateAndKey = signingKey;
+        this.issuer = issuer;
     }
 
     /**
@@ -60,7 +39,7 @@ public class AuthenticationService {
             openNcpAssertions,
             certificateAndKey,
             audience,
-            config.issuer());
+            issuer);
         log.info("Requesting IDWS token from SOSI STS for {}", audience);
         // we use the same certificate for the bootstrap tokens and the soap envelopes
         var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, certificateAndKey);
