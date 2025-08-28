@@ -50,7 +50,7 @@ public class NspClientDgws {
             Instant.now().truncatedTo(ChronoUnit.SECONDS));
         var envelope = makeRequest(soapBody, idCard, Instant.now().truncatedTo(ChronoUnit.SECONDS), extraHeaders);
         var requestString = XmlUtils.writeDocumentToString(envelope);
-        try (var httpClient = HttpClient.newBuilder().build()) {
+        try (var httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()) {
             var request = HttpRequest.newBuilder(uri)
                 .header("Content-Type", "text/xml;charset=utf-8")
                 .header("SOAPAction", soapAction)
