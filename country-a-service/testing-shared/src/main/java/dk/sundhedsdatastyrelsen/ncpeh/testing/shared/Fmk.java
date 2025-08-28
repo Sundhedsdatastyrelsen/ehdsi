@@ -39,11 +39,11 @@ public class Fmk {
 
     public static CertificateAndKey getSigningKey() {
         if (signingKey == null) {
-            var base64 = System.getenv("FMK_CERT_BASE_64");
-            var alias = System.getenv("FMK_CERT_ALIAS");
-            var password = System.getenv("FMK_CERT_PASSWORD");
+            var base64 = System.getenv("CERT_BASE_64");
+            var alias = System.getenv("CERT_ALIAS");
+            var password = System.getenv("CERT_PASSWORD");
             if (StringUtils.isEmpty(base64) || StringUtils.isEmpty(alias) || StringUtils.isEmpty(password)) {
-                throw new IllegalArgumentException("FMK_CERT_BASE_64, FMK_CERT_ALIAS and FMK_CERT_PASSWORD must all be set for the integration test to work.");
+                throw new IllegalArgumentException("CERT_BASE_64, CERT_ALIAS, and CERT_PASSWORD must be set to run the test.");
             }
             try {
                 signingKey = CertificateUtils.loadCertificateFromKeystore(

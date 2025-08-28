@@ -17,25 +17,19 @@ public class TestIdentities {
 
     static {
         try {
+            var cert = CertificateUtils.loadCertificateFromKeystore(
+                TestIdentities.class.getClassLoader().getResourceAsStream("NSP_Test_Service_Consumer_sds.p12"),
+                "1",
+                "Test1234");
             apotekerChrisChristoffersen = new NspDgwsIdentity.User(
                 URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
-                CertificateUtils.loadCertificateFromKeystore(
-                    TestIdentities.class.getResourceAsStream("NSP_Test_Service_Consumer_sds.p12"),
-                    "",
-                    "Test1234"));
+                cert);
             apotekerJeppeMoeller = new NspDgwsIdentity.User(
                 URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
-                CertificateUtils.loadCertificateFromKeystore(
-                    TestIdentities.class.getResourceAsStream("NSP_Test_Service_Consumer_sds.p12"),
-                    "",
-                    "Test1234"));
+                cert);
             systemIdentity = new NspDgwsIdentity.System(
-                // TODO verify params for this.
-                URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
-                CertificateUtils.loadCertificateFromKeystore(
-                    TestIdentities.class.getResourceAsStream("NSP_Test_Service_Consumer_sds.p12"),
-                    "",
-                    "Test1234"));
+                URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService"),
+                cert);
         } catch (AuthenticationException e) {
             throw new RuntimeException(e);
         }
