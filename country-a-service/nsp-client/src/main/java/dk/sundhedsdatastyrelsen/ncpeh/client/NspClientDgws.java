@@ -25,15 +25,18 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/// Some Nsp services require us to use our system's identity instead of a foreign healthcare professional. These
+/// calls are made through this class.
+///
+/// It also serves as a temporary place to call Nsp services that can't yet understand IDWS tokens, for use in
+/// development and in testing, eg. to create prescriptions, which foreign HPs can't.
 public class NspClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientDgws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP, XmlNamespace.WST);
 
     private NspClientDgws() {}
 
-    /**
-     * Send a SOAP request to an NSP service.
-     */
+    /// Send a SOAP request to an NSP service.
     public static Element request(URI uri, Element soapBody, String soapAction, NspDgwsIdentity caller, Element... extraHeaders) {
         try {
             var idCard = AuthenticationService.nspDgwsIdentityToAssertion(caller);
@@ -69,9 +72,7 @@ public class NspClientDgws {
         }
     }
 
-    /**
-     * Extract SOAP message from MIME multipart response.
-     */
+    /// Extract SOAP message from MIME multipart response.
     private static String extractSoapFromMime(String mimeResponse) {
         // Find the boundary marker
         Pattern boundaryPattern = Pattern.compile("--(uuid:[^\\r\\n]+)");
@@ -106,6 +107,9 @@ public class NspClientDgws {
         throw new NspClientException("Could not extract content from MIME response");
     }
 
+    /// Make the document that should be sent to a DGWS NSP webservice.
+    ///
+    /// See seal-to-cpr-organization-request.xml in the test resources to see what this should end up looking like.
     private static Document makeRequest(Element soapBody, Element idCardAssertion, Instant now, Element[] extraHeaders) {
         // Structure
 

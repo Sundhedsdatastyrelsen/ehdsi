@@ -32,6 +32,12 @@ public class DgwsIdCardRequest {
         return soapBody;
     }
 
+    /// Create an organization ID card request for Sosi STS to exchange to an assertion we can use to call Nsp services
+    /// that only need an organization identity.
+    ///
+    /// The request was built by looking at a request from Seal, a library published by sosi. That request can be found
+    /// in the test-resources folder, with the name "seal-to-sts-organization-request.xml". It is helpful to follow
+    /// along in that file when reading this one.
     public static DgwsIdCardRequest of(CertificateAndKey certificate, Instant now) throws AuthenticationException {
         // Structure and header
 

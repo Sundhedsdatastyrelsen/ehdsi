@@ -49,6 +49,13 @@ public class AuthenticationService {
         return sosiStsClientIdws.exchangeBootstrapToken(bstRequest);
     }
 
+    /**
+     * Exchange an organization ID card for a DGWS assertion we can use to call Nsp services that only need an
+     * organization identity.
+     *
+     * @param identity the identity to exchange to a dgws assertion.
+     * @return an assertion we can use to call NSP services that require an organization identity.
+     */
     public static DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
         var request = DgwsIdCardRequest.of(
             identity.systemCertificate(), Instant.now()
