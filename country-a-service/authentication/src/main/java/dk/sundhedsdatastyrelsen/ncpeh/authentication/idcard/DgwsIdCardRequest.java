@@ -11,7 +11,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
@@ -41,6 +40,7 @@ public class DgwsIdCardRequest {
     public static DgwsIdCardRequest of(CertificateAndKey certificate, Instant now) throws AuthenticationException {
         // Structure and header
 
+        var truncatedNow = now.truncatedTo(ChronoUnit.SECONDS);
         var requestDocument = XmlUtils.newDocument();
         var envelope = XmlUtils.appendChild(requestDocument, XmlNamespace.SOAP, "Envelope");
         XmlUtils.declareNamespaces(
@@ -49,9 +49,7 @@ public class DgwsIdCardRequest {
         var header = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Header");
         var security = XmlUtils.appendChild(header, XmlNamespace.WSSE, "Security");
         var ts = XmlUtils.appendChild(security, XmlNamespace.WSU, "Timestamp");
-        XmlUtils.appendChild(
-            ts, XmlNamespace.WSU, "Created", OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS)
-                .format(DateTimeFormatter.ISO_INSTANT));
+        XmlUtils.appendChild(ts, XmlNamespace.WSU, "Created", DateTimeFormatter.ISO_INSTANT.format(truncatedNow));
 
         // Body. Start by setting up the assertion
 
@@ -62,7 +60,7 @@ public class DgwsIdCardRequest {
         XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST, "RequestType", "http://schemas.xmlsoap.org/ws/2005/02/trust/Issue");
         var claims = XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST, "Claims");
         var assertion = XmlUtils.appendChild(claims, XmlNamespace.SAML, "Assertion");
-        assertion.setAttribute("IssueInstant", DateTimeFormatter.ISO_INSTANT.format(now));
+        assertion.setAttribute("IssueInstant", DateTimeFormatter.ISO_INSTANT.format(truncatedNow));
         assertion.setAttribute("Version", "2.0");
         assertion.setAttribute("id", "IDCard");
         assertion.setIdAttribute("id", true);
@@ -80,11 +78,11 @@ public class DgwsIdCardRequest {
         XmlUtils.appendChild(keyInfo, XmlNamespace.DS, "KeyName", "OCESSignature");
 
         var conditions = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Conditions");
-        conditions.setAttribute("NotBefore", DateTimeFormatter.ISO_INSTANT.format(now));
+        conditions.setAttribute("NotBefore", DateTimeFormatter.ISO_INSTANT.format(truncatedNow));
         conditions.setAttribute(
-            "NotOnOrAfter", DateTimeFormatter.ISO_INSTANT.format(now.plusSeconds(
-                // one day
-                86400)));
+            "NotOnOrAfter",
+            // one day
+            DateTimeFormatter.ISO_INSTANT.format(truncatedNow.plusSeconds(86400)));
 
         var idCardAttribute = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "AttributeStatement");
         idCardAttribute.setAttribute("id", "IDCardData");

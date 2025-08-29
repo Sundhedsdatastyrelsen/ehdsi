@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 /**
  * The public API for authentication actions, such as bootstrap-to-IDWS exchanges.
@@ -57,9 +56,7 @@ public class AuthenticationService {
      * @return an assertion we can use to call NSP services that require an organization identity.
      */
     public static DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
-        var request = DgwsIdCardRequest.of(
-            identity.systemCertificate(), Instant.now()
-                .truncatedTo(ChronoUnit.SECONDS));
+        var request = DgwsIdCardRequest.of(identity.systemCertificate(), Instant.now());
         return SosiStsClientDgws.exchangeIdCard(request, identity.stsUri());
     }
 }
