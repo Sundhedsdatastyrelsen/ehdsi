@@ -48,7 +48,7 @@ public class CprClient {
                 "http://rep.oio.dk/medcom.sundcom.dk/xml/wsdl/2007/06/28/getPersonInformation",
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException e) {
             throw new NspClientException("CPR registry request failed", e);
         }
 

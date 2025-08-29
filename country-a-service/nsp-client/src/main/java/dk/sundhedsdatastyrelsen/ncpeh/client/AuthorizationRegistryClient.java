@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -25,7 +26,7 @@ public class AuthorizationRegistryClient {
         }
     }
 
-    private Element authorizationCodeRequestType(String authorizationCode) throws Exception {
+    private Element authorizationCodeRequestType(String authorizationCode) throws ParserConfigurationException {
         var factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         var builder = factory.newDocumentBuilder();
@@ -48,7 +49,7 @@ public class AuthorizationRegistryClient {
                 "http://nsi.dk/sdm/Gateway",
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException | ParserConfigurationException e) {
             throw new NspClientException("AuthorizationCodeService request failed", e);
         }
 

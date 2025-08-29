@@ -96,7 +96,7 @@ public class FskClient {
                 soapAction,
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException | URISyntaxException e) {
             throw new NspClientException("FSK request failed", e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(reply, clazz).getValue();

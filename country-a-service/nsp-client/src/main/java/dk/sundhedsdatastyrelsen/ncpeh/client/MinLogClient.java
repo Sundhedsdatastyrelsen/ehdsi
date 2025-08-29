@@ -66,7 +66,7 @@ public class MinLogClient {
                 soapAction,
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException | JAXBException e) {
             throw new NspClientException("MinLog request failed", e);
         }
         try {
