@@ -94,10 +94,10 @@ public class DgwsIdCardRequest {
         appendSamlAttribute(idCardAttribute, "sosi:IDCardVersion", "1.0.1");
         appendSamlAttribute(idCardAttribute, "sosi:IDCardType", "system");
         appendSamlAttribute(idCardAttribute, "sosi:AuthenticationLevel", "3");
-        // Create a hash of the certificate.
-        byte[] certHash = null;
+
         try {
-            certHash = MessageDigest.getInstance("SHA-256").digest(certificate.certificate().getEncoded());
+            // Create a hash of the certificate.
+            var certHash = MessageDigest.getInstance("SHA-256").digest(certificate.certificate().getEncoded());
             appendSamlAttribute(idCardAttribute, "sosi:OCESCertHash", Base64.getEncoder().encodeToString(certHash));
 
             var systemLogAttribute = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "AttributeStatement");
