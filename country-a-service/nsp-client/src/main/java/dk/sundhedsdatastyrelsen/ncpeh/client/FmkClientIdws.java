@@ -1,15 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ConsentHeaderType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreateDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
@@ -188,36 +184,6 @@ public class FmkClientIdws {
             fac.createGetDrugMedicationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetDrugMedication",
             GetDrugMedicationResponseType.class,
-            token,
-            requestedRole,
-            false
-        );
-    }
-
-    public CreateDrugMedicationResponseType createDrugMedication(
-        CreateDrugMedicationRequestType request,
-        EuropeanHcpIdwsToken token,
-        PredefinedRequestedRole requestedRole
-    ) throws JAXBException {
-        return makeFmkRequest(
-            facE2.createCreateDrugMedicationRequest(request),
-            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreateDrugMedication",
-            CreateDrugMedicationResponseType.class,
-            token,
-            requestedRole,
-            false
-        );
-    }
-
-    public CreatePrescriptionResponseType createPrescription(
-        CreatePrescriptionRequestType request,
-        EuropeanHcpIdwsToken token,
-        PredefinedRequestedRole requestedRole
-    ) throws JAXBException {
-        return makeFmkRequest(
-            facE2.createCreatePrescriptionRequest(request),
-            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#CreatePrescription",
-            CreatePrescriptionResponseType.class,
             token,
             requestedRole,
             false

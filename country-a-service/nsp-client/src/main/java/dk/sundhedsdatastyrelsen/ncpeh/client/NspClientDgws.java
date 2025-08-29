@@ -137,6 +137,7 @@ public class NspClientDgws {
 
         // Add the medcom header
         var medcomHeader = XmlUtils.appendChild(header, XmlNamespace.MEDCOM_LEGACY, "Header");
+        // In some requests from seal, this was 4 - specifically person-requests to CPR. It doesn't seem to matter.
         XmlUtils.appendChild(medcomHeader, XmlNamespace.MEDCOM_LEGACY, "SecurityLevel", "3");
         var medcomLinking = XmlUtils.appendChild(medcomHeader, XmlNamespace.MEDCOM_LEGACY, "Linking");
         var flowId = UUID.randomUUID();
