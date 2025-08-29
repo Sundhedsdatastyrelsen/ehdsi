@@ -3,9 +3,8 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
@@ -41,12 +40,14 @@ public class Controller {
     private final PatientSummaryService patientSummaryService;
     private final CprService cprService;
     private final AuthenticationService authenticationService;
+    private final NspDgwsIdentity.System systemIdentity;
 
     public Controller(
         PrescriptionService prescriptionService,
         PatientSummaryService patientSummaryService,
         CprService cprService,
-        AuthenticationServiceConfig authServiceConfig
+        AuthenticationServiceConfig authServiceConfig,
+        NspDgwsIdentity.System systemIdentity
     ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
@@ -56,6 +57,7 @@ public class Controller {
             authServiceConfig.signingCertificate().getCertificateAndKey(),
             authServiceConfig.issuer()
         );
+        this.systemIdentity = systemIdentity;
     }
 
     @PostMapping(path = "/api/find-patients/")
@@ -83,7 +85,8 @@ public class Controller {
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
     ) {
-        return patientSummaryService.getDocumentMetadata(params.getPatientId(), TestIdentities.apotekerChrisChristoffersen);
+        // TODO should maybe be a user identity instead? It's not used in patient summary yet.
+        return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
     }
 
     @PostMapping(path = "/api/fetch-document/")
@@ -98,9 +101,9 @@ public class Controller {
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),
                 params.getDocumentId(),
-                TestIdentities.apotekerChrisChristoffersen,
+                systemIdentity,
                 // TODO pick out the right identity from the soap header.
-                EuropeanHealthcareProfessional.fromIdentity(TestIdentities.apotekerChrisChristoffersen, ""));
+                "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1");
         }
 
         // TODO better exception

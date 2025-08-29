@@ -16,9 +16,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
-import dk.nsp.test.idp.OrganizationIdentities;
-import dk.nsp.test.idp.model.Identity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
@@ -78,14 +77,17 @@ public class PrescriptionService {
         .maximumSize(500)
         .expireAfterWrite(Duration.ofMinutes(15))
         .build();
+    private final NspDgwsIdentity.System systemIdentity;
 
     public PrescriptionService(
         @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl,
         SigningCertificate signingCertificate,
         UndoDispensationRepository undoDispensationRepository,
         @Qualifier("localLmsDataSource") DataSource lmsDataSource,
-        AuthorizationRegistryClient authorizationRegistry
+        AuthorizationRegistryClient authorizationRegistry,
+        NspDgwsIdentity.System systemIdentity
     ) {
+        this.systemIdentity = systemIdentity;
         try {
             this.fmkClient = new FmkClientIdws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
         } catch (URISyntaxException e) {
@@ -218,7 +220,7 @@ public class PrescriptionService {
                     var authorizations = authorizationRegistryCache.get(
                         EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription)
                             .getAuthorisationIdentifier(),
-                        id -> getAuthorizationByIdentifierCode(id, OrganizationIdentities.sundhedsdatastyrelsen())
+                        id -> getAuthorizationByIdentifierCode(id, systemIdentity)
                             .getAutorisation());
 
                     return new EPrescriptionL3Input(
@@ -238,7 +240,7 @@ public class PrescriptionService {
         }
     }
 
-    private @NonNull AuthorizationResponseType getAuthorizationByIdentifierCode(String authorizationIdentifier, Identity caller) {
+    private @NonNull AuthorizationResponseType getAuthorizationByIdentifierCode(String authorizationIdentifier, NspDgwsIdentity caller) {
         try {
             return authorizationRegistry.requestByAuthorizationCode(authorizationIdentifier, caller);
         } catch (JAXBException e) {

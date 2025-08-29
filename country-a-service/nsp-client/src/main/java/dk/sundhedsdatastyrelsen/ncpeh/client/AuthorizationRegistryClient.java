@@ -1,8 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
-import dk.nsp.test.idp.model.Identity;
-import dk.sosi.seal.model.Reply;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -27,7 +27,7 @@ public class AuthorizationRegistryClient {
         }
     }
 
-    private Element authorizationCodeRequestType(String authorizationCode) throws Exception {
+    private Element authorizationCodeRequestType(String authorizationCode) throws ParserConfigurationException {
         var factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         var builder = factory.newDocumentBuilder();
@@ -40,22 +40,22 @@ public class AuthorizationRegistryClient {
         return rootElement;
     }
 
-    public AuthorizationResponseType requestByAuthorizationCode(String authorizationCode, Identity caller) throws JAXBException {
-        final Reply response;
+    public AuthorizationResponseType requestByAuthorizationCode(String authorizationCode, NspDgwsIdentity caller) throws JAXBException {
+        final Element response;
         try {
             log.info("Calling AuthorizationCodeService at {}", serviceUri);
-            response = NspClient.request(
+            response = NspClientDgws.request(
                 serviceUri,
                 authorizationCodeRequestType(authorizationCode),
                 "http://nsi.dk/sdm/Gateway",
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException | ParserConfigurationException e) {
             throw new NspClientException("AuthorizationCodeService request failed", e);
         }
 
         final var unmarshaller = JAXBContext.newInstance(AuthorizationResponseType.class).createUnmarshaller();
-        final var jaxbResponse = unmarshaller.unmarshal(response.getBody(), AuthorizationResponseType.class);
+        final var jaxbResponse = unmarshaller.unmarshal(response, AuthorizationResponseType.class);
         return jaxbResponse.getValue();
     }
 }

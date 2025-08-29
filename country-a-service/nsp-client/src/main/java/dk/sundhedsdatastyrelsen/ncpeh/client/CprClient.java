@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.nsp.test.idp.model.Identity;
-import dk.sosi.seal.model.Reply;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -39,23 +38,23 @@ public class CprClient {
     /**
      * Look up citizen demographics by CPR number.
      */
-    public GetPersonInformationOut getPersonInformation(String cpr, Identity caller) throws JAXBException {
+    public GetPersonInformationOut getPersonInformation(String cpr, NspDgwsIdentity caller) throws JAXBException {
         final var requestBody = getPersonInformationIn(cpr);
-        final Reply response;
+        final Element response;
         try {
             log.info("Calling getPersonInformation at {}", serviceUri);
-            response = NspClient.request(
+            response = NspClientDgws.request(
                 serviceUri,
                 toElement(requestBody),
                 "http://rep.oio.dk/medcom.sundcom.dk/xml/wsdl/2007/06/28/getPersonInformation",
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException e) {
             throw new NspClientException("CPR registry request failed", e);
         }
 
         final var unmarshaller = jaxbContext.createUnmarshaller();
-        final var jaxbResponse = unmarshaller.unmarshal(response.getBody(), GetPersonInformationOut.class);
+        final var jaxbResponse = unmarshaller.unmarshal(response, GetPersonInformationOut.class);
         return jaxbResponse.getValue();
     }
 

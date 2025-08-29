@@ -172,17 +172,6 @@
                 <artifactId>opentelemetry-instrumentation-annotations</artifactId>
                 <version>2.15.0</version>
             </dependency>
-            <dependency>
-                <groupId>dk.sosi.seal</groupId>
-                <artifactId>seal</artifactId>
-                <version>2.6.25</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -198,6 +187,17 @@
                 <groupId>org.apache.ws.security</groupId>
                 <artifactId>wss4j</artifactId>
                 <version>1.6.4</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.18.0</version>
             </dependency>
 
             <!-- Solve convergence errors -->
@@ -211,15 +211,10 @@
                 <artifactId>checker-qual</artifactId>
                 <version>3.37.0</version>
             </dependency>
-            <dependency><!-- seal -->
+            <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
-                <version>1.4.8</version>
-            </dependency>
-            <dependency><!-- seal -->
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>1.4.01</version>
+                <version>1.5.8</version>
             </dependency>
             <!-- Solve convergence errors -->
         </dependencies>

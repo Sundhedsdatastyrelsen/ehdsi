@@ -14,8 +14,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
 
-public class SosiStsClient {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClient.class);
+public class SosiStsClientIdws {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClientIdws.class);
     private static final XPathWrapper xpath = new XPathWrapper(
         XmlNamespace.SAML,
         XmlNamespace.SOAP,
@@ -27,7 +27,7 @@ public class SosiStsClient {
     private final URI serviceUri;
     private final HttpClient httpClient;
 
-    public SosiStsClient(URI serviceUri) {
+    public SosiStsClientIdws(URI serviceUri) {
         this.serviceUri = serviceUri;
 
         this.httpClient = HttpClient.newBuilder()

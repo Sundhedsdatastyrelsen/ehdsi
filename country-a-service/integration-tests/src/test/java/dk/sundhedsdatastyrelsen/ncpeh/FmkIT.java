@@ -13,6 +13,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.SigningCertificate;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
 import org.apache.commons.lang3.tuple.Pair;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,7 +39,8 @@ class FmkIT {
         new SigningCertificate(Fmk.getSigningKey()),
         undoDispensationRepository(),
         lmsDataSource,
-        authorizationRegistryClient());
+        authorizationRegistryClient(),
+        TestIdentities.systemIdentity);
 
     private static DataSource lmsDataSource() {
         return new SingleConnectionDataSource("jdbc:sqlite:./local-lms-db-it.sqlite", true);

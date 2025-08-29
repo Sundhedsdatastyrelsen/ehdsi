@@ -1,9 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
-import dk.nsp.test.idp.model.Identity;
-import dk.sosi.seal.model.Reply;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -11,6 +10,7 @@ import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Element;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,7 +40,7 @@ public class MinLogClient {
 
     public RegistrationResponseType register(
         RegistrationRequestType request,
-        Identity caller
+        NspDgwsIdentity caller
     ) {
         var jaxbElement = factory.createRegistrationRequest(request);
 
@@ -56,22 +56,22 @@ public class MinLogClient {
         JAXBElement<A> request,
         String soapAction,
         Class<B> clazz,
-        Identity caller
+        NspDgwsIdentity caller
     ) {
-        final Reply reply;
+        final Element reply;
         try {
             log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-            reply = NspClient.request(
+            reply = NspClientDgws.request(
                 serviceUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
                 caller
             );
-        } catch (Exception e) {
+        } catch (NspClientException | JAXBException e) {
             throw new NspClientException("MinLog request failed", e);
         }
         try {
-            return jaxbContext.createUnmarshaller().unmarshal(reply.getBody(), clazz).getValue();
+            return jaxbContext.createUnmarshaller().unmarshal(reply, clazz).getValue();
         } catch (JAXBException e) {
             throw new NspClientException("Could not deserialize response from MinLog", e);
         }

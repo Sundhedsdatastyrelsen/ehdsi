@@ -1,15 +1,13 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.nsp.test.idp.model.OrganizationIdentity;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.DestinationForEntryForRegistrationType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.LogDataEntryForRegistrationType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.PersonIdSourceType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.SourceForEntryType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
-import dk.sundhedsdatastyrelsen.ncpeh.client.EuropeanHealthcareProfessional;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientException;
 import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.ObservableLongUpDownCounter;
@@ -48,7 +46,7 @@ public class MinLogService implements AutoCloseable {
      * The system (FOCES/VOCES) which makes the service request, i.e., certificates representing the NCPeH DK.
      * This is not the same as the parent request caller, i.e., the foreign healthcare professional.
      */
-    private final OrganizationIdentity systemCaller;
+    private final NspDgwsIdentity.System systemCaller;
 
     /**
      * Maximum number of attempts for processing a job before moving it to the failed queue
@@ -57,7 +55,7 @@ public class MinLogService implements AutoCloseable {
 
     public MinLogService(
         MinLogClient minLogClient,
-        OrganizationIdentity systemCaller,
+        NspDgwsIdentity.System systemCaller,
         @Qualifier("jobQueueDataSource") DataSource jobQueueDatasource,
         @Value("${app.minlog.max-attempts:3}") int maxAttempts
     ) throws SQLException {
@@ -96,15 +94,21 @@ public class MinLogService implements AutoCloseable {
             if (!jobs.isEmpty()) {
                 log.info("Sending {} log entries to MinLog", jobs.size());
                 var failedJobs = logEventsSync(jobs);
-                if(failedJobs.isEmpty()){
+                if (failedJobs.isEmpty()) {
                     jobQueue.ack(jobIds);
                 } else {
                     //Find successful jobs and get those IDs
-                    var failedJobIds = failedJobs.stream().map(JobQueue.ReservedJob::id).map(JobQueue.JobId::value).toList();
+                    var failedJobIds = failedJobs.stream()
+                        .map(JobQueue.ReservedJob::id)
+                        .map(JobQueue.JobId::value)
+                        .toList();
                     var succeededJobs = jobIds.stream().filter(ji -> !failedJobIds.contains(ji.value())).toList();
 
                     //Split failed jobs into abandoned jobs and jobs for retrying
-                    var failedJobsRetry = failedJobs.stream().filter(j -> j.attempt() < maxAttempts).map(JobQueue.ReservedJob::id).toList();
+                    var failedJobsRetry = failedJobs.stream()
+                        .filter(j -> j.attempt() < maxAttempts)
+                        .map(JobQueue.ReservedJob::id)
+                        .toList();
                     var failedJobsAbandoned = failedJobs.stream().filter(j -> j.attempt() >= maxAttempts).toList();
 
                     failedJobsAbandoned.forEach(j -> failedJobQueue.enqueue(j.payload()));
@@ -175,16 +179,18 @@ public class MinLogService implements AutoCloseable {
             var failedFoundIds = new ArrayList<String>(); //List of IDs we could not find in our record of sent jobs
             for (var failedEntry : response.getFailedLogDataEntries()) {
                 log.error("MinLog error: {}: {}", failedEntry.getFaultCode(), failedEntry.getFaultText());
-                var failedJob = logEventJobs.stream().filter(j -> j.id().toString().equals(failedEntry.getSequenceNumber())).findFirst();
-                if(failedJob.isEmpty()){
+                var failedJob = logEventJobs.stream()
+                    .filter(j -> j.id().toString().equals(failedEntry.getSequenceNumber()))
+                    .findFirst();
+                if (failedJob.isEmpty()) {
                     failedFoundIds.add(failedEntry.getSequenceNumber()); //Record that we couldn't find the returned ID in our list of jobs
                 } else {
                     failedJobList.add(failedJob.get());
                 }
             }
-            if(!failedFoundIds.isEmpty()){
+            if (!failedFoundIds.isEmpty()) {
                 log.error("MinLog registration failed. The following job IDs couldn't be nack'ed: %s".formatted(
-                    String.join(",",failedFoundIds)));
+                    String.join(",", failedFoundIds)));
             }
             return failedJobList;
         }
@@ -195,12 +201,12 @@ public class MinLogService implements AutoCloseable {
     public void logEventOnPatient(
         String cpr,
         String eventText,
-        EuropeanHealthcareProfessional europeanHealthcareProfessional
+        String europeanHealthProfessionalId
     ) {
         var logEvent = new LogEvent(
             cpr,
             eventText,
-            europeanHealthcareProfessional.europeanHealthcareProfessionalId(),
+            europeanHealthProfessionalId,
             Instant.now());
 
         jobQueue.enqueue(logEvent);

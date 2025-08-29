@@ -3,10 +3,12 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenExchangeRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenParams;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAssertions;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.time.Instant;
 
 /**
  * The public API for authentication actions, such as bootstrap-to-IDWS exchanges.
@@ -15,11 +17,11 @@ public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final String issuer;
-    private final SosiStsClient sosiStsClient;
+    private final SosiStsClientIdws sosiStsClientIdws;
     private final CertificateAndKey certificateAndKey;
 
     public AuthenticationService(URI sosiStsUri, CertificateAndKey signingKey, String issuer) {
-        this.sosiStsClient = new SosiStsClient(sosiStsUri);
+        this.sosiStsClientIdws = new SosiStsClientIdws(sosiStsUri);
         this.certificateAndKey = signingKey;
         this.issuer = issuer;
     }
@@ -43,6 +45,18 @@ public class AuthenticationService {
         log.info("Requesting IDWS token from SOSI STS for {}", audience);
         // we use the same certificate for the bootstrap tokens and the soap envelopes
         var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, certificateAndKey);
-        return sosiStsClient.exchangeBootstrapToken(bstRequest);
+        return sosiStsClientIdws.exchangeBootstrapToken(bstRequest);
+    }
+
+    /**
+     * Exchange an organization ID card for a DGWS assertion we can use to call Nsp services that only need an
+     * organization identity.
+     *
+     * @param identity the identity to exchange to a dgws assertion.
+     * @return an assertion we can use to call NSP services that require an organization identity.
+     */
+    public static DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
+        var request = DgwsIdCardRequest.of(identity.systemCertificate(), Instant.now());
+        return SosiStsClientDgws.exchangeIdCard(request, identity.stsUri());
     }
 }

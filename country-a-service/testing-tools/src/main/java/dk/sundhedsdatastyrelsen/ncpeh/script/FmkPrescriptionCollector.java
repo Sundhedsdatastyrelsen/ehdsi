@@ -1,9 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.script;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
@@ -27,6 +27,7 @@ public class FmkPrescriptionCollector {
         logger.setLevel(Level.INFO);
     }
 
+    // TODO this doesn't work with IDWS tokens. Need DGWS personal tokens.
     public static void main(String[] args) throws JAXBException, IOException {
         var cprInput = Fmk.cprKarl;
         if (args.length > 0) {
@@ -41,8 +42,9 @@ public class FmkPrescriptionCollector {
             medicationOutput = args[2];
         }
 
-        var frs = new FmkResponseStorage(Fmk.apiClient());
-        var prescriptionResponse = frs.getPrescriptionResponse(cprInput, TestIdentities.apotekerChrisChristoffersen);
+        var token = Sosi.getToken();
+        var frs = new FmkResponseStorage(Fmk.idwsApiClient());
+        var prescriptionResponse = frs.getPrescriptionResponse(cprInput, token);
         var prescriptionXml = frs.createXmlFromPrescription(prescriptionResponse);
         var prescriptionPath = Path.of(prescriptionOutput);
         Files.createDirectories(prescriptionPath.getParent());
@@ -53,7 +55,7 @@ public class FmkPrescriptionCollector {
             .stream()
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
-        var medicationResponse = frs.getDrugMedicationResponse(cprInput, medicationIds, TestIdentities.apotekerChrisChristoffersen);
+        var medicationResponse = frs.getDrugMedicationResponse(cprInput, medicationIds, token);
         var medicationXml = frs.createXmlFromDrugMedication(medicationResponse);
         var medicationPath = Path.of(medicationOutput);
         Files.createDirectories(medicationPath.getParent());

@@ -19,16 +19,15 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.client.TestIdentities;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.dtm.ref.DTMNodeList;
 import org.slf4j.Logger;
 import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -217,7 +216,7 @@ public class DispensationMapper {
     });
 
     private static List<Node> evalNodeMany(Document cda, String xpathExpression) throws XPathExpressionException {
-        var nodeList = (DTMNodeList) xpath.get().evaluate(xpathExpression, cda, XPathConstants.NODESET);
+        var nodeList = (NodeList) xpath.get().evaluate(xpathExpression, cda, XPathConstants.NODESET);
         var l = nodeList.getLength();
         var result = new ArrayList<Node>();
         for (var i = 0; i < l; i++) {
@@ -381,7 +380,11 @@ public class DispensationMapper {
             .withPackageSize(packageSize(cda))
             .withSubstitutedDrug(drug)
             .end()
-            .withDeliverySite(TestIdentities.deliverySiteRyApotek) // TODO #190
+            .withDeliverySite(OrganisationType.builder()
+                .withName("Ry Apoteksudsalg")
+                .withType("Apotek")
+                .withIdentifier().withSource("CVR-P").withValue("1008648049").end()
+                .build()) // TODO #190
             .build();
     }
 

@@ -4,7 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import lombok.SneakyThrows;
-import org.apache.axis.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
@@ -19,11 +19,11 @@ public class Sosi {
     @SneakyThrows
     public static EuropeanHcpIdwsToken getToken() {
         if (authService == null) {
-            var base64 = System.getenv("SOSI_CERT_BASE_64");
-            var alias = System.getenv("SOSI_CERT_ALIAS");
-            var password = System.getenv("SOSI_CERT_PASSWORD");
+            var base64 = System.getenv("CERT_BASE_64");
+            var alias = System.getenv("CERT_ALIAS");
+            var password = System.getenv("CERT_PASSWORD");
             if (StringUtils.isEmpty(base64) || StringUtils.isEmpty(alias) || StringUtils.isEmpty(password)) {
-                throw new IllegalArgumentException("SOSI_CERT_BASE_64, SOSI_CERT_ALIAS, and SOSI_CERT_PASSWORD must be set to run the test.");
+                throw new IllegalArgumentException("CERT_BASE_64, CERT_ALIAS, and CERT_PASSWORD must be set to run the test.");
             }
             var signingKey = CertificateUtils.loadCertificateFromKeystore(
                 new ByteArrayInputStream(Base64.getDecoder().decode(base64)),
