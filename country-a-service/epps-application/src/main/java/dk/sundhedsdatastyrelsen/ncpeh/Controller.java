@@ -85,7 +85,7 @@ public class Controller {
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
     ) {
-        // TODO should maybe be a user identity instead?
+        // TODO should maybe be a user identity instead? It's not used in patient summary yet.
         return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
     }
 
