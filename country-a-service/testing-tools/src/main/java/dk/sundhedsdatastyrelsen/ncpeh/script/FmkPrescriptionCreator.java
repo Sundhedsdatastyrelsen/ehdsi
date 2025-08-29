@@ -190,6 +190,7 @@ public class FmkPrescriptionCreator {
             .build();
     }
 
+    // TODO this doesn't work with IDWS tokens. Need DGWS personal tokens.
     public static void main(String[] args) throws Exception {
         var input = Fmk.cprKarl;
         if (args.length > 0) {

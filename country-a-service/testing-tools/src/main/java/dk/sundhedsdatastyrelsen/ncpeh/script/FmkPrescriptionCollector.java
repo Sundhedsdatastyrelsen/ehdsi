@@ -27,6 +27,7 @@ public class FmkPrescriptionCollector {
         logger.setLevel(Level.INFO);
     }
 
+    // TODO this doesn't work with IDWS tokens. Need DGWS personal tokens.
     public static void main(String[] args) throws JAXBException, IOException {
         var cprInput = Fmk.cprKarl;
         if (args.length > 0) {
