@@ -224,7 +224,7 @@ public class NspClientDgws {
         XmlUtils.sign(assertion, null, List.of("#IDCard"), certificate);
         var requestString = XmlUtils.writeDocumentToString(requestDocument);
 
-        try (var httpClient = HttpClient.newBuilder().build()) {
+        try (var httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()) {
             var request = HttpRequest.newBuilder(uri)
                 .header("Content-Type", "application/soap+xml; charset=utf-8")
                 .POST(HttpRequest.BodyPublishers.ofString(requestString))
