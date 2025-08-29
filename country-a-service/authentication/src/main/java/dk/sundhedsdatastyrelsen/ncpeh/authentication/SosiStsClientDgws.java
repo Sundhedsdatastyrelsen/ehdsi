@@ -6,12 +6,10 @@ import org.slf4j.Logger;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 
 public class SosiStsClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClientDgws.class);
@@ -33,7 +31,7 @@ public class SosiStsClientDgws {
         }
     }
 
-    private static DgwsAssertion parseResponse(InputStream result) throws AuthenticationException {
+    private static DgwsAssertion parseResponse(String result) throws AuthenticationException {
         try {
             var document = XmlUtils.parse(result);
 
@@ -52,26 +50,23 @@ public class SosiStsClientDgws {
                 xpath.evalEl(
                     "/soap:Envelope/soap:Body/wst:RequestSecurityTokenResponse/wst:RequestedSecurityToken/*[1]",
                     document));
-        } catch (IOException e) {
-            throw new AuthenticationException("Error reading SOSI STS response", e);
         } catch (XPathExpressionException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
     }
 
-    private static InputStream sendRequest(String xml, URI uri) throws IOException, AuthenticationException {
+    private static String sendRequest(String xml, URI uri) throws IOException, AuthenticationException {
         try (
             var httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(20))
                 .build();
         ) {
             var request = HttpRequest.newBuilder(uri)
                 .header("Content-Type", "application/soap+xml; charset=utf-8")
                 .POST(HttpRequest.BodyPublishers.ofString(xml))
                 .build();
-            var result = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            // If I use .ofInputStream, it never terminates.
+            var result = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             // the service should return 500 and an error response on failure, but it currently returns 200 and an
             // error response on failure.
             if (result.statusCode() != 200 && result.statusCode() != 500) {
