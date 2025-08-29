@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 import dk.sdsd.ddv.dgws._2010._08.NameFormat;
 import dk.sdsd.ddv.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.ddv.dgws._2012._06.WhiteListingHeader;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;

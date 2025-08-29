@@ -6,8 +6,8 @@ import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registra
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.SourceForEntryType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.ObservableLongUpDownCounter;

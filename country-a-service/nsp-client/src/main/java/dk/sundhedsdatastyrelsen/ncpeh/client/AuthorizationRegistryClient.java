@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;

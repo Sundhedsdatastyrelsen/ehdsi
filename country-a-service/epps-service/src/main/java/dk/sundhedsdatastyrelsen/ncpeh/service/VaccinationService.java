@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.DdvClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
 import jakarta.xml.bind.JAXBException;

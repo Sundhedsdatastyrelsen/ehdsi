@@ -1,6 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.client;
-
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import java.net.URI;
 
@@ -16,5 +14,5 @@ public interface NspDgwsIdentity {
     record System(URI stsUri, CertificateAndKey systemCertificate) implements NspDgwsIdentity {}
 
     // This should only be used while we wait for our dependencies to update to IDWS.
-    record User(URI stsUri, CertificateAndKey systemCertificate) implements NspDgwsIdentity {}
+    record ReplaceWithIdws(URI stsUri, CertificateAndKey systemCertificate) implements NspDgwsIdentity {}
 }

@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.service.SigningCertificate;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import org.springframework.beans.factory.annotation.Value;

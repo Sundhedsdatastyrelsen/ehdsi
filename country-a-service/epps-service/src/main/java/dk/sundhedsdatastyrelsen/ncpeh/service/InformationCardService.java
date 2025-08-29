@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;

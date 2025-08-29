@@ -2,16 +2,16 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 
 import java.net.URI;
 
 public class TestIdentities {
     private TestIdentities() {}
 
-    public static final NspDgwsIdentity.User apotekerJeppeMoeller;
+    public static final NspDgwsIdentity.ReplaceWithIdws apotekerJeppeMoeller;
 
-    public static final NspDgwsIdentity.User apotekerChrisChristoffersen;
+    public static final NspDgwsIdentity.ReplaceWithIdws apotekerChrisChristoffersen;
 
     public static final NspDgwsIdentity.System systemIdentity;
 
@@ -21,10 +21,10 @@ public class TestIdentities {
                 TestIdentities.class.getClassLoader().getResourceAsStream("NSP_Test_Service_Consumer_sds.p12"),
                 "1",
                 "Test1234");
-            apotekerChrisChristoffersen = new NspDgwsIdentity.User(
+            apotekerChrisChristoffersen = new NspDgwsIdentity.ReplaceWithIdws(
                 URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
                 cert);
-            apotekerJeppeMoeller = new NspDgwsIdentity.User(
+            apotekerJeppeMoeller = new NspDgwsIdentity.ReplaceWithIdws(
                 URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
                 cert);
             systemIdentity = new NspDgwsIdentity.System(

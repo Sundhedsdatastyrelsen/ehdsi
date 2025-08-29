@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import ihe.iti.xds_b._2007.ObjectFactory;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;

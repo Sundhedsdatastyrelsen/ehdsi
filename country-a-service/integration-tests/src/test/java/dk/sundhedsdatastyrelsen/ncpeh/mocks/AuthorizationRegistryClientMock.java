@@ -2,8 +2,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.mocks;
 
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBException;
 
 public class AuthorizationRegistryClientMock extends AuthorizationRegistryClient {

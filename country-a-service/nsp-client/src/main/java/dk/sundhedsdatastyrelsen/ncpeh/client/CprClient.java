@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;

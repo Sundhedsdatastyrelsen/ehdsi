@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PatientDemographicsDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.CrossGatewayPatientDiscoveryMapper;
