@@ -47,7 +47,7 @@ public class Beans {
      */
     @Bean
     public NspDgwsIdentity.System systemIdentity(
-        @Value("${app.sosi.endpoint.url}") String systemStsUri,
+        @Value("${app.sosi-system-dgws.endpoint.url}") String systemStsUri,
         SigningCertificate signingCertificate
     ) {
         return new NspDgwsIdentity.System(URI.create(systemStsUri), signingCertificate.getCertificateAndKey());
