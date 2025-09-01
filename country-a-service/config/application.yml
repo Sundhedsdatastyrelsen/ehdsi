@@ -26,17 +26,15 @@ signing-certificate-keystore:
   password: ${SOSI_KEYSTORE_PASSWORD:}
 
 app:
-  fmk:
-    endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+  fmk.endpoint.url: https://test1.fmk.netic.dk/idws_xua/fmk_xua_146_E6
   sosi:
     endpoint.url: "https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"
     issuer: "https://ehdsi-idp.testkald.nspop.dk"
-  sosi-system-dgws:
-    endpoint.url: "http://test1.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService"
-  cpr.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4
+  sosi-system-dgws.endpoint.url: "http://test1.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService"
+  cpr.endpoint.url: http://test1.ekstern-test.nspop.dk:8080/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4
   minlog.endpoint.url: https://test1.ekstern-test.nspop.dk:8443/decoupling
-  authorization-registry.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
-  fsk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+  authorization-registry.endpoint.url: https://test1.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
+  fsk.endpoint.url: https://test1-cnsp.ekstern-test.nspop.dk:8443/decoupling
   minlog:
     max-attempts: 3
 
