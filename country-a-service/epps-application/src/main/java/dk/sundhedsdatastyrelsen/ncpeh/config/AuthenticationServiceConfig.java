@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public record AuthenticationServiceConfig(
-    @Value("app.sosi.endpoint.url") String sosiStsUri,
+    @Value("${app.sosi.endpoint.url}") String sosiStsUri,
     SigningCertificate signingCertificate,
-    @Value("app.sosi.issuer") String issuer
+    @Value("${app.sosi.issuer}") String issuer
 ) {}
