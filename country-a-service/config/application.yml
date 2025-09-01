@@ -31,6 +31,8 @@ app:
   sosi:
     endpoint.url: "https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"
     issuer: "https://ehdsi-idp.testkald.nspop.dk"
+  sosi-system-dgws:
+    endpoint.url: "http://test1.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService"
   cpr.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-cpr-ws/service/DetGodeCPROpslag-1.0.4
   minlog.endpoint.url: https://test1.ekstern-test.nspop.dk:8443/decoupling
   authorization-registry.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
