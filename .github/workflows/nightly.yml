@@ -74,6 +74,8 @@ jobs:
           path: target/test-files/
 
       - name: Run integration tests
+        # always run even if the previous steps fail. Because many of the integration tests do not depend on the FMK files generated above.
+        if: success() || failure()
         run: |
           cd country-a-service
           mvn --batch-mode --projects integration-tests --also-make \
