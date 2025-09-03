@@ -56,7 +56,13 @@ public class AuthenticationService {
      * @return an assertion we can use to call NSP services that require an organization identity.
      */
     public static DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
-        var request = DgwsIdCardRequest.of(identity.systemCertificate(), Instant.now());
+        DgwsIdCardRequest request;
+        if (identity instanceof NspDgwsIdentity.ReplaceWithIdws replaceIdentity) {
+            // For integration tests or for development while we wait for external dependencies to be ready with IDWS.
+            request = DgwsIdCardRequest.ofEmployeeIdentity(replaceIdentity, Instant.now());
+        } else {
+            request = DgwsIdCardRequest.of(identity.systemCertificate(), Instant.now());
+        }
         return SosiStsClientDgws.exchangeIdCard(request, identity.stsUri());
     }
 }

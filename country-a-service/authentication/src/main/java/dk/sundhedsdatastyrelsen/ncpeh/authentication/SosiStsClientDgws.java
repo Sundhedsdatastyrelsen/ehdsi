@@ -13,7 +13,7 @@ import java.net.http.HttpResponse;
 
 public class SosiStsClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClientDgws.class);
-    private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP, XmlNamespace.WST);
+    private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
 
     private SosiStsClientDgws() {
     }
@@ -48,7 +48,7 @@ public class SosiStsClientDgws {
             // Otherwise we assume it was a success
             return new DgwsAssertion(
                 xpath.evalEl(
-                    "/soap:Envelope/soap:Body/wst:RequestSecurityTokenResponse/wst:RequestedSecurityToken/*[1]",
+                    "//*[@id='IDCard']",
                     document));
         } catch (XPathExpressionException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
