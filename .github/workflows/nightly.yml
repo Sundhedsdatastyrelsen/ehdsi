@@ -5,6 +5,13 @@ on:
   schedule:
     - cron: "30 04 * * *"
 
+env:
+  # Several jobs, at least "Create a new prescription in FMK" and "Run integration tests", and probably more,
+  # need the system certificate.
+  CERT_BASE_64: ${{ secrets.CERT_BASE_64 }}
+  CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
+  CERT_ALIAS: ${{ vars.CERT_ALIAS }}
+
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
