@@ -258,9 +258,10 @@ public class DispensationMapper {
         var functionCode = eval(cda, XPaths.authorFunctionCode);
         var functionCodeSystem = eval(cda, XPaths.authorFunctionCodeSystem);
         if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
-            //This is the "official" translation of "Pharmacists" from ISCO.
-            // It has implications in FMK, who validates these
-            return "Apoteker";
+            // The "official" translation of "Pharmacists" from ISCO is "Apoteker", but FMK validates this
+            // and compares it with the soap header role. And they translate that as "Udenlandsk apoteker",
+            // so we need to return the same here.
+            return "Udenlandsk apoteker";
         }
         if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             //This is the translation of "Medical Doctor"
