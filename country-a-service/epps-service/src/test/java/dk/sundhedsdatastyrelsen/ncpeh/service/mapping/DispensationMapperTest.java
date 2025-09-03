@@ -104,7 +104,7 @@ class DispensationMapperTest {
         var role = DispensationMapper.authorRole(cda);
 
         Assertions.assertFalse(role.isBlank());
-        Assertions.assertEquals("Apoteker", role);
+        Assertions.assertEquals("Udenlandsk apoteker", role);
     }
 
     @Test
