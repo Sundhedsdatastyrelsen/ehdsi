@@ -14,6 +14,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequ
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
@@ -23,7 +24,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientException;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
-import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -69,18 +69,19 @@ public class FmkPrescriptionCreator {
         new dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory();
 
     public static CreatePrescriptionResponseType createNewPrecriptionForCpr(String cpr) throws Exception {
-        var token = Sosi.getToken();
         var personIdentifier = PersonIdentifierType.builder()
             .withSource("CPR")
             .withValue(cpr)
             .build();
 
-        var medicineCard = Fmk.idwsApiClient().getMedicineCard(
+        // GetMedicineCard should work with IDWS, but it doesn't, so we use DGWS instead.
+        // It's not critical for production.
+        var medicineCard = getMedicineCard(
             GetMedicineCardRequestType.builder()
                 .withPersonIdentifier(personIdentifier)
                 .withIncludePrescriptions(true)
                 .build(),
-            token,
+            TestIdentities.lægeCharlesBabbage,
             PredefinedRequestedRole.LÆGE
         ).getMedicineCard().getFirst();
         var createDrugMedicationRequest = CreateDrugMedicationRequestType.builder()
@@ -219,6 +220,17 @@ public class FmkPrescriptionCreator {
             .end()
             .withSubstitutionAllowed(true)
             .build();
+    }
+
+    public static GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, NspDgwsIdentity identity, PredefinedRequestedRole requestedRole) throws JAXBException {
+        return fmkRequestDgws(
+            facE2.createGetMedicineCardRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
+            GetMedicineCardResponseType.class,
+            identity,
+            requestedRole,
+            false
+        );
     }
 
     public static CreatePrescriptionResponseType createPrescription(
