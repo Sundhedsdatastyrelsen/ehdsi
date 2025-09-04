@@ -8,13 +8,14 @@ WORKDIR /usr/src/app
 #     cd ehealth
 
 COPY ehealth ehealth
+COPY maven-settings.xml maven-settings.xml
 
 WORKDIR /usr/src/app/ehealth
 
 # Use sed to replace the old URL with the new URL
 RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
 
-RUN --mount=type=cache,target=/root/.m2 mvn -DskipTests install
+RUN --mount=type=cache,target=/root/.m2 mvn -s /usr/src/app/maven-settings.xml -DskipTests install
 
 WORKDIR /usr/src/app
 
@@ -23,9 +24,9 @@ COPY ncp_a/pom.xml openncp-server/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2 \
     cd openncp-national-connector && \
-    mvn install && \
+    mvn -s /usr/src/app/maven-settings.xml install && \
     cd ../openncp-server && \
-    mvn install
+    mvn -s /usr/src/app/maven-settings.xml install
 
 # Base Tomcat image for most services
 FROM tomcat:10-jdk17-temurin AS tomcat-base
