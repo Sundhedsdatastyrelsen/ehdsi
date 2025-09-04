@@ -9,7 +9,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
-import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.assertion.exceptions.InsufficientRightsException;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.PatientDemographics;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.PatientId;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;

@@ -1,11 +1,13 @@
-FROM maven:3.9-eclipse-temurin-11 AS builder
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
-ARG OPENNCP_BRANCH="8.0.2"
+ARG OPENNCP_BRANCH="9.0.0"
 
 WORKDIR /usr/src/app
 
-RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
-    cd ehealth
+# RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
+#     cd ehealth
+
+COPY ehealth ehealth
 
 WORKDIR /usr/src/app/ehealth
 
@@ -26,7 +28,7 @@ RUN --mount=type=cache,target=/root/.m2 \
     mvn install
 
 # Base Tomcat image for most services
-FROM tomcat:9-jdk11-temurin AS tomcat-base
+FROM tomcat:10-jdk17-temurin AS tomcat-base
 
 RUN apt-get update \
     && apt-get install -y \
@@ -56,7 +58,7 @@ RUN chown -R tomcat:tomcat . /opt/openncp-configuration /opt/atna-resources /opt
 ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
 
 # TSAM Exporter
-FROM eclipse-temurin:11-jre-jammy AS tsam-exporter
+FROM eclipse-temurin:17-jre-jammy AS tsam-exporter
 
 WORKDIR /usr/local/openncp-tsam-exporter
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar .
@@ -152,7 +154,7 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # TSAM Sync
-FROM eclipse-temurin:11-jre-jammy AS tsam-synchronizer
+FROM eclipse-temurin:17-jre-jammy AS tsam-synchronizer
 
 RUN apt-get update \
     && apt-get install -y \
