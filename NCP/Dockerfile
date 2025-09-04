@@ -4,16 +4,18 @@ ARG OPENNCP_BRANCH="9.0.0"
 
 WORKDIR /usr/src/app
 
-# RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git && \
-#     cd ehealth
-
-COPY ehealth ehealth
+RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git 
 COPY maven-settings.xml maven-settings.xml
 
 WORKDIR /usr/src/app/ehealth
 
 # Use sed to replace the old URL with the new URL
 RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
+
+RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' pom.xml
+RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-configuration-utility/pom.xml
+RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-exporter/pom.xml
+RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-sync/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2 mvn -s /usr/src/app/maven-settings.xml -DskipTests install
 
