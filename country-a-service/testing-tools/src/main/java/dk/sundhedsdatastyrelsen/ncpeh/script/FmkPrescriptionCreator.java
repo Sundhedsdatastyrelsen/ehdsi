@@ -282,7 +282,7 @@ public class FmkPrescriptionCreator {
         }
         try {
             body = NspClientDgws.request(
-                URI.create("https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"),
+                URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/decoupling"),
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
                 identity,
