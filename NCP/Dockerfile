@@ -4,18 +4,16 @@ ARG OPENNCP_BRANCH="9.0.0"
 
 WORKDIR /usr/src/app
 
-RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git 
+RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/ehealth.git
 COPY maven-settings.xml maven-settings.xml
 
 WORKDIR /usr/src/app/ehealth
 
-# Use sed to replace the old URL with the new URL
-RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
-
-RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' pom.xml
-RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-configuration-utility/pom.xml
-RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-exporter/pom.xml
-RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-sync/pom.xml
+# Replace deprecated groupid for oracle driver with the current one to avoid dependency resolution errors
+RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' pom.xml && \
+    sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-configuration-utility/pom.xml && \
+    sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-exporter/pom.xml && \
+    sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-sync/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2 mvn -s /usr/src/app/maven-settings.xml -DskipTests install
 
@@ -127,10 +125,21 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
 
 # OpenATNA
+
+FROM maven:3.9-eclipse-temurin-11 AS openatna-builder
+
+WORKDIR /usr/src/app
+
+RUN git clone --branch master --depth 1 https://code.europa.eu/ehdsi/openatna.git
+
+WORKDIR /usr/src/app/openatna
+
+RUN --mount=type=cache,target=/root/.m2 mvn -DskipTests install
+
 FROM tomcat-base AS openatna
 
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openatna-web.war webapps/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=openatna-builder /usr/src/app/openatna/openatna-docker/target/classes/webapp/openatna-web.war webapps/
+COPY --from=openatna-builder /usr/src/app/openatna/openatna-docker/target/classes/lib lib/
 
 COPY ./openncp-openatna/config conf/
 COPY ./openncp-openatna/entrypoint.sh bin/
