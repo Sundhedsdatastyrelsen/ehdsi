@@ -4,7 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.fhir.DenmarkDispatchingS
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xcpd.PatientSearch;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xdr.DocumentSubmit;
-import eu.europa.ec.sante.openncp.core.common.fhir.services.DispatchingService;
+import eu.europa.ec.sante.openncp.core.common.fhir.services.FhirDispatchingService;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xcpd.PatientSearchInterface;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xdr.DocumentSubmitInterface;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Primary;
 public class ModuleConfiguration {
     @Bean
     @Primary
-    public DispatchingService dispatchingServiceDk() {
+    public FhirDispatchingService dispatchingServiceDk() {
         return new DenmarkDispatchingService();
     }
 

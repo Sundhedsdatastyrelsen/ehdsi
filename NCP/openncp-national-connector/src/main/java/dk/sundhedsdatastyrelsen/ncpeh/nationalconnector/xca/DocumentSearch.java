@@ -9,7 +9,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import eu.europa.ec.sante.openncp.common.ClassCode;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
-import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.assertion.exceptions.InsufficientRightsException;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SimpleConfidentialityEnum;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.*;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
@@ -63,7 +63,8 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                     OpenNCPErrorCode.ERROR_GENERIC,
                     String.format("Bad Request: %s", e.getResponseBody()));
             } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
+                throw new NIException(
+                    OpenNCPErrorCode.ERROR_GENERIC, String.format(
                     "Error:, status: %s, body: %s",
                     e.getCode(),
                     e.getResponseBody()
@@ -94,35 +95,36 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             // TODO L1 should not be the same as L3, fix once we've implemented L1
             final var l1 = md.getLevel3();
             return DocumentFactory.createDocumentAssociation(
-                    DocumentFactory.createPSDocumentXML(
-                        l3.getId(),
-                        l3.getPatientId(),
-                        Utils.offsetDateTimeToDate(l3.getEffectiveTime()),
-                        l3.getRepositoryId(),
-                        l3.getTitle(),
-                        l3.getAuthor(),
-                        SimpleConfidentialityEnum.findByCode(l3.getConfidentiality().getConfidentialityCode()),
-                        l3.getLanguage(),
-                        l3.getSize(),
-                        l3.getHash()
-                    ),
-                    DocumentFactory.createPSDocumentPDF(
-                        l1.getId(),
-                        l1.getPatientId(),
-                        Utils.offsetDateTimeToDate(l1.getEffectiveTime()),
-                        l1.getRepositoryId(),
-                        l1.getTitle(),
-                        l1.getAuthor(),
-                        SimpleConfidentialityEnum.findByCode(l1.getConfidentiality().getConfidentialityCode()),
-                        l1.getLanguage(),
-                        l1.getSize(),
-                        l1.getHash()
-                    ));
+                DocumentFactory.createPSDocumentXML(
+                    l3.getId(),
+                    l3.getPatientId(),
+                    Utils.offsetDateTimeToDate(l3.getEffectiveTime()),
+                    l3.getRepositoryId(),
+                    l3.getTitle(),
+                    l3.getAuthor(),
+                    SimpleConfidentialityEnum.findByCode(l3.getConfidentiality().getConfidentialityCode()),
+                    l3.getLanguage(),
+                    l3.getSize(),
+                    l3.getHash()
+                ),
+                DocumentFactory.createPSDocumentPDF(
+                    l1.getId(),
+                    l1.getPatientId(),
+                    Utils.offsetDateTimeToDate(l1.getEffectiveTime()),
+                    l1.getRepositoryId(),
+                    l1.getTitle(),
+                    l1.getAuthor(),
+                    SimpleConfidentialityEnum.findByCode(l1.getConfidentiality().getConfidentialityCode()),
+                    l1.getLanguage(),
+                    l1.getSize(),
+                    l1.getHash()
+                ));
         } catch (ApiException e) {
             if (e.getCode() == 0) {
                 throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
             } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
+                throw new NIException(
+                    OpenNCPErrorCode.ERROR_GENERIC, String.format(
                     "Error, status: %s, body: %s",
                     e.getCode(),
                     e.getResponseBody()
@@ -131,7 +133,8 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
         }
     }
 
-    static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
+    static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria,
+            Element soapHeader) throws NIException {
         try {
             logger.info("Querying Country A service for documents...");
             final var request = new PostFindEPrescriptionDocumentsRequest()
@@ -156,13 +159,15 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         md.getLevel3().getDescription(),
                         md.getLevel3().getProductCode(),
                         md.getLevel3().getProductName(),
-                        new EpListParam(md.getLevel3().getDispensable(),
+                        new EpListParam(
+                            md.getLevel3().getDispensable(),
                             md.getLevel3().getAtcCode(),
                             md.getLevel3().getAtcName(),
                             md.getLevel3().getDoseFormCode(),
                             md.getLevel3().getDoseFormName(),
                             md.getLevel3().getStrength(),
-                            new SubstitutionMetadata(md.getLevel3().getSubstitutionCode(),
+                            new SubstitutionMetadata(
+                                md.getLevel3().getSubstitutionCode(),
                                 md.getLevel3().getSubstitutionDisplayName())),
                         SimpleConfidentialityEnum.findByCode(md.getLevel3().getConfidentiality().getConfidentialityCode()),
                         md.getLevel3().getLanguage(),
@@ -179,13 +184,15 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         md.getLevel1().getDescription(),
                         md.getLevel1().getProductCode(),
                         md.getLevel1().getProductName(),
-                        new EpListParam(md.getLevel1().getDispensable(),
+                        new EpListParam(
+                            md.getLevel1().getDispensable(),
                             md.getLevel1().getAtcCode(),
                             md.getLevel1().getAtcName(),
                             md.getLevel1().getDoseFormCode(),
                             md.getLevel1().getDoseFormName(),
                             md.getLevel1().getStrength(),
-                            new SubstitutionMetadata(md.getLevel1().getSubstitutionCode(),
+                            new SubstitutionMetadata(
+                                md.getLevel1().getSubstitutionCode(),
                                 md.getLevel1().getSubstitutionDisplayName())),
                         SimpleConfidentialityEnum.findByCode(md.getLevel1().getConfidentiality().getConfidentialityCode()),
                         md.getLevel1().getLanguage(),
@@ -197,7 +204,8 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             if (e.getCode() == 0) {
                 throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
             } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
+                throw new NIException(
+                    OpenNCPErrorCode.ERROR_GENERIC, String.format(
                     "Error, status: %s, body: %s",
                     e.getCode(),
                     e.getResponseBody()

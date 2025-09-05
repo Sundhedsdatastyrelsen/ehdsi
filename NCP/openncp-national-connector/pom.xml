@@ -7,12 +7,12 @@
     <parent>
         <groupId>eu.europa.ec.sante</groupId>
         <artifactId>openncp-application</artifactId>
-        <version>8.0.2</version>
+        <version>9.0.0</version>
     </parent>
 
     <groupId>dk.sds</groupId>
     <artifactId>openncp-national-connector</artifactId>
-    <version>8.0.2</version>
+    <version>9.0.0</version>
     <packaging>jar</packaging>
 
     <name>OpenNCP Denmark National Connector</name>
@@ -39,9 +39,9 @@
             <version>0.2.6</version>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>1.3.5</version>
         </dependency>
     </dependencies>
 
