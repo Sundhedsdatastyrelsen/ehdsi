@@ -2,7 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -20,5 +22,27 @@ class UtilsTest {
         assertThat(
             xgc2.toGregorianCalendar().toZonedDateTime().toOffsetDateTime(),
             is(equalTo(OffsetDateTime.parse("2011-11-13T12:56:00+02:00"))));
+    }
+
+    @Test
+    void safeParsePositiveBigDecimalTest() {
+        assertThat(Utils.safeParsePositiveBigDecimal(null), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveBigDecimal(""), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveBigDecimal("   "), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveBigDecimal("null"), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveBigDecimal("0"), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveBigDecimal("1.0"), is(Optional.of(BigDecimal.valueOf(1.0))));
+        assertThat(Utils.safeParsePositiveBigDecimal("1"), is(Optional.of(BigDecimal.valueOf(1))));
+    }
+
+    @Test
+    void safeParsePositiveBigIntTest() {
+        assertThat(Utils.safeParsePositiveInt(null), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveInt(""), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveInt("   "), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveInt("null"), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveBigDecimal("0"), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveInt("1.0"), is(Optional.empty()));
+        assertThat(Utils.safeParsePositiveInt("1"), is(Optional.of(1)));
     }
 }

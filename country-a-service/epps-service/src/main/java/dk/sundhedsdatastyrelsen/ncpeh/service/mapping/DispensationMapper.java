@@ -366,16 +366,9 @@ public class DispensationMapper {
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        var rawValue = eval(node, "@value");
-        try {
-            var value = Integer.parseInt(rawValue);
-            if (value <= 0) {
-                throw new MapperException("Package quantity must be a positive integer, was: %s".formatted(value));
-            }
-            return value;
-        } catch (NumberFormatException e) {
-            throw new MapperException("Package quantity must be a positive integer, was: %s".formatted(rawValue));
-        }
+        var value = eval(node, "@value");
+        return Utils.safeParsePositiveInt(value)
+            .orElseThrow(() -> new MapperException("Package quantity must be a positive integer, was: %s".formatted(value)));
     }
 
     static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
@@ -561,16 +554,6 @@ public class DispensationMapper {
             .build();
     }
 
-    private static boolean validPositiveNumber(String s) {
-        if (s == null || s.isBlank()) return false;
-        try {
-            var val = Double.parseDouble(s);
-            return val > 0;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     static PackageSizeType packageSize(Document cda) throws MapperException {
         try {
             var node = evalNode(cda, XPaths.contentQuantity);
@@ -582,12 +565,10 @@ public class DispensationMapper {
             // information is available within the national infrastructure, the originalText element can be used to
             // add additional information[...]"
             // https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
-            var value = eval(node, "@value");
             var unit = eval(node, "@unit");
-
-            if (!validPositiveNumber(value)) {
-                throw new MapperException("Content quantity must be a positive number, was %s".formatted(value));
-            }
+            var rawValue = eval(node, "@value");
+            var value = Utils.safeParsePositiveBigDecimal(rawValue)
+                .orElseThrow(() -> new MapperException("Content quantity must be a positive number, was %s".formatted(rawValue)));
 
             String unitText;
             if ("1".equals(unit)) {
