@@ -366,11 +366,16 @@ public class DispensationMapper {
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        var value = Integer.parseInt(eval(node, "@value"));
-        if (value <= 0) {
-            throw new MapperException("Package quantity must be a positive integer, was: %s".formatted(value));
+        var rawValue = eval(node, "@value");
+        try {
+            var value = Integer.parseInt(rawValue);
+            if (value <= 0) {
+                throw new MapperException("Package quantity must be a positive integer, was: %s".formatted(value));
+            }
+            return value;
+        } catch (NumberFormatException e) {
+            throw new MapperException("Package quantity must be a positive integer, was: %s".formatted(rawValue));
         }
-        return value;
     }
 
     static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
