@@ -4,29 +4,44 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class DispensationAllowed {
     private DispensationAllowed() {
     }
 
-    public static boolean isDispensationAllowed(PrescriptionType prescription, PackageInfo packageInfo) {
+    /// Check whether dispensation is allowed. Returns an error message if it is not, otherwise null.
+    ///
+    /// @return an error message if dispensation is not allowed. Null if dispensation is allowed.
+    public static String getDispensationRestrictions(PrescriptionType prescription, PackageInfo packageInfo) {
+        var errors = new ArrayList<String>();
+
         // We check that the regulation code ("Udleveringsbestemmelse") of the product is valid.
         // Specifically, we use this check to disallow narcotics ("§4-lægemidler") which are out-of-scope.
         var isValidRegulationCode = packageInfo != null
             && dispensableRegulations.stream().anyMatch(code -> code.equals(packageInfo.dispensationRegulationCode()));
+        if (!isValidRegulationCode) {
+            errors.add("Medicine dispensation regulation prohibits cross border dispensation.");
+        }
 
         // KBP = "Kombinationspakning" (LMS14)
         // Combination packaging is out of scope, so we disallow them.
         // There is also no good transcoding of KBP.
-        var isNotCombinationPackaging = packageInfo != null && !"KBP".equals(packageInfo.packageFormCode());
+        var isCombinationPackaging = packageInfo == null || "KBP".equals(packageInfo.packageFormCode());
+        if (isCombinationPackaging) {
+            errors.add("Combination packages are not supported.");
+        }
 
         // A prescription is magistral (based on a recipe) if there is a DetailedDrugText on it.
         // This is the only way to tell if a drug is magistral.
         // See also https://github.com/trifork/fmk-schemas/blob/e84edbebfeb17c1b9a98eb3acfdc62706e20f4c8/etc/schemas/2015/01/01/DetailedDrugText.xsd.
-        var isNotMagistral = !EPrescriptionL3Mapper.isMagistral(prescription);
+        var isMagistral = EPrescriptionL3Mapper.isMagistral(prescription);
+        if (isMagistral) {
+            errors.add("Magistral prescriptions are not supported.");
+        }
 
-        return isValidRegulationCode && isNotCombinationPackaging && isNotMagistral;
+        return errors.isEmpty() ? null : String.join(" ", errors);
     }
 
     /// The list of regulations we can dispense in other EU countries, with the
@@ -38,11 +53,11 @@ public final class DispensationAllowed {
         // AP4,Kopieringspligtigt
         // AP4BG,"Kopieringspligtigt, kun sygehuse"
         // AP4NB,"Kopieringspligtigt, kun sygehuse og speciallæger"
-        "APK", // Produktionsdyr og familiedyr, en udlevering
+        // "APK", // Produktionsdyr og familiedyr, en udlevering
         "B", // Receptpligtigt, flere udleveringer
         // BEGR,Kun til sygehuse,
         // BP,"Udelukkende produktionsdyr, flere udleveringer",
-        "BPK", // Produktionsdyr og familiedyr, flere udleveringer
+        // "BPK", // Produktionsdyr og familiedyr, flere udleveringer
         // These two with medicinal gas are never used in the dataset.
         // GA,"Medicinsk gas, en udlevering",
         // GB,"Medicinsk gas, flere udleveringer",
