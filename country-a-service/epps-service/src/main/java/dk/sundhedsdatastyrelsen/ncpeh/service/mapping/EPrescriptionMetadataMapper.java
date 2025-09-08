@@ -143,7 +143,7 @@ public class EPrescriptionMetadataMapper {
             // "When communicated, the Dose form text must be either in English or in (one of) the Country of affiliation national language(s)." 06.02
             drugForm.map(DrugFormType::getText).orElse(null),
             EPrescriptionL3Mapper.drugStrengthText(prescription),
-            DispensationAllowed.isDispensationAllowed(prescription, packageInfo)
+            DispensationAllowed.getDispensationRestrictions(prescription, packageInfo) == null
         );
     }
 

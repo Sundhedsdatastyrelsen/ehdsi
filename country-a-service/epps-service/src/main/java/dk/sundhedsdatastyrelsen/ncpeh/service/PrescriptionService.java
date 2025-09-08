@@ -271,13 +271,13 @@ public class PrescriptionService {
                 .filter(p -> p.getIdentifier() == prescriptionId)
                 .findFirst()
                 .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
-            var isDispensable = DispensationAllowed.isDispensationAllowed(
+            var dispensationAllowedError = DispensationAllowed.getDispensationRestrictions(
                 prescription,
                 lmsDataProvider.packageInfo(prescription.getPackageRestriction()
                     .getPackageNumber()
                     .getValue()));
-            if (!isDispensable) {
-                throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed");
+            if (null != dispensationAllowedError) {
+                throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
             }
         } catch (XPathExpressionException | MapperException | JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch prescription to dispense", e);
