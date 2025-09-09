@@ -366,7 +366,9 @@ public class DispensationMapper {
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        return Integer.parseInt(eval(node, "@value"));
+        var value = eval(node, "@value");
+        return Utils.safeParsePositiveInt(value)
+            .orElseThrow(() -> new MapperException("Package quantity must be a positive integer, was: %s".formatted(value)));
     }
 
     static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
@@ -563,8 +565,11 @@ public class DispensationMapper {
             // information is available within the national infrastructure, the originalText element can be used to
             // add additional information[...]"
             // https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
-            var value = eval(node, "@value");
             var unit = eval(node, "@unit");
+            var rawValue = eval(node, "@value");
+            var value = Utils.safeParsePositiveBigDecimal(rawValue)
+                .orElseThrow(() -> new MapperException("Content quantity must be a positive number, was %s".formatted(rawValue)));
+
             String unitText;
             if ("1".equals(unit)) {
                 var originalText = eval(node, "hl7:translation/hl7:originalText");

@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DispensationMapperTest {
     Document testDispensationCda(String xmlFileName) {
@@ -169,14 +170,19 @@ class DispensationMapperTest {
 
     @Test
     void packageQuantityTest() throws Exception {
-
-        var xmlFileName = "dispensations/CzRequest1.xml";
-
-        var cda = testDispensationCda(xmlFileName);
-
-        var q = DispensationMapper.packageQuantity(cda);
-
-        Assertions.assertEquals(1, q);
+        // value = 1
+        var q = DispensationMapper.packageQuantity(testDispensationCda("dispensations/CzRequest1.xml"));
+        assertThat(q, is(1));
+        // negative integer is invalid value
+        var ex1 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageQuantity(testDispensationCda("dispensations/dispensation_bad_1.xml")));
+        assertThat(ex1.getMessage(), containsString("must be a positive integer"));
+        // decimal value is invalid value
+        var ex2 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageQuantity((testDispensationCda("dispensations/dispensation_bad_2.xml"))));
+        assertThat(ex2.getMessage(), containsString("must be a positive integer"));
     }
 
     @Test
@@ -193,6 +199,17 @@ class DispensationMapperTest {
         // funny namespace
         var s4 = DispensationMapper.packageSize(testDispensationCda("dispensations/CzRequest3.xml"));
         assertThat(s4.getPackageSizeText(), is("100 units"));
+        // zero is invalid value
+        var ex1 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageSize(testDispensationCda("dispensations/dispensation_bad_1.xml")));
+        assertThat(ex1.getMessage(), containsString("must be a positive number"));
+        // negative number is invalid value
+        var ex2 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageSize(testDispensationCda("dispensations/dispensation_bad_2.xml")));
+        assertThat(ex2.getMessage(), containsString("must be a positive number"));
+
     }
 
     @Test
