@@ -21,6 +21,15 @@ public class TestIdentities {
 
     public static final NspDgwsIdentity.System systemIdentity;
 
+    public static String getPatientIdFromCpr(String cpr){
+        var cprPart = cpr;
+        if(!cpr.contains("-")){
+            cprPart = cpr.substring(0,6)+"-"+cpr.substring(6,10);
+        }
+        var DK_CPR_OID = "1.2.208.176.1.2"; //Testing shared has no dependency on CDA Generator, so this is just copied.
+        return cprPart+"^^^&"+ DK_CPR_OID+"&ISO";
+    }
+
     static {
         try {
             var systemCert = CertificateUtils.loadCertificateFromKeystore(

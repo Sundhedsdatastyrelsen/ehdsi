@@ -95,8 +95,8 @@ public class PatientSummaryService {
 
     @WithSpan
     private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId) {
-        var availableInformationCards = informationCardService.findInformationCardDetails(patientId, europeanHealthProfessionalId);
-        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst());
+        var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
+        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(),patientId, europeanHealthProfessionalId);
         var xpath = FskMapper.getXpath();
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(xpath, informationCard));

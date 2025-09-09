@@ -43,8 +43,7 @@ public class InformationCardService {
 
     /// @return A list of ids of information cards.
     public List<String> findInformationCardDetails(
-        String patientId,
-        String europeanHealthProfessionalId
+        String patientId
     ) {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
@@ -90,7 +89,6 @@ public class InformationCardService {
 
             var fskResponse = fskClient.list(request, systemCaller);
 
-            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", europeanHealthProfessionalId);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()
@@ -102,7 +100,7 @@ public class InformationCardService {
         }
     }
 
-    public Document getInformationCard(String uniqueDocumentId) {
+    public Document getInformationCard(String uniqueDocumentId, String patientId, String europeanHealthProfessionalId) {
         try {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
@@ -111,7 +109,10 @@ public class InformationCardService {
                 .withDocumentUniqueId(uniqueDocumentId) //Yes, we need to use the whole unique document ID, as well as part of it earlier.
                 .end().build();
 
-            //TODO: We should log that we did this to MinLog, since we do it as an organisation
+            //Log that we looked up the data on the fælles stamkort, due to using the organisational endpoint
+            var cpr = PatientIdMapper.toCpr(patientId);
+            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", europeanHealthProfessionalId);
+
             //The endpoints does not (in the near future) support IDWS, so we have to use the organisatorial endpoint.
             var fskResponse = fskClient.getDocument(request, systemCaller);
             byte[] documentBytes = fskResponse.getDocumentResponse()
