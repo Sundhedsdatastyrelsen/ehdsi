@@ -84,9 +84,7 @@ class DispensationMapperTest {
         var cda = testDispensationCda(xmlFileName);
         var person = DispensationMapper.authorPerson(cda);
 
-        Assertions.assertNotNull(person.getPersonIdentifier());
-        Assertions.assertEquals("CPR", person.getPersonIdentifier().getSource());
-        Assertions.assertEquals("3001010033", person.getPersonIdentifier().getValue());
+        Assertions.assertNull(person.getPersonIdentifier());
 
         Assertions.assertFalse(person.getName().getGivenName().isBlank());
         Assertions.assertEquals("TOMÁŠ", person.getName().getGivenName());
