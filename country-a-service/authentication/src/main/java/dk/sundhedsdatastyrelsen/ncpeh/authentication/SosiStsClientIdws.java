@@ -73,11 +73,14 @@ public class SosiStsClientIdws {
             var created = xpath.evalString("wst13:Lifetime/wsu:Created", requestSecurityTokenResponse);
             var expires = xpath.evalString("wst13:Lifetime/wsu:Expires", requestSecurityTokenResponse);
             var audience = xpath.evalString("wsp:AppliesTo/wsa:EndpointReference/wsa:Address", requestSecurityTokenResponse);
+            var ehdsiCountryOfTreatment = xpath.evalString("saml:AttributeStatement/saml:Attribute[@Name='urn:dk:healthcare:saml:CountryOfTreatment']/saml:AttributeValue", assertion);
+            var subjectNameId = xpath.evalString("saml:Subject/saml:NameID", assertion);
             return new EuropeanHcpIdwsToken(
                 assertion,
                 audience,
                 Instant.parse(created),
-                Instant.parse(expires)
+                Instant.parse(expires),
+                ehdsiCountryOfTreatment + ":" + subjectNameId
             );
         } catch (IOException e) {
             throw new AuthenticationException("Error reading SOSI STS response", e);

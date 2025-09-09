@@ -65,7 +65,7 @@ class DispensationMapperTest {
     @MethodSource("testDispensationCdas")
     void startEffectuationRequestTest(String xmlFileName) throws MapperException {
         var cda = testDispensationCda(xmlFileName);
-        var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
+        var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda, "SE:author@health.eu");
 
         assertThat(req.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(req.getPrescription().getFirst().getIdentifier() > 0L);
@@ -82,17 +82,19 @@ class DispensationMapperTest {
     void authorPersonTest() throws XPathExpressionException {
         var xmlFileName = "dispensations/CzRequest1.xml";
         var cda = testDispensationCda(xmlFileName);
-        var person = DispensationMapper.authorPerson(cda);
+        var person = DispensationMapper.authorPerson(cda, "SE:author@health.eu");
 
-        Assertions.assertNull(person.getPersonIdentifier());
+        assertThat(person.getPersonIdentifier(), is(not(nullValue())));
+        assertThat(person.getPersonIdentifier().getSource(), is("EuropeanHealthcareProfessional"));
+        assertThat(person.getPersonIdentifier().getValue(), is("SE:author@health.eu"));
 
-        Assertions.assertFalse(person.getName().getGivenName().isBlank());
-        Assertions.assertEquals("TOMÁŠ", person.getName().getGivenName());
+        assertThat(person.getName().getGivenName(), is(not(emptyString())));
+        assertThat(person.getName().getGivenName(), is("TOMÁŠ"));
 
-        Assertions.assertFalse(person.getName().getSurname().isBlank());
-        Assertions.assertEquals("HRABÁČEK", person.getName().getSurname());
+        assertThat(person.getName().getSurname(), is(not(emptyString())));
+        assertThat(person.getName().getSurname(), is("HRABÁČEK"));
 
-        Assertions.assertNull(person.getName().getMiddleName());
+        assertThat(person.getName().getMiddleName(), is(nullValue()));
     }
 
     @Test
@@ -311,7 +313,8 @@ class DispensationMapperTest {
         var result = DispensationMapper.createPharmacyEffectuationRequest(
             "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,
-            startEffectuationResponse
+            startEffectuationResponse,
+            "SE:author@health.eu"
         );
 
         assertThat(result.getPrescription().size(), is(equalTo(1)));

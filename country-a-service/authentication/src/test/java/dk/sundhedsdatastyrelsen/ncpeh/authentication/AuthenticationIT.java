@@ -34,6 +34,7 @@ class AuthenticationIT {
 
         assertThat(idwsToken.audience(), is("https://fmk"));
         assertThat(idwsToken.assertion(), notNullValue());
+        assertThat(idwsToken.authorMinLogId(), is("DK:house@ehdsi.eu"));
     }
 
     @Test
