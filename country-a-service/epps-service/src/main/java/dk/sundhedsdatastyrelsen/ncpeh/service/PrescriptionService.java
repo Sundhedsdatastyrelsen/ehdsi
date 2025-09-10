@@ -286,7 +286,7 @@ public class PrescriptionService {
         try {
             log.info("Start FMK effectuation");
             response = fmkClient.startEffectuation(
-                DispensationMapper.startEffectuationRequest(patientId, dispensationCda, token.authorMinLogId()),
+                DispensationMapper.startEffectuationRequest(patientId, dispensationCda),
                 token);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
@@ -301,8 +301,7 @@ public class PrescriptionService {
                 DispensationMapper.createPharmacyEffectuationRequest(
                     patientId,
                     dispensationCda,
-                    response,
-                    token.authorMinLogId()),
+                    response),
                 token);
         } catch (JAXBException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
@@ -347,8 +346,7 @@ public class PrescriptionService {
                 patientId,
                 cdaToDiscard,
                 undoInfo.orderId(),
-                undoInfo.effectuationId(),
-                token.authorMinLogId()
+                undoInfo.effectuationId()
             );
         } catch (MapperException e) {
             throw new DataRequirementException(MAPPING_ERROR_MESSAGE, e);
