@@ -84,7 +84,11 @@ class DispensationMapperTest {
         var cda = testDispensationCda(xmlFileName);
         var person = DispensationMapper.authorPerson(cda);
 
-        Assertions.assertNull(person.getPersonIdentifier());
+        Assertions.assertNull(
+            person.getPersonIdentifier(),
+            "FMK validates the modifier heavily. It must be of type OtherPerson and ID must be null." +
+                " They take the ID from the XUA IDWS header. This is not specified anywhere yet, I think, but" +
+                " was discovered while both teams worked on this.");
 
         Assertions.assertFalse(person.getName().getGivenName().isBlank());
         Assertions.assertEquals("TOMÁŠ", person.getName().getGivenName());
