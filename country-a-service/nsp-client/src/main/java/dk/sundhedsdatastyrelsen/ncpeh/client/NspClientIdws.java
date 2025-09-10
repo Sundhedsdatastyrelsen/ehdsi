@@ -4,8 +4,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
-import org.apache.ws.security.WSSConfig;
-import org.apache.ws.security.transform.STRTransform;
+import org.apache.wss4j.dom.engine.WSSConfig;
+import org.apache.wss4j.dom.transform.STRTransform;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,9 +41,6 @@ public class NspClientIdws {
 
     static {
         // WSS init is idempotent, but not threadsafe, so we make sure we only do it once.
-        // Loading keys from pkcs12 keystores after this initialization has been called will fail in the version of
-        // wss4j we're using (1.6.4). So we need to use jks. Once we can update wss4j, we should test if it works with
-        // pkcs12.
         WSSConfig.init();
     }
 
