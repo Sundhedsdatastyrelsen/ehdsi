@@ -65,7 +65,7 @@ class DispensationMapperTest {
     @MethodSource("testDispensationCdas")
     void startEffectuationRequestTest(String xmlFileName) throws MapperException {
         var cda = testDispensationCda(xmlFileName);
-        var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda, "SE:author@health.eu");
+        var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
 
         assertThat(req.getPrescription().size(), is(equalTo(1)));
         Assertions.assertTrue(req.getPrescription().getFirst().getIdentifier() > 0L);
@@ -82,19 +82,21 @@ class DispensationMapperTest {
     void authorPersonTest() throws XPathExpressionException {
         var xmlFileName = "dispensations/CzRequest1.xml";
         var cda = testDispensationCda(xmlFileName);
-        var person = DispensationMapper.authorPerson(cda, "SE:author@health.eu");
+        var person = DispensationMapper.authorPerson(cda);
 
-        assertThat(person.getPersonIdentifier(), is(not(nullValue())));
-        assertThat(person.getPersonIdentifier().getSource(), is("EuropeanHealthcareProfessional"));
-        assertThat(person.getPersonIdentifier().getValue(), is("SE:author@health.eu"));
+        Assertions.assertNull(
+            person.getPersonIdentifier(),
+            "FMK validates the modifier heavily. It must be of type OtherPerson and ID must be null." +
+                " They take the ID from the XUA IDWS header. This is not specified anywhere yet, I think, but" +
+                " was discovered while both teams worked on this.");
 
-        assertThat(person.getName().getGivenName(), is(not(emptyString())));
-        assertThat(person.getName().getGivenName(), is("TOMÁŠ"));
+        Assertions.assertFalse(person.getName().getGivenName().isBlank());
+        Assertions.assertEquals("TOMÁŠ", person.getName().getGivenName());
 
-        assertThat(person.getName().getSurname(), is(not(emptyString())));
-        assertThat(person.getName().getSurname(), is("HRABÁČEK"));
+        Assertions.assertFalse(person.getName().getSurname().isBlank());
+        Assertions.assertEquals("HRABÁČEK", person.getName().getSurname());
 
-        assertThat(person.getName().getMiddleName(), is(nullValue()));
+        Assertions.assertNull(person.getName().getMiddleName());
     }
 
     @Test
@@ -313,8 +315,7 @@ class DispensationMapperTest {
         var result = DispensationMapper.createPharmacyEffectuationRequest(
             "1111111118^^^&1.2.208.176.1.2&ISO",
             cda,
-            startEffectuationResponse,
-            "SE:author@health.eu"
+            startEffectuationResponse
         );
 
         assertThat(result.getPrescription().size(), is(equalTo(1)));

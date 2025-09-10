@@ -17,7 +17,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
@@ -238,7 +237,7 @@ public class DispensationMapper {
         return (Node) xpath.get().evaluate(xpathExpression, node, XPathConstants.NODE);
     }
 
-    static ModificatorPersonType authorPerson(Document cda, String authorId) throws XPathExpressionException {
+    static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
         var familyNames = evalMany(cda, XPaths.authorFamilyName);
         var givenNames = evalMany(cda, XPaths.authorGivenName);
         var allButLastName = Stream.concat(
@@ -248,12 +247,7 @@ public class DispensationMapper {
         return ModificatorPersonType.builder()
             .withName()
             .withSurname(familyNames.getLast())
-            .withGivenName(allButLastName)
-            .end()
-            .withPersonIdentifier()
-            .withSource(UserPersonIdSourceType.EUROPEAN_HEALTHCARE_PROFESSIONAL.value())
-            .withValue(authorId)
-            .end()
+            .withGivenName(allButLastName).end()
             .build();
     }
 
@@ -604,15 +598,14 @@ public class DispensationMapper {
     @WithSpan
     public static StartEffectuationRequestType startEffectuationRequest(
         @NonNull String patientId,
-        @NonNull Document cda,
-        @NonNull String authorId
+        @NonNull Document cda
     ) throws MapperException {
         try {
             var obf = new ObjectFactory();
             return StartEffectuationRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
                 .withModifiedBy().withContent(
-                    obf.createModificatorTypeOther(authorPerson(cda, authorId)),
+                    obf.createModificatorTypeOther(authorPerson(cda)),
                     obf.createModificatorTypeRole(authorRole(cda)),
                     obf.createModificatorTypeOrganisation(authorOrganization(cda))
                 ).end()
@@ -631,15 +624,14 @@ public class DispensationMapper {
     public static CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
-        @NonNull StartEffectuationResponseType startEffectuationResponse,
-        @NonNull String authorId
+        @NonNull StartEffectuationResponseType startEffectuationResponse
     ) throws MapperException {
         var obf = new ObjectFactory();
         try {
             return CreatePharmacyEffectuationRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
                 .withCreatedBy().withContent(
-                    obf.createModificatorTypeOther(authorPerson(cda, authorId)),
+                    obf.createModificatorTypeOther(authorPerson(cda)),
                     obf.createModificatorTypeRole(authorRole(cda)),
                     obf.createModificatorTypeOrganisation(authorOrganization(cda))
                 ).end()
@@ -658,8 +650,7 @@ public class DispensationMapper {
         @NonNull String patientId,
         @NonNull Document cda,
         long orderId,
-        long effectuationId,
-        @NonNull String authorId
+        long effectuationId
     ) throws MapperException {
         var obf = new ObjectFactory();
         try {
@@ -668,7 +659,7 @@ public class DispensationMapper {
             return dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
                 .withModifiedBy().withContent(
-                    obf.createModificatorTypeOther(authorPerson(cda, authorId)),
+                    obf.createModificatorTypeOther(authorPerson(cda)),
                     obf.createModificatorTypeRole(authorRole(cda)),
                     obf.createModificatorTypeOrganisation(authorOrganization(cda))
                 ).end()
