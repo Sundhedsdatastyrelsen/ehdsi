@@ -41,8 +41,7 @@ public class CertificateUtils {
     @NonNull
     public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
         try {
-            // Have to use jks because initializing wss4j causes parsing keys from pkcs12 keystores to fail.
-            // See also where we call WSSConfig.init, currently in NspClientIdws.
+            // keystore type is changed once we load the keystore, so it doesn't matter what we put in this constructor.
             var ks = KeyStore.getInstance("jks");
             ks.load(is, password.toCharArray());
             return new CertificateAndKey(

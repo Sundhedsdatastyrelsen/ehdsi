@@ -184,15 +184,9 @@
                 <version>3.47.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ws.security</groupId>
-                <artifactId>wss4j</artifactId>
-                <version>1.6.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-ws-security-dom</artifactId>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -211,12 +205,29 @@
                 <artifactId>checker-qual</artifactId>
                 <version>3.37.0</version>
             </dependency>
+            <!-- Convergence errors for wss4j -->
             <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
-                <version>1.5.8</version>
+                <version>4.0.3</version>
             </dependency>
-            <!-- Solve convergence errors -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.4.0-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>1.78.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.78.1</version>
+            </dependency>
+            <!-- /Convergence errors for wss4j -->
+            <!-- /Solve convergence errors -->
         </dependencies>
     </dependencyManagement>
 
