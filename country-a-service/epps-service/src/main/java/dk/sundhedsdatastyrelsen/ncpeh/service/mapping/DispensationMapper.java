@@ -247,7 +247,13 @@ public class DispensationMapper {
         return ModificatorPersonType.builder()
             .withName()
             .withSurname(familyNames.getLast())
-            .withGivenName(allButLastName).end()
+            .withGivenName(allButLastName)
+            .end()
+            // FMK's undo requires personidentifier to not be null, but it can't have a value, so this is what has been
+            // agreed with them to work. See FmkIT for where we test it.
+            .withPersonIdentifier()
+            .withSource("Udenlandsk")
+            .end()
             .build();
     }
 
