@@ -20,8 +20,7 @@ class FskMapperTest {
     @Test
     void preferredHealthProfessionalTest() throws Exception {
         var cda = testInformationCardCda("informationCards/test-card.xml");
-        var xPath = FskMapper.getXpath();
-        var preferredHealthProfessional = FskMapper.preferredHealthProfessional(xPath, cda);
+        var preferredHealthProfessional = FskMapper.preferredHealthProfessional(cda);
 
         assertThat(preferredHealthProfessional, is(notNullValue()));
         assertThat(preferredHealthProfessional.getName().getFullName(), is("laege praksis"));

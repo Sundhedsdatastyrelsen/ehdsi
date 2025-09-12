@@ -7,11 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="shared" />
+        <module name="base-utils-test" />
         <module name="epps-ddv-api" />
         <module name="epps-fsk-api" />
         <module name="epps-sdp-api" />
         <module name="epps-service" />
+        <module name="base-utils" />
         <module name="integration-tests" />
         <module name="epps-minlog-api" />
         <module name="epps-cpr-api" />
@@ -36,6 +37,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="authentication" options="-parameters" />
       <module name="autorisationsregister-model" options="-parameters" />
+      <module name="base-utils" options="-parameters" />
+      <module name="base-utils-test" options="-parameters" />
       <module name="cda-generator" options="-parameters" />
       <module name="country-b-mock" options="-parameters" />
       <module name="epps-application" options="-parameters" />
@@ -55,7 +58,6 @@
       <module name="job-queue" options="-parameters" />
       <module name="local-lms-db" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
-      <module name="shared" options="-parameters" />
       <module name="testing-shared" options="-parameters" />
       <module name="testing-tools" options="-parameters" />
     </option>

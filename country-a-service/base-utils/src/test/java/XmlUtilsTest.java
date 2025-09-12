@@ -1,5 +1,5 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
-
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlException;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +27,6 @@ class XmlUtilsTest {
     @Test
     void shouldFailOnBadXml() {
         var brokenSoap = "<Envelope><BadXml></Envelope>";
-        Assertions.assertThrows(AuthenticationException.class, () -> XmlUtils.parse(brokenSoap));
+        Assertions.assertThrows(XmlException.class, () -> XmlUtils.parse(brokenSoap));
     }
 }

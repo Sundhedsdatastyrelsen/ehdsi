@@ -2,6 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/authentication/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/base-utils-test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/base-utils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cda-generator/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/country-b-mock/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/epps-api/autorisationsregister-model/src/main/java" charset="UTF-8" />
@@ -27,7 +29,6 @@
     <file url="file://$PROJECT_DIR$/job-queue/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/local-lms-db/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nsp-client/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/shared/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/testing-shared/src/main/java" charset="UTF-8" />

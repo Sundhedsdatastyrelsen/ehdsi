@@ -25,7 +25,12 @@
         </dependency>
         <dependency>
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-            <artifactId>shared</artifactId>
+            <artifactId>base-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>base-utils-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

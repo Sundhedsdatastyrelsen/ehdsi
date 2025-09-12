@@ -2,8 +2,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.TestUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.test.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -146,7 +146,7 @@ public class BootstrapTokenTest {
     }
 
     private static String soapHeader() {
-        return TestUtils.resource("openncp_soap_header.xml");
+        return TestUtils.resource("openncp_soap_header.xml", BootstrapTokenTest.class.getClassLoader());
     }
 
     /**

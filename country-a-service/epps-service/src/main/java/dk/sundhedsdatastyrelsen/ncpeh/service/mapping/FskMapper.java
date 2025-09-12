@@ -4,6 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.xml.SimpleNamespaceContext;
@@ -26,6 +27,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class FskMapper {
+    static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7,XmlNamespace.SDTC);
     private FskMapper() {
     }
 
@@ -44,45 +46,13 @@ public class FskMapper {
             "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
+
     }
 
-    // XPath is not thread safe, so callers have to create a new one.
-    public static XPath getXpath() {
-        var xp = XPathFactory.newInstance().newXPath();
-        var nsCtx = new SimpleNamespaceContext();
-        nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
-        nsCtx.bindNamespaceUri("sdtc", "urn:hl7-org:sdtc");
-        xp.setNamespaceContext(nsCtx);
-        return xp;
-    }
-
-    private static List<Node> evalNodeMany(XPath xpath, Node cda, String xpathExpression) throws XPathExpressionException {
-        var nodeList = (NodeList) xpath.evaluate(xpathExpression, cda, XPathConstants.NODESET);
-        var l = nodeList.getLength();
-        var result = new ArrayList<Node>();
-        for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i));
-        }
-        return Collections.unmodifiableList(result);
-    }
-
-    private static List<String> evalMany(XPath xpath, Node cda, String xpathExpression) throws XPathExpressionException {
-        return evalNodeMany(xpath, cda, xpathExpression).stream().map(Node::getTextContent).toList();
-    }
-
-    private static @NonNull String eval(XPath xpath, Node node, String xpathExpression) throws XPathExpressionException {
-        // XML doesn't handle whitespace, so we need to trim.
-        return xpath.evaluate(xpathExpression, node).trim();
-    }
-
-    private static Node evalNode(XPath xpath, Node node, String xpathExpression) throws XPathExpressionException {
-        return (Node) xpath.evaluate(xpathExpression, node, XPathConstants.NODE);
-    }
-
-    public static PreferredHealthProfessional preferredHealthProfessional(XPath xpath, Document cda) throws XPathExpressionException {
-        var name = eval(xpath, cda, XPaths.preferredHpName);
-        var telecoms = telecomNodesToTelecoms(xpath, evalNodeMany(xpath, cda, XPaths.preferredHpTelecoms));
-        var address = addressNodeToAddress(xpath, evalNode(xpath, cda, XPaths.preferredHpAddress));
+    public static PreferredHealthProfessional preferredHealthProfessional(Document cda) throws XPathExpressionException {
+        var name = xpath.evalString(XPaths.preferredHpName, cda);
+        var telecoms = telecomNodesToTelecoms(xpath.evalNodeSet(XPaths.preferredHpTelecoms,cda));
+        var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress,cda));
 
         return PreferredHealthProfessional.builder()
             .name(Name.fromFullName(name))
@@ -91,23 +61,23 @@ public class FskMapper {
             .build();
     }
 
-    private static Address addressNodeToAddress(XPath xpath, Node addressNode) throws XPathExpressionException {
-        var addressLines = evalMany(xpath, addressNode, "hl7:addressLine");
-        var city = eval(xpath, addressNode, "hl7:city");
-        var postalCode = eval(xpath, addressNode, "hl7:postalCode");
-        var countryCode = eval(xpath, addressNode, "hl7:countryCode");
+    private static Address addressNodeToAddress(Node addressNode) throws XPathExpressionException {
+        var addressLines = xpath.evalNodeSet("hl7:addressLine",addressNode).stream().map(Node::getTextContent).toList();
+        var city =  xpath.evalString("hl7:city",addressNode);
+        var postalCode = xpath.evalString("hl7:postalCode",addressNode);
+        var countryCode = xpath.evalString("hl7:countryCode",addressNode);
         return new Address(addressLines, city, postalCode, countryCode);
     }
 
-    private static List<Telecom> telecomNodesToTelecoms(XPath xpath, List<Node> telecomNodes) throws XPathExpressionException {
+    private static List<Telecom> telecomNodesToTelecoms(List<Node> telecomNodes) throws XPathExpressionException {
         List<Telecom> list = new ArrayList<>();
         for (Node node : telecomNodes) {
-            var reportedUse = eval(xpath, node, "@use");
+            var reportedUse = xpath.evalString("@use",node);
             var telecomUse = Arrays.stream(Telecom.Use.values())
                 .filter(v -> Objects.equals(v.value, reportedUse))
                 .findFirst();
             Telecom build = Telecom.builder()
-                .value(eval(xpath, node, "@value"))
+                .value(xpath.evalString("@value",node))
                 .use(telecomUse.get())
                 .build();
             list.add(build);

@@ -29,7 +29,8 @@
         <module>local-lms-db</module>
         <module>authentication</module>
         <module>job-queue</module>
-        <module>shared</module>
+        <module>base-utils</module>
+        <module>base-utils-test</module>
     </modules>
 
     <properties>
@@ -165,7 +166,12 @@
             </dependency>
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-                <artifactId>shared</artifactId>
+                <artifactId>base-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>base-utils-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
