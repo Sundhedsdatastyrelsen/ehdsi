@@ -1,7 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlNamespaceContract;
+
 ///  A representation of a namespace along with its prefix for use in XML documents.
-public record XmlNamespace(String prefix, String uri) {
+public record XmlNamespace(String prefix, String uri) implements XmlNamespaceContract {
     // This is a list of namespaces used in the project. Its purpose is convenience, to encourage consistency,
     // and to avoid scattering the information around the codebase.
     public static final XmlNamespace AUTH = new XmlNamespace("auth", "http://docs.oasis-open.org/wsfed/authorization/200706");

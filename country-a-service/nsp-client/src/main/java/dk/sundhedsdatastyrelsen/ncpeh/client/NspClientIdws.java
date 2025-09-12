@@ -1,9 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.transform.STRTransform;
 import org.slf4j.Logger;

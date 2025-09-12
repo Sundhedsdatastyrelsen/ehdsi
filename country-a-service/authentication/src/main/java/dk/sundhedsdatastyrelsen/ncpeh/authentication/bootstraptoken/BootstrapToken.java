@@ -2,8 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import org.w3c.dom.Element;
 
 import java.security.cert.CertificateEncodingException;
@@ -129,6 +130,6 @@ public class BootstrapToken {
         var id = "#" + assertion.getAttribute("ID");
         // "Subject" is the second child element, put the signature before that.
         var subject = assertion.getChildNodes().item(1);
-        XmlUtils.sign(assertion, subject, List.of(id), idpCertificate);
+        CertificateUtils.signXml(assertion, subject, List.of(id), idpCertificate);
     }
 }

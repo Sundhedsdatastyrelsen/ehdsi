@@ -1,6 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import org.slf4j.Logger;
 
 import javax.xml.transform.TransformerException;

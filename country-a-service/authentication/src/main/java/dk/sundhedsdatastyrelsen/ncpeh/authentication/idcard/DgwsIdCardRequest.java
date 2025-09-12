@@ -2,9 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -110,7 +111,7 @@ public class DgwsIdCardRequest {
             var issuer = XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST, "Issuer");
             XmlUtils.appendChild(issuer, XmlNamespace.WSA, "Address", ID_CARD_ISSUER);
 
-            XmlUtils.sign(assertion, null, List.of("#IDCard"), certificate);
+            CertificateUtils.signXml(assertion, null, List.of("#IDCard"), certificate);
             return new DgwsIdCardRequest(requestDocument);
         } catch (NoSuchAlgorithmException | CertificateEncodingException e) {
             throw new AuthenticationException("Could not generate DGWS ID card request for STS.", e);
@@ -162,7 +163,7 @@ public class DgwsIdCardRequest {
         try {
             populateEmployeeBody(body, identity, truncatedNow);
 
-            XmlUtils.sign(security, null, List.of("#body", "#ts", "#messageId", "#action"), certificate);
+            CertificateUtils.signXml(security, null, List.of("#body", "#ts", "#messageId", "#action"), certificate);
 //            System.out.println(XmlUtils.writeDocumentToString(document));
             return new DgwsIdCardRequest(document);
         } catch (CertificateEncodingException | AuthenticationException e) {
@@ -254,6 +255,6 @@ public class DgwsIdCardRequest {
         // </Claims>
 
         // This certificate is a different one in the example.
-        XmlUtils.sign(assertion, subject, List.of("#act-as-assertion"), identity.idpCertificate());
+        CertificateUtils.signXml(assertion, subject, List.of("#act-as-assertion"), identity.idpCertificate());
     }
 }

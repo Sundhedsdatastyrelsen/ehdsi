@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.shared;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,8 +49,8 @@ public class XPathWrapper {
         };
     }
 
-    public XPathWrapper(XmlNamespace... namespaces) {
-        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespace::prefix, XmlNamespace::uri)));
+    public XPathWrapper(XmlNamespaceContract... namespaces) {
+        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaceContract::prefix, XmlNamespaceContract::uri)));
     }
 
     private XPath xpath() {

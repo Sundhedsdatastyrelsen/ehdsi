@@ -2,9 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import lombok.Builder;
 import lombok.NonNull;
 import org.w3c.dom.Node;

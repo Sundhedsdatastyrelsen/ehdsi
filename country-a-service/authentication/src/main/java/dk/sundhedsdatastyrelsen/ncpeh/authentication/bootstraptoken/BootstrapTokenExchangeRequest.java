@@ -2,8 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -94,6 +95,6 @@ public class BootstrapTokenExchangeRequest {
     }
 
     private static void signSoapRequest(Element security, CertificateAndKey certificate) throws AuthenticationException {
-        XmlUtils.sign(security, null, List.of("#body", "#ts", "#messageID", "#action"), certificate);
+        CertificateUtils.signXml(security, null, List.of("#body", "#ts", "#messageID", "#action"), certificate);
     }
 }

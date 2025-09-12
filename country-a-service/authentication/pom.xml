@@ -23,5 +23,9 @@
             <version>2.0.17</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>shared</artifactId>
+        </dependency>
     </dependencies>
 </project>
