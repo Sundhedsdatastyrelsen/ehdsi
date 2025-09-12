@@ -33,17 +33,20 @@ import static org.hamcrest.io.FileMatchers.aReadableFile;
 
 class FmkIT {
     private final DataSource lmsDataSource = lmsDataSource();
-
-    private final PrescriptionService prescriptionService = new PrescriptionService(
-        Fmk.FMK_IDWS_ENDPOINT_URI,
-        new SigningCertificate(Fmk.getSigningKey()),
-        undoDispensationRepository(),
-        lmsDataSource,
-        authorizationRegistryClient(),
-        TestIdentities.systemIdentity);
+    private final PrescriptionService prescriptionService = prescriptionService(lmsDataSource);
 
     private static DataSource lmsDataSource() {
         return new SingleConnectionDataSource("jdbc:sqlite:./local-lms-db-it.sqlite", true);
+    }
+
+    private static PrescriptionService prescriptionService(DataSource lmsDataSource) {
+        return new PrescriptionService(
+            Fmk.FMK_IDWS_ENDPOINT_URI,
+            new SigningCertificate(Fmk.getSigningKey()),
+            undoDispensationRepository(),
+            lmsDataSource,
+            authorizationRegistryClient(),
+            TestIdentities.systemIdentity);
     }
 
     @BeforeAll
@@ -181,24 +184,14 @@ class FmkIT {
     /// prescription ID and CPR here, find all the env vars, and run.
     public static void main(String[] args) throws Exception {
         var cpr = "1111111118";
-        var prescriptionId = "495357586367021";
+        var prescriptionId = "495358286669021";
         var token = Sosi.getToken();
         var eDispensation = Utils.readXmlDocument(
             DISPENSATION_CDA.replaceAll(DISPENSATION_CDA_CPR, cpr)
                 .replaceAll(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId));
 
-        var ds = lmsDataSource();
-        if (new DataProvider(ds).lastImport().isEmpty()) {
-            LocalLmsLoader.fetchData(lmsServerInfo(), ds);
-        }
-
-        var prescriptionService = new PrescriptionService(
-            Fmk.FMK_IDWS_ENDPOINT_URI,
-            new SigningCertificate(Fmk.getSigningKey()),
-            undoDispensationRepository(),
-            ds,
-            authorizationRegistryClient(),
-            TestIdentities.systemIdentity);
+        initialiseLmsData();
+        var prescriptionService = prescriptionService(lmsDataSource());
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
