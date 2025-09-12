@@ -183,7 +183,7 @@ class FmkIT {
     /// For manual testing of dispensations. Go to FMK and create a prescription for 100 pinex on someone. Copy
     /// prescription ID and CPR here, find all the env vars, and run.
     public static void main(String[] args) throws Exception {
-        var cpr = "1111111118";
+        var cpr = "1903098089";
         var prescriptionId = "495358286669021";
         var token = Sosi.getToken();
         var eDispensation = Utils.readXmlDocument(
