@@ -65,7 +65,7 @@ public class XPathWrapper {
     }
 
     public String evalString(String expression, Object item) throws XPathExpressionException {
-        return xpath().evaluate(expression, item);
+        return xpath().evaluate(expression, item).trim();
     }
 
     public Node evalNode(String expression, Object item) throws XPathExpressionException {
