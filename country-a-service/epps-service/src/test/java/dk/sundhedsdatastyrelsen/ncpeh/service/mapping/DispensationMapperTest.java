@@ -7,6 +7,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -248,11 +249,13 @@ class DispensationMapperTest {
 
     @Test
     void packageIdTest() throws Exception {
+        XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7,XmlNamespace.PHARM);
+
         {
             var packageId = DispensationMapper.packageId(testDispensationCda("dispensations/PlRequest1.xml"));
             assertThat(packageId, is(notNullValue()));
-            assertThat(DispensationMapper.eval(packageId, "@code"), is("05909990773541"));
-            assertThat(DispensationMapper.eval(packageId, "@codeSystem"), is("1.3.160"));
+            assertThat(xpath.evalString("@code", packageId), is("05909990773541"));
+            assertThat(xpath.evalString("@codeSystem", packageId), is("1.3.160"));
         }
         {
             var packageId = DispensationMapper.packageId(testDispensationCda("dispensations/CzRequest3.xml"));
@@ -261,8 +264,8 @@ class DispensationMapperTest {
         {
             var packageId = DispensationMapper.packageId(testDispensationCda("dispensations/dispensation2.xml"));
             assertThat(packageId, is(notNullValue()));
-            assertThat(DispensationMapper.eval(packageId, "@code"), is("492285"));
-            assertThat(DispensationMapper.eval(packageId, "@codeSystem"), is("2.16.17.710.802.1000.990.1.20.2"));
+            assertThat(xpath.evalString("@code", packageId), is("492285"));
+            assertThat(xpath.evalString("@codeSystem", packageId), is("2.16.17.710.802.1000.990.1.20.2"));
         }
     }
 
