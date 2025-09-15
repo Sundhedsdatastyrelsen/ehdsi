@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -9,10 +10,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 public class Utils {
-    private Utils() {
-    }
+    private Utils() {}
 
     /**
      * Convert an TS.EPSOS.TZ Time Stamp to XMLGregorianCalender
@@ -49,5 +50,29 @@ public class Utils {
      */
     public static XMLGregorianCalendar xmlGregorianCalendar(LocalDate date) {
         return xmlGregorianCalendar(date.atStartOfDay(ZoneId.of("Z")));
+    }
+
+    /// Parse a positive (non-zero) decimal number. Return "empty" on errors, otherwise the number.
+    public static Optional<BigDecimal> safeParsePositiveBigDecimal(String s) {
+        if (s == null || s.isBlank()) return Optional.empty();
+        try {
+            var value = new BigDecimal(s);
+            if (value.compareTo(BigDecimal.ZERO) <= 0) return Optional.empty();
+            return Optional.of(value);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    /// Parse a positive (non-zero) integer. Return "empty" on errors, otherwise the integer.
+    public static Optional<Integer> safeParsePositiveInt(String s) {
+        if (s == null) return Optional.empty();
+        try {
+            var value = Integer.parseInt(s);
+            if (value <= 0) return Optional.empty();
+            return Optional.of(value);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 }

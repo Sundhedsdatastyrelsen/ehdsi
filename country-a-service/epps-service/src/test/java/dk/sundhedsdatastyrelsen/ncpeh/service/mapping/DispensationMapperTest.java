@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DispensationMapperTest {
     Document testDispensationCda(String xmlFileName) {
@@ -84,17 +85,20 @@ class DispensationMapperTest {
         var cda = testDispensationCda(xmlFileName);
         var person = DispensationMapper.authorPerson(cda);
 
-        Assertions.assertNotNull(person.getPersonIdentifier());
-        Assertions.assertEquals("CPR", person.getPersonIdentifier().getSource());
-        Assertions.assertEquals("3001010033", person.getPersonIdentifier().getValue());
+        assertThat(
+            "FMK validates the modifier heavily. It must be of type OtherPerson and ID must be there, with an " +
+                "empty value and source 'Udenlandsk'. They take the ID from the XUA IDWS header. This is not specified " +
+                "anywhere yet, I think, but was discovered while both teams worked on this.",
+            person.getPersonIdentifier(),
+            is(not(nullValue())));
+        assertThat(person.getPersonIdentifier().getValue(), is(nullValue()));
+        assertThat(person.getPersonIdentifier().getSource(), is("Udenlandsk"));
 
-        Assertions.assertFalse(person.getName().getGivenName().isBlank());
-        Assertions.assertEquals("TOMÁŠ", person.getName().getGivenName());
+        assertThat(person.getName().getGivenName(), is("TOMÁŠ"));
 
-        Assertions.assertFalse(person.getName().getSurname().isBlank());
-        Assertions.assertEquals("HRABÁČEK", person.getName().getSurname());
+        assertThat(person.getName().getSurname(), is("HRABÁČEK"));
 
-        Assertions.assertNull(person.getName().getMiddleName());
+        assertThat(person.getName().getMiddleName(), is(nullValue()));
     }
 
     @Test
@@ -170,14 +174,19 @@ class DispensationMapperTest {
 
     @Test
     void packageQuantityTest() throws Exception {
-
-        var xmlFileName = "dispensations/CzRequest1.xml";
-
-        var cda = testDispensationCda(xmlFileName);
-
-        var q = DispensationMapper.packageQuantity(cda);
-
-        Assertions.assertEquals(1, q);
+        // value = 1
+        var q = DispensationMapper.packageQuantity(testDispensationCda("dispensations/CzRequest1.xml"));
+        assertThat(q, is(1));
+        // negative integer is invalid value
+        var ex1 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageQuantity(testDispensationCda("dispensations/dispensation_bad_1.xml")));
+        assertThat(ex1.getMessage(), containsString("must be a positive integer"));
+        // decimal value is invalid value
+        var ex2 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageQuantity((testDispensationCda("dispensations/dispensation_bad_2.xml"))));
+        assertThat(ex2.getMessage(), containsString("must be a positive integer"));
     }
 
     @Test
@@ -194,6 +203,17 @@ class DispensationMapperTest {
         // funny namespace
         var s4 = DispensationMapper.packageSize(testDispensationCda("dispensations/CzRequest3.xml"));
         assertThat(s4.getPackageSizeText(), is("100 units"));
+        // zero is invalid value
+        var ex1 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageSize(testDispensationCda("dispensations/dispensation_bad_1.xml")));
+        assertThat(ex1.getMessage(), containsString("must be a positive number"));
+        // negative number is invalid value
+        var ex2 = assertThrows(
+            MapperException.class, () ->
+                DispensationMapper.packageSize(testDispensationCda("dispensations/dispensation_bad_2.xml")));
+        assertThat(ex2.getMessage(), containsString("must be a positive number"));
+
     }
 
     @Test

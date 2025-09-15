@@ -211,10 +211,13 @@ public class DispensationMapper {
         return ModificatorPersonType.builder()
             .withName()
             .withSurname(familyNames.getLast())
-            .withGivenName(allButLastName).end()
-            // without the following ID the FMK request fails with:
-            // Identifier anvendt i certifikatet CPR:3001010033 stemmer ikke overens med identifier i modifikator-elementet (CreatedBy/ModifiedBy/...) CPR:null
-            .withPersonIdentifier().withSource("CPR").withValue("3001010033").end()
+            .withGivenName(allButLastName)
+            .end()
+            // FMK's undo requires personidentifier to not be null, but it can't have a value, so this is what has been
+            // agreed with them to work. See FmkIT for where we test it.
+            .withPersonIdentifier()
+            .withSource("Udenlandsk")
+            .end()
             .build();
     }
 
@@ -331,7 +334,9 @@ public class DispensationMapper {
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        return Integer.parseInt(xpath.evalString("@value", node));
+        var value = xpath.evalString("@value", node);
+        return Utils.safeParsePositiveInt(value)
+            .orElseThrow(() -> new MapperException("Package quantity must be a positive integer, was: %s".formatted(value)));
     }
 
     static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
@@ -528,8 +533,11 @@ public class DispensationMapper {
             // information is available within the national infrastructure, the originalText element can be used to
             // add additional information[...]"
             // https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
-            var value = xpath.evalString("@value", node);
             var unit = xpath.evalString("@unit", node);
+            var rawValue = xpath.evalString("@value", node);
+            var value = Utils.safeParsePositiveBigDecimal(rawValue)
+                .orElseThrow(() -> new MapperException("Content quantity must be a positive number, was %s".formatted(rawValue)));
+
             String unitText;
             if ("1".equals(unit)) {
                 var originalText = xpath.evalString("hl7:translation/hl7:originalText", cda);
