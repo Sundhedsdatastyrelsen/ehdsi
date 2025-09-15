@@ -34,6 +34,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Class for mapping eDispensation CDAs to FMK requests.
  */
@@ -250,7 +252,7 @@ public class DispensationMapper {
     }
 
     static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
-        var addressLines = xpath.evalStringList(XPaths.authorOrgAddressLine, cda);
+        var addressLines = new ArrayList<>(xpath.evalStringList(XPaths.authorOrgAddressLine, cda)); //Enforce a mutable list since we expand it
         var postalCode = xpath.evalString(XPaths.authorOrgPostalCode, cda);
         var city = xpath.evalString(XPaths.authorOrgCity, cda);
         var state = xpath.evalString(XPaths.authorOrgState, cda);
@@ -274,7 +276,6 @@ public class DispensationMapper {
             if (t.startsWith("mailto:")) email = t.substring(7);
         }
 
-        //TODO CFB GOT TO HERE
         var name = xpath.evalString(XPaths.authorOrgName, cda);
         var b = OrganisationType.builder()
             .withIdentifier(placeholderPharmacyId())
@@ -540,7 +541,7 @@ public class DispensationMapper {
 
             String unitText;
             if ("1".equals(unit)) {
-                var originalText = xpath.evalString("hl7:translation/hl7:originalText", cda);
+                var originalText = xpath.evalString("hl7:translation/hl7:originalText", node);
                 unitText = StringUtils.isEmpty(originalText) ? "units" : originalText;
             } else {
                 unitText = unit;
