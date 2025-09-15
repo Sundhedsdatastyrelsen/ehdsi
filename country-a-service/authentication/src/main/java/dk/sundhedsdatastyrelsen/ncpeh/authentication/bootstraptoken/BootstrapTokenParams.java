@@ -40,7 +40,7 @@ public record BootstrapTokenParams(
 
     public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, CertificateAndKey idpCert, String audience, String issuer) throws AuthenticationException {
         try {
-            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
+            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodeList("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
                 // Workaround for SOSI STS bugs/eHDSI IDWS XUA Token Profile bugs:
                 //  - The STS requires that all element values have xsi:type="CE".  That is not a requirement in eHDSI,
@@ -49,7 +49,7 @@ public record BootstrapTokenParams(
                 .map(e -> {
                     try {
                         // match all element-children (i.e. not text nodes) of AttributeValue
-                        var valueElement = xpath.evalEl("./saml:AttributeValue/*", e);
+                        var valueElement = xpath.evalElement("./saml:AttributeValue/*", e);
                         if (valueElement != null) {
                             // xsi:type="CE" is what the Dynamic Request Generator uses
                             XmlUtils.setAttribute(valueElement, XmlNamespace.XSI, "type", "CE");

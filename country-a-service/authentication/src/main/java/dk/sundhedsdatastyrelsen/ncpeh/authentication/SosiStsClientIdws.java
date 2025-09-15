@@ -56,7 +56,7 @@ public class SosiStsClientIdws {
             var document = XmlUtils.parse(result);
 
             // Was it an error response?
-            var fault = xpath.evalEl("/soap:Envelope/soap:Body/soap:Fault", document);
+            var fault = xpath.evalElement("/soap:Envelope/soap:Body/soap:Fault", document);
             if (fault != null) {
                 throw new AuthenticationException.SosiStsException(
                     xpath.evalString("faultcode", fault),
@@ -66,12 +66,12 @@ public class SosiStsClientIdws {
             }
 
             // Otherwise we assume it was a success
-            var requestSecurityTokenResponse = xpath.evalEl(
+            var requestSecurityTokenResponse = xpath.evalElement(
                 "/soap:Envelope/soap:Body/wst13:RequestSecurityTokenResponseCollection" +
                     "/wst13:RequestSecurityTokenResponse",
                 document);
 
-            var assertion = xpath.evalEl("wst13:RequestedSecurityToken/saml:Assertion", requestSecurityTokenResponse);
+            var assertion = xpath.evalElement("wst13:RequestedSecurityToken/saml:Assertion", requestSecurityTokenResponse);
             var created = xpath.evalString("wst13:Lifetime/wsu:Created", requestSecurityTokenResponse);
             var expires = xpath.evalString("wst13:Lifetime/wsu:Expires", requestSecurityTokenResponse);
             var audience = xpath.evalString("wsp:AppliesTo/wsa:EndpointReference/wsa:Address", requestSecurityTokenResponse);

@@ -30,8 +30,8 @@ public record OpenNcpAssertions(
     public static OpenNcpAssertions fromSoapHeader(String soapHeader) throws AuthenticationException {
         try {
             var doc = XmlUtils.parse(soapHeader);
-            var hcpAssertion = xpath.evalEl("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:hcp']]", doc);
-            var trcAssertion = xpath.evalEl("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:trc']]", doc);
+            var hcpAssertion = xpath.evalElement("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:hcp']]", doc);
+            var trcAssertion = xpath.evalElement("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:trc']]", doc);
 
             if (trcAssertion == null) {
                 throw new AuthenticationException("Missing TRC assertion. Cannot generate bootstrap token.");

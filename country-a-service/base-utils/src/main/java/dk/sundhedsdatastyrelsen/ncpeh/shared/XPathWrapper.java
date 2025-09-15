@@ -72,18 +72,18 @@ public class XPathWrapper {
         return (Node) xpath().evaluate(expression, item, XPathConstants.NODE);
     }
 
-    public Element evalEl(String expression, Object item) throws XPathExpressionException {
+    public Element evalElement(String expression, Object item) throws XPathExpressionException {
         return (Element) evalNode(expression, item);
     }
 
-    public List<Node> evalNodeSet(String expression, Object item) throws XPathExpressionException {
+    public List<Node> evalNodeList(String expression, Object item) throws XPathExpressionException {
         var nodeList = (NodeList) xpath().evaluate(expression, item, XPathConstants.NODESET);
         return IntStream.range(0, nodeList.getLength())
             .mapToObj(nodeList::item)
             .toList();
     }
 
-    public List<String> evalStringSet(String expression, Object item) throws XPathExpressionException {
-        return evalNodeSet(expression, item).stream().map(Node::getTextContent).toList();
+    public List<String> evalStringList(String expression, Object item) throws XPathExpressionException {
+        return evalNodeList(expression, item).stream().map(Node::getTextContent).toList();
     }
 }

@@ -201,8 +201,8 @@ public class DispensationMapper {
     static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7,XmlNamespace.PHARM);
 
     static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
-        var familyNames = xpath.evalStringSet(XPaths.authorFamilyName, cda);
-        var givenNames = xpath.evalStringSet(XPaths.authorGivenName,cda);
+        var familyNames = xpath.evalStringList(XPaths.authorFamilyName, cda);
+        var givenNames = xpath.evalStringList(XPaths.authorGivenName,cda);
         var allButLastName = Stream.concat(
                 givenNames.stream(),
                 familyNames.subList(0, familyNames.size() - 1).stream())
@@ -246,7 +246,7 @@ public class DispensationMapper {
     }
 
     static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
-        var addressLines = xpath.evalStringSet(XPaths.authorOrgAddressLine,cda);
+        var addressLines = xpath.evalStringList(XPaths.authorOrgAddressLine,cda);
         var postalCode = xpath.evalString(XPaths.authorOrgPostalCode,cda);
         var city = xpath.evalString(XPaths.authorOrgCity,cda);
         var state = xpath.evalString(XPaths.authorOrgState,cda);
@@ -258,7 +258,7 @@ public class DispensationMapper {
 
         String email = null;
         String telephone = null;
-        var telecoms = xpath.evalNodeSet(XPaths.authorOrgTelecom,cda)
+        var telecoms = xpath.evalNodeList(XPaths.authorOrgTelecom,cda)
             .stream()
             .map(node -> node.getAttributes().getNamedItem("value"))
             .filter(Objects::nonNull)
@@ -363,7 +363,7 @@ public class DispensationMapper {
     }
 
     static SubstancesType substances(Document cda) throws XPathExpressionException {
-        var ingredientNodes = xpath.evalNodeSet(XPaths.activeIngredients,cda);
+        var ingredientNodes = xpath.evalNodeList(XPaths.activeIngredients,cda);
         if (ingredientNodes.isEmpty()) {
             return null;
         }
@@ -485,7 +485,7 @@ public class DispensationMapper {
         var atcDisplayName = xpath.evalString(XPaths.atcCode + "/@displayName", cda);
 
         var ingredients = new ArrayList<String>();
-        for (var node : xpath.evalNodeSet(XPaths.activeIngredients, cda)) {
+        for (var node : xpath.evalNodeList(XPaths.activeIngredients, cda)) {
             ingredients.add(xpath.evalString("pharm:ingredientSubstance/pharm:name", node));
         }
 

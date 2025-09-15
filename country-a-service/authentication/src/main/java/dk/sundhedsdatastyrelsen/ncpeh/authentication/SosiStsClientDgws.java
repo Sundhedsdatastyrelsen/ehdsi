@@ -38,7 +38,7 @@ public class SosiStsClientDgws {
             var document = XmlUtils.parse(result);
 
             // Was it an error response?
-            var fault = xpath.evalEl("/soap:Envelope/soap:Body/soap:Fault", document);
+            var fault = xpath.evalElement("/soap:Envelope/soap:Body/soap:Fault", document);
             if (fault != null) {
                 throw new AuthenticationException.SosiStsException(
                     xpath.evalString("faultcode", fault),
@@ -49,7 +49,7 @@ public class SosiStsClientDgws {
 
             // Otherwise we assume it was a success
             return new DgwsAssertion(
-                xpath.evalEl(
+                xpath.evalElement(
                     "//*[@id='IDCard']",
                     document));
         } catch (XPathExpressionException e) {

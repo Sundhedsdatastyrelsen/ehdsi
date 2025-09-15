@@ -62,7 +62,7 @@ public class NspClientDgws {
                 if (res.statusCode() >= 400) {
                     throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
                 }
-                return xpath.evalEl("/soap:Envelope/soap:Body/*[1]", responseDoc);
+                return xpath.evalElement("/soap:Envelope/soap:Body/*[1]", responseDoc);
             }
         } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException e) {
             throw new NspClientException("Nsp call failed.", e);

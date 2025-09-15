@@ -83,7 +83,7 @@ public class NspClientIdws {
             if (res.statusCode() >= 400) {
                 throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
             }
-            return (Element) xpath.evalEl("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
+            return (Element) xpath.evalElement("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
         }
     }
 
