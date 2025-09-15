@@ -18,13 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper.splitUniqueIdToRepositoryIdAndDocumentId;
 
 @Slf4j
 @Service
@@ -130,21 +129,5 @@ public class InformationCardService {
         }
     }
 
-    private static Tuple<String, String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId) {
-        //We assume the documentId follows this format: 1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d
-        //We extract the document ID using regex capture groups to ensure that the format is correct
-        String documentIdFormatRegex = "^(\\d+(?:\\.\\d+)+)\\^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$";
-
-        Pattern documentIdFormatPattern = Pattern.compile(documentIdFormatRegex);
-        Matcher documentIdFormatMatcher = documentIdFormatPattern.matcher(uniqueDocumentId);
-
-        if(documentIdFormatMatcher.find() && documentIdFormatMatcher.groupCount() == 2){
-            String oid = documentIdFormatMatcher.group(1);
-            String uuid = documentIdFormatMatcher.group(2);
-            return new Tuple<>(oid, uuid); //Repository ID, Local document ID
-        } else {
-            throw new IllegalArgumentException(String.format("Cannot parse uniqueDocumentId: %s", uniqueDocumentId));
-        }
-    }
 
 }

@@ -8,12 +8,15 @@ import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.yaml.snakeyaml.util.Tuple;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class for mapping FSK information card CDAs to the data needed in the patient summary.
@@ -80,5 +83,21 @@ public class FskMapper {
             list.add(build);
         }
         return list;
+    }
+    public static Tuple<String, String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId) {
+        //We assume the documentId follows this format: 1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d
+        //We extract the document ID using regex capture groups to ensure that the format is correct
+        String documentIdFormatRegex = "^([\\d.]+)\\^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$";
+
+        Pattern documentIdFormatPattern = Pattern.compile(documentIdFormatRegex);
+        Matcher documentIdFormatMatcher = documentIdFormatPattern.matcher(uniqueDocumentId);
+
+        if(documentIdFormatMatcher.find() && documentIdFormatMatcher.groupCount() == 2){
+            String oid = documentIdFormatMatcher.group(1);
+            String uuid = documentIdFormatMatcher.group(2);
+            return new Tuple<>(oid, uuid); //Repository ID, Local document ID
+        } else {
+            throw new IllegalArgumentException(String.format("Cannot parse uniqueDocumentId: %s", uniqueDocumentId));
+        }
     }
 }
