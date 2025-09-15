@@ -65,26 +65,63 @@ public class XPathWrapper {
         return xpath;
     }
 
+    /**
+     * Locates and evaluates the content of a node to a string. Trims the string after extraction.
+     * @param expression The XPath expression linking to the node to be evaluated
+     * @param item The XML object that needs to be traversed
+     * @return The node value as a string (using the XPath function evaluate)
+     * @throws XPathExpressionException if the expression cannot be evaluated by XPath
+     */
     public String evalString(String expression, Object item) throws XPathExpressionException {
         return xpath().evaluate(expression, item).trim();
     }
 
+    /**
+     * Locates and returns a node in an XML.
+     * @param expression The XPath expression describing the location of the node
+     * @param item The XML object that needs to be traversed
+     * @return The node located
+     * @throws XPathExpressionException if the expression cannot be evaluated by XPath
+     */
     public Node evalNode(String expression, Object item) throws XPathExpressionException {
         return (Node) xpath().evaluate(expression, item, XPathConstants.NODE);
     }
 
+    /**
+     * Locates and returns a node, cast as an Element, in an XML.
+     * @param expression The XPath expression describing the location of the node
+     * @param item The XML object that needs to be traversed
+     * @return The node located
+     * @throws XPathExpressionException if the expression cannot be evaluated by XPath
+     */
     public Element evalElement(String expression, Object item) throws XPathExpressionException {
         return (Element) evalNode(expression, item);
     }
 
-    public List<Node> evalNodeList(String expression, Object item) throws XPathExpressionException {
+    /**
+     * Locates and return an XPath NodeSet as a List of Nodes
+     * @param expression The XPath expression describing the location of the nodes
+     * @param item The XML object that needs to be traversed
+     * @return A NodeSet mapped to an unmodifiable list
+     * @throws XPathExpressionException if the expression cannot be evaluated by XPath
+     */
+    public List<Node> evalNodes(String expression, Object item) throws XPathExpressionException {
         var nodeList = (NodeList) xpath().evaluate(expression, item, XPathConstants.NODESET);
         return IntStream.range(0, nodeList.getLength())
             .mapToObj(nodeList::item)
             .toList();
     }
 
-    public List<String> evalStringList(String expression, Object item) throws XPathExpressionException {
-        return evalNodeList(expression, item).stream().map(Node::getTextContent).toList();
+    /**
+     * Locates and returns the text content values of an XPath Nodeset as a list of strings.
+     * The text content is acquired using XPath Node objects getTextContent method.
+     * The text content is trimmed.
+     * @param expression The XPath expression describing the location of the nodes
+     * @param item The XML object that needs to be traversed
+     * @return A NodeSets text content as an unmodifiable list
+     * @throws XPathExpressionException if the expression cannot be evaluated by XPath
+     */
+    public List<String> evalStrings(String expression, Object item) throws XPathExpressionException {
+        return evalNodes(expression, item).stream().map(Node::getTextContent).map(String::trim).toList();
     }
 }

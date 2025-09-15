@@ -40,7 +40,7 @@ public record BootstrapTokenParams(
 
     public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, CertificateAndKey idpCert, String audience, String issuer) throws AuthenticationException {
         try {
-            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodeList("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
+            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
                 // Workaround for SOSI STS bugs/eHDSI IDWS XUA Token Profile bugs:
                 //  - The STS requires that all element values have xsi:type="CE".  That is not a requirement in eHDSI,
