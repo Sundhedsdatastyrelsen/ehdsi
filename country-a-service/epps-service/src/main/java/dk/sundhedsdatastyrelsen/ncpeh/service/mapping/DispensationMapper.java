@@ -198,11 +198,12 @@ public class DispensationMapper {
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
-    static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7,XmlNamespace.PHARM);
+
+    static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.PHARM);
 
     static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
         var familyNames = xpath.evalStringList(XPaths.authorFamilyName, cda);
-        var givenNames = xpath.evalStringList(XPaths.authorGivenName,cda);
+        var givenNames = xpath.evalStringList(XPaths.authorGivenName, cda);
         var allButLastName = Stream.concat(
                 givenNames.stream(),
                 familyNames.subList(0, familyNames.size() - 1).stream())
@@ -218,8 +219,8 @@ public class DispensationMapper {
     }
 
     static String authorRole(Document cda) throws XPathExpressionException {
-        var functionCode = xpath.evalString(XPaths.authorFunctionCode,cda);
-        var functionCodeSystem = xpath.evalString(XPaths.authorFunctionCodeSystem,cda);
+        var functionCode = xpath.evalString(XPaths.authorFunctionCode, cda);
+        var functionCodeSystem = xpath.evalString(XPaths.authorFunctionCodeSystem, cda);
         if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             // The "official" translation of "Pharmacists" from ISCO is "Apoteker", but FMK validates this
             // and compares it with the soap header role. And they translate that as "Udenlandsk apoteker",
@@ -246,11 +247,11 @@ public class DispensationMapper {
     }
 
     static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
-        var addressLines = xpath.evalStringList(XPaths.authorOrgAddressLine,cda);
-        var postalCode = xpath.evalString(XPaths.authorOrgPostalCode,cda);
-        var city = xpath.evalString(XPaths.authorOrgCity,cda);
-        var state = xpath.evalString(XPaths.authorOrgState,cda);
-        var country = xpath.evalString(XPaths.authorOrgCountry,cda);
+        var addressLines = xpath.evalStringList(XPaths.authorOrgAddressLine, cda);
+        var postalCode = xpath.evalString(XPaths.authorOrgPostalCode, cda);
+        var city = xpath.evalString(XPaths.authorOrgCity, cda);
+        var state = xpath.evalString(XPaths.authorOrgState, cda);
+        var country = xpath.evalString(XPaths.authorOrgCountry, cda);
         if (notBlank(postalCode)) addressLines.add(postalCode);
         if (notBlank(city)) addressLines.add(city);
         if (notBlank(state)) addressLines.add(state);
@@ -258,7 +259,7 @@ public class DispensationMapper {
 
         String email = null;
         String telephone = null;
-        var telecoms = xpath.evalNodeList(XPaths.authorOrgTelecom,cda)
+        var telecoms = xpath.evalNodeList(XPaths.authorOrgTelecom, cda)
             .stream()
             .map(node -> node.getAttributes().getNamedItem("value"))
             .filter(Objects::nonNull)
@@ -271,7 +272,7 @@ public class DispensationMapper {
         }
 
         //TODO CFB GOT TO HERE
-        var name = xpath.evalString(XPaths.authorOrgName,cda);
+        var name = xpath.evalString(XPaths.authorOrgName, cda);
         var b = OrganisationType.builder()
             .withIdentifier(placeholderPharmacyId())
             .withName(StringUtils.isBlank(name) ? "(ukendt)" : name)
@@ -289,12 +290,12 @@ public class DispensationMapper {
     }
 
     public static long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
-        var id = xpath.evalNode(XPaths.inFulfillmentOfId,cda);
-        var root = xpath.evalString("@root",id);
+        var id = xpath.evalNode(XPaths.inFulfillmentOfId, cda);
+        var root = xpath.evalString("@root", id);
         if (!Oid.DK_FMK_PRESCRIPTION.value.equals(root)) {
             throw new MapperException("Unknown prescription id type: " + root);
         }
-        var ext = xpath.evalString("@extension",id);
+        var ext = xpath.evalString("@extension", id);
         try {
             return Long.parseLong(ext);
         } catch (NumberFormatException e) {
@@ -325,16 +326,16 @@ public class DispensationMapper {
     }
 
     static Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
-        var node = xpath.evalNode(XPaths.packageQuantity,cda);
-        var unit = xpath.evalString("@unit",node);
+        var node = xpath.evalNode(XPaths.packageQuantity, cda);
+        var unit = xpath.evalString("@unit", node);
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        return Integer.parseInt(xpath.evalString("@value",node));
+        return Integer.parseInt(xpath.evalString("@value", node));
     }
 
     static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
-        var effectiveTime = xpath.evalString(XPaths.effectiveTime,cda);
+        var effectiveTime = xpath.evalString(XPaths.effectiveTime, cda);
         var drug = drug(cda);
 
         return CreatePharmacyEffectuationType.builder()
@@ -363,13 +364,13 @@ public class DispensationMapper {
     }
 
     static SubstancesType substances(Document cda) throws XPathExpressionException {
-        var ingredientNodes = xpath.evalNodeList(XPaths.activeIngredients,cda);
+        var ingredientNodes = xpath.evalNodeList(XPaths.activeIngredients, cda);
         if (ingredientNodes.isEmpty()) {
             return null;
         }
         var b = SubstancesType.builder();
         for (var node : ingredientNodes) {
-            var substanceName = xpath.evalString("pharm:ingredientSubstance/pharm:name",node);
+            var substanceName = xpath.evalString("pharm:ingredientSubstance/pharm:name", node);
             if (StringUtils.isNotBlank(substanceName)) {
                 b.addActiveSubstance().withFreeText(substanceName);
             } else {
@@ -410,7 +411,7 @@ public class DispensationMapper {
     }
 
     static ATCType atc(Document cda) throws XPathExpressionException {
-        var node = xpath.evalNode(XPaths.atcCode,cda);
+        var node = xpath.evalNode(XPaths.atcCode, cda);
         if (node == null) {
             return null;
         }
@@ -477,7 +478,7 @@ public class DispensationMapper {
             xpath.evalString("@code", packageIdNode),
             xpath.evalString("@codeSystem", packageIdNode));
 
-        var drugFormDisplayName = xpath.evalString(XPaths.drugFormCodeDisplayName,cda);
+        var drugFormDisplayName = xpath.evalString(XPaths.drugFormCodeDisplayName, cda);
         var drugForm = StringUtils.isBlank(drugFormDisplayName)
             ? "no form information"
             : drugFormDisplayName;

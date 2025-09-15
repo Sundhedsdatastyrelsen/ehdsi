@@ -20,7 +20,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class FskMapper {
-    static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7,XmlNamespace.SDTC);
+    static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.SDTC);
+
     private FskMapper() {
     }
 
@@ -44,8 +45,8 @@ public class FskMapper {
 
     public static PreferredHealthProfessional preferredHealthProfessional(Document cda) throws XPathExpressionException {
         var name = xpath.evalString(XPaths.preferredHpName, cda);
-        var telecoms = telecomNodesToTelecoms(xpath.evalNodeList(XPaths.preferredHpTelecoms,cda));
-        var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress,cda));
+        var telecoms = telecomNodesToTelecoms(xpath.evalNodeList(XPaths.preferredHpTelecoms, cda));
+        var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress, cda));
 
         return PreferredHealthProfessional.builder()
             .name(Name.fromFullName(name))
@@ -55,22 +56,25 @@ public class FskMapper {
     }
 
     private static Address addressNodeToAddress(Node addressNode) throws XPathExpressionException {
-        var addressLines = xpath.evalNodeList("hl7:addressLine",addressNode).stream().map(Node::getTextContent).toList();
-        var city =  xpath.evalString("hl7:city",addressNode);
-        var postalCode = xpath.evalString("hl7:postalCode",addressNode);
-        var countryCode = xpath.evalString("hl7:countryCode",addressNode);
+        var addressLines = xpath.evalNodeList("hl7:addressLine", addressNode)
+            .stream()
+            .map(Node::getTextContent)
+            .toList();
+        var city = xpath.evalString("hl7:city", addressNode);
+        var postalCode = xpath.evalString("hl7:postalCode", addressNode);
+        var countryCode = xpath.evalString("hl7:countryCode", addressNode);
         return new Address(addressLines, city, postalCode, countryCode);
     }
 
     private static List<Telecom> telecomNodesToTelecoms(List<Node> telecomNodes) throws XPathExpressionException {
         List<Telecom> list = new ArrayList<>();
         for (Node node : telecomNodes) {
-            var reportedUse = xpath.evalString("@use",node);
+            var reportedUse = xpath.evalString("@use", node);
             var telecomUse = Arrays.stream(Telecom.Use.values())
                 .filter(v -> Objects.equals(v.value, reportedUse))
                 .findFirst();
             Telecom build = Telecom.builder()
-                .value(xpath.evalString("@value",node))
+                .value(xpath.evalString("@value", node))
                 .use(telecomUse.get())
                 .build();
             list.add(build);

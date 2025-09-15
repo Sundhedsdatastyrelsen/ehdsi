@@ -9,5 +9,5 @@ public record XmlNamespace(String prefix, String uri) implements XmlNamespaceCon
     public static final XmlNamespace SDTC = new XmlNamespace("sdtc", "urn:hl7-org:sdtc");
 
     //Dispensation
-    public static final XmlNamespace PHARM = new XmlNamespace("pharm","urn:hl7-org:pharm");
+    public static final XmlNamespace PHARM = new XmlNamespace("pharm", "urn:hl7-org:pharm");
 }

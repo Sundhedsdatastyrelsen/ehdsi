@@ -43,7 +43,7 @@ public class XmlUtils {
      * @param xml the XML InputStream to parse
      * @return the parsed Document
      * @throws XmlException if parsing fails
-     * @throws IOException             if I/O error occurs
+     * @throws IOException  if I/O error occurs
      */
     public static Document parse(InputStream xml) throws XmlException, IOException {
         try (xml) {
@@ -201,4 +201,4 @@ public class XmlUtils {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
     }
 
-    }
+}

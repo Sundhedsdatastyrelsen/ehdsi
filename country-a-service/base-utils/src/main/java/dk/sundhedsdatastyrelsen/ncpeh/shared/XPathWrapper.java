@@ -50,7 +50,8 @@ public class XPathWrapper {
     }
 
     public XPathWrapper(XmlNamespaceContract... namespaces) {
-        this(Arrays.stream(namespaces).collect(Collectors.toMap(XmlNamespaceContract::prefix, XmlNamespaceContract::uri)));
+        this(Arrays.stream(namespaces)
+            .collect(Collectors.toMap(XmlNamespaceContract::prefix, XmlNamespaceContract::uri)));
     }
 
     private XPath xpath() {
