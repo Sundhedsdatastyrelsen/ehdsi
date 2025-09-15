@@ -1,5 +1,5 @@
-import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
-import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
