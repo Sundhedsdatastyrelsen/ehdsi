@@ -1,11 +1,17 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
-import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespaceContract;
-
-///  A representation of a namespace along with its prefix for use in XML documents.
-public record XmlNamespace(String prefix, String uri) implements XmlNamespaceContract {
+public record XmlNamespace(String prefix, String uri) {
     // This is a list of namespaces used in the project. Its purpose is convenience, to encourage consistency,
     // and to avoid scattering the information around the codebase.
+    public static final XmlNamespace HL7 = new XmlNamespace("hl7", "urn:hl7-org:v3");
+
+    /// FSK
+    public static final XmlNamespace SDTC = new XmlNamespace("sdtc", "urn:hl7-org:sdtc");
+
+    /// Dispensation
+    public static final XmlNamespace PHARM = new XmlNamespace("pharm", "urn:hl7-org:pharm");
+
+    /// Authentication
     public static final XmlNamespace AUTH = new XmlNamespace("auth", "http://docs.oasis-open.org/wsfed/authorization/200706");
     public static final XmlNamespace DS = new XmlNamespace("ds", "http://www.w3.org/2000/09/xmldsig#");
 
