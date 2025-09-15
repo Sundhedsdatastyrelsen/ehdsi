@@ -82,4 +82,8 @@ public class XPathWrapper {
             .mapToObj(nodeList::item)
             .toList();
     }
+
+    public List<String> evalStringSet(String expression, Object item) throws XPathExpressionException {
+        return evalNodeSet(expression, item).stream().map(Node::getTextContent).toList();
+    }
 }

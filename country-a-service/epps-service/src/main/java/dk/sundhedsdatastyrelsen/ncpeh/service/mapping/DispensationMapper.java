@@ -20,6 +20,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationRespons
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -204,25 +205,22 @@ public class DispensationMapper {
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
     }
+    static final XPathWrapper xpathNew = new XPathWrapper(XmlNamespace.HL7,XmlNamespace.PHARM);
+
 
     // XPath is not thread safe so we keep a separate copy for each thread.
     private static final ThreadLocal<XPath> xpath = ThreadLocal.withInitial(() -> {
         var xp = XPathFactory.newInstance().newXPath();
         var nsCtx = new SimpleNamespaceContext();
-        nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
-        nsCtx.bindNamespaceUri("pharm", "urn:hl7-org:pharm");
+
         xp.setNamespaceContext(nsCtx);
         return xp;
     });
 
+    //Is this still relevant? Is the unmodifiable needed?
     private static List<Node> evalNodeMany(Document cda, String xpathExpression) throws XPathExpressionException {
-        var nodeList = (NodeList) xpath.get().evaluate(xpathExpression, cda, XPathConstants.NODESET);
-        var l = nodeList.getLength();
-        var result = new ArrayList<Node>();
-        for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i));
-        }
-        return Collections.unmodifiableList(result);
+        var nodeList = xpathNew.evalNodeSet(xpathExpression,cda);
+        return Collections.unmodifiableList(nodeList);
     }
 
     private static List<String> evalMany(Document cda, String xpathExpression) throws XPathExpressionException {
@@ -238,8 +236,8 @@ public class DispensationMapper {
     }
 
     static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
-        var familyNames = evalMany(cda, XPaths.authorFamilyName);
-        var givenNames = evalMany(cda, XPaths.authorGivenName);
+        var familyNames = xpathNew.evalStringSet(XPaths.authorFamilyName, cda);
+        var givenNames = xpathNew.evalStringSet(XPaths.authorGivenName,cda);
         var allButLastName = Stream.concat(
                 givenNames.stream(),
                 familyNames.subList(0, familyNames.size() - 1).stream())
@@ -255,8 +253,8 @@ public class DispensationMapper {
     }
 
     static String authorRole(Document cda) throws XPathExpressionException {
-        var functionCode = eval(cda, XPaths.authorFunctionCode);
-        var functionCodeSystem = eval(cda, XPaths.authorFunctionCodeSystem);
+        var functionCode = xpathNew.evalString(XPaths.authorFunctionCode,cda);
+        var functionCodeSystem = xpathNew.evalString(XPaths.authorFunctionCodeSystem,cda);
         if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             // The "official" translation of "Pharmacists" from ISCO is "Apoteker", but FMK validates this
             // and compares it with the soap header role. And they translate that as "Udenlandsk apoteker",
@@ -283,11 +281,11 @@ public class DispensationMapper {
     }
 
     static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
-        var addressLines = new ArrayList<>(evalMany(cda, XPaths.authorOrgAddressLine));
-        var postalCode = eval(cda, XPaths.authorOrgPostalCode);
-        var city = eval(cda, XPaths.authorOrgCity);
-        var state = eval(cda, XPaths.authorOrgState);
-        var country = eval(cda, XPaths.authorOrgCountry);
+        var addressLines = xpathNew.evalStringSet(XPaths.authorOrgAddressLine,cda);
+        var postalCode = xpathNew.evalString(XPaths.authorOrgPostalCode,cda);
+        var city = xpathNew.evalString(XPaths.authorOrgCity,cda);
+        var state = xpathNew.evalString(XPaths.authorOrgState,cda);
+        var country = xpathNew.evalString(XPaths.authorOrgCountry,cda);
         if (notBlank(postalCode)) addressLines.add(postalCode);
         if (notBlank(city)) addressLines.add(city);
         if (notBlank(state)) addressLines.add(state);
@@ -295,7 +293,7 @@ public class DispensationMapper {
 
         String email = null;
         String telephone = null;
-        var telecoms = evalNodeMany(cda, XPaths.authorOrgTelecom)
+        var telecoms = xpathNew.evalNodeSet(XPaths.authorOrgTelecom,cda)
             .stream()
             .map(node -> node.getAttributes().getNamedItem("value"))
             .filter(Objects::nonNull)
@@ -307,6 +305,7 @@ public class DispensationMapper {
             if (t.startsWith("mailto:")) email = t.substring(7);
         }
 
+        //TODO CFB GOT TO HERE
         var name = eval(cda, XPaths.authorOrgName);
         var b = OrganisationType.builder()
             .withIdentifier(placeholderPharmacyId())
