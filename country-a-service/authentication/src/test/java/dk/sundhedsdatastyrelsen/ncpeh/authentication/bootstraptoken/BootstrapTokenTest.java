@@ -2,8 +2,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.test.TestUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;

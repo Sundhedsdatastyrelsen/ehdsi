@@ -4,7 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

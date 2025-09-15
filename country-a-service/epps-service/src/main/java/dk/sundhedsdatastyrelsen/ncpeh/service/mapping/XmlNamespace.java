@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlNamespaceContract;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespaceContract;
 
 public record XmlNamespace(String prefix, String uri) implements XmlNamespaceContract {
     public static final XmlNamespace HL7 = new XmlNamespace("hl7", "urn:hl7-org:v3");

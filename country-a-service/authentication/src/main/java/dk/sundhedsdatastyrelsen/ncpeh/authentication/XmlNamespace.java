@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlNamespaceContract;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespaceContract;
 
 ///  A representation of a namespace along with its prefix for use in XML documents.
 public record XmlNamespace(String prefix, String uri) implements XmlNamespaceContract {

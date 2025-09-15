@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenExchangeRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
 
 import javax.xml.transform.TransformerException;

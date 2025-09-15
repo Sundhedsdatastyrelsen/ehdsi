@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.shared.test;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils.test;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.shared;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
 public interface XmlNamespaceContract {
     String prefix();

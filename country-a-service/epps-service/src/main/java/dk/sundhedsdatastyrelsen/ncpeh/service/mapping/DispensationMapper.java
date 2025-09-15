@@ -20,7 +20,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationRespons
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Class for mapping eDispensation CDAs to FMK requests.
