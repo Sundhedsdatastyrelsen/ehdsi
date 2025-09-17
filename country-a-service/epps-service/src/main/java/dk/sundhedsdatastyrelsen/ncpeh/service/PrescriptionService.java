@@ -146,6 +146,7 @@ public class PrescriptionService {
             final var request = GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
                 .withIncludeOpenPrescriptions().end()
+                .withIncludeEffectuations(true)
                 .build();
             var fmkResponse = fmkClient.getPrescription(request, token);
 
@@ -264,6 +265,7 @@ public class PrescriptionService {
                 GetPrescriptionRequestType.builder()
                     .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
                     .withIncludeOpenPrescriptions().end()
+                    .withIncludeEffectuations(true)
                     .build(),
                 token);
             var prescription = prescriptionResponse.getPrescription()

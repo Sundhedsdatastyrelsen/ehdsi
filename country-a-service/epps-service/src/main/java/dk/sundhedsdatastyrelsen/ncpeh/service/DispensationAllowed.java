@@ -1,11 +1,15 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public final class DispensationAllowed {
     private DispensationAllowed() {
@@ -16,6 +20,52 @@ public final class DispensationAllowed {
     /// @return an error message if dispensation is not allowed. Null if dispensation is allowed.
     public static String getDispensationRestrictions(PrescriptionType prescription, PackageInfo packageInfo) {
         var errors = new ArrayList<String>();
+
+        // If another pharmacy has started handling this prescription, calls to FMK to dispense it will fail, as they
+        // have a lock on the prescription.
+        var effectuationStartedOrder = prescription.getOrder()
+            .stream()
+            .filter(o ->
+                // The documentation for ekspedition påbegyndt is clear, the prescription is locked to that pharmacy.
+                // All foreign pharmacies share the same ID here, so we can't use that.
+                Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value())
+                    // The documentation for Bestilt is more muddy. But it seems to be rarely used, and mostly with
+                    // dosisdispenseret medicine, so we err on the side of caution and block it.
+                    // See e.g. https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:bestilling:
+                    // >  Bestilt. Nye bestillinger oprettet af bl.a. læger vil have denne status. Denne status låser ikke recepten.
+                    // and https://wiki.fmk-teknik.dk/doku.php?id=apo:generel:scenarier:borger_med_cpr-nummer_henvender_sig_pa_apoteket_for_at_hente_bestilt_laegemiddel
+                    // >  Recepten har ikke længere en åben bestilling og er derfor ikke længere ”låst” til apoteket.
+                    || Objects.equals(o.getStatus(), OrderStatusPredefinedType.BESTILT.value()))
+            .findFirst();
+        if (effectuationStartedOrder.isPresent()) {
+            errors.add("Prescription is locked to another pharmacy, and cannot be dispensed cross border.");
+        }
+
+        // If there are past dispensations on an open prescription, this is either an iterated prescription or a
+        // prescription that is already partially dispensed. FMK doesn't return effectuations that didn't dispense
+        // anything.
+        // For now, we don't support those. See also #328 and #205
+        var pastEffectuation = prescription.getOrder()
+            .stream()
+            .filter(o ->
+                // Negative list so if they add a new status, we block it by default.
+                // Cancelled orders are OK.
+                !Objects.equals(o.getStatus(), OrderStatusPredefinedType.ANNULLERET.value())
+                    // We already check for ekspedition påbegyndt and bestilt above. Don't want to report that error twice.
+                    && !Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value())
+                    && !Objects.equals(o.getStatus(), OrderStatusPredefinedType.BESTILT.value()))
+            .findFirst();
+        if (pastEffectuation.isPresent()) {
+            errors.add("Prescription has been partially dispensed. This is not yet supported in DK.");
+        }
+
+        // Iterated prescriptions require clarification, so we block them for now.
+        var iterationNumber = Optional.ofNullable(prescription.getPackageRestriction())
+            .map(PackageRestrictionType::getIterationNumber)
+            .orElse(null);
+        if (iterationNumber != null && iterationNumber > 1) {
+            errors.add("Prescription is iterated, which is not yet supported in DK.");
+        }
 
         // We check that the regulation code ("Udleveringsbestemmelse") of the product is valid.
         // Specifically, we use this check to disallow narcotics ("§4-lægemidler") which are out-of-scope.
@@ -41,7 +91,7 @@ public final class DispensationAllowed {
             errors.add("Magistral prescriptions are not supported.");
         }
 
-        return errors.isEmpty() ? null : String.join(" ", errors);
+        return errors.isEmpty() ? null : String.join("\n", errors);
     }
 
     /// The list of regulations we can dispense in other EU countries, with the
