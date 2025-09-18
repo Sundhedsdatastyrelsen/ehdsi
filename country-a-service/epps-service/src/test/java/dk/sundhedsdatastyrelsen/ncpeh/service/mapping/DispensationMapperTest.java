@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -310,7 +311,10 @@ class DispensationMapperTest {
         var startEffectuationResponse = StartEffectuationResponseType.builder()
             .addPrescription(PrescriptionType.builder()
                 .withPackageRestriction(packageRestriction)
-                .addOrder().withIdentifier(12345L).end()
+                .addOrder()
+                .withIdentifier(12345L)
+                .withStatus(OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value())
+                .end()
                 .build())
             .build();
         var result = DispensationMapper.createPharmacyEffectuationRequest(
