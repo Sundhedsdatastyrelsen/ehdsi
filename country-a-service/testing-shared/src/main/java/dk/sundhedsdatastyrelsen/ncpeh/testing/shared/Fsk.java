@@ -14,6 +14,8 @@ public class Fsk {
 
     public static final String documentJensJensenFskResponse = "1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d";
 
+    public static final String germanDoctor = "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9";
+
 
     private static FskClient fskClient;
 

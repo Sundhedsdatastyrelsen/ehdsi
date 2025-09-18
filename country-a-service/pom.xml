@@ -29,6 +29,8 @@
         <module>local-lms-db</module>
         <module>authentication</module>
         <module>job-queue</module>
+        <module>base-utils</module>
+        <module>base-utils-test</module>
     </modules>
 
     <properties>
@@ -160,6 +162,16 @@
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>job-queue</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>base-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>base-utils-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

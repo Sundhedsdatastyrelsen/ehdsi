@@ -18,11 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.yaml.snakeyaml.util.Tuple;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+
+import static dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper.splitUniqueIdToRepositoryIdAndDocumentId;
 
 @Slf4j
 @Service
@@ -43,8 +44,7 @@ public class InformationCardService {
 
     /// @return A list of ids of information cards.
     public List<String> findInformationCardDetails(
-        String patientId,
-        String europeanHealthProfessionalId
+        String patientId
     ) {
         try {
             String cpr = PatientIdMapper.toCpr(patientId);
@@ -90,7 +90,6 @@ public class InformationCardService {
 
             var fskResponse = fskClient.list(request, systemCaller);
 
-            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", europeanHealthProfessionalId);
 
             return fskResponse.getRegistryObjectList()
                 .getIdentifiable()
@@ -102,7 +101,7 @@ public class InformationCardService {
         }
     }
 
-    public Document getInformationCard(String uniqueDocumentId) {
+    public Document getInformationCard(String uniqueDocumentId, String patientId, String europeanHealthProfessionalId) {
         try {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
@@ -111,7 +110,10 @@ public class InformationCardService {
                 .withDocumentUniqueId(uniqueDocumentId) //Yes, we need to use the whole unique document ID, as well as part of it earlier.
                 .end().build();
 
-            //TODO: We should log that we did this to MinLog, since we do it as an organisation
+            //Log that we looked up the data on the fælles stamkort, due to using the organisational endpoint
+            var cpr = PatientIdMapper.toCpr(patientId);
+            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", europeanHealthProfessionalId);
+
             //The endpoints does not (in the near future) support IDWS, so we have to use the organisatorial endpoint.
             var fskResponse = fskClient.getDocument(request, systemCaller);
             byte[] documentBytes = fskResponse.getDocumentResponse()
@@ -127,13 +129,5 @@ public class InformationCardService {
         }
     }
 
-    private static Tuple<String, String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId) {
-        //We assume the documentId follows this format: 1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d
-        String[] parts = uniqueDocumentId.split("\\^");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException(String.format("Cannot parse uniqueDocumentId: %s", uniqueDocumentId));
-        }
-        return new Tuple<>(parts[0], parts[1]); //Repository ID, Local document ID
-    }
 
 }

@@ -1,21 +1,9 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.xml.crypto.MarshalException;
-import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.DigestMethod;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.SignatureMethod;
-import javax.xml.crypto.dsig.Transform;
-import javax.xml.crypto.dsig.XMLSignatureException;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.dom.DOMSignContext;
-import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
-import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -30,10 +18,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class XmlUtils {
     private XmlUtils() {}
@@ -43,9 +27,9 @@ public class XmlUtils {
      *
      * @param xml the XML string to parse
      * @return the parsed Document
-     * @throws AuthenticationException if parsing fails
+     * @throws XmlException if parsing fails
      */
-    public static Document parse(String xml) throws AuthenticationException {
+    public static Document parse(String xml) throws XmlException {
         try {
             return parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         } catch (IOException e) {
@@ -58,15 +42,15 @@ public class XmlUtils {
      *
      * @param xml the XML InputStream to parse
      * @return the parsed Document
-     * @throws AuthenticationException if parsing fails
-     * @throws IOException             if I/O error occurs
+     * @throws XmlException if parsing fails
+     * @throws IOException  if I/O error occurs
      */
-    public static Document parse(InputStream xml) throws AuthenticationException, IOException {
+    public static Document parse(InputStream xml) throws XmlException, IOException {
         try (xml) {
             var builder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
             return builder.parse(xml);
         } catch (SAXException e) {
-            throw new AuthenticationException("Parse error", e);
+            throw new XmlException("Parse error", e);
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("should not happen", e);
         }
@@ -217,68 +201,4 @@ public class XmlUtils {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
     }
 
-    /// Signs an XML element with the specified certificate and key.
-    ///
-    /// The signature is inserted into the document at the specified location, either as a child
-    /// of the root element or as a sibling to the specified nextSibling node.
-    ///
-    /// The elements matching the `referenceUris` should have their ID attributes marked as IdAttributes,
-    /// otherwise validation might fail.
-    ///
-    /// @param rootElement   the root element of the XML document to be signed
-    /// @param nextSibling   the node before which the signature should be inserted, or null to append as child of rootElement
-    /// @param referenceUris list of element IDs to be included in the signature (typically "#id" format)
-    /// @param certificate   the certificate and private key pair used for signing
-    /// @throws AuthenticationException  if signing fails due to cryptographic or XML processing errors
-    /// @throws IllegalArgumentException if any of the parameters are invalid
-    public static void sign(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
-        try {
-            // Make the internal representation of the DOM consistent before signing, by
-            // e.g. merging adjacent text-nodes.
-            rootElement.getOwnerDocument().normalizeDocument();
-            var sigFactory = XMLSignatureFactory.getInstance("DOM");
-
-            // Define the transforms to be applied to each referenced element
-            // - ENVELOPED: Removes the signature element itself from the signed content
-            // - EXCLUSIVE: Applies exclusive canonicalization to normalize whitespace and namespace handling
-            var transforms = List.of(
-                sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null),
-                sigFactory.newTransform(CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null));
-
-            // Each reference specifies which part of the document is included in the signature.
-            List<Reference> references = new ArrayList<>();
-            for (var id : referenceUris) {
-                references.add(sigFactory.newReference(
-                    id,
-                    sigFactory.newDigestMethod(DigestMethod.SHA256, null),
-                    transforms,
-                    null,
-                    null));
-            }
-
-            // This is the core of the XML signature that describes what and how it was signed
-            var signedInfo = sigFactory.newSignedInfo(
-                sigFactory.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, (C14NMethodParameterSpec) null),
-                sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA256, null),
-                references
-            );
-
-            var keyInfoFactory = sigFactory.getKeyInfoFactory();
-            var keyInfo = keyInfoFactory.newKeyInfo(List.of(keyInfoFactory.newX509Data(List.of(certificate.certificate()))));
-
-            var signContext = new DOMSignContext(certificate.privateKey(), rootElement);
-            if (nextSibling != null) {
-                // Insert signature before the specified sibling node
-                signContext.setNextSibling(nextSibling);
-            }
-            // Otherwise, the signature will be appended as a child of the root element
-
-            // Create and apply the XML signature
-            var signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
-            signature.sign(signContext);
-        } catch (MarshalException | XMLSignatureException | NoSuchAlgorithmException |
-                 InvalidAlgorithmParameterException e) {
-            throw new AuthenticationException("Signing failed", e);
-        }
-    }
 }

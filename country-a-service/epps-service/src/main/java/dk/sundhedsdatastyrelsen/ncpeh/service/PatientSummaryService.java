@@ -95,11 +95,10 @@ public class PatientSummaryService {
 
     @WithSpan
     private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId) {
-        var availableInformationCards = informationCardService.findInformationCardDetails(patientId, europeanHealthProfessionalId);
-        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst());
-        var xpath = FskMapper.getXpath();
+        var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
+        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(),patientId, europeanHealthProfessionalId);
         try {
-            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(xpath, informationCard));
+            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard));
         } catch (XPathExpressionException e) {
             // TODO better exception.
             throw new RuntimeException(e);
