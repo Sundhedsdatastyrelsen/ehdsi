@@ -79,4 +79,14 @@ class DispensationAllowedTest {
         var res1 = DispensationAllowed.getDispensationRestrictions(prescription, pInfo);
         assertThat(res1, is("Prescription is iterated, which is not yet supported in DK."));
     }
+
+    @Test
+    void doseDispensedPrescriptionsAreBlocked() {
+        var prescription = PrescriptionType.builder()
+            .withDoseDispensedRestriction().end()
+            .build();
+        var pInfo = new PackageInfo("", "A", "", 1);
+        var res1 = DispensationAllowed.getDispensationRestrictions(prescription, pInfo);
+        assertThat(res1, is("Dose dispensed medications are not supported."));
+    }
 }
