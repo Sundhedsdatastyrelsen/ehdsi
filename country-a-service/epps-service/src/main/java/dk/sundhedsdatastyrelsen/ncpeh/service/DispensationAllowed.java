@@ -17,6 +17,7 @@ public final class DispensationAllowed {
 
     /// Check whether dispensation is allowed. Returns an error message if it is not, otherwise null.
     ///
+    /// @param prescription the prescription to dispense. Fetching the orders for the prescription is required.
     /// @return an error message if dispensation is not allowed. Null if dispensation is allowed.
     public static String getDispensationRestrictions(PrescriptionType prescription, PackageInfo packageInfo) {
         var errors = new ArrayList<String>();
@@ -67,6 +68,14 @@ public final class DispensationAllowed {
             errors.add("Prescription is iterated, which is not yet supported in DK.");
         }
 
+        // Dose dispensed prescriptions are out of scope https://webgate.ec.europa.eu/fpfis/wikis/spaces/EHDSI/pages/912798895/ePrescription+Test+Framework+Extension.
+        // It's not as clear-cut as the out of scope items defined in the MyHealth@EU scope and business goals.
+        var isDoseDispensed = prescription.getDoseDispensedRestriction() != null;
+        if (isDoseDispensed) {
+            errors.add("Dose dispensed medications are not supported.");
+        }
+
+        // The rest are the formal out-of-scope cases defined in https://webgate.ec.europa.eu/fpfis/wikis/spaces/EHDSI/pages/888398063/MyHealth+EU+Scope+and+Business+Goals
         // We check that the regulation code ("Udleveringsbestemmelse") of the product is valid.
         // Specifically, we use this check to disallow narcotics ("§4-lægemidler") which are out-of-scope.
         var isValidRegulationCode = packageInfo != null
