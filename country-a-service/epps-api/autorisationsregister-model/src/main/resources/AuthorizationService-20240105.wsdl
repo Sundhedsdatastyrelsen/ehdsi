@@ -167,14 +167,14 @@
     <wsdl:port binding="tns:AuthorizationBinding" name="AuthorizationPort">
       <!-- The following is required in the wsdl, but the actual url is defined 
         elsewhere -->
-      <soap:address location="http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105"/>
+      <soap:address location="http://test2-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105"/>
     </wsdl:port>
   </wsdl:service>
   <wsdl:service name="AuthorizationCodeService">
     <wsdl:port binding="tns:AuthorizationCodeBinding" name="AuthorizationCodePort">
       <!-- The following is required in the wsdl, but the actual url is defined 
         elsewhere -->
-      <soap:address location="http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105"/>
+      <soap:address location="http://test2-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

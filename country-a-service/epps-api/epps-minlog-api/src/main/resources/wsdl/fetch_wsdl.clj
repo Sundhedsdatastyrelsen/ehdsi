@@ -79,7 +79,7 @@
        (run! #(fix-schema-locations % "./"))))
 
 (def minlog-wsdl-url
-  "http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService?wsdl")
+  "http://test2.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService?wsdl")
 
 (when (= *file* (System/getProperty "babashka.file"))
   (fetch-wsdl minlog-wsdl-url "minlog.wsdl"))
