@@ -254,7 +254,7 @@ public class PrescriptionService {
     @WithSpan
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, EuropeanHcpIdwsToken token) {
         var helper = new SubmitDispensationHelper();
-        var eDispensationCdaId = SubmitDispensationHelper.geteDispensationId(dispensationCda);
+        var eDispensationCdaId = SubmitDispensationHelper.getEDispensationId(dispensationCda);
 
         // Get the prescription from FMK to check that we can dispense it.
         helper.validateDispensable(patientId, dispensationCda, token);
@@ -462,7 +462,7 @@ public class PrescriptionService {
             }
         }
 
-        private static String geteDispensationId(Document dispensationCda) {
+        private static String getEDispensationId(Document dispensationCda) {
             String eDispensationCdaId;
             try {
                 eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
