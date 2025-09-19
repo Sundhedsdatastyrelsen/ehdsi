@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.AbortEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ConsentHeaderType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
@@ -9,6 +10,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuati
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.AbortEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
@@ -89,6 +91,21 @@ public class FmkClientIdws {
             facE5.createStartEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#StartEffectuation",
             StartEffectuationResponseType.class,
+            token,
+            false
+        );
+    }
+
+    /**
+     * "Afbryd ekspedition".
+     * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:afbryd_ekspedition">FMK documentation.</a>
+     */
+    public AbortEffectuationResponseType abortEffectuation(AbortEffectuationRequestType request, EuropeanHcpIdwsToken token)
+        throws JAXBException {
+        return makeFmkRequest(
+            facE5.createAbortEffectuationRequest(request),
+            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5#AbortEffectuation",
+            AbortEffectuationResponseType.class,
             token,
             false
         );

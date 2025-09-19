@@ -8,8 +8,10 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestTyp
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -251,80 +253,46 @@ public class PrescriptionService {
 
     @WithSpan
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, EuropeanHcpIdwsToken token) {
-        StartEffectuationResponseType response;
-        String eDispensationCdaId;
-        try {
-            eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
-        } catch (MapperException e) {
-            throw new DataRequirementException("Invalid CDA ID value", e);
-        }
+        var helper = new SubmitDispensationHelper();
+        var eDispensationCdaId = SubmitDispensationHelper.getEDispensationId(dispensationCda);
+
+        // Get the prescription from FMK to check that we can dispense it.
+        helper.validateDispensable(patientId, dispensationCda, token);
+
+        // Start the effectuation. This locks the prescription to us.
+        log.info("Start FMK effectuation");
+        var startEffectuation = helper.lockEffectuation(patientId, dispensationCda, token);
 
         try {
-            var prescriptionId = DispensationMapper.prescriptionId(dispensationCda);
-            var prescriptionResponse = fmkClient.getPrescription(
-                GetPrescriptionRequestType.builder()
-                    .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
-                    .withIncludeOpenPrescriptions().end()
-                    .withIncludeEffectuations(true)
-                    .build(),
-                token);
-            var prescription = prescriptionResponse.getPrescription()
-                .stream()
-                .filter(p -> p.getIdentifier() == prescriptionId)
-                .findFirst()
-                .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
-            var dispensationAllowedError = DispensationAllowed.getDispensationRestrictions(
-                prescription,
-                lmsDataProvider.packageInfo(prescription.getPackageRestriction()
-                    .getPackageNumber()
-                    .getValue()));
-            if (null != dispensationAllowedError) {
-                throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
-            }
-        } catch (XPathExpressionException | MapperException | JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch prescription to dispense", e);
-        }
-
-        try {
-            log.info("Start FMK effectuation");
-            response = fmkClient.startEffectuation(
-                DispensationMapper.startEffectuationRequest(patientId, dispensationCda),
-                token);
-        } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
-        } catch (MapperException e) {
-            throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
-        }
-
-        CreatePharmacyEffectuationResponseType effectuationResponse;
-        try {
+            // Dispense it. This may also close the prescription.
             log.info("Create FMK pharmacy effectuation");
-            effectuationResponse = fmkClient.createPharmacyEffectuation(
-                DispensationMapper.createPharmacyEffectuationRequest(
-                    patientId,
-                    dispensationCda,
-                    response),
-                token);
-        } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
-        } catch (MapperException e) {
-            throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
-        }
+            var dispensation = helper.dispense(patientId, dispensationCda, token, startEffectuation.response());
 
-        for (var effectuation : effectuationResponse.getEffectuation()) {
-            // There should only be one in our case, but FMK supports multiple effectuations per request
-            log.info("Store effectuation undo information");
-            try {
-                undoDispensationRepository.insert(UndoDispensationRow.fromCdaId(
-                    eDispensationCdaId,
-                    effectuation.getEffectuationIdentifier(),
-                    effectuation.getOrderIdentifier()
-                ));
-            } catch (Exception e) {
-                // We should not fail the submitDispensation request here because of a database error,
-                // because the dispensation has been recorded in FMK at this point.
-                log.error("Storing undo information for dispensation failed", e);
+            // If we didn't terminate, release the lock on the prescription again.
+            if (!dispensation.request().getPrescription().getFirst().isTerminate()) {
+                log.info("Release lock on prescription, it was not terminated.");
+                helper.releaseEffectuation(token, startEffectuation);
             }
+
+            // Add effectuation to undo repo to support undo workflow.
+            for (var effectuation : dispensation.response().getEffectuation()) {
+                // There should only be one in our case, but FMK supports multiple effectuations per request
+                log.info("Store effectuation undo information");
+                helper.storeUndoInformation(effectuation, eDispensationCdaId);
+            }
+        } catch (Exception e) {
+            // No matter the exception, we release the lock on the effectuation if dispensation fails. Otherwise
+            // all subsequent attempts to dispense will fail.
+            try {
+                fmkClient.abortEffectuation(
+                    DispensationMapper.abortEffectuationRequest(startEffectuation.request(), startEffectuation.response()),
+                    token);
+            } catch (Exception e2) {
+                // Nothing to do but log here.
+                log.error("Couldn't abort the effectuation. Error: ", e2);
+            }
+            // Rethrow the original exception.
+            throw e;
         }
     }
 
@@ -395,5 +363,113 @@ public class PrescriptionService {
             "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
                 .size(), drugMedicationId);
         return fmkResponse;
+    }
+
+    private class SubmitDispensationHelper {
+        record ReqRes<TReq, TRes>(TReq request, TRes response) {
+        }
+
+        private void storeUndoInformation(CreatePharmacyEffectuationResponseType.Effectuation effectuation, String eDispensationCdaId) {
+            try {
+                undoDispensationRepository.insert(UndoDispensationRow.fromCdaId(
+                    eDispensationCdaId,
+                    effectuation.getEffectuationIdentifier(),
+                    effectuation.getOrderIdentifier()
+                ));
+            } catch (Exception e) {
+                // We should not fail the submitDispensation request here because of a database error,
+                // because the dispensation has been recorded in FMK at this point.
+                log.error("Storing undo information for dispensation failed", e);
+            }
+        }
+
+        private void releaseEffectuation(
+            EuropeanHcpIdwsToken token,
+            ReqRes<StartEffectuationRequestType, StartEffectuationResponseType> startEffectuation
+        ) {
+            try {
+                fmkClient.abortEffectuation(
+                    DispensationMapper.abortEffectuationRequest(startEffectuation.request(), startEffectuation.response()),
+                    token);
+            } catch (JAXBException e) {
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Abort effectuation failed", e);
+            } catch (MapperException e) {
+                throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
+            }
+        }
+
+        private ReqRes<CreatePharmacyEffectuationRequestType, CreatePharmacyEffectuationResponseType> dispense(
+            String patientId,
+            Document dispensationCda,
+            EuropeanHcpIdwsToken token,
+            StartEffectuationResponseType startEffectuationResponse
+        ) {
+            try {
+                var createEffectuationRequest = DispensationMapper.createPharmacyEffectuationRequest(
+                    patientId,
+                    dispensationCda,
+                    startEffectuationResponse);
+                var effectuationResponse = fmkClient.createPharmacyEffectuation(createEffectuationRequest, token);
+                return new ReqRes<>(createEffectuationRequest, effectuationResponse);
+            } catch (JAXBException e) {
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
+            } catch (MapperException e) {
+                throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
+            }
+        }
+
+        private ReqRes<StartEffectuationRequestType, StartEffectuationResponseType> lockEffectuation(
+            String patientId,
+            Document dispensationCda,
+            EuropeanHcpIdwsToken token
+        ) {
+            try {
+                var startEffectuationRequest = DispensationMapper.startEffectuationRequest(patientId, dispensationCda);
+                var startEffectuationResponse = fmkClient.startEffectuation(startEffectuationRequest, token);
+                return new ReqRes<>(startEffectuationRequest, startEffectuationResponse);
+            } catch (JAXBException e) {
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
+            } catch (MapperException e) {
+                throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
+            }
+        }
+
+        private void validateDispensable(String patientId, Document dispensationCda, EuropeanHcpIdwsToken token) {
+            try {
+                var prescriptionId = DispensationMapper.prescriptionId(dispensationCda);
+                var prescriptionResponse = fmkClient.getPrescription(
+                    GetPrescriptionRequestType.builder()
+                        .withPersonIdentifier().withSource("CPR").withValue(PatientIdMapper.toCpr(patientId)).end()
+                        .withIncludeOpenPrescriptions().end()
+                        .withIncludeEffectuations(true)
+                        .build(),
+                    token);
+                var prescription = prescriptionResponse.getPrescription()
+                    .stream()
+                    .filter(p -> p.getIdentifier() == prescriptionId)
+                    .findFirst()
+                    .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
+                var dispensationAllowedError = DispensationAllowed.getDispensationRestrictions(
+                    prescription,
+                    lmsDataProvider.packageInfo(prescription.getPackageRestriction()
+                        .getPackageNumber()
+                        .getValue()));
+                if (null != dispensationAllowedError) {
+                    throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
+                }
+            } catch (XPathExpressionException | MapperException | JAXBException e) {
+                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch prescription to dispense", e);
+            }
+        }
+
+        private static String getEDispensationId(Document dispensationCda) {
+            String eDispensationCdaId;
+            try {
+                eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
+            } catch (MapperException e) {
+                throw new DataRequirementException("Invalid CDA ID value", e);
+            }
+            return eDispensationCdaId;
+        }
     }
 }

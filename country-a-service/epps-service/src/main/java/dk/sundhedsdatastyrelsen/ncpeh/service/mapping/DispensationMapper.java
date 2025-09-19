@@ -5,6 +5,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorPersonType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ObjectFactory;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierPredefinedSourceType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
@@ -13,9 +14,12 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationOnPrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.OrderType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageSizeType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.AbortEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -352,7 +356,7 @@ public class DispensationMapper {
         Document cda,
         @NonNull StartEffectuationResponseType startEffectuationResponse
     ) throws XPathExpressionException, MapperException {
-        var order = startEffectuationResponse.getPrescription().getFirst().getOrder().getFirst();
+        var order = getOpenedOrder(startEffectuationResponse.getPrescription().getFirst());
         var packageRestriction = startEffectuationResponse.getPrescription().getFirst().getPackageRestriction();
         var terminate = packageQuantity(cda) == packageRestriction.getPackageQuantity();
         return CreatePharmacyEffectuationOnPrescriptionType.builder()
@@ -624,6 +628,34 @@ public class DispensationMapper {
             // Make Sonar happy
             xpath.remove();
         }
+    }
+
+    public static @NonNull OrderType getOpenedOrder(PrescriptionType prescription) throws MapperException {
+        return prescription.getOrder()
+            .stream()
+            .filter(o -> Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value()))
+            .findFirst()
+            .orElseThrow(() -> new MapperException("No started effectuation found."));
+    }
+
+    public static AbortEffectuationRequestType abortEffectuationRequest(
+        StartEffectuationRequestType startEffectuationRequest,
+        StartEffectuationResponseType startEffectuationResponse
+    ) throws MapperException {
+        return AbortEffectuationRequestType.builder()
+            .withPersonIdentifier(startEffectuationRequest.getPersonIdentifier())
+            .withModifiedBy(startEffectuationRequest.getModifiedBy())
+            .withOrganisationIdentifier(startEffectuationRequest.getOrganisationIdentifier())
+            .withReportedBy(startEffectuationRequest.getReportedBy())
+            .addPrescription()
+            .withIdentifier(startEffectuationRequest.getPrescription().getFirst().getIdentifier())
+            .withOrder(AbortEffectuationRequestType.Prescription.Order.builder()
+                .withIdentifier(
+                    DispensationMapper.getOpenedOrder(startEffectuationResponse.getPrescription().getFirst())
+                        .getIdentifier())
+                .build())
+            .end()
+            .build();
     }
 
     @WithSpan
