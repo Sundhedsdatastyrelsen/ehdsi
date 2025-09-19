@@ -17,7 +17,7 @@ public final class DispensationAllowed {
 
     /// Check whether dispensation is allowed. Returns an error message if it is not, otherwise null.
     ///
-    /// @param prescription the prescription to dispense. Fetching the orders for the prescription is required.
+    /// @param prescription the prescription to dispense. Must include effectuations and orders.
     /// @return an error message if dispensation is not allowed. Null if dispensation is allowed.
     public static String getDispensationRestrictions(PrescriptionType prescription, PackageInfo packageInfo) {
         var errors = new ArrayList<String>();
