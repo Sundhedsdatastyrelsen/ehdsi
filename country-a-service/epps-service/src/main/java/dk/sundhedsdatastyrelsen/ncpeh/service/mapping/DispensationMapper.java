@@ -357,14 +357,25 @@ public class DispensationMapper {
         @NonNull StartEffectuationResponseType startEffectuationResponse
     ) throws XPathExpressionException, MapperException {
         var order = getOpenedOrder(startEffectuationResponse.getPrescription().getFirst());
-        var packageRestriction = startEffectuationResponse.getPrescription().getFirst().getPackageRestriction();
-        var terminate = packageQuantity(cda) == packageRestriction.getPackageQuantity();
         return CreatePharmacyEffectuationOnPrescriptionType.builder()
             .withPrescriptionIdentifier(prescriptionId(cda))
             .withOrderIdentifier(order.getIdentifier())
             .withEffectuation(effectuation(cda))
-            .withTerminate(terminate)
+            .withTerminate(shouldTerminate(cda, startEffectuationResponse))
             .build();
+    }
+
+    static boolean shouldTerminate(Document cda, StartEffectuationResponseType startEffectuationResponse) { //NOSONAR
+        // In DK, the pharmacist chooses whether to close the prescription or leave it open for more dispensations.
+        // This is not supported in ePrescription and eDispensation, so we close all prescriptions.
+        // If the patient needs more medicine, they will have to call their doctor to reopen or recreate the prescription.
+        // But that's better than leaving all prescriptions open.
+
+        // It should be possible, by setting up some constraints (no change in package type, no change in medicine form
+        // or strength, at least some percentage of the medicine remains, etc), to decide automatically whether to leave
+        // a prescription open or not. But whether we should do that is still being discussed. And even then, when
+        // the constraints don't hold, we should still terminate.
+        return true; //NOSONAR this is likely to change.
     }
 
     static Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
