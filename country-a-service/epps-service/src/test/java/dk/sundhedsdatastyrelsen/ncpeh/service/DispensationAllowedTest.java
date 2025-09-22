@@ -26,15 +26,8 @@ class DispensationAllowedTest {
             .withStatus("Ekspedition påbegyndt")
             .end()
             .build();
-        var orderedPrescription = PrescriptionType.builder()
-            .addOrder()
-            .withStatus(OrderStatusPredefinedType.BESTILT.value())
-            .end()
-            .build();
         var res1 = DispensationAllowed.getDispensationRestrictions(effectuationStarted, pInfo);
-        var res2 = DispensationAllowed.getDispensationRestrictions(orderedPrescription, pInfo);
         assertThat(res1, is("Prescription is locked to another pharmacy, and cannot be dispensed cross border."));
-        assertThat(res2, is("Prescription is locked to another pharmacy, and cannot be dispensed cross border."));
     }
 
     @Test
@@ -58,14 +51,21 @@ class DispensationAllowedTest {
 
     @Test
     void prescriptionsWithCancelledPastDispensationsAreAllowed() {
-        var prescription = PrescriptionType.builder()
+        var cancelledPrescription = PrescriptionType.builder()
             .addOrder()
             .withStatus("Annulleret")
             .end()
             .build();
+        var orderedPrescription = PrescriptionType.builder()
+            .addOrder()
+            .withStatus(OrderStatusPredefinedType.BESTILT.value())
+            .end()
+            .build();
         var pInfo = new PackageInfo("", "A", "", 1);
-        var res1 = DispensationAllowed.getDispensationRestrictions(prescription, pInfo);
+        var res1 = DispensationAllowed.getDispensationRestrictions(cancelledPrescription, pInfo);
+        var res2 = DispensationAllowed.getDispensationRestrictions(orderedPrescription, pInfo);
         assertThat(res1, is(nullValue()));
+        assertThat(res2, is(nullValue()));
     }
 
     @Test

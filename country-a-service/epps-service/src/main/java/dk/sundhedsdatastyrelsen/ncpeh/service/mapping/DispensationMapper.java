@@ -209,6 +209,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:id";
     }
 
+    public static final String EHDSI_EAN = "5790001392277"; // NSI, Udenlandsk Apotek via epSOS ( SOR-nummer: 397941000016003 )
+
     // XPath is not thread safe so we keep a separate copy for each thread.
     private static final ThreadLocal<XPath> xpath = ThreadLocal.withInitial(() -> {
         var xp = XPathFactory.newInstance().newXPath();
@@ -285,7 +287,7 @@ public class DispensationMapper {
     private static OrganisationIdentifierType placeholderPharmacyId() {
         return OrganisationIdentifierType.builder()
             .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
-            .withValue("5790001392277") // NSI, Udenlandsk Apotek via epSOS ( SOR-nummer: 397941000016003 )
+            .withValue(EHDSI_EAN)
             .build();
     }
 

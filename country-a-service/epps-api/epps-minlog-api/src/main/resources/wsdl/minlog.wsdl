@@ -36,7 +36,7 @@
   </wsdl:binding>
   <wsdl:service name="RegisterService">
     <wsdl:port binding="tns:RegisterServiceBinding" name="RegisterServicePort">
-      <soap:address location="http://test1.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService"/>
+      <soap:address location="http://test2.ekstern-test.nspop.dk:8080/minlog2-registration/20250312/RegisterService"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

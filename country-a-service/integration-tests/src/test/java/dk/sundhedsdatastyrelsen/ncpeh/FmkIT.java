@@ -8,6 +8,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
 import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
+import dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.SigningCertificate;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
@@ -180,18 +181,19 @@ class FmkIT {
             token);
     }
 
-    /// For manual testing of dispensations. Go to FMK and create a prescription for 100 pinex on someone. Copy
-    /// prescription ID and CPR here, find all the env vars, and run.
-    public static void main(String[] args) throws Exception {
-        var cpr = "1903098089";
-        var prescriptionId = "495358286669021";
-        var token = Sosi.getToken();
+    @Test
+    void simpleDispensationTest() throws Exception {
+        var cpr = Fmk.cprKarl;
+        var prescription = FmkPrescriptionCreator.createNewPrecriptionForCpr(cpr);
+        var prescriptionId = Long.toString(prescription.getPrescription()
+            .getFirst()
+            .getPrescriptionIdentifier()
+            .getFirst());
         var eDispensation = Utils.readXmlDocument(
             DISPENSATION_CDA.replaceAll(DISPENSATION_CDA_CPR, cpr)
                 .replaceAll(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId));
 
-        initialiseLmsData();
-        var prescriptionService = prescriptionService(lmsDataSource());
+        var token = Sosi.getToken();
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
@@ -203,10 +205,7 @@ class FmkIT {
         prescriptionService.undoDispensation(patientId(cpr), eDispensation, token);
 
         // we perform the dispensation again to clean up after ourselves:
-        prescriptionService.submitDispensation(
-            patientId(cpr),
-            eDispensation,
-            token);
+        prescriptionService.submitDispensation(patientId(cpr), eDispensation, token);
     }
 
     // These are the CPR number and prescription id used in the dispensation CDA below.

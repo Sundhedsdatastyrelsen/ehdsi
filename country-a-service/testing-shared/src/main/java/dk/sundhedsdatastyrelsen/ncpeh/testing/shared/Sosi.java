@@ -15,6 +15,9 @@ import java.util.Base64;
 public class Sosi {
     private static AuthenticationService authService;
     private static String soapHeader;
+    private static final URI sosiUri = URI.create("https://test2-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws");
+    public static final URI sosiOrganisationDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService");
+    public static final URI sosiPersonalDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI");
 
     @SneakyThrows
     public static EuropeanHcpIdwsToken getToken() {
@@ -31,7 +34,7 @@ public class Sosi {
                 password);
 
             authService = new AuthenticationService(
-                URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
+                sosiUri,
                 signingKey,
                 "https://ehdsi-idp.testkald.nspop.dk");
         }

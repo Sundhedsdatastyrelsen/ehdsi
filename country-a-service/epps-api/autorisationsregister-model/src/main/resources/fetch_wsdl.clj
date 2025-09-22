@@ -79,7 +79,7 @@
        (run! #(fix-schema-locations % "./"))))
 
 (def wsdl-url
-  "http://test1-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105?wsdl")
+  "http://test2-cnsp.ekstern-test.nspop.dk:8080/stamdata-authorization-lookup-ws/service/AuthorizationService-20240105?wsdl")
 
 (when (= *file* (System/getProperty "babashka.file"))
   (fetch-wsdl wsdl-url "AuthorizationService-20240105.wsdl"))

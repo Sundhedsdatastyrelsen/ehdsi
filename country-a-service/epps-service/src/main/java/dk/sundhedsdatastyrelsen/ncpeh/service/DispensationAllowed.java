@@ -29,14 +29,7 @@ public final class DispensationAllowed {
             .filter(o ->
                 // The documentation for ekspedition påbegyndt is clear, the prescription is locked to that pharmacy.
                 // All foreign pharmacies share the same ID here, so we can't use that.
-                Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value())
-                    // The documentation for Bestilt is more muddy. But it seems to be rarely used, and mostly with
-                    // dosisdispenseret medicine, so we err on the side of caution and block it.
-                    // See e.g. https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:bestilling:
-                    // >  Bestilt. Nye bestillinger oprettet af bl.a. læger vil have denne status. Denne status låser ikke recepten.
-                    // and https://wiki.fmk-teknik.dk/doku.php?id=apo:generel:scenarier:borger_med_cpr-nummer_henvender_sig_pa_apoteket_for_at_hente_bestilt_laegemiddel
-                    // >  Recepten har ikke længere en åben bestilling og er derfor ikke længere ”låst” til apoteket.
-                    || Objects.equals(o.getStatus(), OrderStatusPredefinedType.BESTILT.value()))
+                Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value()))
             .findFirst();
         if (effectuationStartedOrder.isPresent()) {
             errors.add("Prescription is locked to another pharmacy, and cannot be dispensed cross border.");
@@ -52,8 +45,12 @@ public final class DispensationAllowed {
                 // Negative list so if they add a new status, we block it by default.
                 // Cancelled orders are OK.
                 !Objects.equals(o.getStatus(), OrderStatusPredefinedType.ANNULLERET.value())
-                    // We already check for ekspedition påbegyndt and bestilt above. Don't want to report that error twice.
+                    // We already check for ekspedition påbegyndt above. Don't want to report that error twice.
                     && !Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value())
+                    // Bestilt means "The prescriber thinks you should pick it up here, but you can still pick it up
+                    // anywhere". When we cancel an effectuation, the prescriptions remains "bestilt" to us. So we allow
+                    // "bestilt" prescriptions. See also https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:bestilling and
+                    // https://wiki.fmk-teknik.dk/doku.php?id=apo:generel:scenarier:borger_med_cpr-nummer_henvender_sig_pa_apoteket_for_at_hente_bestilt_laegemiddel
                     && !Objects.equals(o.getStatus(), OrderStatusPredefinedType.BESTILT.value()))
             .findFirst();
         if (pastEffectuation.isPresent()) {
