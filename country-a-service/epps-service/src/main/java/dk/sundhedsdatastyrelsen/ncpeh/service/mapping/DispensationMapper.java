@@ -323,7 +323,7 @@ public class DispensationMapper {
         return b.build();
     }
 
-    private static OrganisationType pharmacyEan(Document cda) throws XPathExpressionException {
+    static OrganisationType pharmacyEan(Document cda) throws XPathExpressionException {
         // When the type is "Apotek" we need to use EAN.  For modificator elements it needs to be "Apotek", hence EAN.
         return authorOrganization(
             cda, OrganisationIdentifierType.builder()
@@ -333,7 +333,7 @@ public class DispensationMapper {
             "Apotek");
     }
 
-    private static OrganisationType pharmacySor(Document cda) throws XPathExpressionException {
+    static OrganisationType pharmacySor(Document cda) throws XPathExpressionException {
         // To use SOR the type has to be "apotek" (lower case). For delivery site, we must use SOR, hence "apotek".
         return authorOrganization(
             cda, OrganisationIdentifierType.builder()
