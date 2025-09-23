@@ -117,7 +117,7 @@ class DispensationMapperTest {
         var xmlFileName = "dispensations/CzRequest1.xml";
 
         var cda = testDispensationCda(xmlFileName);
-        var org = DispensationMapper.authorOrganization(cda);
+        var org = DispensationMapper.pharmacyEan(cda);
 
         Assertions.assertFalse(org.getIdentifier().getSource().isBlank());
         Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
