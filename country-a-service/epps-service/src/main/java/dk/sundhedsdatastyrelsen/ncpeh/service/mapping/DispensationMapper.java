@@ -209,7 +209,8 @@ public class DispensationMapper {
             "/hl7:ClinicalDocument/hl7:id";
     }
 
-    public static final String EHDSI_EAN = "5790001392277"; // NSI, Udenlandsk Apotek via epSOS ( SOR-nummer: 397941000016003 )
+    public static final String EHDSI_EAN = "5790001392277";   // NSI, Udenlandsk Apotek via epSOS
+    public static final String EHDSI_SOR = "397941000016003"; // NSI, Udenlandsk Apotek via epSOS
 
     // XPath is not thread safe so we keep a separate copy for each thread.
     private static final ThreadLocal<XPath> xpath = ThreadLocal.withInitial(() -> {
@@ -284,14 +285,7 @@ public class DispensationMapper {
         return s != null && !s.isBlank();
     }
 
-    private static OrganisationIdentifierType placeholderPharmacyId() {
-        return OrganisationIdentifierType.builder()
-            .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
-            .withValue(EHDSI_EAN)
-            .build();
-    }
-
-    static OrganisationType authorOrganization(Document cda) throws XPathExpressionException {
+    private static OrganisationType authorOrganization(Document cda, OrganisationIdentifierType placeholderId, String type) throws XPathExpressionException {
         var addressLines = new ArrayList<>(evalMany(cda, XPaths.authorOrgAddressLine));
         var postalCode = eval(cda, XPaths.authorOrgPostalCode);
         var city = eval(cda, XPaths.authorOrgCity);
@@ -318,9 +312,9 @@ public class DispensationMapper {
 
         var name = eval(cda, XPaths.authorOrgName);
         var b = OrganisationType.builder()
-            .withIdentifier(placeholderPharmacyId())
+            .withIdentifier(placeholderId)
             .withName(StringUtils.isBlank(name) ? "(ukendt)" : name)
-            .withType("Apotek")
+            .withType(type) // capitalisation matters!
             .addAddressLine(addressLines);
 
         if (email != null) b.withEmailAddress(email);
@@ -329,8 +323,24 @@ public class DispensationMapper {
         return b.build();
     }
 
-    static OrganisationType orderedAtPharmacy(Document cda) throws XPathExpressionException {
-        return authorOrganization(cda);
+    static OrganisationType pharmacyEan(Document cda) throws XPathExpressionException {
+        // When the type is "Apotek" we need to use EAN.  For modificator elements it needs to be "Apotek", hence EAN.
+        return authorOrganization(
+            cda, OrganisationIdentifierType.builder()
+                .withSource(OrganisationIdentifierPredefinedSourceType.EAN_LOKATIONSNUMMER.value())
+                .withValue(EHDSI_EAN)
+                .build(),
+            "Apotek");
+    }
+
+    static OrganisationType pharmacySor(Document cda) throws XPathExpressionException {
+        // To use SOR the type has to be "apotek" (lower case). For delivery site, we must use SOR, hence "apotek".
+        return authorOrganization(
+            cda, OrganisationIdentifierType.builder()
+                .withSource(OrganisationIdentifierPredefinedSourceType.SOR.value())
+                .withValue(EHDSI_SOR)
+                .build(),
+            "apotek");
     }
 
     public static long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
@@ -403,11 +413,7 @@ public class DispensationMapper {
             .withPackageSize(packageSize(cda))
             .withSubstitutedDrug(drug)
             .end()
-            .withDeliverySite(OrganisationType.builder()
-                .withName("Ry Apoteksudsalg")
-                .withType("Apotek")
-                .withIdentifier().withSource("CVR-P").withValue("1008648049").end()
-                .build()) // TODO #190
+            .withDeliverySite(pharmacySor(cda))
             .build();
     }
 
@@ -630,9 +636,9 @@ public class DispensationMapper {
                 .withModifiedBy().withContent(
                     obf.createModificatorTypeOther(authorPerson(cda)),
                     obf.createModificatorTypeRole(authorRole(cda)),
-                    obf.createModificatorTypeOrganisation(authorOrganization(cda))
+                    obf.createModificatorTypeOrganisation(pharmacyEan(cda))
                 ).end()
-                .withOrderedAtPharmacy(orderedAtPharmacy(cda))
+                .withOrderedAtPharmacy(pharmacyEan(cda))
                 .withPrescription(startEffectuationRequestPrescription(cda))
                 .build();
         } catch (XPathExpressionException e) {
@@ -684,7 +690,7 @@ public class DispensationMapper {
                 .withCreatedBy().withContent(
                     obf.createModificatorTypeOther(authorPerson(cda)),
                     obf.createModificatorTypeRole(authorRole(cda)),
-                    obf.createModificatorTypeOrganisation(authorOrganization(cda))
+                    obf.createModificatorTypeOrganisation(pharmacyEan(cda))
                 ).end()
                 .addPrescription(prescription(cda, startEffectuationResponse))
                 .build();
@@ -712,7 +718,7 @@ public class DispensationMapper {
                 .withModifiedBy().withContent(
                     obf.createModificatorTypeOther(authorPerson(cda)),
                     obf.createModificatorTypeRole(authorRole(cda)),
-                    obf.createModificatorTypeOrganisation(authorOrganization(cda))
+                    obf.createModificatorTypeOrganisation(pharmacyEan(cda))
                 ).end()
                 .addPrescription()
                 .withIdentifier(prescriptionId)
