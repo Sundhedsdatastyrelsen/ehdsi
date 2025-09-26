@@ -88,10 +88,11 @@ class FmkIT {
      */
     @Test
     void getPrescriptionAndMedicationTest() throws Exception {
+        var cpr = Fmk.cprHelleReadOnly;
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
             .withPersonIdentifier()
             .withSource("CPR")
-            .withValue(Fmk.cprHelleReadOnly)
+            .withValue(cpr)
             .end()
             .withIncludeOpenPrescriptions()
             .end()
@@ -110,9 +111,9 @@ class FmkIT {
             .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
             .toList();
 
-        var drugMedications = prescriptionService.getDrugMedicationResponse(Fmk.cprHelleReadOnly, drugMedicationIds, token);
+        var drugMedications = prescriptionService.getDrugMedicationResponse(cpr, drugMedicationIds, token);
+        assertThat(drugMedications.getPersonIdentifier().getValue(), is(cpr));
         assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
-        assertThat(drugMedications.getPersonIdentifier().getValue(), is(Fmk.cprHelleReadOnly));
     }
 
     @Test

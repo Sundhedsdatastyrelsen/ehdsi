@@ -160,10 +160,12 @@ public class PrescriptionService {
                     patientId,
                     fmkResponse,
                     pair.getLeft(),
-                    lmsDataProvider.packageInfo(pair.getRight()
-                        .getPackageRestriction()
-                        .getPackageNumber()
-                        .getValue())))
+                    Optional.ofNullable(pair.getRight())
+                        .map(PrescriptionType::getPackageRestriction)
+                        .map(PackageRestrictionType::getPackageNumber)
+                        .map(PackageNumberType::getValue)
+                        .map(lmsDataProvider::packageInfo)
+                        .orElse(null)))
                 .filter(Objects::nonNull)
                 .toList();
         } catch (JAXBException e) {
