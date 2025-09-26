@@ -6,6 +6,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +20,7 @@ public final class DispensationAllowed {
     ///
     /// @param prescription the prescription to dispense. Must include effectuations and orders.
     /// @return an error message if dispensation is not allowed. Null if dispensation is allowed.
-    public static String getDispensationRestrictions(PrescriptionType prescription, PackageInfo packageInfo) {
+    public static String getDispensationRestrictions(PrescriptionType prescription, @Nullable PackageInfo packageInfo) {
         var errors = new ArrayList<String>();
 
         // If another pharmacy has started handling this prescription, calls to FMK to dispense it will fail, as they
