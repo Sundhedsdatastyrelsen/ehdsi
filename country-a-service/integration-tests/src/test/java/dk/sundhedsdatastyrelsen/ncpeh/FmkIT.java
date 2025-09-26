@@ -1,6 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PrescriptionStatusType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
@@ -50,18 +52,33 @@ class FmkIT {
             TestIdentities.systemIdentity);
     }
 
+    private static FtpConnection.ServerInfo lmsServerInfo() {
+        var user = Objects.requireNonNull(System.getenv("LMSFTP_USERNAME"), "envvar LMSFTP_USERNAME is not set");
+        var password = Objects.requireNonNull(System.getenv("LMSFTP_PASSWORD"), "envvar LMSFTP_PASSWORD is not set");
+        return new FtpConnection.ServerInfo("ftp.medicinpriser.dk", 21, user, password);
+    }
+
+    private static String patientId(String cpr) {
+        return String.format("%s^^^&%s&ISO", cpr, Oid.DK_CPR.value);
+    }
+
+    private static UndoDispensationRepository undoDispensationRepository() {
+        var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
+        // perform db migrations
+        Flyway.configure().dataSource(dataSource).load().migrate();
+        return new UndoDispensationRepository(dataSource);
+    }
+
+    private static AuthorizationRegistryClient authorizationRegistryClient() {
+        return new AuthorizationRegistryClientMock();
+    }
+
     @BeforeAll
     static void initialiseLmsData() throws SQLException, IOException {
         var ds = lmsDataSource();
         if (new DataProvider(ds).lastImport().isEmpty()) {
             LocalLmsLoader.fetchData(lmsServerInfo(), ds);
         }
-    }
-
-    private static FtpConnection.ServerInfo lmsServerInfo() {
-        var user = Objects.requireNonNull(System.getenv("LMSFTP_USERNAME"), "envvar LMSFTP_USERNAME is not set");
-        var password = Objects.requireNonNull(System.getenv("LMSFTP_PASSWORD"), "envvar LMSFTP_PASSWORD is not set");
-        return new FtpConnection.ServerInfo("ftp.medicinpriser.dk", 21, user, password);
     }
 
     /**
@@ -127,19 +144,51 @@ class FmkIT {
         assertThat(validPrescriptions.size(), is(drugMedications.getDrugMedication().size()));
     }
 
-    private static String patientId(String cpr) {
-        return String.format("%s^^^&%s&ISO", cpr, Oid.DK_CPR.value);
-    }
+    @Test
+    void startAndAbortEffectuationTest() throws Exception {
+        var cpr = Fmk.cprKarl;
+        var prescription = FmkPrescriptionCreator.createNewPrecriptionForCpr(cpr);
+        var prescriptionId = Long.toString(prescription.getPrescription()
+            .getFirst()
+            .getPrescriptionIdentifier()
+            .getFirst());
+        var eDispensation = Utils.readXmlDocument(
+            DISPENSATION_CDA.replaceAll(DISPENSATION_CDA_CPR, cpr)
+                .replaceAll(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId));
 
-    private static UndoDispensationRepository undoDispensationRepository() {
-        var dataSource = new SingleConnectionDataSource("jdbc:sqlite::memory:", true);
-        // perform db migrations
-        Flyway.configure().dataSource(dataSource).load().migrate();
-        return new UndoDispensationRepository(dataSource);
-    }
+        var token = Sosi.getToken();
 
-    private static AuthorizationRegistryClient authorizationRegistryClient() {
-        return new AuthorizationRegistryClientMock();
+        try {
+            prescriptionService.submitDispensation(patientId(cpr), eDispensation, token, true);
+            assertThat("we shouldn't get here", false);
+        } catch (IllegalStateException e) {
+            // carry on
+        }
+
+        var updatedPrescription = Fmk.idwsApiClient().getPrescription(
+                GetPrescriptionRequestType.builder()
+                    .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+                    .withIdentifier(Long.valueOf(prescriptionId))
+                    .withIncludeEffectuations(true)
+                    .build(),
+                token)
+            .getPrescription()
+            .getFirst();
+
+        assertThat("prescription is open", updatedPrescription.getStatus(), is(PrescriptionStatusType.ÅBEN));
+
+        assertThat(
+            "there are no begun orders",
+            updatedPrescription
+                // getOrder can be null, but streams work fine with that - treat it like an empty list.
+                .getOrder()
+                .stream()
+                .filter(o -> Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value()))
+                .toList(),
+            is(empty()));
+
+        // Cleanup
+        prescriptionService.submitDispensation(patientId(cpr), eDispensation, token);
     }
 
     /**

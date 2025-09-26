@@ -251,8 +251,13 @@ public class PrescriptionService {
         }
     }
 
-    @WithSpan
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, EuropeanHcpIdwsToken token) {
+        submitDispensation(patientId, dispensationCda, token, false);
+    }
+
+    /// @hidden public for testing.
+    @WithSpan
+    public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, EuropeanHcpIdwsToken token, boolean forceDispensationError) {
         var helper = new SubmitDispensationHelper();
         var eDispensationCdaId = SubmitDispensationHelper.getEDispensationId(dispensationCda);
 
@@ -266,6 +271,9 @@ public class PrescriptionService {
         try {
             // Dispense it. This may also close the prescription.
             log.info("Create FMK pharmacy effectuation");
+            if (forceDispensationError) {
+                throw new IllegalStateException("Forced dispensation error");
+            }
             var dispensation = helper.dispense(patientId, dispensationCda, token, startEffectuation.response());
 
             // If we didn't terminate, release the lock on the prescription again.
