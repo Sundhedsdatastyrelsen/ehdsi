@@ -22,17 +22,23 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.io.FileMatchers.aReadableFile;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class FmkIT {
     private final DataSource lmsDataSource = lmsDataSource();
@@ -153,9 +159,7 @@ class FmkIT {
             .getFirst()
             .getPrescriptionIdentifier()
             .getFirst());
-        var eDispensation = Utils.readXmlDocument(
-            DISPENSATION_CDA.replaceAll(DISPENSATION_CDA_CPR, cpr)
-                .replaceAll(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId));
+        var eDispensation = dispensationCda(cpr, prescriptionId);
 
         var token = Sosi.getToken();
 
@@ -239,31 +243,44 @@ class FmkIT {
             .getFirst()
             .getPrescriptionIdentifier()
             .getFirst());
-        var eDispensation = Utils.readXmlDocument(
-            DISPENSATION_CDA.replaceAll(DISPENSATION_CDA_CPR, cpr)
-                .replaceAll(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId));
 
+        var eDispensation = dispensationCda(cpr, prescriptionId);
         var token = Sosi.getToken();
 
-        // shouldn't throw:
-        prescriptionService.submitDispensation(
-            patientId(cpr),
-            eDispensation,
-            token);
+        assertDoesNotThrow(() ->
+            prescriptionService.submitDispensation(
+                patientId(cpr),
+                eDispensation,
+                token)
+        );
 
-        // shouldn't throw:
-        prescriptionService.undoDispensation(patientId(cpr), eDispensation, token);
+        assertDoesNotThrow(() ->
+            prescriptionService.undoDispensation(patientId(cpr), eDispensation, token)
+        );
 
         // we perform the dispensation again to clean up after ourselves:
         prescriptionService.submitDispensation(patientId(cpr), eDispensation, token);
     }
 
+    private Document dispensationCda(String cpr, String prescriptionId) throws SAXException {
+        var timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss+0000")
+            .withZone(ZoneOffset.UTC)
+            .format(Instant.now());
+        return Utils.readXmlDocument(DISPENSATION_CDA
+            .replace(DISPENSATION_CDA_CPR, cpr)
+            .replace(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId)
+            .replace(DISPENSATION_TIMESTAMP, timestamp));
+    }
+
     // These are the CPR number and prescription id used in the dispensation CDA below.
     private static final String DISPENSATION_CDA_CPR = "1903098089";
     private static final String DISPENSATION_CDA_PRESCRIPTION_ID = "495186474925101";
+    private static final String DISPENSATION_TIMESTAMP = "20250910064843+0000";
 
     /// This is a dispensation as generated for one of our test patients by the test country B portal published by
     /// EU. The prescription is for 100 paracetamol 500 mg tablets.
+    /// It has been modified with the dispensation information from PlRequest1.xml to get some more realistic looking
+    /// test data for FMK.
     private static final String DISPENSATION_CDA = """
         <hl7:ClinicalDocument xmlns:hl7="urn:hl7-org:v3">
             <hl7:realmCode code="DK" />
@@ -410,123 +427,127 @@ class FmkIT {
                                     <hl7:templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.3" />
                                     <hl7:templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.3" />
                                     <hl7:templateId root="2.16.840.1.113883.10.20.1.34" />
-                                    <hl7:id extension="extension" root="root" />
+                                    <id extension="A9F0065214DE43D1AB0509-1"
+                                        root="2.16.840.1.113883.3.4424.7.20.2.2.3.2.7.19.5.1" />
                                     <hl7:quantity unit="1" value="1" />
                                     <hl7:product>
                                         <hl7:manufacturedProduct classCode="MANU">
                                             <templateId xmlns="urn:hl7-org:v3"
                                                 root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29" />
-                                            <manufacturedMaterial xmlns="urn:hl7-org:v3" classCode="MMAT"
-                                                determinerCode="KIND">
+                                            <manufacturedMaterial xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" classCode="MMAT" determinerCode="KIND">
                                                 <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30" />
-                                                <code code="28103909506" codeSystem="1.2.208.176.3.1"
-                                                    codeSystemName="Lægemiddelstyrelsens DrugID"
-                                                    displayName="Pinex" />
-                                                <name>Pinex</name>
-                                                <pharm:desc xmlns:pharm="urn:hl7-org:pharm">500 mg</pharm:desc>
-                                                <pharm:formCode xmlns:pharm="urn:hl7-org:pharm"
-                                                    code="10219000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                <code code="100224877"
+                                                    codeSystem="2.16.840.1.113883.3.4424.6.1"
+                                                    codeSystemName="Identyfikatory lekÃ³w z bazy produktÃ³w leczniczych URPL"
+                                                    displayName="Asubtela" />
+                                                <name>Asubtela</name>
+                                                <pharm:desc>3 mg + 0,03 mg</pharm:desc>
+                                                <pharm:formCode code="10221000"
+                                                    codeSystem="0.4.0.127.0.16.1.1.2.1"
                                                     codeSystemName="EDQM" codeSystemVersion="2025-01-07"
-                                                    displayName="Tablet">
-                                                    <hl7:translation code="TAB"
-                                                        codeSystem="1.2.208.176.3.22" codeSystemName="LMS22"
-                                                        displayName="tabletter" />
+                                                    displayName="Film-coated tablet">
+                                                    <pharm:translation xmlns:pharm="urn:hl7-org:v3"
+                                                        code="10221000" codeSystem="0.4.0.127.0.16.1.1.2.1"
+                                                        codeSystemName="EDQM"
+                                                        displayName="Tabletki powlekane" />
                                                 </pharm:formCode>
-                                                <pharm:asContent xmlns:pharm="urn:hl7-org:pharm"
-                                                    classCode="CONT">
-                                                    <pharm:quantity unit="1" value="100">
-                                                        <hl7:translation>
-                                                            <originalText>stk.</originalText>
-                                                        </hl7:translation>
+                                                <pharm:asContent classCode="CONT">
+                                                    <pharm:quantity unit="1" value="21">
+                                                        <translation>
+                                                            <originalText>tablet</originalText>
+                                                        </translation>
                                                     </pharm:quantity>
                                                     <pharm:containerPackagedProduct classCode="CONT"
                                                         determinerCode="KIND">
-                                                        <pharm:code code="580984"
-                                                            codeSystem="1.2.208.176.3.2"
-                                                            codeSystemName="Varenumre på lægemiddelpakninger" />
-                                                        <pharm:name>Pinex, tabletter, 500 mg, 100 stk.
-                                                            (blister)</pharm:name>
-                                                        <pharm:formCode code="30007000"
-                                                            codeSystem="0.4.0.127.0.16.1.1.2.1"
-                                                            codeSystemName="EDQM"
-                                                            codeSystemVersion="2025-01-07"
-                                                            displayName="Blister">
-                                                            <hl7:translation code="BLI"
-                                                                codeSystem="1.2.208.176.3.14"
-                                                                codeSystemName="LMS14" />
-                                                        </pharm:formCode>
+                                                        <pharm:formCode nullFlavor="NI" />
+                                                        <pharm:asContent classCode="CONT">
+                                                            <pharm:quantity unit="1" value="1" />
+                                                            <pharm:containerPackagedProduct classCode="CONT"
+                                                                determinerCode="KIND">
+                                                                <pharm:code code="05909990773541"
+                                                                    codeSystem="1.3.160"
+                                                                    codeSystemName="GS1"
+                                                                    displayName="Asubtela, film-coated tablet, 3 mg + 0,03 mg, 1 x package(s), 21 tablet, 05909990773541 / drospirenone and ethinylestradiol, G03AA12" />
+                                                                <pharm:name>Asubtela, film-coated tablet, 3
+                                                                    mg + 0,03 mg, 1 x package(s), 21 tablet,
+                                                                    05909990773541 / drospirenone and
+                                                                    ethinylestradiol, G03AA12</pharm:name>
+                                                                <pharm:formCode nullFlavor="NI" />
+                                                            </pharm:containerPackagedProduct>
+                                                        </pharm:asContent>
                                                     </pharm:containerPackagedProduct>
                                                 </pharm:asContent>
-                                                <pharm:asSpecializedKind xmlns:pharm="urn:hl7-org:pharm"
-                                                    classCode="GRIC">
+                                                <pharm:asSpecializedKind classCode="GRIC">
                                                     <pharm:generalizedMaterialKind classCode="MMAT"
                                                         determinerCode="KIND">
-                                                        <pharm:code code="N02BE01"
+                                                        <pharm:code code="G03AA12"
                                                             codeSystem="2.16.840.1.113883.6.73"
                                                             codeSystemName="Anatomical Therapeutic Chemical"
                                                             codeSystemVersion="2025-01"
-                                                            displayName="paracetamol">
-                                                            <hl7:translation code="N02BE01"
+                                                            displayName="drospirenone and ethinylestradiol">
+                                                            <pharm:translation xmlns:pharm="urn:hl7-org:v3"
+                                                                code="G03AA12"
                                                                 codeSystem="2.16.840.1.113883.6.73"
                                                                 codeSystemName="Anatomical Therapeutic Chemical"
-                                                                displayName="Paracetamol" />
+                                                                displayName="drospirenon i etynyloestradiol" />
                                                         </pharm:code>
                                                     </pharm:generalizedMaterialKind>
                                                 </pharm:asSpecializedKind>
-                                                <pharm:ingredient xmlns:pharm="urn:hl7-org:pharm"
-                                                    classCode="ACTI">
+                                                <pharm:ingredient classCode="ACTI">
                                                     <pharm:quantity>
-                                                        <numerator
-                                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                            unit="mg" value="500" xsi:type="hl7:PQ" />
-                                                        <denominator
-                                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                            unit="1" value="1" xsi:type="hl7:PQ" />
+                                                        <numerator unit="mg" value="3" xsi:type="PQ" />
+                                                        <denominator unit="1" value="1" xsi:type="PQ" />
                                                     </pharm:quantity>
                                                     <pharm:ingredientSubstance classCode="MMAT"
                                                         determinerCode="KIND">
-                                                        <pharm:code nullFlavor="UNK" />
-                                                        <pharm:name>PARACETAMOL</pharm:name>
+                                                        <pharm:code nullFlavor="NI" />
+                                                        <pharm:name>Drospirenonum</pharm:name>
+                                                    </pharm:ingredientSubstance>
+                                                </pharm:ingredient>
+                                                <pharm:ingredient classCode="ACTI">
+                                                    <pharm:quantity>
+                                                        <numerator unit="mg" value="0.03" xsi:type="PQ" />
+                                                        <denominator unit="1" value="1" xsi:type="PQ" />
+                                                    </pharm:quantity>
+                                                    <pharm:ingredientSubstance classCode="MMAT"
+                                                        determinerCode="KIND">
+                                                        <pharm:code nullFlavor="NI" />
+                                                        <pharm:name>Ethinylestradiol</pharm:name>
                                                     </pharm:ingredientSubstance>
                                                 </pharm:ingredient>
                                             </manufacturedMaterial>
-                                            <manufacturerOrganization xmlns="urn:hl7-org:v3" classCode="ORG"
+                                            <manufacturerOrganization classCode="ORG"
                                                 determinerCode="INSTANCE">
-                                                <name>Vitabalans</name>
+                                                <name>Exeltis Poland Sp. z o.o.</name>
                                             </manufacturerOrganization>
                                         </hl7:manufacturedProduct>
                                     </hl7:product>
-                                    <hl7:performer typeCode="PRF">
-                                        <hl7:time value="20250910064843+0000" />
-                                        <hl7:assignedEntity>
-                                            <hl7:id extension="extension" root="root" />
-                                            <hl7:addr>
-                                                <hl7:streetAddressLine>streetAddressLine</hl7:streetAddressLine>
-                                                <hl7:postalCode>postalCode</hl7:postalCode>
-                                                <hl7:city>city</hl7:city>
-                                                <hl7:country>country</hl7:country>
-                                            </hl7:addr>
-                                            <hl7:telecom use="WP" value="tel:123456789" />
-                                            <hl7:assignedPerson>
-                                                <hl7:name>
-                                                    <hl7:family>familyName</hl7:family>
-                                                    <hl7:given>givenName</hl7:given>
-                                                    <hl7:suffix>suffix</hl7:suffix>
-                                                </hl7:name>
-                                            </hl7:assignedPerson>
-                                            <hl7:representedOrganization>
-                                                <hl7:id root="root" />
-                                                <hl7:name>name</hl7:name>
-                                                <hl7:telecom use="WP" value="tel:123456789" />
-                                                <hl7:addr>
-                                                    <hl7:streetAddressLine>streetAddressLine</hl7:streetAddressLine>
-                                                    <hl7:postalCode>postalCode</hl7:postalCode>
-                                                    <hl7:city>city</hl7:city>
-                                                    <hl7:country>country</hl7:country>
-                                                </hl7:addr>
-                                            </hl7:representedOrganization>
-                                        </hl7:assignedEntity>
-                                    </hl7:performer>
+                                    <performer typeCode="PRF">
+                                        <time value="20250404122129+0100" />
+                                        <assignedEntity>
+                                            <id extension="10000716" root="2.16.840.1.113883.3.4424.1.6.1" />
+                                            <addr nullFlavor="NI" />
+                                            <telecom nullFlavor="NI" />
+                                            <assignedPerson>
+                                                <name>
+                                                    <family>Testowy</family>
+                                                    <given>Farmaceuta</given>
+                                                </name>
+                                            </assignedPerson>
+                                            <representedOrganization classCode="ORG"
+                                                determinerCode="INSTANCE">
+                                                <id extension="1230011" root="2.16.840.1.113883.3.4424.2.6" />
+                                                <name>Apteka porcelanowa</name>
+                                                <telecom use="WP" value="tel:+4832123456" />
+                                                <addr>
+                                                    <country>PL</country>
+                                                    <postalCode>77-330</postalCode>
+                                                    <city>KrakÃ³w</city>
+                                                    <streetAddressLine>WolnoÅ\\u009bci 7</streetAddressLine>
+                                                </addr>
+                                            </representedOrganization>
+                                        </assignedEntity>
+                                    </performer>
                                     <hl7:participant contextControlCode="OP" typeCode="PRF">
                                         <hl7:participantRole classCode="LIC">
                                             <hl7:id root="entryOid" />
