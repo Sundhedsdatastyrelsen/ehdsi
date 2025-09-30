@@ -15,10 +15,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequest
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
-import dk.sdsd.dgws._2010._08.NameFormat;
-import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
-import dk.sdsd.dgws._2012._06.ObjectFactory;
-import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
@@ -185,24 +181,12 @@ public class FmkClientIdws {
         );
     }
 
-    public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, EuropeanHcpIdwsToken token, PredefinedRequestedRole requestedRole) throws JAXBException {
+    public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, EuropeanHcpIdwsToken token) throws JAXBException {
         return makeFmkRequest(
             facE2.createGetMedicineCardRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
             GetMedicineCardResponseType.class,
             token,
-            requestedRole,
-            false
-        );
-    }
-
-    public GetDrugMedicationResponseType getDrugMedication(GetDrugMedicationRequestType request, EuropeanHcpIdwsToken token, PredefinedRequestedRole requestedRole) throws JAXBException {
-        return makeFmkRequest(
-            fac.createGetDrugMedicationRequest(request),
-            "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetDrugMedication",
-            GetDrugMedicationResponseType.class,
-            token,
-            requestedRole,
             false
         );
     }
@@ -218,24 +202,13 @@ public class FmkClientIdws {
         EuropeanHcpIdwsToken token,
         boolean requiresMedicineCardConsent
     ) throws JAXBException {
-        return makeFmkRequest(request, soapAction, clazz, token, PredefinedRequestedRole.APOTEKER, requiresMedicineCardConsent);
-    }
-
-    private <RequestType, ResponseType> ResponseType makeFmkRequest(
-        JAXBElement<RequestType> request,
-        String soapAction,
-        Class<ResponseType> clazz,
-        EuropeanHcpIdwsToken token,
-        PredefinedRequestedRole requestedRole,
-        boolean requiresMedicineCardConsent
-    ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         final Element body;
         Element[] extraHeaders;
         if (requiresMedicineCardConsent) {
-            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole)), ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
+            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
         } else {
-            extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
+            extraHeaders = new Element[0];
         }
         try {
             body = NspClientIdws.request(
@@ -250,21 +223,5 @@ public class FmkClientIdws {
             throw new NspClientException("FMK request failed", e);
         }
         return jaxbContext.createUnmarshaller().unmarshal(body, clazz).getValue();
-    }
-
-    private JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
-        final var header = WhitelistingHeader.builder()
-            .withSystemName("ePPS PoC")
-            .withSystemOwnerName("Sundhedsdatastyrelsen")
-            .withSystemVersion("0.1.0")
-            .withOrgResponsibleName("Sundhedsdatastyrelsen")
-            .withOrgUsingName("Sundhedsdatastyrelsen")
-            .withOrgUsingID()
-            // TODO: Don't use Region Hovedstaden's location number:
-            .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
-            .withRequestedRole(requestedRole.value())
-            .build();
-
-        return new ObjectFactory().createWhitelistingHeader(header);
     }
 }
