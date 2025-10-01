@@ -24,6 +24,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationRespons
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -212,41 +213,11 @@ public class DispensationMapper {
     public static final String EHDSI_EAN = "5790001392277";   // NSI, Udenlandsk Apotek via epSOS
     public static final String EHDSI_SOR = "397941000016003"; // NSI, Udenlandsk Apotek via epSOS
 
-    // XPath is not thread safe so we keep a separate copy for each thread.
-    private static final ThreadLocal<XPath> xpath = ThreadLocal.withInitial(() -> {
-        var xp = XPathFactory.newInstance().newXPath();
-        var nsCtx = new SimpleNamespaceContext();
-        nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
-        nsCtx.bindNamespaceUri("pharm", "urn:hl7-org:pharm");
-        xp.setNamespaceContext(nsCtx);
-        return xp;
-    });
-
-    private static List<Node> evalNodeMany(Document cda, String xpathExpression) throws XPathExpressionException {
-        var nodeList = (NodeList) xpath.get().evaluate(xpathExpression, cda, XPathConstants.NODESET);
-        var l = nodeList.getLength();
-        var result = new ArrayList<Node>();
-        for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i));
-        }
-        return Collections.unmodifiableList(result);
-    }
-
-    private static List<String> evalMany(Document cda, String xpathExpression) throws XPathExpressionException {
-        return evalNodeMany(cda, xpathExpression).stream().map(Node::getTextContent).toList();
-    }
-
-    static @NonNull String eval(Node node, String xpathExpression) throws XPathExpressionException {
-        return xpath.get().evaluate(xpathExpression, node);
-    }
-
-    private static Node evalNode(Node node, String xpathExpression) throws XPathExpressionException {
-        return (Node) xpath.get().evaluate(xpathExpression, node, XPathConstants.NODE);
-    }
+    static final XPathWrapper xpathNew = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.PHARM);
 
     static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
-        var familyNames = evalMany(cda, XPaths.authorFamilyName);
-        var givenNames = evalMany(cda, XPaths.authorGivenName);
+        var familyNames = xpathNew.evalStringList(XPaths.authorFamilyName, cda);
+        var givenNames = xpathNew.evalStringList(XPaths.authorGivenName, cda);
         var allButLastName = Stream.concat(
                 givenNames.stream(),
                 familyNames.subList(0, familyNames.size() - 1).stream())
@@ -265,8 +236,8 @@ public class DispensationMapper {
     }
 
     static String authorRole(Document cda) throws XPathExpressionException {
-        var functionCode = eval(cda, XPaths.authorFunctionCode);
-        var functionCodeSystem = eval(cda, XPaths.authorFunctionCodeSystem);
+        var functionCode = xpathNew.evalString(XPaths.authorFunctionCode, cda);
+        var functionCodeSystem = xpathNew.evalString(XPaths.authorFunctionCodeSystem, cda);
         if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
             // The "official" translation of "Pharmacists" from ISCO is "Apoteker", but FMK validates this
             // and compares it with the soap header role. And they translate that as "Udenlandsk apoteker",
@@ -286,11 +257,11 @@ public class DispensationMapper {
     }
 
     private static OrganisationType authorOrganization(Document cda, OrganisationIdentifierType placeholderId, String type) throws XPathExpressionException {
-        var addressLines = new ArrayList<>(evalMany(cda, XPaths.authorOrgAddressLine));
-        var postalCode = eval(cda, XPaths.authorOrgPostalCode);
-        var city = eval(cda, XPaths.authorOrgCity);
-        var state = eval(cda, XPaths.authorOrgState);
-        var country = eval(cda, XPaths.authorOrgCountry);
+        var addressLines = new ArrayList<>(xpathNew.evalStringList(XPaths.authorOrgAddressLine, cda));
+        var postalCode = xpathNew.evalString(XPaths.authorOrgPostalCode, cda);
+        var city = xpathNew.evalString(XPaths.authorOrgCity, cda);
+        var state = xpathNew.evalString(XPaths.authorOrgState, cda);
+        var country = xpathNew.evalString(XPaths.authorOrgCountry, cda);
         if (notBlank(postalCode)) addressLines.add(postalCode);
         if (notBlank(city)) addressLines.add(city);
         if (notBlank(state)) addressLines.add(state);
@@ -298,7 +269,7 @@ public class DispensationMapper {
 
         String email = null;
         String telephone = null;
-        var telecoms = evalNodeMany(cda, XPaths.authorOrgTelecom)
+        var telecoms = xpathNew.evalNodeList(XPaths.authorOrgTelecom, cda)
             .stream()
             .map(node -> node.getAttributes().getNamedItem("value"))
             .filter(Objects::nonNull)
@@ -310,7 +281,7 @@ public class DispensationMapper {
             if (t.startsWith("mailto:")) email = t.substring(7);
         }
 
-        var name = eval(cda, XPaths.authorOrgName);
+        var name = xpathNew.evalString(XPaths.authorOrgName, cda);
         var b = OrganisationType.builder()
             .withIdentifier(placeholderId)
             .withName(StringUtils.isBlank(name) ? "(ukendt)" : name)
@@ -344,12 +315,12 @@ public class DispensationMapper {
     }
 
     public static long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
-        var id = evalNode(cda, XPaths.inFulfillmentOfId);
-        var root = eval(id, "@root");
+        var id = xpathNew.evalNode(XPaths.inFulfillmentOfId, cda);
+        var root = xpathNew.evalString("@root", id);
         if (!Oid.DK_FMK_PRESCRIPTION.value.equals(root)) {
             throw new MapperException("Unknown prescription id type: " + root);
         }
-        var ext = eval(id, "@extension");
+        var ext = xpathNew.evalString("@extension", id);
         try {
             return Long.parseLong(ext);
         } catch (NumberFormatException e) {
@@ -391,18 +362,18 @@ public class DispensationMapper {
     }
 
     static Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
-        var node = evalNode(cda, XPaths.packageQuantity);
-        var unit = eval(node, "@unit");
+        var node = xpathNew.evalNode(XPaths.packageQuantity, cda);
+        var unit = xpathNew.evalString("@unit", node);
         if (!"1".equals(unit)) {
             throw new MapperException("Unsupported quantity unit: " + unit);
         }
-        var value = eval(node, "@value");
+        var value = xpathNew.evalString("@value", node);
         return Utils.safeParsePositiveInt(value)
             .orElseThrow(() -> new MapperException("Package quantity must be a positive integer, was: %s".formatted(value)));
     }
 
     static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
-        var effectiveTime = eval(cda, XPaths.effectiveTime);
+        var effectiveTime = xpathNew.evalString(XPaths.effectiveTime, cda);
         var drug = drug(cda);
 
         return CreatePharmacyEffectuationType.builder()
@@ -427,18 +398,18 @@ public class DispensationMapper {
     }
 
     static SubstancesType substances(Document cda) throws XPathExpressionException {
-        var ingredientNodes = evalNodeMany(cda, XPaths.activeIngredients);
+        var ingredientNodes = xpathNew.evalNodeList(XPaths.activeIngredients, cda);
         if (ingredientNodes.isEmpty()) {
             return null;
         }
         var b = SubstancesType.builder();
         for (var node : ingredientNodes) {
-            var substanceName = eval(node, "pharm:ingredientSubstance/pharm:name");
+            var substanceName = xpathNew.evalString("pharm:ingredientSubstance/pharm:name", node);
             if (StringUtils.isNotBlank(substanceName)) {
                 b.addActiveSubstance().withFreeText(substanceName);
             } else {
-                var substanceCode = eval(node, "pharm:ingredientSubstance/pharm:code/@code");
-                var substanceDisplayName = eval(node, "pharm:ingredientSubstance/pharm:code/@displayName");
+                var substanceCode = xpathNew.evalString("pharm:ingredientSubstance/pharm:code/@code", node);
+                var substanceDisplayName = xpathNew.evalString("pharm:ingredientSubstance/pharm:code/@displayName", node);
                 if (StringUtils.isNotBlank(substanceCode)) {
                     b.addActiveSubstance().withFreeText("%s %s".formatted(substanceCode, substanceDisplayName).trim());
                 }
@@ -459,7 +430,7 @@ public class DispensationMapper {
         // numerisk værdi og enhedskode samt evt. enheds-tekst og evt. komplet tekst, eller alternativt
         // som komplet tekst.
         // https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:opret_effektuering
-        var drugStrengthFreeText = eval(cda, XPaths.drugStrengthFreeText);
+        var drugStrengthFreeText = xpathNew.evalString(XPaths.drugStrengthFreeText, cda);
         if (StringUtils.isBlank(drugStrengthFreeText)) {
             return null;
         }
@@ -474,17 +445,17 @@ public class DispensationMapper {
     }
 
     static ATCType atc(Document cda) throws XPathExpressionException {
-        var node = evalNode(cda, XPaths.atcCode);
+        var node = xpathNew.evalNode(XPaths.atcCode, cda);
         if (node == null) {
             return null;
         }
-        var codeSystem = eval(node, "@codeSystem");
+        var codeSystem = xpathNew.evalString("@codeSystem", node);
         if (!Oid.ATC.value.equals(codeSystem)) {
             log.warn("Unexpected code system for ATC code: {}. Skipping ATC value.", codeSystem);
             return null;
         }
-        var code = eval(node, "@code");
-        var displayName = eval(node, "@displayName");
+        var code = xpathNew.evalString("@code", node);
+        var displayName = xpathNew.evalString("@displayName", node);
 
         return ATCType.builder()
             .withCode()
@@ -504,13 +475,13 @@ public class DispensationMapper {
         /// packaged medicinal product.  I.e., the meaning of the element ".../manufacturedMaterial/asContent"
         /// is dependent on whether it has a "/containerPackagedProduct/asContent" subelement (and also on whether
         /// that subelement has a "/containerPackagedProduct/asContent" subelement).
-        return evalNode(cda, XPaths.innermostContainerPackagedProduct);
+        return xpathNew.evalNode(XPaths.innermostContainerPackagedProduct, cda);
     }
 
     static Node packageId(Document cda) throws XPathExpressionException {
         var pmp = packagedMedicinalProduct(cda);
         if (pmp == null) return null;
-        return evalNode(pmp, "pharm:code");
+        return xpathNew.evalNode("pharm:code", pmp);
     }
 
     static @NonNull String packagedMedicinalProductDescription(Document cda) throws XPathExpressionException {
@@ -520,37 +491,37 @@ public class DispensationMapper {
         /// medicinal product/package. The description may contain information on the brand name, dose form, package
         /// (including its type or brand name), strength, etc."
         /// https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
-        var desc = eval(pmp, "pharm:name");
+        var desc = xpathNew.evalString("pharm:name", pmp);
         // normalize whitespace
         return desc.replaceAll("\\s+", " ");
     }
 
     static String detailedDrugText(Document cda) throws XPathExpressionException {
-        var drugName = eval(cda, XPaths.manufacturedMaterialName);
-        var drugIdNode = evalNode(cda, XPaths.manufacturedMaterialCode);
+        var drugName = xpathNew.evalString(XPaths.manufacturedMaterialName, cda);
+        var drugIdNode = xpathNew.evalNode(XPaths.manufacturedMaterialCode, cda);
         var drugId = drugIdNode == null
             ? "N/A"
             : "code: %s, code system: %s".formatted(
-            eval(drugIdNode, "@code"),
-            eval(drugIdNode, "@codeSystem"));
+            xpathNew.evalString("@code", drugIdNode),
+            xpathNew.evalString("@codeSystem", drugIdNode));
 
         var packageIdNode = packageId(cda);
         var packageId = packageIdNode == null
             ? "N/A"
             : "code: %s, code system: %s".formatted(
-            eval(packageIdNode, "@code"),
-            eval(packageIdNode, "@codeSystem"));
+            xpathNew.evalString("@code", packageIdNode),
+            xpathNew.evalString("@codeSystem", packageIdNode));
 
-        var drugFormDisplayName = eval(cda, XPaths.drugFormCodeDisplayName);
+        var drugFormDisplayName = xpathNew.evalString(XPaths.drugFormCodeDisplayName, cda);
         var drugForm = StringUtils.isBlank(drugFormDisplayName)
             ? "no form information"
             : drugFormDisplayName;
 
-        var atcDisplayName = eval(cda, XPaths.atcCode + "/@displayName");
+        var atcDisplayName = xpathNew.evalString(XPaths.atcCode + "/@displayName", cda);
 
         var ingredients = new ArrayList<String>();
-        for (var node : evalNodeMany(cda, XPaths.activeIngredients)) {
-            ingredients.add(eval(node, "pharm:ingredientSubstance/pharm:name"));
+        for (var node : xpathNew.evalNodeList(XPaths.activeIngredients, cda)) {
+            ingredients.add(xpathNew.evalString("pharm:ingredientSubstance/pharm:name", cda));
         }
 
         // The "DetailedDrugText" element in FMK has a max size of 400 chars.
@@ -582,7 +553,7 @@ public class DispensationMapper {
 
     static PackageSizeType packageSize(Document cda) throws MapperException {
         try {
-            var node = evalNode(cda, XPaths.contentQuantity);
+            var node = xpathNew.evalNode(XPaths.contentQuantity, cda);
             // "This element describes how many content items are present in the package.
             //
             // The preferred way is to provide the quantity in a coded form using the @unit and @value attributes.
@@ -591,14 +562,14 @@ public class DispensationMapper {
             // information is available within the national infrastructure, the originalText element can be used to
             // add additional information[...]"
             // https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.30-2025-01-23T141901.html
-            var unit = eval(node, "@unit");
-            var rawValue = eval(node, "@value");
+            var unit = xpathNew.evalString("@unit", node);
+            var rawValue = xpathNew.evalString("@value", node);
             var value = Utils.safeParsePositiveBigDecimal(rawValue)
                 .orElseThrow(() -> new MapperException("Content quantity must be a positive number, was %s".formatted(rawValue)));
 
             String unitText;
             if ("1".equals(unit)) {
-                var originalText = eval(node, "hl7:translation/hl7:originalText");
+                var originalText = xpathNew.evalString("hl7:translation/hl7:originalText", node);
                 unitText = StringUtils.isEmpty(originalText) ? "units" : originalText;
             } else {
                 unitText = unit;
@@ -613,9 +584,9 @@ public class DispensationMapper {
 
     public static String cdaId(Document cda) throws MapperException {
         try {
-            var node = evalNode(cda, XPaths.cdaId);
-            var root = eval(node, "@root");
-            var ext = eval(node, "@extension");
+            var node = xpathNew.evalNode(XPaths.cdaId, cda);
+            var root = xpathNew.evalString("@root", node);
+            var ext = xpathNew.evalString("@extension", node);
             return StringUtils.isBlank(ext)
                 ? root
                 : root + "^^^" + ext;
@@ -643,9 +614,6 @@ public class DispensationMapper {
                 .build();
         } catch (XPathExpressionException e) {
             throw new MapperException(e.getMessage());
-        } finally {
-            // Make Sonar happy
-            xpath.remove();
         }
     }
 
@@ -696,9 +664,6 @@ public class DispensationMapper {
                 .build();
         } catch (XPathExpressionException e) {
             throw new MapperException(e.getMessage(), e);
-        } finally {
-            // Make Sonar happy
-            xpath.remove();
         }
     }
 
