@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities.getPatientIdFromCpr;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -21,13 +22,14 @@ class FskIT {
      */
     @Test
     void getListOfCards() throws Exception {
-        var documentIdList = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly, "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9");
+        var documentIdList = service.findInformationCardDetails(Fsk.cprJensJensenReadOnly);
         assertThat(documentIdList.size(), is(1));
     }
 
     @Test
     void getDocument() throws Exception {
-        var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse);
+        var patientId = getPatientIdFromCpr(Fsk.cprJensJensenReadOnly);
+        var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse, patientId, Fsk.germanDoctor);
         assertThat(informationCard, is(notNullValue()));
         assertThat(
             "the clinical document tag is there", informationCard.getElementsByTagName("ClinicalDocument")
@@ -37,9 +39,11 @@ class FskIT {
     @ParameterizedTest
     @ValueSource(strings = {Fsk.cprJensJensenReadOnly})
     void getInformationCardFromPerson(String cpr) {
-        var documentIdList = service.findInformationCardDetails(cpr, "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9");
+        var documentIdList = service.findInformationCardDetails(cpr);
         var documentId = documentIdList.getFirst();
-        var informationCard = service.getInformationCard(documentId);
+        var patientId = getPatientIdFromCpr(cpr);
+
+        var informationCard = service.getInformationCard(documentId, patientId, Fsk.germanDoctor);
         assertThat(informationCard, is(notNullValue()));
         assertThat(
             "the clinical document tag is there",

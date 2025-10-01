@@ -3,9 +3,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,9 +63,9 @@ public class NspClientDgws {
                 if (res.statusCode() >= 400) {
                     throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
                 }
-                return xpath.evalEl("/soap:Envelope/soap:Body/*[1]", responseDoc);
+                return xpath.evalElement("/soap:Envelope/soap:Body/*[1]", responseDoc);
             }
-        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException e) {
+        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException | XmlException e) {
             throw new NspClientException("Nsp call failed.", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

@@ -1,31 +1,31 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
-import lombok.NonNull;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.yaml.snakeyaml.util.Tuple;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class for mapping FSK information card CDAs to the data needed in the patient summary.
  */
 @Slf4j
 public class FskMapper {
+    static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.SDTC);
+
     private FskMapper() {
     }
 
@@ -44,45 +44,13 @@ public class FskMapper {
             "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         static final String cdaId =
             "/hl7:ClinicalDocument/hl7:id";
+
     }
 
-    // XPath is not thread safe, so callers have to create a new one.
-    public static XPath getXpath() {
-        var xp = XPathFactory.newInstance().newXPath();
-        var nsCtx = new SimpleNamespaceContext();
-        nsCtx.bindNamespaceUri("hl7", "urn:hl7-org:v3");
-        nsCtx.bindNamespaceUri("sdtc", "urn:hl7-org:sdtc");
-        xp.setNamespaceContext(nsCtx);
-        return xp;
-    }
-
-    private static List<Node> evalNodeMany(XPath xpath, Node cda, String xpathExpression) throws XPathExpressionException {
-        var nodeList = (NodeList) xpath.evaluate(xpathExpression, cda, XPathConstants.NODESET);
-        var l = nodeList.getLength();
-        var result = new ArrayList<Node>();
-        for (var i = 0; i < l; i++) {
-            result.add(nodeList.item(i));
-        }
-        return Collections.unmodifiableList(result);
-    }
-
-    private static List<String> evalMany(XPath xpath, Node cda, String xpathExpression) throws XPathExpressionException {
-        return evalNodeMany(xpath, cda, xpathExpression).stream().map(Node::getTextContent).toList();
-    }
-
-    private static @NonNull String eval(XPath xpath, Node node, String xpathExpression) throws XPathExpressionException {
-        // XML doesn't handle whitespace, so we need to trim.
-        return xpath.evaluate(xpathExpression, node).trim();
-    }
-
-    private static Node evalNode(XPath xpath, Node node, String xpathExpression) throws XPathExpressionException {
-        return (Node) xpath.evaluate(xpathExpression, node, XPathConstants.NODE);
-    }
-
-    public static PreferredHealthProfessional preferredHealthProfessional(XPath xpath, Document cda) throws XPathExpressionException {
-        var name = eval(xpath, cda, XPaths.preferredHpName);
-        var telecoms = telecomNodesToTelecoms(xpath, evalNodeMany(xpath, cda, XPaths.preferredHpTelecoms));
-        var address = addressNodeToAddress(xpath, evalNode(xpath, cda, XPaths.preferredHpAddress));
+    public static PreferredHealthProfessional preferredHealthProfessional(Document cda) throws XPathExpressionException {
+        var name = xpath.evalString(XPaths.preferredHpName, cda);
+        var telecoms = telecomNodesToTelecoms(xpath.evalNodes(XPaths.preferredHpTelecoms, cda));
+        var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress, cda));
 
         return PreferredHealthProfessional.builder()
             .name(Name.fromFullName(name))
@@ -91,27 +59,46 @@ public class FskMapper {
             .build();
     }
 
-    private static Address addressNodeToAddress(XPath xpath, Node addressNode) throws XPathExpressionException {
-        var addressLines = evalMany(xpath, addressNode, "hl7:addressLine");
-        var city = eval(xpath, addressNode, "hl7:city");
-        var postalCode = eval(xpath, addressNode, "hl7:postalCode");
-        var countryCode = eval(xpath, addressNode, "hl7:countryCode");
+    private static Address addressNodeToAddress(Node addressNode) throws XPathExpressionException {
+        var addressLines = xpath.evalNodes("hl7:addressLine", addressNode)
+            .stream()
+            .map(Node::getTextContent)
+            .toList();
+        var city = xpath.evalString("hl7:city", addressNode);
+        var postalCode = xpath.evalString("hl7:postalCode", addressNode);
+        var countryCode = xpath.evalString("hl7:countryCode", addressNode);
         return new Address(addressLines, city, postalCode, countryCode);
     }
 
-    private static List<Telecom> telecomNodesToTelecoms(XPath xpath, List<Node> telecomNodes) throws XPathExpressionException {
+    private static List<Telecom> telecomNodesToTelecoms(List<Node> telecomNodes) throws XPathExpressionException {
         List<Telecom> list = new ArrayList<>();
         for (Node node : telecomNodes) {
-            var reportedUse = eval(xpath, node, "@use");
+            var reportedUse = xpath.evalString("@use", node);
             var telecomUse = Arrays.stream(Telecom.Use.values())
                 .filter(v -> Objects.equals(v.value, reportedUse))
                 .findFirst();
             Telecom build = Telecom.builder()
-                .value(eval(xpath, node, "@value"))
+                .value(xpath.evalString("@value", node))
                 .use(telecomUse.get())
                 .build();
             list.add(build);
         }
         return list;
+    }
+    public static Tuple<String, String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId) {
+        //We assume the documentId follows this format: 1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d
+        //We extract the document ID using regex capture groups to ensure that the format is correct
+        String documentIdFormatRegex = "^([\\d.]+)\\^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$";
+
+        Pattern documentIdFormatPattern = Pattern.compile(documentIdFormatRegex);
+        Matcher documentIdFormatMatcher = documentIdFormatPattern.matcher(uniqueDocumentId);
+
+        if(documentIdFormatMatcher.find() && documentIdFormatMatcher.groupCount() == 2){
+            String oid = documentIdFormatMatcher.group(1);
+            String uuid = documentIdFormatMatcher.group(2);
+            return new Tuple<>(oid, uuid); //Repository ID, Local document ID
+        } else {
+            throw new IllegalArgumentException(String.format("Cannot parse uniqueDocumentId: %s", uniqueDocumentId));
+        }
     }
 }

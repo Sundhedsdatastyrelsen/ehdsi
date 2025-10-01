@@ -1,5 +1,6 @@
-package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import static org.hamcrest.Matchers.*;
 class XmlUtilsTest {
     @Test
     void parseExample() throws Exception {
-        var example = getClass().getClassLoader().getResourceAsStream("openncp_soap_header.xml");
+        var example = TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
         assertThat(example, is(notNullValue()));
 
         var xml = XmlUtils.parse(example);
@@ -27,6 +28,6 @@ class XmlUtilsTest {
     @Test
     void shouldFailOnBadXml() {
         var brokenSoap = "<Envelope><BadXml></Envelope>";
-        Assertions.assertThrows(AuthenticationException.class, () -> XmlUtils.parse(brokenSoap));
+        Assertions.assertThrows(XmlException.class, () -> XmlUtils.parse(brokenSoap));
     }
 }

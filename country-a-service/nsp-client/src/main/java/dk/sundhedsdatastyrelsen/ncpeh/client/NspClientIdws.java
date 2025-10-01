@@ -1,11 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.transform.STRTransform;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -80,7 +80,7 @@ public class NspClientIdws {
             if (res.statusCode() >= 400) {
                 throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
             }
-            return (Element) xpath.evalEl("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
+            return (Element) xpath.evalElement("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
         }
     }
 

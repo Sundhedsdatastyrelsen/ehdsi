@@ -2,9 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import lombok.Builder;
 import lombok.NonNull;
 import org.w3c.dom.Node;
@@ -40,7 +40,7 @@ public record BootstrapTokenParams(
 
     public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, CertificateAndKey idpCert, String audience, String issuer) throws AuthenticationException {
         try {
-            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodeSet("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
+            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
                 // Workaround for SOSI STS bugs/eHDSI IDWS XUA Token Profile bugs:
                 //  - The STS requires that all element values have xsi:type="CE".  That is not a requirement in eHDSI,
@@ -49,7 +49,7 @@ public record BootstrapTokenParams(
                 .map(e -> {
                     try {
                         // match all element-children (i.e. not text nodes) of AttributeValue
-                        var valueElement = xpath.evalEl("./saml:AttributeValue/*", e);
+                        var valueElement = xpath.evalElement("./saml:AttributeValue/*", e);
                         if (valueElement != null) {
                             // xsi:type="CE" is what the Dynamic Request Generator uses
                             XmlUtils.setAttribute(valueElement, XmlNamespace.XSI, "type", "CE");

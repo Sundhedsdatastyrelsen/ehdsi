@@ -2,9 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import lombok.NonNull;
 import org.w3c.dom.Element;
 
@@ -30,8 +31,8 @@ public record OpenNcpAssertions(
     public static OpenNcpAssertions fromSoapHeader(String soapHeader) throws AuthenticationException {
         try {
             var doc = XmlUtils.parse(soapHeader);
-            var hcpAssertion = xpath.evalEl("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:hcp']]", doc);
-            var trcAssertion = xpath.evalEl("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:trc']]", doc);
+            var hcpAssertion = xpath.evalElement("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:hcp']]", doc);
+            var trcAssertion = xpath.evalElement("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:trc']]", doc);
 
             if (trcAssertion == null) {
                 throw new AuthenticationException("Missing TRC assertion. Cannot generate bootstrap token.");
@@ -42,7 +43,7 @@ public record OpenNcpAssertions(
             var countryOfTreatment = CertificateUtils.extractCountryCode(CertificateUtils.fromBase64(hcpCertB64));
 
             return new OpenNcpAssertions(hcpAssertion, trcAssertion, countryOfTreatment);
-        } catch (XPathExpressionException e) {
+        } catch (XPathExpressionException | XmlException e) {
             throw new AuthenticationException("Error when parsing HCP assertion", e);
         }
 
