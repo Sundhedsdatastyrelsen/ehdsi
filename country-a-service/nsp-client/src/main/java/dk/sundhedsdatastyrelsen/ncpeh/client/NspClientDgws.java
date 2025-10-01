@@ -4,6 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class NspClientDgws {
                 }
                 return xpath.evalElement("/soap:Envelope/soap:Body/*[1]", responseDoc);
             }
-        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException e) {
+        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException | XmlException e) {
             throw new NspClientException("Nsp call failed.", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

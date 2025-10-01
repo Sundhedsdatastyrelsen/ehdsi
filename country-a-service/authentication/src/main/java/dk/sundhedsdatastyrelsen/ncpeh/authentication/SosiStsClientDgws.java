@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class SosiStsClientDgws {
                 xpath.evalElement(
                     "//*[@id='IDCard']",
                     document));
-        } catch (XPathExpressionException e) {
+        } catch (XPathExpressionException | XmlException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
     }

@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenExchangeRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ public class SosiStsClientIdws {
             );
         } catch (IOException e) {
             throw new AuthenticationException("Error reading SOSI STS response", e);
-        } catch (XPathExpressionException e) {
+        } catch (XPathExpressionException | XmlException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
     }

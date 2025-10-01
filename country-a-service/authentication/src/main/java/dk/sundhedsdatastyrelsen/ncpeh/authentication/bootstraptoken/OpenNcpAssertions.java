@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import lombok.NonNull;
@@ -42,7 +43,7 @@ public record OpenNcpAssertions(
             var countryOfTreatment = CertificateUtils.extractCountryCode(CertificateUtils.fromBase64(hcpCertB64));
 
             return new OpenNcpAssertions(hcpAssertion, trcAssertion, countryOfTreatment);
-        } catch (XPathExpressionException e) {
+        } catch (XPathExpressionException | XmlException e) {
             throw new AuthenticationException("Error when parsing HCP assertion", e);
         }
 
