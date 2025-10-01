@@ -31,7 +31,7 @@ class AuthenticationIT {
     @Test
     void exchangeToken() throws AuthenticationException {
         var service = authenticationService();
-        var idwsToken = service.xcaSoapHeaderToIdwsToken(TestUtils.resource("openncp_soap_header.xml"), "https://fmk");
+        var idwsToken = service.xcaSoapHeaderToIdwsToken(TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml")), "https://fmk");
 
         assertThat(idwsToken.audience(), is("https://fmk"));
         assertThat(idwsToken.assertion(), notNullValue());
@@ -42,6 +42,6 @@ class AuthenticationIT {
         var service = authenticationService();
         assertThrows(
             AuthenticationException.SosiStsException.class,
-            () -> service.xcaSoapHeaderToIdwsToken(TestUtils.resource("openncp_soap_header_bad.xml"), "https://fmk"));
+            () -> service.xcaSoapHeaderToIdwsToken(TestUtils.slurp(TestUtils.resource("openncp_soap_header_bad.xml")), "https://fmk"));
     }
 }

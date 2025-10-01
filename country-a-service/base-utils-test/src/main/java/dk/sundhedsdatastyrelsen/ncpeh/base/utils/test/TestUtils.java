@@ -44,15 +44,16 @@ public class TestUtils {
      * @param uri - Path to resource for current classloader
      * @return Content of file in UTF-8
      */
-    public static String resource(String uri) {
+
+    public static InputStream resource(String uri){
         var classLoader = Thread.currentThread().getContextClassLoader();
         return resource(uri, classLoader);
     }
 
-    public static String resource(String uri, ClassLoader classLoaderWithResourcePresent) {
+    public static InputStream resource(String uri, ClassLoader classLoaderWithResourcePresent){
         var is = classLoaderWithResourcePresent.getResourceAsStream(uri);
         MatcherAssert.assertThat(is, Matchers.notNullValue());
-        return slurp(is);
+        return is;
     }
 
 }

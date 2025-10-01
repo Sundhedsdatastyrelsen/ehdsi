@@ -146,7 +146,7 @@ public class BootstrapTokenTest {
     }
 
     private static String soapHeader() {
-        return TestUtils.resource("openncp_soap_header.xml", BootstrapTokenTest.class.getClassLoader());
+        return TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
     }
 
     /**
