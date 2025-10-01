@@ -4,6 +4,8 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ATCType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugFormCodeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugFormType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
@@ -132,7 +134,11 @@ public class EPrescriptionMetadataMapper {
             EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription).getName(),
             EPrescriptionL3Mapper.makeTitle(prescriptions, prescription),
             description(prescription),
-            prescription.getPackageRestriction().getPackageNumber().getValue(),
+            Optional.of(prescription)
+                .map(PrescriptionType::getPackageRestriction)
+                .map(PackageRestrictionType::getPackageNumber)
+                .map(PackageNumberType::getValue)
+                .orElse(null),
             prescription.getDrug().getName(),
             atc.map(ATCType::getCode).map(ATCCodeType::getValue).orElse(null),
             // "When communicated, the ATC text must be either in English or in (one of) the Country of affiliation national language(s)." 06.02
