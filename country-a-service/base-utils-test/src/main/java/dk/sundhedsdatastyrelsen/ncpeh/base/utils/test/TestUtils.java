@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class TestUtils {
+    private TestUtils() {}
 
     public static String slurp(Path filePath) {
         try {
@@ -54,7 +55,4 @@ public class TestUtils {
         return slurp(is);
     }
 
-    private TestUtils() { //Sonar S1118
-        throw new IllegalStateException("Utility class");
-    }
 }
