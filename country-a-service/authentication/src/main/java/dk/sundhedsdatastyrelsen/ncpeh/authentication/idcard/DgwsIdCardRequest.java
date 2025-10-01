@@ -4,8 +4,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.XmlNamespace;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XmlUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

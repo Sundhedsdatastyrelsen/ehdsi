@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
-import dk.sundhedsdatastyrelsen.ncpeh.shared.test.TestUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

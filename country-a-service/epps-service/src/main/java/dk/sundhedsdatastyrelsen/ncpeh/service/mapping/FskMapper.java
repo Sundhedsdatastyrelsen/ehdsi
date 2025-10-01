@@ -1,10 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -48,7 +49,7 @@ public class FskMapper {
 
     public static PreferredHealthProfessional preferredHealthProfessional(Document cda) throws XPathExpressionException {
         var name = xpath.evalString(XPaths.preferredHpName, cda);
-        var telecoms = telecomNodesToTelecoms(xpath.evalNodeList(XPaths.preferredHpTelecoms, cda));
+        var telecoms = telecomNodesToTelecoms(xpath.evalNodes(XPaths.preferredHpTelecoms, cda));
         var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress, cda));
 
         return PreferredHealthProfessional.builder()
@@ -59,7 +60,7 @@ public class FskMapper {
     }
 
     private static Address addressNodeToAddress(Node addressNode) throws XPathExpressionException {
-        var addressLines = xpath.evalNodeList("hl7:addressLine", addressNode)
+        var addressLines = xpath.evalNodes("hl7:addressLine", addressNode)
             .stream()
             .map(Node::getTextContent)
             .toList();

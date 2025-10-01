@@ -1,4 +1,4 @@
-package dk.sundhedsdatastyrelsen.ncpeh.shared;
+package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
 public class XmlException extends RuntimeException {
     public XmlException(String message) {
