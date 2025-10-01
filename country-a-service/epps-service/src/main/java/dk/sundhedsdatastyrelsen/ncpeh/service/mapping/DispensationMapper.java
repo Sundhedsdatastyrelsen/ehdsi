@@ -21,26 +21,20 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequest
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.Utils;
-import dk.sundhedsdatastyrelsen.ncpeh.shared.XPathWrapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
-import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -216,8 +210,8 @@ public class DispensationMapper {
     static final XPathWrapper xpathNew = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.PHARM);
 
     static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
-        var familyNames = xpathNew.evalStringList(XPaths.authorFamilyName, cda);
-        var givenNames = xpathNew.evalStringList(XPaths.authorGivenName, cda);
+        var familyNames = xpathNew.evalStrings(XPaths.authorFamilyName, cda);
+        var givenNames = xpathNew.evalStrings(XPaths.authorGivenName, cda);
         var allButLastName = Stream.concat(
                 givenNames.stream(),
                 familyNames.subList(0, familyNames.size() - 1).stream())
@@ -257,7 +251,7 @@ public class DispensationMapper {
     }
 
     private static OrganisationType authorOrganization(Document cda, OrganisationIdentifierType placeholderId, String type) throws XPathExpressionException {
-        var addressLines = new ArrayList<>(xpathNew.evalStringList(XPaths.authorOrgAddressLine, cda));
+        var addressLines = new ArrayList<>(xpathNew.evalStrings(XPaths.authorOrgAddressLine, cda));
         var postalCode = xpathNew.evalString(XPaths.authorOrgPostalCode, cda);
         var city = xpathNew.evalString(XPaths.authorOrgCity, cda);
         var state = xpathNew.evalString(XPaths.authorOrgState, cda);
@@ -269,7 +263,7 @@ public class DispensationMapper {
 
         String email = null;
         String telephone = null;
-        var telecoms = xpathNew.evalNodeList(XPaths.authorOrgTelecom, cda)
+        var telecoms = xpathNew.evalNodes(XPaths.authorOrgTelecom, cda)
             .stream()
             .map(node -> node.getAttributes().getNamedItem("value"))
             .filter(Objects::nonNull)
@@ -398,7 +392,7 @@ public class DispensationMapper {
     }
 
     static SubstancesType substances(Document cda) throws XPathExpressionException {
-        var ingredientNodes = xpathNew.evalNodeList(XPaths.activeIngredients, cda);
+        var ingredientNodes = xpathNew.evalNodes(XPaths.activeIngredients, cda);
         if (ingredientNodes.isEmpty()) {
             return null;
         }
@@ -520,8 +514,8 @@ public class DispensationMapper {
         var atcDisplayName = xpathNew.evalString(XPaths.atcCode + "/@displayName", cda);
 
         var ingredients = new ArrayList<String>();
-        for (var node : xpathNew.evalNodeList(XPaths.activeIngredients, cda)) {
-            ingredients.add(xpathNew.evalString("pharm:ingredientSubstance/pharm:name", cda));
+        for (var node : xpathNew.evalNodes(XPaths.activeIngredients, cda)) {
+            ingredients.add(xpathNew.evalString("pharm:ingredientSubstance/pharm:name", node));
         }
 
         // The "DetailedDrugText" element in FMK has a max size of 400 chars.
