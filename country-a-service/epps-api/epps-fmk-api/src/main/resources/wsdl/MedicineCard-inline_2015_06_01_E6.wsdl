@@ -7342,9 +7342,7 @@ Name of a village, city or subdivision of a city or district, which is determine
 
 	<xs:simpleType name="PersonIdentifierValueType">
 		<xs:restriction base="xs:string">
-                        <!-- TODO: This has been changed from 1 to 0, because we're actually required to send an empty value here.
-                              FMK has been notified of the discrepancy. -->
-			<xs:minLength value="0"/>
+			<xs:minLength value="1"/>
 			<xs:maxLength value="50"/>
 		</xs:restriction>
 	</xs:simpleType>
