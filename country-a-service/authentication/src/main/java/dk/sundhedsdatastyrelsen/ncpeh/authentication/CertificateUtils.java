@@ -125,11 +125,11 @@ public class CertificateUtils {
     /// otherwise validation might fail.
     ///
     /// @param rootElement   the root element of the XML document to be signed
-     /// @param nextSibling   the node before which the signature should be inserted, or null to append as child of rootElement
-     /// @param referenceUris list of element IDs to be included in the signature (typically "#id" format)
-     /// @param certificate   the certificate and private key pair used for signing
-     /// @throws AuthenticationException  if signing fails due to cryptographic or XML processing errors
-     /// @throws IllegalArgumentException if any of the parameters are invalid
+    /// @param nextSibling   the node before which the signature should be inserted, or null to append as child of rootElement
+    /// @param referenceUris list of element IDs to be included in the signature (typically "#id" format)
+    /// @param certificate   the certificate and private key pair used for signing
+    /// @throws AuthenticationException  if signing fails due to cryptographic or XML processing errors
+    /// @throws IllegalArgumentException if any of the parameters are invalid
     public static void signXml(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
         try {
             // Make the internal representation of the DOM consistent before signing, by
