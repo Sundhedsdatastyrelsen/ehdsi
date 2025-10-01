@@ -16,9 +16,9 @@ import java.util.Base64;
 public class Fmk {
     private Fmk() {}
 
-    private static final String FMK_ENDPOINT_URI = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
+    public static final String FMK_DGWS_ENDPOINT_URI = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling";
 
-    public static final String FMK_IDWS_ENDPOINT_URI = "https://test1.fmk.netic.dk/idws_xua/fmk_xua_146_E6";
+    public static final String FMK_IDWS_ENDPOINT_URI = "https://test2.fmk.netic.dk/idws_xua/fmk_xua_146_E6";
 
     /**
      * Helle Bonde is a test persona which we do *not* own, so we should only perform read operations on her.

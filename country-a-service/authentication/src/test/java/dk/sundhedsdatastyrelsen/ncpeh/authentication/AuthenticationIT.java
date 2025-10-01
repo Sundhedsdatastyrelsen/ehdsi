@@ -23,7 +23,7 @@ class AuthenticationIT {
             keyAlias,
             password);
         return new AuthenticationService(
-            URI.create("https://test1-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
+            URI.create("https://test2-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
             signingKey,
             "https://ehdsi-idp.testkald.nspop.dk");
     }

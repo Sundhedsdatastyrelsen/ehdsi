@@ -4,7 +4,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 
-import java.net.URI;
 import java.util.UUID;
 
 public class TestIdentities {
@@ -42,24 +41,24 @@ public class TestIdentities {
                 "Test1234"
             );
             apotekerChrisChristoffersen = new NspDgwsIdentity.ReplaceWithIdws(
-                URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
+                Sosi.sosiPersonalDgwsUri,
                 systemCert,
                 UUID.fromString("1fdff71e-2697-4f84-8611-e890a422cef8"),
                 idpCert);
             apotekerJeppeMoeller = new NspDgwsIdentity.ReplaceWithIdws(
-                URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
+                Sosi.sosiPersonalDgwsUri,
                 systemCert,
                 UUID.fromString("00798849-effe-4733-bcc4-670093830511"),
                 idpCert
             );
             lægeCharlesBabbage = new NspDgwsIdentity.ReplaceWithIdws(
-                URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI"),
+                Sosi.sosiPersonalDgwsUri,
                 systemCert,
                 UUID.fromString("46559bb9-d720-48b7-b9bd-c280915768d0"),
                 idpCert
             );
             systemIdentity = new NspDgwsIdentity.System(
-                URI.create("http://test1.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService"),
+                Sosi.sosiOrganisationDgwsUri,
                 systemCert);
         } catch (AuthenticationException e) {
             throw new RuntimeException(e);

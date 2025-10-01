@@ -23,6 +23,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.DispensationAllowed;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ public class EPrescriptionMetadataMapper {
     ) {
     }
 
-    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) {
+    public static DocumentAssociationForEPrescriptionDocumentMetadataDto mapMeta(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, @Nullable PackageInfo packageInfo) {
         try {
             var model = makeModel(patientId, prescriptions, prescriptionIndex, packageInfo);
             var l3Meta = generateMeta(model, DocumentLevel.LEVEL3);
@@ -115,7 +116,7 @@ public class EPrescriptionMetadataMapper {
     }
 
     @NonNull
-    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, PackageInfo packageInfo) throws MapperException {
+    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, @Nullable PackageInfo packageInfo) throws MapperException {
         var prescription = prescriptions.getPrescription().get(prescriptionIndex);
         if (prescription == null) {
             throw new MapperException("Missing prescription");

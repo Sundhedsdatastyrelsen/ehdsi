@@ -7,15 +7,13 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
  */
 public class Fsk {
     private static final String fskEndpointUri = "http://test1.ekstern-test.nspop.dk:8080/decoupling";
+
     /**
      * Jens Jensen is a test person vi can see in the test person overview. Do not edit.
      */
     public static final String cprJensJensenReadOnly = "0408801111";
 
     public static final String documentJensJensenFskResponse = "1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d";
-
-    public static final String germanDoctor = "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9";
-
 
     private static FskClient fskClient;
 

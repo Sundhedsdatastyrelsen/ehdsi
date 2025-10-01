@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
@@ -113,27 +114,31 @@ class DispensationMapperTest {
     }
 
     @Test
-    void authorOrganizationTest() throws XPathExpressionException {
+    void pharmacyTest() throws XPathExpressionException {
         var xmlFileName = "dispensations/CzRequest1.xml";
 
         var cda = testDispensationCda(xmlFileName);
-        var org = DispensationMapper.authorOrganization(cda);
+        var orgEan = DispensationMapper.pharmacyEan(cda);
+        var orgSor = DispensationMapper.pharmacySor(cda);
 
-        Assertions.assertFalse(org.getIdentifier().getSource().isBlank());
-        Assertions.assertFalse(org.getIdentifier().getValue().isBlank());
-        Assertions.assertFalse(org.getType().isBlank());
-        Assertions.assertFalse(org.getAddressLine().isEmpty());
+        var eanId = orgEan.getIdentifier();
+        var sorId = orgSor.getIdentifier();
 
-        // Assertions
-        Assertions.assertEquals("EAN-Lokationsnummer", org.getIdentifier().getSource(), "Source does not match");
-        Assertions.assertEquals("5790001392277", org.getIdentifier().getValue(), "Value does not match");
-        Assertions.assertEquals("Apotek", org.getType(), "Type does not match");
-        Assertions.assertEquals("NCP-B-CZ Portal", org.getName(), "Name does not match");
-        Assertions.assertEquals("invalid@email.test", org.getEmailAddress(), "Email does not match");
-        Assertions.assertNull(org.getTelephoneNumber(), "TelephoneNumber should be null");
-        Assertions.assertEquals(2, org.getAddressLine().size(), "AddressLine size does not match");
-        Assertions.assertEquals("", org.getAddressLine().get(0), "AddressLine[0] does not match");
-        Assertions.assertEquals("CZ", org.getAddressLine().get(1), "AddressLine[1] does not match");
+        assertThat(eanId.getSource(), is("EAN-Lokationsnummer"));
+        assertThat(eanId.getValue(), is("5790001392277"));
+
+        assertThat(sorId.getSource(), is("SOR"));
+        assertThat(sorId.getValue(), is("397941000016003"));
+
+        assertThat(orgEan.getType(), is("Apotek"));
+        assertThat(orgSor.getType(), is("apotek"));
+
+        assertThat(orgEan.getName(), both(is(orgSor.getName())).and(is("NCP-B-CZ Portal")));
+        assertThat(orgEan.getEmailAddress(), both(is(orgSor.getEmailAddress())).and(is("invalid@email.test")));
+        assertThat(orgEan.getTelephoneNumber(), nullValue());
+        assertThat(orgSor.getTelephoneNumber(), nullValue());
+        assertThat(orgEan.getAddressLine(), contains("", "CZ"));
+        assertThat(orgSor.getAddressLine(), contains("", "CZ"));
     }
 
     @Test
@@ -313,7 +318,10 @@ class DispensationMapperTest {
         var startEffectuationResponse = StartEffectuationResponseType.builder()
             .addPrescription(PrescriptionType.builder()
                 .withPackageRestriction(packageRestriction)
-                .addOrder().withIdentifier(12345L).end()
+                .addOrder()
+                .withIdentifier(12345L)
+                .withStatus(OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value())
+                .end()
                 .build())
             .build();
         var result = DispensationMapper.createPharmacyEffectuationRequest(
