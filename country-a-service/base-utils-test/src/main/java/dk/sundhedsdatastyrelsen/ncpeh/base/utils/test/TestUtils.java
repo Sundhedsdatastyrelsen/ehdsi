@@ -53,4 +53,8 @@ public class TestUtils {
         MatcherAssert.assertThat(is, Matchers.notNullValue());
         return slurp(is);
     }
+
+    private TestUtils() { //Sonar S1118
+        throw new IllegalStateException("Utility class");
+    }
 }

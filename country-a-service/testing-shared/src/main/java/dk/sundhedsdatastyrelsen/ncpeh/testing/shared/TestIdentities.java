@@ -25,8 +25,8 @@ public class TestIdentities {
         if(!cpr.contains("-")){
             cprPart = cpr.substring(0,6)+"-"+cpr.substring(6,10);
         }
-        var DK_CPR_OID = "1.2.208.176.1.2"; // testing-shared has no dependency on CDA Generator, so this is just copied.
-        return cprPart+"^^^&"+ DK_CPR_OID+"&ISO";
+        var dkCprOid = "1.2.208.176.1.2"; // testing-shared has no dependency on CDA Generator, so this is just copied.
+        return cprPart+"^^^&"+ dkCprOid+"&ISO";
     }
 
     static {

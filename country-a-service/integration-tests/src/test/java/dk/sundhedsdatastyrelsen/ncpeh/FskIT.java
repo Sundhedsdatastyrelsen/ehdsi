@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fsk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
@@ -18,7 +17,6 @@ class FskIT {
         MinLogIT.minLogService(),
         TestIdentities.systemIdentity);
 
-
     /**
      * This test simply checks that we can connect and get an answer on the data.
      */
@@ -31,7 +29,7 @@ class FskIT {
     @Test
     void getDocument() throws Exception {
         var patientId = getPatientIdFromCpr(Fsk.cprJensJensenReadOnly);
-        var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse, patientId,Fsk.germanDoctor);
+        var informationCard = service.getInformationCard(Fsk.documentJensJensenFskResponse, patientId, Fsk.germanDoctor);
         assertThat(informationCard, is(notNullValue()));
         assertThat(
             "the clinical document tag is there", informationCard.getElementsByTagName("ClinicalDocument")
