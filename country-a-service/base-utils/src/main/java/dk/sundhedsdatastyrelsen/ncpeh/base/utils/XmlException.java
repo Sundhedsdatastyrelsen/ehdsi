@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
-public class XmlException extends RuntimeException {
+public class XmlException extends Exception {
     public XmlException(String message) {
         super(message);
     }
