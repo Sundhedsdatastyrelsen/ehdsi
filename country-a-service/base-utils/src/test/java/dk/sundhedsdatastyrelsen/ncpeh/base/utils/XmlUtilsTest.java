@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import static org.hamcrest.Matchers.*;
 class XmlUtilsTest {
     @Test
     void parseExample() throws Exception {
-        var example = getClass().getClassLoader().getResourceAsStream("openncp_soap_header.xml");
+        var example = TestUtils.resource("openncp_soap_header.xml");
         assertThat(example, is(notNullValue()));
 
         var xml = XmlUtils.parse(example);
