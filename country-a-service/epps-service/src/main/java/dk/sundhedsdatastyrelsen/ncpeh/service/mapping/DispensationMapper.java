@@ -224,12 +224,13 @@ public class DispensationMapper {
             .build();
     }
 
-    static String authorRole(Document cda) throws XPathExpressionException {
+    /// @hidden public for testing.
+    public static String authorRole(Document cda) throws XPathExpressionException, MapperException {
         var functionCode = xpath.evalString(XPaths.authorFunctionCode, cda);
         var functionCodeSystem = xpath.evalString(XPaths.authorFunctionCodeSystem, cda);
 
         if (!Oid.ISCO.value.equals(functionCodeSystem)) {
-            throw new IllegalArgumentException("Unexpected function code system: " + functionCodeSystem);
+            throw new MapperException("Unexpected function code system: " + functionCodeSystem);
         }
 
         // These values are validated by FMK, and discrepancies with the soap header are ignored.
