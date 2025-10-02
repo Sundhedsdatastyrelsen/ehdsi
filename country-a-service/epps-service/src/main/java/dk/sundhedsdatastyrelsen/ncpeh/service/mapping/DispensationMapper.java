@@ -224,21 +224,26 @@ public class DispensationMapper {
             .build();
     }
 
-    static String authorRole(Document cda) throws XPathExpressionException {
+    /// @hidden public for testing.
+    public static String authorRole(Document cda) throws XPathExpressionException, MapperException {
         var functionCode = xpath.evalString(XPaths.authorFunctionCode, cda);
         var functionCodeSystem = xpath.evalString(XPaths.authorFunctionCodeSystem, cda);
-        if ("2262".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
-            // The "official" translation of "Pharmacists" from ISCO is "Apoteker", but FMK validates this
-            // and compares it with the soap header role. And they translate that as "Udenlandsk apoteker",
-            // so we need to return the same here.
-            return "Udenlandsk apoteker";
-        }
-        if ("221".equals(functionCode) && "2.16.840.1.113883.2.9.6.2.7".equals(functionCodeSystem)) {
-            //This is the translation of "Medical Doctor"
-            return "Læge";
+
+        if (!Oid.ISCO.value.equals(functionCodeSystem)) {
+            throw new MapperException("Unexpected function code system: " + functionCodeSystem);
         }
 
-        throw new IllegalArgumentException("Unexpected function code: " + functionCode);
+        // These values are validated by FMK, and discrepancies with the soap header are ignored.
+        // Ensure they match the following:
+        //    Udenlandsk apoteker
+        //    Udenlandsk apoteksansat
+        //    Udenlandsk sundhedsmedarbejder
+        return switch (functionCode) {
+            case "2262" -> "Udenlandsk apoteker";
+            case "3213" -> "Udenlandsk apoteksansat";
+            // case "221" -> "Udenlandsk læge"; // Not ready yet
+            default -> "Udenlandsk sundhedsmedarbejder";
+        };
     }
 
     private static boolean notBlank(String s) {

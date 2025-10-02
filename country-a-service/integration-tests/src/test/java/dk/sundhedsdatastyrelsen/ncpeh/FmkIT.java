@@ -13,6 +13,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.mocks.AuthorizationRegistryClientMock;
 import dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.SigningCertificate;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
@@ -236,7 +237,7 @@ class FmkIT {
     }
 
     @Test
-    void simpleDispensationTest() throws Exception {
+    void allRolesDispensationTest() throws Exception {
         var cpr = Fmk.cprKarl;
         var prescription = FmkPrescriptionCreator.createNewPrecriptionForCpr(cpr);
         var prescriptionId = Long.toString(prescription.getPrescription()
@@ -244,32 +245,51 @@ class FmkIT {
             .getPrescriptionIdentifier()
             .getFirst());
 
-        var eDispensation = dispensationCda(cpr, prescriptionId);
+        var pharmacistDispensation = dispensationCda(cpr, prescriptionId);
+        var pharmacyWorkerDispensation = dispensationCda(cpr, prescriptionId, "3213", "Pharmaceutical technicians and assistants");
+        assertThat(DispensationMapper.authorRole(pharmacyWorkerDispensation), is("Udenlandsk apoteksansat"));
+        var otherHealthProfessionalDispensation = dispensationCda(cpr, prescriptionId, "221", "Medical Doctors");
         var token = Sosi.getToken();
 
         assertDoesNotThrow(() ->
-            prescriptionService.submitDispensation(
-                patientId(cpr),
-                eDispensation,
-                token)
+            prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, token)
         );
 
         assertDoesNotThrow(() ->
-            prescriptionService.undoDispensation(patientId(cpr), eDispensation, token)
+            prescriptionService.undoDispensation(patientId(cpr), pharmacistDispensation, token)
         );
 
-        // we perform the dispensation again to clean up after ourselves:
-        prescriptionService.submitDispensation(patientId(cpr), eDispensation, token);
+        assertDoesNotThrow(() ->
+            prescriptionService.submitDispensation(patientId(cpr), pharmacyWorkerDispensation, token)
+        );
+
+        assertDoesNotThrow(() ->
+            prescriptionService.undoDispensation(patientId(cpr), pharmacyWorkerDispensation, token)
+        );
+
+        assertDoesNotThrow(() ->
+            prescriptionService.submitDispensation(patientId(cpr), otherHealthProfessionalDispensation, token)
+        );
     }
 
     private Document dispensationCda(String cpr, String prescriptionId) throws SAXException {
+        return dispensationCda(cpr, prescriptionId, null, null);
+    }
+
+    private Document dispensationCda(String cpr, String prescriptionId, String iscoCode, String iscoDisplay) throws SAXException {
         var timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss+0000")
             .withZone(ZoneOffset.UTC)
             .format(Instant.now());
-        return Utils.readXmlDocument(DISPENSATION_CDA
+        var replacedCda = DISPENSATION_CDA
             .replace(DISPENSATION_CDA_CPR, cpr)
             .replace(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId)
-            .replace(DISPENSATION_TIMESTAMP, timestamp));
+            .replace(DISPENSATION_TIMESTAMP, timestamp);
+        if (iscoCode != null && iscoDisplay != null) {
+            return Utils.readXmlDocument(replacedCda
+                .replace("code=\"2262\"", "code=\"" + iscoCode + "\"")
+                .replace("displayName=\"Pharmacists\"", "displayName=\"" + iscoDisplay + "\""));
+        }
+        return Utils.readXmlDocument(replacedCda);
     }
 
     // These are the CPR number and prescription id used in the dispensation CDA below.
