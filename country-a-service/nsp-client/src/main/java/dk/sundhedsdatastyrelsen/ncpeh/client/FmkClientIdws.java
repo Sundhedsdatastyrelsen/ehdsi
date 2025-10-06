@@ -5,6 +5,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.ConsentHeaderType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.CreatePharmacyEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PrescriptionErrorType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.UndoEffectuationResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePharmacyEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
@@ -26,6 +27,7 @@ import org.w3c.dom.Element;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.PrivateKey;
+import java.util.stream.Collectors;
 
 public class FmkClientIdws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FmkClientIdws.class);
@@ -98,13 +100,22 @@ public class FmkClientIdws {
      */
     public AbortEffectuationResponseType abortEffectuation(AbortEffectuationRequestType request, EuropeanHcpIdwsToken token)
         throws JAXBException {
-        return makeFmkRequest(
+        var result = makeFmkRequest(
             facE5.createAbortEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5#AbortEffectuation",
             AbortEffectuationResponseType.class,
             token,
             false
         );
+
+        if (result.getAbortEffectuationFailed() != null && !result.getAbortEffectuationFailed().isEmpty()) {
+            throw new IllegalStateException("Abort failed. Messages: " + result.getAbortEffectuationFailed()
+                .stream()
+                .map(PrescriptionErrorType::getReasonText)
+                .collect(Collectors.joining("; ")));
+        }
+
+        return result;
     }
 
     /**
