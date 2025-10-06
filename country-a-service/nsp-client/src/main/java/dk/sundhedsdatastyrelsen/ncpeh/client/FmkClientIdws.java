@@ -85,13 +85,21 @@ public class FmkClientIdws {
      */
     public StartEffectuationResponseType startEffectuation(StartEffectuationRequestType request, EuropeanHcpIdwsToken token)
         throws JAXBException {
-        return makeFmkRequest(
+        var response = makeFmkRequest(
             facE5.createStartEffectuationRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6#StartEffectuation",
             StartEffectuationResponseType.class,
             token,
             false
         );
+        if (response.getStartEffectuationFailed() != null
+            && !response.getStartEffectuationFailed().isEmpty()) {
+            throw new IllegalStateException("Start effectuation failed. Messages: " + response.getStartEffectuationFailed()
+                .stream()
+                .map(dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PrescriptionErrorType::getReasonText)
+                .collect(Collectors.joining("; ")));
+        }
+        return response;
     }
 
     /**
