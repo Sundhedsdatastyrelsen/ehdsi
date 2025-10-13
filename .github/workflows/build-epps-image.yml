@@ -61,9 +61,9 @@ jobs:
             "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
           ]
           output = [
+            "type=image,name=${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=build-${{ github.run_number }}",
             "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=latest",
-            "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=${{ github.sha }}",
-            "type=image,name=${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=${{ github.sha }}"
+            "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=${{ github.sha }}"
           ]
         }
         EOL
