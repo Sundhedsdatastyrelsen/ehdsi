@@ -48,9 +48,4 @@ jobs:
     - name: Build and push images
       run: |
         cd country-a-service
-        docker buildx bake \
-          --file docker-compose.yml \
-          --file docker-compose-cache.json \
-          --set *.output=type=image,name=${{ env.REGISTRY }}/${{ env.REPO_NAME }},push=true \
-          --set *.output=type=image,name=${{ env.AZURE_REGISTRY }}/${{ env.REPO_NAME }},push=true \
-          --push
+        docker buildx bake --file docker-bake.hcl --push
