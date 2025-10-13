@@ -63,7 +63,6 @@ jobs:
           output = [
             "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=latest",
             "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=${{ github.sha }}",
-            "type=image,name=${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=latest",
             "type=image,name=${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=${{ github.sha }}"
           ]
         }
