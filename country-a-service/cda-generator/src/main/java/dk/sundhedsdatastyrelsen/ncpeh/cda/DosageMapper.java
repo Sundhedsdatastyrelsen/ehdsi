@@ -2,7 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageAnyDayType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageDayType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageFreeTextForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructuresForResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageTranslationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DoseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.EmptyDosageStructureType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DosageForResponseType;
@@ -109,9 +112,20 @@ public final class DosageMapper {
     private DosageMapper() {
     }
 
-    public static @NonNull Dosage model(@NonNull DosageForResponseType dosage) {
+    public static @NonNull Dosage model(@NonNull DosageForResponseType dosage, String prescriptionDosageText) {
         final var unstructuredText = getUnstructuredText(dosage);
+        final var shortText = getShortText(dosage);
         final var unit = mapUnit(dosage);
+
+        if (overriddenDosageTextOnPrescription(prescriptionDosageText, shortText)) {
+            // Doctors may override the drug medication dosage when creating a prescription. This is only visible by
+            // the short text on the prescription being different from the short text on the drug medication.
+            // In this case, the structured information on the drug medication might not match the actual
+            // dosage, so we have to return everything unstructured.
+            return new Dosage.Unstructured(
+                String.format("Prescription dosage text: %s\n\nMedication dosage text: %s", prescriptionDosageText, unstructuredText),
+                "Different dosages on drug medication and prescription.");
+        }
         if (unit == null) {
             // If there is no unit, it is not safe to display any dosage.
             // We still provide the free-text parts of the prescription in the narrative block.
@@ -142,26 +156,74 @@ public final class DosageMapper {
         return mapStructure(structure, unit, unstructuredText, dosage.getStructuresAccordingToNeed() != null);
     }
 
+    /// In all these cases, the doctor can choose to write something else on the prescription, overriding the default.
+    /// Observations about default behaviour:
+    /// - When a drug medication is created with free text, and the free text is short enough to fit in the 70
+    ///   characters allowed on a prescription, the prescription text is the same as the free text.
+    /// - When a drug medication is created with free text, and it doesn't fit, it is replaced with "Dosering i henhold
+    ///   til lægemiddelordinationen" on the prescription.
+    /// - When a drug medication is created with dosage according to written instructions, the short text becomes
+    ///   "Dosering efter skriftlig anvisning".
+    /// - When a drug medication is created with a simple dosage, the short text on the drug medication and on the
+    ///   prescription are the same.
+    /// - When a drug medication is created with a complex dosage, the short text on the prescription becomes "Dosering
+    ///   i henhold til lægemiddelordinationen".
+    static boolean overriddenDosageTextOnPrescription(String prescriptionDosageText, String shortText) {
+        return prescriptionDosageText != null
+            && !"Dosering i henhold til lægemiddelordination".equals(prescriptionDosageText)
+            && !"Dosering efter skriftlig anvisning".equals(prescriptionDosageText)
+            && !Objects.equals(shortText, prescriptionDosageText);
+    }
+
+    static String getShortText(@NonNull DosageForResponseType dosage) {
+        final var opt = Optional.of(dosage);
+
+        final var fixedStructureText = opt.map(DosageForResponseType::getStructuresFixed)
+            .map(DosageStructuresForResponseType::getDosageTranslationCombined)
+            .map(DosageTranslationType::getShortText);
+
+        final var needStructureText = opt.map(DosageForResponseType::getStructuresAccordingToNeed)
+            .map(DosageStructuresForResponseType::getDosageTranslationCombined)
+            .map(DosageTranslationType::getShortText);
+
+        final var freeTextStructure = opt.map(DosageForResponseType::getFreeText)
+            .map(DosageFreeTextForResponseType::getText);
+
+        return fixedStructureText.orElse(needStructureText.orElse(freeTextStructure.orElse(null)));
+    }
+
     static @NonNull String getUnstructuredText(@NonNull DosageForResponseType dosage) {
         final var unstructuredTexts = new ArrayList<String>();
-        if (dosage.getStructuresFixed() != null && dosage.getStructuresFixed()
-            .getDosageTranslationCombined() != null && dosage.getStructuresFixed()
-            .getDosageTranslationCombined()
-            .getLongText() != null) {
-            unstructuredTexts.add(dosage.getStructuresFixed().getDosageTranslationCombined().getLongText());
-        }
-        if (dosage.getStructuresAccordingToNeed() != null && dosage.getStructuresAccordingToNeed()
-            .getDosageTranslationCombined() != null && dosage.getStructuresAccordingToNeed()
-            .getDosageTranslationCombined()
-            .getLongText() != null) {
-            unstructuredTexts.add(dosage.getStructuresAccordingToNeed().getDosageTranslationCombined().getLongText());
-        }
-        if (dosage.getFreeText() != null && dosage.getFreeText().getText() != null) {
-            unstructuredTexts.add(dosage.getFreeText().getText());
+
+        // Add from fixed structures.
+        final var fixedTexts = Optional.of(dosage)
+            .map(DosageForResponseType::getStructuresFixed)
+            .map(DosageStructuresForResponseType::getDosageTranslationCombined);
+
+        fixedTexts.map(DosageTranslationType::getShortText).ifPresent(unstructuredTexts::add);
+        fixedTexts.map(DosageTranslationType::getLongText).ifPresent(unstructuredTexts::add);
+
+        // Add from structures according to need.
+        final var toNeedTexts = Optional.of(dosage)
+            .map(DosageForResponseType::getStructuresAccordingToNeed)
+            .map(DosageStructuresForResponseType::getDosageTranslationCombined);
+
+        toNeedTexts.map(DosageTranslationType::getShortText).ifPresent(unstructuredTexts::add);
+        toNeedTexts.map(DosageTranslationType::getLongText).ifPresent(unstructuredTexts::add);
+
+        // Add from free text
+        Optional.of(dosage)
+            .map(DosageForResponseType::getFreeText)
+            .map(DosageFreeTextForResponseType::getText)
+            .ifPresent(unstructuredTexts::add);
+
+        if (dosage.getAdministrationAccordingToSchemaInLocalSystem() != null) {
+            // This is used when doctors provide dosage instructions outside the system, e.g. on paper.
+            unstructuredTexts.add("Dosage according to written instructions.");
         }
 
         final var builder = new StringBuilder();
-        for (String s : unstructuredTexts) {
+        for (var s : unstructuredTexts) {
             if (!builder.isEmpty()) {
                 builder.append("\n\n");
             }

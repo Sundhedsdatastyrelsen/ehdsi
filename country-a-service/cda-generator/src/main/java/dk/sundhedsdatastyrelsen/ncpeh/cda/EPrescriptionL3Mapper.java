@@ -100,14 +100,14 @@ public class EPrescriptionL3Mapper {
 
         if (medication.isPresent()) {
             var drugMedicationType = medication.get();
-            var dosage = DosageMapper.model(drugMedicationType.getDosage());
+            var dosage = DosageMapper.model(drugMedicationType.getDosage(), prescription.getDosageText());
             if (dosage instanceof Dosage.Unstructured unstructured) {
                 log.info("Dosage could not be mapped. Reason: {}", unstructured.getReason());
             }
             prescriptionBuilder
                 .medicationStartTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                     .getTreatmentStartDate()))
-                .dosage(DosageMapper.model(drugMedicationType.getDosage()))
+                .dosage(dosage)
                 .medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                     .getTreatmentEndDate()));
 
