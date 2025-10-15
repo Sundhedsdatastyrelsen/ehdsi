@@ -5,6 +5,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageIsNotIteratedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructureForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructuresForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageTimesDosageEndingUndeterminedType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageTranslationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DoseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DosageForResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -67,11 +69,29 @@ class DosageMapperTest {
     private final DosageForResponseType onePillDailyResponse = DosageForResponseType.builder()
         .withStructuresFixed(DosageStructuresForResponseType.builder()
             .addEmptyStructureOrStructure(onePillDailyStructure)
+            .withDosageTranslationCombined(DosageTranslationType.builder()
+                .withShortText("1 tablet 1 gang dagligt")
+                .build())
             .build()).withUnitText("1").build();
 
     @Test
+    void prescriptionDosageDiffersFromDrugMedicationDosageTest() {
+        // Doctors can override the dosage on the prescription, which means the structured version doesn't work anymore.
+        final var result = DosageMapper.model(onePillDailyResponse, "2 tabletter 1 gang dagligt");
+        assertThat(result.getTag(), is("Unstructured"));
+        assertThat(result, instanceOf(Dosage.Unstructured.class));
+
+        final var dosage = (Dosage.Unstructured) result;
+        assertThat(dosage.getReason(), is("Different dosages on drug medication and prescription."));
+        // In real scenarios, there would always be something here.
+        assertThat(dosage.getUnstructuredText(), is("Prescription dosage text: 2 tabletter 1 gang dagligt\n\nMedication dosage text: 1 tablet 1 gang dagligt"));
+    }
+
+    @Test
     void takeOnePillDailyTest() {
-        var result = DosageMapper.model(onePillDailyResponse);
+        var result = DosageMapper.model(
+            onePillDailyResponse,
+            onePillDailyResponse.getStructuresFixed().getDosageTranslationCombined().getShortText());
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -110,7 +130,7 @@ class DosageMapperTest {
                 .build())
             .build();
 
-        var result = DosageMapper.model(response);
+        var result = DosageMapper.model(response, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -136,7 +156,7 @@ class DosageMapperTest {
                 .build())
             .build();
 
-        var result = DosageMapper.model(response);
+        var result = DosageMapper.model(response, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -165,7 +185,7 @@ class DosageMapperTest {
                 .build())
             .build();
 
-        var result = DosageMapper.model(response);
+        var result = DosageMapper.model(response, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -193,7 +213,7 @@ class DosageMapperTest {
                 .build())
             .build();
 
-        var result = DosageMapper.model(response);
+        var result = DosageMapper.model(response, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -221,7 +241,7 @@ class DosageMapperTest {
                 .build())
             .build();
 
-        var result = DosageMapper.model(response);
+        var result = DosageMapper.model(response, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -240,7 +260,7 @@ class DosageMapperTest {
 
     @Test
     void takeOnePillAccordingToNeedTest() {
-        var result = DosageMapper.model(onePillAccordingToNeedResponse);
+        var result = DosageMapper.model(onePillAccordingToNeedResponse, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
@@ -280,7 +300,7 @@ class DosageMapperTest {
                     .build())
             .build();
 
-        var result = DosageMapper.model(response);
+        var result = DosageMapper.model(response, null);
 
         if (result instanceof Dosage.Unstructured) {
             Assertions.fail(((Dosage.Unstructured) result).getReason());
