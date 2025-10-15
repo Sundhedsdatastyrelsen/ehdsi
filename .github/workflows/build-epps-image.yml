@@ -60,10 +60,15 @@ jobs:
           cache-to = [
             "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
           ]
+          tags = [
+            "${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a:build-${{ github.run_number }}",
+            "${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest",
+            "${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a:${{ github.sha }}",
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest",
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:${{ github.sha }}"
+          ]
           output = [
-            "type=image,name=${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=build-${{ github.run_number }}",
-            "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=latest",
-            "type=image,name=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a,push=true,tag=${{ github.sha }}"
+            "type=image,push=true"
           ]
         }
         EOL
