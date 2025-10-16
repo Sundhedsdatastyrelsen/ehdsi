@@ -12,6 +12,12 @@ WORKDIR /usr/src/app/ehealth
 # Use sed to replace the old URL with the new URL
 RUN sed -i 's|https://gazelle.ihe.net/nexus/content/repositories/public/|https://nexus.ihe-catalyst.net/repository/maven-public/|g' pom.xml
 
+# Replace deprecated groupid for oracle driver with the current one to avoid dependency resolution errors
+RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' pom.xml \
+    openncp-tools/openncp-configuration-utility/pom.xml \
+    openncp-tools/openncp-tsam-exporter/pom.xml \
+    openncp-tools/openncp-tsam-sync/pom.xml
+
 RUN --mount=type=cache,target=/root/.m2 mvn -DskipTests install
 
 WORKDIR /usr/src/app
