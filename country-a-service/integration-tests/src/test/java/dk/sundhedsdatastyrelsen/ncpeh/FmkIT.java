@@ -249,26 +249,30 @@ class FmkIT {
         var pharmacyWorkerDispensation = dispensationCda(cpr, prescriptionId, "3213", "Pharmaceutical technicians and assistants");
         assertThat(DispensationMapper.authorRole(pharmacyWorkerDispensation), is("Udenlandsk apoteksansat"));
         var otherHealthProfessionalDispensation = dispensationCda(cpr, prescriptionId, "221", "Medical Doctors");
-        var token = Sosi.getToken();
+        var pharmacistToken = Sosi.getToken("2262");
 
         assertDoesNotThrow(() ->
-            prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, token)
+            prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, pharmacistToken)
+        );
+
+        var pharmacyWorkerToken = Sosi.getToken("3213");
+
+        assertDoesNotThrow(() ->
+            prescriptionService.undoDispensation(patientId(cpr), pharmacistDispensation, pharmacyWorkerToken)
         );
 
         assertDoesNotThrow(() ->
-            prescriptionService.undoDispensation(patientId(cpr), pharmacistDispensation, token)
+            prescriptionService.submitDispensation(patientId(cpr), pharmacyWorkerDispensation, pharmacyWorkerToken)
+        );
+
+        var otherHealthProfessionalToken = Sosi.getToken("221");
+
+        assertDoesNotThrow(() ->
+            prescriptionService.undoDispensation(patientId(cpr), pharmacyWorkerDispensation, otherHealthProfessionalToken)
         );
 
         assertDoesNotThrow(() ->
-            prescriptionService.submitDispensation(patientId(cpr), pharmacyWorkerDispensation, token)
-        );
-
-        assertDoesNotThrow(() ->
-            prescriptionService.undoDispensation(patientId(cpr), pharmacyWorkerDispensation, token)
-        );
-
-        assertDoesNotThrow(() ->
-            prescriptionService.submitDispensation(patientId(cpr), otherHealthProfessionalDispensation, token)
+            prescriptionService.submitDispensation(patientId(cpr), otherHealthProfessionalDispensation, otherHealthProfessionalToken)
         );
     }
 
