@@ -33,14 +33,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Log in to Azure Container Registry
-      uses: docker/login-action@v3.2.0
-      with:
-        registry: ${{ env.AZURE_REGISTRY }}
-        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-
-
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -61,11 +53,8 @@ jobs:
             "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
           ]
           tags = [
-            "${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a:build-${{ github.run_number }}",
-            "${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest",
-            "${{ env.AZURE_REGISTRY }}/sundhedsdatastyrelsen/ehdsi/epps-country-a:${{ github.sha }}",
             "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest",
-            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:${{ github.sha }}"
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:build-${{ github.run_number }}"
           ]
           output = [
             "type=image,push=true"
