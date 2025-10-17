@@ -6,6 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
+import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -50,7 +51,8 @@ public class Controller {
         PatientSummaryService patientSummaryService,
         CprService cprService,
         AuthenticationServiceConfig authServiceConfig,
-        NspDgwsIdentity.System systemIdentity
+        NspDgwsIdentity.System systemIdentity,
+        OptOutConfig optOutConfig
     ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
@@ -61,7 +63,16 @@ public class Controller {
             authServiceConfig.issuer()
         );
         this.systemIdentity = systemIdentity;
-        this.optOutService = OptOutService.never();
+
+        if (optOutConfig.host() == null) {
+            log.warn("Opt-out integration is disabled. No host configured.");
+            this.optOutService = OptOutService.never();
+        } else {
+            this.optOutService = OptOutService.create(optOutConfig.config());
+            // crash early if there are problems
+            // TODO handle this better. Should probably be part of a health check instead of failing early
+            this.optOutService.hasOptedOut("0000000000", OptOutService.Service.EPRESCRIPTION);
+        }
     }
 
     @PostMapping(path = "/api/find-patients/")
