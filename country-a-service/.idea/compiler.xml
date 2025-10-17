@@ -27,6 +27,7 @@
         <module name="testing-shared" />
         <module name="epps-ncp-api" />
         <module name="authentication" />
+        <module name="opt-out" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -58,6 +59,7 @@
       <module name="job-queue" options="-parameters" />
       <module name="local-lms-db" options="-parameters" />
       <module name="nsp-client" options="-parameters" />
+      <module name="opt-out" options="-parameters" />
       <module name="testing-shared" options="-parameters" />
       <module name="testing-tools" options="-parameters" />
     </option>

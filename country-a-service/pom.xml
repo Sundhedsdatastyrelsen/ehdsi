@@ -31,6 +31,7 @@
         <module>job-queue</module>
         <module>base-utils</module>
         <module>base-utils-test</module>
+        <module>opt-out</module>
     </modules>
 
     <properties>
@@ -157,6 +158,11 @@
             <dependency>
                 <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
                 <artifactId>local-lms-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+                <artifactId>opt-out</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
