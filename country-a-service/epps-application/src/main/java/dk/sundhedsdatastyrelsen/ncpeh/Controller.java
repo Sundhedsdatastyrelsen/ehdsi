@@ -64,14 +64,11 @@ public class Controller {
         );
         this.systemIdentity = systemIdentity;
 
-        if (optOutConfig.host() == null) {
-            log.warn("Opt-out integration is disabled. No host configured.");
+        if (optOutConfig.disabled()) {
+            log.warn("Opt-out integration is disabled. This should not happen in production!");
             this.optOutService = OptOutService.never();
         } else {
             this.optOutService = OptOutService.create(optOutConfig.config());
-            // crash early if there are problems
-            // TODO handle this better. Should probably be part of a health check instead of failing early
-            this.optOutService.hasOptedOut("0000000000", OptOutService.Service.EPRESCRIPTION);
         }
     }
 

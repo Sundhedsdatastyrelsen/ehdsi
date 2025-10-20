@@ -102,17 +102,13 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
     }
 
     public static void main(String... args) throws Exception {
-        var oo = new OptOutServiceImpl(new Config(
+        try(var oo = new OptOutServiceImpl(new Config(
                 "https://localhost:8444",
                 "opt-out/src/test/resources/opt-out-keystore.p12",
                 "changeit",
                 "opt-out/src/test/resources/opt-out-truststore.p12",
-                "changeit"));
-        System.out.println(oo.hasOptedOut("0101019999", Service.PATIENT_SUMMARY));
-
-        var req = new Request("0101019999", List.of(Service.PATIENT_SUMMARY, Service.EPRESCRIPTION));
-        var resp = oo.lookup(req);
-
-        System.out.println(resp);
+                "changeit"))) {
+            System.out.println(oo.hasOptedOut("0101019999", Service.PATIENT_SUMMARY));
+        }
     }
 }
