@@ -14,7 +14,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -67,9 +67,9 @@ class OptOutServiceImplMockServerTest {
 
     @Test
     void happyPathReturnsExpectedResponse() throws Exception {
-        var mockResponse = new HashMap<OptOutService.Service, Boolean>();
-        mockResponse.put(OptOutService.Service.EPRESCRIPTION, false);
-        mockResponse.put(OptOutService.Service.PATIENT_SUMMARY, true);
+        var mockResponse = Map.of(
+                OptOutService.Service.EPRESCRIPTION, false,
+                OptOutService.Service.PATIENT_SUMMARY, true);
 
         var okResponse = new MockResponse()
                 .setResponseCode(200)

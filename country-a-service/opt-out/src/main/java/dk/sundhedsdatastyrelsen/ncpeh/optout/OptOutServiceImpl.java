@@ -105,7 +105,7 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
     }
 
     @SuppressWarnings("java:S106") // don't complain about System.out.println
-    public static void main(String... args) throws Exception {
+    public static void main(String... args) {
         try (var oo = new OptOutServiceImpl(new Config(
                 "https://localhost:8444",
                 "opt-out/src/test/resources/opt-out-keystore.p12",
