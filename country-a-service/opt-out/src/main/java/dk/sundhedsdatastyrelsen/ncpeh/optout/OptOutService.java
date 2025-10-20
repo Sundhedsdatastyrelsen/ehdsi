@@ -22,9 +22,4 @@ public interface OptOutService {
     static OptOutService never() {
         return (cpr, service) -> false;
     }
-
-    // Returns an OptOutService which calls out to the lookup service of an external opt-out lookup service.
-    static OptOutService create(Config config) {
-        return new OptOutServiceImpl(config);
-    }
 }

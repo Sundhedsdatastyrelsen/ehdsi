@@ -16,8 +16,8 @@ import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OptOutServiceImpl implements OptOutService, AutoCloseable {
     private final ObjectMapper json = new ObjectMapper();
@@ -51,15 +51,18 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
                 throw new OptOutServiceException("Missing opt-out value for service: " + service);
             }
             return value;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            throw new OptOutServiceException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new OptOutServiceException(e);
         }
     }
 
     private record Request(String cpr, List<OptOutService.Service> services) {}
-    // Response:  HashMap<Service, Boolean>
+    // Response:  Map<Service, Boolean>
 
-    private HashMap<Service, Boolean> lookup(Request request) throws IOException, InterruptedException {
+    private Map<Service, Boolean> lookup(Request request) throws IOException, InterruptedException {
         var resp = httpClient.send(
                 HttpRequest.newBuilder()
                         .uri(URI.create(config.host()).resolve("/api/lookup"))
@@ -101,8 +104,9 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
         return sslContext;
     }
 
+    @SuppressWarnings("java:S106") // don't complain about System.out.println
     public static void main(String... args) throws Exception {
-        try(var oo = new OptOutServiceImpl(new Config(
+        try (var oo = new OptOutServiceImpl(new Config(
                 "https://localhost:8444",
                 "opt-out/src/test/resources/opt-out-keystore.p12",
                 "changeit",

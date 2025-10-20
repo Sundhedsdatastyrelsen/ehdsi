@@ -18,6 +18,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindEPrescriptionDocumentsRequ
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindPatientsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.optout.OptOutService;
+import dk.sundhedsdatastyrelsen.ncpeh.optout.OptOutServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
@@ -68,7 +69,7 @@ public class Controller {
             log.warn("Opt-out integration is disabled. This should not happen in production!");
             this.optOutService = OptOutService.never();
         } else {
-            this.optOutService = OptOutService.create(optOutConfig.config());
+            this.optOutService = new OptOutServiceImpl(optOutConfig.config());
         }
     }
 
