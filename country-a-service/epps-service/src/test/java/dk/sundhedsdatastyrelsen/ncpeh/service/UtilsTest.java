@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -44,5 +45,15 @@ class UtilsTest {
         assertThat(Utils.safeParsePositiveBigDecimal("0"), is(Optional.empty()));
         assertThat(Utils.safeParsePositiveInt("1.0"), is(Optional.empty()));
         assertThat(Utils.safeParsePositiveInt("1"), is(Optional.of(1)));
+    }
+
+    @Test
+    void splitUniqueIdToRepositoryIdAndDocumentIdTest() {
+        var testOid = "1.2.208.176.43210.8.10.12";
+        var testUuid = "aa575bf2-fde6-434c-bd0c-ccf5a512680d";
+        var testDocumentId = testOid + "^" + testUuid;
+        var tuple = InformationCardService.splitUniqueIdToRepositoryIdAndDocumentId(testDocumentId);
+        assertThat(tuple.first(), Matchers.is(testOid));
+        assertThat(tuple.second(), Matchers.is(testUuid));
     }
 }
