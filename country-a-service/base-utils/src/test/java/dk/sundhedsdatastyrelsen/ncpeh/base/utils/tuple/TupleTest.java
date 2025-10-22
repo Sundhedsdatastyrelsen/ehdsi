@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class TupleTest {
+class TupleTest {
     @Test
-    public void equalityTest() {
+    void equalityTest() {
         var pair1 = new Pair<>("String", 1);
         var pair2 = new Pair<>("String", 1);
         var pair3 = new Pair<>("DifferentString", 1);

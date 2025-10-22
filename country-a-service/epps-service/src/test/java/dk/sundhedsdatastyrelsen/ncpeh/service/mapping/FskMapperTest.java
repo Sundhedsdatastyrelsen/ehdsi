@@ -2,7 +2,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
-import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
