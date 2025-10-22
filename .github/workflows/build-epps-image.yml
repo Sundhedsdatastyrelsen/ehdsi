@@ -12,6 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   REPO_NAME: ${{ github.repository }}
+  AZURE_REGISTRY: eppsregistry.azurecr.io
 
 jobs:
   build-country-a-service:
@@ -35,6 +36,34 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Generate docker-bake.hcl
+      run: |
+        cat > country-a-service/docker-bake.hcl <<EOL
+        group "default" {
+          targets = ["epps-country-a"]
+        }
+
+        target "epps-country-a" {
+          dockerfile = "Dockerfile"
+          platforms = ["linux/amd64", "linux/arm64"]
+          cache-from = [
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
+          ]
+          cache-to = [
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
+          ]
+          tags = [
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest",
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:build-${{ github.run_number }}"
+          ]
+          output = [
+            "type=image,push=true"
+          ]
+        }
+        EOL
+
     # https://stackoverflow.com/a/75544124
     - name: Build and push images
-      run: cd country-a-service && docker buildx bake --file docker-compose.yml --file docker-compose-cache.json --push
+      run: |
+        cd country-a-service
+        docker buildx bake --file docker-bake.hcl --push
