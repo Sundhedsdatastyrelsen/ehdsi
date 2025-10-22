@@ -187,7 +187,6 @@ public class EPrescriptionL3Mapper {
                 .build()
             : null;
 
-
         var atc = prescription.getDrug().getATC();
         var atcCode = CdaCode.builder()
             .codeSystem(Oid.ATC)
@@ -298,12 +297,13 @@ public class EPrescriptionL3Mapper {
         // https://www.nspop.dk/display/public/web/Autorisation has the list of education codes
         // We should use the translation layer for these codes, but they are also used in L1, which isn't mapped in
         // OpenNCP, so we have to map it in the code.
-        var functionCode = FunctionCodeMapper.mapToFunctionCode(firstValidAuthorization.map(AuthorizationType::getUddannelsesKode)
+        var functionCodeAndDisplay = FunctionCodeMapper.mapToFunctionCode(firstValidAuthorization.map(AuthorizationType::getUddannelsesKode)
             // 0000 means 'Erstatningsautorisation' replacement authorization
             .orElse("0000"));
         var cdaFunctionCode = CdaCode.builder()
             .codeSystem(Oid.ISCO)
-            .code(functionCode)
+            .code(functionCodeAndDisplay.getKey())
+            .displayName(functionCodeAndDisplay.getValue())
             .build();
         var creator = getAuthorizedHealthcareProfessional(prescription);
 
