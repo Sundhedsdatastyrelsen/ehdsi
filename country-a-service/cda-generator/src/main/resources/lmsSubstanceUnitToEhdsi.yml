@@ -1,38 +1,127 @@
 # Mapping from LMS15 "substance" (unit type 3) codes to eHDSI unit values.
 #
-# Codes and values are based on:
-# - eHDSIUnit from MVC 7.2.0
-# - LMS15 codes from 20240503.
+# Codes and values are based on the agreed substance unit map with LMS. Should be found under the semantics folder
+# on sharepoint.
 #
 # Values are maps of
 # - "lms15-display-name" the description from LMS15, if there is information there that cannot be coded.
 # - "numerator" the unit type of the numerator, defaults to "1"
 # - "denominator" the unit type of the denominator, defaults to "1"
 # - "denominatorValue" the value of the denominator. Must be parseable as a BigDecimal. Defaults to "1"
-#
-# As a first effort, I have taken the top 10 most used units. These account for about 95 % of all drugs.
 
+"AGU":
+  numerator: "[AU]"
+"CL":
+  numerator: "{cells}"
+"CML":
+  numerator: "{cells}"
+  denominator: "mL"
+"EUM":
+  # In the accepted mappings, they write "[ELISA'U]" which doesn't exist in eHDSIUnit. But "{ELISA'U}" does, so we use
+  # that instead.
+  numerator: "{ELISA'U}"
+  denominator: "mL"
 "G":
   numerator: "g"
+"GL":
+  numerator: "g"
+  denominator: "L"
+"GML":
+  numerator: "g"
+  denominator: "mL"
 "IU": # Internationale enheder
   numerator: "[IU]"
+"IUG":
+  numerator: "[IU]"
+  denominator: "g"
+"IUI":
+  numerator: "[IU]"
+  denominator: "mg"
+"IUM":
+  numerator: "[IU]"
+  denominator: "mL"
+"KBM":
+  numerator: "kBq"
+  denominator: "mL"
+"KG":
+  numerator: "kg"
+"LT":
+  numerator: "L"
+"MEM":
+  numerator: "10*6"
+  denominator: "mL"
+"MEQ":
+  numerator: "meq"
 "MG":
   numerator: "mg"
+"MGF":
+  numerator: "mg/(72.h)" # (72.h) is not a unit in eHDSIUnit, but mg/(72.h) is.
 "MGG":
   numerator: "mg"
   denominator: "g"
+"MGH":
+  # (24.h) is not a unit in eHDSIUnit. 24.h is, but I'm not sure it would be understood.
+  # mg/(24.h) is a unit, so we use that.
+  numerator: "mg/(24.h)"
+"MGK":
+  numerator: "mg"
+  denominator: "cm2"
+"MGL":
+  numerator: "mg"
+  denominator: "L"
 "MGM": # mg/ml
   numerator: "mg"
   denominator: "mL"
+"MIM":
+  # In the accepted mappings, they write "10*6[IU]" which doesn't exist in eHDSIUnit. But "10*6.[IU]" does, so we use
+  # that instead.
+  numerator: "10*6.[IU]"
+  denominator: "mL"
+"MIU":
+  # In the accepted mappings, they write "10*6[IU]" which doesn't exist in eHDSIUnit. But "10*6.[IU]" does, so we use
+  # that instead.
+  numerator: "10*6.[IU]"
 "ML":
   numerator: "mL"
+"MML":
+  numerator: "mmol"
+  denominator: "mL"
+"MMO":
+  numerator: "mmol"
+"MOM":
+  numerator: "mmol"
+  denominator: "mL"
 "PC":
   numerator: "%"
+"PPM":
+  numerator: "[ppm]"
 "RG": # mikrogram
   numerator: "ug"
-"RGD":
+# RGD is not part of the approved mappings, so it's been removed. It's used in 1.45 % of drugs, so might be good to look
+# at transcoding it later. Included here because we used to map it during tests, it's in the top 10 most used.
+# "RGD":
+#   numerator: "ug"
+#   lms15-display-name: "mikrogram/dosis"
+"RGG":
   numerator: "ug"
-  lms15-display-name: "mikrogram/dosis"
+  denominator: "g"
+"RGH":
+  # (24.h) is not a unit in eHDSIUnit. 24.h is, but I'm not sure it would be understood.
+  # ug/(24.h) is a unit, so we use that.
+  numerator: "ug/(24.h)"
 "RGM": # mikrogram/ml
   numerator: "ug"
   denominator: "mL"
+"RGT":
+  numerator: "ug"
+  denominator: "h"
+"RLM":
+  numerator: "uL"
+  denominator: "mL"
+"ST":
+  numerator: "1"
+"UML":
+  numerator: "[IU]"
+  denominator: "mL"
+"UN":
+  numerator: "1"
