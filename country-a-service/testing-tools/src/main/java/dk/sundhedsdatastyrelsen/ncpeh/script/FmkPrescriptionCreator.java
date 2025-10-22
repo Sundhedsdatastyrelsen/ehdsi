@@ -302,7 +302,6 @@ public class FmkPrescriptionCreator {
             .withOrgResponsibleName("Sundhedsdatastyrelsen")
             .withOrgUsingName("Sundhedsdatastyrelsen")
             .withOrgUsingID()
-            // TODO: Don't use Region Hovedstaden's location number:
             .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
             .withRequestedRole(requestedRole.value())
             .build();

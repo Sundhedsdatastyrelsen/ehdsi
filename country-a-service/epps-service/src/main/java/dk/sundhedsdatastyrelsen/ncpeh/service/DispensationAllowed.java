@@ -127,7 +127,7 @@ public final class DispensationAllowed {
         "HV", // Håndkøb, veterinær, ikke apoteksforbeholdt
         "HX", // Håndkøb, ikke apoteksforbeholdt, begrænset
         "HX18" // Håndkøb, ikke apoteksforbeholdt, 18 år el. derover
-        // NBS,Kun til sygehuse og speciallæger, TODO this one might be dispensable? Sounds like the one where the doctor has to have the right specialization.
+        // NBS,Kun til sygehuse og speciallæger,
         // PRMIX,Kun til fodermøller efter veterinær ordination,
         // SSI,Kan udleveres fra Statens Seruminstitut,
         // SVS,Kan udleveres fra Statens Vet. Serumlaboratorium,
