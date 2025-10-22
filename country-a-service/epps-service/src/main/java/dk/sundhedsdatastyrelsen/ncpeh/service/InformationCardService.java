@@ -107,7 +107,7 @@ public class InformationCardService {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
                 .addDocumentRequest()
-                .withRepositoryUniqueId(documentId.getFirst())
+                .withRepositoryUniqueId(documentId.first())
                 .withDocumentUniqueId(uniqueDocumentId) //Yes, we need to use the whole unique document ID, as well as part of it earlier.
                 .end().build();
 

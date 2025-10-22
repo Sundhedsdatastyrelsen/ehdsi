@@ -28,8 +28,8 @@ public class TupleTest {
         assertThat(pair1.hashCode(), is(not(equalTo(pair5.hashCode()))));
         assertThat(pair1.hashCode(), is(not(equalTo(pair6.hashCode()))));
 
-        assertThat(pair1.getFirst(), is(equalTo(pair2.getFirst())));
-        assertThat(pair1.getSecond(), is(equalTo(pair2.getSecond())));
+        assertThat(pair1.first(), is(equalTo(pair2.first())));
+        assertThat(pair1.second(), is(equalTo(pair2.second())));
     }
 
 

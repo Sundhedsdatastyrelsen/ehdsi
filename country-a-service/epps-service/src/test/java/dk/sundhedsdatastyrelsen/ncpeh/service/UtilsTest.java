@@ -53,7 +53,7 @@ class UtilsTest {
         var testUuid = "aa575bf2-fde6-434c-bd0c-ccf5a512680d";
         var testDocumentId = testOid + "^" + testUuid;
         var tuple = InformationCardService.splitUniqueIdToRepositoryIdAndDocumentId(testDocumentId);
-        assertThat(tuple.getFirst(), Matchers.is(testOid));
-        assertThat(tuple.getSecond(), Matchers.is(testUuid));
+        assertThat(tuple.first(), Matchers.is(testOid));
+        assertThat(tuple.second(), Matchers.is(testUuid));
     }
 }
