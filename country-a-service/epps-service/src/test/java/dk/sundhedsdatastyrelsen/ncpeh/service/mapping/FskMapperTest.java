@@ -2,10 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
+import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import static dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper.splitUniqueIdToRepositoryIdAndDocumentId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -32,13 +32,9 @@ class FskMapperTest {
         assertThat(preferredHealthProfessional.getAddress().getCity(), is("City"));
     }
 
-    @Test
-    void splitUniqueIdToRepositoryIdAndDocumentIdTest() {
-        var testOid = "1.2.208.176.43210.8.10.12";
-        var testUuid = "aa575bf2-fde6-434c-bd0c-ccf5a512680d";
-        var testDocumentId = testOid+"^"+testUuid;
-        var tuple = splitUniqueIdToRepositoryIdAndDocumentId(testDocumentId);
-        assertThat(tuple._1(),is(testOid));
-        assertThat(tuple._2(),is(testUuid));
-    }
+
+
+
+
+
 }

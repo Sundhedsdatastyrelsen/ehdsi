@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.tuple.Pair;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
@@ -22,8 +23,8 @@ import org.xml.sax.SAXException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
-
-import static dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper.splitUniqueIdToRepositoryIdAndDocumentId;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -106,7 +107,7 @@ public class InformationCardService {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
                 .addDocumentRequest()
-                .withRepositoryUniqueId(documentId._1())
+                .withRepositoryUniqueId(documentId.getFirst())
                 .withDocumentUniqueId(uniqueDocumentId) //Yes, we need to use the whole unique document ID, as well as part of it earlier.
                 .end().build();
 
@@ -126,6 +127,23 @@ public class InformationCardService {
             throw new CountryAException(HttpStatus.BAD_REQUEST, e);
         } catch (JAXBException | SAXException | IOException e) {
             throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    static Pair<String, String> splitUniqueIdToRepositoryIdAndDocumentId(String uniqueDocumentId) {
+        //We assume the documentId follows this format: 1.2.208.176.43210.8.10.12^aa575bf2-fde6-434c-bd0c-ccf5a512680d
+        //We extract the document ID using regex capture groups to ensure that the format is correct
+        String documentIdFormatRegex = "^([\\d.]+)\\^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$";
+
+        Pattern documentIdFormatPattern = Pattern.compile(documentIdFormatRegex);
+        Matcher documentIdFormatMatcher = documentIdFormatPattern.matcher(uniqueDocumentId);
+
+        if (documentIdFormatMatcher.find() && documentIdFormatMatcher.groupCount() == 2) {
+            String oid = documentIdFormatMatcher.group(1);
+            String uuid = documentIdFormatMatcher.group(2);
+            return new Pair<>(oid, uuid); //Repository ID, Local document ID
+        } else {
+            throw new IllegalArgumentException(String.format("Cannot parse uniqueDocumentId: %s", uniqueDocumentId));
         }
     }
 
