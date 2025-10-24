@@ -7,7 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
-import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DiscardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
@@ -153,13 +153,13 @@ public class Controller {
 
     @PostMapping(path = "/api/edispensation/discard")
     public void discardDispensation(
-        @Valid @RequestBody DisardDispensationRequestDto request
+        @Valid @RequestBody DiscardDispensationRequestDto request
     ) {
         try {
             prescriptionService.undoDispensation(
-                request.getDisardDispenseDetails()
-                    .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
-                    .getDocument()), this.getFmkToken(request.getSoapHeader()));
+                request.getDiscardDispenseDetails().getPatientId(),
+                Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()),
+                this.getFmkToken(request.getSoapHeader()));
         } catch (SAXException e) {
             log.error("Could not read XML document in request");
         } catch (Exception e) {

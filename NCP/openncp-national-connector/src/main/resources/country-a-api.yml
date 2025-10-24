@@ -161,7 +161,7 @@ paths:
     post:
       summary: |
         Discard an eDispensation.
-      operationId: disardDispensation
+      operationId: discardDispensation
       requestBody:
         required: true
         content:
@@ -171,7 +171,7 @@ paths:
                 - $ref: "#/components/schemas/SoapHeader"
                 - type: object
                   properties:
-                    disardDispenseDetails:
+                    discardDispenseDetails:
                       $ref: "#/components/schemas/DiscardDispenseDetails"
                     dispensationToDiscard:
                       $ref: "#/components/schemas/EpsosDocument"
