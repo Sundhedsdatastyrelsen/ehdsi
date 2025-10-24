@@ -6,6 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
+import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -16,6 +17,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFetchDocumentRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindPatientsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.optout.OptOutService;
+import dk.sundhedsdatastyrelsen.ncpeh.optout.OptOutServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
@@ -42,13 +45,15 @@ public class Controller {
     private final CprService cprService;
     private final AuthenticationService authenticationService;
     private final NspDgwsIdentity.System systemIdentity;
+    private final OptOutService optOutService;
 
     public Controller(
         PrescriptionService prescriptionService,
         PatientSummaryService patientSummaryService,
         CprService cprService,
         AuthenticationServiceConfig authServiceConfig,
-        NspDgwsIdentity.System systemIdentity
+        NspDgwsIdentity.System systemIdentity,
+        OptOutConfig optOutConfig
     ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
@@ -59,6 +64,13 @@ public class Controller {
             authServiceConfig.issuer()
         );
         this.systemIdentity = systemIdentity;
+
+        if (optOutConfig.disabled()) {
+            log.warn("Opt-out integration is disabled. This should not happen in production!");
+            this.optOutService = OptOutService.never();
+        } else {
+            this.optOutService = new OptOutServiceImpl(optOutConfig.config());
+        }
     }
 
     @PostMapping(path = "/api/find-patients/")
@@ -72,6 +84,7 @@ public class Controller {
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) {
+        checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
         var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.findEPrescriptionDocuments(
             params.getPatientId(),
@@ -86,6 +99,7 @@ public class Controller {
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
     ) {
+        checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
         // TODO should maybe be a user identity instead? It's not used in patient summary yet.
         return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
     }
@@ -96,9 +110,11 @@ public class Controller {
     ) {
         var repoId = params.getRepositoryId();
         if (Objects.equals(repoId, Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
+            checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
             var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
             return prescriptionService.getPrescriptions(params.getPatientId(), filter, this.getFmkToken(params.getSoapHeader()));
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
+            checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),
                 params.getDocumentId(),
@@ -115,6 +131,7 @@ public class Controller {
     public void submitDispensation(
         @Valid @RequestBody SubmitDispensationRequestDto request
     ) {
+        checkOptOut(request.getPatientId(), OptOutService.Service.EPRESCRIPTION);
         try {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
@@ -163,6 +180,12 @@ public class Controller {
             return this.authenticationService.xcaSoapHeaderToIdwsToken(hackyWorkaroundForFmkBugRequiringSpecificRole(soapHeader), "https://fmk");
         } catch (AuthenticationException e) {
             throw new CountryAException(HttpStatus.UNAUTHORIZED, "Could not authenticate.", e);
+        }
+    }
+
+    private void checkOptOut(String cpr, OptOutService.Service service) {
+        if (optOutService.hasOptedOut(cpr, service)) {
+            throw new CountryAException(HttpStatus.BAD_REQUEST, "Citizen has opted out of service: %s".formatted(service));
         }
     }
 
@@ -234,5 +257,4 @@ public class Controller {
     //ox4U15xS2+Nr0fmlbpWzDx/jGvxKhHD7isXrDf5jlPpHTJfNr1KhwTey/RkJSWujGX0gwY6IiTk=
     //</ds:SignatureValue>
     //<ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIEKTCCAxGgAwIBAgICAMUwDQYJKoZIhvcNAQENBQAwUTELMAkGA1UEBhMCQkUxHDAaBgNVBAoME0V1cm9wZWFuIENvbW1pc3Npb24xETAPBgNVBAMMCEVIRFNJIENBMREwDwYDVQQLDAhERyBTYW50ZTAeFw0yNDEwMDcxMzM2NTNaFw0zNDEwMDcxMzM2NTNaMF4xCzAJBgNVBAYTAkRLMSkwJwYDVQQKDCBUaGUgRGFuaXNoIEhlYWx0aCBEYXRhIEF1dGhvcml0eTEkMCIGA1UEAwwbR1JQOkVIRUFMVEhfTkNQX0JPT1RDQU1QX0RLMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtpXCcVejHR1AGvKA06LaxGWwyXRQw4U3W118l5RU+BNdOgD7nvC0ujvi05ESdnL7SKrGeVosh1qyyIBGbNCdZTYqGsYLkIkiRb0cP/YRCCfW/NuEcW22sdezVgPGbv1vgIEaINkDkXHM4s5yZEi55JyBuNGG19ghNfwxnhgqge54GdLhOPct5K+m06AgGuRTEU4mR/uBRdM4sue0WfOVkw4bF9JTeNoU5YI0qp1q8nSsuJAwsOGaNPd7Q0garSeT8WXl/q8Z5RijdnUcPnznvMbri+JhryVH9n33S6ejFQ06mQHswn1006ZJkoGXVtv7VCmVtzUZtO34p1w8HiVnRpQ/K907uJEMkY5kOxrzpuMv0hf7veKGMSDwyW1hgd9UHV/fk4rtKY5LfNueFWjpXNcvW1YpRZHSCa7T0a3HvrnIC2HaZszt8ALX5RtTmqH7nyAhHHUX2eY6bGseuM1+x+55n215DuK7rV6kMVd4taOQcbmeTmtwQp6Kc4oUXpYDUTpUu+xlzV9thDTqnl6cnwXuGHb1b9s6TvXv2ouiQ4RV91u+XY1+YLdEKHtAKVfekaWQU//vdeRqORfEpj4PbzoIQsEgW01/xLMzgw2BsMtiHE9+yk+v/ljzFxGDdgmryCu6ODX4Hol5jSXwtGHa5KDl9zZTwtSSZp2axxURinECAwEAATANBgkqhkiG9w0BAQ0FAAOCAQEAEPj3ChZY4indo6n6dUxqcZWmXizDYWHW1KCbac4SXMfpv4lOfUK/lbuuDxGZEIdYDf1A4kelBfky9sS5k1zsPnn8O6wHboLKbFiXZzOElfa0uSjY+IO3Fe73xvnW762xickZ8g5EdMhm+wUy5PWbUFMYruyiOAVScTCP90Kp9DCDYBuHUd6KzNF5V458QrKLb7uNruK0hoXrExHMjbAeM5hIFfDz477Y84Suh6XSNA1istQ8Stfw1H8hSIiFrRbPf+57IfLWQ/SYM/ghY4ZGIiEn1dXBpSeyjlAeU3sr4rxCm1zCDd8DniYcITTXrwND/3V/5FmtSUX4V4Oh7MXinA==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature><saml2:Subject><saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">house@ehdsi.eu</saml2:NameID><saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:sender-vouches"/></saml2:Subject><saml2:Conditions NotBefore="2025-09-01T12:55:09.921Z" NotOnOrAfter="2025-09-01T14:55:09.921Z"><saml2:AudienceRestriction><saml2:Audience>urn:ehdsi:assertions.audience:x-border</saml2:Audience></saml2:AudienceRestriction></saml2:Conditions><saml2:Advice><saml2:AssertionIDRef>_c82b7e98-a5db-41ad-bb97-9073c60e0b06</saml2:AssertionIDRef></saml2:Advice><saml2:AuthnStatement AuthnInstant="2025-09-01T12:55:09.921Z"><saml2:AuthnContext><saml2:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession</saml2:AuthnContextClassRef></saml2:AuthnContext></saml2:AuthnStatement><saml2:AttributeStatement><saml2:Attribute FriendlyName="XSPA Subject" Name="urn:oasis:names:tc:xspa:1.0:subject:subject-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"><saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">0410009234^^^&amp;1.2.208.176.1.2&amp;ISO</saml2:AttributeValue></saml2:Attribute><saml2:Attribute FriendlyName="XSPA Purpose Of Use" Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"><saml2:AttributeValue><PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="3bc18518-d305-46c2-a8d6-94bd59856e9e" codeSystemName="eHDSI XSPA PurposeOfUse" displayName="TREATMENT"/></saml2:AttributeValue></saml2:Attribute></saml2:AttributeStatement></saml2:Assertion></wsse:Security></soapenv:Header>
-
 }
