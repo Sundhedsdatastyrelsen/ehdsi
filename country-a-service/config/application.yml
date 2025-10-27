@@ -69,6 +69,8 @@ logging:
     root: info
     org.springframework.web: info
     dk.sundhedsdatastyrelsen.ncpeh: info
+    # debug in development so we see full documents in case of errors. Must be at least info in production.
+    dk.sundhedsdatastyrelsen.ncpeh.Controller: debug
 
 lmsftp:
   server: "ftp.medicinpriser.dk"
