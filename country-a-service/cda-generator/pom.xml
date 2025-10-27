@@ -21,6 +21,10 @@
         </dependency>
         <dependency>
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>base-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
             <artifactId>autorisationsregister-model</artifactId>
         </dependency>
         <dependency>

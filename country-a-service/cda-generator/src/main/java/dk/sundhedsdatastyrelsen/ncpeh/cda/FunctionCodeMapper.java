@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.tuple.Pair;
 import lombok.NonNull;
-import org.apache.commons.lang3.tuple.Pair;
 
 /// The function code should be mapped by the translation layer, but it is metadata also present in L1-unstructured
 /// documents, and these are not mapped at all. So we have to do it in the code until that is fixed.

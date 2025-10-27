@@ -302,8 +302,8 @@ public class EPrescriptionL3Mapper {
             .orElse("0000"));
         var cdaFunctionCode = CdaCode.builder()
             .codeSystem(Oid.ISCO)
-            .code(functionCodeAndDisplay.getKey())
-            .displayName(functionCodeAndDisplay.getValue())
+            .code(functionCodeAndDisplay.first())
+            .displayName(functionCodeAndDisplay.second())
             .build();
         var creator = getAuthorizedHealthcareProfessional(prescription);
 
