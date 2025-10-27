@@ -29,6 +29,11 @@
 #     If the @unit attribute is not provided, it is considered to have the default
 #     value '1'.
 
+# The actual values that are in use as of oct 2025 are:
+# DO, DS, ES, G, HD, HS, HT, IS, IU, KG, LT, MG, ML, PK, SE, ST, and UN
+# We have added a few more that may be used in the future, but we haven't added everything.
+# Also remark that this list has not yet (oct 2025) been verified by LMS. We're working on that.
+
 "AM":
   lms15-display-name: "ampuller"
   ehdsi-unit: "{Ampoule}"
@@ -39,11 +44,14 @@
   ehdsi-unit: "{Sachet}"
 "CK":
   lms15-display-name: "cmx2"
+  ehdsi-unit: "cm2"
 "CM":
   lms15-display-name: "cm"
   ehdsi-unit: "cm"
 "DO":
   lms15-display-name: "doser"
+  # Might be possible to transcode to {Actuation}, which is part of eHDSIQuantityUnit, but we would need to get it
+  # verified. "Dose" is used for a lot of metered-dose inhalers and nasal inhalors in DK.
 "DS":
   lms15-display-name: "doser+solv."
 "DU":
@@ -63,6 +71,8 @@
   lms15-display-name: "htgl+solv."
 "HT":
   lms15-display-name: "htgl"
+  # htgl: Hætteglas
+  ehdsi-unit: "{Vial}"
 "IF":
   lms15-display-name: "Inf.flaske"
 "IS":
