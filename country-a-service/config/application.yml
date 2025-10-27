@@ -37,6 +37,15 @@ app:
   fsk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
   minlog:
     max-attempts: 3
+  opt-out:
+## For now, we disable the opt-out integration by default.
+## Note, that this must not be disabled in production and should therefore also not be disabled in test environments.
+#    host: https://localhost:8444
+#    clientKeystorePath: config/dev-opt-out-keystore.p12
+#    clientKeystorePassword: changeit
+#    clientTruststorePath: config/dev-opt-out-truststore.p12
+#    clientTruststorePassword: changeit
+    disabled: true
 
 management:
   endpoint:
