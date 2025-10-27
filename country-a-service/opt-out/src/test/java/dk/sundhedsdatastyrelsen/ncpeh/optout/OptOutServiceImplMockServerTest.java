@@ -20,6 +20,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+// The default lifecycle behaviour is "PER_METHOD", i.e., the test runner instantiates the class for each method.
+// With "PER_CLASS" we can share state between the tests (e.g. ksPath, tsPath).
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OptOutServiceImplMockServerTest {
 
