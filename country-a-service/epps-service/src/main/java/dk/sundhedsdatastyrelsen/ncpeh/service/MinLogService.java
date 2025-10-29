@@ -12,9 +12,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.ObservableLongUpDownCounter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -28,7 +25,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Service
 public class MinLogService implements AutoCloseable {
     private static final String MINLOG_QUEUE_NAME = "minlog";
     private static final String MINLOG_FAILED_QUEUE_NAME = "minlog_errors";
@@ -56,8 +52,8 @@ public class MinLogService implements AutoCloseable {
     public MinLogService(
         MinLogClient minLogClient,
         NspDgwsIdentity.System systemCaller,
-        @Qualifier("jobQueueDataSource") DataSource jobQueueDatasource,
-        @Value("${app.minlog.max-attempts:3}") int maxAttempts
+        DataSource jobQueueDatasource,
+        int maxAttempts
     ) throws SQLException {
         this.minLogClient = minLogClient;
         this.systemCaller = systemCaller;

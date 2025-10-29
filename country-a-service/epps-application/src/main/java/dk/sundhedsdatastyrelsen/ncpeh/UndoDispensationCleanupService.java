@@ -1,5 +1,6 @@
-package dk.sundhedsdatastyrelsen.ncpeh.service.undo;
+package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import org.slf4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

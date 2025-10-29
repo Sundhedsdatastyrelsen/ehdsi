@@ -49,10 +49,6 @@ import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
@@ -68,7 +64,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Slf4j
-@Service
 public class PrescriptionService {
     private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClientIdws fmkClient;
@@ -82,10 +77,10 @@ public class PrescriptionService {
     private final NspDgwsIdentity.System systemIdentity;
 
     public PrescriptionService(
-        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl,
+        String fmkEndpointUrl,
         SigningCertificate signingCertificate,
         UndoDispensationRepository undoDispensationRepository,
-        @Qualifier("localLmsDataSource") DataSource lmsDataSource,
+        DataSource lmsDataSource,
         AuthorizationRegistryClient authorizationRegistry,
         NspDgwsIdentity.System systemIdentity
     ) {
@@ -126,7 +121,7 @@ public class PrescriptionService {
         public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
             var documentId = CdaId.fromDocumentId(rootedDocumentId);
             if (documentId != null && documentId.getRootOid() != Oid.DK_EPRESCRIPTION_REPOSITORY_ID) {
-                throw new CountryAException(HttpStatus.BAD_REQUEST, "Document repository in document ID is not ePrescription.");
+                throw new CountryAException(400, "Document repository in document ID is not ePrescription.");
             }
             return new PrescriptionFilter(
                 Optional.ofNullable(documentId)
@@ -169,7 +164,7 @@ public class PrescriptionService {
                 .filter(Objects::nonNull)
                 .toList();
         } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new CountryAException(500, e);
         }
     }
 
@@ -177,7 +172,7 @@ public class PrescriptionService {
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
         var input = assembleEPrescriptionInput(patientId, filter, token).findFirst().orElse(null);
         if (input == null) {
-            throw new CountryAException(HttpStatus.NOT_FOUND, "Requested prescription not found.");
+            throw new CountryAException(404, "Requested prescription not found.");
         }
         try {
             var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
@@ -188,7 +183,7 @@ public class PrescriptionService {
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6));
         } catch (MapperException | TemplateException | IOException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new CountryAException(500, e);
         }
     }
 
@@ -237,11 +232,11 @@ public class PrescriptionService {
                         packageInfo.map(PackageInfo::numberOfSubPackages).orElse(null),
                         manufacturerOrganizationName.orElse(null));
                 } catch (MapperException e) {
-                    throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get packageFormCode.");
+                    throw new CountryAException(500, "Could not get packageFormCode.");
                 }
             });
         } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not retrieve prescriptions from FMK");
+            throw new CountryAException(500, "Could not retrieve prescriptions from FMK");
         }
     }
 
@@ -249,7 +244,7 @@ public class PrescriptionService {
         try {
             return authorizationRegistry.requestByAuthorizationCode(authorizationIdentifier, caller);
         } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get authorizationType.");
+            throw new CountryAException(500, "Could not get authorizationType.");
         }
     }
 
@@ -317,7 +312,7 @@ public class PrescriptionService {
         var undoInfo = undoDispensationRepository.findByCdaId(eDispensationCdaId);
 
         if (undoInfo == null) {
-            throw new CountryAException(HttpStatus.NOT_FOUND, "No undo information found for given eDispensation CDA id");
+            throw new CountryAException(404, "No undo information found for given eDispensation CDA id");
         }
 
         UndoEffectuationRequestType undoEffectuationRequest;
@@ -336,7 +331,7 @@ public class PrescriptionService {
         try {
             undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, token);
         } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "UndoEffectuation call to FMK failed", e);
+            throw new CountryAException(500, "UndoEffectuation call to FMK failed", e);
         }
 
         var cancelledEffectuationCount = undoResponse.getPrescription()
@@ -346,7 +341,7 @@ public class PrescriptionService {
             .sum();
         if (cancelledEffectuationCount < 1) {
             throw new CountryAException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                500,
                 "Error cancelling effectuation, nothing was cancelled");
         }
         if (cancelledEffectuationCount > 1) {
@@ -402,7 +397,7 @@ public class PrescriptionService {
                     DispensationMapper.abortEffectuationRequest(startEffectuation.request(), startEffectuation.response()),
                     token);
             } catch (JAXBException e) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Abort effectuation failed", e);
+                throw new CountryAException(500, "Abort effectuation failed", e);
             } catch (MapperException e) {
                 throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
             }
@@ -422,7 +417,7 @@ public class PrescriptionService {
                 var effectuationResponse = fmkClient.createPharmacyEffectuation(createEffectuationRequest, token);
                 return new ReqRes<>(createEffectuationRequest, effectuationResponse);
             } catch (JAXBException e) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "CreatePharmacyEffectuation failed", e);
+                throw new CountryAException(500, "CreatePharmacyEffectuation failed", e);
             } catch (MapperException e) {
                 throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
             }
@@ -438,7 +433,7 @@ public class PrescriptionService {
                 var startEffectuationResponse = fmkClient.startEffectuation(startEffectuationRequest, token);
                 return new ReqRes<>(startEffectuationRequest, startEffectuationResponse);
             } catch (JAXBException e) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "StartEffectuation failed", e);
+                throw new CountryAException(500, "StartEffectuation failed", e);
             } catch (MapperException e) {
                 throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
             }
@@ -458,17 +453,17 @@ public class PrescriptionService {
                     .stream()
                     .filter(p -> p.getIdentifier() == prescriptionId)
                     .findFirst()
-                    .orElseThrow(() -> new CountryAException(HttpStatus.NOT_FOUND, "Could not find prescription to dispense"));
+                    .orElseThrow(() -> new CountryAException(404, "Could not find prescription to dispense"));
                 var dispensationAllowedError = DispensationAllowed.getDispensationRestrictions(
                     prescription,
                     lmsDataProvider.packageInfo(prescription.getPackageRestriction()
                         .getPackageNumber()
                         .getValue()));
                 if (null != dispensationAllowedError) {
-                    throw new CountryAException(HttpStatus.BAD_REQUEST, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
+                    throw new CountryAException(400, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
                 }
             } catch (XPathExpressionException | MapperException | JAXBException e) {
-                throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not fetch prescription to dispense", e);
+                throw new CountryAException(500, "Could not fetch prescription to dispense", e);
             }
         }
 

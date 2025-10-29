@@ -11,14 +11,11 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Component
 public class DdvClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DdvClient.class);
 
@@ -28,7 +25,7 @@ public class DdvClient {
     private static final dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory requestFactory =
         new dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory();
 
-    public DdvClient(@Value("${app.fmk.endpoint.url}") String fmkEndpointUrl) throws URISyntaxException, JAXBException {
+    public DdvClient(String fmkEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fmkEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
             ":dk.vaccinationsregister.schemas._2013._12._01"

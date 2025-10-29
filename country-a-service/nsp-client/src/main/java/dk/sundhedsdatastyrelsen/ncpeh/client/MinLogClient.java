@@ -8,14 +8,11 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Component
 public class MinLogClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(MinLogClient.class);
 
@@ -24,7 +21,7 @@ public class MinLogClient {
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
 
-    public MinLogClient(@Value("${app.minlog.endpoint.url}") String minlogEndpointUrl) {
+    public MinLogClient(String minlogEndpointUrl) {
         try {
             this.serviceUri = new URI(minlogEndpointUrl);
             this.jaxbContext = JAXBContext.newInstance(

@@ -19,7 +19,8 @@ public class CountryAExceptionHandler {
 
     @ExceptionHandler(CountryAException.class)
     public ResponseEntity<ErrorDto> handleException(CountryAException e) {
-        HttpStatus httpStatus = e.getHttpStatus();
+        var httpStatusCode = e.getHttpStatus();
+        var httpStatus = HttpStatus.valueOf(httpStatusCode);
 
         var errorUuid = UUID.randomUUID();
 
