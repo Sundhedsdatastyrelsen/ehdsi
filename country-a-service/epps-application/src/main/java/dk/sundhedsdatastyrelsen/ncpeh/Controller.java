@@ -7,7 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
-import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DisardDispensationRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DiscardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
@@ -140,37 +140,35 @@ public class Controller {
         } catch (SAXException e) {
             log.error("Could not read XML document in request", e);
         } catch (Exception e) {
-            // TODO Logs here might contain patient information, should be stored somewhere with better security
-            // TODO Logs are probably not the best tool for communicating this
-            log.error(
-                "Failed in handling dispensation request for patient id %s, with classcode {}", request.getPatientId(), request.getClassCode()
-                    .toString());
-            log.error("SOAP Header: {}", request.getSoapHeader());
-            log.error("Request document: {}", request.getDocument());
+            log.error("Dispensation failed", e);
+            // Debug logging so we can see the full document in development.
+            log.debug("patient id {}, class code {}", request.getPatientId(), request.getClassCode().toString());
+            log.debug("SOAP Header: {}", request.getSoapHeader());
+            log.debug("Request document: {}", request.getDocument());
             throw e;
         }
     }
 
     @PostMapping(path = "/api/edispensation/discard")
     public void discardDispensation(
-        @Valid @RequestBody DisardDispensationRequestDto request
+        @Valid @RequestBody DiscardDispensationRequestDto request
     ) {
         try {
             prescriptionService.undoDispensation(
-                request.getDisardDispenseDetails()
-                    .getPatientId(), Utils.readXmlDocument(request.getDispensationToDiscard()
-                    .getDocument()), this.getFmkToken(request.getSoapHeader()));
+                request.getDiscardDispenseDetails().getPatientId(),
+                Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()),
+                this.getFmkToken(request.getSoapHeader()));
         } catch (SAXException e) {
-            log.error("Could not read XML document in request");
+            log.error("Could not read XML document in request", e);
         } catch (Exception e) {
-            // TODO Logs here might contain patient information, should be stored somewhere with better security
-            // TODO Logs are probably not the best tool for communicating this
-            log.error(
-                "Failed in handling discard request for patient id %s, with classcode {}", request.getDispensationToDiscard()
-                    .getPatientId(), request.getDispensationToDiscard().getClassCode()
-                    .toString());
-            log.error("SOAP Header: {}", request.getSoapHeader());
-            log.error("Request document: {}", request.getDispensationToDiscard().getDocument());
+            log.error("Dispensation discard failed.", e);
+            // Debug logging so we can see the full document in development.
+            log.debug(
+                "patient id {}, class code {}",
+                request.getDispensationToDiscard().getPatientId(),
+                request.getDispensationToDiscard().getClassCode().toString());
+            log.debug("SOAP Header: {}", request.getSoapHeader());
+            log.debug("Request document: {}", request.getDispensationToDiscard().getDocument());
             throw e;
         }
     }

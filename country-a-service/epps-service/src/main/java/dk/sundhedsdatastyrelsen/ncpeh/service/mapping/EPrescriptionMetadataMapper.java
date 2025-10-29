@@ -49,7 +49,8 @@ public class EPrescriptionMetadataMapper {
         String doseFormCode,
         String doseFormName,
         String strength,
-        boolean dispensable
+        boolean dispensable,
+        boolean substitutionAllowed
     ) {
     }
 
@@ -102,17 +103,14 @@ public class EPrescriptionMetadataMapper {
         meta.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
             .confidentialityDisplay("Normal"));
         meta.setStrength(model.strength());
+        // Only generic substitution and no substitution are allowed. These are "G": "generic" and "N": "none".
+        meta.setSubstitutionCode(model.substitutionAllowed() ? "G" : "N");
+        meta.setSubstitutionDisplayName(model.substitutionAllowed() ? "generic" : "none");
 
         //The following data is set to this by convention to indicate a document generated on-demand
         // https://profiles.ihe.net/ITI/TF/Volume2/ITI-38.html
         meta.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709"); //SHA1 hash of a zero length file
         meta.setSize(0L);
-
-        // TODO Missing metadata fields as of 2025-04-01
-        /*
-        String substitutionCode;
-        String substitutionDisplayName;
-         */
 
         return meta;
     }
@@ -150,7 +148,8 @@ public class EPrescriptionMetadataMapper {
             // "When communicated, the Dose form text must be either in English or in (one of) the Country of affiliation national language(s)." 06.02
             drugForm.map(DrugFormType::getText).orElse(null),
             EPrescriptionL3Mapper.drugStrengthText(prescription),
-            DispensationAllowed.getDispensationRestrictions(prescription, packageInfo) == null
+            DispensationAllowed.getDispensationRestrictions(prescription, packageInfo) == null,
+            prescription.isSubstitutionAllowed()
         );
     }
 

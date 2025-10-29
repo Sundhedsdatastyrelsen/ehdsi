@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xdr;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.ClassCode;
-import dk.sundhedsdatastyrelsen.ncpeh.api.model.DisardDispensationRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.DiscardDispensationRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.EpsosDocument;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.SubmitDispensationRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
@@ -63,9 +63,9 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
     @Override
     public void cancelDispensation(DiscardDispenseDetails discardDispenseDetails, EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
         try {
-            CountryAService.api().disardDispensation(new DisardDispensationRequest()
+            CountryAService.api().discardDispensation(new DiscardDispensationRequest()
                     .soapHeader(Utils.elementToString(soapHeader))
-                    .disardDispenseDetails(apiModel(discardDispenseDetails))
+                    .discardDispenseDetails(apiModel(discardDispenseDetails))
                     .dispensationToDiscard(apiModel(epsosDocument)));
         } catch (ApiException e) {
             throw new NIException(OpenNCPErrorCode.ERROR_ED_DISCARD_FAILED, String.format("Dispensation discard failed with error: %s",e.getResponseBody()));
