@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,8 @@ class AuthenticationIT {
         return new AuthenticationService(
             URI.create("https://test2-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
             signingKey,
-            "https://ehdsi-idp.testkald.nspop.dk");
+            "https://ehdsi-idp.testkald.nspop.dk",
+            new DgwsIdCardRequest.Configuration("", "", "", ""));
     }
 
     @Test

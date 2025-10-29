@@ -15,8 +15,10 @@ import java.net.URISyntaxException;
 public class AuthorizationRegistryClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(AuthorizationRegistryClient.class);
     private final URI serviceUri;
+    private final NspClientDgws nspClientDgws;
 
-    public AuthorizationRegistryClient(String serviceUri) {
+    public AuthorizationRegistryClient(String serviceUri, NspClientDgws nspClientDgws) {
+        this.nspClientDgws = nspClientDgws;
         try {
             this.serviceUri = new URI(serviceUri);
         } catch (URISyntaxException e) {
@@ -41,7 +43,7 @@ public class AuthorizationRegistryClient {
         final Element response;
         try {
             log.info("Calling AuthorizationCodeService at {}", serviceUri);
-            response = NspClientDgws.request(
+            response = nspClientDgws.request(
                 serviceUri,
                 authorizationCodeRequestType(authorizationCode),
                 "http://nsi.dk/sdm/Gateway",
