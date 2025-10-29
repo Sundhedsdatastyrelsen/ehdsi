@@ -9,7 +9,7 @@ public class Ddv {
     public static DdvClient apiClient() {
         if (ddvClient == null) {
             try {
-                ddvClient = new DdvClient(DdvEndpointUri);
+                ddvClient = new DdvClient(DdvEndpointUri, Sosi.nspClientDgws);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
