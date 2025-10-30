@@ -56,7 +56,6 @@
 <#if author.specialization??>
             <code <@common.cdaCodeAttrs author.specialization />/>
 </#if>
-            <#-- TODO: Er det nødvendigt med addr og telecom?  -->
             <addr nullFlavor="NI"/>
             <telecom nullFlavor="NI"/>
             <assignedPerson classCode="PSN" determinerCode="INSTANCE">
@@ -76,8 +75,7 @@
         </assignedAuthor>
     </author>
 
-<#-- This elements represents the organization that is in charge of maintaining the document.
-     TODO: find ud af hvem der er "kustode". Er det SDS? -->
+<#-- This elements represents the organization that is in charge of maintaining the document. -->
     <custodian typeCode="CST">
         <assignedCustodian classCode="ASSIGNED">
             <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
@@ -98,8 +96,6 @@
     healthcare organization will send this to the NCP. The definition of the legal
     authenticator may vary accoriding to the rules set up in the framework agreement
     particular to each state. It may be a person or a regional authority, or an NCP.
-
-    TODO: find ud af hvem der er legalAuthenticator. Er det SDS?
     -->
     <legalAuthenticator contextControlCode="OP" typeCode="LA">
         <time value="${ signatureTime }"/>
