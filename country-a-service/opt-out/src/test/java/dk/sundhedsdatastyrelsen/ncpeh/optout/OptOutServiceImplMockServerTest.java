@@ -22,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 // The default lifecycle behaviour is "PER_METHOD", i.e., the test runner instantiates the class for each method.
 // With "PER_CLASS" we can share state between the tests (e.g. ksPath, tsPath).
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+// PER_METHOD Try to see if this fixes it.
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class OptOutServiceImplMockServerTest {
 
     private MockWebServer server;
@@ -39,16 +40,13 @@ class OptOutServiceImplMockServerTest {
         }
     }
 
-    @BeforeAll
-    void setupAll(@TempDir Path tempDir) throws IOException {
-        this.ksPath = copy("opt-out-keystore.p12", tempDir);
-        this.tsPath = copy("opt-out-truststore.p12", tempDir);
-    }
-
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp(@TempDir Path tempDir) throws Exception {
         server = new MockWebServer();
         server.start();
+
+        this.ksPath = copy("opt-out-keystore.p12", tempDir);
+        this.tsPath = copy("opt-out-truststore.p12", tempDir);
 
         var baseUrl = server.url("/").toString().replaceAll("/+$", "");
         var config = new OptOutService.Config(
