@@ -19,10 +19,12 @@ import java.net.URISyntaxException;
 public class CprClient {
 
     private final URI serviceUri;
+    private final NspClientDgws nspClientDgws;
     private final JAXBContext jaxbContext;
 
-    public CprClient(String serviceUri) throws URISyntaxException, JAXBException {
+    public CprClient(String serviceUri, NspClientDgws nspClientDgws) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(serviceUri);
+        this.nspClientDgws = nspClientDgws;
         jaxbContext = JAXBContext.newInstance(GetPersonInformationIn.class, GetPersonInformationOut.class);
     }
 
@@ -40,7 +42,7 @@ public class CprClient {
         final Element response;
         try {
             log.info("Calling getPersonInformation at {}", serviceUri);
-            response = NspClientDgws.request(
+            response = nspClientDgws.request(
                 serviceUri,
                 toElement(requestBody),
                 "http://rep.oio.dk/medcom.sundcom.dk/xml/wsdl/2007/06/28/getPersonInformation",

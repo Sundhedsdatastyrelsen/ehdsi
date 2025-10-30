@@ -22,7 +22,7 @@ public class Fsk {
     public static FskClient apiClient() {
         if (fskClient == null) {
             try {
-                fskClient = new FskClient(fskEndpointUri);
+                fskClient = new FskClient(fskEndpointUri, Sosi.nspClientDgws);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

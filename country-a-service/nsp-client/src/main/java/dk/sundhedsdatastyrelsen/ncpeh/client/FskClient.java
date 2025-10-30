@@ -30,10 +30,12 @@ public class FskClient {
     private static final ihe.iti.xds_b._2007.ObjectFactory factory = new ObjectFactory();
 
     private final URI serviceUri;
+    private final NspClientDgws nspClientDgws;
     private final JAXBContext jaxbContext;
 
-    public FskClient(String fskEndpointUrl) throws URISyntaxException, JAXBException {
+    public FskClient(String fskEndpointUrl, NspClientDgws nspClientDgws) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fskEndpointUrl);
+        this.nspClientDgws = nspClientDgws;
         this.jaxbContext = JAXBContext.newInstance(
             "ihe.iti.xds_b._2007"
                 + ":oasis.names.tc.ebxml_regrep.xsd.query._3"
@@ -88,7 +90,7 @@ public class FskClient {
         try {
             var fullUri = new URI(new StringBuilder().append(serviceUri).append(specificEndpoint).toString());
             log.info("Calling '{}' with a SOAP action '{}'", fullUri, soapAction);
-            reply = NspClientDgws.request(
+            reply = nspClientDgws.request(
                 fullUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,

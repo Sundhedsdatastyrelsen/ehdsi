@@ -20,13 +20,15 @@ public class DdvClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DdvClient.class);
 
     private final URI serviceUri;
+    private final NspClientDgws nspClientDgws;
     private final JAXBContext jaxbContext;
 
     private static final dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory requestFactory =
         new dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory();
 
-    public DdvClient(String fmkEndpointUrl) throws URISyntaxException, JAXBException {
+    public DdvClient(String fmkEndpointUrl, NspClientDgws nspClientDgws) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fmkEndpointUrl);
+        this.nspClientDgws = nspClientDgws;
         this.jaxbContext = JAXBContext.newInstance(
             ":dk.vaccinationsregister.schemas._2013._12._01"
                 + ":dk.sdsd.ddv.dgws._2012._06"
@@ -89,7 +91,7 @@ public class DdvClient {
         extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
 
         try {
-            reply = NspClientDgws.request(
+            reply = nspClientDgws.request(
                 serviceUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,

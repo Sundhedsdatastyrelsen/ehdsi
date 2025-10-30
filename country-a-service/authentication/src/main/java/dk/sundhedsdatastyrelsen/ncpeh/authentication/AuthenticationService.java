@@ -17,13 +17,15 @@ public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final String issuer;
+    private final DgwsIdCardRequest.Configuration dgwsConfiguration;
     private final SosiStsClientIdws sosiStsClientIdws;
     private final CertificateAndKey certificateAndKey;
 
-    public AuthenticationService(URI sosiStsUri, CertificateAndKey signingKey, String issuer) {
+    public AuthenticationService(URI sosiStsUri, CertificateAndKey signingKey, String issuer, DgwsIdCardRequest.Configuration dgwsConfiguration) {
         this.sosiStsClientIdws = new SosiStsClientIdws(sosiStsUri);
         this.certificateAndKey = signingKey;
         this.issuer = issuer;
+        this.dgwsConfiguration = dgwsConfiguration;
     }
 
     /**
@@ -55,13 +57,13 @@ public class AuthenticationService {
      * @param identity the identity to exchange to a dgws assertion.
      * @return an assertion we can use to call NSP services that require an organization identity.
      */
-    public static DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
+    public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
         DgwsIdCardRequest request;
         if (identity instanceof NspDgwsIdentity.ReplaceWithIdws replaceIdentity) {
             // For integration tests or for development while we wait for external dependencies to be ready with IDWS.
-            request = DgwsIdCardRequest.ofEmployeeIdentity(replaceIdentity, Instant.now());
+            request = DgwsIdCardRequest.ofEmployeeIdentity(replaceIdentity, Instant.now(), dgwsConfiguration);
         } else {
-            request = DgwsIdCardRequest.of(identity.systemCertificate(), Instant.now());
+            request = DgwsIdCardRequest.of(identity.systemCertificate(), Instant.now(), dgwsConfiguration);
         }
         return SosiStsClientDgws.exchangeIdCard(request, identity.stsUri());
     }

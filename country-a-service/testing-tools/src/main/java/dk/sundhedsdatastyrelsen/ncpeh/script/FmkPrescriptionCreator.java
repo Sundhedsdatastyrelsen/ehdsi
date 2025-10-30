@@ -20,10 +20,10 @@ import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientException;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -281,7 +281,7 @@ public class FmkPrescriptionCreator {
             extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole))};
         }
         try {
-            body = NspClientDgws.request(
+            body = Sosi.nspClientDgws.request(
                 URI.create(Fmk.FMK_DGWS_ENDPOINT_URI),
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
