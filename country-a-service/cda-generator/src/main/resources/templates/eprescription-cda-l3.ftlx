@@ -131,18 +131,17 @@
                     <id <@common.cdaIdAttrs prescriptionId />/>
                     <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
                     <title>Prescriptions</title>
-                    <text><#-- TODO review w. semantics -->
-                        <content ID="entry-text"><#-- TODO can't use <paragraph> within content, doesn't validate. So how is this supposed to be structured? -->
-                            ${ product.name }
-                            ${ indicationText }
-                            ${ patientMedicationInstructions }
-                            ${ unstructuredActiveIngredients }
-
+                    <#-- This is "the narrative block". It has several rules that make it complex to work with.
+                    Search for "cda narrative block" to learn more. -->
+                    <text>
+                        <content ID="entry-text">
+                            <content ID="product-name">${ product.name }</content><br/>
+                            <content ID="indication-text">${ indicationText }</content><br/>
+                            <content ID="patient-medication-instructions">${ patientMedicationInstructions }</content><br/>
+                            ${ unstructuredActiveIngredients }<br/>
+                            <br/>
                             ${ dosage.unstructuredText }
                         </content>
-                        <content ID="product-name">${ product.name }</content>
-                        <content ID="indication-text">${ indicationText }</content>
-                        <content ID="patient-medication-instructions">${ patientMedicationInstructions }</content>
                     </text>
                     <entry typeCode="COMP">
                         <#-- I Danmark er der én ordination per recept, derfor vil der altid være netop ét "entry"-element -->
