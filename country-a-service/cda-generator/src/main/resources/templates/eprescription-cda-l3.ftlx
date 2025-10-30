@@ -142,6 +142,10 @@
                             <br/>
                             ${ dosage.unstructuredText }
                         </content>
+                        <paragraph>
+                            The information in this ePrescription comes from the Danish system "Fælles Medicinkort",
+                            "FMK", translated as "shared medicine card".
+                        </paragraph>
                     </text>
                     <entry typeCode="COMP">
                         <#-- I Danmark er der én ordination per recept, derfor vil der altid være netop ét "entry"-element -->
