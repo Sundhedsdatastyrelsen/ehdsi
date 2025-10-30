@@ -15,8 +15,6 @@ import oasis.names.tc.ebxml_regrep.xsd.query._3.ResponseOptionType;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.AdhocQueryType;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.SlotType1;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.ValueListType;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -27,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-@Service
 public class InformationCardService {
     private final FskClient fskClient;
     private final MinLogService minLogService;
@@ -98,7 +95,7 @@ public class InformationCardService {
                 .map(identifiable -> identifiable.getValue().getId())
                 .toList();
         } catch (JAXBException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new CountryAException(500, e);
         }
     }
 
@@ -124,9 +121,9 @@ public class InformationCardService {
                 .orElse(null);
             return documentBytes == null ? null : Utils.readXmlDocument(new ByteArrayInputStream(documentBytes));
         } catch (IllegalArgumentException e) {
-            throw new CountryAException(HttpStatus.BAD_REQUEST, e);
+            throw new CountryAException(400, e);
         } catch (JAXBException | SAXException | IOException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new CountryAException(500, e);
         }
     }
 

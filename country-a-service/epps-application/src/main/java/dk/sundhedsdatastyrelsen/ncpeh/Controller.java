@@ -5,7 +5,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DiscardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
@@ -26,13 +25,11 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFi
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -51,18 +48,14 @@ public class Controller {
         PrescriptionService prescriptionService,
         PatientSummaryService patientSummaryService,
         CprService cprService,
-        AuthenticationServiceConfig authServiceConfig,
+        AuthenticationService authenticationService,
         NspDgwsIdentity.System systemIdentity,
         OptOutConfig optOutConfig
     ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
         this.cprService = cprService;
-        this.authenticationService = new AuthenticationService(
-            URI.create(authServiceConfig.sosiStsUri()),
-            authServiceConfig.signingCertificate().getCertificateAndKey(),
-            authServiceConfig.issuer()
-        );
+        this.authenticationService = authenticationService;
         this.systemIdentity = systemIdentity;
 
         if (optOutConfig.disabled()) {
@@ -177,13 +170,13 @@ public class Controller {
         try {
             return this.authenticationService.xcaSoapHeaderToIdwsToken(hackyWorkaroundForFmkBugRequiringSpecificRole(soapHeader), "https://fmk");
         } catch (AuthenticationException e) {
-            throw new CountryAException(HttpStatus.UNAUTHORIZED, "Could not authenticate.", e);
+            throw new CountryAException(401, "Could not authenticate.", e);
         }
     }
 
     private void checkOptOut(String cpr, OptOutService.Service service) {
         if (optOutService.hasOptedOut(cpr, service)) {
-            throw new CountryAException(HttpStatus.BAD_REQUEST, "Citizen has opted out of service: %s".formatted(service));
+            throw new CountryAException(400, "Citizen has opted out of service: %s".formatted(service));
         }
     }
 

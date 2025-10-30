@@ -11,8 +11,6 @@ import jakarta.xml.bind.JAXBException;
 import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryRequest;
 import oasis.names.tc.ebxml_regrep.xsd.query._3.AdhocQueryResponse;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -23,7 +21,6 @@ import java.net.URISyntaxException;
  * Client for calling FSK SOAP endpoints.
  * Documentation is here: https://www.nspop.dk/display/public/web/FSK+-+Guide+til+anvendere
  */
-@Component
 public class FskClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FskClient.class);
 
@@ -35,7 +32,7 @@ public class FskClient {
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
 
-    public FskClient(@Value("${app.fsk.endpoint.url}") String fskEndpointUrl) throws URISyntaxException, JAXBException {
+    public FskClient(String fskEndpointUrl) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fskEndpointUrl);
         this.jaxbContext = JAXBContext.newInstance(
             "ihe.iti.xds_b._2007"

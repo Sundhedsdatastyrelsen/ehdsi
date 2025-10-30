@@ -7,8 +7,6 @@ import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import oio.medcom.cprservice._1_0.GetPersonInformationIn;
 import oio.medcom.cprservice._1_0.GetPersonInformationOut;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -18,13 +16,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-@Component
 public class CprClient {
 
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
 
-    public CprClient(@Value("${app.cpr.endpoint.url}") String serviceUri) throws URISyntaxException, JAXBException {
+    public CprClient(String serviceUri) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(serviceUri);
         jaxbContext = JAXBContext.newInstance(GetPersonInformationIn.class, GetPersonInformationOut.class);
     }

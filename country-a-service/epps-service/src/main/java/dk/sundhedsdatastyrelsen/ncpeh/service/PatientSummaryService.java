@@ -16,8 +16,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
 import freemarker.template.TemplateException;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
@@ -26,13 +24,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@Service
 public class PatientSummaryService {
     private final InformationCardService informationCardService;
 
-    public PatientSummaryService(
-        InformationCardService informationCardService
-    ) {
+    public PatientSummaryService(InformationCardService informationCardService) {
         this.informationCardService = informationCardService;
     }
 
@@ -89,14 +84,14 @@ public class PatientSummaryService {
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._60591_5));
         } catch (MapperException | TemplateException | IOException e) {
-            throw new CountryAException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new CountryAException(500, e);
         }
     }
 
     @WithSpan
     private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId) {
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
-        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(),patientId, europeanHealthProfessionalId);
+        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard));
         } catch (XPathExpressionException e) {
