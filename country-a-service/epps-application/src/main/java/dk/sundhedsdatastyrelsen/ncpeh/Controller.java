@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerErrorException;
 import org.xml.sax.SAXException;
 
 import java.util.List;
@@ -116,8 +117,7 @@ public class Controller {
                 "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1");
         }
 
-        // TODO better exception
-        throw new RuntimeException("Unknown repository id " + repoId);
+        throw new ServerErrorException("Unknown repository id " + repoId, null);
     }
 
     @PostMapping(path = "/api/edispensation/submit")
