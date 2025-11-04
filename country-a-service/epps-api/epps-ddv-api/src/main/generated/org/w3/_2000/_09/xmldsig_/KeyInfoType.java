@@ -1,8 +1,6 @@
 
-package dk.vaccinationsregister.schemas._2013._12._01;
+package org.w3._2000._09.xmldsig_;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,31 +12,39 @@ import com.kscs.util.jaxb.PropertyTreeUse;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlElementRefs;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlMixed;
+import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.w3c.dom.Element;
 
 
 /**
- * <p>Java class for DrugStrengthType complex type.
+ * <p>Java class for KeyInfoType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>{@code
- * <complexType name="DrugStrengthType">
+ * <complexType name="KeyInfoType">
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <choice>
- *         <sequence>
- *           <element name="DrugStrengthValue" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthValueType"/>
- *           <element name="DrugStrengthUnitCode" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitCodeType"/>
- *           <element name="DrugStrengthUnitText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitTextType" minOccurs="0"/>
- *         </sequence>
- *         <sequence>
- *           <element name="DrugStrengthText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthTextType" minOccurs="0"/>
- *           <element name="DrugStrengthUnitText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitTextType" minOccurs="0"/>
- *         </sequence>
+ *       <choice maxOccurs="unbounded">
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}KeyName"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}KeyValue"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}RetrievalMethod"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}X509Data"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}PGPData"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}SPKIData"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}MgmtData"/>
+ *         <any processContents='lax' namespace='##other'/>
  *       </choice>
+ *       <attribute name="Id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -47,30 +53,31 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DrugStrengthType", propOrder = {
+@XmlType(name = "KeyInfoType", propOrder = {
     "content"
 })
-public class DrugStrengthType {
+public class KeyInfoType {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "DrugStrengthValue", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "DrugStrengthUnitCode", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "DrugStrengthUnitText", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "DrugStrengthText", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "KeyName", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "KeyValue", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "RetrievalMethod", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "X509Data", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "PGPData", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "SPKIData", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "MgmtData", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false)
     })
-    protected List<JAXBElement<? extends Serializable>> content;
+    @XmlMixed
+    @XmlAnyElement(lax = true)
+    protected List<Object> content;
+    @XmlAttribute(name = "Id")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    @XmlSchemaType(name = "ID")
+    protected String id;
 
     /**
-     * Gets the rest of the content model. 
-     * 
-     * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "DrugStrengthUnitText" is used by two different parts of a schema. See: 
-     * line 25 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_DrugStrength.xsd
-     * line 21 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_DrugStrength.xsd
-     * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names:Gets the value of the content property.
+     * Gets the value of the content property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
@@ -89,18 +96,48 @@ public class DrugStrengthType {
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link BigDecimal }{@code >}
+     * {@link JAXBElement }{@code <}{@link KeyValueType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PGPDataType }{@code >}
+     * {@link JAXBElement }{@code <}{@link RetrievalMethodType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SPKIDataType }{@code >}
+     * {@link JAXBElement }{@code <}{@link X509DataType }{@code >}
+     * {@link Object }
+     * {@link String }
+     * {@link Element }
      * 
      * 
      * @return
      *     The value of the content property.
      */
-    public List<JAXBElement<? extends Serializable>> getContent() {
+    public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<>();
         }
         return this.content;
+    }
+
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setId(String value) {
+        this.id = value;
     }
 
     /**
@@ -110,31 +147,32 @@ public class DrugStrengthType {
      * @param _other
      *     A builder instance to which the state of this object will be copied.
      */
-    public<_B >void copyTo(final DrugStrengthType.Builder<_B> _other) {
+    public<_B >void copyTo(final KeyInfoType.Builder<_B> _other) {
         if (this.content == null) {
             _other.content = null;
         } else {
             _other.content = new ArrayList<>();
-            for (JAXBElement<? extends Serializable> _item: this.content) {
+            for (Object _item: this.content) {
                 _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
             }
         }
+        _other.id = this.id;
     }
 
-    public<_B >DrugStrengthType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
-        return new DrugStrengthType.Builder<_B>(_parentBuilder, this, true);
+    public<_B >KeyInfoType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
+        return new KeyInfoType.Builder<_B>(_parentBuilder, this, true);
     }
 
-    public DrugStrengthType.Builder<Void> newCopyBuilder() {
+    public KeyInfoType.Builder<Void> newCopyBuilder() {
         return newCopyBuilder(null);
     }
 
-    public static DrugStrengthType.Builder<Void> builder() {
-        return new DrugStrengthType.Builder<>(null, null, false);
+    public static KeyInfoType.Builder<Void> builder() {
+        return new KeyInfoType.Builder<>(null, null, false);
     }
 
-    public static<_B >DrugStrengthType.Builder<_B> copyOf(final DrugStrengthType _other) {
-        final DrugStrengthType.Builder<_B> _newBuilder = new DrugStrengthType.Builder<>(null, null, false);
+    public static<_B >KeyInfoType.Builder<_B> copyOf(final KeyInfoType _other) {
+        final KeyInfoType.Builder<_B> _newBuilder = new KeyInfoType.Builder<>(null, null, false);
         _other.copyTo(_newBuilder);
         return _newBuilder;
     }
@@ -146,39 +184,43 @@ public class DrugStrengthType {
      * @param _other
      *     A builder instance to which the state of this object will be copied.
      */
-    public<_B >void copyTo(final DrugStrengthType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+    public<_B >void copyTo(final KeyInfoType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
         final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
         if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
             if (this.content == null) {
                 _other.content = null;
             } else {
                 _other.content = new ArrayList<>();
-                for (JAXBElement<? extends Serializable> _item: this.content) {
+                for (Object _item: this.content) {
                     _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                 }
             }
         }
+        final PropertyTree idPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("id"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(idPropertyTree!= null):((idPropertyTree == null)||(!idPropertyTree.isLeaf())))) {
+            _other.id = this.id;
+        }
     }
 
-    public<_B >DrugStrengthType.Builder<_B> newCopyBuilder(final _B _parentBuilder, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        return new DrugStrengthType.Builder<_B>(_parentBuilder, this, true, _propertyTree, _propertyTreeUse);
+    public<_B >KeyInfoType.Builder<_B> newCopyBuilder(final _B _parentBuilder, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        return new KeyInfoType.Builder<_B>(_parentBuilder, this, true, _propertyTree, _propertyTreeUse);
     }
 
-    public DrugStrengthType.Builder<Void> newCopyBuilder(final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+    public KeyInfoType.Builder<Void> newCopyBuilder(final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
         return newCopyBuilder(null, _propertyTree, _propertyTreeUse);
     }
 
-    public static<_B >DrugStrengthType.Builder<_B> copyOf(final DrugStrengthType _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        final DrugStrengthType.Builder<_B> _newBuilder = new DrugStrengthType.Builder<>(null, null, false);
+    public static<_B >KeyInfoType.Builder<_B> copyOf(final KeyInfoType _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        final KeyInfoType.Builder<_B> _newBuilder = new KeyInfoType.Builder<>(null, null, false);
         _other.copyTo(_newBuilder, _propertyTree, _propertyTreeUse);
         return _newBuilder;
     }
 
-    public static DrugStrengthType.Builder<Void> copyExcept(final DrugStrengthType _other, final PropertyTree _propertyTree) {
+    public static KeyInfoType.Builder<Void> copyExcept(final KeyInfoType _other, final PropertyTree _propertyTree) {
         return copyOf(_other, _propertyTree, PropertyTreeUse.EXCLUDE);
     }
 
-    public static DrugStrengthType.Builder<Void> copyOnly(final DrugStrengthType _other, final PropertyTree _propertyTree) {
+    public static KeyInfoType.Builder<Void> copyOnly(final KeyInfoType _other, final PropertyTree _propertyTree) {
         return copyOf(_other, _propertyTree, PropertyTreeUse.INCLUDE);
     }
 
@@ -186,10 +228,11 @@ public class DrugStrengthType {
     {
 
         protected final _B _parentBuilder;
-        protected final DrugStrengthType _storedValue;
+        protected final KeyInfoType _storedValue;
         private List<Buildable> content;
+        private String id;
 
-        public Builder(final _B _parentBuilder, final DrugStrengthType _other, final boolean _copy) {
+        public Builder(final _B _parentBuilder, final KeyInfoType _other, final boolean _copy) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
@@ -198,10 +241,11 @@ public class DrugStrengthType {
                         this.content = null;
                     } else {
                         this.content = new ArrayList<>();
-                        for (JAXBElement<? extends Serializable> _item: _other.content) {
+                        for (Object _item: _other.content) {
                             this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                         }
                     }
+                    this.id = _other.id;
                 } else {
                     _storedValue = _other;
                 }
@@ -210,7 +254,7 @@ public class DrugStrengthType {
             }
         }
 
-        public Builder(final _B _parentBuilder, final DrugStrengthType _other, final boolean _copy, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        public Builder(final _B _parentBuilder, final KeyInfoType _other, final boolean _copy, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
@@ -221,10 +265,14 @@ public class DrugStrengthType {
                             this.content = null;
                         } else {
                             this.content = new ArrayList<>();
-                            for (JAXBElement<? extends Serializable> _item: _other.content) {
+                            for (Object _item: _other.content) {
                                 this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                             }
                         }
+                    }
+                    final PropertyTree idPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("id"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(idPropertyTree!= null):((idPropertyTree == null)||(!idPropertyTree.isLeaf())))) {
+                        this.id = _other.id;
                     }
                 } else {
                     _storedValue = _other;
@@ -238,14 +286,15 @@ public class DrugStrengthType {
             return this._parentBuilder;
         }
 
-        protected<_P extends DrugStrengthType >_P init(final _P _product) {
+        protected<_P extends KeyInfoType >_P init(final _P _product) {
             if (this.content!= null) {
-                final List<JAXBElement<? extends Serializable>> content = new ArrayList<>(this.content.size());
+                final List<Object> content = new ArrayList<>(this.content.size());
                 for (Buildable _item: this.content) {
-                    content.add(((JAXBElement<? extends Serializable> ) _item.build()));
+                    content.add(((Object) _item.build()));
                 }
                 _product.content = content;
             }
+            _product.id = this.id;
             return _product;
         }
 
@@ -255,12 +304,12 @@ public class DrugStrengthType {
          * @param content
          *     Items to add to the value of the "content" property
          */
-        public DrugStrengthType.Builder<_B> addContent(final Iterable<? extends JAXBElement<? extends Serializable>> content) {
+        public KeyInfoType.Builder<_B> addContent(final Iterable<?> content) {
             if (content!= null) {
                 if (this.content == null) {
                     this.content = new ArrayList<>();
                 }
-                for (JAXBElement<? extends Serializable> _item: content) {
+                for (Object _item: content) {
                     this.content.add(new Buildable.PrimitiveBuildable(_item));
                 }
             }
@@ -273,7 +322,7 @@ public class DrugStrengthType {
          * @param content
          *     New value of the "content" property.
          */
-        public DrugStrengthType.Builder<_B> withContent(final Iterable<? extends JAXBElement<? extends Serializable>> content) {
+        public KeyInfoType.Builder<_B> withContent(final Iterable<?> content) {
             if (this.content!= null) {
                 this.content.clear();
             }
@@ -286,7 +335,7 @@ public class DrugStrengthType {
          * @param content
          *     Items to add to the value of the "content" property
          */
-        public DrugStrengthType.Builder<_B> addContent(JAXBElement<? extends Serializable> ... content) {
+        public KeyInfoType.Builder<_B> addContent(Object... content) {
             addContent(Arrays.asList(content));
             return this;
         }
@@ -297,33 +346,44 @@ public class DrugStrengthType {
          * @param content
          *     New value of the "content" property.
          */
-        public DrugStrengthType.Builder<_B> withContent(JAXBElement<? extends Serializable> ... content) {
+        public KeyInfoType.Builder<_B> withContent(Object... content) {
             withContent(Arrays.asList(content));
             return this;
         }
 
+        /**
+         * Sets the new value of "id" (any previous value will be replaced)
+         * 
+         * @param id
+         *     New value of the "id" property.
+         */
+        public KeyInfoType.Builder<_B> withId(final String id) {
+            this.id = id;
+            return this;
+        }
+
         @Override
-        public DrugStrengthType build() {
+        public KeyInfoType build() {
             if (_storedValue == null) {
-                return this.init(new DrugStrengthType());
+                return this.init(new KeyInfoType());
             } else {
-                return ((DrugStrengthType) _storedValue);
+                return ((KeyInfoType) _storedValue);
             }
         }
 
-        public DrugStrengthType.Builder<_B> copyOf(final DrugStrengthType _other) {
+        public KeyInfoType.Builder<_B> copyOf(final KeyInfoType _other) {
             _other.copyTo(this);
             return this;
         }
 
-        public DrugStrengthType.Builder<_B> copyOf(final DrugStrengthType.Builder _other) {
+        public KeyInfoType.Builder<_B> copyOf(final KeyInfoType.Builder _other) {
             return copyOf(_other.build());
         }
 
     }
 
     public static class Select
-        extends DrugStrengthType.Selector<DrugStrengthType.Select, Void>
+        extends KeyInfoType.Selector<KeyInfoType.Select, Void>
     {
 
 
@@ -331,8 +391,8 @@ public class DrugStrengthType {
             super(null, null, null);
         }
 
-        public static DrugStrengthType.Select _root() {
-            return new DrugStrengthType.Select();
+        public static KeyInfoType.Select _root() {
+            return new KeyInfoType.Select();
         }
 
     }
@@ -341,7 +401,8 @@ public class DrugStrengthType {
         extends com.kscs.util.jaxb.Selector<TRoot, TParent>
     {
 
-        private com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> content = null;
+        private com.kscs.util.jaxb.Selector<TRoot, KeyInfoType.Selector<TRoot, TParent>> content = null;
+        private com.kscs.util.jaxb.Selector<TRoot, KeyInfoType.Selector<TRoot, TParent>> id = null;
 
         public Selector(final TRoot root, final TParent parent, final String propertyName) {
             super(root, parent, propertyName);
@@ -354,11 +415,18 @@ public class DrugStrengthType {
             if (this.content!= null) {
                 products.put("content", this.content.init());
             }
+            if (this.id!= null) {
+                products.put("id", this.id.init());
+            }
             return products;
         }
 
-        public com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> content() {
+        public com.kscs.util.jaxb.Selector<TRoot, KeyInfoType.Selector<TRoot, TParent>> content() {
             return ((this.content == null)?this.content = new com.kscs.util.jaxb.Selector<>(this._root, this, "content"):this.content);
+        }
+
+        public com.kscs.util.jaxb.Selector<TRoot, KeyInfoType.Selector<TRoot, TParent>> id() {
+            return ((this.id == null)?this.id = new com.kscs.util.jaxb.Selector<>(this._root, this, "id"):this.id);
         }
 
     }

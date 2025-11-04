@@ -1,5 +1,5 @@
 
-package dk.vaccinationsregister.schemas._2013._12._01;
+package org.w3._2000._09.xmldsig_;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,32 +12,28 @@ import com.kscs.util.jaxb.PropertyTreeUse;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlElementRefs;
+import jakarta.xml.bind.annotation.XmlMixed;
 import jakarta.xml.bind.annotation.XmlType;
+import org.w3c.dom.Element;
 
 
 /**
- * <p>Java class for AuthorisedModificatorType complex type.
+ * <p>Java class for KeyValueType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>{@code
- * <complexType name="AuthorisedModificatorType">
+ * <complexType name="KeyValueType">
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <sequence>
- *         <choice>
- *           <sequence>
- *             <element name="AuthorisedHealthcareProfessional" type="{http://vaccinationsregister.dk/schemas/2013/12/01}AuthorisedHealthcareProfessionalType"/>
- *             <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType"/>
- *           </sequence>
- *           <sequence>
- *             <element name="Other" type="{http://vaccinationsregister.dk/schemas/2013/12/01}ModificatorPersonType"/>
- *             <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType" minOccurs="0"/>
- *           </sequence>
- *         </choice>
- *       </sequence>
+ *       <choice>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}DSAKeyValue"/>
+ *         <element ref="{http://www.w3.org/2000/09/xmldsig#}RSAKeyValue"/>
+ *         <any processContents='lax' namespace='##other'/>
+ *       </choice>
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -46,29 +42,21 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AuthorisedModificatorType", propOrder = {
+@XmlType(name = "KeyValueType", propOrder = {
     "content"
 })
-public class AuthorisedModificatorType {
+public class KeyValueType {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "AuthorisedHealthcareProfessional", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "Organisation", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "Other", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "DSAKeyValue", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "RSAKeyValue", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false)
     })
-    protected List<JAXBElement<?>> content;
+    @XmlMixed
+    @XmlAnyElement(lax = true)
+    protected List<Object> content;
 
     /**
-     * Gets the rest of the content model. 
-     * 
-     * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "Organisation" is used by two different parts of a schema. See: 
-     * line 58 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
-     * line 54 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
-     * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names:Gets the value of the content property.
+     * Gets the value of the content property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
@@ -85,15 +73,17 @@ public class AuthorisedModificatorType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link AuthorisedHealthcareProfessionalType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ModificatorPersonType }{@code >}
-     * {@link JAXBElement }{@code <}{@link OrganisationType }{@code >}
+     * {@link JAXBElement }{@code <}{@link DSAKeyValueType }{@code >}
+     * {@link JAXBElement }{@code <}{@link RSAKeyValueType }{@code >}
+     * {@link Object }
+     * {@link String }
+     * {@link Element }
      * 
      * 
      * @return
      *     The value of the content property.
      */
-    public List<JAXBElement<?>> getContent() {
+    public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<>();
         }
@@ -107,31 +97,31 @@ public class AuthorisedModificatorType {
      * @param _other
      *     A builder instance to which the state of this object will be copied.
      */
-    public<_B >void copyTo(final AuthorisedModificatorType.Builder<_B> _other) {
+    public<_B >void copyTo(final KeyValueType.Builder<_B> _other) {
         if (this.content == null) {
             _other.content = null;
         } else {
             _other.content = new ArrayList<>();
-            for (JAXBElement<?> _item: this.content) {
+            for (Object _item: this.content) {
                 _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
             }
         }
     }
 
-    public<_B >AuthorisedModificatorType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
-        return new AuthorisedModificatorType.Builder<_B>(_parentBuilder, this, true);
+    public<_B >KeyValueType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
+        return new KeyValueType.Builder<_B>(_parentBuilder, this, true);
     }
 
-    public AuthorisedModificatorType.Builder<Void> newCopyBuilder() {
+    public KeyValueType.Builder<Void> newCopyBuilder() {
         return newCopyBuilder(null);
     }
 
-    public static AuthorisedModificatorType.Builder<Void> builder() {
-        return new AuthorisedModificatorType.Builder<>(null, null, false);
+    public static KeyValueType.Builder<Void> builder() {
+        return new KeyValueType.Builder<>(null, null, false);
     }
 
-    public static<_B >AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType _other) {
-        final AuthorisedModificatorType.Builder<_B> _newBuilder = new AuthorisedModificatorType.Builder<>(null, null, false);
+    public static<_B >KeyValueType.Builder<_B> copyOf(final KeyValueType _other) {
+        final KeyValueType.Builder<_B> _newBuilder = new KeyValueType.Builder<>(null, null, false);
         _other.copyTo(_newBuilder);
         return _newBuilder;
     }
@@ -143,39 +133,39 @@ public class AuthorisedModificatorType {
      * @param _other
      *     A builder instance to which the state of this object will be copied.
      */
-    public<_B >void copyTo(final AuthorisedModificatorType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+    public<_B >void copyTo(final KeyValueType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
         final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
         if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
             if (this.content == null) {
                 _other.content = null;
             } else {
                 _other.content = new ArrayList<>();
-                for (JAXBElement<?> _item: this.content) {
+                for (Object _item: this.content) {
                     _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                 }
             }
         }
     }
 
-    public<_B >AuthorisedModificatorType.Builder<_B> newCopyBuilder(final _B _parentBuilder, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        return new AuthorisedModificatorType.Builder<_B>(_parentBuilder, this, true, _propertyTree, _propertyTreeUse);
+    public<_B >KeyValueType.Builder<_B> newCopyBuilder(final _B _parentBuilder, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        return new KeyValueType.Builder<_B>(_parentBuilder, this, true, _propertyTree, _propertyTreeUse);
     }
 
-    public AuthorisedModificatorType.Builder<Void> newCopyBuilder(final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+    public KeyValueType.Builder<Void> newCopyBuilder(final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
         return newCopyBuilder(null, _propertyTree, _propertyTreeUse);
     }
 
-    public static<_B >AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        final AuthorisedModificatorType.Builder<_B> _newBuilder = new AuthorisedModificatorType.Builder<>(null, null, false);
+    public static<_B >KeyValueType.Builder<_B> copyOf(final KeyValueType _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        final KeyValueType.Builder<_B> _newBuilder = new KeyValueType.Builder<>(null, null, false);
         _other.copyTo(_newBuilder, _propertyTree, _propertyTreeUse);
         return _newBuilder;
     }
 
-    public static AuthorisedModificatorType.Builder<Void> copyExcept(final AuthorisedModificatorType _other, final PropertyTree _propertyTree) {
+    public static KeyValueType.Builder<Void> copyExcept(final KeyValueType _other, final PropertyTree _propertyTree) {
         return copyOf(_other, _propertyTree, PropertyTreeUse.EXCLUDE);
     }
 
-    public static AuthorisedModificatorType.Builder<Void> copyOnly(final AuthorisedModificatorType _other, final PropertyTree _propertyTree) {
+    public static KeyValueType.Builder<Void> copyOnly(final KeyValueType _other, final PropertyTree _propertyTree) {
         return copyOf(_other, _propertyTree, PropertyTreeUse.INCLUDE);
     }
 
@@ -183,10 +173,10 @@ public class AuthorisedModificatorType {
     {
 
         protected final _B _parentBuilder;
-        protected final AuthorisedModificatorType _storedValue;
+        protected final KeyValueType _storedValue;
         private List<Buildable> content;
 
-        public Builder(final _B _parentBuilder, final AuthorisedModificatorType _other, final boolean _copy) {
+        public Builder(final _B _parentBuilder, final KeyValueType _other, final boolean _copy) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
@@ -195,7 +185,7 @@ public class AuthorisedModificatorType {
                         this.content = null;
                     } else {
                         this.content = new ArrayList<>();
-                        for (JAXBElement<?> _item: _other.content) {
+                        for (Object _item: _other.content) {
                             this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                         }
                     }
@@ -207,7 +197,7 @@ public class AuthorisedModificatorType {
             }
         }
 
-        public Builder(final _B _parentBuilder, final AuthorisedModificatorType _other, final boolean _copy, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        public Builder(final _B _parentBuilder, final KeyValueType _other, final boolean _copy, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
@@ -218,7 +208,7 @@ public class AuthorisedModificatorType {
                             this.content = null;
                         } else {
                             this.content = new ArrayList<>();
-                            for (JAXBElement<?> _item: _other.content) {
+                            for (Object _item: _other.content) {
                                 this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                             }
                         }
@@ -235,11 +225,11 @@ public class AuthorisedModificatorType {
             return this._parentBuilder;
         }
 
-        protected<_P extends AuthorisedModificatorType >_P init(final _P _product) {
+        protected<_P extends KeyValueType >_P init(final _P _product) {
             if (this.content!= null) {
-                final List<JAXBElement<?>> content = new ArrayList<>(this.content.size());
+                final List<Object> content = new ArrayList<>(this.content.size());
                 for (Buildable _item: this.content) {
-                    content.add(((JAXBElement<?> ) _item.build()));
+                    content.add(((Object) _item.build()));
                 }
                 _product.content = content;
             }
@@ -252,12 +242,12 @@ public class AuthorisedModificatorType {
          * @param content
          *     Items to add to the value of the "content" property
          */
-        public AuthorisedModificatorType.Builder<_B> addContent(final Iterable<? extends JAXBElement<?>> content) {
+        public KeyValueType.Builder<_B> addContent(final Iterable<?> content) {
             if (content!= null) {
                 if (this.content == null) {
                     this.content = new ArrayList<>();
                 }
-                for (JAXBElement<?> _item: content) {
+                for (Object _item: content) {
                     this.content.add(new Buildable.PrimitiveBuildable(_item));
                 }
             }
@@ -270,7 +260,7 @@ public class AuthorisedModificatorType {
          * @param content
          *     New value of the "content" property.
          */
-        public AuthorisedModificatorType.Builder<_B> withContent(final Iterable<? extends JAXBElement<?>> content) {
+        public KeyValueType.Builder<_B> withContent(final Iterable<?> content) {
             if (this.content!= null) {
                 this.content.clear();
             }
@@ -283,7 +273,7 @@ public class AuthorisedModificatorType {
          * @param content
          *     Items to add to the value of the "content" property
          */
-        public AuthorisedModificatorType.Builder<_B> addContent(JAXBElement<?> ... content) {
+        public KeyValueType.Builder<_B> addContent(Object... content) {
             addContent(Arrays.asList(content));
             return this;
         }
@@ -294,33 +284,33 @@ public class AuthorisedModificatorType {
          * @param content
          *     New value of the "content" property.
          */
-        public AuthorisedModificatorType.Builder<_B> withContent(JAXBElement<?> ... content) {
+        public KeyValueType.Builder<_B> withContent(Object... content) {
             withContent(Arrays.asList(content));
             return this;
         }
 
         @Override
-        public AuthorisedModificatorType build() {
+        public KeyValueType build() {
             if (_storedValue == null) {
-                return this.init(new AuthorisedModificatorType());
+                return this.init(new KeyValueType());
             } else {
-                return ((AuthorisedModificatorType) _storedValue);
+                return ((KeyValueType) _storedValue);
             }
         }
 
-        public AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType _other) {
+        public KeyValueType.Builder<_B> copyOf(final KeyValueType _other) {
             _other.copyTo(this);
             return this;
         }
 
-        public AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType.Builder _other) {
+        public KeyValueType.Builder<_B> copyOf(final KeyValueType.Builder _other) {
             return copyOf(_other.build());
         }
 
     }
 
     public static class Select
-        extends AuthorisedModificatorType.Selector<AuthorisedModificatorType.Select, Void>
+        extends KeyValueType.Selector<KeyValueType.Select, Void>
     {
 
 
@@ -328,8 +318,8 @@ public class AuthorisedModificatorType {
             super(null, null, null);
         }
 
-        public static AuthorisedModificatorType.Select _root() {
-            return new AuthorisedModificatorType.Select();
+        public static KeyValueType.Select _root() {
+            return new KeyValueType.Select();
         }
 
     }
@@ -338,7 +328,7 @@ public class AuthorisedModificatorType {
         extends com.kscs.util.jaxb.Selector<TRoot, TParent>
     {
 
-        private com.kscs.util.jaxb.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> content = null;
+        private com.kscs.util.jaxb.Selector<TRoot, KeyValueType.Selector<TRoot, TParent>> content = null;
 
         public Selector(final TRoot root, final TParent parent, final String propertyName) {
             super(root, parent, propertyName);
@@ -354,7 +344,7 @@ public class AuthorisedModificatorType {
             return products;
         }
 
-        public com.kscs.util.jaxb.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> content() {
+        public com.kscs.util.jaxb.Selector<TRoot, KeyValueType.Selector<TRoot, TParent>> content() {
             return ((this.content == null)?this.content = new com.kscs.util.jaxb.Selector<>(this._root, this, "content"):this.content);
         }
 

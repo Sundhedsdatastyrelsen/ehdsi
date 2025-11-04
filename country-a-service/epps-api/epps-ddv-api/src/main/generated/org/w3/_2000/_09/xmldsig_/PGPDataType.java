@@ -1,5 +1,5 @@
 
-package dk.vaccinationsregister.schemas._2013._12._01;
+package org.w3._2000._09.xmldsig_;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,32 +12,33 @@ import com.kscs.util.jaxb.PropertyTreeUse;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlElementRefs;
 import jakarta.xml.bind.annotation.XmlType;
+import org.w3c.dom.Element;
 
 
 /**
- * <p>Java class for AuthorisedModificatorType complex type.
+ * <p>Java class for PGPDataType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>{@code
- * <complexType name="AuthorisedModificatorType">
+ * <complexType name="PGPDataType">
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <sequence>
- *         <choice>
- *           <sequence>
- *             <element name="AuthorisedHealthcareProfessional" type="{http://vaccinationsregister.dk/schemas/2013/12/01}AuthorisedHealthcareProfessionalType"/>
- *             <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType"/>
- *           </sequence>
- *           <sequence>
- *             <element name="Other" type="{http://vaccinationsregister.dk/schemas/2013/12/01}ModificatorPersonType"/>
- *             <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType" minOccurs="0"/>
- *           </sequence>
- *         </choice>
- *       </sequence>
+ *       <choice>
+ *         <sequence>
+ *           <element name="PGPKeyID" type="{http://www.w3.org/2001/XMLSchema}base64Binary"/>
+ *           <element name="PGPKeyPacket" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *           <any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
+ *         </sequence>
+ *         <sequence>
+ *           <element name="PGPKeyPacket" type="{http://www.w3.org/2001/XMLSchema}base64Binary"/>
+ *           <any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
+ *         </sequence>
+ *       </choice>
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -46,26 +47,26 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AuthorisedModificatorType", propOrder = {
+@XmlType(name = "PGPDataType", propOrder = {
     "content"
 })
-public class AuthorisedModificatorType {
+public class PGPDataType {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "AuthorisedHealthcareProfessional", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "Organisation", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "Other", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "PGPKeyID", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "PGPKeyPacket", namespace = "http://www.w3.org/2000/09/xmldsig#", type = JAXBElement.class, required = false)
     })
-    protected List<JAXBElement<?>> content;
+    @XmlAnyElement(lax = true)
+    protected List<Object> content;
 
     /**
      * Gets the rest of the content model. 
      * 
      * <p>
      * You are getting this "catch-all" property because of the following reason: 
-     * The field name "Organisation" is used by two different parts of a schema. See: 
-     * line 58 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
-     * line 54 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
+     * The field name "PGPKeyPacket" is used by two different parts of a schema. See: 
+     * line 208 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas-idws/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
+     * line 203 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas-idws/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
      * <p>
      * To get rid of this property, apply a property customization to one 
      * of both of the following declarations to change their names:Gets the value of the content property.
@@ -85,15 +86,16 @@ public class AuthorisedModificatorType {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link AuthorisedHealthcareProfessionalType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ModificatorPersonType }{@code >}
-     * {@link JAXBElement }{@code <}{@link OrganisationType }{@code >}
+     * {@link JAXBElement }{@code <}{@link byte[]}{@code >}
+     * {@link JAXBElement }{@code <}{@link byte[]}{@code >}
+     * {@link Object }
+     * {@link Element }
      * 
      * 
      * @return
      *     The value of the content property.
      */
-    public List<JAXBElement<?>> getContent() {
+    public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<>();
         }
@@ -107,31 +109,31 @@ public class AuthorisedModificatorType {
      * @param _other
      *     A builder instance to which the state of this object will be copied.
      */
-    public<_B >void copyTo(final AuthorisedModificatorType.Builder<_B> _other) {
+    public<_B >void copyTo(final PGPDataType.Builder<_B> _other) {
         if (this.content == null) {
             _other.content = null;
         } else {
             _other.content = new ArrayList<>();
-            for (JAXBElement<?> _item: this.content) {
+            for (Object _item: this.content) {
                 _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
             }
         }
     }
 
-    public<_B >AuthorisedModificatorType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
-        return new AuthorisedModificatorType.Builder<_B>(_parentBuilder, this, true);
+    public<_B >PGPDataType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
+        return new PGPDataType.Builder<_B>(_parentBuilder, this, true);
     }
 
-    public AuthorisedModificatorType.Builder<Void> newCopyBuilder() {
+    public PGPDataType.Builder<Void> newCopyBuilder() {
         return newCopyBuilder(null);
     }
 
-    public static AuthorisedModificatorType.Builder<Void> builder() {
-        return new AuthorisedModificatorType.Builder<>(null, null, false);
+    public static PGPDataType.Builder<Void> builder() {
+        return new PGPDataType.Builder<>(null, null, false);
     }
 
-    public static<_B >AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType _other) {
-        final AuthorisedModificatorType.Builder<_B> _newBuilder = new AuthorisedModificatorType.Builder<>(null, null, false);
+    public static<_B >PGPDataType.Builder<_B> copyOf(final PGPDataType _other) {
+        final PGPDataType.Builder<_B> _newBuilder = new PGPDataType.Builder<>(null, null, false);
         _other.copyTo(_newBuilder);
         return _newBuilder;
     }
@@ -143,39 +145,39 @@ public class AuthorisedModificatorType {
      * @param _other
      *     A builder instance to which the state of this object will be copied.
      */
-    public<_B >void copyTo(final AuthorisedModificatorType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+    public<_B >void copyTo(final PGPDataType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
         final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
         if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
             if (this.content == null) {
                 _other.content = null;
             } else {
                 _other.content = new ArrayList<>();
-                for (JAXBElement<?> _item: this.content) {
+                for (Object _item: this.content) {
                     _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                 }
             }
         }
     }
 
-    public<_B >AuthorisedModificatorType.Builder<_B> newCopyBuilder(final _B _parentBuilder, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        return new AuthorisedModificatorType.Builder<_B>(_parentBuilder, this, true, _propertyTree, _propertyTreeUse);
+    public<_B >PGPDataType.Builder<_B> newCopyBuilder(final _B _parentBuilder, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        return new PGPDataType.Builder<_B>(_parentBuilder, this, true, _propertyTree, _propertyTreeUse);
     }
 
-    public AuthorisedModificatorType.Builder<Void> newCopyBuilder(final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+    public PGPDataType.Builder<Void> newCopyBuilder(final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
         return newCopyBuilder(null, _propertyTree, _propertyTreeUse);
     }
 
-    public static<_B >AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        final AuthorisedModificatorType.Builder<_B> _newBuilder = new AuthorisedModificatorType.Builder<>(null, null, false);
+    public static<_B >PGPDataType.Builder<_B> copyOf(final PGPDataType _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        final PGPDataType.Builder<_B> _newBuilder = new PGPDataType.Builder<>(null, null, false);
         _other.copyTo(_newBuilder, _propertyTree, _propertyTreeUse);
         return _newBuilder;
     }
 
-    public static AuthorisedModificatorType.Builder<Void> copyExcept(final AuthorisedModificatorType _other, final PropertyTree _propertyTree) {
+    public static PGPDataType.Builder<Void> copyExcept(final PGPDataType _other, final PropertyTree _propertyTree) {
         return copyOf(_other, _propertyTree, PropertyTreeUse.EXCLUDE);
     }
 
-    public static AuthorisedModificatorType.Builder<Void> copyOnly(final AuthorisedModificatorType _other, final PropertyTree _propertyTree) {
+    public static PGPDataType.Builder<Void> copyOnly(final PGPDataType _other, final PropertyTree _propertyTree) {
         return copyOf(_other, _propertyTree, PropertyTreeUse.INCLUDE);
     }
 
@@ -183,10 +185,10 @@ public class AuthorisedModificatorType {
     {
 
         protected final _B _parentBuilder;
-        protected final AuthorisedModificatorType _storedValue;
+        protected final PGPDataType _storedValue;
         private List<Buildable> content;
 
-        public Builder(final _B _parentBuilder, final AuthorisedModificatorType _other, final boolean _copy) {
+        public Builder(final _B _parentBuilder, final PGPDataType _other, final boolean _copy) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
@@ -195,7 +197,7 @@ public class AuthorisedModificatorType {
                         this.content = null;
                     } else {
                         this.content = new ArrayList<>();
-                        for (JAXBElement<?> _item: _other.content) {
+                        for (Object _item: _other.content) {
                             this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                         }
                     }
@@ -207,7 +209,7 @@ public class AuthorisedModificatorType {
             }
         }
 
-        public Builder(final _B _parentBuilder, final AuthorisedModificatorType _other, final boolean _copy, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
+        public Builder(final _B _parentBuilder, final PGPDataType _other, final boolean _copy, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
@@ -218,7 +220,7 @@ public class AuthorisedModificatorType {
                             this.content = null;
                         } else {
                             this.content = new ArrayList<>();
-                            for (JAXBElement<?> _item: _other.content) {
+                            for (Object _item: _other.content) {
                                 this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
                             }
                         }
@@ -235,11 +237,11 @@ public class AuthorisedModificatorType {
             return this._parentBuilder;
         }
 
-        protected<_P extends AuthorisedModificatorType >_P init(final _P _product) {
+        protected<_P extends PGPDataType >_P init(final _P _product) {
             if (this.content!= null) {
-                final List<JAXBElement<?>> content = new ArrayList<>(this.content.size());
+                final List<Object> content = new ArrayList<>(this.content.size());
                 for (Buildable _item: this.content) {
-                    content.add(((JAXBElement<?> ) _item.build()));
+                    content.add(((Object) _item.build()));
                 }
                 _product.content = content;
             }
@@ -252,12 +254,12 @@ public class AuthorisedModificatorType {
          * @param content
          *     Items to add to the value of the "content" property
          */
-        public AuthorisedModificatorType.Builder<_B> addContent(final Iterable<? extends JAXBElement<?>> content) {
+        public PGPDataType.Builder<_B> addContent(final Iterable<?> content) {
             if (content!= null) {
                 if (this.content == null) {
                     this.content = new ArrayList<>();
                 }
-                for (JAXBElement<?> _item: content) {
+                for (Object _item: content) {
                     this.content.add(new Buildable.PrimitiveBuildable(_item));
                 }
             }
@@ -270,7 +272,7 @@ public class AuthorisedModificatorType {
          * @param content
          *     New value of the "content" property.
          */
-        public AuthorisedModificatorType.Builder<_B> withContent(final Iterable<? extends JAXBElement<?>> content) {
+        public PGPDataType.Builder<_B> withContent(final Iterable<?> content) {
             if (this.content!= null) {
                 this.content.clear();
             }
@@ -283,7 +285,7 @@ public class AuthorisedModificatorType {
          * @param content
          *     Items to add to the value of the "content" property
          */
-        public AuthorisedModificatorType.Builder<_B> addContent(JAXBElement<?> ... content) {
+        public PGPDataType.Builder<_B> addContent(Object... content) {
             addContent(Arrays.asList(content));
             return this;
         }
@@ -294,33 +296,33 @@ public class AuthorisedModificatorType {
          * @param content
          *     New value of the "content" property.
          */
-        public AuthorisedModificatorType.Builder<_B> withContent(JAXBElement<?> ... content) {
+        public PGPDataType.Builder<_B> withContent(Object... content) {
             withContent(Arrays.asList(content));
             return this;
         }
 
         @Override
-        public AuthorisedModificatorType build() {
+        public PGPDataType build() {
             if (_storedValue == null) {
-                return this.init(new AuthorisedModificatorType());
+                return this.init(new PGPDataType());
             } else {
-                return ((AuthorisedModificatorType) _storedValue);
+                return ((PGPDataType) _storedValue);
             }
         }
 
-        public AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType _other) {
+        public PGPDataType.Builder<_B> copyOf(final PGPDataType _other) {
             _other.copyTo(this);
             return this;
         }
 
-        public AuthorisedModificatorType.Builder<_B> copyOf(final AuthorisedModificatorType.Builder _other) {
+        public PGPDataType.Builder<_B> copyOf(final PGPDataType.Builder _other) {
             return copyOf(_other.build());
         }
 
     }
 
     public static class Select
-        extends AuthorisedModificatorType.Selector<AuthorisedModificatorType.Select, Void>
+        extends PGPDataType.Selector<PGPDataType.Select, Void>
     {
 
 
@@ -328,8 +330,8 @@ public class AuthorisedModificatorType {
             super(null, null, null);
         }
 
-        public static AuthorisedModificatorType.Select _root() {
-            return new AuthorisedModificatorType.Select();
+        public static PGPDataType.Select _root() {
+            return new PGPDataType.Select();
         }
 
     }
@@ -338,7 +340,7 @@ public class AuthorisedModificatorType {
         extends com.kscs.util.jaxb.Selector<TRoot, TParent>
     {
 
-        private com.kscs.util.jaxb.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> content = null;
+        private com.kscs.util.jaxb.Selector<TRoot, PGPDataType.Selector<TRoot, TParent>> content = null;
 
         public Selector(final TRoot root, final TParent parent, final String propertyName) {
             super(root, parent, propertyName);
@@ -354,7 +356,7 @@ public class AuthorisedModificatorType {
             return products;
         }
 
-        public com.kscs.util.jaxb.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> content() {
+        public com.kscs.util.jaxb.Selector<TRoot, PGPDataType.Selector<TRoot, TParent>> content() {
             return ((this.content == null)?this.content = new com.kscs.util.jaxb.Selector<>(this._root, this, "content"):this.content);
         }
 
