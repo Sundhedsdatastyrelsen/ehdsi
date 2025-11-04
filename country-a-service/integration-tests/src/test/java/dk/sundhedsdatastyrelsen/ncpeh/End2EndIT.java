@@ -96,7 +96,7 @@ class End2EndIT {
                     .withIncludeOpenPrescriptions()
                     .end()
                     .build(),
-                Sosi.getToken());
+                Sosi.getToken("https://fmk"));
     }
 
     static String fetchOrCreatePrescriptionId(GetPrescriptionResponseType existingPrescriptions, String cpr) throws Exception {
