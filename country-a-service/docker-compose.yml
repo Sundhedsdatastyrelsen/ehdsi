@@ -32,28 +32,14 @@ services:
       PYROSCOPE_SERVER_ADDRESS: "http://pyroscope:4040"
       PYROSCOPE_APPLICATION_NAME: "country-a-service"
 
-    secrets:
-      - lmsftp_username
-      - lmsftp_password
-      - country_a_keystore_password
-      - country_a_key_password
-      - sosi_keystore_password
-
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
+      - ./secrets/COUNTRY_A_KEYSTORE_PASSWORD:/run/secrets/server/ssl/key-store-password:ro
+      - ./secrets/COUNTRY_A_KEY_PASSWORD:/run/secrets/server/ssl/key-password:ro
+      - ./secrets/SOSI_KEYSTORE_PASSWORD:/run/secrets/signing-certificate-keystore/password:ro
+      - ./secrets/LMSFTP_USERNAME:/run/secrets/lmsftp/username:ro
+      - ./secrets/LMSFTP_PASSWORD:/run/secrets/lmsftp/password:ro
     networks:
       - epps-backend
       - monitoring
-
-secrets:
-  lmsftp_username:
-    file: ./secrets/LMSFTP_USERNAME
-  lmsftp_password:
-    file: ./secrets/LMSFTP_PASSWORD
-  country_a_keystore_password:
-    file: ./secrets/COUNTRY_A_KEYSTORE_PASSWORD
-  country_a_key_password:
-    file: ./secrets/COUNTRY_A_KEY_PASSWORD
-  sosi_keystore_password:
-    file: ./secrets/SOSI_KEYSTORE_PASSWORD
