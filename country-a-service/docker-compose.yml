@@ -18,13 +18,8 @@ services:
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
       SPRING_PROFILES_ACTIVE: "docker"
-      LMSFTP_USERNAME: "${LMSFTP_USERNAME}"
-      LMSFTP_PASSWORD: "${LMSFTP_PASSWORD}"
-      COUNTRY_A_KEYSTORE_PASSWORD: "${COUNTRY_A_KEYSTORE_PASSWORD}"
       COUNTRY_A_CERTIFICATE_ALIAS: "${COUNTRY_A_CERTIFICATE_ALIAS}"
-      COUNTRY_A_KEY_PASSWORD: "${COUNTRY_A_KEY_PASSWORD}"
       COUNTRY_A_KEYSTORE_LOCATION: "${COUNTRY_A_KEYSTORE_LOCATION}"
-      SOSI_KEYSTORE_PASSWORD: "${SOSI_KEYSTORE_PASSWORD}"
       OTEL_SERVICE_NAME: "country-a-service"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
@@ -37,9 +32,28 @@ services:
       PYROSCOPE_SERVER_ADDRESS: "http://pyroscope:4040"
       PYROSCOPE_APPLICATION_NAME: "country-a-service"
 
+    secrets:
+      - lmsftp_username
+      - lmsftp_password
+      - country_a_keystore_password
+      - country_a_key_password
+      - sosi_keystore_password
+
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
     networks:
       - epps-backend
       - monitoring
+
+secrets:
+  lmsftp_username:
+    file: ./secrets/LMSFTP_USERNAME
+  lmsftp_password:
+    file: ./secrets/LMSFTP_PASSWORD
+  country_a_keystore_password:
+    file: ./secrets/COUNTRY_A_KEYSTORE_PASSWORD
+  country_a_key_password:
+    file: ./secrets/COUNTRY_A_KEY_PASSWORD
+  sosi_keystore_password:
+    file: ./secrets/SOSI_KEYSTORE_PASSWORD
