@@ -40,3 +40,4 @@ _merged_spec.yaml
 dependency-reduced-pom.xml
 
 /data
+/secrets
