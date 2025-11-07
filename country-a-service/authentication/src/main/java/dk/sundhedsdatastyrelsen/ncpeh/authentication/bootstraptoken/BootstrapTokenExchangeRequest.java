@@ -34,8 +34,8 @@ public class BootstrapTokenExchangeRequest {
      * @param bst             the parameters for the bootstrap token
      * @param soapCertificate the certificate and key used to sign the SOAP request body
      */
-    public static BootstrapTokenExchangeRequest of(BootstrapTokenParams bst, CertificateAndKey soapCertificate) throws AuthenticationException {
-        return of(bst.audience(), BootstrapToken.of(bst), soapCertificate);
+    public static BootstrapTokenExchangeRequest of(BootstrapTokenParams bst, CertificateAndKey idpCertificate, CertificateAndKey soapCertificate) throws AuthenticationException {
+        return of(bst.audience(), BootstrapToken.of(bst, idpCertificate), soapCertificate);
     }
 
     private static BootstrapTokenExchangeRequest of(String audience, BootstrapToken bootstrapToken, CertificateAndKey soapCertificate)

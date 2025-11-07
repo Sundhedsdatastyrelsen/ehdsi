@@ -1,0 +1,111 @@
+package dk.sundhedsdatastyrelsen.ncpeh.authentication;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenParams;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAssertions;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
+import org.w3c.dom.Node;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class CachedAuthenticationService extends AuthenticationService {
+    // We want to reuse tokens as long as we can, so we don't pull new tokens all the time, but still remove them N
+    // seconds before they run out, so we don't risk requests that take a long time not working.
+    private static final int SECONDS_BUFFER = 30;
+
+    private final Cache<IdwsCacheKey, EuropeanHcpIdwsToken> idwsCache = Caffeine.newBuilder()
+            .expireAfter(Expiry.writing((k, v) -> Duration.between(
+                    Instant.now(),
+                    ((EuropeanHcpIdwsToken) v).expires().minusSeconds(SECONDS_BUFFER))))
+            .build();
+
+    private final Cache<NspDgwsIdentity, DgwsAssertion> dgwsCache = Caffeine.newBuilder()
+            .expireAfter(Expiry.writing((k, v) -> Duration.between(
+                    Instant.now(),
+                    ((DgwsAssertion) v).expiresAt().minusSeconds(SECONDS_BUFFER))))
+            .build();
+
+    private final String issuer;
+
+    public CachedAuthenticationService(IdwsConfiguration idwsConfiguration, DgwsIdCardRequest.Configuration dgwsConfiguration) {
+        super(idwsConfiguration, dgwsConfiguration);
+        this.issuer = Optional.ofNullable(idwsConfiguration).map(IdwsConfiguration::issuer).orElse(null);
+    }
+
+    @Override
+    public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(String soapHeader, String audience) throws AuthenticationException {
+        // Can't use simple get because of checked exception and lambda.
+        var cacheKey = IdwsCacheKey.fromSoapHeader(soapHeader, audience, issuer);
+        var cached = idwsCache.getIfPresent(cacheKey);
+        if (cached == null) {
+            cached = super.xcaSoapHeaderToIdwsToken(soapHeader, audience);
+            idwsCache.put(cacheKey, cached);
+        }
+        return cached;
+    }
+
+    @Override
+    public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
+        // Can't use simple get because of checked exception and lambda.
+        var cacheKey = identity;
+        var cached = dgwsCache.getIfPresent(cacheKey);
+        if (cached == null) {
+            cached = super.nspDgwsIdentityToAssertion(identity);
+            dgwsCache.put(cacheKey, cached);
+        }
+        return cached;
+    }
+
+    private record IdwsCacheKey(String audience, String nameIdFormat, String nameId,
+                                Set<CacheAttribute> attributes) {
+        static IdwsCacheKey fromSoapHeader(String soapHeader, String audience, String issuer) throws AuthenticationException {
+            var ncpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
+            var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(ncpAssertions, audience, issuer);
+            return new IdwsCacheKey(
+                    audience,
+                    bstParams.nameIdFormat(),
+                    bstParams.nameId(),
+                    bstParams.attributes().stream().map(CacheAttribute::new).collect(Collectors.toSet()));
+        }
+    }
+
+    private record CacheAttribute(BootstrapTokenParams.SamlAttribute att) {
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            var that = (CacheAttribute) o;
+            return switch (att) {
+                case BootstrapTokenParams.SamlAttribute.New n1 ->
+                        that.att instanceof BootstrapTokenParams.SamlAttribute.New n2
+                                && Objects.equals(n1.name(), n2.name()) && n1.values().equals(n2.values());
+                case BootstrapTokenParams.SamlAttribute.Raw r1 ->
+                        that.att instanceof BootstrapTokenParams.SamlAttribute.Raw r2
+                                && normalized(r1.node()).isEqualNode(normalized(r2.node()));
+            };
+        }
+
+        @Override
+        public int hashCode() {
+            return switch (att) {
+                case BootstrapTokenParams.SamlAttribute.New n -> Objects.hash(n.name(), n.values());
+                // w3c.dom.Node doesn't provide a function to calculate a hash that lives up to the equals of isEqualNode,
+                // and it's a big task to write that ourselves, so we opt to just return the same number.
+                // Otherwise, we break the contract that equal objects must have the same hash.
+                case BootstrapTokenParams.SamlAttribute.Raw ignored -> 1;
+            };
+        }
+
+        static Node normalized(Node n) {
+            var clone = n.cloneNode(true);
+            clone.normalize();
+            return clone;
+        }
+    }
+}

@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CachedAuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
@@ -35,7 +36,7 @@ public class Sosi {
                 alias,
                 password);
 
-            authService = new AuthenticationService(
+            authService = new CachedAuthenticationService(
                 new AuthenticationService.IdwsConfiguration(
                     sosiUri,
                     signingKey,
@@ -51,7 +52,7 @@ public class Sosi {
     }
 
     public static final NspClientDgws nspClientDgws = new NspClientDgws(
-        new AuthenticationService(
+        new CachedAuthenticationService(
             null,
             new DgwsIdCardRequest.Configuration(
                 "33257872",

@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.CachedAuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
@@ -141,7 +142,7 @@ public class Beans {
     public AuthenticationService authenticationService(
         AuthenticationServiceConfig authServiceConfig
     ) {
-        return new AuthenticationService(
+        return new CachedAuthenticationService(
             new AuthenticationService.IdwsConfiguration(
                 URI.create(authServiceConfig.sosiStsUri()),
                 authServiceConfig.signingCertificate().getCertificateAndKey(),

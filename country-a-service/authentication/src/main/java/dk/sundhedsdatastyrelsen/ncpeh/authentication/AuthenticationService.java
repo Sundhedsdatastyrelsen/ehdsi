@@ -44,12 +44,11 @@ public class AuthenticationService {
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(
             openNcpAssertions,
-            idwsConfiguration.certificateAndKey(),
             audience,
             idwsConfiguration.issuer());
         log.info("Requesting IDWS token from SOSI STS for {}", audience);
         // we use the same certificate for the bootstrap tokens and the soap envelopes
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, idwsConfiguration.certificateAndKey());
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, idwsConfiguration.certificateAndKey(), idwsConfiguration.certificateAndKey());
         return sosiStsClientIdws.exchangeBootstrapToken(bstRequest);
     }
 

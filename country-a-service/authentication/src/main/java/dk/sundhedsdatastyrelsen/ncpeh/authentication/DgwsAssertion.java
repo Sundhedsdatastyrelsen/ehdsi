@@ -2,5 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 
 import org.w3c.dom.Element;
 
-public record DgwsAssertion(Element assertion) {
+import java.time.Instant;
+
+public record DgwsAssertion(Element assertion, Instant expiresAt) {
 }

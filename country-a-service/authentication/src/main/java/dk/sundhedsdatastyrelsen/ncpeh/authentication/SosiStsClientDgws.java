@@ -14,10 +14,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Instant;
 
 public class SosiStsClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(SosiStsClientDgws.class);
-    private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
+    private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP, XmlNamespace.SAML);
 
     private SosiStsClientDgws() {
     }
@@ -50,10 +51,10 @@ public class SosiStsClientDgws {
             }
 
             // Otherwise we assume it was a success
+            var idCard = xpath.evalElement("//saml:Assertion[@id='IDCard']", document);
             return new DgwsAssertion(
-                xpath.evalElement(
-                    "//*[@id='IDCard']",
-                    document));
+                idCard,
+                Instant.parse(xpath.evalString("saml:Conditions/@NotOnOrAfter", idCard)));
         } catch (XPathExpressionException | XmlException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
