@@ -3,12 +3,12 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /// Only for use in tests.
@@ -20,7 +20,7 @@ public class Sosi {
     public static final URI sosiPersonalDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI");
 
     @SneakyThrows
-    public static EuropeanHcpIdwsToken getToken() {
+    public static EuropeanHcpIdwsToken getToken(String audience) {
         if (authService == null) {
             var base64 = System.getenv("CERT_BASE_64");
             var alias = System.getenv("CERT_ALIAS");
@@ -39,10 +39,9 @@ public class Sosi {
                 "https://ehdsi-idp.testkald.nspop.dk");
         }
         if (soapHeader == null) {
-            try (var is = Sosi.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {
-                soapHeader = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
+            soapHeader = TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
         }
-        return authService.xcaSoapHeaderToIdwsToken(soapHeader, "https://fmk");
+        return authService.xcaSoapHeaderToIdwsToken(soapHeader, audience);
     }
+
 }

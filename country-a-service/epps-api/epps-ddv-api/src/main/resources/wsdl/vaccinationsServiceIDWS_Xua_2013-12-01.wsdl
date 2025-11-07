@@ -1,0 +1,240 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:wsp="http://www.w3.org/ns/ws-policy"
+                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+                  xmlns:wsap="http://docs.oasis-open.org/ws-sx/ws-trust/200512"
+                  xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"
+                  xmlns:wsa="http://www.w3.org/2005/08/addressing"
+                  xmlns:tns="http://vaccinationsregister.dk/schemas/2013/12/01"
+                  xmlns:vaccinationcard20131201="http://vaccinationsregister.dk/schemas/2013/12/01"
+                  xmlns:medcom="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd"
+                  xmlns:sdsd201206="http://www.sdsd.dk/dgws/2012/06"
+                  xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+                  xmlns:sbf="urn:liberty:sb"
+                  targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01">
+    <wsdl:types>
+        <xs:schema targetNamespace="urn:liberty:sb">
+            <xs:include schemaLocation="../ddv/schemas-idws/urn_liberty_sb/liberty-idwsf-soap-binding.xsd"/>
+            <xs:include schemaLocation="../ddv/schemas-idws/urn_liberty_sb/idws-fault.xsd"/>
+        </xs:schema>
+        <xs:schema targetNamespace="http://www.w3.org/2005/08/addressing">
+            <xs:include schemaLocation="../ddv/schemas-idws/2005/08/addressing/ws-addr.xsd"/>
+        </xs:schema>
+        <xs:schema targetNamespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <xs:include schemaLocation="../ddv/schemas-idws/wss/2004/01/oasis-200401_orig-wss-wssecurity-secext-1.0.xsd"/>
+        </xs:schema>
+        <xs:schema targetNamespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+            <xs:include schemaLocation="../ddv/schemas-idws/wss/2004/01/oasis-200401_orig-wss-wssecurity-utility-1.0.xsd"/>
+        </xs:schema>
+        <xs:schema targetNamespace="http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd">
+            <xs:include schemaLocation="../ddv/schemas/2006/01/17/04/dgws-1.0/medcom.xsd"/>
+        </xs:schema>
+        <xs:schema targetNamespace="http://www.sdsd.dk/dgws/2012/06">
+            <xs:include schemaLocation="../ddv/schemas/sdsd/2012/06/WhitelistingHeader.xsd"/>
+        </xs:schema>
+
+        <xs:schema targetNamespace="http://vaccinationsregister.dk/schemas/2013/12/01" elementFormDefault="qualified">
+            <xs:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" schemaLocation="../ddv/schemas-idws/wss/2004/01/oasis-200401_orig-wss-wssecurity-secext-1.0.xsd"/>
+            <xs:import namespace="http://rep.oio.dk/cpr.dk/xml/schemas/core/2005/03/18/" schemaLocation="../ddv/schemas/2005/03/18/CPR_PersonCivilRegistrationIdentifier.xsd"/>
+            <xs:include schemaLocation="../ddv/schemas/2013/12/01/SSI_OnBehalfOf.xsd"/>
+            <xs:include schemaLocation="../ddv/schemas/2013/12/01/SSI_TimingList.xsd"/>
+            <xs:include schemaLocation="../ddv/schemas/2013/12/01/SSI_GetVaccinationCardRequest.xsd"/>
+            <xs:include schemaLocation="../ddv/schemas/2013/12/01/SSI_GetVaccinationCardResponse.xsd"/>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="MessageIDHeader">
+        <wsdl:part name="MessageIDHeader" element="wsa:MessageID"/>
+    </wsdl:message>
+    <wsdl:message name="ActionHeader">
+        <wsdl:part name="ActionHeader" element="wsa:Action"/>
+    </wsdl:message>
+    <wsdl:message name="ToHeader">
+        <wsdl:part name="ToHeader" element="wsa:To"/>
+    </wsdl:message>
+    <wsdl:message name="RelatesToHeader">
+        <wsdl:part name="RelatesToHeader" element="wsa:RelatesTo"/>
+    </wsdl:message>
+    <wsdl:message name="FrameworkHeader">
+        <wsdl:part name="FrameworkHeader" element="sbf:Framework"/>
+    </wsdl:message>
+    <wsdl:message name="SecurityHeader">
+        <wsdl:part name="SecurityHeader" element="wsse:Security"/>
+    </wsdl:message>
+
+    <wsdl:message name="MedComHeader">
+        <wsdl:part name="MedcomHeader" element="medcom:Header"/>
+    </wsdl:message>
+
+    <wsdl:message name="WhitelistingHeader">
+        <wsdl:part name="WhitelistingHeader" element="sdsd201206:WhiteListingHeader"/>
+    </wsdl:message>
+
+    <wsdl:message name="TimingHeader">
+        <wsdl:part name="TimingHeader" element="vaccinationcard20131201:TimingList"/>
+    </wsdl:message>
+
+    <wsdl:message name="OnBehalfOfHeader">
+        <wsdl:part name="OnBehalfOfHeader" element="vaccinationcard20131201:OnBehalfOf"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetVaccinationCardRequestMessage_2013_12_01">
+        <wsdl:part name="GetVaccinationCardRequestPart" element="vaccinationcard20131201:GetVaccinationCardRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetVaccinationCardResponseMessage_2013_12_01">
+        <wsdl:part name="GetVaccinationCardResponsePart" element="vaccinationcard20131201:GetVaccinationCardResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="IDWSFault">
+        <wsdl:part name="fault" element="sbf:IDWSFault"/>
+    </wsdl:message>
+
+
+    <wsdl:portType name="VaccinationsIdwsPortType">
+        <wsdl:operation name="GetVaccinationCard_2013_12_01">
+            <wsdl:input name="GetVaccinationCardRequestInput_2013_12_01" message="tns:GetVaccinationCardRequestMessage_2013_12_01"/>
+            <wsdl:output name="GetVaccinationCardResponseOutput_2013_12_01" message="tns:GetVaccinationCardResponseMessage_2013_12_01"/>
+            <wsdl:fault name="IDWSFault" message="tns:IDWSFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="VaccinationsIdwsBinding" type="tns:VaccinationsIdwsPortType">
+        <wsp:PolicyReference URI="#IDWS_XUA_Binding_Policy"/>
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <!--wsaw:UsingAddressing wsdl:required="true" /-->
+
+        <wsdl:operation name="GetVaccinationCard_2013_12_01">
+            <soap:operation soapAction="http://vaccinationsregister.dk/schemas/2013/12/01#GetVaccinationCardIDWS"/>
+            <wsdl:input name="GetVaccinationCardRequestInput_2013_12_01">
+                <wsp:PolicyReference URI="#IDWS_XUA_Input_Policy"/>
+                <soap:header use="literal" part="MessageIDHeader" message="tns:MessageIDHeader" wsdl:required="true"/>
+                <soap:header use="literal" part="ActionHeader" message="tns:ActionHeader" wsdl:required="true"/>
+                <soap:header use="literal" part="ToHeader" message="tns:ToHeader"/>
+                <soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader" wsdl:required="true"/>
+                <soap:header use="literal" part="FrameworkHeader" message="tns:FrameworkHeader" wsdl:required="true"/>
+                <soap:header use="literal" part="OnBehalfOfHeader" message="tns:OnBehalfOfHeader"/>
+                <soap:header use="literal" part="WhitelistingHeader" message="tns:WhitelistingHeader" wsdl:required="true"/>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="GetVaccinationCardResponseOutput_2013_12_01">
+                <wsp:PolicyReference URI="#IDWS_XUA_Output_Policy"/>
+                <soap:header use="literal" part="MessageIDHeader" message="tns:MessageIDHeader"/>
+                <soap:header use="literal" part="ActionHeader" message="tns:ActionHeader"/>
+                <soap:header use="literal" part="RelatesToHeader" message="tns:RelatesToHeader"/>
+                <soap:header use="literal" part="SecurityHeader" message="tns:SecurityHeader"/>
+                <soap:header use="literal" part="FrameworkHeader" message="tns:FrameworkHeader"/>
+                <soap:header use="literal" part="TimingHeader" message="tns:TimingHeader"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="IDWSFault">
+                <soap:fault name="IDWSFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="VaccinationsIdwsService">
+        <wsdl:port name="VaccinationsPort" binding="tns:VaccinationsIdwsBinding">
+            <soap:address location="http://localhost:8080/ddv/idws/vaccinationsServiceIDWS_2013_12_01"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsp:Policy wsu:Id="IDWS_XUA_Binding_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsam:Addressing wsp:Optional="false">
+                    <!--wsp should probably be set to "http://www.w3.org/2006/07/ws-policy" ??? -->
+                    <wsp:Policy/>
+                </wsam:Addressing>
+
+                <sp:AsymmetricBinding>
+                    <wsp:Policy>
+                        <sp:InitiatorToken>
+                            <wsp:Policy>
+                                <sp:IssuedToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Never">
+                                    <sp:RequestSecurityTokenTemplate>
+                                        <wsap:KeyType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/PublicKey</wsap:KeyType>
+                                        <wsap:TokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0</wsap:TokenType>
+                                    </sp:RequestSecurityTokenTemplate>
+                                    <wsp:Policy/>
+                                </sp:IssuedToken>
+                            </wsp:Policy>
+                        </sp:InitiatorToken>
+
+                        <sp:RecipientToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToInitiator">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:RecipientToken>
+
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic256Sha256/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict/>
+                            </wsp:Policy>
+                        </sp:Layout>
+
+                        <sp:ProtectTokens/>
+                        <sp:IncludeTimestamp/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:AsymmetricBinding>
+
+                <sp:SignedSupportingTokens>
+                    <wsp:Policy>
+                        <sp:IssuedToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                            <sp:RequestSecurityTokenTemplate>
+                                <wsap:KeyType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/PublicKey</wsap:KeyType>
+                                <wsap:TokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0</wsap:TokenType>
+                            </sp:RequestSecurityTokenTemplate>
+                            <wsp:Policy/>
+                        </sp:IssuedToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+
+    <wsp:Policy wsu:Id="IDWS_XUA_Input_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts>
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+
+    <wsp:Policy wsu:Id="IDWS_XUA_Output_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SignedParts>
+                    <sp:Body/>
+                    <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing"/>
+                    <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing"/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+</wsdl:definitions>

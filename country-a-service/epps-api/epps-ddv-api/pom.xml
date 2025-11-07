@@ -88,7 +88,7 @@
                                 <arg>-verbose</arg>
                             </args>
                             <wsdlUrls>
-                                <wsdlUrl>./src/main/resources/wsdl/vaccinationsService_2013-12-01-E1.wsdl</wsdlUrl>
+                                <wsdlUrl>./src/main/resources/wsdl/vaccinationsServiceIDWS_Xua_2013-12-01.wsdl</wsdlUrl>
                             </wsdlUrls>
                             <sourceDestDir>${project.basedir}/src/main/generated</sourceDestDir>
                             <extension>true</extension>
@@ -113,7 +113,7 @@
                             <activeRecipes>
                                 <recipe>dk.sundhedsdatastyrelsen.openrewrite.RenameDgwsPrefix</recipe>
                             </activeRecipes>
-                            <configLocation>${maven.multiModuleProjectDirectory}/epps-api/epps-ddv-api/rewrite.yml
+                            <configLocation>${project.basedir}/rewrite.yml
                             </configLocation>
                             <runPerSubmodule>true</runPerSubmodule>
                         </configuration>

@@ -105,7 +105,7 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken("https://fmk");
 
         var prescriptions = Fmk.idwsApiClient()
             .getPrescription(getPrescriptionRequest, token);
@@ -134,7 +134,7 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken("https://fmk");
 
         var prescriptions = Fmk.idwsApiClient()
             .getPrescription(getPrescriptionRequest, token);
@@ -162,7 +162,7 @@ class FmkIT {
             .getFirst());
         var eDispensation = dispensationCda(cpr, prescriptionId);
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken("https://fmk");
 
         try {
             prescriptionService.submitDispensation(patientId(cpr), eDispensation, token, true);
@@ -218,7 +218,7 @@ class FmkIT {
             eDispensationPath.toFile(),
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
-        var token = Sosi.getToken();
+        var token = Sosi.getToken("https://fmk");
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
@@ -249,7 +249,7 @@ class FmkIT {
         var pharmacyWorkerDispensation = dispensationCda(cpr, prescriptionId, "3213", "Pharmaceutical technicians and assistants");
         assertThat(DispensationMapper.authorRole(pharmacyWorkerDispensation), is("Udenlandsk apoteksansat"));
         var otherHealthProfessionalDispensation = dispensationCda(cpr, prescriptionId, "221", "Medical Doctors");
-        var token = Sosi.getToken();
+        var token = Sosi.getToken("https://fmk");
 
         assertDoesNotThrow(() ->
             prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, token)
