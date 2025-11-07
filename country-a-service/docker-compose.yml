@@ -35,6 +35,7 @@ services:
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
+      # Secrets are mounted directly to specific paths, since this allows us to use the configtree method to read them into the config.
       - ./secrets/COUNTRY_A_KEYSTORE_PASSWORD:/run/secrets/server/ssl/key-store-password:ro
       - ./secrets/COUNTRY_A_KEY_PASSWORD:/run/secrets/server/ssl/key-password:ro
       - ./secrets/SOSI_KEYSTORE_PASSWORD:/run/secrets/signing-certificate-keystore/password:ro
