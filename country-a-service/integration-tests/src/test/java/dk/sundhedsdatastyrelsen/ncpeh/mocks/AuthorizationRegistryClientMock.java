@@ -8,7 +8,7 @@ import jakarta.xml.bind.JAXBException;
 
 public class AuthorizationRegistryClientMock extends AuthorizationRegistryClient {
     public AuthorizationRegistryClientMock() {
-        super("");
+        super("", null);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
 import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ class AuthorizationRegistryIT {
 
     @Test
     void authorizationLookup() throws JAXBException {
-        var client = new AuthorizationRegistryClient(serviceUrl);
+        var client = new AuthorizationRegistryClient(serviceUrl, Sosi.nspClientDgws);
         // 6QF17 is the authorisation code of Charles Babbage
         var response = client.requestByAuthorizationCode("6QF17", TestIdentities.systemIdentity);
 

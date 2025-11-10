@@ -3,10 +3,12 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
@@ -63,7 +65,7 @@ public class Beans {
      */
     @Bean
     public NspDgwsIdentity.System systemIdentity(
-        @Value("${app.sosi-system-dgws.endpoint.url}") String systemStsUri,
+        @Value("${app.sosi-dgws.endpoint.url}") String systemStsUri,
         SigningCertificate signingCertificate
     ) {
         return new NspDgwsIdentity.System(URI.create(systemStsUri), signingCertificate.getCertificateAndKey());
@@ -103,9 +105,10 @@ public class Beans {
 
     @Bean
     public AuthorizationRegistryClient authorizationRegistryClient(
-        @Value("${app.authorization-registry.endpoint.url}") String serviceUri
+        @Value("${app.authorization-registry.endpoint.url}") String serviceUri,
+        NspClientDgws nspClientDgws
     ) {
-        return new AuthorizationRegistryClient(serviceUri);
+        return new AuthorizationRegistryClient(serviceUri, nspClientDgws);
     }
 
     @Bean
@@ -114,10 +117,11 @@ public class Beans {
         @Value("${app.fsk.endpoint.url}") String fskEndpointUrl,
         @Qualifier("jobQueueDataSource") DataSource jobQueueDataSource,
         @Value("${app.minlog.max-attempts:3}") int maxAttempts,
-        @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl
+        @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl,
+        NspClientDgws nspClientDgws
     ) throws JAXBException, URISyntaxException, SQLException {
-        var minLogClient = new MinLogClient(minlogEndpointUrl);
-        var fskClient = new FskClient(fskEndpointUrl);
+        var minLogClient = new MinLogClient(minlogEndpointUrl, nspClientDgws);
+        var fskClient = new FskClient(fskEndpointUrl, nspClientDgws);
         var minLogService = new MinLogService(minLogClient, systemCaller, jobQueueDataSource, maxAttempts);
         var informationCardService = new InformationCardService(fskClient, minLogService, systemCaller);
         return new PatientSummaryService(informationCardService);
@@ -126,9 +130,10 @@ public class Beans {
     @Bean
     public CprService cprService(
         NspDgwsIdentity.System systemCaller,
-        @Value("${app.cpr.endpoint.url}") String serviceUri
+        @Value("${app.cpr.endpoint.url}") String serviceUri,
+        NspClientDgws nspClientDgws
     ) throws JAXBException, URISyntaxException {
-        var cprClient = new CprClient(serviceUri);
+        var cprClient = new CprClient(serviceUri, nspClientDgws);
         return new CprService(cprClient, systemCaller);
     }
 
@@ -137,9 +142,20 @@ public class Beans {
         AuthenticationServiceConfig authServiceConfig
     ) {
         return new AuthenticationService(
-            URI.create(authServiceConfig.sosiStsUri()),
-            authServiceConfig.signingCertificate().getCertificateAndKey(),
-            authServiceConfig.issuer()
+            new AuthenticationService.IdwsConfiguration(
+                URI.create(authServiceConfig.sosiStsUri()),
+                authServiceConfig.signingCertificate().getCertificateAndKey(),
+                authServiceConfig.issuer()),
+            new DgwsIdCardRequest.Configuration(
+                authServiceConfig.dgwsCvr(),
+                authServiceConfig.dgwsIssuer(),
+                authServiceConfig.dgwsItProvider(),
+                authServiceConfig.dgwsCareProvider())
         );
+    }
+
+    @Bean
+    public NspClientDgws nspClientDgws(AuthenticationService authenticationService) {
+        return new NspClientDgws(authenticationService);
     }
 }

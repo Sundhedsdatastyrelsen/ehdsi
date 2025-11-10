@@ -20,8 +20,10 @@ public class MinLogClient {
 
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
+    private final NspClientDgws nspClientDgws;
 
-    public MinLogClient(String minlogEndpointUrl) {
+    public MinLogClient(String minlogEndpointUrl, NspClientDgws nspClientDgws) {
+        this.nspClientDgws = nspClientDgws;
         try {
             this.serviceUri = new URI(minlogEndpointUrl);
             this.jaxbContext = JAXBContext.newInstance(
@@ -58,7 +60,7 @@ public class MinLogClient {
         final Element reply;
         try {
             log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-            reply = NspClientDgws.request(
+            reply = nspClientDgws.request(
                 serviceUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,

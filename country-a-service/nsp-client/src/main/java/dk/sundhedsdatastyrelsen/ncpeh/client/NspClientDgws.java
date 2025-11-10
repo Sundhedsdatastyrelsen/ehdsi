@@ -34,13 +34,16 @@ import java.util.regex.Pattern;
 public class NspClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientDgws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP, XmlNamespace.WST);
+    private final AuthenticationService authenticationService;
 
-    private NspClientDgws() {}
+    public NspClientDgws(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     /// Send a SOAP request to an NSP service.
-    public static Element request(URI uri, Element soapBody, String soapAction, NspDgwsIdentity caller, Element... extraHeaders) {
+    public Element request(URI uri, Element soapBody, String soapAction, NspDgwsIdentity caller, Element... extraHeaders) {
         try {
-            var idCard = AuthenticationService.nspDgwsIdentityToAssertion(caller);
+            var idCard = authenticationService.nspDgwsIdentityToAssertion(caller);
             var envelope = makeRequest(
                 soapBody, idCard.assertion(), Instant.now()
                     .truncatedTo(ChronoUnit.SECONDS), extraHeaders);
@@ -65,7 +68,8 @@ public class NspClientDgws {
                 }
                 return xpath.evalElement("/soap:Envelope/soap:Body/*[1]", responseDoc);
             }
-        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException | XmlException e) {
+        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException |
+                 XmlException e) {
             throw new NspClientException("Nsp call failed.", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

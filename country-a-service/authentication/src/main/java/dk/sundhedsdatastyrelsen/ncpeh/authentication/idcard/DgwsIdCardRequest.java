@@ -21,12 +21,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DgwsIdCardRequest {
-    // TODO validate these values are what they should be
-    private static final String ID_CARD_CVR = "33257872";
-    private static final String ID_CARD_ISSUER = "NCPeH-DK";
-    private static final String ID_CARD_IT_PROVIDER = "Service Consumer Test";
-    private static final String ID_CARD_CARE_PROVIDER_NAME = "Sundhedsdatastyrelsen";
     private final Document soapBody;
+
+    public record Configuration(String cvr, String issuer, String itProvider, String careProviderName) {}
 
     private DgwsIdCardRequest(Document soapBody) {this.soapBody = soapBody;}
 
@@ -40,7 +37,7 @@ public class DgwsIdCardRequest {
     /// The request was built by looking at a request from Seal, a library published by sosi. That request can be found
     /// in the test-resources folder, with the name "seal-to-sts-organization-request.xml". It is helpful to follow
     /// along in that file when reading this one.
-    public static DgwsIdCardRequest of(CertificateAndKey certificate, Instant now) throws AuthenticationException {
+    public static DgwsIdCardRequest of(CertificateAndKey certificate, Instant now, Configuration configuration) throws AuthenticationException {
         // Structure and header
 
         var truncatedNow = now.truncatedTo(ChronoUnit.SECONDS);
@@ -68,11 +65,11 @@ public class DgwsIdCardRequest {
         assertion.setAttribute("id", "IDCard");
         assertion.setIdAttribute("id", true);
 
-        XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Issuer", ID_CARD_ISSUER);
+        XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Issuer", configuration.issuer());
 
         // subject
         var subject = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "Subject");
-        var nameId = XmlUtils.appendChild(subject, XmlNamespace.SAML, "NameID", ID_CARD_CVR);
+        var nameId = XmlUtils.appendChild(subject, XmlNamespace.SAML, "NameID", configuration.cvr());
         nameId.setAttribute("Format", "medcom:cvrnumber");
         var subjectConfirmation = XmlUtils.appendChild(subject, XmlNamespace.SAML, "SubjectConfirmation");
         XmlUtils.appendChild(subjectConfirmation, XmlNamespace.SAML, "ConfirmationMethod", "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key");
@@ -103,13 +100,16 @@ public class DgwsIdCardRequest {
 
             var systemLogAttribute = XmlUtils.appendChild(assertion, XmlNamespace.SAML, "AttributeStatement");
             systemLogAttribute.setAttribute("id", "SystemLog");
-            appendSamlAttribute(systemLogAttribute, "medcom:ITSystemName", ID_CARD_IT_PROVIDER);
-            var cvrEl = appendSamlAttribute(systemLogAttribute, "medcom:CareProviderID", ID_CARD_CVR);
+            //  Id (= navn) på det it-system, medarbejderen
+            //benytter til Den Gode Webservice-kommunikation. Skal også angives i ”Name
+            //ID”, når korttypen er et ”system”.
+            appendSamlAttribute(systemLogAttribute, "medcom:ITSystemName", configuration.itProvider());
+            var cvrEl = appendSamlAttribute(systemLogAttribute, "medcom:CareProviderID", configuration.cvr());
             cvrEl.setAttribute("NameFormat", "medcom:cvrnumber");
-            appendSamlAttribute(systemLogAttribute, "medcom:CareProviderName", ID_CARD_CARE_PROVIDER_NAME);
+            appendSamlAttribute(systemLogAttribute, "medcom:CareProviderName", configuration.careProviderName);
 
             var issuer = XmlUtils.appendChild(requestSecurityToken, XmlNamespace.WST, "Issuer");
-            XmlUtils.appendChild(issuer, XmlNamespace.WSA, "Address", ID_CARD_ISSUER);
+            XmlUtils.appendChild(issuer, XmlNamespace.WSA, "Address", configuration.issuer);
 
             CertificateUtils.signXml(assertion, null, List.of("#IDCard"), certificate);
             return new DgwsIdCardRequest(requestDocument);
@@ -132,7 +132,7 @@ public class DgwsIdCardRequest {
     /// The request was built by looking at a request from Seal, a library published by sosi. That request can be found
     /// in the test-resources folder, with the name "seal-to-sts-person-request.xml". It is helpful to follow
     /// along in that file when reading this one.
-    public static DgwsIdCardRequest ofEmployeeIdentity(NspDgwsIdentity.ReplaceWithIdws identity, Instant now) throws AuthenticationException {
+    public static DgwsIdCardRequest ofEmployeeIdentity(NspDgwsIdentity.ReplaceWithIdws identity, Instant now, Configuration configuration) throws AuthenticationException {
         var certificate = identity.systemCertificate();
 
         var truncatedNow = now.truncatedTo(ChronoUnit.SECONDS);
@@ -161,7 +161,7 @@ public class DgwsIdCardRequest {
         var body = XmlUtils.appendChild(envelope, XmlNamespace.SOAP, "Body");
         XmlUtils.setIdAttribute(body, XmlNamespace.WSU, "Id", "body");
         try {
-            populateEmployeeBody(body, identity, truncatedNow);
+            populateEmployeeBody(body, identity, truncatedNow, configuration);
 
             CertificateUtils.signXml(security, null, List.of("#body", "#ts", "#messageId", "#action"), certificate);
 //            System.out.println(XmlUtils.writeDocumentToString(document));
@@ -171,7 +171,7 @@ public class DgwsIdCardRequest {
         }
     }
 
-    private static void populateEmployeeBody(Element body, NspDgwsIdentity.ReplaceWithIdws identity, Instant now) throws CertificateEncodingException, AuthenticationException {
+    private static void populateEmployeeBody(Element body, NspDgwsIdentity.ReplaceWithIdws identity, Instant now, Configuration configuration) throws CertificateEncodingException, AuthenticationException {
         var subjectNameId = identity.nameId().toString();
 
         var requestSecurityToken = XmlUtils.appendChild(body, XmlNamespace.WST13, "RequestSecurityToken");
@@ -218,8 +218,8 @@ public class DgwsIdCardRequest {
             Map.of("name", "https://healthcare.data.gov.dk/model/core/specVersion", "value", "OIO-SAML-H-3.0"),
             Map.of("name", "https://data.gov.dk/concept/core/nsis/loa", "value", "High"),
             Map.of("name", "https://data.gov.dk/model/core/eid/professional/uuid/persistent", "value", "urn:uuid:" + subjectNameId),
-            Map.of("name", "https://data.gov.dk/model/core/eid/professional/cvr", "value", "33257872"),
-            Map.of("name", "https://data.gov.dk/model/core/eid/professional/orgName", "value", "Sundhedsdatastyrelsen"));
+            Map.of("name", "https://data.gov.dk/model/core/eid/professional/cvr", "value", configuration.cvr()),
+            Map.of("name", "https://data.gov.dk/model/core/eid/professional/orgName", "value", configuration.careProviderName()));
         for (var attribute : attributes) {
             var a = XmlUtils.appendChild(attributeStatement, XmlNamespace.SAML, "Attribute");
             a.setAttribute("Name", attribute.get("name"));
@@ -247,7 +247,7 @@ public class DgwsIdCardRequest {
         claims.setAttribute("Dialect", "http://docs.oasis-open.org/wsfed/authorization/200706/authclaims");
         var claim1 = XmlUtils.appendChild(claims, XmlNamespace.AUTH, "ClaimType");
         claim1.setAttribute("Uri", "medcom:ITSystemName");
-        XmlUtils.appendChild(claim1, XmlNamespace.AUTH, "Value", "Service Consumer Test");
+        XmlUtils.appendChild(claim1, XmlNamespace.AUTH, "Value", configuration.itProvider());
         var claim2 = XmlUtils.appendChild(claims, XmlNamespace.AUTH, "ClaimType");
         claim2.setAttribute("Uri", "sosi:SubjectNameID");
         XmlUtils.appendChild(claim2, XmlNamespace.AUTH, "Value", "urn:uuid:" + subjectNameId);

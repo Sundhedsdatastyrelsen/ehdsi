@@ -3,6 +3,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,9 +36,11 @@ public class Sosi {
                 password);
 
             authService = new AuthenticationService(
-                sosiUri,
-                signingKey,
-                "https://ehdsi-idp.testkald.nspop.dk");
+                new AuthenticationService.IdwsConfiguration(
+                    sosiUri,
+                    signingKey,
+                    "https://ehdsi-idp.testkald.nspop.dk"),
+                null);
         }
         if (soapHeader == null) {
             try (var is = Sosi.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {
@@ -45,4 +49,13 @@ public class Sosi {
         }
         return authService.xcaSoapHeaderToIdwsToken(soapHeader, "https://fmk");
     }
+
+    public static final NspClientDgws nspClientDgws = new NspClientDgws(
+        new AuthenticationService(
+            null,
+            new DgwsIdCardRequest.Configuration(
+                "33257872",
+                "NCPeH-DK",
+                "NCPeH-DK",
+                "Sundhedsdatastyrelsen")));
 }
