@@ -142,9 +142,10 @@ public class Beans {
         AuthenticationServiceConfig authServiceConfig
     ) {
         return new AuthenticationService(
-            URI.create(authServiceConfig.sosiStsUri()),
-            authServiceConfig.signingCertificate().getCertificateAndKey(),
-            authServiceConfig.issuer(),
+            new AuthenticationService.IdwsConfiguration(
+                URI.create(authServiceConfig.sosiStsUri()),
+                authServiceConfig.signingCertificate().getCertificateAndKey(),
+                authServiceConfig.issuer()),
             new DgwsIdCardRequest.Configuration(
                 authServiceConfig.dgwsCvr(),
                 authServiceConfig.dgwsIssuer(),

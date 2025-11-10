@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * The public API for authentication actions, such as bootstrap-to-IDWS exchanges.
@@ -16,16 +17,18 @@ import java.time.Instant;
 public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
-    private final String issuer;
-    private final DgwsIdCardRequest.Configuration dgwsConfiguration;
+    private final IdwsConfiguration idwsConfiguration;
     private final SosiStsClientIdws sosiStsClientIdws;
-    private final CertificateAndKey certificateAndKey;
+    private final DgwsIdCardRequest.Configuration dgwsConfiguration;
 
-    public AuthenticationService(URI sosiStsUri, CertificateAndKey signingKey, String issuer, DgwsIdCardRequest.Configuration dgwsConfiguration) {
-        this.sosiStsClientIdws = new SosiStsClientIdws(sosiStsUri);
-        this.certificateAndKey = signingKey;
-        this.issuer = issuer;
+    public AuthenticationService(IdwsConfiguration idwsConfiguration, DgwsIdCardRequest.Configuration dgwsConfiguration) {
+        this.idwsConfiguration = idwsConfiguration;
         this.dgwsConfiguration = dgwsConfiguration;
+        // Nullable for easier testing of just one half.
+        sosiStsClientIdws = Optional.ofNullable(idwsConfiguration)
+            .map(IdwsConfiguration::uri)
+            .map(SosiStsClientIdws::new)
+            .orElse(null);
     }
 
     /**
@@ -41,12 +44,12 @@ public class AuthenticationService {
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(
             openNcpAssertions,
-            certificateAndKey,
+            idwsConfiguration.certificateAndKey(),
             audience,
-            issuer);
+            idwsConfiguration.issuer());
         log.info("Requesting IDWS token from SOSI STS for {}", audience);
         // we use the same certificate for the bootstrap tokens and the soap envelopes
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, certificateAndKey);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, idwsConfiguration.certificateAndKey());
         return sosiStsClientIdws.exchangeBootstrapToken(bstRequest);
     }
 
@@ -67,4 +70,6 @@ public class AuthenticationService {
         }
         return SosiStsClientDgws.exchangeIdCard(request, identity.stsUri());
     }
+
+    public record IdwsConfiguration(URI uri, CertificateAndKey certificateAndKey, String issuer) {}
 }

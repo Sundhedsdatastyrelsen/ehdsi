@@ -143,8 +143,7 @@
                             ${ dosage.unstructuredText }
                         </content>
                         <paragraph>
-                            The information in this ePrescription comes from the Danish system "Fælles Medicinkort",
-                            "FMK", translated as "shared medicine card".
+                            Data source: FMK 1.4.6
                         </paragraph>
                     </text>
                     <entry typeCode="COMP">

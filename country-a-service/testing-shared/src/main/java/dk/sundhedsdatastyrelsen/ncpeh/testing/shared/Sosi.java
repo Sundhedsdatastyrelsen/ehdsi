@@ -36,10 +36,11 @@ public class Sosi {
                 password);
 
             authService = new AuthenticationService(
-                sosiUri,
-                signingKey,
-                "https://ehdsi-idp.testkald.nspop.dk",
-                new DgwsIdCardRequest.Configuration("", "", "", ""));
+                new AuthenticationService.IdwsConfiguration(
+                    sosiUri,
+                    signingKey,
+                    "https://ehdsi-idp.testkald.nspop.dk"),
+                null);
         }
         if (soapHeader == null) {
             try (var is = Sosi.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {
@@ -51,9 +52,7 @@ public class Sosi {
 
     public static final NspClientDgws nspClientDgws = new NspClientDgws(
         new AuthenticationService(
-            URI.create("https://ncp"),
             null,
-            "",
             new DgwsIdCardRequest.Configuration(
                 "33257872",
                 "NCPeH-DK",
