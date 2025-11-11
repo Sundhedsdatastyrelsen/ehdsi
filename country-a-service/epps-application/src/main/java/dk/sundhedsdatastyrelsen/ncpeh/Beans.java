@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceInterface;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CachedAuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
@@ -139,24 +140,27 @@ public class Beans {
     }
 
     @Bean
-    public AuthenticationService authenticationService(
+    public AuthenticationServiceInterface authenticationService(
         AuthenticationServiceConfig authServiceConfig
     ) {
+        var idwsConfig = new AuthenticationService.IdwsConfiguration(
+            URI.create(authServiceConfig.sosiStsUri()),
+            authServiceConfig.signingCertificate().getCertificateAndKey(),
+            authServiceConfig.issuer());
         return new CachedAuthenticationService(
-            new AuthenticationService.IdwsConfiguration(
-                URI.create(authServiceConfig.sosiStsUri()),
-                authServiceConfig.signingCertificate().getCertificateAndKey(),
-                authServiceConfig.issuer()),
-            new DgwsIdCardRequest.Configuration(
-                authServiceConfig.dgwsCvr(),
-                authServiceConfig.dgwsIssuer(),
-                authServiceConfig.dgwsItProvider(),
-                authServiceConfig.dgwsCareProvider())
+            new AuthenticationService(
+                idwsConfig,
+                new DgwsIdCardRequest.Configuration(
+                    authServiceConfig.dgwsCvr(),
+                    authServiceConfig.dgwsIssuer(),
+                    authServiceConfig.dgwsItProvider(),
+                    authServiceConfig.dgwsCareProvider())),
+            idwsConfig
         );
     }
 
     @Bean
-    public NspClientDgws nspClientDgws(AuthenticationService authenticationService) {
+    public NspClientDgws nspClientDgws(AuthenticationServiceInterface authenticationService) {
         return new NspClientDgws(authenticationService);
     }
 }

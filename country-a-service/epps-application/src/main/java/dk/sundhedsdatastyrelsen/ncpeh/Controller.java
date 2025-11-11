@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceInterface;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -41,7 +41,7 @@ public class Controller {
     private final PrescriptionService prescriptionService;
     private final PatientSummaryService patientSummaryService;
     private final CprService cprService;
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceInterface authenticationService;
     private final NspDgwsIdentity.System systemIdentity;
     private final OptOutService optOutService;
 
@@ -49,7 +49,7 @@ public class Controller {
         PrescriptionService prescriptionService,
         PatientSummaryService patientSummaryService,
         CprService cprService,
-        AuthenticationService authenticationService,
+        AuthenticationServiceInterface authenticationService,
         NspDgwsIdentity.System systemIdentity,
         OptOutConfig optOutConfig
     ) {

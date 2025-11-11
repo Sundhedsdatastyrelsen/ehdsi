@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceInterface;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
@@ -34,9 +34,9 @@ import java.util.regex.Pattern;
 public class NspClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientDgws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP, XmlNamespace.WST);
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceInterface authenticationService;
 
-    public NspClientDgws(AuthenticationService authenticationService) {
+    public NspClientDgws(AuthenticationServiceInterface authenticationService) {
         this.authenticationService = authenticationService;
     }
 

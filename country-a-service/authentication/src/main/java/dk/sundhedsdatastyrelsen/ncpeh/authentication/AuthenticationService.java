@@ -7,14 +7,13 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Optional;
 
 /**
  * The public API for authentication actions, such as bootstrap-to-IDWS exchanges.
  */
-public class AuthenticationService {
+public class AuthenticationService implements AuthenticationServiceInterface {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final IdwsConfiguration idwsConfiguration;
@@ -40,6 +39,7 @@ public class AuthenticationService {
      * @return a token which can be used to gain access to the requested service
      * @throws AuthenticationException if something goes wrong
      */
+    @Override
     public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(String soapHeader, String audience) throws AuthenticationException {
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(
@@ -59,6 +59,7 @@ public class AuthenticationService {
      * @param identity the identity to exchange to a dgws assertion.
      * @return an assertion we can use to call NSP services that require an organization identity.
      */
+    @Override
     public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
         DgwsIdCardRequest request;
         if (identity instanceof NspDgwsIdentity.ReplaceWithIdws replaceIdentity) {
@@ -69,6 +70,4 @@ public class AuthenticationService {
         }
         return SosiStsClientDgws.exchangeIdCard(request, identity.stsUri());
     }
-
-    public record IdwsConfiguration(URI uri, CertificateAndKey certificateAndKey, String issuer) {}
 }

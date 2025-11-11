@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenParams;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAssertions;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import org.w3c.dom.Node;
 
 import java.time.Duration;
@@ -15,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CachedAuthenticationService extends AuthenticationService {
+public class CachedAuthenticationService implements AuthenticationServiceInterface {
     // We want to reuse tokens as long as we can, so we don't pull new tokens all the time, but still remove them N
     // seconds before they run out, so we don't risk requests that take a long time not working.
     private static final int SECONDS_BUFFER = 30;
@@ -32,10 +31,11 @@ public class CachedAuthenticationService extends AuthenticationService {
                     ((DgwsAssertion) v).expiresAt().minusSeconds(SECONDS_BUFFER))))
             .build();
 
+    private final AuthenticationService service;
     private final String issuer;
 
-    public CachedAuthenticationService(IdwsConfiguration idwsConfiguration, DgwsIdCardRequest.Configuration dgwsConfiguration) {
-        super(idwsConfiguration, dgwsConfiguration);
+    public CachedAuthenticationService(AuthenticationService service, IdwsConfiguration idwsConfiguration) {
+        this.service = service;
         this.issuer = Optional.ofNullable(idwsConfiguration).map(IdwsConfiguration::issuer).orElse(null);
     }
 
@@ -45,7 +45,7 @@ public class CachedAuthenticationService extends AuthenticationService {
         var cacheKey = IdwsCacheKey.fromSoapHeader(soapHeader, audience, issuer);
         var cached = idwsCache.getIfPresent(cacheKey);
         if (cached == null) {
-            cached = super.xcaSoapHeaderToIdwsToken(soapHeader, audience);
+            cached = service.xcaSoapHeaderToIdwsToken(soapHeader, audience);
             idwsCache.put(cacheKey, cached);
         }
         return cached;
@@ -57,7 +57,7 @@ public class CachedAuthenticationService extends AuthenticationService {
         var cacheKey = identity;
         var cached = dgwsCache.getIfPresent(cacheKey);
         if (cached == null) {
-            cached = super.nspDgwsIdentityToAssertion(identity);
+            cached = service.nspDgwsIdentityToAssertion(identity);
             dgwsCache.put(cacheKey, cached);
         }
         return cached;
