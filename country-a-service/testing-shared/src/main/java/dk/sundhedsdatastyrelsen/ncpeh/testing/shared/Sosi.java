@@ -43,7 +43,7 @@ public class Sosi {
                 "https://ehdsi-idp.testkald.nspop.dk");
             authService = new CachedAuthenticationService(
                 new AuthenticationService(idwsConfig, null),
-                idwsConfig);
+                idwsConfig.issuer());
         }
         if (soapHeader == null) {
             try (var is = Sosi.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {

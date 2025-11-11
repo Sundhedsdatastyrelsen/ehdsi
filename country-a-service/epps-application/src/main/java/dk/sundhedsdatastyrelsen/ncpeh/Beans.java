@@ -155,8 +155,7 @@ public class Beans {
                     authServiceConfig.dgwsIssuer(),
                     authServiceConfig.dgwsItProvider(),
                     authServiceConfig.dgwsCareProvider())),
-            idwsConfig
-        );
+            idwsConfig.issuer());
     }
 
     @Bean

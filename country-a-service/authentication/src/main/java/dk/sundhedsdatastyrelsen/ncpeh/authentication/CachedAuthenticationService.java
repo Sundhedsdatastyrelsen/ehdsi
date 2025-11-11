@@ -3,14 +3,14 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
+import com.github.benmanes.caffeine.cache.Ticker;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenParams;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAssertions;
 import org.w3c.dom.Node;
 
+import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,28 +19,44 @@ public class CachedAuthenticationService implements AuthenticationServiceInterfa
     // seconds before they run out, so we don't risk requests that take a long time not working.
     private static final int SECONDS_BUFFER = 30;
 
-    private final Cache<IdwsCacheKey, EuropeanHcpIdwsToken> idwsCache = Caffeine.newBuilder()
-            .expireAfter(Expiry.writing((k, v) -> Duration.between(
-                    Instant.now(),
-                    ((EuropeanHcpIdwsToken) v).expires().minusSeconds(SECONDS_BUFFER))))
-            .build();
-
-    private final Cache<NspDgwsIdentity, DgwsAssertion> dgwsCache = Caffeine.newBuilder()
-            .expireAfter(Expiry.writing((k, v) -> Duration.between(
-                    Instant.now(),
-                    ((DgwsAssertion) v).expiresAt().minusSeconds(SECONDS_BUFFER))))
-            .build();
-
-    private final AuthenticationService service;
+    private final Cache<IdwsCacheKey, EuropeanHcpIdwsToken> idwsCache;
+    private final Cache<NspDgwsIdentity, DgwsAssertion> dgwsCache;
+    private final AuthenticationServiceInterface service;
     private final String issuer;
 
-    public CachedAuthenticationService(AuthenticationService service, IdwsConfiguration idwsConfiguration) {
+    public CachedAuthenticationService(
+            AuthenticationServiceInterface service,
+            String issuer,
+            Clock clock,
+            Ticker ticker
+    ) {
         this.service = service;
-        this.issuer = Optional.ofNullable(idwsConfiguration).map(IdwsConfiguration::issuer).orElse(null);
+        this.issuer = issuer;
+        idwsCache = Caffeine.newBuilder()
+                .ticker(ticker)
+                .expireAfter(Expiry.writing((k, v) -> Duration.between(
+                        clock.instant(),
+                        ((EuropeanHcpIdwsToken) v).expires().minusSeconds(SECONDS_BUFFER))))
+                .maximumSize(10000)
+                .build();
+        dgwsCache = Caffeine.newBuilder()
+                .ticker(ticker)
+                .expireAfter(Expiry.writing((k, v) -> Duration.between(
+                        clock.instant(),
+                        ((DgwsAssertion) v).expiresAt().minusSeconds(SECONDS_BUFFER))))
+                .maximumSize(10000)
+                .build();
+    }
+
+    public CachedAuthenticationService(AuthenticationServiceInterface service, String issuer) {
+        this(service, issuer, Clock.systemUTC(), Ticker.systemTicker());
     }
 
     @Override
-    public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(String soapHeader, String audience) throws AuthenticationException {
+    public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(
+            String soapHeader,
+            String audience
+    ) throws AuthenticationException {
         // Can't use simple get because of checked exception and lambda.
         var cacheKey = IdwsCacheKey.fromSoapHeader(soapHeader, audience, issuer);
         var cached = idwsCache.getIfPresent(cacheKey);
@@ -63,9 +79,17 @@ public class CachedAuthenticationService implements AuthenticationServiceInterfa
         return cached;
     }
 
-    private record IdwsCacheKey(String audience, String nameIdFormat, String nameId,
-                                Set<CacheAttribute> attributes) {
-        static IdwsCacheKey fromSoapHeader(String soapHeader, String audience, String issuer) throws AuthenticationException {
+    private record IdwsCacheKey(
+            String audience,
+            String nameIdFormat,
+            String nameId,
+            Set<CacheAttribute> attributes
+    ) {
+        static IdwsCacheKey fromSoapHeader(
+                String soapHeader,
+                String audience,
+                String issuer
+        ) throws AuthenticationException {
             var ncpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
             var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(ncpAssertions, audience, issuer);
             return new IdwsCacheKey(
