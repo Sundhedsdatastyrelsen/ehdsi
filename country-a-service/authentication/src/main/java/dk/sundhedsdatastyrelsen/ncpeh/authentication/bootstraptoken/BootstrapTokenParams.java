@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
@@ -18,7 +17,6 @@ import java.util.stream.Stream;
  */
 @Builder
 public record BootstrapTokenParams(
-    @NonNull CertificateAndKey idpCert,
     @NonNull String nameId,
     @NonNull String nameIdFormat,
     List<SamlAttribute> attributes,
@@ -38,7 +36,7 @@ public record BootstrapTokenParams(
         record New(String name, String friendlyName, List<String> values) implements SamlAttribute {}
     }
 
-    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, CertificateAndKey idpCert, String audience, String issuer) throws AuthenticationException {
+    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, String audience, String issuer) throws AuthenticationException {
         try {
             Stream<SamlAttribute> attributesFromHcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
@@ -98,7 +96,6 @@ public record BootstrapTokenParams(
             );
             var attributes = Stream.concat(attributesFromHcp, ncpBstSpecificAttributes).toList();
             return BootstrapTokenParams.builder()
-                .idpCert(idpCert)
                 .audience(audience)
                 .issuer(issuer)
                 .nameIdFormat(xpath.evalString("saml:Subject/saml:NameID/@Format", openNcpAssertions.hcpAssertion()))

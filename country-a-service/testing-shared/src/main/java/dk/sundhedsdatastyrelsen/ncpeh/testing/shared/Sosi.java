@@ -1,6 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
@@ -35,12 +37,13 @@ public class Sosi {
                 alias,
                 password);
 
-            authService = new AuthenticationService(
-                new AuthenticationService.IdwsConfiguration(
-                    sosiUri,
-                    signingKey,
-                    "https://ehdsi-idp.testkald.nspop.dk"),
-                null);
+            var idwsConfig = new AuthenticationServiceImpl.IdwsConfiguration(
+                sosiUri,
+                signingKey,
+                "https://ehdsi-idp.testkald.nspop.dk");
+            authService = new AuthenticationServiceCached(
+                new AuthenticationServiceImpl(idwsConfig, null),
+                idwsConfig.issuer());
         }
         if (soapHeader == null) {
             try (var is = Sosi.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {
@@ -51,11 +54,13 @@ public class Sosi {
     }
 
     public static final NspClientDgws nspClientDgws = new NspClientDgws(
-        new AuthenticationService(
-            null,
-            new DgwsIdCardRequest.Configuration(
-                "33257872",
-                "NCPeH-DK",
-                "NCPeH-DK",
-                "Sundhedsdatastyrelsen")));
+        new AuthenticationServiceCached(
+            new AuthenticationServiceImpl(
+                null,
+                new DgwsIdCardRequest.Configuration(
+                    "33257872",
+                    "NCPeH-DK",
+                    "NCPeH-DK",
+                    "Sundhedsdatastyrelsen")),
+            null));
 }

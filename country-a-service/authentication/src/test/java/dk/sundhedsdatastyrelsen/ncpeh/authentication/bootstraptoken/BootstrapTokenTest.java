@@ -90,14 +90,13 @@ public class BootstrapTokenTest {
             .toList();
 
         var bstParams = BootstrapTokenParams.builder()
-            .idpCert(cert)
             .audience("https://fmk")
             .issuer("https://ehdsi-idp.testkald.nspop.dk")
             .attributes(attrs)
             .nameId("1234567890")
             .nameIdFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
             .build();
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert, cert);
         var xml = XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody());
 
         assertThat(
@@ -113,8 +112,8 @@ public class BootstrapTokenTest {
     void fromOpenNcpAssertion() throws Exception {
         var cert = testCert();
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader());
-        var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, cert, "https://fmk", "https://ehdsi-idp.testkald.nspop.dk");
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert);
+        var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, "https://fmk", "https://ehdsi-idp.testkald.nspop.dk");
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert, cert);
 
         var xml = XmlUtils.writeDocumentToString(bstRequest.soapBody());
         assertThat(
@@ -158,11 +157,10 @@ public class BootstrapTokenTest {
         var cert = CertificateUtils.loadCertificateFromKeystore(Path.of("config/epps-sosi-sts-client.p12"), "epps-sosi-sts-client", password);
         var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(
             OpenNcpAssertions.fromSoapHeader(soapHeader()),
-            cert,
             "https://fmk",
             "https://ehdsi-idp.testkald.nspop.dk"
         );
-        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert);
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert, cert);
 
         Files.createDirectories(Path.of("temp"));
         try (var w = Files.newBufferedWriter(Path.of("temp", "request.xml"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {

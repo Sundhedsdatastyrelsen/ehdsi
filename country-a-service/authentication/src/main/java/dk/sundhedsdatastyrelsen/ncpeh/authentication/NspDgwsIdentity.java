@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 import java.net.URI;
 import java.util.UUID;
 
-///  An identity in NSP. Can be both a system identity and a user identity.
+/// An identity in NSP. Can be both a system identity and a user identity.
 ///
 /// In production, we will only need a system identity here, as all user identities will go through IDWS.
 public interface NspDgwsIdentity {

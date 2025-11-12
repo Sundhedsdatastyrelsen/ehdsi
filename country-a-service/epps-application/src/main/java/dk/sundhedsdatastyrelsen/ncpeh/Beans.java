@@ -2,6 +2,8 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
@@ -141,17 +143,19 @@ public class Beans {
     public AuthenticationService authenticationService(
         AuthenticationServiceConfig authServiceConfig
     ) {
-        return new AuthenticationService(
-            new AuthenticationService.IdwsConfiguration(
-                URI.create(authServiceConfig.sosiStsUri()),
-                authServiceConfig.signingCertificate().getCertificateAndKey(),
-                authServiceConfig.issuer()),
-            new DgwsIdCardRequest.Configuration(
-                authServiceConfig.dgwsCvr(),
-                authServiceConfig.dgwsIssuer(),
-                authServiceConfig.dgwsItProvider(),
-                authServiceConfig.dgwsCareProvider())
-        );
+        var idwsConfig = new AuthenticationServiceImpl.IdwsConfiguration(
+            URI.create(authServiceConfig.sosiStsUri()),
+            authServiceConfig.signingCertificate().getCertificateAndKey(),
+            authServiceConfig.issuer());
+        return new AuthenticationServiceCached(
+            new AuthenticationServiceImpl(
+                idwsConfig,
+                new DgwsIdCardRequest.Configuration(
+                    authServiceConfig.dgwsCvr(),
+                    authServiceConfig.dgwsIssuer(),
+                    authServiceConfig.dgwsItProvider(),
+                    authServiceConfig.dgwsCareProvider())),
+            idwsConfig.issuer());
     }
 
     @Bean

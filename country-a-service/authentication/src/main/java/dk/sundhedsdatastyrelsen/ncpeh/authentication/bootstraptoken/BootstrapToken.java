@@ -45,7 +45,7 @@ public class BootstrapToken {
      * @return the Bootstrap token object
      * @throws AuthenticationException if token generation fails
      */
-    public static BootstrapToken of(BootstrapTokenParams bst) throws AuthenticationException {
+    public static BootstrapToken of(BootstrapTokenParams bst, CertificateAndKey idpCert) throws AuthenticationException {
         var clock = Clock.systemUTC();
         // we don't want higher resolution than seconds
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
@@ -71,7 +71,7 @@ public class BootstrapToken {
         var subjectConfirmationData = XmlUtils.appendChild(subjectConfirmation, XmlNamespace.SAML, "SubjectConfirmationData");
         var keyInfo = XmlUtils.appendChild(subjectConfirmationData, XmlNamespace.DS, "KeyInfo");
         try {
-            var certB64 = Base64.getEncoder().encodeToString(bst.idpCert().certificate().getEncoded());
+            var certB64 = Base64.getEncoder().encodeToString(idpCert.certificate().getEncoded());
             XmlUtils.appendChild(
                 XmlUtils.appendChild(keyInfo, XmlNamespace.DS, "X509Data"),
                 XmlNamespace.DS,
@@ -122,7 +122,7 @@ public class BootstrapToken {
             }
         }
 
-        signAssertion(assertion, bst.idpCert());
+        signAssertion(assertion, idpCert);
         return new BootstrapToken(assertion);
     }
 
