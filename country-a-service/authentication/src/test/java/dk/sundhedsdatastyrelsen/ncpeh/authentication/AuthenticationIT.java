@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AuthenticationIT {
-    private static AuthenticationService authenticationService() throws AuthenticationException {
+    private static AuthenticationServiceImpl authenticationService() throws AuthenticationException {
         var keystorePath = System.getenv("KEYSTORE_PATH");
         assertThat("KEYSTORE_PATH env var should be set", keystorePath, notNullValue());
         var keyAlias = System.getenv("KEY_ALIAS");
@@ -22,8 +22,8 @@ class AuthenticationIT {
             Path.of(keystorePath),
             keyAlias,
             password);
-        return new AuthenticationService(
-            new AuthenticationService.IdwsConfiguration(
+        return new AuthenticationServiceImpl(
+            new AuthenticationServiceImpl.IdwsConfiguration(
                 URI.create("https://test2-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws"),
                 signingKey,
                 "https://ehdsi-idp.testkald.nspop.dk"),

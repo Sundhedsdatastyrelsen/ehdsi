@@ -2,8 +2,8 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceInterface;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.CachedAuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
@@ -140,15 +140,15 @@ public class Beans {
     }
 
     @Bean
-    public AuthenticationServiceInterface authenticationService(
+    public AuthenticationService authenticationService(
         AuthenticationServiceConfig authServiceConfig
     ) {
-        var idwsConfig = new AuthenticationService.IdwsConfiguration(
+        var idwsConfig = new AuthenticationServiceImpl.IdwsConfiguration(
             URI.create(authServiceConfig.sosiStsUri()),
             authServiceConfig.signingCertificate().getCertificateAndKey(),
             authServiceConfig.issuer());
-        return new CachedAuthenticationService(
-            new AuthenticationService(
+        return new AuthenticationServiceCached(
+            new AuthenticationServiceImpl(
                 idwsConfig,
                 new DgwsIdCardRequest.Configuration(
                     authServiceConfig.dgwsCvr(),
@@ -159,7 +159,7 @@ public class Beans {
     }
 
     @Bean
-    public NspClientDgws nspClientDgws(AuthenticationServiceInterface authenticationService) {
+    public NspClientDgws nspClientDgws(AuthenticationService authenticationService) {
         return new NspClientDgws(authenticationService);
     }
 }

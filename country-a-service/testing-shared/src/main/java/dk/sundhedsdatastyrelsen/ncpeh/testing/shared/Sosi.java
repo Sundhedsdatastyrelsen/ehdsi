@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceInterface;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.CachedAuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
@@ -17,7 +17,7 @@ import java.util.Base64;
 
 /// Only for use in tests.
 public class Sosi {
-    private static AuthenticationServiceInterface authService;
+    private static AuthenticationService authService;
     private static String soapHeader;
     private static final URI sosiUri = URI.create("https://test2-cnsp.ekstern-test.nspop.dk:8443/sts/services/DKNCPBST2EHDSIIdws");
     public static final URI sosiOrganisationDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService");
@@ -37,12 +37,12 @@ public class Sosi {
                 alias,
                 password);
 
-            var idwsConfig = new AuthenticationService.IdwsConfiguration(
+            var idwsConfig = new AuthenticationServiceImpl.IdwsConfiguration(
                 sosiUri,
                 signingKey,
                 "https://ehdsi-idp.testkald.nspop.dk");
-            authService = new CachedAuthenticationService(
-                new AuthenticationService(idwsConfig, null),
+            authService = new AuthenticationServiceCached(
+                new AuthenticationServiceImpl(idwsConfig, null),
                 idwsConfig.issuer());
         }
         if (soapHeader == null) {
@@ -54,8 +54,8 @@ public class Sosi {
     }
 
     public static final NspClientDgws nspClientDgws = new NspClientDgws(
-        new CachedAuthenticationService(
-            new AuthenticationService(
+        new AuthenticationServiceCached(
+            new AuthenticationServiceImpl(
                 null,
                 new DgwsIdCardRequest.Configuration(
                     "33257872",
