@@ -28,11 +28,12 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
     public OptOutServiceImpl(Config config) {
         this.config = config;
         try {
+            var sslContext = sslContext(config);
+            // Disable hostname verification by setting endpoint identification algorithm to empty string
+            sslContext.getDefaultSSLParameters().setEndpointIdentificationAlgorithm("");
             this.httpClient = HttpClient.newBuilder()
-                    .sslContext(sslContext(config))
+                    .sslContext(sslContext)
                     .build();
-            this.httpClient.sslContext().getDefaultSSLParameters()
-                .setEndpointIdentificationAlgorithm("");
         } catch (GeneralSecurityException | IOException e) {
             throw new IllegalArgumentException(e);
         }
