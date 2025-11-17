@@ -31,6 +31,8 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
             this.httpClient = HttpClient.newBuilder()
                     .sslContext(sslContext(config))
                     .build();
+            this.httpClient.sslContext().getDefaultSSLParameters()
+                .setEndpointIdentificationAlgorithm("");
         } catch (GeneralSecurityException | IOException e) {
             throw new IllegalArgumentException(e);
         }
