@@ -24,19 +24,10 @@ public class Sosi {
     public static final URI sosiOrganisationDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService");
     public static final URI sosiPersonalDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI");
 
-    public enum Audience {
-        FMK("https://fmk"),
-        DDV("https://ddv");
-
-        private final String value;
-
-        Audience(String value) {
-            this.value = value;
-        }
-
-        public String value() {
-            return value;
-        }
+    public interface Audience {
+        String value();
+        Audience FMK = () -> "https://fmk";
+        Audience DDV = () -> "https://ddv";
     }
 
     public static EuropeanHcpIdwsToken getToken(Audience audience) {
