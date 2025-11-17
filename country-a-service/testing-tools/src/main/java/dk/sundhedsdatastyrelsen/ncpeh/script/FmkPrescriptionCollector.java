@@ -41,7 +41,7 @@ public class FmkPrescriptionCollector {
             medicationOutput = args[2];
         }
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
         var frs = new FmkResponseStorage(Fmk.idwsApiClient());
         var prescriptionResponse = frs.getPrescriptionResponse(cprInput, token);
         var prescriptionXml = frs.createXmlFromPrescription(prescriptionResponse);
