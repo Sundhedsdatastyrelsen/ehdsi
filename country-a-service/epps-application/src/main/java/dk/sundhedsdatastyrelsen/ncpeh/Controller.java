@@ -160,15 +160,26 @@ public class Controller {
     public void discardDispensation(
         @Valid @RequestBody DiscardDispensationRequestDto request
     ) {
+        Document parsedRequestDocument;
+        try {
+            parsedRequestDocument = Utils.readXmlDocument(request.getDispensationToDiscard().getDocument());
+        } catch (SAXException e) {
+            log.error("Could not read XML document in request", e);
+            // TODO unsure whether this is an improvement. We didn't throw anything before.
+            throw new RuntimeException("Could not read XML document in request", e);
+        }
         try {
             prescriptionService.undoDispensation(
                 request.getDiscardDispenseDetails().getPatientId(),
-                Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()),
+                parsedRequestDocument,
                 this.getFmkToken(request.getSoapHeader()));
-        } catch (SAXException e) {
-            log.error("Could not read XML document in request", e);
         } catch (Exception e) {
             log.error("Dispensation discard failed.", e);
+            try {
+                log.info(PiiStripper.stripPersonalInformation(parsedRequestDocument));
+            } catch (XPathExpressionException | TransformerException ex) {
+                log.error("Could not strip personal information, so cannot print document.", ex);
+            }
             // Debug logging so we can see the full document in development.
             log.debug(
                 "patient id {}, class code {}",

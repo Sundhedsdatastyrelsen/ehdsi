@@ -25,48 +25,11 @@ public class PiiStripper {
 
         var stringsToRemove = Stream.of(
                 getPersonPii(xpath.evalElement("//hl7:patientRole", dispensation)),
-                getPersonPii(xpath.evalElement("//hl7:author", dispensation)),
-                getPersonPii(xpath.evalElement("//hl7:performer", dispensation)))
+                getPersonPii(xpath.evalElement("//hl7:author/hl7:assignedAuthor", dispensation)),
+                getPersonPii(xpath.evalElement("//hl7:performer/hl7:assignedEntity", dispensation)),
+                getPersonPii(xpath.evalElement("//hl7:legalAuthenticator/hl7:assignedEntity", dispensation)))
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
-
-        // Names
-        for (var nameNode : xpath.evalNodes("//hl7:name/*", dispensation)) {
-            nameNode.setTextContent(strippedString);
-        }
-
-        // CPR
-        xpath.evalElement("//hl7:patientRole/hl7:id", dispensation).setAttribute("extension", strippedString);
-
-        // Addresses
-        for (var addressNode : xpath.evalNodes("//hl7:addr/*", dispensation)) {
-            addressNode.setTextContent(strippedString);
-        }
-
-        // Birthdays
-        for (var birthdayElement : xpath.evalNodes("//hl7:birthTime", dispensation)) {
-            if (birthdayElement instanceof Element el) {
-                el.setAttribute("value", strippedString);
-            }
-        }
-
-        // Phone numbers
-        for (var phoneNumber : xpath.evalNodes("//hl7:telecom", dispensation)) {
-            if (phoneNumber instanceof Element el) {
-                el.setAttribute("value", strippedString);
-            }
-        }
-
-        // Author id
-        xpath.evalElement("//hl7:assignedAuthor/hl7:id", dispensation).setAttribute("extension", strippedString);
-
-        // Performer id
-        xpath.evalElement("//hl7:performer/hl7:assignedEntity/hl7:id", dispensation)
-            .setAttribute("extension", strippedString);
-
-        // Legal authenticator id
-        xpath.evalElement("//hl7:legalAuthenticator/hl7:assignedEntity/hl7:id", dispensation)
-            .setAttribute("extension", strippedString);
 
         // Free text
         xpath.evalElement("//hl7:section/hl7:text", dispensation).setTextContent(strippedString);
@@ -81,13 +44,20 @@ public class PiiStripper {
 
     private static Set<String> getPersonPii(Element personElement) throws XPathExpressionException {
         return Stream.of(
+                // id, cpr
                 xpath.evalStrings("./hl7:id/@extension", personElement),
-                xpath.evalStrings("./hl7:addr/hl7:streetAddressLine", personElement),
+                // address
+                xpath.evalStrings("./hl7:addr/*", personElement),
+                // phone numbers, emails
                 xpath.evalStrings("./hl7:telecom/@value", personElement),
-                xpath.evalStrings("./hl7:patient|hl7:assignedPerson/hl7:name/*", personElement),
+                // names
+                xpath.evalStrings("./hl7:patient/hl7:name/*", personElement),
+                xpath.evalStrings("./hl7:assignedPerson/hl7:name/*", personElement),
+                // birthdate
                 xpath.evalStrings("./hl7:patient/hl7:birthTime/@value", personElement))
             .flatMap(Collection::stream)
             .filter(Objects::nonNull)
+            .filter(s -> !s.isEmpty())
             .collect(Collectors.toSet());
     }
 }
