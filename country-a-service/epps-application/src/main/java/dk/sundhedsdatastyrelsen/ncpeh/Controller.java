@@ -23,14 +23,18 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PiiStripper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerErrorException;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 import java.util.List;
 import java.util.Objects;
 
@@ -124,15 +128,26 @@ public class Controller {
         @Valid @RequestBody SubmitDispensationRequestDto request
     ) {
         checkOptOut(request.getPatientId(), OptOutService.Service.EPRESCRIPTION);
+        Document parsedRequestDocument;
+        try {
+            parsedRequestDocument = Utils.readXmlDocument(request.getDocument());
+        } catch (SAXException e) {
+            log.error("Could not read XML document in request", e);
+            // TODO unsure whether this is an improvement. We didn't throw anything before.
+            throw new RuntimeException("Could not read XML document in request", e);
+        }
         try {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
-                Utils.readXmlDocument(request.getDocument()),
+                parsedRequestDocument,
                 this.getFmkToken(request.getSoapHeader()));
-        } catch (SAXException e) {
-            log.error("Could not read XML document in request", e);
         } catch (Exception e) {
             log.error("Dispensation failed", e);
+            try {
+                log.info(PiiStripper.stripPersonalInformation(parsedRequestDocument));
+            } catch (XPathExpressionException | TransformerException ex) {
+                log.error("Could not strip personal information, so cannot print document.", ex);
+            }
             // Debug logging so we can see the full document in development.
             log.debug("patient id {}, class code {}", request.getPatientId(), request.getClassCode().toString());
             log.debug("SOAP Header: {}", request.getSoapHeader());
