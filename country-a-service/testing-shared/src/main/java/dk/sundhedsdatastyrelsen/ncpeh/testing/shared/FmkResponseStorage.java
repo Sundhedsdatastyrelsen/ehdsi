@@ -203,7 +203,7 @@ public class FmkResponseStorage {
      */
     public static void main(String[] args) throws Exception {
         var frs = new FmkResponseStorage(Fmk.idwsApiClient());
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
         var dir = Files.createDirectories(
             Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
         for (var cpr : rawResponseCprs) {
