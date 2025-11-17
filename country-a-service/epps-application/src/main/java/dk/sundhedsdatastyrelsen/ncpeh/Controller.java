@@ -23,7 +23,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
-import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PiiStripper;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.Anonymizer;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -133,9 +133,9 @@ public class Controller {
             parsedRequestDocument = Utils.readXmlDocument(request.getDocument());
         } catch (SAXException e) {
             log.error("Could not read XML document in request", e);
-            // TODO unsure whether this is an improvement. We didn't throw anything before.
-            throw new RuntimeException("Could not read XML document in request", e);
+            throw new CountryAException(400, "Could not read XML document in request", e);
         }
+
         try {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
@@ -144,9 +144,9 @@ public class Controller {
         } catch (Exception e) {
             log.error("Dispensation failed", e);
             try {
-                log.info(PiiStripper.stripPersonalInformation(parsedRequestDocument));
+                log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
             } catch (XPathExpressionException | TransformerException ex) {
-                log.error("Could not strip personal information, so cannot print document.", ex);
+                log.error("Could not remove personal information, so cannot print document.", ex);
             }
             // Debug logging so we can see the full document in development.
             log.debug("patient id {}, class code {}", request.getPatientId(), request.getClassCode().toString());
@@ -165,9 +165,9 @@ public class Controller {
             parsedRequestDocument = Utils.readXmlDocument(request.getDispensationToDiscard().getDocument());
         } catch (SAXException e) {
             log.error("Could not read XML document in request", e);
-            // TODO unsure whether this is an improvement. We didn't throw anything before.
-            throw new RuntimeException("Could not read XML document in request", e);
+            throw new CountryAException(400, "Could not read XML document in request", e);
         }
+
         try {
             prescriptionService.undoDispensation(
                 request.getDiscardDispenseDetails().getPatientId(),
@@ -176,9 +176,9 @@ public class Controller {
         } catch (Exception e) {
             log.error("Dispensation discard failed.", e);
             try {
-                log.info(PiiStripper.stripPersonalInformation(parsedRequestDocument));
+                log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
             } catch (XPathExpressionException | TransformerException ex) {
-                log.error("Could not strip personal information, so cannot print document.", ex);
+                log.error("Could not remove personal information, so cannot print document.", ex);
             }
             // Debug logging so we can see the full document in development.
             log.debug(

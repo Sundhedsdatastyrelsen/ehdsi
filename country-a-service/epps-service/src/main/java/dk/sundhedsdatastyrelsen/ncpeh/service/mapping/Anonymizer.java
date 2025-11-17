@@ -14,12 +14,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PiiStripper {
-    private PiiStripper() {}
+/// Class to help with anonymizing CDA documents, for when we want to log a request that fails.
+public class Anonymizer {
+    private Anonymizer() {}
 
     static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.PHARM);
-    static final String strippedString = "REDACTED";
+    static final String STRIPPED_STRING = "REDACTED";
 
+    /// Replace all personal information in an eDispensation with "REDACTED". Used to log failing requests.
     public static String stripPersonalInformation(Document originalEDispensation) throws XPathExpressionException, TransformerException {
         var dispensation = (Document) originalEDispensation.cloneNode(true);
 
@@ -32,11 +34,11 @@ public class PiiStripper {
             .collect(Collectors.toSet());
 
         // Free text
-        xpath.evalElement("//hl7:section/hl7:text", dispensation).setTextContent(strippedString);
+        xpath.evalElement("//hl7:section/hl7:text", dispensation).setTextContent(STRIPPED_STRING);
 
         var asString = XmlUtils.writeDocumentToString(dispensation);
         for (var stringToRemove : stringsToRemove) {
-            asString = asString.replaceAll(stringToRemove, strippedString);
+            asString = asString.replaceAll(stringToRemove, STRIPPED_STRING);
         }
 
         return asString;
