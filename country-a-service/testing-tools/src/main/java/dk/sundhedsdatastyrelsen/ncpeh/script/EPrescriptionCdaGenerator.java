@@ -11,24 +11,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
+@SuppressWarnings("java:S106") // don't complain about System.out
 public class EPrescriptionCdaGenerator {
-    private static final Logger logger = Logger.getLogger(EPrescriptionCdaGenerator.class.getName());
-
-    static {
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new SimpleFormatter());
-        handler.setLevel(Level.INFO);
-
-        logger.addHandler(handler);
-        logger.setUseParentHandlers(false);
-        logger.setLevel(Level.INFO);
-    }
-
     public static void main(String[] args) throws TemplateException, JAXBException, MapperException, IOException {
         var prescriptionInput = "target/test-files/get-prescription.xml";
         if (args.length > 0) {
@@ -53,10 +38,10 @@ public class EPrescriptionCdaGenerator {
         Files.createDirectories(medicationResponseFile.getParent());
 
         var prescriptionResponse = FmkResponseStorage.readStoredPrescriptions(prescriptionResponseFile.toFile());
-        logger.log(Level.INFO, "Reading FMK prescription from {0}", prescriptionResponseFile.toAbsolutePath());
+        System.out.printf("Reading FMK prescription from %s%n", prescriptionResponseFile.toAbsolutePath());
 
         var medicationResponse = FmkResponseStorage.readStoredMedication(medicationResponseFile.toFile());
-        logger.log(Level.INFO, "Reading FMK medication from {0}", medicationResponseFile.toAbsolutePath());
+        System.out.printf("Reading FMK medication from %s%n", medicationResponseFile.toAbsolutePath());
         var xmlString = EPrescriptionL3Generator.generate(
             new EPrescriptionL3Input(
                 prescriptionResponse,
@@ -71,6 +56,6 @@ public class EPrescriptionCdaGenerator {
         Files.createDirectories(ePCda.getParent());
 
         FmkResponseStorage.serializeToFile(xmlString.getBytes(StandardCharsets.UTF_8), ePCda.toFile());
-        logger.log(Level.INFO, "Wrote ePrescription CDA to {0}", ePCda.toAbsolutePath());
+        System.out.printf("Wrote ePrescription CDA to %s%n", ePCda.toAbsolutePath());
     }
 }
