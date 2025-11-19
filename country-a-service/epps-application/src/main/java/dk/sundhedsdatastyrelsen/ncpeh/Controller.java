@@ -24,6 +24,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.Anonymizer;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -199,8 +200,8 @@ public class Controller {
         }
     }
 
-    private void checkOptOut(String cpr, OptOutService.Service service) {
-        if (optOutService.hasOptedOut(cpr, service)) {
+    private void checkOptOut(String patientId, OptOutService.Service service) {
+        if (optOutService.hasOptedOut(PatientIdMapper.toCpr(patientId), service)) {
             throw new CountryAException(400, "Citizen has opted out of service: %s".formatted(service));
         }
     }

@@ -6,6 +6,10 @@ This service exposes a REST API which can be called by the OpenNCP national conn
 
 - Remember to let the usert ID (10001:10001) own the /data directory, so it can create the SQLite databases
 
+## Certificates
+The certificates for calling the opt-out service needs to match the DNS name of the opt out server, otherwise Java
+won't recognize it. SANs don't work.
+
 ## Developer guidelines
 
 - Write in a mostly functional style. Prefer static methods, use filter and map, avoid unnecessary state, prefer
