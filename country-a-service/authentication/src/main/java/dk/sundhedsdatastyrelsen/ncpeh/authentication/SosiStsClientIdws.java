@@ -40,7 +40,8 @@ public class SosiStsClientIdws {
             .build();
     }
 
-    public EuropeanHcpIdwsToken exchangeBootstrapToken(BootstrapTokenExchangeRequest request) throws AuthenticationException {
+    /// @throws AuthenticationException if something goes wrong
+    public EuropeanHcpIdwsToken exchangeBootstrapToken(BootstrapTokenExchangeRequest request) {
         try {
             var requestXml = XmlUtils.writeDocumentToString(request.soapBody());
             var response = sendRequest(requestXml);
@@ -53,7 +54,7 @@ public class SosiStsClientIdws {
         }
     }
 
-    private EuropeanHcpIdwsToken parseResponse(InputStream result) throws AuthenticationException {
+    private EuropeanHcpIdwsToken parseResponse(InputStream result) {
         try {
             var document = XmlUtils.parse(result);
 
@@ -90,7 +91,7 @@ public class SosiStsClientIdws {
         }
     }
 
-    private InputStream sendRequest(String xml) throws IOException, AuthenticationException {
+    private InputStream sendRequest(String xml) throws IOException {
         var httpRequest = HttpRequest.newBuilder()
             .uri(serviceUri)
             .POST(HttpRequest.BodyPublishers.ofString(xml))

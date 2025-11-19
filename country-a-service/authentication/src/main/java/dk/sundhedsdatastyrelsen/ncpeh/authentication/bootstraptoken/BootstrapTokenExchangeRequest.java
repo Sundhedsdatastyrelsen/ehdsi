@@ -33,13 +33,13 @@ public class BootstrapTokenExchangeRequest {
      *
      * @param bst             the parameters for the bootstrap token
      * @param soapCertificate the certificate and key used to sign the SOAP request body
+     * @throws AuthenticationException if request could not be created
      */
-    public static BootstrapTokenExchangeRequest of(BootstrapTokenParams bst, CertificateAndKey idpCertificate, CertificateAndKey soapCertificate) throws AuthenticationException {
+    public static BootstrapTokenExchangeRequest of(BootstrapTokenParams bst, CertificateAndKey idpCertificate, CertificateAndKey soapCertificate) {
         return of(bst.audience(), BootstrapToken.of(bst, idpCertificate), soapCertificate);
     }
 
-    private static BootstrapTokenExchangeRequest of(String audience, BootstrapToken bootstrapToken, CertificateAndKey soapCertificate)
-        throws AuthenticationException {
+    private static BootstrapTokenExchangeRequest of(String audience, BootstrapToken bootstrapToken, CertificateAndKey soapCertificate) {
         var clock = Clock.systemUTC();
         var doc = XmlUtils.newDocument();
 
@@ -94,7 +94,7 @@ public class BootstrapTokenExchangeRequest {
         return new BootstrapTokenExchangeRequest(doc);
     }
 
-    private static void signSoapRequest(Element security, CertificateAndKey certificate) throws AuthenticationException {
+    private static void signSoapRequest(Element security, CertificateAndKey certificate) {
         CertificateUtils.signXml(security, null, List.of("#body", "#ts", "#messageID", "#action"), certificate);
     }
 }

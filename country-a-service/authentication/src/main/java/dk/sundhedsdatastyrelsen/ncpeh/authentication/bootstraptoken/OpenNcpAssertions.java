@@ -28,7 +28,8 @@ public record OpenNcpAssertions(
         XmlNamespace.DS,
         XmlNamespace.SAML);
 
-    public static OpenNcpAssertions fromSoapHeader(String soapHeader) throws AuthenticationException {
+    /// @throws AuthenticationException if trc assertion is missing or hcp assertions cannot be parsed
+    public static OpenNcpAssertions fromSoapHeader(String soapHeader) {
         try {
             var doc = XmlUtils.parse(soapHeader);
             var hcpAssertion = xpath.evalElement("//saml:Assertion[saml:Issuer[@NameQualifier='urn:ehdsi:assertions:hcp']]", doc);

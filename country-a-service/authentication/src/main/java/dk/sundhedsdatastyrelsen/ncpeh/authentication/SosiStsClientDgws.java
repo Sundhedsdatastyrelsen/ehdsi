@@ -23,7 +23,8 @@ public class SosiStsClientDgws {
     private SosiStsClientDgws() {
     }
 
-    public static DgwsAssertion exchangeIdCard(DgwsIdCardRequest request, URI stsUri) throws AuthenticationException {
+    /// @throws AuthenticationException if something goes wrong
+    public static DgwsAssertion exchangeIdCard(DgwsIdCardRequest request, URI stsUri) {
         try {
             var requestXml = XmlUtils.writeDocumentToString(request.soapBody());
             var response = sendRequest(requestXml, stsUri);
@@ -36,7 +37,7 @@ public class SosiStsClientDgws {
         }
     }
 
-    private static DgwsAssertion parseResponse(String result) throws AuthenticationException {
+    private static DgwsAssertion parseResponse(String result) {
         try {
             var document = XmlUtils.parse(result);
 
@@ -60,7 +61,7 @@ public class SosiStsClientDgws {
         }
     }
 
-    private static String sendRequest(String xml, URI uri) throws IOException, AuthenticationException {
+    private static String sendRequest(String xml, URI uri) throws IOException {
         try (
             var httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)

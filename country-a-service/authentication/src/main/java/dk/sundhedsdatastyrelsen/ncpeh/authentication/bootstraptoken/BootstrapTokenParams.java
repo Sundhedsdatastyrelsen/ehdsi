@@ -36,7 +36,9 @@ public record BootstrapTokenParams(
         record New(String name, String friendlyName, List<String> values) implements SamlAttribute {}
     }
 
-    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, String audience, String issuer) throws AuthenticationException {
+    /// @throws AuthenticationException  if params could not be created
+    /// @throws IllegalArgumentException if attributes are missing or wrong
+    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, String audience, String issuer) {
         try {
             Stream<SamlAttribute> attributesFromHcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()

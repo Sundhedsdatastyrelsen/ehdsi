@@ -45,7 +45,7 @@ public class BootstrapToken {
      * @return the Bootstrap token object
      * @throws AuthenticationException if token generation fails
      */
-    public static BootstrapToken of(BootstrapTokenParams bst, CertificateAndKey idpCert) throws AuthenticationException {
+    public static BootstrapToken of(BootstrapTokenParams bst, CertificateAndKey idpCert) {
         var clock = Clock.systemUTC();
         // we don't want higher resolution than seconds
         var now = Instant.now(clock).truncatedTo(ChronoUnit.SECONDS);
@@ -126,7 +126,7 @@ public class BootstrapToken {
         return new BootstrapToken(assertion);
     }
 
-    private static void signAssertion(Element assertion, CertificateAndKey idpCertificate) throws AuthenticationException {
+    private static void signAssertion(Element assertion, CertificateAndKey idpCertificate) {
         var id = "#" + assertion.getAttribute("ID");
         // "Subject" is the second child element, put the signature before that.
         var subject = assertion.getChildNodes().item(1);

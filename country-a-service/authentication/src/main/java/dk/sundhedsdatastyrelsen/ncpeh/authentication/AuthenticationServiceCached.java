@@ -56,7 +56,7 @@ public class AuthenticationServiceCached implements AuthenticationService {
     public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(
         String soapHeader,
         String audience
-    ) throws AuthenticationException {
+    ) {
         // Can't use simple get because of checked exception and lambda.
         var cacheKey = IdwsCacheKey.fromSoapHeader(soapHeader, audience, issuer);
         var cached = idwsCache.getIfPresent(cacheKey);
@@ -68,7 +68,7 @@ public class AuthenticationServiceCached implements AuthenticationService {
     }
 
     @Override
-    public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
+    public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) {
         // Can't use simple get because of checked exception and lambda.
         var cached = dgwsCache.getIfPresent(identity);
         if (cached == null) {
