@@ -7,8 +7,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -32,7 +30,7 @@ public class SosiStsClientDgws {
 
         } catch (IOException e) {
             throw new AuthenticationException("SOSI STS request failed", e);
-        } catch (TransformerException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Malformed id card exchange request", e);
         }
     }
@@ -56,7 +54,7 @@ public class SosiStsClientDgws {
             return new DgwsAssertion(
                 idCard,
                 Instant.parse(xpath.evalString("saml:Conditions/@NotOnOrAfter", idCard)));
-        } catch (XPathExpressionException | XmlException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
     }

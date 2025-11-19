@@ -7,8 +7,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -49,7 +47,7 @@ public class SosiStsClientIdws {
 
         } catch (IOException e) {
             throw new AuthenticationException("SOSI STS request failed", e);
-        } catch (TransformerException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Malformed bootstrap token exchange request", e);
         }
     }
@@ -84,9 +82,7 @@ public class SosiStsClientIdws {
                 Instant.parse(created),
                 Instant.parse(expires)
             );
-        } catch (IOException e) {
-            throw new AuthenticationException("Error reading SOSI STS response", e);
-        } catch (XPathExpressionException | XmlException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
     }

@@ -9,8 +9,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import lombok.NonNull;
 import org.w3c.dom.Element;
 
-import javax.xml.xpath.XPathExpressionException;
-
 /**
  * Record representing the pertinent parts of an OpenNCP XCA SOAP header.
  *
@@ -44,7 +42,7 @@ public record OpenNcpAssertions(
             var countryOfTreatment = CertificateUtils.extractCountryCode(CertificateUtils.fromBase64(hcpCertB64));
 
             return new OpenNcpAssertions(hcpAssertion, trcAssertion, countryOfTreatment);
-        } catch (XPathExpressionException | XmlException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Error when parsing HCP assertion", e);
         }
 
