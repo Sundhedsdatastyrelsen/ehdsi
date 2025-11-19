@@ -23,6 +23,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,7 +78,7 @@ public class Controller {
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) {
-        checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
+        checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.EPRESCRIPTION);
         var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.findEPrescriptionDocuments(
             params.getPatientId(),
@@ -92,7 +93,7 @@ public class Controller {
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
     ) {
-        checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
+        checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.PATIENT_SUMMARY);
         // TODO should maybe be a user identity instead? It's not used in patient summary yet.
         return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
     }
@@ -103,11 +104,11 @@ public class Controller {
     ) {
         var repoId = params.getRepositoryId();
         if (Objects.equals(repoId, Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
-            checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
+            checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.EPRESCRIPTION);
             var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
             return prescriptionService.getPrescriptions(params.getPatientId(), filter, this.getFmkToken(params.getSoapHeader()));
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
-            checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
+            checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.PATIENT_SUMMARY);
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),
                 params.getDocumentId(),
@@ -123,7 +124,7 @@ public class Controller {
     public void submitDispensation(
         @Valid @RequestBody SubmitDispensationRequestDto request
     ) {
-        checkOptOut(request.getPatientId(), OptOutService.Service.EPRESCRIPTION);
+        checkOptOut(PatientIdMapper.toCpr(request.getPatientId()), OptOutService.Service.EPRESCRIPTION);
         try {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
