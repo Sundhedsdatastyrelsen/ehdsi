@@ -82,7 +82,7 @@ public class Controller {
     public List<DocumentAssociationForEPrescriptionDocumentMetadataDto> findEPrescriptionDocuments(
         @Valid @RequestBody PostFindEPrescriptionDocumentsRequestDto params
     ) {
-        checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.EPRESCRIPTION);
+        checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
         var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
         return prescriptionService.findEPrescriptionDocuments(
             params.getPatientId(),
@@ -97,7 +97,7 @@ public class Controller {
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
     ) {
-        checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.PATIENT_SUMMARY);
+        checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
         // TODO should maybe be a user identity instead? It's not used in patient summary yet.
         return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
     }
@@ -108,11 +108,11 @@ public class Controller {
     ) {
         var repoId = params.getRepositoryId();
         if (Objects.equals(repoId, Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
-            checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.EPRESCRIPTION);
+            checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
             var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
             return prescriptionService.getPrescriptions(params.getPatientId(), filter, this.getFmkToken(params.getSoapHeader()));
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
-            checkOptOut(PatientIdMapper.toCpr(params.getPatientId()), OptOutService.Service.PATIENT_SUMMARY);
+            checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),
                 params.getDocumentId(),
@@ -137,7 +137,6 @@ public class Controller {
             throw new CountryAException(400, "Could not read XML document in request", e);
         }
 
-        checkOptOut(PatientIdMapper.toCpr(request.getPatientId()), OptOutService.Service.EPRESCRIPTION);
         try {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
@@ -201,8 +200,8 @@ public class Controller {
         }
     }
 
-    private void checkOptOut(String cpr, OptOutService.Service service) {
-        if (optOutService.hasOptedOut(cpr, service)) {
+    private void checkOptOut(String patientId, OptOutService.Service service) {
+        if (optOutService.hasOptedOut(PatientIdMapper.toCpr(patientId), service)) {
             throw new CountryAException(400, "Citizen has opted out of service: %s".formatted(service));
         }
     }
