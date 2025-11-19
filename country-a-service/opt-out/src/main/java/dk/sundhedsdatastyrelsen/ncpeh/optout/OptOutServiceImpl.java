@@ -21,16 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 public class OptOutServiceImpl implements OptOutService, AutoCloseable {
-    static {
-        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
-            new javax.net.ssl.HostnameVerifier(){
-
-                public boolean verify(String hostname,
-                                      javax.net.ssl.SSLSession sslSession) {
-                    return true;
-                }
-            });
-    }
     private final ObjectMapper json = new ObjectMapper();
     private final Config config;
 
@@ -40,14 +30,9 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
         this.config = config;
         try {
             var sslContext = sslContext(config);
-            // Disable hostname verification by setting endpoint identification algorithm to empty string
-            //sslContext.getDefaultSSLParameters().setEndpointIdentificationAlgorithm("");
-            var sslparams = new SSLParameters();
-            sslparams.setEndpointIdentificationAlgorithm(null);
 
             this.httpClient = HttpClient.newBuilder()
                     .sslContext(sslContext)
-                    .sslParameters(sslparams)
                     .build();
         } catch (GeneralSecurityException | IOException e) {
             throw new IllegalArgumentException(e);

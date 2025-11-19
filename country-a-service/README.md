@@ -8,7 +8,7 @@ This service exposes a REST API which can be called by the OpenNCP national conn
 
 ## Certificates
 The certificates for calling the opt-out service needs to match the DNS name of the opt out server, otherwise Java
-won't recognize it. SANs don't work. 
+won't recognize it. SANs don't work.
 
 ## Developer guidelines
 
