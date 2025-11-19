@@ -1,19 +1,22 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
-import dk.sundhedsdatastyrelsen.ncpeh.client.DdvClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.DdvClientIdws;
 
 public class Ddv {
-    private static final String DdvEndpointUri = "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"; //Should be the same as the FMK endpoint
-    private static DdvClient ddvClient;
+    private static final String ENDPOINT = "https://test1.fmk.netic.dk/idws_xua/ddv_xua_140";
+    private static DdvClientIdws ddvClient;
 
-    public static DdvClient apiClient() {
+    private Ddv() {}
+
+    public static DdvClientIdws apiClient() {
         if (ddvClient == null) {
             try {
-                ddvClient = new DdvClient(DdvEndpointUri, Sosi.nspClientDgws);
+                ddvClient = new DdvClientIdws(Fmk.getSigningKey().privateKey(), ENDPOINT);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         return ddvClient;
     }
+
 }

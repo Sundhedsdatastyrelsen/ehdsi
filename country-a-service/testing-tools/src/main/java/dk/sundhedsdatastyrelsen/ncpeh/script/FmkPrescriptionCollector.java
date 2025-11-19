@@ -9,24 +9,9 @@ import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
+@SuppressWarnings("java:S106") // don't complain about System.out
 public class FmkPrescriptionCollector {
-    private static final Logger logger = Logger.getLogger(FmkPrescriptionCollector.class.getName());
-
-    static {
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new SimpleFormatter());
-        handler.setLevel(Level.INFO);
-
-        logger.addHandler(handler);
-        logger.setUseParentHandlers(false);
-        logger.setLevel(Level.INFO);
-    }
-
     public static void main(String[] args) throws JAXBException, IOException {
         var cprInput = Fmk.cprKarl;
         if (args.length > 0) {
@@ -41,14 +26,14 @@ public class FmkPrescriptionCollector {
             medicationOutput = args[2];
         }
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
         var frs = new FmkResponseStorage(Fmk.idwsApiClient());
         var prescriptionResponse = frs.getPrescriptionResponse(cprInput, token);
         var prescriptionXml = frs.createXmlFromPrescription(prescriptionResponse);
         var prescriptionPath = Path.of(prescriptionOutput);
         Files.createDirectories(prescriptionPath.getParent());
         FmkResponseStorage.serializeToFile(prescriptionXml, prescriptionPath.toFile());
-        logger.log(Level.INFO, "Wrote prescriptions to {0}", prescriptionPath.toAbsolutePath());
+        System.out.printf("Wrote prescriptions to %s%n", prescriptionPath.toAbsolutePath());
 
         var medicationIds = prescriptionResponse.getPrescription()
             .stream()
@@ -59,6 +44,6 @@ public class FmkPrescriptionCollector {
         var medicationPath = Path.of(medicationOutput);
         Files.createDirectories(medicationPath.getParent());
         FmkResponseStorage.serializeToFile(medicationXml, medicationPath.toFile());
-        logger.log(Level.INFO, "Wrote medications to {0}", medicationPath.toAbsolutePath());
+        System.out.printf("Wrote medications to %s%n", medicationPath.toAbsolutePath());
     }
 }

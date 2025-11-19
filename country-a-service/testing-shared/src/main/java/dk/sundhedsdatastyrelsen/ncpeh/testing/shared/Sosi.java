@@ -7,12 +7,12 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
@@ -24,12 +24,18 @@ public class Sosi {
     public static final URI sosiOrganisationDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/NewSecurityTokenService");
     public static final URI sosiPersonalDgwsUri = URI.create("http://test2.ekstern-test.nspop.dk:8080/sts/services/BST2SOSI");
 
-    public static EuropeanHcpIdwsToken getToken() {
-        return Sosi.getToken("2262");
+    public interface Audience {
+        String value();
+        Audience FMK = () -> "https://fmk";
+        Audience DDV = () -> "https://ddv";
+    }
+
+    public static EuropeanHcpIdwsToken getToken(Audience audience) {
+        return getToken(audience, "2262");
     }
 
     @SneakyThrows
-    public static EuropeanHcpIdwsToken getToken(String role) {
+    public static EuropeanHcpIdwsToken getToken(Audience audience, String role) {
         if (authService == null) {
             var base64 = System.getenv("CERT_BASE_64");
             var alias = System.getenv("CERT_ALIAS");
@@ -51,11 +57,9 @@ public class Sosi {
                 idwsConfig.issuer());
         }
         if (soapHeader == null) {
-            try (var is = Sosi.class.getClassLoader().getResourceAsStream("openncp_soap_header.xml")) {
-                soapHeader = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
+            soapHeader = TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
         }
-        return authService.xcaSoapHeaderToIdwsToken(changeRoleInHeader(soapHeader, role), "https://fmk");
+        return authService.xcaSoapHeaderToIdwsToken(changeRoleInHeader(soapHeader, role), audience.value());
     }
 
     private static String changeRoleInHeader(String soapHeader, String desiredRole) {

@@ -23,6 +23,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.Anonymizer;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerErrorException;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 import java.util.List;
 import java.util.Objects;
 
@@ -124,16 +128,28 @@ public class Controller {
     public void submitDispensation(
         @Valid @RequestBody SubmitDispensationRequestDto request
     ) {
+        checkOptOut(request.getPatientId(), OptOutService.Service.EPRESCRIPTION);
+        Document parsedRequestDocument;
+        try {
+            parsedRequestDocument = Utils.readXmlDocument(request.getDocument());
+        } catch (SAXException e) {
+            log.error("Could not read XML document in request", e);
+            throw new CountryAException(400, "Could not read XML document in request", e);
+        }
+
         checkOptOut(PatientIdMapper.toCpr(request.getPatientId()), OptOutService.Service.EPRESCRIPTION);
         try {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
-                Utils.readXmlDocument(request.getDocument()),
+                parsedRequestDocument,
                 this.getFmkToken(request.getSoapHeader()));
-        } catch (SAXException e) {
-            log.error("Could not read XML document in request", e);
         } catch (Exception e) {
             log.error("Dispensation failed", e);
+            try {
+                log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
+            } catch (XPathExpressionException | TransformerException ex) {
+                log.error("Could not remove personal information, so cannot print document.", ex);
+            }
             // Debug logging so we can see the full document in development.
             log.debug("patient id {}, class code {}", request.getPatientId(), request.getClassCode().toString());
             log.debug("SOAP Header: {}", request.getSoapHeader());
@@ -146,15 +162,26 @@ public class Controller {
     public void discardDispensation(
         @Valid @RequestBody DiscardDispensationRequestDto request
     ) {
+        Document parsedRequestDocument;
+        try {
+            parsedRequestDocument = Utils.readXmlDocument(request.getDispensationToDiscard().getDocument());
+        } catch (SAXException e) {
+            log.error("Could not read XML document in request", e);
+            throw new CountryAException(400, "Could not read XML document in request", e);
+        }
+
         try {
             prescriptionService.undoDispensation(
                 request.getDiscardDispenseDetails().getPatientId(),
-                Utils.readXmlDocument(request.getDispensationToDiscard().getDocument()),
+                parsedRequestDocument,
                 this.getFmkToken(request.getSoapHeader()));
-        } catch (SAXException e) {
-            log.error("Could not read XML document in request", e);
         } catch (Exception e) {
             log.error("Dispensation discard failed.", e);
+            try {
+                log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
+            } catch (XPathExpressionException | TransformerException ex) {
+                log.error("Could not remove personal information, so cannot print document.", ex);
+            }
             // Debug logging so we can see the full document in development.
             log.debug(
                 "patient id {}, class code {}",

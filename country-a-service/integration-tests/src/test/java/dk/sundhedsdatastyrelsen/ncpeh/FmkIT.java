@@ -105,7 +105,7 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
 
         var prescriptions = Fmk.idwsApiClient()
             .getPrescription(getPrescriptionRequest, token);
@@ -134,7 +134,7 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
 
         var prescriptions = Fmk.idwsApiClient()
             .getPrescription(getPrescriptionRequest, token);
@@ -162,7 +162,7 @@ class FmkIT {
             .getFirst());
         var eDispensation = dispensationCda(cpr, prescriptionId);
 
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
 
         try {
             prescriptionService.submitDispensation(patientId(cpr), eDispensation, token, true);
@@ -218,7 +218,7 @@ class FmkIT {
             eDispensationPath.toFile(),
             is(aReadableFile()));
         var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
-        var token = Sosi.getToken();
+        var token = Sosi.getToken(Sosi.Audience.FMK);
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
@@ -249,13 +249,13 @@ class FmkIT {
         var pharmacyWorkerDispensation = dispensationCda(cpr, prescriptionId, "3213", "Pharmaceutical technicians and assistants");
         assertThat(DispensationMapper.authorRole(pharmacyWorkerDispensation), is("Udenlandsk apoteksansat"));
         var otherHealthProfessionalDispensation = dispensationCda(cpr, prescriptionId, "221", "Medical Doctors");
-        var pharmacistToken = Sosi.getToken("2262");
+        var pharmacistToken = Sosi.getToken(Sosi.Audience.FMK, "2262");
 
         assertDoesNotThrow(() ->
             prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, pharmacistToken)
         );
 
-        var pharmacyWorkerToken = Sosi.getToken("3213");
+        var pharmacyWorkerToken = Sosi.getToken(Sosi.Audience.FMK, "3213");
 
         assertDoesNotThrow(() ->
             prescriptionService.undoDispensation(patientId(cpr), pharmacistDispensation, pharmacyWorkerToken)
@@ -265,7 +265,7 @@ class FmkIT {
             prescriptionService.submitDispensation(patientId(cpr), pharmacyWorkerDispensation, pharmacyWorkerToken)
         );
 
-        var otherHealthProfessionalToken = Sosi.getToken("221");
+        var otherHealthProfessionalToken = Sosi.getToken(Sosi.Audience.FMK, "221");
 
         assertDoesNotThrow(() ->
             prescriptionService.undoDispensation(patientId(cpr), pharmacyWorkerDispensation, otherHealthProfessionalToken)
