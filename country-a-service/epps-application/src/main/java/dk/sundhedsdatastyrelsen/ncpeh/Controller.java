@@ -35,8 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerErrorException;
 import org.w3c.dom.Document;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.List;
 import java.util.Objects;
 
@@ -147,7 +145,7 @@ public class Controller {
             log.error("Dispensation failed", e);
             try {
                 log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
-            } catch (XPathExpressionException | TransformerException ex) {
+            } catch (XmlException ex) {
                 log.error("Could not remove personal information, so cannot print document.", ex);
             }
             // Debug logging so we can see the full document in development.
@@ -179,7 +177,7 @@ public class Controller {
             log.error("Dispensation discard failed.", e);
             try {
                 log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
-            } catch (XPathExpressionException | TransformerException ex) {
+            } catch (XmlException ex) {
                 log.error("Could not remove personal information, so cannot print document.", ex);
             }
             // Debug logging so we can see the full document in development.

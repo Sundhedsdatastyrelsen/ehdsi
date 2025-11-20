@@ -9,11 +9,12 @@ import java.nio.file.Path;
 public class SigningCertificate {
     private final CertificateAndKey certificateAndKey;
 
+    /// @throws AuthenticationException if certificate couldn't be loaded
     public SigningCertificate(
         String keystorePath,
         String keystoreAlias,
         String keystorePassword
-    ) throws AuthenticationException {
+    ) {
         this.certificateAndKey = CertificateUtils.loadCertificateFromKeystore(
             Path.of(keystorePath),
             keystoreAlias,
