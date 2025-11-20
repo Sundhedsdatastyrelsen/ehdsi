@@ -6,8 +6,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,16 +26,17 @@ public class Sosi {
 
     public interface Audience {
         String value();
+
         Audience FMK = () -> "https://fmk";
         Audience DDV = () -> "https://ddv";
     }
 
     public static EuropeanHcpIdwsToken getToken(Audience audience) {
-        return getToken(audience, "2262");
+        return getToken(audience, "2262", null);
     }
 
     @SneakyThrows
-    public static EuropeanHcpIdwsToken getToken(Audience audience, String role) {
+    public static EuropeanHcpIdwsToken getToken(Audience audience, String role, String name) {
         if (authService == null) {
             var base64 = System.getenv("CERT_BASE_64");
             var alias = System.getenv("CERT_ALIAS");
@@ -59,7 +60,17 @@ public class Sosi {
         if (soapHeader == null) {
             soapHeader = TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
         }
-        return authService.xcaSoapHeaderToIdwsToken(changeRoleInHeader(soapHeader, role), audience.value());
+        var headerWithRoleChange = changeRoleInHeader(soapHeader, role);
+        var headerWithNameChange = name == null ? headerWithRoleChange : changeNameInHeader(headerWithRoleChange, name);
+        return authService.xcaSoapHeaderToIdwsToken(headerWithNameChange, audience.value());
+    }
+
+    private static String changeNameInHeader(String soapHeader, String name) {
+        var namePattern = Pattern.compile("<saml2:Attribute\\b[^>]*\\bName\\s*=\\s*\"urn:oasis:names:tc:xspa:1.0:subject:subject-id\"[^>]*>.*?</saml2:Attribute>");
+        var requestedNameElement = String.format(
+            "<saml2:Attribute FriendlyName=\"XSPA Subject\" Name=\"urn:oasis:names:tc:xspa:1.0:subject:subject-id\" NameFormat=\"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\"><saml2:AttributeValue xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">%s</saml2:AttributeValue></saml2:Attribute>",
+            name);
+        return namePattern.matcher(soapHeader).replaceFirst(requestedNameElement);
     }
 
     private static String changeRoleInHeader(String soapHeader, String desiredRole) {

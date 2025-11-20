@@ -249,13 +249,13 @@ class FmkIT {
         var pharmacyWorkerDispensation = dispensationCda(cpr, prescriptionId, "3213", "Pharmaceutical technicians and assistants");
         assertThat(DispensationMapper.authorRole(pharmacyWorkerDispensation), is("Udenlandsk apoteksansat"));
         var otherHealthProfessionalDispensation = dispensationCda(cpr, prescriptionId, "221", "Medical Doctors");
-        var pharmacistToken = Sosi.getToken(Sosi.Audience.FMK, "2262");
+        var pharmacistToken = Sosi.getToken(Sosi.Audience.FMK, "2262", "John House");
 
         assertDoesNotThrow(() ->
             prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, pharmacistToken)
         );
 
-        var pharmacyWorkerToken = Sosi.getToken(Sosi.Audience.FMK, "3213");
+        var pharmacyWorkerToken = Sosi.getToken(Sosi.Audience.FMK, "3213", "Mark Twain");
 
         assertDoesNotThrow(() ->
             prescriptionService.undoDispensation(patientId(cpr), pharmacistDispensation, pharmacyWorkerToken)
@@ -265,7 +265,7 @@ class FmkIT {
             prescriptionService.submitDispensation(patientId(cpr), pharmacyWorkerDispensation, pharmacyWorkerToken)
         );
 
-        var otherHealthProfessionalToken = Sosi.getToken(Sosi.Audience.FMK, "221");
+        var otherHealthProfessionalToken = Sosi.getToken(Sosi.Audience.FMK, "221", "Oscar Wilde");
 
         assertDoesNotThrow(() ->
             prescriptionService.undoDispensation(patientId(cpr), pharmacyWorkerDispensation, otherHealthProfessionalToken)
