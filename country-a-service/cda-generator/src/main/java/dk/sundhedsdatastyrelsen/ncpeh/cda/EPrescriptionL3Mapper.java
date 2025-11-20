@@ -54,8 +54,10 @@ public class EPrescriptionL3Mapper {
 
     /**
      * Map a prescription response from FMK to a CDA data model.
+     *
+     * @throws MapperException if something goes wrong
      */
-    public static EPrescriptionL3 model(EPrescriptionL3Input input) throws MapperException {
+    public static EPrescriptionL3 model(EPrescriptionL3Input input) {
         var response = input.fmkPrescriptionResponse();
         var prescriptionIndex = input.prescriptionIndex();
         var drugMedicationResponse = input.fmkDrugMedicationResponse();
@@ -127,6 +129,7 @@ public class EPrescriptionL3Mapper {
         return prescriptionBuilder.build();
     }
 
+    /// @throws MapperException if something can't be mapped
     public static boolean isMagistral(PrescriptionType prescription) {
         // A prescription is magistral (based on a recipe) if there is a DetailedDrugText on it.
         // This is the only way to tell if a drug is magistral.
@@ -213,11 +216,11 @@ public class EPrescriptionL3Mapper {
             .divide(BigDecimal.valueOf(numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages, 0), RoundingMode.UNNECESSARY);
     }
 
-    private static Patient patient(GetPrescriptionResponseType response) throws MapperException {
+    private static Patient patient(GetPrescriptionResponseType response) {
         var person = response.getPatient().getPerson();
         var id = person.getPersonIdentifier();
         if (!Objects.equals(id.getSource(), "CPR")) {
-            throw new MapperException("Only CPR person ids supported, got: " + id.getSource());
+            throw new MapperException("Only CPR person ids supported, got another kind: " + id.getSource());
         }
 
         var a = response.getPatient().getAddress();
@@ -266,7 +269,7 @@ public class EPrescriptionL3Mapper {
         return new CdaId(root, fmkOrgId.getValue());
     }
 
-    private static Organization authorOrganization(PrescriptionType prescription) throws MapperException {
+    private static Organization authorOrganization(PrescriptionType prescription) {
         var org = authorOrganizationXml(prescription);
 
         var id = organizationId(org.getIdentifier());
@@ -290,7 +293,7 @@ public class EPrescriptionL3Mapper {
         return new Organization(id, org.getName(), org.getTelephoneNumber(), address);
     }
 
-    private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizations) throws MapperException {
+    private static Author author(PrescriptionType prescription, List<AuthorizationType> authorizations) {
         var firstValidAuthorization = authorizations.stream()
             .filter(a -> "1".equals(a.getAutorisationGyldig()))
             .findFirst();
@@ -357,7 +360,7 @@ public class EPrescriptionL3Mapper {
         return dateTime.toGregorianCalendar().toZonedDateTime().toOffsetDateTime();
     }
 
-    private static OrganisationType authorOrganizationXml(PrescriptionType prescription) throws MapperException {
+    private static OrganisationType authorOrganizationXml(PrescriptionType prescription) {
         return prescription.getCreated()
             .getBy()
             .getContent()
@@ -368,7 +371,8 @@ public class EPrescriptionL3Mapper {
             .orElseThrow(() -> new MapperException("Cannot find prescription creator organization"));
     }
 
-    public static @NonNull AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) throws MapperException {
+    /// @throws MapperException if something can't be mapped
+    public static @NonNull AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType getAuthorizedHealthcareProfessional(PrescriptionType prescriptionType) {
         return prescriptionType.getCreated()
             .getBy()
             .getContent()
@@ -447,6 +451,7 @@ public class EPrescriptionL3Mapper {
             .orElse(null);
     }
 
+    /// @throws MapperException if something can't be mapped
     public static String drugStrengthText(@NonNull PrescriptionType prescription) {
         return Optional.ofNullable(prescription.getDrug())
             .map(DrugType::getStrength)
@@ -454,6 +459,7 @@ public class EPrescriptionL3Mapper {
             .orElse(null);
     }
 
+    /// @throws MapperException if something can't be mapped
     public static String productDescription(@NonNull PrescriptionType prescription) {
         // "[...]the element SHALL contain a sufficiently detailed description of the prescribed
         // medicinal product/package. The description may contain information on the brand name,
