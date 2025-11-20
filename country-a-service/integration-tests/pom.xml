@@ -18,11 +18,11 @@
         </dependency>
         <dependency>
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-            <artifactId>epps-service</artifactId>
+            <artifactId>base-utils</artifactId>
         </dependency>
         <dependency>
             <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
-            <artifactId>epps-fmk-api</artifactId>
+            <artifactId>epps-service</artifactId>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>

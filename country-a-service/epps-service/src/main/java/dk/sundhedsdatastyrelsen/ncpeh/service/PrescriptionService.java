@@ -20,6 +20,7 @@ import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
@@ -43,7 +44,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMetadataMappe
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
-import freemarker.template.TemplateException;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
@@ -53,7 +53,6 @@ import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -182,7 +181,7 @@ public class PrescriptionService {
             };
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6));
-        } catch (MapperException | TemplateException | IOException e) {
+        } catch (MapperException | XmlException e) {
             throw new CountryAException(500, e);
         }
     }

@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
-import dk.sundhedsdatastyrelsen.ncpeh.Utils;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.*;
 class FskMapperTest {
     Document testInformationCardCda(String xmlFileName) {
         try (var is = this.getClass().getClassLoader().getResourceAsStream(xmlFileName)) {
-            return Utils.readXmlDocument(is);
+            return XmlUtils.parse(is);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -30,10 +30,6 @@ class FskMapperTest {
         assertThat(preferredHealthProfessional.getTelecoms().get(1).getValue(), is("mailto:laege@praksis.dk"));
         assertThat(preferredHealthProfessional.getAddress().getCity(), is("City"));
     }
-
-
-
-
 
 
 }

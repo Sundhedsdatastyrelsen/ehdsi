@@ -6,9 +6,9 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
-import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DispensationMapperTest {
     Document testDispensationCda(String xmlFileName) {
         try (var is = this.getClass().getClassLoader().getResourceAsStream(xmlFileName)) {
-            return Utils.readXmlDocument(is);
+            return XmlUtils.parse(is);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

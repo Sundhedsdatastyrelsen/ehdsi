@@ -22,6 +22,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -571,7 +572,7 @@ public class DispensationMapper {
             return PackageSizeType.builder()
                 .withPackageSizeText("%s %s".formatted(value, unitText))
                 .build();
-        } catch (XPathExpressionException e) {
+        } catch (XmlException e) {
             throw new MapperException("Could not find package size information", e);
         }
     }
@@ -584,7 +585,7 @@ public class DispensationMapper {
             return StringUtils.isBlank(ext)
                 ? root
                 : root + "^^^" + ext;
-        } catch (XPathExpressionException e) {
+        } catch (XmlException e) {
             throw new MapperException(e.getMessage());
         }
     }
