@@ -30,7 +30,7 @@ public class SubstanceUnitMapper {
                 return Map.entry(kv.getKey(), new Substance(numerator, denominator, new BigDecimal(denominatorValue), displayName));
             }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

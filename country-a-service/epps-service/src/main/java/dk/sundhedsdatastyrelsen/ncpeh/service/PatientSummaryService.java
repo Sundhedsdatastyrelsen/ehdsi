@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
@@ -13,12 +14,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
-import freemarker.template.TemplateException;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -83,7 +81,7 @@ public class PatientSummaryService {
             var cda = PatientSummaryL3Generator.generate(input);
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._60591_5));
-        } catch (MapperException | TemplateException | IOException e) {
+        } catch (MapperException | XmlException e) {
             throw new CountryAException(500, e);
         }
     }
@@ -94,9 +92,8 @@ public class PatientSummaryService {
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard));
-        } catch (XPathExpressionException e) {
-            // TODO better exception.
-            throw new RuntimeException(e);
+        } catch (XmlException e) {
+            throw new CountryAException(400, "Error in received XML", e);
         }
     }
 }

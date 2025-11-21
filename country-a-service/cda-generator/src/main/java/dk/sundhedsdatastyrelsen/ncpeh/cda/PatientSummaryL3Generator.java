@@ -17,15 +17,21 @@ public class PatientSummaryL3Generator {
     private PatientSummaryL3Generator() {
     }
 
-    public static String generate(PatientSummaryL3 dataModel) throws IOException, TemplateException {
-        var template = FreemarkerConfiguration.config().getTemplate("patient-summary-cda-l3.ftlx");
-        var writer = new StringWriter();
-        template.process(dataModel, writer);
-        return writer.toString();
+    /// @throws MapperException if something goes wrong
+    public static String generate(PatientSummaryL3 dataModel) {
+        try {
+            var template = FreemarkerConfiguration.config().getTemplate("patient-summary-cda-l3.ftlx");
+            var writer = new StringWriter();
+            template.process(dataModel, writer);
+            return writer.toString();
+        } catch (IOException | TemplateException e) {
+            throw new MapperException("Could not generate L3 patient summary", e);
+        }
     }
 
+    /// @throws MapperException if something goes wrong
     @WithSpan
-    public static String generate(PatientSummaryInput input) throws MapperException, TemplateException, IOException {
+    public static String generate(PatientSummaryInput input) {
         var model = inputToModel(input);
         return generate(model);
     }

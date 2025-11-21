@@ -34,14 +34,12 @@ class MinLogIT {
     @Test
     void testEvent() {
         try (var ds = ds();
-             var service = minLogService(ds);) {
+             var service = minLogService(ds)) {
             var q = JobQueue.open(ds, "minlog", null, null);
             service.logEventOnPatient(MinLog.CPR_JENS_JENSEN_READ_ONLY, "integrationstest", "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9");
             assertThat(q.size(), is(1L));
             assertDoesNotThrow(service::sendBatch);
             assertThat(q.size(), is(0L));
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to open JobQueue", e);
         }
     }
 }

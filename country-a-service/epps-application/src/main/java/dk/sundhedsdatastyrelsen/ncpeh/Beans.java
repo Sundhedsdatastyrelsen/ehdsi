@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
@@ -101,7 +100,7 @@ public class Beans {
         @Value("${signing-certificate-keystore.path}") String keystorePath,
         @Value("${signing-certificate-keystore.alias}") String keystoreAlias,
         @Value("${signing-certificate-keystore.password}") String keystorePassword
-    ) throws AuthenticationException {
+    ) {
         return new SigningCertificate(keystorePath, keystoreAlias, keystorePassword);
     }
 

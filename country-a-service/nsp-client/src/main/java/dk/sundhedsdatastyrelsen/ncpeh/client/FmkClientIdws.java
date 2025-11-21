@@ -82,6 +82,8 @@ public class FmkClientIdws {
     /**
      * "Påbegynd ekspedition".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:pabegynd_ekspedition">FMK documentation.</a>
+     *
+     * @throws NspClientException if starting fails
      */
     public StartEffectuationResponseType startEffectuation(StartEffectuationRequestType request, EuropeanHcpIdwsToken token)
         throws JAXBException {
@@ -92,9 +94,8 @@ public class FmkClientIdws {
             token,
             false
         );
-        if (response.getStartEffectuationFailed() != null
-            && !response.getStartEffectuationFailed().isEmpty()) {
-            throw new IllegalStateException("Start effectuation failed. Messages: " + response.getStartEffectuationFailed()
+        if (response.getStartEffectuationFailed() != null && !response.getStartEffectuationFailed().isEmpty()) {
+            throw new NspClientException("Start effectuation failed. Messages: " + response.getStartEffectuationFailed()
                 .stream()
                 .map(dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PrescriptionErrorType::getReasonText)
                 .collect(Collectors.joining("; ")));
@@ -105,6 +106,8 @@ public class FmkClientIdws {
     /**
      * "Afbryd ekspedition".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:afbryd_ekspedition">FMK documentation.</a>
+     *
+     * @throws NspClientException if the abort fails
      */
     public AbortEffectuationResponseType abortEffectuation(AbortEffectuationRequestType request, EuropeanHcpIdwsToken token)
         throws JAXBException {
@@ -117,7 +120,7 @@ public class FmkClientIdws {
         );
 
         if (result.getAbortEffectuationFailed() != null && !result.getAbortEffectuationFailed().isEmpty()) {
-            throw new IllegalStateException("Abort failed. Messages: " + result.getAbortEffectuationFailed()
+            throw new NspClientException("Abort failed. Messages: " + result.getAbortEffectuationFailed()
                 .stream()
                 .map(PrescriptionErrorType::getReasonText)
                 .collect(Collectors.joining("; ")));
@@ -222,25 +225,20 @@ public class FmkClientIdws {
         boolean requiresMedicineCardConsent
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-        final Element body;
         Element[] extraHeaders;
         if (requiresMedicineCardConsent) {
             extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
         } else {
             extraHeaders = new Element[0];
         }
-        try {
-            body = NspClientIdws.request(
-                serviceUri,
-                ClientUtils.toElement(jaxbContext, request),
-                soapAction,
-                token,
-                this.fmkSigningKey,
-                extraHeaders
-            );
-        } catch (Exception e) {
-            throw new NspClientException("FMK request failed", e);
-        }
+        final var body = NspClientIdws.request(
+            serviceUri,
+            ClientUtils.toElement(jaxbContext, request),
+            soapAction,
+            token,
+            this.fmkSigningKey,
+            extraHeaders
+        );
         return jaxbContext.createUnmarshaller().unmarshal(body, clazz).getValue();
     }
 }

@@ -17,6 +17,8 @@ public class FreemarkerConfiguration {
         config.setRecognizeStandardFileExtensions(true);
     }
 
+    private FreemarkerConfiguration() {}
+
     public static Configuration config() {
         return config;
     }

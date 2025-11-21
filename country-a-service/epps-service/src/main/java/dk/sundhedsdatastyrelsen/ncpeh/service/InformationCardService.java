@@ -1,7 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.sundhedsdatastyrelsen.ncpeh.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.tuple.Pair;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
@@ -16,10 +17,8 @@ import oasis.names.tc.ebxml_regrep.xsd.rim._3.AdhocQueryType;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.SlotType1;
 import oasis.names.tc.ebxml_regrep.xsd.rim._3.ValueListType;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,10 +118,10 @@ public class InformationCardService {
                 .map(RetrieveDocumentSetResponseType.DocumentResponse::getDocument)
                 .findFirst()
                 .orElse(null);
-            return documentBytes == null ? null : Utils.readXmlDocument(new ByteArrayInputStream(documentBytes));
+            return documentBytes == null ? null : XmlUtils.parse(new ByteArrayInputStream(documentBytes));
         } catch (IllegalArgumentException e) {
             throw new CountryAException(400, e);
-        } catch (JAXBException | SAXException | IOException e) {
+        } catch (JAXBException | XmlException e) {
             throw new CountryAException(500, e);
         }
     }

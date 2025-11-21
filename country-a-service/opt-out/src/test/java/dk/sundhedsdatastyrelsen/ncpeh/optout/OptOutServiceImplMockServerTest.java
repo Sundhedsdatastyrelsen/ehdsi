@@ -94,7 +94,7 @@ class OptOutServiceImplMockServerTest {
         var ex = assertThrows(
                 OptOutServiceException.class,
                 () -> service.hasOptedOut("0101019999", OptOutService.Service.EPRESCRIPTION));
-        assertThat(ex.getMessage(), containsString("Bad response from opt-out lookup service"));
+        assertThat(ex.getMessage(), containsString("Error when looking up if citizen has opted out."));
     }
 
     @Test

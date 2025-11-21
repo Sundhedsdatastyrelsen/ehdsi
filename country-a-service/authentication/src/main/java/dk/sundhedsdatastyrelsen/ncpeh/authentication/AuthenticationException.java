@@ -3,7 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 /**
  * Exception thrown when authentication-related operations fail.
  */
-public class AuthenticationException extends Exception {
+public class AuthenticationException extends RuntimeException {
 
     public AuthenticationException(String message) {
         super(message);

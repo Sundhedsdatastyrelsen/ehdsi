@@ -4,6 +4,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DiscardDispensationRequestDto;
@@ -32,10 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerErrorException;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.List;
 import java.util.Objects;
 
@@ -131,9 +130,8 @@ public class Controller {
         checkOptOut(request.getPatientId(), OptOutService.Service.EPRESCRIPTION);
         Document parsedRequestDocument;
         try {
-            parsedRequestDocument = Utils.readXmlDocument(request.getDocument());
-        } catch (SAXException e) {
-            log.error("Could not read XML document in request", e);
+            parsedRequestDocument = XmlUtils.parse(request.getDocument());
+        } catch (XmlException e) {
             throw new CountryAException(400, "Could not read XML document in request", e);
         }
 
@@ -146,7 +144,7 @@ public class Controller {
             log.error("Dispensation failed", e);
             try {
                 log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
-            } catch (XPathExpressionException | TransformerException ex) {
+            } catch (XmlException ex) {
                 log.error("Could not remove personal information, so cannot print document.", ex);
             }
             // Debug logging so we can see the full document in development.
@@ -163,9 +161,8 @@ public class Controller {
     ) {
         Document parsedRequestDocument;
         try {
-            parsedRequestDocument = Utils.readXmlDocument(request.getDispensationToDiscard().getDocument());
-        } catch (SAXException e) {
-            log.error("Could not read XML document in request", e);
+            parsedRequestDocument = XmlUtils.parse(request.getDispensationToDiscard().getDocument());
+        } catch (XmlException e) {
             throw new CountryAException(400, "Could not read XML document in request", e);
         }
 
@@ -178,7 +175,7 @@ public class Controller {
             log.error("Dispensation discard failed.", e);
             try {
                 log.info(Anonymizer.stripPersonalInformation(parsedRequestDocument));
-            } catch (XPathExpressionException | TransformerException ex) {
+            } catch (XmlException ex) {
                 log.error("Could not remove personal information, so cannot print document.", ex);
             }
             // Debug logging so we can see the full document in development.

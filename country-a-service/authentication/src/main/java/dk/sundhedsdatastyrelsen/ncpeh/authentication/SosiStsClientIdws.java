@@ -7,8 +7,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.slf4j.Logger;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -40,7 +38,8 @@ public class SosiStsClientIdws {
             .build();
     }
 
-    public EuropeanHcpIdwsToken exchangeBootstrapToken(BootstrapTokenExchangeRequest request) throws AuthenticationException {
+    /// @throws AuthenticationException if something goes wrong
+    public EuropeanHcpIdwsToken exchangeBootstrapToken(BootstrapTokenExchangeRequest request) {
         try {
             var requestXml = XmlUtils.writeDocumentToString(request.soapBody());
             var response = sendRequest(requestXml);
@@ -48,12 +47,12 @@ public class SosiStsClientIdws {
 
         } catch (IOException e) {
             throw new AuthenticationException("SOSI STS request failed", e);
-        } catch (TransformerException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Malformed bootstrap token exchange request", e);
         }
     }
 
-    private EuropeanHcpIdwsToken parseResponse(InputStream result) throws AuthenticationException {
+    private EuropeanHcpIdwsToken parseResponse(InputStream result) {
         try {
             var document = XmlUtils.parse(result);
 
@@ -83,14 +82,12 @@ public class SosiStsClientIdws {
                 Instant.parse(created),
                 Instant.parse(expires)
             );
-        } catch (IOException e) {
-            throw new AuthenticationException("Error reading SOSI STS response", e);
-        } catch (XPathExpressionException | XmlException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Error parsing SOSI STS response", e);
         }
     }
 
-    private InputStream sendRequest(String xml) throws IOException, AuthenticationException {
+    private InputStream sendRequest(String xml) throws IOException {
         var httpRequest = HttpRequest.newBuilder()
             .uri(serviceUri)
             .POST(HttpRequest.BodyPublishers.ofString(xml))

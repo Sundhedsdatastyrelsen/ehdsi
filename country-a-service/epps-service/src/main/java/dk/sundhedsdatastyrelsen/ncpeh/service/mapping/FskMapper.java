@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +43,8 @@ public class FskMapper {
 
     }
 
-    public static PreferredHealthProfessional preferredHealthProfessional(Document cda) throws XPathExpressionException {
+    /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if something goes wrong
+    public static PreferredHealthProfessional preferredHealthProfessional(Document cda) {
         var name = xpath.evalString(XPaths.preferredHpName, cda);
         var telecoms = telecomNodesToTelecoms(xpath.evalNodes(XPaths.preferredHpTelecoms, cda));
         var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress, cda));
@@ -56,7 +56,8 @@ public class FskMapper {
             .build();
     }
 
-    private static Address addressNodeToAddress(Node addressNode) throws XPathExpressionException {
+    /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if something goes wrong
+    private static Address addressNodeToAddress(Node addressNode) {
         var addressLines = xpath.evalNodes("hl7:addressLine", addressNode)
             .stream()
             .map(Node::getTextContent)
@@ -67,7 +68,8 @@ public class FskMapper {
         return new Address(addressLines, city, postalCode, countryCode);
     }
 
-    private static List<Telecom> telecomNodesToTelecoms(List<Node> telecomNodes) throws XPathExpressionException {
+    /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if something goes wrong
+    private static List<Telecom> telecomNodesToTelecoms(List<Node> telecomNodes) {
         List<Telecom> list = new ArrayList<>();
         for (Node node : telecomNodes) {
             var reportedUse = xpath.evalString("@use", node);

@@ -61,6 +61,7 @@ public class EPrescriptionMetadataMapper {
             var l1Meta = generateMeta(model, DocumentLevel.LEVEL1);
             return new DocumentAssociationForEPrescriptionDocumentMetadataDto(l3Meta, l1Meta);
         } catch (Exception e) {
+            // We catch all exceptions here, as we don't want to block metadata for prescriptions that work from getting through.
             log.error("An error occurred while mapping metadata.", e);
             return null;
         }
@@ -115,8 +116,9 @@ public class EPrescriptionMetadataMapper {
         return meta;
     }
 
+    /// @throws MapperException if something couldn't be mapped
     @NonNull
-    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, @Nullable PackageInfo packageInfo) throws MapperException {
+    private static MetaModel makeModel(String patientId, GetPrescriptionResponseType prescriptions, int prescriptionIndex, @Nullable PackageInfo packageInfo) {
         var prescription = prescriptions.getPrescription().get(prescriptionIndex);
         if (prescription == null) {
             throw new MapperException("Missing prescription");

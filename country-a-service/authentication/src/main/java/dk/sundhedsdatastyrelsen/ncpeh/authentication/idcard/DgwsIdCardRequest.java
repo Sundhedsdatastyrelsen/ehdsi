@@ -37,7 +37,9 @@ public class DgwsIdCardRequest {
     /// The request was built by looking at a request from Seal, a library published by sosi. That request can be found
     /// in the test-resources folder, with the name "seal-to-sts-organization-request.xml". It is helpful to follow
     /// along in that file when reading this one.
-    public static DgwsIdCardRequest of(CertificateAndKey certificate, Instant now, Configuration configuration) throws AuthenticationException {
+    ///
+    /// @throws AuthenticationException if document creation or signing did not work
+    public static DgwsIdCardRequest of(CertificateAndKey certificate, Instant now, Configuration configuration) {
         // Structure and header
 
         var truncatedNow = now.truncatedTo(ChronoUnit.SECONDS);
@@ -132,7 +134,9 @@ public class DgwsIdCardRequest {
     /// The request was built by looking at a request from Seal, a library published by sosi. That request can be found
     /// in the test-resources folder, with the name "seal-to-sts-person-request.xml". It is helpful to follow
     /// along in that file when reading this one.
-    public static DgwsIdCardRequest ofEmployeeIdentity(NspDgwsIdentity.ReplaceWithIdws identity, Instant now, Configuration configuration) throws AuthenticationException {
+    ///
+    /// @throws AuthenticationException if document creation or signing fails
+    public static DgwsIdCardRequest ofEmployeeIdentity(NspDgwsIdentity.ReplaceWithIdws identity, Instant now, Configuration configuration) {
         var certificate = identity.systemCertificate();
 
         var truncatedNow = now.truncatedTo(ChronoUnit.SECONDS);
@@ -171,7 +175,7 @@ public class DgwsIdCardRequest {
         }
     }
 
-    private static void populateEmployeeBody(Element body, NspDgwsIdentity.ReplaceWithIdws identity, Instant now, Configuration configuration) throws CertificateEncodingException, AuthenticationException {
+    private static void populateEmployeeBody(Element body, NspDgwsIdentity.ReplaceWithIdws identity, Instant now, Configuration configuration) throws CertificateEncodingException {
         var subjectNameId = identity.nameId().toString();
 
         var requestSecurityToken = XmlUtils.appendChild(body, XmlNamespace.WST13, "RequestSecurityToken");

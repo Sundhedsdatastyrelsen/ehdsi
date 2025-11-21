@@ -22,6 +22,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -33,7 +34,6 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -146,9 +146,7 @@ public class DispensationMapper {
 </CreatePharmacyEffectuationRequest>
      */
     static class XPaths {
-        private XPaths() {
-            throw new IllegalStateException("Static utility class should not be instantiated");
-        }
+        private XPaths() {}
 
         static final String authorFamilyName =
             "/hl7:ClinicalDocument/hl7:author/hl7:assignedAuthor/hl7:assignedPerson/hl7:name/hl7:family";
@@ -209,7 +207,7 @@ public class DispensationMapper {
 
     static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.PHARM);
 
-    static ModificatorPersonType authorPerson(Document cda) throws XPathExpressionException {
+    static ModificatorPersonType authorPerson(Document cda) {
         var familyNames = xpath.evalStrings(XPaths.authorFamilyName, cda);
         var givenNames = xpath.evalStrings(XPaths.authorGivenName, cda);
         var allButLastName = Stream.concat(
@@ -225,7 +223,7 @@ public class DispensationMapper {
     }
 
     /// @hidden public for testing.
-    public static String authorRole(Document cda) throws XPathExpressionException, MapperException {
+    public static String authorRole(Document cda) {
         var functionCode = xpath.evalString(XPaths.authorFunctionCode, cda);
         var functionCodeSystem = xpath.evalString(XPaths.authorFunctionCodeSystem, cda);
 
@@ -250,7 +248,7 @@ public class DispensationMapper {
         return s != null && !s.isBlank();
     }
 
-    private static OrganisationType authorOrganization(Document cda, OrganisationIdentifierType placeholderId, String type) throws XPathExpressionException {
+    private static OrganisationType authorOrganization(Document cda, OrganisationIdentifierType placeholderId, String type) {
         var addressLines = new ArrayList<>(xpath.evalStrings(XPaths.authorOrgAddressLine, cda));
         var postalCode = xpath.evalString(XPaths.authorOrgPostalCode, cda);
         var city = xpath.evalString(XPaths.authorOrgCity, cda);
@@ -288,7 +286,7 @@ public class DispensationMapper {
         return b.build();
     }
 
-    static OrganisationType pharmacyEan(Document cda) throws XPathExpressionException {
+    static OrganisationType pharmacyEan(Document cda) {
         // When the type is "Apotek" we need to use EAN.  For modificator elements it needs to be "Apotek", hence EAN.
         return authorOrganization(
             cda, OrganisationIdentifierType.builder()
@@ -298,7 +296,7 @@ public class DispensationMapper {
             "Apotek");
     }
 
-    static OrganisationType pharmacySor(Document cda) throws XPathExpressionException {
+    static OrganisationType pharmacySor(Document cda) {
         // To use SOR the type has to be "apotek" (lower case). For delivery site, we must use SOR, hence "apotek".
         return authorOrganization(
             cda, OrganisationIdentifierType.builder()
@@ -308,7 +306,8 @@ public class DispensationMapper {
             "apotek");
     }
 
-    public static long prescriptionId(Document cda) throws XPathExpressionException, MapperException {
+    /// @throws XmlException if something goes wrong
+    public static long prescriptionId(Document cda) {
         var id = xpath.evalNode(XPaths.inFulfillmentOfId, cda);
         var root = xpath.evalString("@root", id);
         if (!Oid.DK_FMK_PRESCRIPTION.value.equals(root)) {
@@ -318,12 +317,11 @@ public class DispensationMapper {
         try {
             return Long.parseLong(ext);
         } catch (NumberFormatException e) {
-            throw new MapperException("Unexpected prescription id format: " + ext);
+            throw new MapperException("Unexpected prescription id format: " + ext, e);
         }
     }
 
-    static StartEffectuationRequestType.Prescription startEffectuationRequestPrescription(Document cda) throws XPathExpressionException,
-        MapperException {
+    static StartEffectuationRequestType.Prescription startEffectuationRequestPrescription(Document cda) {
         return StartEffectuationRequestType.Prescription.builder()
             .withIdentifier(prescriptionId(cda))
             .build();
@@ -332,7 +330,7 @@ public class DispensationMapper {
     static CreatePharmacyEffectuationOnPrescriptionType prescription(
         Document cda,
         @NonNull StartEffectuationResponseType startEffectuationResponse
-    ) throws XPathExpressionException, MapperException {
+    ) {
         var order = getOpenedOrder(startEffectuationResponse.getPrescription().getFirst());
         return CreatePharmacyEffectuationOnPrescriptionType.builder()
             .withPrescriptionIdentifier(prescriptionId(cda))
@@ -355,7 +353,7 @@ public class DispensationMapper {
         return true; //NOSONAR this is likely to change.
     }
 
-    static Integer packageQuantity(Document cda) throws XPathExpressionException, MapperException {
+    static Integer packageQuantity(Document cda) {
         var node = xpath.evalNode(XPaths.packageQuantity, cda);
         var unit = xpath.evalString("@unit", node);
         if (!"1".equals(unit)) {
@@ -366,7 +364,7 @@ public class DispensationMapper {
             .orElseThrow(() -> new MapperException("Package quantity must be a positive integer, was: %s".formatted(value)));
     }
 
-    static CreatePharmacyEffectuationType effectuation(Document cda) throws XPathExpressionException, MapperException {
+    static CreatePharmacyEffectuationType effectuation(Document cda) {
         var effectiveTime = xpath.evalString(XPaths.effectiveTime, cda);
         var drug = drug(cda);
 
@@ -382,7 +380,7 @@ public class DispensationMapper {
             .build();
     }
 
-    static DrugType drug(Document cda) throws XPathExpressionException {
+    static DrugType drug(Document cda) {
         return DrugType.builder()
             .withDetailedDrugText(detailedDrugText(cda))
             .withATC(atc(cda))
@@ -391,7 +389,7 @@ public class DispensationMapper {
             .build();
     }
 
-    static SubstancesType substances(Document cda) throws XPathExpressionException {
+    static SubstancesType substances(Document cda) {
         var ingredientNodes = xpath.evalNodes(XPaths.activeIngredients, cda);
         if (ingredientNodes.isEmpty()) {
             return null;
@@ -417,7 +415,7 @@ public class DispensationMapper {
         return result;
     }
 
-    static DrugStrengthType drugStrength(Document cda) throws XPathExpressionException {
+    static DrugStrengthType drugStrength(Document cda) {
         // [...]
         // Tilsvarende kan lægemidlet styrke angives for i Medicinpriser og “Stærke vitaminer og mineraler”,
         // og skal angives hvis der substitueres til andre typer af lægemidler. Styrken angives enten som
@@ -438,7 +436,7 @@ public class DispensationMapper {
             .build();
     }
 
-    static ATCType atc(Document cda) throws XPathExpressionException {
+    static ATCType atc(Document cda) {
         var node = xpath.evalNode(XPaths.atcCode, cda);
         if (node == null) {
             return null;
@@ -460,7 +458,7 @@ public class DispensationMapper {
             .build();
     }
 
-    static Node packagedMedicinalProduct(Document cda) throws XPathExpressionException {
+    static Node packagedMedicinalProduct(Document cda) {
         /// The Packaged Medicinal Product is found on the "containerPackagedProduct" element.  But there can be up to 3
         /// containerPackagedProduct elements nested inside each other.
         /// Our current understanding (2025-05-14) of the convoluted documentation in ART-DECOR
@@ -472,13 +470,13 @@ public class DispensationMapper {
         return xpath.evalNode(XPaths.innermostContainerPackagedProduct, cda);
     }
 
-    static Node packageId(Document cda) throws XPathExpressionException {
+    static Node packageId(Document cda) {
         var pmp = packagedMedicinalProduct(cda);
         if (pmp == null) return null;
         return xpath.evalNode("pharm:code", pmp);
     }
 
-    static @NonNull String packagedMedicinalProductDescription(Document cda) throws XPathExpressionException {
+    static @NonNull String packagedMedicinalProductDescription(Document cda) {
         var pmp = packagedMedicinalProduct(cda);
         if (pmp == null) return "";
         /// "If present, the element SHALL contain a sufficiently detailed description of the prescribed/dispensed
@@ -490,7 +488,7 @@ public class DispensationMapper {
         return desc.replaceAll("\\s+", " ");
     }
 
-    static String detailedDrugText(Document cda) throws XPathExpressionException {
+    static String detailedDrugText(Document cda) {
         var drugName = xpath.evalString(XPaths.manufacturedMaterialName, cda);
         var drugIdNode = xpath.evalNode(XPaths.manufacturedMaterialCode, cda);
         var drugId = drugIdNode == null
@@ -545,7 +543,7 @@ public class DispensationMapper {
             .build();
     }
 
-    static PackageSizeType packageSize(Document cda) throws MapperException {
+    static PackageSizeType packageSize(Document cda) {
         try {
             var node = xpath.evalNode(XPaths.contentQuantity, cda);
             // "This element describes how many content items are present in the package.
@@ -571,12 +569,13 @@ public class DispensationMapper {
             return PackageSizeType.builder()
                 .withPackageSizeText("%s %s".formatted(value, unitText))
                 .build();
-        } catch (XPathExpressionException e) {
+        } catch (XmlException e) {
             throw new MapperException("Could not find package size information", e);
         }
     }
 
-    public static String cdaId(Document cda) throws MapperException {
+    /// @throws MapperException if something goes wrong
+    public static String cdaId(Document cda) {
         try {
             var node = xpath.evalNode(XPaths.cdaId, cda);
             var root = xpath.evalString("@root", node);
@@ -584,16 +583,17 @@ public class DispensationMapper {
             return StringUtils.isBlank(ext)
                 ? root
                 : root + "^^^" + ext;
-        } catch (XPathExpressionException e) {
-            throw new MapperException(e.getMessage());
+        } catch (XmlException e) {
+            throw new MapperException(e.getMessage(), e);
         }
     }
 
+    /// @throws MapperException if something goes wrong
     @WithSpan
     public static StartEffectuationRequestType startEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda
-    ) throws MapperException {
+    ) {
         try {
             var obf = new ObjectFactory();
             return StartEffectuationRequestType.builder()
@@ -606,12 +606,13 @@ public class DispensationMapper {
                 .withOrderedAtPharmacy(pharmacyEan(cda))
                 .withPrescription(startEffectuationRequestPrescription(cda))
                 .build();
-        } catch (XPathExpressionException e) {
-            throw new MapperException(e.getMessage());
+        } catch (XmlException e) {
+            throw new MapperException(e.getMessage(), e);
         }
     }
 
-    public static @NonNull OrderType getOpenedOrder(PrescriptionType prescription) throws MapperException {
+    /// @throws MapperException if something goes wrong
+    public static @NonNull OrderType getOpenedOrder(PrescriptionType prescription) {
         return prescription.getOrder()
             .stream()
             .filter(o -> Objects.equals(o.getStatus(), OrderStatusPredefinedType.EKSPEDITION_PÅBEGYNDT.value()))
@@ -619,10 +620,11 @@ public class DispensationMapper {
             .orElseThrow(() -> new MapperException("No started effectuation found."));
     }
 
+    /// @throws MapperException if something goes wrong
     public static AbortEffectuationRequestType abortEffectuationRequest(
         StartEffectuationRequestType startEffectuationRequest,
         StartEffectuationResponseType startEffectuationResponse
-    ) throws MapperException {
+    ) {
         return AbortEffectuationRequestType.builder()
             .withPersonIdentifier(startEffectuationRequest.getPersonIdentifier())
             .withModifiedBy(startEffectuationRequest.getModifiedBy())
@@ -639,12 +641,13 @@ public class DispensationMapper {
             .build();
     }
 
+    /// @throws MapperException if something goes wrong
     @WithSpan
     public static CreatePharmacyEffectuationRequestType createPharmacyEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
         @NonNull StartEffectuationResponseType startEffectuationResponse
-    ) throws MapperException {
+    ) {
         var obf = new ObjectFactory();
         try {
             return CreatePharmacyEffectuationRequestType.builder()
@@ -656,18 +659,19 @@ public class DispensationMapper {
                 ).end()
                 .addPrescription(prescription(cda, startEffectuationResponse))
                 .build();
-        } catch (XPathExpressionException e) {
+        } catch (XmlException e) {
             throw new MapperException(e.getMessage(), e);
         }
     }
 
+    /// @throws MapperException if something goes wrong
     @WithSpan
     public static UndoEffectuationRequestType createUndoEffectuationRequest(
         @NonNull String patientId,
         @NonNull Document cda,
         long orderId,
         long effectuationId
-    ) throws MapperException {
+    ) {
         var obf = new ObjectFactory();
         try {
             var prescriptionId = prescriptionId(cda);
@@ -687,8 +691,8 @@ public class DispensationMapper {
                 .end()
                 .end()
                 .build();
-        } catch (XPathExpressionException e) {
-            throw new MapperException(e.getMessage());
+        } catch (XmlException e) {
+            throw new MapperException(e.getMessage(), e);
         }
     }
 }

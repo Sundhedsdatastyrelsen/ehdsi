@@ -55,7 +55,7 @@ public class CertificateUtils {
      * @throws AuthenticationException if the keystore cannot be loaded
      */
     @NonNull
-    public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) throws AuthenticationException {
+    public static CertificateAndKey loadCertificateFromKeystore(InputStream is, String keyAlias, String password) {
         try {
             // keystore type is changed once we load the keystore, so it doesn't matter what we put in this constructor.
             var ks = KeyStore.getInstance("jks");
@@ -73,7 +73,8 @@ public class CertificateUtils {
         }
     }
 
-    public static CertificateAndKey loadCertificateFromKeystore(Path keystore, String keyAlias, String password) throws AuthenticationException {
+    /// @throws AuthenticationException if something goes wrong
+    public static CertificateAndKey loadCertificateFromKeystore(Path keystore, String keyAlias, String password) {
         log.info("Loading certificate with alias {} from keystore {}", keyAlias, keystore);
         try (var is = new BufferedInputStream(Files.newInputStream(keystore))) {
             return loadCertificateFromKeystore(is, keyAlias, password);
@@ -88,7 +89,7 @@ public class CertificateUtils {
      *
      * @throws AuthenticationException if the input is not a valid X509 certificate.
      */
-    public static X509Certificate fromBase64(String certB64) throws AuthenticationException {
+    public static X509Certificate fromBase64(String certB64) {
         var sanitized = certB64.replaceAll("\\s+", "");
         var certBytes = Base64.getDecoder().decode(sanitized);
         try {
@@ -101,8 +102,10 @@ public class CertificateUtils {
 
     /**
      * Extract the country code from a certificate by locating the "C=..." distinguished name.
+     *
+     * @throws AuthenticationException if country code is missing or the format is wrong
      */
-    public static String extractCountryCode(X509Certificate cert) throws AuthenticationException {
+    public static String extractCountryCode(X509Certificate cert) {
         try {
             var ldapName = new LdapName(cert.getSubjectX500Principal().getName());
             for (var rdn : ldapName.getRdns()) {
@@ -130,7 +133,7 @@ public class CertificateUtils {
     /// @param certificate   the certificate and private key pair used for signing
     /// @throws AuthenticationException  if signing fails due to cryptographic or XML processing errors
     /// @throws IllegalArgumentException if any of the parameters are invalid
-    public static void signXml(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) throws AuthenticationException {
+    public static void signXml(Element rootElement, Node nextSibling, List<String> referenceUris, CertificateAndKey certificate) {
         try {
             // Make the internal representation of the DOM consistent before signing, by
             // e.g. merging adjacent text-nodes.

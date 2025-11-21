@@ -4,6 +4,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PrescriptionStatusType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -217,7 +217,7 @@ class FmkIT {
             "Cannot find eDispensation CDA at " + eDispensationPath,
             eDispensationPath.toFile(),
             is(aReadableFile()));
-        var eDispensation = Utils.readXmlDocument(Files.newInputStream(eDispensationPath));
+        var eDispensation = XmlUtils.parse(Files.newInputStream(eDispensationPath));
         var token = Sosi.getToken(Sosi.Audience.FMK);
 
         // shouldn't throw:
@@ -276,11 +276,11 @@ class FmkIT {
         );
     }
 
-    private Document dispensationCda(String cpr, String prescriptionId) throws SAXException {
+    private Document dispensationCda(String cpr, String prescriptionId) {
         return dispensationCda(cpr, prescriptionId, null, null);
     }
 
-    private Document dispensationCda(String cpr, String prescriptionId, String iscoCode, String iscoDisplay) throws SAXException {
+    private Document dispensationCda(String cpr, String prescriptionId, String iscoCode, String iscoDisplay) {
         var timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss+0000")
             .withZone(ZoneOffset.UTC)
             .format(Instant.now());
@@ -289,11 +289,11 @@ class FmkIT {
             .replace(DISPENSATION_CDA_PRESCRIPTION_ID, prescriptionId)
             .replace(DISPENSATION_TIMESTAMP, timestamp);
         if (iscoCode != null && iscoDisplay != null) {
-            return Utils.readXmlDocument(replacedCda
+            return XmlUtils.parse(replacedCda
                 .replace("code=\"2262\"", "code=\"" + iscoCode + "\"")
                 .replace("displayName=\"Pharmacists\"", "displayName=\"" + iscoDisplay + "\""));
         }
-        return Utils.readXmlDocument(replacedCda);
+        return XmlUtils.parse(replacedCda);
     }
 
     // These are the CPR number and prescription id used in the dispensation CDA below.

@@ -29,12 +29,8 @@ public class XmlUtils {
      * @return the parsed Document
      * @throws XmlException if parsing fails
      */
-    public static Document parse(String xml) throws XmlException {
-        try {
-            return parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-        } catch (IOException e) {
-            throw new IllegalStateException("should not happen", e);
-        }
+    public static Document parse(String xml) {
+        return parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -43,9 +39,8 @@ public class XmlUtils {
      * @param xml the XML InputStream to parse
      * @return the parsed Document
      * @throws XmlException if parsing fails
-     * @throws IOException  if I/O error occurs
      */
-    public static Document parse(InputStream xml) throws XmlException, IOException {
+    public static Document parse(InputStream xml) {
         try (xml) {
             var builder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
             return builder.parse(xml);
@@ -53,17 +48,21 @@ public class XmlUtils {
             throw new XmlException("Parse error", e);
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("should not happen", e);
+        } catch (IOException e) {
+            throw new XmlException("Couldn't read document", e);
         }
     }
 
     /**
      * Create a new, empty Document object.
+     *
+     * @throws XmlException if document cannot be created
      */
     public static Document newDocument() {
         try {
             return DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
-            throw new IllegalStateException(e);
+            throw new XmlException("Couldn't create new document", e);
         }
     }
 
@@ -72,9 +71,9 @@ public class XmlUtils {
      *
      * @param doc    the Document to write
      * @param writer the target Writer
-     * @throws TransformerException if transformation fails
+     * @throws XmlException if writing fails
      */
-    public static void writeDocument(Document doc, Writer writer) throws TransformerException {
+    public static void writeDocument(Document doc, Writer writer) {
         writeDocument(doc, writer, false);
     }
 
@@ -83,9 +82,9 @@ public class XmlUtils {
      *
      * @param doc the Document to convert
      * @return the XML as String
-     * @throws TransformerException if transformation fails
+     * @throws XmlException if writing fails
      */
-    public static String writeDocumentToString(Document doc) throws TransformerException {
+    public static String writeDocumentToString(Document doc) {
         var writer = new StringWriter();
         writeDocument(doc, writer);
         return writer.toString();
@@ -96,24 +95,28 @@ public class XmlUtils {
      *
      * @param doc the Document to convert
      * @return the formatted XML as String
-     * @throws TransformerException if transformation fails
+     * @throws XmlException if writing fails
      */
-    public static String writeDocumentToStringPretty(Document doc) throws TransformerException {
+    public static String writeDocumentToStringPretty(Document doc) {
         var writer = new StringWriter();
         writeDocument(doc, writer, true);
         return writer.toString();
     }
 
-    private static void writeDocument(Document doc, Result result, boolean shouldIndent) throws TransformerException {
-        var transformer = TransformerFactory.newDefaultInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, shouldIndent ? "yes" : "no");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.transform(new DOMSource(doc), result);
+    private static void writeDocument(Document doc, Result result, boolean shouldIndent) {
+        try {
+            var transformer = TransformerFactory.newDefaultInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, shouldIndent ? "yes" : "no");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.transform(new DOMSource(doc), result);
+        } catch (TransformerException e) {
+            throw new XmlException("Couldn't write document", e);
+        }
     }
 
-    private static void writeDocument(Document doc, Writer writer, boolean shouldIndent) throws TransformerException {
+    private static void writeDocument(Document doc, Writer writer, boolean shouldIndent) {
         writeDocument(doc, new StreamResult(writer), shouldIndent);
     }
 

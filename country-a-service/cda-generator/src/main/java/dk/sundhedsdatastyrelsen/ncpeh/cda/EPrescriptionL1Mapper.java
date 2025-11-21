@@ -10,11 +10,13 @@ public final class EPrescriptionL1Mapper {
     private EPrescriptionL1Mapper() {
     }
 
-    public static EPrescriptionL1 model(EPrescriptionL3Input input) throws MapperException {
+    /// @throws MapperException if something goes wrong
+    public static EPrescriptionL1 model(EPrescriptionL3Input input) {
         return model(EPrescriptionL3Mapper.model(input));
     }
 
-    public static EPrescriptionL1 model(EPrescriptionL3 l3Model) throws MapperException {
+    /// @throws MapperException if something goes wrong
+    public static EPrescriptionL1 model(EPrescriptionL3 l3Model) {
         var modelWithL1Id = l3Model.withDocumentId(new CdaId(
             Oid.DK_EPRESCRIPTION_REPOSITORY_ID,
             EPrescriptionDocumentIdMapper.level1DocumentId(l3Model.getPrescriptionId().getExtension())));
