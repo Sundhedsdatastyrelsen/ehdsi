@@ -17,7 +17,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -93,9 +92,8 @@ public class PatientSummaryService {
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard));
-        } catch (XPathExpressionException e) {
-            // TODO better exception.
-            throw new RuntimeException(e);
+        } catch (XmlException e) {
+            throw new CountryAException(400, "Error in received XML", e);
         }
     }
 }
