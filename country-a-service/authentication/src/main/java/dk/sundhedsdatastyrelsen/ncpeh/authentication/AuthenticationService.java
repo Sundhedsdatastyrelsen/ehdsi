@@ -23,6 +23,7 @@ public interface AuthenticationService {
      *
      * @param identity the identity to exchange to a dgws assertion.
      * @return an assertion we can use to call NSP services that require an organization identity.
+     * @throws AuthenticationException if something goes wrong
      */
     DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity);
 
