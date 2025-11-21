@@ -149,10 +149,6 @@ public class Controller {
             } catch (XPathExpressionException | TransformerException ex) {
                 log.error("Could not remove personal information, so cannot print document.", ex);
             }
-            // Debug logging so we can see the full document in development.
-            log.debug("patient id {}, class code {}", request.getPatientId(), request.getClassCode().toString());
-            log.debug("SOAP Header: {}", request.getSoapHeader());
-            log.debug("Request document: {}", request.getDocument());
             throw e;
         }
     }
@@ -181,13 +177,6 @@ public class Controller {
             } catch (XPathExpressionException | TransformerException ex) {
                 log.error("Could not remove personal information, so cannot print document.", ex);
             }
-            // Debug logging so we can see the full document in development.
-            log.debug(
-                "patient id {}, class code {}",
-                request.getDispensationToDiscard().getPatientId(),
-                request.getDispensationToDiscard().getClassCode().toString());
-            log.debug("SOAP Header: {}", request.getSoapHeader());
-            log.debug("Request document: {}", request.getDispensationToDiscard().getDocument());
             throw e;
         }
     }
