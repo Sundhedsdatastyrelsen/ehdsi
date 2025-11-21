@@ -57,25 +57,14 @@ public class AuthenticationServiceCached implements AuthenticationService {
         String soapHeader,
         String audience
     ) {
-        // Can't use simple get because of checked exception and lambda.
-        var cacheKey = IdwsCacheKey.fromSoapHeader(soapHeader, audience, issuer);
-        var cached = idwsCache.getIfPresent(cacheKey);
-        if (cached == null) {
-            cached = service.xcaSoapHeaderToIdwsToken(soapHeader, audience);
-            idwsCache.put(cacheKey, cached);
-        }
-        return cached;
+        return idwsCache.get(
+            IdwsCacheKey.fromSoapHeader(soapHeader, audience, issuer),
+            key -> service.xcaSoapHeaderToIdwsToken(soapHeader, audience));
     }
 
     @Override
     public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) {
-        // Can't use simple get because of checked exception and lambda.
-        var cached = dgwsCache.getIfPresent(identity);
-        if (cached == null) {
-            cached = service.nspDgwsIdentityToAssertion(identity);
-            dgwsCache.put(identity, cached);
-        }
-        return cached;
+        return dgwsCache.get(identity, key -> service.nspDgwsIdentityToAssertion(identity));
     }
 
     private record IdwsCacheKey(
