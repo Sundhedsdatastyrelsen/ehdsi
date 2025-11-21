@@ -1,11 +1,19 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PatientDemographicsDto;
+import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Cpr;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CprServiceIT {
+import java.util.List;
+
+import static dk.sundhedsdatastyrelsen.ncpeh.testing.shared.WhereMatcher.where;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+class CprServiceIT {
     @Test
     void getPersonInformationTest() throws Exception {
         var response = Cpr.apiClient()
@@ -25,5 +33,26 @@ public class CprServiceIT {
             response.getPersonInformationStructure()
                 .getRegularCPRPerson()
                 .getPersonNameForAddressingName());
+    }
+
+    @Test
+    void getOneGoodViaServiceTest() {
+        var service = new CprService(Cpr.apiClient(), TestIdentities.systemIdentity);
+        var result = service.findPatients(List.of("0611809735"));
+        assertThat(result.getPatients(), contains(where(PatientDemographicsDto::getFamilyName, is("Babbage"))));
+    }
+
+    @Test
+    void getBadViaServiceTest() {
+        var service = new CprService(Cpr.apiClient(), TestIdentities.systemIdentity);
+        var result = service.findPatients(List.of("0909729999", "9999999999"));
+        assertThat(result.getPatients(), empty());
+    }
+
+    @Test
+    void getOneGoodAndOneBadViaServiceTest() {
+        var service = new CprService(Cpr.apiClient(), TestIdentities.systemIdentity);
+        var result = service.findPatients(List.of("0611809735", "0909729999"));
+        assertThat(result.getPatients(), contains(where(PatientDemographicsDto::getFamilyName, is("Babbage"))));
     }
 }
