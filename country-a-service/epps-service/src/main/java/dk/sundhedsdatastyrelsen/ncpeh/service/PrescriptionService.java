@@ -13,7 +13,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationRespons
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
@@ -139,7 +138,7 @@ public class PrescriptionService {
         EuropeanHcpIdwsToken token
     ) {
         try {
-            String cpr = PatientIdMapper.toCpr(patientId);
+            var cpr = PatientIdMapper.toCpr(patientId);
             final var request = GetPrescriptionRequestType.builder()
                 .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
                 .withIncludeOpenPrescriptions().end()
@@ -189,16 +188,13 @@ public class PrescriptionService {
 
     @WithSpan
     private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
-        String cpr = PatientIdMapper.toCpr(patientId);
+        var cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludeOpenPrescriptions().end()
             .build();
         try {
-            GetPrescriptionResponseType fmkResponse = fmkClient.getPrescription(request, token);
-
-            log.debug("Found {} prescriptions for {}", fmkResponse.getPrescription().size(), cpr);
-
+            var fmkResponse = fmkClient.getPrescription(request, token);
             var validPrescriptions = filter.validPrescriptionIndexes(fmkResponse.getPrescription()).toList();
 
             var drugMedicationIds = validPrescriptions.stream().map(Pair::getRight)
@@ -362,7 +358,7 @@ public class PrescriptionService {
             .withIncludeEffectuations(false)
             .build();
 
-        log.debug("Looking up DrugMedication  info for {}", cpr);
+        log.debug("Looking up DrugMedication info");
         GetDrugMedicationResponseType fmkResponse = fmkClient.getDrugMedication(drugMedicationRequest, token);
         log.debug(
             "Found {} prescriptions for drug medication ID {}", fmkResponse.getDrugMedication()
