@@ -96,12 +96,13 @@ public class Beans {
             systemIdentity);
     }
 
+    /// @throws AuthenticationException if configuration is wrong
     @Bean
     public SigningCertificate signingCertificate(
         @Value("${signing-certificate-keystore.path}") String keystorePath,
         @Value("${signing-certificate-keystore.alias}") String keystoreAlias,
         @Value("${signing-certificate-keystore.password}") String keystorePassword
-    ) throws AuthenticationException {
+    ) {
         return new SigningCertificate(keystorePath, keystoreAlias, keystorePassword);
     }
 

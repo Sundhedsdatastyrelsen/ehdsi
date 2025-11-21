@@ -132,7 +132,6 @@ public class Controller {
         try {
             parsedRequestDocument = XmlUtils.parse(request.getDocument());
         } catch (XmlException e) {
-            log.error("Could not read XML document in request", e);
             throw new CountryAException(400, "Could not read XML document in request", e);
         }
 
@@ -164,7 +163,6 @@ public class Controller {
         try {
             parsedRequestDocument = XmlUtils.parse(request.getDispensationToDiscard().getDocument());
         } catch (XmlException e) {
-            log.error("Could not read XML document in request", e);
             throw new CountryAException(400, "Could not read XML document in request", e);
         }
 
