@@ -18,7 +18,7 @@ class FskMapperTest {
     }
 
     @Test
-    void preferredHealthProfessionalTest() throws Exception {
+    void preferredHealthProfessionalTest() {
         var cda = testInformationCardCda("informationCards/test-card.xml");
         var preferredHealthProfessional = FskMapper.preferredHealthProfessional(cda);
 

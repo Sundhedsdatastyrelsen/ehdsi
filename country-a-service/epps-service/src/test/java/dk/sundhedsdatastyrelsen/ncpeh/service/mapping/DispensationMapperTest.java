@@ -29,7 +29,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -66,7 +65,7 @@ class DispensationMapperTest {
 
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
-    void startEffectuationRequestTest(String xmlFileName) throws MapperException {
+    void startEffectuationRequestTest(String xmlFileName) {
         var cda = testDispensationCda(xmlFileName);
         var req = DispensationMapper.startEffectuationRequest("1111111118^^^&1.2.208.176.1.2&ISO", cda);
 
@@ -82,7 +81,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void authorPersonTest() throws XPathExpressionException {
+    void authorPersonTest() {
         var xmlFileName = "dispensations/CzRequest1.xml";
         var cda = testDispensationCda(xmlFileName);
         var person = DispensationMapper.authorPerson(cda);
@@ -100,7 +99,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void authorRoleTest() throws Exception {
+    void authorRoleTest() {
         var xmlFileName = "dispensations/CzRequest1.xml";
 
         var cda = testDispensationCda(xmlFileName);
@@ -111,7 +110,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void pharmacyTest() throws XPathExpressionException {
+    void pharmacyTest() {
         var xmlFileName = "dispensations/CzRequest1.xml";
 
         var cda = testDispensationCda(xmlFileName);
@@ -139,7 +138,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void startEffectuationRequestPrescriptionTest() throws XPathExpressionException, MapperException {
+    void startEffectuationRequestPrescriptionTest() {
         var xmlFileName = "dispensations/CzRequest1.xml";
 
         var cda = testDispensationCda(xmlFileName);
@@ -149,7 +148,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void effectuationTest() throws Exception {
+    void effectuationTest() {
         var xmlFileName = "dispensations/CzRequest1.xml";
 
         var cda = testDispensationCda(xmlFileName);
@@ -175,24 +174,22 @@ class DispensationMapperTest {
     }
 
     @Test
-    void packageQuantityTest() throws Exception {
+    void packageQuantityTest() {
         // value = 1
         var q = DispensationMapper.packageQuantity(testDispensationCda("dispensations/CzRequest1.xml"));
         assertThat(q, is(1));
         // negative integer is invalid value
-        var ex1 = assertThrows(
-            MapperException.class, () ->
-                DispensationMapper.packageQuantity(testDispensationCda("dispensations/dispensation_bad_1.xml")));
+        var bad1 = testDispensationCda("dispensations/dispensation_bad_1.xml");
+        var ex1 = assertThrows(MapperException.class, () -> DispensationMapper.packageQuantity(bad1));
         assertThat(ex1.getMessage(), containsString("must be a positive integer"));
         // decimal value is invalid value
-        var ex2 = assertThrows(
-            MapperException.class, () ->
-                DispensationMapper.packageQuantity((testDispensationCda("dispensations/dispensation_bad_2.xml"))));
+        var bad2 = testDispensationCda("dispensations/dispensation_bad_2.xml");
+        var ex2 = assertThrows(MapperException.class, () -> DispensationMapper.packageQuantity((bad2)));
         assertThat(ex2.getMessage(), containsString("must be a positive integer"));
     }
 
     @Test
-    void packageSizeTest() throws Exception {
+    void packageSizeTest() {
         // unit="1" and has translation text
         var s1 = DispensationMapper.packageSize(testDispensationCda("dispensations/CzRequest1.xml"));
         assertThat(s1.getPackageSizeText(), is("100 stk."));
@@ -206,20 +203,22 @@ class DispensationMapperTest {
         var s4 = DispensationMapper.packageSize(testDispensationCda("dispensations/CzRequest3.xml"));
         assertThat(s4.getPackageSizeText(), is("100 units"));
         // zero is invalid value
+        var bad1 = testDispensationCda("dispensations/dispensation_bad_1.xml");
         var ex1 = assertThrows(
             MapperException.class, () ->
-                DispensationMapper.packageSize(testDispensationCda("dispensations/dispensation_bad_1.xml")));
+                DispensationMapper.packageSize(bad1));
         assertThat(ex1.getMessage(), containsString("must be a positive number"));
         // negative number is invalid value
+        var bad2 = testDispensationCda("dispensations/dispensation_bad_2.xml");
         var ex2 = assertThrows(
             MapperException.class, () ->
-                DispensationMapper.packageSize(testDispensationCda("dispensations/dispensation_bad_2.xml")));
+                DispensationMapper.packageSize(bad2));
         assertThat(ex2.getMessage(), containsString("must be a positive number"));
 
     }
 
     @Test
-    void atcTest() throws Exception {
+    void atcTest() {
         {
             var atc = DispensationMapper.atc(testDispensationCda("dispensations/CzRequest1.xml"));
             assertThat(atc, is(notNullValue()));
@@ -241,7 +240,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void drugStrengthTest() throws Exception {
+    void drugStrengthTest() {
         {
             var ds = DispensationMapper.drugStrength(testDispensationCda("dispensations/CzRequest1.xml"));
             assertThat(ds, is(notNullValue()));
@@ -255,7 +254,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void substancesTest() throws Exception {
+    void substancesTest() {
         {
             var substances = DispensationMapper.substances(testDispensationCda("dispensations/CzRequest1.xml"));
             assertThat(substances, is(nullValue()));
@@ -270,7 +269,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void packageIdTest() throws Exception {
+    void packageIdTest() {
         XPathWrapper xpath = new XPathWrapper(XmlNamespace.HL7, XmlNamespace.PHARM);
 
         {
@@ -292,7 +291,7 @@ class DispensationMapperTest {
     }
 
     @Test
-    void packageDescriptionTest() throws Exception {
+    void packageDescriptionTest() {
         {
             var packageDesc = DispensationMapper.packagedMedicinalProductDescription(testDispensationCda("dispensations/PlRequest1.xml"));
             assertThat(packageDesc, containsString("Asubtela, film-coated tablet, 3 mg"));
@@ -306,7 +305,7 @@ class DispensationMapperTest {
 
     @ParameterizedTest
     @MethodSource("testDispensationCdas")
-    void createPharmacyEffectuationRequestTest(String xmlFileName) throws Exception {
+    void createPharmacyEffectuationRequestTest(String xmlFileName) {
         var cda = testDispensationCda(xmlFileName);
         var packageRestriction = PackageRestrictionType.builder()
             .withPackageNumber(DispensationMapper.packageNumber())

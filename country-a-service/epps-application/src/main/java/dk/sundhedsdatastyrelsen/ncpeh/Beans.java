@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
@@ -96,7 +95,6 @@ public class Beans {
             systemIdentity);
     }
 
-    /// @throws AuthenticationException if configuration is wrong
     @Bean
     public SigningCertificate signingCertificate(
         @Value("${signing-certificate-keystore.path}") String keystorePath,

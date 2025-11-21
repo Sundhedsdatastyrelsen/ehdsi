@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.w3c.dom.Document;
@@ -22,7 +21,7 @@ public class Anonymizer {
 
     /// Replace all personal information in an eDispensation with "REDACTED". Used to log failing requests.
     ///
-    /// @throws XmlException if the XML is not as expected
+    /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if the XML is not as expected
     public static String stripPersonalInformation(Document originalEDispensation) {
         var dispensation = (Document) originalEDispensation.cloneNode(true);
 
