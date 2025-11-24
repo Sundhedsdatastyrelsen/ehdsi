@@ -38,6 +38,7 @@ class CprServiceIT {
     @Test
     void getOneGoodViaServiceTest() {
         var service = new CprService(Cpr.apiClient(), TestIdentities.systemIdentity);
+        // 0611809735: valid and exists
         var result = service.findPatients(List.of("0611809735"));
         assertThat(result.getPatients(), contains(where(PatientDemographicsDto::getFamilyName, is("Babbage"))));
     }
@@ -45,6 +46,8 @@ class CprServiceIT {
     @Test
     void getBadViaServiceTest() {
         var service = new CprService(Cpr.apiClient(), TestIdentities.systemIdentity);
+        // 0909729999: valid, but doesn't exist (per 2025-11-24)
+        // 9999999999: invalid
         var result = service.findPatients(List.of("0909729999", "9999999999"));
         assertThat(result.getPatients(), empty());
     }
@@ -52,6 +55,8 @@ class CprServiceIT {
     @Test
     void getOneGoodAndOneBadViaServiceTest() {
         var service = new CprService(Cpr.apiClient(), TestIdentities.systemIdentity);
+        // 0611809735: valid and exists
+        // 0909729999: valid, but doesn't exist (per 2025-11-24)
         var result = service.findPatients(List.of("0611809735", "0909729999"));
         assertThat(result.getPatients(), contains(where(PatientDemographicsDto::getFamilyName, is("Babbage"))));
     }
