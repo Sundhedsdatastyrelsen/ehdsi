@@ -210,16 +210,11 @@ components:
       type: object
       required:
         - patients
-        - patientsNotFound
       properties:
         patients:
           type: array
           items:
             $ref: "#/components/schemas/PatientDemographics"
-        patientsNotFound:
-          type: array
-          items:
-            type: string
 
     FetchDocumentRequest:
       type: object
