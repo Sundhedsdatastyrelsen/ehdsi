@@ -20,6 +20,7 @@ import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
@@ -43,7 +44,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMetadataMappe
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRow;
-import freemarker.template.TemplateException;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.xml.bind.JAXBException;
 import lombok.NonNull;
@@ -52,8 +52,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -65,7 +63,6 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class PrescriptionService {
-    private static final String MAPPING_ERROR_MESSAGE = "Error mapping eDispensation CDA to request: %s";
     private final FmkClientIdws fmkClient;
     private final UndoDispensationRepository undoDispensationRepository;
     private final DataProvider lmsDataProvider;
@@ -182,7 +179,7 @@ public class PrescriptionService {
             };
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6));
-        } catch (MapperException | TemplateException | IOException e) {
+        } catch (MapperException | XmlException e) {
             throw new CountryAException(500, e);
         }
     }
@@ -324,7 +321,7 @@ public class PrescriptionService {
                 undoInfo.effectuationId()
             );
         } catch (MapperException e) {
-            throw new DataRequirementException(MAPPING_ERROR_MESSAGE, e);
+            throw new DataRequirementException(String.format("Error mapping eDispensation CDA to undo request: %s", e.getMessage()), e);
         }
         log.info("Requesting effectuation undo");
         UndoEffectuationResponseType undoResponse;
@@ -340,9 +337,7 @@ public class PrescriptionService {
             .mapToLong(o -> o.getEffectuation().size())
             .sum();
         if (cancelledEffectuationCount < 1) {
-            throw new CountryAException(
-                500,
-                "Error cancelling effectuation, nothing was cancelled");
+            throw new CountryAException(500, "Error cancelling effectuation, nothing was cancelled");
         }
         if (cancelledEffectuationCount > 1) {
             log.error(
@@ -399,7 +394,7 @@ public class PrescriptionService {
             } catch (JAXBException e) {
                 throw new CountryAException(500, "Abort effectuation failed", e);
             } catch (MapperException e) {
-                throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
+                throw new DataRequirementException(String.format("Error mapping eDispensation CDA to request when releasing effectuation: %s", e.getMessage()), e);
             }
         }
 
@@ -419,7 +414,7 @@ public class PrescriptionService {
             } catch (JAXBException e) {
                 throw new CountryAException(500, "CreatePharmacyEffectuation failed", e);
             } catch (MapperException e) {
-                throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
+                throw new DataRequirementException(String.format("Error mapping eDispensation CDA to request when dispensing: %s", e.getMessage()), e);
             }
         }
 
@@ -435,7 +430,7 @@ public class PrescriptionService {
             } catch (JAXBException e) {
                 throw new CountryAException(500, "StartEffectuation failed", e);
             } catch (MapperException e) {
-                throw new DataRequirementException(String.format(MAPPING_ERROR_MESSAGE, e.getMessage()), e);
+                throw new DataRequirementException(String.format("Error mapping eDispensation CDA to request when beginning dispensation: %s", e.getMessage()), e);
             }
         }
 
@@ -462,7 +457,7 @@ public class PrescriptionService {
                 if (null != dispensationAllowedError) {
                     throw new CountryAException(400, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
                 }
-            } catch (XPathExpressionException | MapperException | JAXBException e) {
+            } catch (JAXBException | MapperException | XmlException e) {
                 throw new CountryAException(500, "Could not fetch prescription to dispense", e);
             }
         }

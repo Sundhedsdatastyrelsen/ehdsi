@@ -6,8 +6,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -22,7 +20,9 @@ public class Anonymizer {
     static final String STRIPPED_STRING = "REDACTED";
 
     /// Replace all personal information in an eDispensation with "REDACTED". Used to log failing requests.
-    public static String stripPersonalInformation(Document originalEDispensation) throws XPathExpressionException, TransformerException {
+    ///
+    /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if the XML is not as expected
+    public static String stripPersonalInformation(Document originalEDispensation) {
         var dispensation = (Document) originalEDispensation.cloneNode(true);
 
         var stringsToRemove = Stream.of(
@@ -44,7 +44,7 @@ public class Anonymizer {
         return asString;
     }
 
-    private static Set<String> getPersonPii(Element personElement) throws XPathExpressionException {
+    private static Set<String> getPersonPii(Element personElement) {
         return Stream.of(
                 // id, cpr
                 xpath.evalStrings("./hl7:id/@extension", personElement),

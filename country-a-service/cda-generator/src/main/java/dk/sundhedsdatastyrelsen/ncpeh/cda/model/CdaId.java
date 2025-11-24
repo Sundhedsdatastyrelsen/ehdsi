@@ -33,7 +33,7 @@ public class CdaId {
         } else if (rootUuid != null) {
             return rootUuid.toString().toUpperCase(Locale.ROOT);
         }
-        throw new RuntimeException("invalid CdaId, should not happen");
+        throw new IllegalStateException("invalid CdaId, should not happen");
     }
 
     /// Try to get an id from a string also containing the correct root "1.2.208.176.7.2.3^123456L3" -> "123456L3". If

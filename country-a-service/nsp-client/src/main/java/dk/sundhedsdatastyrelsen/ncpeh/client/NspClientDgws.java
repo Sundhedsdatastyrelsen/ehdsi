@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -68,8 +66,7 @@ public class NspClientDgws {
                 }
                 return xpath.evalElement("/soap:Envelope/soap:Body/*[1]", responseDoc);
             }
-        } catch (IOException | XPathExpressionException | TransformerException | AuthenticationException |
-                 XmlException e) {
+        } catch (IOException | AuthenticationException | XmlException e) {
             throw new NspClientException("Nsp call failed.", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

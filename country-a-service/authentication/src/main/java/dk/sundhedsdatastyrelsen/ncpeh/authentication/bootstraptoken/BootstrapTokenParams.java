@@ -2,13 +2,13 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import lombok.Builder;
 import lombok.NonNull;
 import org.w3c.dom.Node;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,7 +36,9 @@ public record BootstrapTokenParams(
         record New(String name, String friendlyName, List<String> values) implements SamlAttribute {}
     }
 
-    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, String audience, String issuer) throws AuthenticationException {
+    /// @throws AuthenticationException if params could not be created
+    /// @throws XmlException            if attributes are missing or wrong
+    public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, String audience, String issuer) {
         try {
             Stream<SamlAttribute> attributesFromHcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
@@ -45,21 +47,17 @@ public record BootstrapTokenParams(
                 //    so we add it manually.
                 //  - The STS does not accept codeSystem="3bc18518-d305-46c2-a8d6-94bd59856e9e" for PurposeOfUse elements.
                 .map(e -> {
-                    try {
-                        // match all element-children (i.e. not text nodes) of AttributeValue
-                        var valueElement = xpath.evalElement("./saml:AttributeValue/*", e);
-                        if (valueElement != null) {
-                            // xsi:type="CE" is what the Dynamic Request Generator uses
-                            XmlUtils.setAttribute(valueElement, XmlNamespace.XSI, "type", "CE");
-                            if ("PurposeOfUse".equals(valueElement.getTagName())) {
-                                // workaround for the codeSystem bug:
-                                valueElement.setAttribute("codeSystem", "urn:oasis:names:tc:xspa:1.0");
-                            }
+                    // match all element-children (i.e. not text nodes) of AttributeValue
+                    var valueElement = xpath.evalElement("./saml:AttributeValue/*", e);
+                    if (valueElement != null) {
+                        // xsi:type="CE" is what the Dynamic Request Generator uses
+                        XmlUtils.setAttribute(valueElement, XmlNamespace.XSI, "type", "CE");
+                        if ("PurposeOfUse".equals(valueElement.getTagName())) {
+                            // workaround for the codeSystem bug:
+                            valueElement.setAttribute("codeSystem", "urn:oasis:names:tc:xspa:1.0");
                         }
-                        return e;
-                    } catch (XPathExpressionException ex) {
-                        throw new IllegalArgumentException("HCP attribute parsing failed", ex);
                     }
+                    return e;
                 })
                 .map(BootstrapTokenParams.SamlAttribute.Raw::new);
 
@@ -102,7 +100,7 @@ public record BootstrapTokenParams(
                 .nameId(xpath.evalString("saml:Subject/saml:NameID", openNcpAssertions.hcpAssertion()))
                 .attributes(attributes)
                 .build();
-        } catch (XPathExpressionException e) {
+        } catch (XmlException e) {
             throw new AuthenticationException("Error when parsing HCP assertion", e);
         }
 

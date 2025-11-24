@@ -17,15 +17,17 @@ public class PackageUnitMapper {
             HashMap<String, HashMap<String, String>> data = yaml.load(is);
             lmsPackageUnitsToEntries = data.entrySet().stream().map(kv -> {
                 var unit = kv.getValue().get("ehdsi-unit");
-                PackageUnit ehdsiUnit = unit != null
+                var ehdsiUnit = unit != null
                     ? new PackageUnit.WithCode(unit)
                     : new PackageUnit.WithTranslation(kv.getValue().get("lms15-display-name"));
                 return Map.entry(kv.getKey(), ehdsiUnit);
             }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
+
+    private PackageUnitMapper() {}
 
     /**
      * Convert a package unit code from LMS15 ("Medicinpriser") to an eHDSI Unit code.

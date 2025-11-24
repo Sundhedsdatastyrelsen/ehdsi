@@ -207,14 +207,5 @@ public sealed interface Dosage {
         public String value() {
             return value;
         }
-
-        public static EventEnum fromValue(String v) {
-            for (EventEnum ee : EventEnum.values()) {
-                if (ee.value.equals(v)) {
-                    return ee;
-                }
-            }
-            throw new IllegalArgumentException(v);
-        }
     }
 }

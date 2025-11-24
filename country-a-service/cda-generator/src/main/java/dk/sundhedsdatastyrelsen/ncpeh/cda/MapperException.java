@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-public class MapperException extends Exception {
+public class MapperException extends RuntimeException {
     public MapperException(String message) {
         super(message);
     }

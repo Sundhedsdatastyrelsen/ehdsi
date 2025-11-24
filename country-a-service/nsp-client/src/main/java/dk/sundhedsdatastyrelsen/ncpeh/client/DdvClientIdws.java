@@ -8,7 +8,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,7 +49,6 @@ public class DdvClientIdws {
      * Private
      ***********************/
 
-
     private <T, U> U makeDdvRequest(
         JAXBElement<T> request,
         String soapAction,
@@ -58,18 +56,13 @@ public class DdvClientIdws {
         EuropeanHcpIdwsToken token
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-        final Element body;
-        try {
-            body = NspClientIdws.request(
-                serviceUri,
-                ClientUtils.toElement(jaxbContext, request),
-                soapAction,
-                token,
-                this.signingKey
-            );
-        } catch (Exception e) {
-            throw new NspClientException("DDV request failed", e);
-        }
+        final var body = NspClientIdws.request(
+            serviceUri,
+            ClientUtils.toElement(jaxbContext, request),
+            soapAction,
+            token,
+            this.signingKey
+        );
         return jaxbContext.createUnmarshaller().unmarshal(body, clazz).getValue();
     }
 }

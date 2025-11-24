@@ -39,7 +39,7 @@ public class EPrescriptionPdfGenerator {
     public static byte[] generate(EPrescriptionPdf pdfModel) {
         try (var pdfDocument = initializeDocument()) {
             var pdfPage = pdfDocument.getPage(0);
-            for (PdfField field : pdfModel.getFields()) {
+            for (var field : pdfModel.getFields()) {
                 writeField(field, pdfPage, pdfDocument);
             }
             return saveBytes(pdfDocument);
@@ -81,7 +81,7 @@ public class EPrescriptionPdfGenerator {
     }
 
     private static byte[] saveBytes(PDDocument pdfDocument) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        var baos = new ByteArrayOutputStream();
         try {
             pdfDocument.save(baos);
         } catch (IOException e) {

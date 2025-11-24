@@ -2,6 +2,8 @@ package dk.sundhedsdatastyrelsen.ncpeh.optout;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OptOutServiceImpl implements OptOutService, AutoCloseable {
+    private static final Logger log = LoggerFactory.getLogger(OptOutServiceImpl.class);
     private final ObjectMapper json = new ObjectMapper();
     private final Config config;
 
@@ -29,8 +32,8 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
         this.config = config;
         try {
             this.httpClient = HttpClient.newBuilder()
-                    .sslContext(sslContext(config))
-                    .build();
+                .sslContext(sslContext(config))
+                .build();
         } catch (GeneralSecurityException | IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -64,18 +67,20 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
 
     private Map<Service, Boolean> lookup(Request request) throws IOException, InterruptedException {
         var resp = httpClient.send(
-                HttpRequest.newBuilder()
-                        .uri(URI.create(config.host()).resolve("/api/lookup"))
-                        .headers(
-                                "Accept", "application/json",
-                                "Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(request)))
-                        .build(),
-                HttpResponse.BodyHandlers.ofString());
+            HttpRequest.newBuilder()
+                .uri(URI.create(config.host()).resolve("/api/lookup"))
+                .headers(
+                    "Accept", "application/json",
+                    "Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(request)))
+                .build(),
+            HttpResponse.BodyHandlers.ofString());
 
         if (resp.statusCode() != 200) {
-            throw new OptOutServiceException("Bad response from opt-out lookup service. Response code: %s. Body: %s"
-                    .formatted(resp.statusCode(), resp.body()));
+            if (log.isErrorEnabled()) {
+                log.error("Bad response from opt-out lookup service. Response code: {}. Body: {}", resp.statusCode(), resp.body());
+            }
+            throw new OptOutServiceException("Error when looking up if citizen has opted out.");
         }
 
         return json.readValue(resp.body(), new TypeReference<>() {});
@@ -104,14 +109,15 @@ public class OptOutServiceImpl implements OptOutService, AutoCloseable {
         return sslContext;
     }
 
+    /// For testing
     @SuppressWarnings("java:S106") // don't complain about System.out.println
     public static void main(String... args) {
         try (var oo = new OptOutServiceImpl(new Config(
-                "https://localhost:8444",
-                "opt-out/src/test/resources/opt-out-keystore.p12",
-                "changeit",
-                "opt-out/src/test/resources/opt-out-truststore.p12",
-                "changeit"))) {
+            "https://localhost:8444",
+            "opt-out/src/test/resources/opt-out-keystore.p12",
+            "changeit",
+            "opt-out/src/test/resources/opt-out-truststore.p12",
+            "changeit"))) {
             System.out.println(oo.hasOptedOut("0101019999", Service.PATIENT_SUMMARY));
         }
     }
