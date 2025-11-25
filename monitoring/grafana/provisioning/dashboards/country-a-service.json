@@ -105,7 +105,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(http_server_requests_seconds_count{job=\"country-a-service\"}[5m])",
+          "expr": "rate(http_server_requests_seconds_count{job=\"national-connector\"}[5m])",
           "range": true,
           "refId": "A"
         }
@@ -196,7 +196,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(http_server_requests_seconds_sum{job=\"country-a-service\"}[5m]) / rate(http_server_requests_seconds_count{job=\"country-a-service\"}[5m])",
+          "expr": "rate(http_server_requests_seconds_sum{job=\"national-connector\"}[5m]) / rate(http_server_requests_seconds_count{job=\"national-connector\"}[5m])",
           "refId": "A"
         }
       ],

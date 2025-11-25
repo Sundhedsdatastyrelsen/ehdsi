@@ -17,7 +17,7 @@ import jakarta.xml.ws.WebServiceFeature;
  * Generated source version: 3.0
  * 
  */
-@WebServiceClient(name = "VaccinationsIdwsService", targetNamespace = "http://vaccinationsregister.dk/schemas/2013/12/01", wsdlLocation = "file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/wsdl/vaccinationsServiceIDWS_Xua_2013-12-01.wsdl")
+@WebServiceClient(name = "VaccinationsIdwsService", targetNamespace = "http://vaccinationsregister.dk/schemas/2013/12/01", wsdlLocation = "file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/wsdl/vaccinationsServiceIDWS_Xua_2013-12-01.wsdl")
 public class VaccinationsIdwsService
     extends Service
 {
@@ -30,7 +30,7 @@ public class VaccinationsIdwsService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/wsdl/vaccinationsServiceIDWS_Xua_2013-12-01.wsdl");
+            url = new URL("file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/wsdl/vaccinationsServiceIDWS_Xua_2013-12-01.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

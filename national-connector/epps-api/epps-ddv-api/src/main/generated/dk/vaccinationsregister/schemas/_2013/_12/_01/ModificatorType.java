@@ -84,8 +84,8 @@ public class ModificatorType {
      * <p>
      * You are getting this "catch-all" property because of the following reason: 
      * The field name "Organisation" is used by two different parts of a schema. See: 
-     * line 33 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
-     * line 26 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
+     * line 33 of file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
+     * line 26 of file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
      * <p>
      * To get rid of this property, apply a property customization to one 
      * of both of the following declarations to change their names:Gets the value of the content property.

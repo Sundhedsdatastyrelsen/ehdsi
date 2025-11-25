@@ -4,7 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
 import dk.sundhedsdatastyrelsen.ncpeh.api.DefaultApi;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.Gender;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientsRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.NationalConnectorService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
@@ -115,7 +115,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         return result;
     }
 
-    static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader, DefaultApi countryAApi) throws NIException {
+    static List<PatientDemographics> getPatientDemographicsFromCountryA(List<PatientId> patientIds, Element soapHeader, DefaultApi nationalConnectorApi) throws NIException {
         try {
             // We only accept patient ids with root "1.2.208.176.1.2", otherwise we throw.
             final var pidsValidInvalid = patientIds.stream().collect(Collectors.partitioningBy(pid -> "1.2.208.176.1.2".equals(
@@ -130,7 +130,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
                 .soapHeader(Utils.elementToString(soapHeader))
                 .patientIds(cprNumbers);
             logger.info("Retrieving patient demographics from Country A service...");
-            final var response = countryAApi.postFindPatients(request);
+            final var response = nationalConnectorApi.postFindPatients(request);
             logger.info("Successfully retrieved patient demographics from Country A service.");
             return response.getPatients().stream()
                 .map(PatientSearch::toEpsosPatient)
@@ -145,7 +145,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
 
     @Override
     public List<PatientDemographics> getPatientDemographics(List<PatientId> patientIds) throws NIException {
-        return getPatientDemographicsFromCountryA(patientIds, this.soapHeader, CountryAService.api());
+        return getPatientDemographicsFromCountryA(patientIds, this.soapHeader, NationalConnectorService.api());
     }
 
     @Override
@@ -161,7 +161,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
             var foo = getPatientDemographicsFromCountryA(
                 List.of(new PatientId("1.2.208.176.1.2", "1111111118")),
                 XmlUtil.parseContent("<SomeXml/>").getDocumentElement(),
-                CountryAService.api());
+                NationalConnectorService.api());
             return;
         } catch (NIException e) {
             throw new RuntimeException(e);

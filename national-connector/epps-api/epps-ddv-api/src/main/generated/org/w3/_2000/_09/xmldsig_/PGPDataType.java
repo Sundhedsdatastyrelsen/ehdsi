@@ -65,8 +65,8 @@ public class PGPDataType {
      * <p>
      * You are getting this "catch-all" property because of the following reason: 
      * The field name "PGPKeyPacket" is used by two different parts of a schema. See: 
-     * line 208 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas-idws/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
-     * line 203 of file:/Users/hansbugge/gtsrc/sds/ehdsi/country-a-service/epps-api/epps-ddv-api/src/main/resources/ddv/schemas-idws/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
+     * line 208 of file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas-idws/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
+     * line 203 of file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas-idws/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
      * <p>
      * To get rid of this property, apply a property customization to one 
      * of both of the following declarations to change their names:Gets the value of the content property.

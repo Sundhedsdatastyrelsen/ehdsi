@@ -7,10 +7,10 @@ networks:
     external: true
 
 services:
-  epps-country-a:
-    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest
+  national-connector:
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:latest
     build: .
-    container_name: country-a-service
+    container_name: national-connector
     restart: unless-stopped
     ports:
       - "4443:4443"
@@ -18,9 +18,9 @@ services:
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
       SPRING_PROFILES_ACTIVE: "docker"
-      COUNTRY_A_CERTIFICATE_ALIAS: "${COUNTRY_A_CERTIFICATE_ALIAS}"
-      COUNTRY_A_KEYSTORE_LOCATION: "${COUNTRY_A_KEYSTORE_LOCATION}"
-      OTEL_SERVICE_NAME: "country-a-service"
+      NC_CERTIFICATE_ALIAS: "${NC_CERTIFICATE_ALIAS}"
+      NC_KEYSTORE_LOCATION: "${NC_KEYSTORE_LOCATION}"
+      OTEL_SERVICE_NAME: "national-connector"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
@@ -30,14 +30,14 @@ services:
       OTEL_LOGS_EXPORTER: "none"
       OTEL_PROPAGATORS: "tracecontext,baggage"
       PYROSCOPE_SERVER_ADDRESS: "http://pyroscope:4040"
-      PYROSCOPE_APPLICATION_NAME: "country-a-service"
+      PYROSCOPE_APPLICATION_NAME: "national-connector"
 
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
       # Secrets are mounted directly to specific paths, since this allows us to use the configtree method to read them into the config.
-      - ./secrets/COUNTRY_A_KEYSTORE_PASSWORD:/run/secrets/server/ssl/key-store-password:ro
-      - ./secrets/COUNTRY_A_KEY_PASSWORD:/run/secrets/server/ssl/key-password:ro
+      - ./secrets/NC_KEYSTORE_PASSWORD:/run/secrets/server/ssl/key-store-password:ro
+      - ./secrets/NC_KEY_PASSWORD:/run/secrets/server/ssl/key-password:ro
       - ./secrets/SOSI_KEYSTORE_PASSWORD:/run/secrets/signing-certificate-keystore/password:ro
       - ./secrets/LMSFTP_USERNAME:/run/secrets/lmsftp/username:ro
       - ./secrets/LMSFTP_PASSWORD:/run/secrets/lmsftp/password:ro

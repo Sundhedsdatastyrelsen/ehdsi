@@ -6,7 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.api.model.ClassCode;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.DiscardDispensationRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.EpsosDocument;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.SubmitDispensationRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.NationalConnectorService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
@@ -30,7 +30,7 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
     @Override
     public void submitDispensation(EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
         try {
-            CountryAService.api().submitDispensation(new SubmitDispensationRequest()
+            NationalConnectorService.api().submitDispensation(new SubmitDispensationRequest()
                     .soapHeader(Utils.elementToString(soapHeader))
                     .patientId(epsosDocument.getPatientId())
                     .classCode(Utils.classCode(epsosDocument.getClassCode()))
@@ -63,7 +63,7 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
     @Override
     public void cancelDispensation(DiscardDispenseDetails discardDispenseDetails, EPSOSDocument epsosDocument) throws NIException, InsufficientRightsException {
         try {
-            CountryAService.api().discardDispensation(new DiscardDispensationRequest()
+            NationalConnectorService.api().discardDispensation(new DiscardDispensationRequest()
                     .soapHeader(Utils.elementToString(soapHeader))
                     .discardDispenseDetails(apiModel(discardDispenseDetails))
                     .dispensationToDiscard(apiModel(epsosDocument)));
@@ -79,7 +79,7 @@ public class DocumentSubmit implements NationalConnectorInterface, DocumentSubmi
 
     public static void main(String[] args) {
         try {
-            var res = CountryAService.api().submitDispensationWithHttpInfo(new SubmitDispensationRequest()
+            var res = NationalConnectorService.api().submitDispensationWithHttpInfo(new SubmitDispensationRequest()
                     .patientId("0101010101")
                     .classCode(ClassCode._60593_1)
                     .document("<dummy/>")

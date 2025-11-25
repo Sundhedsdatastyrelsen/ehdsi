@@ -16,7 +16,7 @@ server:
   ssl:
     key-store: config/dev-keystore.jks
     key-store-password: Test.1234
-    key-alias: epps-country-a
+    key-alias: national-connector
     key-password: Test.1234
 
 # The certificate used for signing our requests to the national services.

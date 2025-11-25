@@ -32,7 +32,7 @@ jobs:
               git clone https://github.com/Sundhedsdatastyrelsen/ehdsi.git /var/ehdsi
             fi
 
-            cd /var/ehdsi/country-a-service
+            cd /var/ehdsi/national-connector
 
             # 2. Log in to GitHub Container Registry
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
