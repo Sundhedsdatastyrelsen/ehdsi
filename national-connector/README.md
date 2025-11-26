@@ -2,9 +2,11 @@
 
 This service exposes a REST API which can be called by the OpenNCP national connector.
 
+The national connector used to be called "country a service", some traces of that might still linger.
+
 ## Setup
 
-- Remember to let the usert ID (10001:10001) own the /data directory, so it can create the SQLite databases
+- Remember to let the user ID (10001:10001) own the /data directory, so it can create the SQLite databases
 
 ## Certificates
 The certificates for calling the opt-out service needs to match the DNS name of the opt out server, otherwise Java
