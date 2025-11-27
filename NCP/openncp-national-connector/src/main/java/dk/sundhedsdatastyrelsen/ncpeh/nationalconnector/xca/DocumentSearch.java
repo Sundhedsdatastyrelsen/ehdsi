@@ -4,7 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindEPrescriptionDocumentsRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientSummaryDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.CountryAService;
+import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.NationalConnectorService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import eu.europa.ec.sante.openncp.common.ClassCode;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
@@ -33,7 +33,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
 
     static EPSOSDocument getDocumentFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
         try {
-            logger.info("Retrieving document from Country A service...");
+            logger.info("Retrieving document from national connector service...");
             final var request = new PostFetchDocumentRequest()
                 .patientId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.PATIENT_ID))
                 .repositoryId(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.REPOSITORY_ID))
@@ -43,7 +43,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                 .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
                 .soapHeader(Utils.elementToString(soapHeader));
 
-            final var docs = CountryAService.api().postFetchDocument(request);
+            final var docs = NationalConnectorService.api().postFetchDocument(request);
             if (docs.isEmpty()) {
                 logger.info("Empty response from Country A service.");
                 return null;
@@ -88,7 +88,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                 .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
                 .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
                 .soapHeader(Utils.elementToString(soapHeader));
-            final var md = CountryAService.api().postFindPatientSummaryDocument(request);
+            final var md = NationalConnectorService.api().postFindPatientSummaryDocument(request);
             logger.info("Got well-formed response from Country A service.");
             final var l3 = md.getLevel3();
             // TODO L1 should not be the same as L3, fix once we've implemented L1
@@ -142,7 +142,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                 .createdBefore(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_BEFORE)))
                 .createdAfter(Utils.parseOffsetDateTime(searchCriteria.getCriteriaValue(SearchCriteria.Criteria.CREATED_AFTER)))
                 .soapHeader(Utils.elementToString(soapHeader));
-            final var result = CountryAService.api().postFindEPrescriptionDocuments(request);
+            final var result = NationalConnectorService.api().postFindEPrescriptionDocuments(request);
             logger.info("Got well-formed response from Country A service.");
             return result.stream()
                 .map(md -> DocumentFactory.createDocumentAssociation(

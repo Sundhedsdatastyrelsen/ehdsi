@@ -3,9 +3,9 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'country-a-service'
+  - job_name: 'national-connector'
     static_configs:
-      - targets: ['epps-country-a:9464']
+      - targets: ['national-connector:9464']
 
   - job_name: 'openncp-server'
     static_configs:

@@ -5,7 +5,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'country-a-service/**'
+      - 'national-connector/**'
     tags:
   workflow_dispatch:
 
@@ -15,7 +15,7 @@ env:
   AZURE_REGISTRY: eppsregistry.azurecr.io
 
 jobs:
-  build-country-a-service:
+  build-national-connector:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,23 +38,23 @@ jobs:
 
     - name: Generate docker-bake.hcl
       run: |
-        cat > country-a-service/docker-bake.hcl <<EOL
+        cat > national-connector/docker-bake.hcl <<EOL
         group "default" {
-          targets = ["epps-country-a"]
+          targets = ["national-connector"]
         }
 
-        target "epps-country-a" {
+        target "national-connector" {
           dockerfile = "Dockerfile"
           platforms = ["linux/amd64"]
           cache-from = [
-            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:cache"
           ]
           cache-to = [
-            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:cache"
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:cache"
           ]
           tags = [
-            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:latest",
-            "ghcr.io/sundhedsdatastyrelsen/ehdsi/epps-country-a:build-${{ github.run_number }}"
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:latest",
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:build-${{ github.run_number }}"
           ]
           output = [
             "type=image,push=true"
@@ -65,5 +65,5 @@ jobs:
     # https://stackoverflow.com/a/75544124
     - name: Build and push images
       run: |
-        cd country-a-service
+        cd national-connector
         docker buildx bake --file docker-bake.hcl --push

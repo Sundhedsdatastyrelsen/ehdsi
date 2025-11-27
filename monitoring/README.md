@@ -57,5 +57,5 @@ Tools for application performance profiling and flamegraphs.
 
 Pyroscope is a backend for collecting and visualizing profiling data.
 
-We are only interested in profiling our own code, so we only enable profiling on country-a-service.
+We are only interested in profiling our own code, so we only enable profiling on national-connector.
 Here we use a Pyroscope extension to the OpenTelemetry Java Agent to push profiling data to Pyroscope.
