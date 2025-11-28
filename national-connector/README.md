@@ -12,6 +12,8 @@ The national connector used to be called "country a service", some traces of tha
 The certificates for calling the opt-out service needs to match the DNS name of the opt out server, otherwise Java
 won't recognize it. SANs don't work.
 
+See [../docs/certificates.md](../docs/certificates.md) for how to generate and update certificates.
+
 ## Developer guidelines
 
 - Write in a mostly functional style. Prefer static methods, use filter and map, avoid unnecessary state, prefer
