@@ -27,10 +27,8 @@ public class ConfigurationValidator {
             "app.fmk.endpoint.url",
             "app.fsk.endpoint.url",
             "app.minlog.endpoint.url",
-            "server.ssl.key-alias",
-            "server.ssl.key-password",
-            "server.ssl.key-store",
-            "server.ssl.key-store-password"
+            "server.ssl.certificate",
+            "server.ssl.certificate-private-key"
         );
         for (var key : nonBlankVals) {
             var value = env.getProperty(key);

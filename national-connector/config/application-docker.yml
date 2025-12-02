@@ -3,8 +3,3 @@ spring:
     import: "optional:configtree:/run/secrets/"
     activate:
       on-profile: docker
-
-server:
-  ssl:
-    key-store: ${NC_KEYSTORE_LOCATION}
-    key-alias: ${NC_CERTIFICATE_ALIAS}

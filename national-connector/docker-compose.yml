@@ -18,8 +18,6 @@ services:
     environment:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
       SPRING_PROFILES_ACTIVE: "docker"
-      NC_CERTIFICATE_ALIAS: "${NC_CERTIFICATE_ALIAS}"
-      NC_KEYSTORE_LOCATION: "${NC_KEYSTORE_LOCATION}"
       OTEL_SERVICE_NAME: "national-connector"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
@@ -36,8 +34,8 @@ services:
       - ./config:/app/config:ro
       - ./data:/app/data
       # Secrets are mounted directly to specific paths, since this allows us to use the configtree method to read them into the config.
-      - ./secrets/NC_KEYSTORE_PASSWORD:/run/secrets/server/ssl/key-store-password:ro
-      - ./secrets/NC_KEY_PASSWORD:/run/secrets/server/ssl/key-password:ro
+      - ./secrets/NC_NCP_CERTIFICATE:/run/secrets/server/ssl/certificate:ro
+      - ./secrets/NC_NCP_PRIVATE_KEY:/run/secrets/server/ssl/certificate-private-key:ro
       - ./secrets/SOSI_KEYSTORE_PASSWORD:/run/secrets/signing-certificate-keystore/password:ro
       - ./secrets/LMSFTP_USERNAME:/run/secrets/lmsftp/username:ro
       - ./secrets/LMSFTP_PASSWORD:/run/secrets/lmsftp/password:ro
