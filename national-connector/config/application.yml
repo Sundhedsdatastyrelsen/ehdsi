@@ -11,6 +11,8 @@ spring:
     enabled: true
     locations: "classpath:db/migration"
 
+# This is automatically picked up by Spring boot.
+# See https://docs.spring.io/spring-boot/how-to/webserver.html#howto.webserver.configure-ssl
 server:
   port: 4443
   ssl:
@@ -19,7 +21,7 @@ server:
     key-alias: national-connector
     key-password: Test.1234
 
-# The certificate used for signing our requests to the national services.
+# The certificate used for signing our requests to the national services. Picked up in Beans.java.
 signing-certificate-keystore:
   path: "data/epps-sosi-sts-client.jks"
   alias: "epps-sosi-sts-client"
