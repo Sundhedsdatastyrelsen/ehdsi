@@ -16,10 +16,8 @@ spring:
 server:
   port: 4443
   ssl:
-    key-store: config/dev-keystore.jks
-    key-store-password: Test.1234
-    key-alias: national-connector
-    key-password: Test.1234
+    certificate: "config/dev-ncp-ssl.crt"
+    certificate-private-key: "config/dev-ncp-ssl.key"
 
 # The certificate used for signing our requests to the national services. Picked up in Beans.java.
 signing-certificate-keystore:
