@@ -21,6 +21,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.StartEffectuationRequest
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e5.UndoEffectuationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.StartEffectuationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
@@ -584,7 +585,7 @@ public class DispensationMapper {
                 ? root
                 : root + "^^^" + ext;
         } catch (XmlException e) {
-            throw new MapperException(e.getMessage(), e);
+            throw new PublicException(400, "CDA ID malformed.", e);
         }
     }
 

@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 
 import java.util.regex.Pattern;
 
@@ -24,7 +24,7 @@ public final class PatientIdMapper {
      * Extracts the CPR from a patientId. This method is quite forgiving as it accepts id with and without
      * root extension.
      *
-     * @throws DataRequirementException if the id is not a CPR number
+     * @throws PublicException if the id is not a CPR number
      */
     public static String toCpr(String patientId) {
         if (patientId == null) {
@@ -33,7 +33,7 @@ public final class PatientIdMapper {
 
         var matcher = patientIdPattern.matcher(patientId);
         if (!matcher.matches()) {
-            throw new DataRequirementException("The patient identifier doesn't match any of the expected patterns");
+            throw new PublicException(400, "The patient identifier doesn't match any of the expected patterns");
         }
         return matcher.group(1).replace("-", "");
     }

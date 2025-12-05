@@ -136,10 +136,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
                 .map(PatientSearch::toEpsosPatient)
                 .collect(Collectors.toList());
         } catch (ApiException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_PI_GENERIC, e.getCode() > 0
-                ? String.format("Error, status: %s body: %s", e.getCode(), e.getResponseBody())
-                : "Missing response from service"
-            );
+            throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_PI_GENERIC);
         }
     }
 

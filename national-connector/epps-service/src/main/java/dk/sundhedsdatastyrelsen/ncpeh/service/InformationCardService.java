@@ -1,11 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.tuple.Pair;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
@@ -94,7 +94,8 @@ public class InformationCardService {
                 .map(identifiable -> identifiable.getValue().getId())
                 .toList();
         } catch (JAXBException e) {
-            throw new CountryAException(500, e);
+            // TODO exception text
+            throw new PublicException(500, e);
         }
     }
 
@@ -120,9 +121,11 @@ public class InformationCardService {
                 .orElse(null);
             return documentBytes == null ? null : XmlUtils.parse(new ByteArrayInputStream(documentBytes));
         } catch (IllegalArgumentException e) {
-            throw new CountryAException(400, e);
+            // TODO exception text
+            throw new PublicException(400, e);
         } catch (JAXBException | XmlException e) {
-            throw new CountryAException(500, e);
+            // TODO exception text
+            throw new PublicException(500, e);
         }
     }
 
