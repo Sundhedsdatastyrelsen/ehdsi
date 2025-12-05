@@ -1,6 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector;
 
+import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.ClassCode;
+import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
+import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.OutputKeys;
@@ -53,5 +56,12 @@ public class Utils {
 
     public static OffsetDateTime parseOffsetDateTime(String s) {
         return s == null ? null : OffsetDateTime.parse(s);
+    }
+
+    public static NIException restErrorToNcpException(ApiException apiError, OpenNCPErrorCode errorCode) {
+        return new NIException(errorCode, apiError.getCode() > 0
+                ? String.format("Error, status: %s body: %s", apiError.getCode(), apiError.getResponseBody())
+                : "Missing response from service"
+            );
     }
 }
