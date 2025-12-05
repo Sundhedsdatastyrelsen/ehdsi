@@ -19,6 +19,7 @@ import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
@@ -36,8 +37,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.DispensationMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.EPrescriptionMetadataMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
@@ -117,7 +116,7 @@ public class PrescriptionService {
         public static PrescriptionFilter fromRootedId(String rootedDocumentId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
             var documentId = CdaId.fromDocumentId(rootedDocumentId);
             if (documentId != null && documentId.getRootOid() != Oid.DK_EPRESCRIPTION_REPOSITORY_ID) {
-                throw new CountryAException(400, "Document repository in document ID is not ePrescription.");
+                throw new PublicException(400, "Document repository in document ID is not ePrescription.");
             }
             return new PrescriptionFilter(
                 Optional.ofNullable(documentId)
@@ -160,7 +159,7 @@ public class PrescriptionService {
                 .filter(Objects::nonNull)
                 .toList();
         } catch (JAXBException e) {
-            throw new CountryAException(500, e);
+            throw new PublicException(500, "Failed to read prescriptions.", e);
         }
     }
 
@@ -168,7 +167,7 @@ public class PrescriptionService {
     public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
         var input = assembleEPrescriptionInput(patientId, filter, token).findFirst().orElse(null);
         if (input == null) {
-            throw new CountryAException(404, "Requested prescription not found.");
+            throw new PublicException(404, "Requested prescription not found.");
         }
         try {
             var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
@@ -179,7 +178,7 @@ public class PrescriptionService {
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._57833_6));
         } catch (MapperException | XmlException e) {
-            throw new CountryAException(500, e);
+            throw new PublicException(500, "Failed to get prescription.", e);
         }
     }
 
@@ -201,35 +200,33 @@ public class PrescriptionService {
             var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, token);
 
             return validPrescriptions.stream().map(pair -> {
-                try {
-                    var prescription = pair.getRight();
-                    var packageInfo = Optional.ofNullable(prescription.getPackageRestriction())
-                        .map(PackageRestrictionType::getPackageNumber)
-                        .map(PackageNumberType::getValue)
-                        .map(lmsDataProvider::packageInfo);
-                    var manufacturerOrganizationName = Optional.ofNullable(prescription.getDrug().getIdentifier())
-                        .map(DrugIdentifierType::getValue)
-                        .map(lmsDataProvider::manufacturerOrganizationName);
-                    var authorizations = authorizationRegistryCache.get(
-                        EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription)
-                            .getAuthorisationIdentifier(),
-                        id -> getAuthorizationByIdentifierCode(id, systemIdentity)
-                            .getAutorisation());
+                var prescription = pair.getRight();
+                var packageInfo = Optional.ofNullable(prescription.getPackageRestriction())
+                    .map(PackageRestrictionType::getPackageNumber)
+                    .map(PackageNumberType::getValue)
+                    .map(lmsDataProvider::packageInfo);
+                var manufacturerOrganizationName = Optional.ofNullable(prescription.getDrug().getIdentifier())
+                    .map(DrugIdentifierType::getValue)
+                    .map(lmsDataProvider::manufacturerOrganizationName);
+                var authorizations = authorizationRegistryCache.get(
+                    EPrescriptionL3Mapper.getAuthorizedHealthcareProfessional(prescription)
+                        .getAuthorisationIdentifier(),
+                    id -> getAuthorizationByIdentifierCode(id, systemIdentity)
+                        .getAutorisation());
 
-                    return new EPrescriptionL3Input(
-                        fmkResponse,
-                        pair.getLeft(),
-                        drugMedications,
-                        Optional.ofNullable(authorizations).orElse(List.of()),
-                        packageInfo.map(PackageInfo::packageFormCode).orElse(null),
-                        packageInfo.map(PackageInfo::numberOfSubPackages).orElse(null),
-                        manufacturerOrganizationName.orElse(null));
-                } catch (MapperException e) {
-                    throw new CountryAException(500, "Could not get packageFormCode.");
-                }
+                return new EPrescriptionL3Input(
+                    fmkResponse,
+                    pair.getLeft(),
+                    drugMedications,
+                    Optional.ofNullable(authorizations).orElse(List.of()),
+                    packageInfo.map(PackageInfo::packageFormCode).orElse(null),
+                    packageInfo.map(PackageInfo::numberOfSubPackages).orElse(null),
+                    manufacturerOrganizationName.orElse(null));
             });
         } catch (JAXBException e) {
-            throw new CountryAException(500, "Could not retrieve prescriptions from FMK");
+            throw new PublicException(500, "Could not retrieve prescription.", e);
+        } catch (MapperException e) {
+            throw new PublicException(500, "Could not produce CDA prescription.", e);
         }
     }
 
@@ -237,7 +234,7 @@ public class PrescriptionService {
         try {
             return authorizationRegistry.requestByAuthorizationCode(authorizationIdentifier, caller);
         } catch (JAXBException e) {
-            throw new CountryAException(500, "Could not get authorizationType.");
+            throw new PublicException(500, "Could not get prescriber's specializations.", e);
         }
     }
 
@@ -249,7 +246,7 @@ public class PrescriptionService {
     @WithSpan
     public void submitDispensation(@NonNull String patientId, @NonNull Document dispensationCda, EuropeanHcpIdwsToken token, boolean forceDispensationError) {
         var helper = new SubmitDispensationHelper();
-        var eDispensationCdaId = SubmitDispensationHelper.getEDispensationId(dispensationCda);
+        var eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
 
         // Get the prescription from FMK to check that we can dispense it.
         helper.validateDispensable(patientId, dispensationCda, token);
@@ -296,16 +293,11 @@ public class PrescriptionService {
 
     @WithSpan
     public void undoDispensation(@NonNull String patientId, Document cdaToDiscard, EuropeanHcpIdwsToken token) {
-        String eDispensationCdaId;
-        try {
-            eDispensationCdaId = DispensationMapper.cdaId(cdaToDiscard);
-        } catch (MapperException e) {
-            throw new DataRequirementException("Invalid CDA ID value", e);
-        }
+        var eDispensationCdaId = DispensationMapper.cdaId(cdaToDiscard);
         var undoInfo = undoDispensationRepository.findByCdaId(eDispensationCdaId);
 
         if (undoInfo == null) {
-            throw new CountryAException(404, "No undo information found for given eDispensation CDA id");
+            throw new PublicException(404, "No undo information found for given eDispensation CDA id.");
         }
 
         UndoEffectuationRequestType undoEffectuationRequest;
@@ -317,14 +309,14 @@ public class PrescriptionService {
                 undoInfo.effectuationId()
             );
         } catch (MapperException e) {
-            throw new DataRequirementException(String.format("Error mapping eDispensation CDA to undo request: %s", e.getMessage()), e);
+            throw new PublicException(500, "Failed to undo, could not create undo request.", e);
         }
         log.info("Requesting effectuation undo");
         UndoEffectuationResponseType undoResponse;
         try {
             undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, token);
         } catch (JAXBException e) {
-            throw new CountryAException(500, "UndoEffectuation call to FMK failed", e);
+            throw new PublicException(500, "Failed to undo, error from national infrastructure.", e);
         }
 
         var cancelledEffectuationCount = undoResponse.getPrescription()
@@ -333,7 +325,7 @@ public class PrescriptionService {
             .mapToLong(o -> o.getEffectuation().size())
             .sum();
         if (cancelledEffectuationCount < 1) {
-            throw new CountryAException(500, "Error cancelling effectuation, nothing was cancelled");
+            throw new PublicException(500, "Error cancelling effectuation, nothing was cancelled in response from national infrastructure.");
         }
         if (cancelledEffectuationCount > 1) {
             log.error(
@@ -387,10 +379,8 @@ public class PrescriptionService {
                 fmkClient.abortEffectuation(
                     DispensationMapper.abortEffectuationRequest(startEffectuation.request(), startEffectuation.response()),
                     token);
-            } catch (JAXBException e) {
-                throw new CountryAException(500, "Abort effectuation failed", e);
-            } catch (MapperException e) {
-                throw new DataRequirementException(String.format("Error mapping eDispensation CDA to request when releasing effectuation: %s", e.getMessage()), e);
+            } catch (JAXBException | MapperException e) {
+                throw new PublicException(500, "Failed to release lock on prescription.", e);
             }
         }
 
@@ -407,10 +397,8 @@ public class PrescriptionService {
                     startEffectuationResponse);
                 var effectuationResponse = fmkClient.createPharmacyEffectuation(createEffectuationRequest, token);
                 return new ReqRes<>(createEffectuationRequest, effectuationResponse);
-            } catch (JAXBException e) {
-                throw new CountryAException(500, "CreatePharmacyEffectuation failed", e);
-            } catch (MapperException e) {
-                throw new DataRequirementException(String.format("Error mapping eDispensation CDA to request when dispensing: %s", e.getMessage()), e);
+            } catch (JAXBException | MapperException e) {
+                throw new PublicException(500, "Failed to dispense prescription.", e);
             }
         }
 
@@ -423,10 +411,8 @@ public class PrescriptionService {
                 var startEffectuationRequest = DispensationMapper.startEffectuationRequest(patientId, dispensationCda);
                 var startEffectuationResponse = fmkClient.startEffectuation(startEffectuationRequest, token);
                 return new ReqRes<>(startEffectuationRequest, startEffectuationResponse);
-            } catch (JAXBException e) {
-                throw new CountryAException(500, "StartEffectuation failed", e);
-            } catch (MapperException e) {
-                throw new DataRequirementException(String.format("Error mapping eDispensation CDA to request when beginning dispensation: %s", e.getMessage()), e);
+            } catch (JAXBException | MapperException e) {
+                throw new PublicException(500, "Failed to lock prescription.", e);
             }
         }
 
@@ -444,28 +430,18 @@ public class PrescriptionService {
                     .stream()
                     .filter(p -> p.getIdentifier() == prescriptionId)
                     .findFirst()
-                    .orElseThrow(() -> new CountryAException(404, "Could not find prescription to dispense"));
+                    .orElseThrow(() -> new PublicException(404, "Could not find prescription to dispense."));
                 var dispensationAllowedError = DispensationAllowed.getDispensationRestrictions(
                     prescription,
                     lmsDataProvider.packageInfo(prescription.getPackageRestriction()
                         .getPackageNumber()
                         .getValue()));
                 if (null != dispensationAllowedError) {
-                    throw new CountryAException(400, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
+                    throw new PublicException(400, "Prescription is not allowed to be dispensed. " + dispensationAllowedError);
                 }
             } catch (JAXBException | MapperException | XmlException e) {
-                throw new CountryAException(500, "Could not fetch prescription to dispense", e);
+                throw new PublicException(500, "Could not fetch prescription to dispense.", e);
             }
-        }
-
-        private static String getEDispensationId(Document dispensationCda) {
-            String eDispensationCdaId;
-            try {
-                eDispensationCdaId = DispensationMapper.cdaId(dispensationCda);
-            } catch (MapperException e) {
-                throw new DataRequirementException("Invalid CDA ID value", e);
-            }
-            return eDispensationCdaId;
         }
     }
 }
