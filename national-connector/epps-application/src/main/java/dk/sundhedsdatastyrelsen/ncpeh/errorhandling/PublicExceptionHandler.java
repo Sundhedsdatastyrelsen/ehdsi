@@ -24,7 +24,12 @@ public class PublicExceptionHandler {
 
         var errorUuid = UUID.randomUUID();
 
-        var details = new ErrorDto(httpStatus.name(), String.format("Error id: %s", errorUuid));
+        var details = new ErrorDto(
+            httpStatus.name(),
+            String.format(
+                "%s Error id: %s",
+                e.getMessage().endsWith(".") ? e.getMessage() : (e.getMessage() + "."),
+                errorUuid));
 
         if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
             log.error(
