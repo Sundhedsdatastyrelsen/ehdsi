@@ -1,10 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
-import lombok.Getter;
-
-@Getter
 public class PublicException extends RuntimeException {
     private final int httpCode;
+
+    public int getHttpCode() {
+        return httpCode;
+    }
 
     /// The http code will be 500.
     public PublicException(String message) {
