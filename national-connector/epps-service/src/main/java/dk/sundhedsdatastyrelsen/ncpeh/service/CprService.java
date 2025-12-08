@@ -45,9 +45,9 @@ public class CprService {
                     return null;
                 }
             }
-            throw new PublicException(503, "CPR service unavailable", e);
+            throw new PublicException(503, "Error from citizen lookup service", e);
         } catch (Exception e) {
-            throw new PublicException(503, "CPR service unavailable", e);
+            throw new PublicException(503, "Unable to connect to citizen lookup service", e);
         }
     }
 

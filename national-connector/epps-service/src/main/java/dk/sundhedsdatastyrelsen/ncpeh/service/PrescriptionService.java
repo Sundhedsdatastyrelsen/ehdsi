@@ -297,7 +297,7 @@ public class PrescriptionService {
         var undoInfo = undoDispensationRepository.findByCdaId(eDispensationCdaId);
 
         if (undoInfo == null) {
-            throw new PublicException(404, "No undo information found for given eDispensation CDA id.");
+            throw new PublicException(404, "No undo information found for the given eDispensation.");
         }
 
         UndoEffectuationRequestType undoEffectuationRequest;
@@ -316,7 +316,7 @@ public class PrescriptionService {
         try {
             undoResponse = fmkClient.undoEffectuation(undoEffectuationRequest, token);
         } catch (JAXBException e) {
-            throw new PublicException(500, "Failed to undo, error from national infrastructure.", e);
+            throw new PublicException(500, "Failed to undo dispensation, error from national infrastructure.", e);
         }
 
         var cancelledEffectuationCount = undoResponse.getPrescription()
@@ -325,7 +325,9 @@ public class PrescriptionService {
             .mapToLong(o -> o.getEffectuation().size())
             .sum();
         if (cancelledEffectuationCount < 1) {
-            throw new PublicException(500, "Error cancelling effectuation, nothing was cancelled in response from national infrastructure.");
+            throw new PublicException(
+                500,
+                "Error cancelling dispensation, national infrastructure reported nothing cancelled.");
         }
         if (cancelledEffectuationCount > 1) {
             log.error(

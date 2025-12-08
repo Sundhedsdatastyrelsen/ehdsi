@@ -94,6 +94,7 @@ public class PatientSummaryService {
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard));
         } catch (XmlException e) {
+            // TODO better exception text
             throw new PublicException(400, "Error in received XML", e);
         }
     }

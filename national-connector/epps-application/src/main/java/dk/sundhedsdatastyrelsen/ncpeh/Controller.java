@@ -132,7 +132,7 @@ public class Controller {
         try {
             parsedRequestDocument = XmlUtils.parse(request.getDocument());
         } catch (XmlException e) {
-            throw new PublicException(400, "Could not read XML document in request", e);
+            throw new PublicException(400, "Unable to read document sent from country of treatment", e);
         }
 
         try {
