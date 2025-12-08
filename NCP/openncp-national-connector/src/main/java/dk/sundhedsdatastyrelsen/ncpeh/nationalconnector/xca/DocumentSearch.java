@@ -56,19 +56,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                 XmlUtil.parseContent(doc.getDocument())
             );
         } catch (ApiException e) {
-            if (e.getCode() == 0) {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
-            } else if (e.getCode() == 400) {
-                throw new NIException(
-                    OpenNCPErrorCode.ERROR_GENERIC,
-                    String.format("Bad Request: %s", e.getResponseBody()));
-            } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
-                    "Error:, status: %s, body: %s",
-                    e.getCode(),
-                    e.getResponseBody()
-                ));
-            }
+            throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_GENERIC);
         } catch (ParserConfigurationException | IOException | SAXException e) {
             throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document received was invalid XML");
         }
@@ -119,15 +107,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         l1.getHash()
                     ));
         } catch (ApiException e) {
-            if (e.getCode() == 0) {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
-            } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
-                    "Error, status: %s, body: %s",
-                    e.getCode(),
-                    e.getResponseBody()
-                ));
-            }
+            throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_GENERIC);
         }
     }
 
@@ -194,15 +174,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                     )))
                 .collect(Collectors.toList());
         } catch (ApiException e) {
-            if (e.getCode() == 0) {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Could not establish connection with service");
-            } else {
-                throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, String.format(
-                    "Error, status: %s, body: %s",
-                    e.getCode(),
-                    e.getResponseBody()
-                ));
-            }
+            throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_GENERIC);
         }
     }
 

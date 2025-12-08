@@ -4,6 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -24,7 +25,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PatientSummaryService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.PrescriptionService.PrescriptionFilter;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.Anonymizer;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import jakarta.validation.Valid;
@@ -132,7 +132,7 @@ public class Controller {
         try {
             parsedRequestDocument = XmlUtils.parse(request.getDocument());
         } catch (XmlException e) {
-            throw new CountryAException(400, "Could not read XML document in request", e);
+            throw new PublicException(400, "Unable to read document sent from country of treatment", e);
         }
 
         try {
@@ -159,7 +159,7 @@ public class Controller {
         try {
             parsedRequestDocument = XmlUtils.parse(request.getDispensationToDiscard().getDocument());
         } catch (XmlException e) {
-            throw new CountryAException(400, "Could not read XML document in request", e);
+            throw new PublicException(400, "Could not read XML document in request", e);
         }
 
         try {
@@ -182,13 +182,13 @@ public class Controller {
         try {
             return this.authenticationService.xcaSoapHeaderToIdwsToken(soapHeader, "https://fmk");
         } catch (AuthenticationException e) {
-            throw new CountryAException(401, "Could not authenticate.", e);
+            throw new PublicException(401, "Could not authenticate.", e);
         }
     }
 
     private void checkOptOut(String patientId, OptOutService.Service service) {
         if (optOutService.hasOptedOut(PatientIdMapper.toCpr(patientId), service)) {
-            throw new CountryAException(400, "Citizen has opted out of service: %s".formatted(service));
+            throw new PublicException(400, "Citizen has opted out of service: %s".formatted(service));
         }
     }
 }

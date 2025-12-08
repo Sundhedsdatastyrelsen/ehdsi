@@ -1,11 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientException;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PatientDemographicsDto;
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.CountryAException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.CrossGatewayPatientDiscoveryMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +45,9 @@ public class CprService {
                     return null;
                 }
             }
-            throw new CountryAException(503, "CPR service unavailable", e);
+            throw new PublicException(503, "Error from citizen lookup service", e);
         } catch (Exception e) {
-            throw new CountryAException(503, "CPR service unavailable", e);
+            throw new PublicException(503, "Unable to connect to citizen lookup service", e);
         }
     }
 

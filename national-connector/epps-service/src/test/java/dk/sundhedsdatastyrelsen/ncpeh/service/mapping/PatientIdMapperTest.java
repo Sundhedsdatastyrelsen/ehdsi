@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
-import dk.sundhedsdatastyrelsen.ncpeh.service.exception.DataRequirementException;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,8 +14,8 @@ public class PatientIdMapperTest {
 
     @Test
     public void malformedIds() {
-        Assert.assertThrows(DataRequirementException.class, () -> PatientIdMapper.toCpr("123"));
-        Assert.assertThrows(DataRequirementException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa"));
-        Assert.assertThrows(DataRequirementException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa^^^123"));
+        Assert.assertThrows(PublicException.class, () -> PatientIdMapper.toCpr("123"));
+        Assert.assertThrows(PublicException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa"));
+        Assert.assertThrows(PublicException.class, () -> PatientIdMapper.toCpr("aaaaaaaaaa^^^123"));
     }
 }

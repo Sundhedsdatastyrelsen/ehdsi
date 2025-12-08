@@ -9,6 +9,7 @@
         <option name="m_maxLength" value="50" />
       </extension>
     </inspection_tool>
+    <inspection_tool class="LombokGetterMayBeUsed" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MisspelledMethodName" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NewMethodNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
       <extension name="InstanceMethodNamingConvention" enabled="true">
