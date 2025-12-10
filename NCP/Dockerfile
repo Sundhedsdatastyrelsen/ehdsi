@@ -174,13 +174,15 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsam-sync.jar"]
 
 # Web Manager Frontend
-FROM node:14.21-alpine AS web-manager-frontend-builder
+FROM node:24-alpine AS web-manager-frontend-builder
 
 WORKDIR /app
 
 COPY --from=builder /usr/src/app/ehealth/openncp-web-manager/openncp-web-manager-frontend/package*.json ./
 
-RUN npm install
+# There is no package-lock.json so we cannot use npm ci.
+# vue-ctk-date-time-picker@2.6.0 is broken so we need to downgrade explicitly
+RUN npm install && npm install vue-ctk-date-time-picker@2.5.0
 
 COPY --from=builder /usr/src/app/ehealth/openncp-web-manager/openncp-web-manager-frontend .
 
