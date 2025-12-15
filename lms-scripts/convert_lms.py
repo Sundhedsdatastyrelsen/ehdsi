@@ -42,7 +42,7 @@ def parse_system_file(system_file):
 
 def get_schema_for_file(excel_file, lms_file):
     """Extracts the field schema for a given LMS file from the spreadsheet."""
-    df = pd.read_excel(excel_file, sheet_name='Nyt')
+    df = pd.read_excel(excel_file)
     df = df.dropna(how='all').reset_index(drop=True)
 
     # Find where the schema for the given file starts
@@ -54,9 +54,8 @@ def get_schema_for_file(excel_file, lms_file):
     schema_end_idx = schema_start_idx + 1
     while schema_end_idx < len(df):
         cell_value = str(df.iloc[schema_end_idx, 0])
-        # Stop if we find total length marker or next LMS definition
-        if (cell_value.startswith("Total record-længde") or
-            (cell_value.startswith("LMS") and cell_value != lms_file.replace('.txt', ''))):
+        # Stop if we find next LMS definition or SYSTEM record
+        if (cell_value.startswith("LMS") or cell_value == "SYSTEM"):
             break
         schema_end_idx += 1
 
