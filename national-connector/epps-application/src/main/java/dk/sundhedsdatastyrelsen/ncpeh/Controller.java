@@ -9,6 +9,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
+import dk.sundhedsdatastyrelsen.ncpeh.config.PatientSummaryConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DiscardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -46,6 +47,7 @@ public class Controller {
     private final CprService cprService;
     private final AuthenticationService authenticationService;
     private final NspDgwsIdentity.System systemIdentity;
+    private final PatientSummaryConfig patientSummaryConfig;
     private final OptOutService optOutService;
 
     public Controller(
@@ -54,15 +56,21 @@ public class Controller {
         CprService cprService,
         AuthenticationService authenticationService,
         NspDgwsIdentity.System systemIdentity,
-        OptOutConfig optOutConfig
+        OptOutConfig optOutConfig,
+        PatientSummaryConfig patientSummaryConfig
     ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
         this.cprService = cprService;
         this.authenticationService = authenticationService;
         this.systemIdentity = systemIdentity;
+        this.patientSummaryConfig = patientSummaryConfig;
 
-        if (optOutConfig.disabled()) {
+        if (!patientSummaryConfig.enabled()) {
+            log.warn("Patient summary is disabled.");
+        }
+
+        if (!optOutConfig.enabled()) {
             log.warn("Opt-out integration is disabled. This should not happen in production!");
             this.optOutService = OptOutService.never();
         } else {
@@ -96,6 +104,10 @@ public class Controller {
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
     ) {
+        if (!patientSummaryConfig.enabled()) {
+            throw new PublicException(500, "Patient summary is disabled");
+        }
+
         checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
         // TODO should maybe be a user identity instead? It's not used in patient summary yet.
         return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
@@ -111,6 +123,10 @@ public class Controller {
             var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
             return prescriptionService.getPrescriptions(params.getPatientId(), filter, this.getFmkToken(params.getSoapHeader()));
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
+            if (!patientSummaryConfig.enabled()) {
+                throw new PublicException(500, "Patient summary is disabled");
+            }
+
             checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),

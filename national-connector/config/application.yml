@@ -50,7 +50,9 @@ app:
 #    clientKeystorePassword: changeit
 #    clientTruststorePath: config/dev-opt-out-truststore.p12
 #    clientTruststorePassword: changeit
-    disabled: true
+    enabled: false
+  patient-summary:
+    enabled: true
 
 management:
   endpoint:
