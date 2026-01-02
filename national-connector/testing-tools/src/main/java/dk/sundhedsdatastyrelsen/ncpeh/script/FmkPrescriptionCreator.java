@@ -34,6 +34,9 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -329,6 +332,21 @@ public class FmkPrescriptionCreator {
             input = args[0];
         }
 
-        createNewPrecriptionForCpr(input);
+        var outputPath = "target/test-files/prescription-id.txt";
+        if (args.length > 1) {
+            outputPath = args[1];
+        }
+
+        var resp = createNewPrecriptionForCpr(input);
+        var prescriptionId = resp.getPrescription().getFirst().getPrescriptionIdentifier().getFirst();
+        var path = Path.of(outputPath);
+        Files.createDirectories(path.getParent());
+        Files.writeString(
+            path.toAbsolutePath(),
+            prescriptionId.toString(),
+            StandardOpenOption.CREATE,
+            StandardOpenOption.TRUNCATE_EXISTING);
+
+        System.out.printf("Wrote %s to %s", prescriptionId, path);
     }
 }
