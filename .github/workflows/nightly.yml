@@ -26,14 +26,15 @@ jobs:
           distribution: temurin
           cache: maven
       - name: Build with Maven
-        run:  |
+        run: |
           cd national-connector
           mvn --batch-mode --projects testing-tools --also-make -DskipUTs package
       - name: Create a new prescription in FMK
         run: |
           java -cp national-connector/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
           dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator \
-          0201909309
+          0201909309 \
+          target/test-files/prescription-id.txt
       - name: Get the prescription from FMK
         run: |
           java -cp national-connector/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
@@ -45,6 +46,7 @@ jobs:
         run: |
           java -cp national-connector/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
           dk.sundhedsdatastyrelsen.ncpeh.script.EPrescriptionCdaGenerator \
+          target/test-files/prescription-id.txt \
           target/test-files/get-prescription.xml \
           target/test-files/drug-medication.xml \
           target/test-files/eprescription-cda.xml
