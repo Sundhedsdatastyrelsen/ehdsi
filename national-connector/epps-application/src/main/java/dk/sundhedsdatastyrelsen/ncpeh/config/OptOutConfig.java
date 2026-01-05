@@ -14,7 +14,7 @@ public record OptOutConfig(
     @Value("${app.opt-out.clientKeystorePassword:#{null}}") String clientKeystorePassword,
     @Value("${app.opt-out.clientTruststorePath:#{null}}") String clientTruststorePath,
     @Value("${app.opt-out.clientTruststorePassword:#{null}}") String clientTruststorePassword,
-    @Value("${app.opt-out.enabled:true}") boolean enabled
+    @Value("${app.opt-out.enabled}") boolean enabled
 ) {
     public OptOutConfig {
         if (enabled &&
