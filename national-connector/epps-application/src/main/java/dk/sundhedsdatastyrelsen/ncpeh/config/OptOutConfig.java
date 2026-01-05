@@ -14,10 +14,10 @@ public record OptOutConfig(
     @Value("${app.opt-out.clientKeystorePassword:#{null}}") String clientKeystorePassword,
     @Value("${app.opt-out.clientTruststorePath:#{null}}") String clientTruststorePath,
     @Value("${app.opt-out.clientTruststorePassword:#{null}}") String clientTruststorePassword,
-    @Value("${app.opt-out.disabled:false}") boolean disabled
+    @Value("${app.opt-out.enabled}") boolean enabled
 ) {
     public OptOutConfig {
-        if (!disabled &&
+        if (enabled &&
             Stream.of(host, clientKeystorePath, clientKeystorePassword, clientTruststorePath, clientTruststorePassword)
                 .anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("Opt-out config is invalid, missing values.");
@@ -25,7 +25,7 @@ public record OptOutConfig(
     }
 
     public OptOutService.Config config() {
-        if (disabled) return null;
+        if (!enabled) return null;
         return new OptOutService.Config(
             host,
             clientKeystorePath,
