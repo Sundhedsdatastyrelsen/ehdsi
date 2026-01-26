@@ -1,0 +1,58 @@
+// Receiver configuration - accept OTLP traffic on 4317/4318
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    metrics = [otelcol.processor.batch.default.input]
+    logs    = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+// Intermediate step, collects batches of otel data before sending it downstream
+otelcol.processor.batch "default" {
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+    logs    = [otelcol.exporter.loki.default.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+// Prometheus exporter
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+  }
+}
+
+// Loki exporter
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// Tempo exporter
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "http://tempo:4317"
+     // Disable TLS
+    tls {
+      insecure = true
+    }
+ }
+}

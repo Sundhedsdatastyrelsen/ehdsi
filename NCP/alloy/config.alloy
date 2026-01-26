@@ -1,0 +1,36 @@
+// Receiver configuration - accept OTLP traffic on 4317/4318
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    metrics = [otelcol.processor.batch.default.input]
+    logs    = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+// Intermediate step, collects batches of otel data before sending it downstream
+otelcol.processor.batch "default" {
+  output {
+    metrics = [otelcol.exporter.otlp.default.input]
+    logs    = [otelcol.exporter.otlp.default.input]
+    traces  = [otelcol.exporter.otlp.default.input]
+  }
+}
+
+// exporter configuration - send the batched otel data to this endpoint
+otelcol.exporter.otlp "default" {
+  client {
+    endpoint = sys.env("OTLP_SERVER_ENDPOINT")
+    // Disable TLS
+    tls {
+      insecure = true
+    }
+  }
+}

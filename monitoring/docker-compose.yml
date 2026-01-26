@@ -1,6 +1,9 @@
 networks:
   monitoring:
     name: monitoring
+  ncp:
+    name: epps
+    external: true
 
 services:
   # Prometheus for metrics collection
@@ -21,6 +24,18 @@ services:
     networks:
       - monitoring
 
+  # Grafana Mimir for metrics collection (instead of Prometheus)
+  mimir:
+    image: grafana/mimir:3.0.2
+    container_name: mimir
+    restart: unless-stopped
+    command: ["-config.file=/etc/mimir/mimir.yaml"]
+    volumes:
+      - ./mimir:/etc/mimir
+      - mimir_data:/data
+    networks:
+      - monitoring
+
   # Loki for log aggregation
   loki:
     image: grafana/loki:3.5
@@ -33,19 +48,19 @@ services:
       - monitoring
 
   # Promtail for log collection
-  promtail:
-    image: grafana/promtail:3.5
-    restart: unless-stopped
-    command: -config.file=/etc/promtail/config.yml
-    volumes:
-      - ./promtail:/etc/promtail
-      - promtail_data:/tmp # for the "positions" file that remembers what logs are sent to loki
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - monitoring
-    depends_on:
-      - loki
+  # promtail:
+  #   image: grafana/promtail:3.5
+  #   restart: unless-stopped
+  #   command: -config.file=/etc/promtail/config.yml
+  #   volumes:
+  #     - ./promtail:/etc/promtail
+  #     - promtail_data:/tmp # for the "positions" file that remembers what logs are sent to loki
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - monitoring
+  #   depends_on:
+  #     - loki
 
   # Grafana for visualization
   grafana:
@@ -137,8 +152,20 @@ services:
     networks:
       - monitoring
 
+  # Grafana Alloy is the node that receives all telemetrics and distributes them to the backends
+  alloy-hub:
+    image: grafana/alloy:v1.12.2
+    restart: unless-stopped
+    command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+    networks:
+      - ncp
+      - monitoring
+
 volumes:
   prometheus_data:
+  mimir_data:
   grafana_data:
   tempo_data:
   loki_data:
