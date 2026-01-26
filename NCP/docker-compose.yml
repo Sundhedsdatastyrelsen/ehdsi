@@ -391,7 +391,28 @@ services:
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
     environment:
-      OTLP_SERVER_ENDPOINT: http://alloy-hub:4317
+      OTLP_SERVER_ENDPOINT: http://host.docker.internal:4317
+    extra_hosts:
+      # https://docs.docker.com/reference/cli/dockerd/#configure-host-gateway-ip
+      - "host.docker.internal:host-gateway" # to allow connections to alloy-hub
+    networks:
+      - ncp
+
+  # node-exporter for host VM metrics
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    restart: unless-stopped
+    pid: host # Use the host PID namespace
+    cap_add:
+     - SYS_TIME
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
     networks:
       - ncp
 

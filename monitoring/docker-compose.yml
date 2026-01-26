@@ -1,9 +1,6 @@
 networks:
   monitoring:
     name: monitoring
-  ncp:
-    name: epps
-    external: true
 
 services:
   # Prometheus for metrics collection
@@ -24,7 +21,7 @@ services:
     networks:
       - monitoring
 
-  # Grafana Mimir for metrics collection (instead of Prometheus)
+  # Grafana Mimir for metrics storage (instead of Prometheus)
   mimir:
     image: grafana/mimir:3.0.2
     container_name: mimir
@@ -156,11 +153,12 @@ services:
   alloy-hub:
     image: grafana/alloy:v1.12.2
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:4317:4317"   # OTLP/gRPC
     command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
     networks:
-      - ncp
       - monitoring
 
 volumes:
