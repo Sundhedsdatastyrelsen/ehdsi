@@ -65,3 +65,71 @@ prometheus.scrape "node_exporter" {
   job_name = "monitoring-server-node-exporter"
   forward_to = [prometheus.remote_write.default.receiver]
 }
+
+/// Collect logs from Docker daemon (this section replaces "promtail")
+
+discovery.docker "local" {
+  host             = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_labels" {
+  targets = discovery.docker.local.targets
+
+  // /foo -> foo
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "container_id"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "logstream"
+  }
+}
+
+
+loki.process "pipeline" {
+  // Read log lines using the CRI logging format.
+  stage.cri {}
+
+  // Parse multiline log entries.  If a line is indented it is considered part of the previous block.
+  stage.multiline {
+    firstline     = "^\\S"
+  }
+
+  // If possible, parse log line as json
+  stage.json {
+    expressions = {
+      level = "level",
+    }
+  }
+
+  // Promote extracted "level" into a Loki label
+  stage.labels {
+    values = {
+      level = "",
+    }
+  }
+
+  stage.static_labels {
+    values = {
+      // to differentiate from the OTLP logs which have exporter = "OTLP"
+      exporter = "docker-daemon",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_labels.output
+  forward_to = [loki.process.pipeline.receiver]
+}

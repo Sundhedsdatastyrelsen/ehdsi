@@ -44,21 +44,6 @@ services:
     networks:
       - monitoring
 
-  # Promtail for log collection
-  # promtail:
-  #   image: grafana/promtail:3.5
-  #   restart: unless-stopped
-  #   command: -config.file=/etc/promtail/config.yml
-  #   volumes:
-  #     - ./promtail:/etc/promtail
-  #     - promtail_data:/tmp # for the "positions" file that remembers what logs are sent to loki
-  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   networks:
-  #     - monitoring
-  #   depends_on:
-  #     - loki
-
   # Grafana for visualization
   grafana:
     image: grafana/grafana:12.0.2
@@ -157,14 +142,16 @@ services:
       - "127.0.0.1:4317:4317"   # OTLP/gRPC
     command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
     volumes:
+      - alloy_data:/var/lib/alloy
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - monitoring
 
 volumes:
+  alloy_data:
   prometheus_data:
   mimir_data:
   grafana_data:
   tempo_data:
   loki_data:
-  promtail_data:
