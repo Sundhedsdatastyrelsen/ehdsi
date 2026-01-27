@@ -34,6 +34,7 @@ The above means that when we update to newer NCP versions, we should do the foll
 - compare the changes in `openncp-application/openncp-application-server/src/main/resources/logback.xml` from the previous version to the new one, and consider whether anything needs to be reflected in `common/logback.xml`.
 - compare the configuration files in `atna-resources` with their counterparts. See `atna-resources/README.md`.
 - compare the .env files from `env_defaults/.env` and `openncp-docker/.env`, and update as required. Remember that this is just the default env, and is copied to the actual environment file (in NCP root), as well as modified in every deployment. These will need to be manually updated in each deployment.
+- compare the ehealth configuration file `openncp-docker/openncp-configuration-utility/openncp-configuration.properties` with `openncp-configuration/openncp-configuration.properties` and update values if necessary.
 
 # Tests
 
