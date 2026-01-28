@@ -139,7 +139,7 @@ services:
     image: grafana/alloy:v1.12.2
     restart: unless-stopped
     ports:
-      - "127.0.0.1:4317:4317"   # OTLP/gRPC
+      - "4317:4317"   # OTLP/gRPC
     command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
     volumes:
       - alloy_data:/var/lib/alloy
