@@ -19,7 +19,6 @@ file automatically. -->
         <appender-ref ref="NOP" />
     </logger>
 
-    <!-- We want deprecation errors to bubble up. -->
     <logger name="org.hibernate.orm.deprecation" level="ERROR" />
 
     <root level="INFO">
