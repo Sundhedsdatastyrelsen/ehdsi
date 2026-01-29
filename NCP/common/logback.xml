@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--This file is copied from EHEALTH:
+<!--This file overwrites the following file from the ehealth repo:
 openncp-application\openncp-application-server\src\main\resources\logback.xml -->
 <!-- We overwrite their file with this, so any changes to their logging is not going to into our
 file automatically. -->
@@ -14,7 +14,7 @@ file automatically. -->
 
     <appender name="NOP" class="ch.qos.logback.core.helpers.NOPAppender" />
 
-    <!-- Clinical data is not logged -->
+    <!-- Clinical data is not logged, it may contain personal info. -->
     <logger name="LOGGER_CLINICAL" level="OFF" additivity="false">
         <appender-ref ref="NOP" />
     </logger>

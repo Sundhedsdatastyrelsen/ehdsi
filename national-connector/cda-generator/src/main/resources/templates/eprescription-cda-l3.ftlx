@@ -143,7 +143,7 @@
                             ${ dosage.unstructuredText }
                         </content>
                         <paragraph>
-                            Data source: FMK 1.4.6
+                            Data source: FMK 1.4.6<#-- One of the requirements from the ICC audit was that we listed the source of the data -->
                         </paragraph>
                     </text>
                     <entry typeCode="COMP">

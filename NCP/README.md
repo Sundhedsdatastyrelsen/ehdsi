@@ -27,11 +27,10 @@ To ensure regular synchronization from the CTS, add the following line (edited a
 ```
 
 # How it's built
-Take a look in the docker file for specifics, but we checkout the EHEALTH code from Europa, and then inject our own country-a code (in openncp-national-connector), and replace the pom in ncp_a with our pom (which is dependant on openncp-national-connector). We also change the logging by replacing their logback.xml
+Take a look in the docker file for specifics, but we checkout the EHEALTH code from Europa, and then inject our own country-a code (in openncp-national-connector), and replace the pom in ncp_a with our pom (which is dependant on openncp-national-connector). We also change some of the configuration of the ehealth docker containers, for example the logging by replacing their logback.xml
 
 ## Updating to newer NCP versions
-The above means that when we update to newer NCP versions, we should manually merge changes from:
-- ehealth openncp-application/openncp-application-server/src/main/resources/logback.xml to ncp_a/logback.xml
+The above means that when we update to newer NCP versions, we need to manually check whether any configuration should be updated. See [./updating.md](./updating.md).
 
 # Tests
 
