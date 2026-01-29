@@ -11,8 +11,6 @@ networks:
 volumes:
   db-data:
   tsam-exporter-data:
-  portainer_data:
-    external: false
 
 secrets:
   db_username:
@@ -406,20 +404,5 @@ services:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
       - '--path.rootfs=/rootfs'
-    networks:
-      - ncp
-
-  # Convenience tool for managing docker containers.
-  # To enable: Add COMPOSE_PROFILES=portainer to .env
-  portainer:
-    profiles: ["portainer"]
-    image: portainer/portainer-ce:latest
-    restart: unless-stopped
-    container_name: portainer
-    ports:
-      - "${PORTAINER_PORT}:${PORTAINER_EXTERNAL_PORT}"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # To manage Docker
-      - portainer_data:/data # Persistent storage for Portainer
     networks:
       - ncp
