@@ -40,7 +40,6 @@ x-opentelemetry-config: &opentelemetry-config
 
 services:
   mysql:
-    profiles: ["dev"]
     container_name: openncp_db
     hostname: ${DB_HOST}
     image: mysql:9
