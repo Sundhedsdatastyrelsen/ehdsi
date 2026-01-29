@@ -363,7 +363,7 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - ./openncp-configuration/openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
+      - ./openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
       - ./keystore:/opt/openncp-configuration/keystore
     environment:
       OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
