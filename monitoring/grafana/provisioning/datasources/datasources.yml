@@ -1,16 +1,6 @@
 apiVersion: 1
 
 datasources:
-  # Up for deletion
-  - name: Prometheus
-    uid: prometheus
-    type: prometheus
-    access: proxy
-    url: http://prometheus:9090
-    editable: true
-    jsonData:
-      timeInterval: 15s
-
   - name: Mimir
     uid: mimir
     type: prometheus
