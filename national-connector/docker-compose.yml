@@ -20,11 +20,6 @@ services:
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
       OTEL_TRACES_SAMPLER: "always_on"
-      # Pyroscope (profiling) temporarily disabled
-      PYROSCOPE_AGENT_ENABLED: false
-      # PYROSCOPE_SERVER_ADDRESS: "http://pyroscope:4040"
-      # PYROSCOPE_APPLICATION_NAME: "national-connector"
-
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data

@@ -27,15 +27,3 @@ datasources:
     jsonData:
       tracesToLogs:
         datasourceUid: loki
-      tracesToProfiles:
-        datasourceUid: pyroscope
-        tags:
-          - key: service.name
-            value: service_name
-
-  - name: Pyroscope
-    uid: pyroscope
-    type: grafana-pyroscope-datasource
-    access: proxy
-    url: http://pyroscope:4040
-    editable: true

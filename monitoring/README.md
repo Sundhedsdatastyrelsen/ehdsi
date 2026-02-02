@@ -10,7 +10,7 @@ Access is restricted to localhost; use port forwarding (e.g., `ssh -L 3000:local
 
 ## Telemetry pipeline
 
-All telemetry (logs, metrics, traces, profiling) flows through Grafana Alloy.
+All telemetry (logs, metrics, traces) flows through Grafana Alloy.
 Each service host runs an `alloy-edge` instance that accepts OTLP and forwards it to `alloy-hub`
 in the monitoring stack. `alloy-hub` is the only exposed ingestion endpoint and it distributes
 telemetry to the backend services.
@@ -40,16 +40,6 @@ Metrics are pushed to Alloy via OTLP and scraped by Alloy where needed.
 
 Node Exporter exposes system-level metrics from the host VM for Alloy to scrape.
 
-## Profiling
-
-Tools for application performance profiling and flamegraphs.
-
-### [Pyroscope](https://pyroscope.io/)
-
-Pyroscope is a backend for collecting and visualizing profiling data.
-
-We are only interested in profiling our own code, so we only enable profiling on national-connector.
-Here we use a Pyroscope extension to the OpenTelemetry Java Agent to push profiling data to Pyroscope.
 
 # Alloy Configuration
 This section details the configuration of Grafana Alloy, to ease understanding when reading the configuration

@@ -39,7 +39,7 @@ services:
       # - GF_SECURITY_ADMIN_USER=admin
       # - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_INSTALL_PLUGINS=grafana-pyroscope-app
+
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -106,13 +106,6 @@ services:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
       - '--path.rootfs=/rootfs'
-    networks:
-      - monitoring
-
-  # Pyroscope for continuous profiling
-  pyroscope:
-    image: grafana/pyroscope:1.14.0
-    restart: unless-stopped
     networks:
       - monitoring
 
