@@ -115,7 +115,7 @@ services:
     restart: unless-stopped
     ports:
       - "4317:4317"   # OTLP/gRPC
-    command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
+    command: ["run", "/etc/alloy/config.alloy"]
     volumes:
       - alloy_data:/var/lib/alloy
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
