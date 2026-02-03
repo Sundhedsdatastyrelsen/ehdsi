@@ -2,9 +2,6 @@ networks:
   epps-backend:
     name: epps
     external: true
-  monitoring:
-    name: monitoring
-    external: true
 
 services:
   national-connector:
@@ -19,17 +16,10 @@ services:
       # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
       SPRING_PROFILES_ACTIVE: "docker"
       OTEL_SERVICE_NAME: "national-connector"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy-edge:4317"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
       OTEL_TRACES_SAMPLER: "always_on"
-      OTEL_METRICS_EXPORTER: "prometheus"
-      OTEL_METRICS_EXPORTER_PROMETHEUS_PORT: "9464"
-      OTEL_LOGS_EXPORTER: "none"
-      OTEL_PROPAGATORS: "tracecontext,baggage"
-      PYROSCOPE_SERVER_ADDRESS: "http://pyroscope:4040"
-      PYROSCOPE_APPLICATION_NAME: "national-connector"
-
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
@@ -41,4 +31,3 @@ services:
       - ./secrets/LMSFTP_PASSWORD:/run/secrets/lmsftp/password:ro
     networks:
       - epps-backend
-      - monitoring

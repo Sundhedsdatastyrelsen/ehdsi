@@ -1,0 +1,135 @@
+// Receiver configuration - accept OTLP traffic on 4317/4318
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    metrics = [otelcol.processor.batch.default.input]
+    logs    = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+// Intermediate step, collects batches of otel data before sending it downstream
+otelcol.processor.batch "default" {
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+    logs    = [otelcol.exporter.loki.default.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+// Prometheus exporter
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+  }
+}
+
+// Loki exporter
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// Tempo exporter
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "http://tempo:4317"
+     // Disable TLS
+    tls {
+      insecure = true
+    }
+ }
+}
+
+// Metrics scraping
+prometheus.scrape "node_exporter" {
+  targets = [
+    {"__address__" = "node-exporter:9100"},
+  ]
+  job_name = "monitoring-server-node-exporter"
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+/// Collect logs from Docker daemon (this section replaces "promtail")
+
+discovery.docker "local" {
+  host             = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_labels" {
+  targets = discovery.docker.local.targets
+
+  // /foo -> foo
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "container_id"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "logstream"
+  }
+}
+
+
+loki.process "pipeline" {
+  // Read log lines using the CRI logging format.
+  stage.cri {}
+
+  // Parse multiline log entries.  If a line is indented it is considered part of the previous block.
+  stage.multiline {
+    firstline     = "^\\S"
+  }
+
+  // If possible, parse log line as json
+  stage.json {
+    expressions = {
+      level = "level",
+    }
+  }
+
+  // Promote extracted "level" into a Loki label
+  stage.labels {
+    values = {
+      level = "",
+    }
+  }
+
+  stage.static_labels {
+    values = {
+      // to differentiate from the OTLP logs which have exporter = "OTLP"
+      exporter = "docker-daemon",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_labels.output
+  forward_to = [loki.process.pipeline.receiver]
+}
