@@ -37,7 +37,6 @@ FROM tomcat:9-jdk11-temurin AS tomcat-base
 RUN apt-get update \
     && apt-get install -y \
     gettext \
-    socat \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -84,7 +83,6 @@ COPY --from=builder \
     /usr/src/app/ehealth/openncp-docker/target/classes/lib \
     lib/
 
-# COPY ./ncp_a/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
 COPY ./ncp_a/config conf/
 COPY ./ncp_a/entrypoint.sh bin/
 
