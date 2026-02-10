@@ -37,6 +37,20 @@ x-opentelemetry-config: &opentelemetry-config
   OTEL_TRACES_SAMPLER: always_on
 
 services:
+  # The tomcat servers run as user 10001. In order for the services to start correctly,
+  # we need to ensure that user 10001 can write to the evidence folders.
+  tomcat-init:
+    image: busybox
+    user: root
+    entrypoint:
+      - "chown"
+      - "-R"
+      - "10001:10001"
+      - "/opt/openncp-configuration"
+    volumes:
+      - ./evidence/obligations:/opt/openncp-configuration/obligations
+      - ./evidence/validation:/opt/openncp-configuration/validation
+
   mysql:
     container_name: openncp_db
     hostname: ${DB_HOST}
@@ -112,7 +126,7 @@ services:
     container_name: "openncp-server"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-a:${IMAGE_TAG}
     restart: unless-stopped
-    depends_on: [alloy-edge]
+    depends_on: [alloy-edge, tomcat-init]
     env_file:
       - ./ncp_a/ncpa.database.env
       - ./ncp_a/ncpa.env
@@ -153,7 +167,7 @@ services:
     container_name: "openncp-client"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-node-b:${IMAGE_TAG}
     restart: unless-stopped
-    depends_on: [alloy-edge]
+    depends_on: [alloy-edge, tomcat-init]
     env_file:
       - ./ncp_b/ncpb.database.env
       - ./ncp_b/ncpb.env
@@ -193,7 +207,7 @@ services:
       target: openatna
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-openatna:${IMAGE_TAG}
     restart: unless-stopped
-    depends_on: [alloy-edge]
+    depends_on: [alloy-edge, tomcat-init]
     env_file:
       - ./openncp-openatna/openatna.database.env
       - ./openncp-openatna/openatna.env
@@ -233,7 +247,7 @@ services:
       target: trc-sts
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-trc-sts:${IMAGE_TAG}
     restart: unless-stopped
-    depends_on: [alloy-edge]
+    depends_on: [alloy-edge, tomcat-init]
     env_file:
       - ./openncp-trc-sts/.database.env
       - ./openncp-trc-sts/.env
@@ -272,7 +286,7 @@ services:
       target: translations-and-mappings
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-translations-and-mappings:${IMAGE_TAG}
     restart: unless-stopped
-    depends_on: [alloy-edge]
+    depends_on: [alloy-edge, tomcat-init]
     env_file:
       - ./openncp-translations-and-mappings/translations-and-mappings.database.env
       - ./openncp-translations-and-mappings/translations-and-mappings.env
@@ -311,7 +325,7 @@ services:
       target: web-manager
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-web-manager-backend:${IMAGE_TAG}
     restart: unless-stopped
-    depends_on: [alloy-edge]
+    depends_on: [alloy-edge, tomcat-init]
     env_file:
       - ./openncp-web-manager/.database.env
       - ./openncp-web-manager/.env

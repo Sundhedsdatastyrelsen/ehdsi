@@ -4,11 +4,25 @@ networks:
     external: true
 
 services:
+  # National connector runs as user 10001. In order for it to start correctly,
+  # we need to ensure that user 10001 can write to the database.
+  init:
+    image: busybox
+    user: root
+    entrypoint:
+      - "chown"
+      - "-R"
+      - "10001:10001"
+      - "/app/data"
+    volumes:
+      - ./data:/app/data
+
   national-connector:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:latest
     build: .
     container_name: national-connector
     restart: unless-stopped
+    depends_on: [init]
     ports:
       - "4443:4443"
       # - "5008:5008"
