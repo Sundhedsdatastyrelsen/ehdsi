@@ -1,8 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.locallms;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class Specs {
     private Specs() {
     }
@@ -33,10 +36,17 @@ public class Specs {
     ) {
         public List<String> parseRow(String row) {
             return fields().stream()
-                .map(field -> row.substring(
-                        field.startColumn,
-                        Math.min(row.length(), field.startColumn() + field.size()))
-                    .trim())
+                .map(field -> {
+                    // TODO temporary logging to understand why this sometimes happens.
+                    if (row.length() < field.startColumn) {
+                        log.warn("Row shorter than start column. startColumn: {}. Row: {}.", field.startColumn(), row);
+                        return "";
+                    }
+                    return row.substring(
+                            field.startColumn,
+                            Math.min(row.length(), field.startColumn() + field.size()))
+                        .trim();
+                })
                 .toList();
         }
 
