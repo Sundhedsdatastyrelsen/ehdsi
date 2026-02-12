@@ -99,7 +99,7 @@ public class Controller {
 
     /// There is only one patient summary per patient, but the MyHealth@EU api functions like a document repository, so
     /// we have to let them search for that one document. We could also have returned it directly in the NCP adapter,
-    /// but we want all the business logic in this application.
+    /// but we want all the business logic in national connector.
     @PostMapping(path = "/api/find-patient-summary-document/")
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
         @Valid @RequestBody FindDocumentsRequestDto params
