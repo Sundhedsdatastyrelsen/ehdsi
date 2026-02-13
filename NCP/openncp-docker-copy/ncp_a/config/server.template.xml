@@ -54,9 +54,9 @@
                   maxThreads="150" scheme="https" secure="true"
                   clientAuth="$CLIENT_AUTH" sslProtocol="TLS"
                   keyAlias="$KEY_ALIAS"
-                  keystoreFile="/opt/openncp-configuration/keystore/gazelle-service-provider-keystore.jks"
+                  keystoreFile="$KEYSTORE_PATH"
                   keystorePass="$KEYSTORE_PASSWORD"
-                  truststoreFile="/opt/openncp-configuration/keystore/eu-truststore.jks"
+                  truststoreFile="$TRUSTSTORE_PATH"
                   truststorePass="$TRUSTSTORE_PASSWORD"
                   maxHttpHeaderSize="1048576"
                   URIEncoding="UTF-8"/>

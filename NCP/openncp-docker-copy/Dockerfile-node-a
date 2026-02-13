@@ -18,8 +18,8 @@ COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 RUN chmod 777 -R /opt/ehealth-openncp/openncp-configuration-utility/
 
-RUN groupadd -g 1000 tomcat && \
-  useradd -r -u 1000 -g tomcat tomcat && \
+RUN groupadd -g 2000 tomcat && \
+  useradd -r -u 2000 -g tomcat tomcat && \
   chown -R tomcat:tomcat /usr/local/tomcat/ $EPSOS_PROPS_PATH
 
 RUN apt-get update && apt-get -qq -y install gettext socat

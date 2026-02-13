@@ -127,6 +127,8 @@
             <Code code="IHE0003" codingScheme="IHE" display="Patient Care Resource Assignment"/>
             <Code code="IHE0004" codingScheme="IHE" display="Patient Care Episode"/>
             <Code code="IHE0005" codingScheme="IHE" display="Patient Care Protocol"/>
+
+            <Code code="FHIR_READ" codingScheme="HL7" display="FHIR Read Operation"/>
         </CodeType>
         <CodeType name="SourceType">
             <Code code="1" codingScheme="RFC-3881" display="End User Display Device"/>
@@ -184,6 +186,8 @@
             <Code code="110135" codingScheme="DCM" display="Object Security Attributes Changed"/>
             <Code code="110136" codingScheme="DCM" display="Security Roles Changed"/>
             <Code code="110137" codingScheme="DCM" display="User Security Attributes Changed"/>
+
+            <Code code="FHIR_READ" codingScheme="HL7 FHIR Transactions" display="HL7 FHIR Read"/>
         </CodeType>
         <CodeType name="ObjectIdType">
             <Code code="110180" codingScheme="DCM" display="Study Instance UID"/>

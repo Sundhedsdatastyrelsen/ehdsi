@@ -1,4 +1,6 @@
-FROM node:14.21-alpine
+FROM node:20-alpine
+
+ENV NODE_OPTIONS="--openssl-legacy-provider"
 
 RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 

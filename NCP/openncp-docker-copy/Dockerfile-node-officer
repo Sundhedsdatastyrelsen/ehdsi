@@ -12,8 +12,8 @@ COPY ncp_officer/config /usr/local/tomcat/conf/
 # exec: "tomcat-config-entrypoint.sh": executable file not found in $PATH: unknown
 RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
 
-RUN groupadd -g 1000 tomcat && \
-  useradd -r -u 1000 -g tomcat tomcat && \
+RUN groupadd -g 2000 tomcat && \
+  useradd -r -u 2000 -g tomcat tomcat && \
   chown -R tomcat:tomcat /usr/local/tomcat/bin /usr/local/tomcat/webapps /usr/local/tomcat/conf /usr/local/tomcat/logs
 
 

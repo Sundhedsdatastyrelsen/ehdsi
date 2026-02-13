@@ -26,9 +26,9 @@ tsam-sync:
     username:
     password:
   cts:
-    url: https://webgate.training.ec.europa.eu/ehealth-term-server
-    username: ncpeh@eu
-    password: MyNewTrnCTS#2023
+    url: ${TSAM_SYNC_URL}
+    username: ${TSAM_SYNC_USERNAME}
+    password: ${TSAM_SYNC_PASSWORD}
 spring:
   jpa:
     show_sql: false

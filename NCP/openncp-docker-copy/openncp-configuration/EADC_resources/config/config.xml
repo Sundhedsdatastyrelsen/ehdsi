@@ -48,7 +48,18 @@
                     <mapping targetColumn="DataType" sourceXPath="'cda:ClinicalDocument/cda:templateId'"/>
                     <mapping targetColumn="DataTypeName" sourceXPath="'Service OID'"/>
                     <mapping targetColumn="DataValue" sourceXPath="@root"/>
-                    <mapping targetColumn="ValueDisplay" sourceXPath="if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.3') then 'Patient Summary' else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.2') then 'eDispensation' else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.1') then 'ePrescription' else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.7') then 'Patient Summary PDF embedded' else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.6') then 'ePrescription PDF embedded' else 'unknown'"/>
+                    <mapping targetColumn="ValueDisplay"
+                             sourceXPath="if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.3') then 'Patient Summary - PIVOT format'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.2') then 'eDispensation - PIVOT format'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.1') then 'ePrescription - PIVOT format'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.7') then 'Patient Summary - PDF format'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.6') then 'ePrescription - PDF format'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.2-DISCARD') then 'eDispensation discard request'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.9') then 'OrCD Hospital Discharge Report'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.8') then 'OrCD Laboratory Result'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.6') then 'OrCD Medical Images'
+                             else if (@root = '1.3.6.1.4.1.12559.11.10.1.3.1.1.10') then 'OrCD Medical Imaging Report'
+                             else 'unknown'"/>
                 </extractionRule>
             </content>
         </group>

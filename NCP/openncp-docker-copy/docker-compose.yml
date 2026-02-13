@@ -51,6 +51,9 @@ services:
       DRIVER_CLASS_NAME: ${DRIVER_CLASS_NAME}
       DB_PASSWORD: ${DB_ROOT_PASSWORD}
       DB_ACTIVE_PROFILE: ${DB_ACTIVE_PROFILE}
+      TSAM_SYNC_URL: ${TSAM_SYNC_URL}
+      TSAM_SYNC_USERNAME: ${TSAM_SYNC_USERNAME}
+      TSAM_SYNC_PASSWORD: ${TSAM_SYNC_PASSWORD}
     build:
       context: ./
       dockerfile: ./openncp-tsam-sync/Dockerfile
@@ -109,6 +112,7 @@ services:
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
         -Dfile.encoding=UTF-8
+        -Dserver.ehealth.mode=PRODUCTION
         -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5006,server=y,suspend=n"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
@@ -118,7 +122,7 @@ services:
         -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
         -Dtls_truststore_pwd=${TLS_TRUSTSTORE_PWD}
         -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
     networks:
       - openncp
   tomcat_node_b:
@@ -136,6 +140,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     dns:
+      - 10.0.0.1
       - 8.8.8.8
     depends_on:
       mysql:
@@ -144,6 +149,7 @@ services:
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
         -Dfile.encoding=UTF-8
+        -Dserver.ehealth.mode=PRODUCTION
         -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5005,server=y,suspend=n"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
@@ -153,7 +159,7 @@ services:
         -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
         -Dtls_truststore_pwd=${TLS_TRUSTSTORE_PWD}
         -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
     networks:
       - openncp
   openncp-openatna:
@@ -169,6 +175,7 @@ services:
       - "${NCP_OPENATNA_CONNECTOR_SECURE_PORT}:${NCP_OPENATNA_CONNECTOR_SECURE_PORT}"
       - "2861:2861/udp"
       - "2862:2862"
+      - "5008:5008"
     depends_on:
       mysql:
         condition: service_healthy
@@ -177,7 +184,8 @@ services:
     environment:
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -186,7 +194,7 @@ services:
         -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
         -Dtls_truststore_pwd=${TLS_TRUSTSTORE_PWD}
         -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
     networks:
       - openncp
   openncp-trc-sts:
@@ -216,7 +224,7 @@ services:
         -Dtls_truststore_pwd=${TLS_TRUSTSTORE_PWD}
         -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}
         -Dorg.apache.cxf.stax.allowInsecureParser=true"
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
     networks:
       - openncp
   openncp-translations-and-mappings:
@@ -230,6 +238,7 @@ services:
     ports:
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_PORT}"
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
+      - "5007:5007"
     depends_on:
       mysql:
         condition: service_healthy
@@ -240,7 +249,8 @@ services:
     environment:
       CATALINA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
-        -Dfile.encoding=UTF-8"
+        -Dfile.encoding=UTF-8
+        -Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:5007,server=y,suspend=n"
       JAVA_OPTS: "
         -DopenATNA.properties.path=file:/opt/openncp-configuration/ATNA_resources/openatna.properties
         -Dfile.encoding=UTF-8
@@ -249,7 +259,7 @@ services:
         -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
         -Dtls_truststore_pwd=${TLS_TRUSTSTORE_PWD}
         -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
     networks:
       - openncp
   openncp-web-manager-backend:
@@ -266,6 +276,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     dns:
+      - 10.0.0.1
       - 8.8.8.8
     depends_on:
       mysql:
@@ -287,7 +298,7 @@ services:
         -Dtls_keystore_path=${TLS_KEYSTORE_PATH}
         -Dtls_truststore_pwd=${TLS_TRUSTSTORE_PWD}
         -Dtls_truststore_path=${TLS_TRUSTSTORE_PATH}"
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
     networks:
       - openncp
   openncp-web-manager-frontend:
