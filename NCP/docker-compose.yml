@@ -60,7 +60,8 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./mysql/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-      - ./mysql/initdb:/docker-entrypoint-initdb.d-original:ro
+      - ./mysql/initdb:/docker-entrypoint-initdb.d-dk:ro
+      - ./openncp-docker-copy/mysql/initdb:/docker-entrypoint-initdb.d-openncp:ro
     entrypoint: /usr/local/bin/entrypoint.sh
     environment:
       MYSQL_ROOT_USER: ${DB_ROOT_USER}
