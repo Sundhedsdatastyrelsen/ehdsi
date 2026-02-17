@@ -44,7 +44,8 @@ RUN apt-get update \
 RUN groupadd -g 10001 tomcat && \
     useradd -r -u 10001 -g tomcat tomcat
 
-COPY ./openncp-configuration/ /opt/openncp-configuration
+COPY ./openncp-docker-copy/openncp-configuration/ /opt/openncp-configuration
+COPY ./openncp-configuration/* /opt/openncp-configuration/
 COPY ./atna-resources/ /opt/atna-resources
 
 # Download OpenTelemetry Java agent
