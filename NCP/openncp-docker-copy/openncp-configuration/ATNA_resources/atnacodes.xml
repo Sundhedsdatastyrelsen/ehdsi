@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     Copyright (c) 2009-2011 Misys Open Source Solutions (MOSS) and others
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+     implied. See the License for the specific language governing
+     permissions and limitations under the License.
+
+     Contributors:
+       Misys Open Source Solutions - initial API and implementation
+
+-->
+
+<!--
+        ATNA related Codes
+
+    -->
+<Codes>
+    <CodeType name="EventId">
+        <Code code="110100" codingScheme="DCM" display="Application Activity"/>
+        <Code code="110101" codingScheme="DCM" display="Audit Log Used"/>
+        <Code code="110102" codingScheme="DCM" display="Being Transfering DICOM Instances"/>
+        <Code code="110103" codingScheme="DCM" display="DICOM Instances Accessed"/>
+        <Code code="110104" codingScheme="DCM" display="DICOM Instances Transferred"/>
+        <Code code="110105" codingScheme="DCM" display="DICOM Study Deleted"/>
+        <Code code="110106" codingScheme="DCM" display="Export"/>
+        <Code code="110107" codingScheme="DCM" display="Import"/>
+        <Code code="110108" codingScheme="DCM" display="Network Entry"/>
+        <Code code="110109" codingScheme="DCM" display="Order Record"/>
+        <Code code="110110" codingScheme="DCM" display="Patient Record"/>
+        <Code code="110111" codingScheme="DCM" display="Proceedure Record"/>
+        <Code code="110112" codingScheme="DCM" display="Query"/>
+        <Code code="110113" codingScheme="DCM" display="Security Alert"/>
+        <Code code="110114" codingScheme="DCM" display="User Authentication"/>
+
+        <Code code="IHE0001" codingScheme="IHE" display="Health Services Provision Event"/>
+        <Code code="IHE0002" codingScheme="IHE" display="Medication Event"/>
+        <Code code="IHE0003" codingScheme="IHE" display="Patient Care Resource Assignment"/>
+        <Code code="IHE0004" codingScheme="IHE" display="Patient Care Episode"/>
+        <Code code="IHE0005" codingScheme="IHE" display="Patient Care Protocol"/>
+    </CodeType>
+    <CodeType name="SourceType">
+        <Code code="1" codingScheme="RFC-3881" display="End User Display Device"/>
+        <Code code="2" codingScheme="RFC-3881" display="Data Acquisition Device"/>
+        <Code code="3" codingScheme="RFC-3881" display="Web Server Process"/>
+        <Code code="4" codingScheme="RFC-3881" display="Application Server Process"/>
+        <Code code="5" codingScheme="RFC-3881" display="Database Server Process"/>
+        <Code code="6" codingScheme="RFC-3881" display="Security Server"/>
+        <Code code="7" codingScheme="RFC-3881" display="Network Component"/>
+        <Code code="8" codingScheme="RFC-3881" display="Operating Software"/>
+        <Code code="9" codingScheme="RFC-3881" display="External Source"/>
+    </CodeType>
+    <CodeType name="ParticipantRoleType">
+        <Code code="110150" codingScheme="DCM" display="Application"/>
+        <Code code="110151" codingScheme="DCM" display="Application Launcher"/>
+        <Code code="110152" codingScheme="DCM" display="Destination"/>
+        <Code code="110153" codingScheme="DCM" display="Source"/>
+        <Code code="110154" codingScheme="DCM" display="Destination Media"/>
+        <Code code="110155" codingScheme="DCM" display="Source Media"/>
+    </CodeType>
+    <CodeType name="EventType">
+        <Code code="ITI-8" codingScheme="IHE Transactions" display="Patient Identity Feed"/>
+        <Code code="ITI-10" codingScheme="IHE Transactions" display="PIX Update Notification"/>
+        <Code code="ITI-21" codingScheme="IHE Transactions" display="Patient Demographics Query"/>
+        <Code code="ITI-22" codingScheme="IHE Transactions" display="Patient Demographics and Visit Query"/>
+        <Code code="ITI-14" codingScheme="IHE Transactions" display="Register Document Set"/>
+        <Code code="ITI-15" codingScheme="IHE Transactions" display="Provide and Register Document Set"/>
+        <Code code="ITI-16" codingScheme="IHE Transactions" display="Registry SQL Query"/>
+        <Code code="ITI-17" codingScheme="IHE Transactions" display="Retrieve Document"/>
+        <Code code="ITI-18" codingScheme="IHE Transactions" display="Registry Stored Query"/>
+        <Code code="ITI-32" codingScheme="IHE Transactions" display="Distribute Document Set on Media"/>
+        <Code code="ITI-30" codingScheme="IHE Transactions" display="Patient Identity Management"/>
+        <Code code="ITI-38" codingScheme="IHE Transactions" display="Cross Gateway Query"/>
+        <Code code="ITI-39" codingScheme="IHE Transactions" display="Cross Gateway Retrieve"/>
+        <Code code="ITI-41" codingScheme="IHE Transactions" display="Provide and Register Document Set-b"/>
+        <Code code="ITI-42" codingScheme="IHE Transactions" display="Register Document Set-b"/>
+        <Code code="ITI-43" codingScheme="IHE Transactions" display="Retrieve Document Set"/>
+        <Code code="ITI-48" codingScheme="IHE Transactions" display="Retrieve Value Set"/>
+        <Code code="ITI-51" codingScheme="IHE Transactions" display="Multi-Patient Query"/>
+
+        <Code code="110120" codingScheme="DCM" display="Application Start"/>
+        <Code code="110121" codingScheme="DCM" display="Application Stop"/>
+        <Code code="110122" codingScheme="DCM" display="Login"/>
+        <Code code="110123" codingScheme="DCM" display="Logout"/>
+        <Code code="110124" codingScheme="DCM" display="Attach"/>
+        <Code code="110125" codingScheme="DCM" display="Detach"/>
+        <Code code="110126" codingScheme="DCM" display="Node Authentication"/>
+        <Code code="110127" codingScheme="DCM" display="Emergency Override"/>
+        <Code code="110128" codingScheme="DCM" display="Network Configuration"/>
+        <Code code="110129" codingScheme="DCM" display="Security Configuration"/>
+        <Code code="110130" codingScheme="DCM" display="Hardware Configuration"/>
+        <Code code="110131" codingScheme="DCM" display="Software Configuration"/>
+        <Code code="110132" codingScheme="DCM" display="Use of Restritcted Function"/>
+        <Code code="110133" codingScheme="DCM" display="Audit Recording Stopped"/>
+        <Code code="110134" codingScheme="DCM" display="Audit Recording Started"/>
+        <Code code="110135" codingScheme="DCM" display="Object Security Attributes Changed"/>
+        <Code code="110136" codingScheme="DCM" display="Security Roles Changed"/>
+        <Code code="110137" codingScheme="DCM" display="User Security Attributes Changed"/>
+    </CodeType>
+    <CodeType name="ObjectIdType">
+        <Code code="110180" codingScheme="DCM" display="Study Instance UID"/>
+        <Code code="110181" codingScheme="DCM" display="SOP Class UID"/>
+        <Code code="110182" codingScheme="DCM" display="NodeID"/>
+        <Code code="1" codingScheme="RFC-3881" display="Medical Record Number"/>
+        <Code code="2" codingScheme="RFC-3881" display="Patient Number"/>
+        <Code code="3" codingScheme="RFC-3881" display="Encounter Number"/>
+        <Code code="4" codingScheme="RFC-3881" display="Enrollee Number"/>
+        <Code code="5" codingScheme="RFC-3881" display="Social Security Number"/>
+        <Code code="6" codingScheme="RFC-3881" display="Account Number"/>
+        <Code code="7" codingScheme="RFC-3881" display="Guarantor Number"/>
+        <Code code="8" codingScheme="RFC-3881" display="Report Name"/>
+        <Code code="9" codingScheme="RFC-3881" display="Report Nunber"/>
+        <Code code="10" codingScheme="RFC-3881" display="Search Criteria"/>
+        <Code code="11" codingScheme="RFC-3881" display="User Identifier"/>
+        <Code code="12" codingScheme="RFC-3881" display="URI"/>
+        <Code code="ITI-21" codingScheme="IHE Transactions" display="Patient Demographics Query"/>
+
+        <Code code="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"
+              codingScheme="IHE XDS Metadata" display="SubmissionSet ClassificationNode"/>
+    </CodeType>
+
+</Codes>
