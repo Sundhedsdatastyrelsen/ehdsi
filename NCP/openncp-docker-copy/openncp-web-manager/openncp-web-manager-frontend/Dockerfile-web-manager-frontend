@@ -1,0 +1,22 @@
+FROM node:14.21-alpine
+
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+
+RUN npm install -g http-server
+
+WORKDIR /app
+
+COPY openncp-web-manager/openncp-web-manager-frontend/package*.json ./
+
+RUN npm install
+
+COPY openncp-web-manager/openncp-web-manager-frontend .
+
+ARG GATEWAY_BACKEND_URL
+RUN sed -i -e "/^VUE_APP_SERVER_URL/s/=.*$/=${GATEWAY_BACKEND_URL}/" .env.production
+RUN sed -i '/publicPath/d' vue.config.js
+
+RUN npm run build
+
+EXPOSE 8080
+CMD [ "http-server", "dist"]

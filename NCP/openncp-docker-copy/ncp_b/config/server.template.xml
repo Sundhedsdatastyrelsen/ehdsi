@@ -1,0 +1,111 @@
+<Server port="8005" shutdown="SHUTDOWN">
+   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+   <!-- Security listener. Documentation at /docs/config/listeners.html
+      <Listener className="org.apache.catalina.security.SecurityListener" />
+   -->
+   <!--APR library loader. Documentation at /docs/apr.html -->
+   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+   <!-- Prevent memory leaks due to use of particular java/javax APIs-->
+   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+ 
+   <!-- Global JNDI resources Documentation at /docs/jndi-resources-howto.html -->
+   <GlobalNamingResources>
+      <!-- Editable user database that can also be used by
+         UserDatabaseRealm to authenticate users
+      -->
+   <Resource name="UserDatabase" auth="Container" type="org.apache.catalina.UserDatabase" description="User database that can be updated and saved"
+             factory="org.apache.catalina.users.MemoryUserDatabaseFactory" pathname="conf/tomcat-users.xml" />
+ 
+      <!--Define hereafter your OpenNCP Connection Pools: jdbc/ConfMgr, jdbc/TSAM, jdbc/EADC, jdbc/LOGS -->    
+      <Resource name="jdbc/ConfMgr" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
+                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+ 
+      <Resource name="jdbc/OPEN_ATNA" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
+                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+ 
+      <Resource name="jdbc/TSAM" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
+                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+ 
+      <Resource name="jdbc/EADC" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory" type="javax.sql.DataSource" singleton="true"
+                minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000" dataSourceClassName="$DATASOURCE_CLASS_NAME"
+                dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+                dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+   </GlobalNamingResources>
+ 
+   <!-- A "Service" is a collection of one or more "Connectors" that share
+        a single "Container" Note:  A "Service" is not itself a "Container",
+        so you may not define subcomponents such as "Valves" at this level.
+        Documentation at /docs/config/service.html
+   -->
+   <Service name="Catalina">
+      <Connector port="$CONNECTOR_PORT" protocol="HTTP/1.1"
+                 connectionTimeout="20000"
+                 maxHttpHeaderSize="1048576"
+                 redirectPort="$CONNECTOR_SECURE_PORT" />
+       <Connector port="$CONNECTOR_SECURE_PORT" SSLEnabled="true" protocol="HTTP/1.1"
+                  maxThreads="150" scheme="https" secure="true"
+                  clientAuth="$CLIENT_AUTH" sslProtocol="TLS"
+                  keyAlias="$KEY_ALIAS"
+                  keystoreFile="/opt/openncp-configuration/keystore/gazelle-service-consumer-keystore.jks"
+                  keystorePass="$KEYSTORE_PASSWORD"
+                  truststoreFile="/opt/openncp-configuration/keystore/eu-truststore.jks"
+                  truststorePass="$TRUSTSTORE_PASSWORD"
+                  maxHttpHeaderSize="1048576"
+                  URIEncoding="UTF-8"/>
+      <!-- An Engine represents the entry point (within Catalina) that processes
+            every request.  The Engine implementation for Tomcat stand alone
+            analyzes the HTTP headers included with the request, and passes them
+            on to the appropriate Host (virtual host).
+            Documentation at /docs/config/engine.html -->
+
+      <!-- You should set jvmRoute to support load-balancing via AJP ie :
+      <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
+      -->
+      <Engine name="Catalina" defaultHost="localhost">
+
+         <!--For clustering, please take a look at documentation at:
+             /docs/cluster-howto.html  (simple how to)
+             /docs/config/cluster.html (reference documentation) -->
+         <!--
+         <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"/>
+         -->
+
+         <!-- Use the LockOutRealm to prevent attempts to guess user passwords
+              via a brute-force attack -->
+         <Realm className="org.apache.catalina.realm.LockOutRealm">
+            <!-- This Realm uses the UserDatabase configured in the global JNDI
+                 resources under the key "UserDatabase".  Any edits
+                 that are performed against this UserDatabase are immediately
+                 available for use by the Realm.  -->
+            <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                   resourceName="UserDatabase"/>
+         </Realm>
+
+         <Host name="localhost"  appBase="webapps"
+               unpackWARs="true" autoDeploy="true">
+
+            <!-- SingleSignOn valve, share authentication between web applications
+                 Documentation at: /docs/config/valve.html -->
+            <!--
+            <Valve className="org.apache.catalina.authenticator.SingleSignOn" />
+            -->
+
+            <!-- Access log processes all example.
+                 Documentation at: /docs/config/valve.html
+                 Note: The pattern used is equivalent to using pattern="common" -->
+            <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                   prefix="localhost_access_log" suffix=".txt"
+                   pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+         </Host>
+      </Engine>
+   </Service>
+
+</Server>

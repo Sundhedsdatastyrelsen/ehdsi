@@ -1,0 +1,224 @@
+<html>
+	<head>
+		<style type="text/css">
+			*
+			{
+				font-family:Arial;
+				font-size:10pt;
+			}
+			img
+			{
+				border-style:outset;
+				border-color:lightgray;
+				border-width:4px;
+			}
+			li
+			{
+				padding:2px;
+			}
+			body > table
+			{
+				width: 1300px;
+			}
+			span.important
+			{
+				font-weight:bold;
+				font-style:italic;
+			}
+			div.headline
+			{
+				font-weight:bold;
+				font-size:14pt;
+				padding-top:30px;
+				padding-bottom:5px;
+			}
+			div.subsection
+			{
+				font-weight:bold;
+				font-size:12pt;
+				padding-top:9px;
+				padding-bottom:3px;
+			}
+			div.mainHeadline
+			{
+				font-size:25pt;
+				font-weight:bold;
+				text-align:center;
+				width:100%
+			}
+			
+		</style>
+	</head>
+	<body>
+		<div class="mainHeadline">Epsos Automatic Data Collector (EADC)</div>
+		<ul>
+			<li>
+				<div class="headline">Overview and Purpose</div>
+				<ul>
+					<li>
+						The Epsos Automatic Data Collector's main objective is to <span class="important">extract data</span> from every transaction being processed by an <span class="important">NCP</span>.
+					</li>
+					<li>
+						<span class="important">Rules</span> can be defined in XML to extract data from a transaction's <span class="important">Metadata</span> as well as from an appended <span class="important">CDA-document</span>.
+					</li>
+					<li>
+						An <span class="important">SQL-database</span> is used to store the extracted data.
+					</li>
+					<li>
+						To maximize throughput, the EADC generates and caches a <span class="important">customized extraction routine</span> (XSLT) for every kind of CDA-Document<br/>
+						The behaviour of the XSLT generation process can be controlled by assigning extraction-rules to specific filter-groups.
+					</li>
+				</ul>
+			</li>
+			<li>
+				<div class="headline">Extraction Workflow</div>
+				<ul>
+					<li>
+						<div class="subsection">Overview</div>
+						<img alt="Transaction" src="images/workflow.png"><br/>
+						The workflow consists of two branches, which are described in detail as follows:<br/>
+					</li>
+					<li>
+						<div class="subsection">Extraction process</div>
+						<ul>
+							<li>The spirit proxy feeds the EADC with a transaction-xml as specified in the section XML-Schema Diagrams.</li>
+							<li>If the transaction has an appended CDA-document, the class-code of that document is extracted, otherwise "null" is used as classcode.</li>
+							<li>An XML-stylesheet, that is customized for being used along with that class-code, is then retrieved from the configuration cache.<br/>
+							<li>The retrieved XML-stylsheet is applied to the transaction-xml.</li>
+							<li>The resulting plaintext output is a list of SQL-insert-statements.</li>
+							<li>Those statements are then executed by using the JDBC-connector</li>
+						</ul>
+					</li>
+					<li>
+						<div class="subsection">Configuration cache</div>
+						<ul>
+							<li>Extraction rules are specified in the file config.xml. (Every extraction rule can be configured for being applied to a specific subset of CDA-document-types.)</li>
+							<li>A stylesheet request from the extraction process always contains a specific CDA classcode.</li>
+							<li>The factory.xslt, the config.xml,  and this classcode are used to generate an intermedia-xslt, which is  then cached.</li>
+							<li>This cache can be cleared  by reloading the proxy configuration</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<div class="headline">Preparations</div>
+				<ul>
+					<li>Make sure to have an <span class="important">XML-Editor</span> installed on your local computer, that has a <span class="important">content-assistant</span> which is able to use <span class="important">XML-Schemas</span> that are linked to <span class="important">XML-files</span>. (e.g. Eclipse-IDE)
+					</li>
+					<li>You will need to <span class="important">transfer files and directories</span> between your computer and the target system</li>
+					<li>Prepare access to your target systems <span class="important">MySQL Database</span> for executing SQL Scripts</li>
+					<li>You need to be able to execute <span class="important">bash commands</span> at your target system</li>
+				</ul>
+			</li>
+			<li>
+				<div class="headline">Installation</div>
+				<ul>
+					<li>Determine which sql-datbase you want to use for this purpose.</li>
+					<li>Use the sql-script <span class="important">create_EADC.sql</span> provided in <span class="important">EADC_resources/db</span> to setup the required tables within this database.</li>
+					<li><span class="important">Copy</span> the directory <span class="important">EADC_resources</span> to your jboss working directory <span class="important">.../jboss/bin</span> </li>
+				</ul>
+			</li>
+
+			<li>
+				<div class="headline">Configuration</div>
+				<ul>
+					<li>Copy the directory <span class="important">EADC_resources</span> from the target system to your workstation</li>
+					<li>Configure extraction rules by editing the file <span class="important">EADC_resources/config/config.xml</span> with your <span class="important">XML-Editor</span>
+						<ul>
+							<li>Use your XML-editors <span class="important">Content-Assistant</span> at any XML-Node to provide Information on:
+								<ul>
+									<li>... what content is allowed within that XML-Node</li>
+									<li>... how this node affects the data extraction</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li>Move your local copy of <span class="important">EADC_resources</span> back to the target system</li>
+				</ul>
+			</li>
+			<li>
+				<div class="headline">Configuration Example Procedure</div>
+				<ul>
+					<li>Assume we want to configure the EADC to extract the patients gender from every CDA document being processed.</li>
+					<li>The following is a step-by-step procedure achieving that goal:</li>
+					<ol>
+						<li>Determine the XML-Node within the CDA-Document, where the data is stored, which should be extracted.</li>
+						<li>Create an XPath expression leading to that Node. This expression is used to navigate within the transaction-xml:<br/>
+						<span class="important">/proxy:Transaction/cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:administrativeGenderCode</span></li>
+						<li>Open config.xml and navigate to the <span class="important">childTable</span> node</li>
+						<li>Within that node insert the following <span class="important">extractionRule</span> node:<br/>
+							<textarea cols="160" rows="6">
+<extractionRule matchXPath="/proxy:Transaction/cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:administrativeGenderCode">
+	<mapping targetColumn="DataType" sourceXPath="'0815'"/>
+	<mapping targetColumn="DataTypeName" sourceXPath="'Gender Code'"/>
+	<mapping targetColumn="DataValue" sourceXPath="."/>
+	<mapping targetColumn="ValueDisplay" sourceXPath="."/>
+</extractionRule>
+							</textarea>
+							<ul>
+								<li>The <span class="important">matchXPath</span> attribute is targeting the <span class="important">administrativeGenderCode</span> node.
+								This extraction rule is being processed for every match of this XPath within the transaction-xml. 
+								</li>
+								<li>Every <span class="important">mapping</span> node specifies a customizable part of the resulting sql-insert statement.
+									<ul>
+										<li>The <span class="important">targetColumn</span> attribute specifies into which sql-column the value should be stored.</li>	
+										<li>The <span class="important">sourceXPath</span> attribute specifies the content, that should be stored.<br/>
+										It must contain a valid XPath expression. This expression is evaluated within the <span class="important">context</span> of the currently processed node, that was matched by <span class="important">matchXPath</span> 
+										</li>
+									</ul>
+								</li> 
+							</ul>
+						</li>
+					</ol> 
+				</ul>
+			</li>
+			<li>
+				<div class="headline">CSV Export</div>
+				<ul>
+					<li>Log in to the target system via ssh</li>
+					<li>Execute the following command (copy&amp;paste):<br/>
+					<textarea cols="150" rows="8">
+mysql -utmed -ptmed -e "select 'Transaction_PK','Direction','HomeISO','HomeNCP_OID','HomeHCID','HomeHost','HomeAddress','SndISO','SndNCP_OID','SndHCID','SndAddress','SndHost','SndMsgID','ReceivingISO','ReceivingNCP_OID','ReceivingHost','receivingAddr','ReceivingMsgID','TransactionCounter','HumanRequestor','UserId','POC','POC_ID','AuthentificationLevel','RequestAction','ResponseAction','ServiceType','ServiceName','StartTime','EndTime','Duration','TransactionData_PK','Transaction_FK','DataType','DataTypeName','DataValue','ValueDisplay','Void0','Void1','Void2','Void3','Void4','Void5','Void6','Void7','Void8','Void9' \
+union select * INTO OUTFILE '/tmp/etransactiondata_`hostname`_`date +%Y%m%d%H%M%S`' FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\'' LINES TERMINATED BY '\n' \
+from tmed.etransaction left join tmed.etransactiondata on etransaction.Transaction_PK=etransactiondata.Transaction_FK"					
+					</textarea>
+					</li>
+					<li>The above command unloads the content of the tables etransaction and etransactiondata to the csv file /tmp/etransactiondata_`hostname`_`date +%Y%m%d%H%M%S`' i.e. /tmp/etransactiondata_ncp-at_20111102123839</li>
+				</ul>
+			</li>
+			<li>
+				<div class="headline">XML Schema Diagrams</div>
+				<ul>
+					<li>
+						<div class="subsection">Input data structure</div>
+						The following XML-Structure is used to feed the EADC.<br/> 
+						<img alt="Transaction" src="images/schema_transaction.png"><br/>
+					</li>
+					<li>
+						<div class="subsection">Configuration root node</div>
+						<img alt="ConfigurationRootNode" src="images/schema_root.png"><br/>
+						The maintable and childtable have a similar specification for extractionRule.<br/>
+						Every <span class="important">NCP-transaction</span> is parsed by the <span class="important">MainTable-extractionRule</span> and by the <span class="important">ChildTable-extractionRules</span>.
+						<ul>
+							<li>
+								The <span class="important">MainTable-extractionRule</span> translates the parsed transaction-message into an SQL-query that inserts the data into the MainTable.
+							</li>
+							<li>
+								Every <span class="important">ChildTable-extractionRule</span> generates an SQL-insert-statement for every match of any extractionRule. The extracted data is inserted into the ChildTable by those insert statements.
+							</li>
+						</ul>
+					</li>
+					<li>
+						<div class="subsection">Group filter structure</div>
+						<img alt="GroupFilterStructure" src="images/schema_group.png"><br/>
+						At the child table one can build a tree structure of groups.
+					</li>
+					<li>
+						<div class="subsection">Extraction rule</div>
+						<img alt="ExtractionRule" src="images/schema_extractionrule.png">
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</body>
+</html>

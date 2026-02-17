@@ -1,0 +1,191 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.europa.ec.sante</groupId>
+        <artifactId>openncp</artifactId>
+        <version>8.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>openncp-docker</artifactId>
+    <name>openncp-docker</name>
+    <dependencies>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-server</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/webapp</outputDirectory>
+                            <destFileName>openncp-ws-server.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-client</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/webapp</outputDirectory>
+                            <destFileName>openncp-client-connector.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openatna-web</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/webapp</outputDirectory>
+                            <destFileName>openatna-web.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-web-manager-backend</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/webapp</outputDirectory>
+                            <destFileName>openncp-gateway-backend.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-configuration-utility</artifactId>
+                            <version>${project.version}</version>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/utilities/</outputDirectory>
+                            <destFileName>openncp-configuration-utility.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-trc-sts</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/webapp/</outputDirectory>
+                            <destFileName>TRC-STS.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-transformation</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/webapp/</outputDirectory>
+                            <destFileName>translations-and-mappings-ws.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-tsam-sync</artifactId>
+                            <version>${project.version}</version>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/utilities/</outputDirectory>
+                            <destFileName>openncp-tsam-sync.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-tsam-exporter</artifactId>
+                            <version>${project.version}</version>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/utilities/</outputDirectory>
+                            <destFileName>openncp-tsamexporter.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.mysql</groupId>
+                            <artifactId>mysql-connector-j</artifactId>
+                            <version>${mysql-connector.version}</version>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/lib</outputDirectory>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.zaxxer</groupId>
+                            <artifactId>HikariCP</artifactId>
+                            <version>${hikaricp.version}</version>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/lib</outputDirectory>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${basedir}/target/classes/lib</outputDirectory>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>io.fabric8</groupId>-->
+            <!--                <artifactId>docker-maven-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <verbose>true</verbose>-->
+            <!--                    <skipRun>${skipTests}</skipRun>-->
+            <!--                    <images>-->
+            <!--                        <image>-->
+            <!--                            <alias>openncpa-${project.version}${build.number}</alias>-->
+            <!--                            <name>opencnp-a:${project.version}</name>-->
+            <!--                            <build>-->
+            <!--                                <dockerFile>${project.basedir}/Dockerfile-web-manager-backend-node-a</dockerFile>-->
+            <!--                                <tags>-->
+            <!--                                    <tag>latest</tag>-->
+            <!--                                </tags>-->
+            <!--                            </build>-->
+            <!--                            <run>-->
+            <!--                                <containerNamePattern>%a-%i</containerNamePattern>-->
+            <!--                                <ports>-->
+            <!--                                    <port>http_port:8080</port>-->
+            <!--                                </ports>-->
+            <!--                                <wait>-->
+            <!--                                    <time>100000</time>-->
+            <!--                                    <healthy>true</healthy>-->
+            <!--                                </wait>-->
+            <!--                            </run>-->
+            <!--                        </image>-->
+            <!--                    </images>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>make-docker-image</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>build</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>package</phase>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>start-containers</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>start</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>pre-integration-test</phase>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>stop-containers</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>stop</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>post-integration-test</phase>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
+        </plugins>
+    </build>
+</project>

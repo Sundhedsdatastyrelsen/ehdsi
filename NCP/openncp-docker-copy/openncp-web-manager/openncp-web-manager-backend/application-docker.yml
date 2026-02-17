@@ -1,0 +1,22 @@
+logging:
+  level:
+    org.hibernate: info
+  servlet:
+    context-path: /openncp-gateway-backend
+spring:
+  datasource:
+    default:
+      jndi-name: java:comp/env/jdbc/ConfMgr
+    atna:
+      jndi-name: java:comp/env/jdbc/OPEN_ATNA
+    eadc:
+      jndi-name: java:comp/env/jdbc/EADC
+  jpa:
+    properties:
+      hibernate.show_sql: false
+      hibernate.format_sql: false
+      hibernate.generate_statistics: false
+application:
+  security:
+    jwt:
+      secret: S7U418zVNeAIRmznNyNQec7eimPD0qEv

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*******************************************************************************
+Vocabulary for HL7 Pharmacy extension of HL7 Clinical Document Architecture (CDA) R2 (2005)
+Currently included by POCD_MT000040_extPHARM.xsd, COCT_MT230100UV01_extPHARM.xsd 
+
+History:
+2018.06.29 Giorgio Cangioli, first version based on the ELGA XML schema created by Tony Schaller, medshare GmbH, Switzerland
+2023.30.01 Giorgio Cangioli, fixed the error with the first annotation
+*******************************************************************************
+-->
+<xs:schema xmlns:hl7v3="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:ips="urn:hl7-org:ips" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:hl7-org:v3" elementFormDefault="qualified">
+	<xs:include schemaLocation="../coreschemas/datatypes.xsd">
+		<xs:annotation><xs:documentation>The included coreschemas/datatypes-base.xsd has been modified to include the Pharmacy / IPS extensions for coded elements (e.g. CD, CE,...)</xs:documentation></xs:annotation>
+	</xs:include>
+	<!-- this comes originally from infrastructureRoot.xsd of HL7 V3 Normative Edition 2010 -->
+	<xs:group name="InfrastructureRootElements">
+		<xs:sequence>
+			<xs:element name="realmCode" type="hl7v3:CS" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="typeId" type="hl7v3:all.InfrastructureRoot.typeId" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="templateId" type="hl7v3:all.InfrastructureRoot.templateId" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:group>
+	<xs:attributeGroup name="InfrastructureRootAttributes"/>
+
+
+	<xs:complexType name="all.InfrastructureRoot.typeId">
+		<xs:complexContent>
+			<xs:restriction base="hl7v3:II">
+				<xs:attribute name="root" type="hl7v3:uid" use="required" fixed="2.16.840.1.113883.1.3"/>
+				<xs:attribute name="extension" type="hl7v3:st" use="required"/>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="all.InfrastructureRoot.templateId">
+		<xs:complexContent>
+			<xs:extension base="hl7v3:II">
+				<xs:attribute name="unsorted" type="xs:boolean" default="false"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- this comes originally from voc.xsd of HL7 V3 Normative Edition 2010 -->
+	<xs:simpleType name="EntityClassPublicInstitution">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="PUB"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EntityDeterminerSpecific">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="INSTANCE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ActMoodEventOccurrence">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="EVN"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ParticipationAuthorOriginator">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="AUT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RoleClassContent">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="CONT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EntityClassState">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="STATE"/>
+			<xs:enumeration value="NAT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ParticipationHolder">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="HLD"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RoleClassAdministerableMaterial">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="ADMM"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ActMoodGoal">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="GOL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RoleClassPart">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="PART"/>
+			<xs:enumeration value="ACTM"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ActMoodDefinition">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="DEF"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RoleClassTerritoryOfAuthority">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="TERR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ActClassInvoiceElement">
+		<xs:restriction base="hl7v3:cs">
+			<xs:enumeration value="INVE"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

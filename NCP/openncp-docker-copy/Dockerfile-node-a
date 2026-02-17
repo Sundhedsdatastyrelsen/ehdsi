@@ -1,0 +1,34 @@
+FROM tomcat:9-jdk11-temurin
+
+# Copy the webapps
+COPY target/classes/webapp/openncp-ws-server.war /usr/local/tomcat/webapps/
+COPY target/classes/lib /usr/local/tomcat/lib/
+
+COPY ./ncp_a/tomcat-config-entrypoint.sh /usr/local/tomcat/bin/
+COPY ./ncp_a/config /usr/local/tomcat/conf/
+
+ENV EPSOS_PROPS_PATH=/opt/openncp-configuration/
+
+COPY ./openncp-configuration-utility/ /opt/ehealth-openncp/openncp-configuration-utility/
+COPY ./openncp-configuration/ $EPSOS_PROPS_PATH
+
+# needed because else we get the error:
+# failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process:
+# exec: "tomcat-config-entrypoint.sh": executable file not found in $PATH: unknown
+RUN chmod 777 /usr/local/tomcat/bin/tomcat-config-entrypoint.sh
+RUN chmod 777 -R /opt/ehealth-openncp/openncp-configuration-utility/
+
+RUN groupadd -g 1000 tomcat && \
+  useradd -r -u 1000 -g tomcat tomcat && \
+  chown -R tomcat:tomcat /usr/local/tomcat/ $EPSOS_PROPS_PATH
+
+RUN apt-get update && apt-get -qq -y install gettext socat
+
+
+
+ENTRYPOINT ["tomcat-config-entrypoint.sh"]
+
+USER tomcat
+
+# Start the tomcat service
+CMD ["catalina.sh", "run"]

@@ -1,0 +1,38 @@
+debug: false
+tsam-sync:
+  database:
+    backup: true
+  datasource:
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    host: ${DB_HOST}
+    port: ${DB_INTERNAL_PORT}
+    database: ehealth_ltrdb
+    dialect: org.hibernate.dialect.MySQL8Dialect
+    driver: com.mysql.cj.jdbc.Driver
+    timezone: Europe/Brussels
+  datasource-ehealth-properties:
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    host: ${DB_HOST}
+    port: ${DB_INTERNAL_PORT}
+    database: ehealth_properties
+    dialect: org.hibernate.dialect.MySQL8Dialect
+    driver: com.mysql.cj.jdbc.Driver
+    timezone: Europe/Brussels
+  proxy:
+    host:
+    port:
+    username:
+    password:
+  cts:
+    url: https://webgate.training.ec.europa.eu/ehealth-term-server
+    username: ncpeh@eu
+    password: MyNewTrnCTS#2023
+spring:
+  jpa:
+    show_sql: false
+  main:
+    allow-circular-references: true
+  profiles:
+    active: mysql

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+   <mapping country="be" domainId="1.3.6.1.4.1.48336"/>
+   <mapping country="bg" domainId="2.16.17.710.812.1000.990.1"/>
+   <mapping country="cz" domainId="2.16.17.710.804.1000.990.1"/>
+   <mapping country="dk" domainId="2.16.17.710.802.1000.990.1"/>
+   <mapping country="de" domainId="2.16.17.710.803.1000.990.1"/>
+   <mapping country="ee" domainId="2.16.17.710.815.1000.990.1"/>
+   <mapping country="ie" domainId="2.16.17.710.813.1000.990.1"/>
+   <mapping country="gr" domainId="2.16.17.710.811.1000.990.1"/>
+   <mapping country="es" domainId="2.16.724.4"/>
+   <mapping country="fr" domainId="2.16.17.710.790.1000.990.1"/>
+   <mapping country="hr" domainId="2.16.17.710.840.1000.990.1"/>
+   <mapping country="it" domainId="2.16.17.710.806.1000.990.1"/>
+   <mapping country="cy" domainId="2.16.17.710.860.1000.990.1"/>
+   <mapping country="lv" domainId="2.16.17.710.816.1000.990.1"/>
+   <mapping country="lt" domainId="2.16.17.710.817.1000.990.1"/>
+   <mapping country="lu" domainId="1.3.182.2.12.10000734.6.1"/>
+   <mapping country="hu" domainId="2.16.17.710.818.1000.990.1"/>
+   <mapping country="mt" domainId="2.16.470.1.100.1.2.1000.990.1"/>
+   <mapping country="nl" domainId="2.16.17.710.810.1000.990.1"/>
+   <mapping country="at" domainId="2.16.17.710.780.1000.990.1"/>
+   <mapping country="pl" domainId="2.16.17.710.819.1000.990.1"/>
+   <mapping country="pt" domainId="2.16.17.710.820.1000.990.1"/>
+   <mapping country="ro" domainId="2.16.17.710.821.1000.990.1"/>
+   <mapping country="si" domainId="2.16.17.710.822.1000.990.1"/>
+   <mapping country="sk" domainId="2.16.17.710.805.1000.990.1"/>
+   <mapping country="fi" domainId="1.2.246.556.12001.4.1000.990.1"/>
+   <mapping country="se" domainId="2.16.17.710.807.1000.990.1"/>
+   <mapping country="eu" domainId="2.16.17.710.850.1000.990.1"/>
+</mappings>
