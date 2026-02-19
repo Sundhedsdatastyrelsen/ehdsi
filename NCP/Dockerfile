@@ -44,8 +44,18 @@ RUN apt-get update \
 RUN groupadd -g 10001 tomcat && \
     useradd -r -u 10001 -g tomcat tomcat
 
+# Add our openncp configuration.
 COPY ./openncp-configuration/ /opt/openncp-configuration
+# Copy the files we use directly from ehealth.
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/EADC_resources /opt/openncp-configuration/EADC_resources
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/TM_resources /opt/openncp-configuration/TM_resources
+
+# We save our atna configuration in another folder for some reason.
 COPY ./atna-resources/ /opt/atna-resources
+# Copy the files we use directly from ehealth.
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/atnacodes.xml /opt/atna-resources/atnacodes.xml
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/entities.xml /opt/atna-resources/entities.xml
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/IheActors.xml /opt/atna-resources/IheActors.xml
 
 # Download OpenTelemetry Java agent
 RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
