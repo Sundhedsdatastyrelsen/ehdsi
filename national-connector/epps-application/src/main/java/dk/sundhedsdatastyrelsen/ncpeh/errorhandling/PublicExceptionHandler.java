@@ -38,11 +38,11 @@ public class PublicExceptionHandler {
         } else if (httpStatus.is5xxServerError()) {
             log.warn(
                 PROTOTYPE_ERROR_MESSAGE, e.getClass()
-                    .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
+                    .getSimpleName(), e.getMessage(), errorUuid, httpStatus, e);
         } else {
             log.info(
                 PROTOTYPE_ERROR_MESSAGE, e.getClass()
-                    .getSimpleName(), e.getMessage(), errorUuid, httpStatus);
+                    .getSimpleName(), e.getMessage(), errorUuid, httpStatus, e);
         }
 
         return ResponseEntity.status(httpStatus).body(details);
