@@ -4,6 +4,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTok
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.BootstrapTokenParams;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.bootstraptoken.OpenNcpAssertions;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             .orElse(null);
     }
 
+    @WithSpan
     @Override
     public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(String soapHeader, String audience) {
         var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
@@ -40,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return sosiStsClientIdws.exchangeBootstrapToken(bstRequest);
     }
 
+    @WithSpan
     @Override
     public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) {
         DgwsIdCardRequest request;

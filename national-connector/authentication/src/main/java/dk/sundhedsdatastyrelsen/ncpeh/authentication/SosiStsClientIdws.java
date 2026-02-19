@@ -5,6 +5,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class SosiStsClientIdws {
             .build();
     }
 
+    @WithSpan
     /// @throws AuthenticationException if something goes wrong
     public EuropeanHcpIdwsToken exchangeBootstrapToken(BootstrapTokenExchangeRequest request) {
         try {
