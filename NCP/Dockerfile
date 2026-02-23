@@ -138,8 +138,11 @@ FROM tomcat-base AS trc-sts
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/TRC-STS.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-trc-sts/config/context.xml \
+    conf/
 
-COPY ./openncp-trc-sts/config conf/
+COPY ./openncp-trc-sts/config/server.xml conf/
 COPY ./openncp-trc-sts/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .

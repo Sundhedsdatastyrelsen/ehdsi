@@ -35,6 +35,7 @@ I'll list the different files below.
 - openncp-national-connector/ (our implementation)
 - openncp-openatna/entrypoint.sh (replaces openncp-docker/openncp-openatna/tomcat-config-entrypoint.sh)
 - openncp-translations-and-mappings/entrypoint.sh (replaces openncp-docker/openncp-translations-and-mappings/tomcat-config-entrypoint.sh)
+- openncp-trc-sts/entrypoint.sh (replaces openncp-docker/openncp-trc-sts/tomcat-config-entrypoint.sh)
 
 ### 2 Patched files
 
