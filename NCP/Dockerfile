@@ -50,7 +50,7 @@ COPY ./openncp-configuration/ /opt/openncp-configuration
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/EADC_resources /opt/openncp-configuration/EADC_resources
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/TM_resources /opt/openncp-configuration/TM_resources
 
-# We save our atna configuration in another folder for some reason.
+# We save our atna configuration in another folder.
 COPY ./atna-resources/ /opt/atna-resources
 # Copy the files we use directly from ehealth.
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/atnacodes.xml /opt/atna-resources/atnacodes.xml
@@ -93,7 +93,11 @@ COPY --from=builder \
     /usr/src/app/ehealth/openncp-docker/target/classes/lib \
     lib/
 
-COPY ./ncp_a/config conf/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/ncp_a/config/context.xml \
+    conf/
+
+COPY ./ncp_a/config/server.xml conf/
 COPY ./ncp_a/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
