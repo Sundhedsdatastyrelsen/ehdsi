@@ -31,6 +31,7 @@ I'll list the different files below.
 - ncp_a/entrypoint.sh (replaces openncp-docker/ncp_a/tomcat-config-entrypoint.sh)
 - ncp_a/pom.xml (not from ehealth, injects our national connector in ncp_a)
 - ncp_b/entrypoint.sh (replaces openncp-docker/ncp_b/tomcat-config-entrypoint.sh)
+- openncp-configuration/pn-oid.xml (must be mounted, since it may need to be changed)
 
 ### 2 Patched files
 
@@ -84,7 +85,6 @@ diff ehealth/openncp-docker/ncp_b/ncpb.database.env ehdsi/NCP/ncp_b/ncpb.databas
 diff ehealth/openncp-docker/ncp_b/ncpb.env ehdsi/NCP/ncp_b/ncpb.env -u > ehdsi/NCP/ncp_b/ncpb.env.diff
 
 # openncp-configuration
-diff ehealth/openncp-docker/openncp-configuration/pn-oid.xml ehdsi/NCP/openncp-configuration/pn-oid.xml -u > ehdsi/NCP/openncp-configuration/pn-oid.xml.diff
 diff ehealth/openncp-docker/openncp-configuration/tm.properties ehdsi/NCP/openncp-configuration/tm.properties -u > ehdsi/NCP/openncp-configuration/tm.properties.diff
 diff ehealth/openncp-docker/openncp-configuration/tsam.properties ehdsi/NCP/openncp-configuration/tsam.properties -u > ehdsi/NCP/openncp-configuration/tsam.properties.diff
 ```

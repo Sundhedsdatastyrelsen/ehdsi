@@ -45,7 +45,8 @@ RUN groupadd -g 10001 tomcat && \
     useradd -r -u 10001 -g tomcat tomcat
 
 # Add our openncp configuration.
-COPY ./openncp-configuration/ /opt/openncp-configuration
+COPY ./openncp-configuration/tm.properties /opt/openncp-configuration/tm.properties
+COPY ./openncp-configuration/tsam.properties /opt/openncp-configuration/tsam.properties
 # Copy the files we use directly from ehealth.
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/audit-backup /opt/openncp-configuration/audit-backup
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/audits /opt/openncp-configuration/audits
