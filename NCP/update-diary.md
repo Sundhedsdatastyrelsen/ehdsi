@@ -37,6 +37,7 @@ I'll list the different files below.
 - openncp-translations-and-mappings/entrypoint.sh (replaces openncp-docker/openncp-translations-and-mappings/tomcat-config-entrypoint.sh)
 - openncp-trc-sts/entrypoint.sh (replaces openncp-docker/openncp-trc-sts/tomcat-config-entrypoint.sh)
 - openncp-tsam-exporter/entrypoint.sh (replaces openncp-docker/openncp-tsam-exporter/tomcat-config-entrypoint.sh)
+- openncp-web-manager/entrypoint.sh (replaces openncp-docker/openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh)
 
 ### 2 Patched files
 
@@ -56,6 +57,8 @@ The `mysql/[01-05]*.sql` files are copied and not changed, but we need them loca
 There is also a configuration file in ehealth, but it's not loaded in their docker-compose.
 
 `openncp-tsam-exporter/application.yml` is also copied.
+
+`openncp-web-manager/openncp-web-manager-backend/application-docker.yml` is also copied.
 
 ### Commands I ran
 
@@ -114,4 +117,11 @@ diff ehealth/openncp-docker/openncp-trc-sts/.env ehdsi/NCP/openncp-trc-sts/.env 
 
 # openncp-tsam-exporter
 # diff ehealth/openncp-docker/openncp-tsam-exporter/application.yml ehdsi/NCP/openncp-tsam-exporter/application.yml -u > ehdsi/NCP/openncp-tsam-exporter/application.yml.diff
+
+# openncp-web-manager/openncp-web-manager-backend
+# diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/context.xml ehdsi/NCP/openncp-web-manager/config/context.xml -u > ehdsi/NCP/openncp-web-manager/config/context.xml.diff
+diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/server.template.xml ehdsi/NCP/openncp-web-manager/config/server.xml -u > ehdsi/NCP/openncp-web-manager/config/server.xml.diff
+diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/.database.env ehdsi/NCP/openncp-web-manager/.database.env -u > ehdsi/NCP/openncp-web-manager/.database.env.diff
+diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/.env ehdsi/NCP/openncp-web-manager/.env -u > ehdsi/NCP/openncp-web-manager/.env.diff
+# diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/application-docker.yml ehdsi/NCP/openncp-web-manager/application-docker.yml -u > ehdsi/NCP/openncp-web-manager/application-docker.yml.diff
 ```
