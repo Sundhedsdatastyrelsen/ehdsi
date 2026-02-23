@@ -64,9 +64,6 @@ diff ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.proper
 # .env
 diff ehealth/openncp-docker/.env ehdsi/NCP/env_default/.env -u > ehdsi/NCP/env_default/.env.diff
 
-# evidence - need to copy this some other way.
-diff ehealth/openncp-docker/openncp-configuration/validation/gazelle.ehdsi.properties ehdsi/NCP/evidence/validation/gazelle.ehdsi.properties -u > ehdsi/NCP/evidence/validation/gazelle.ehdsi.properties.diff
-
 # mysql
 # diff ehealth/openncp-docker/mysql/initdb/01-ehealth-properties.sql ehdsi/NCP/mysql/initdb/01-ehealth-properties.sql -u > ehdsi/NCP/mysql/initdb/01-ehealth-properties.sql.diff
 # diff ehealth/openncp-docker/mysql/initdb/02-atna.sql ehdsi/NCP/mysql/initdb/02-atna.sql -u > ehdsi/NCP/mysql/initdb/02-atna.sql.diff

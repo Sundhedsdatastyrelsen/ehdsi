@@ -54,6 +54,7 @@ COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/EA
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/forms /opt/openncp-configuration/forms
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/integration /opt/openncp-configuration/integration
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/TM_resources /opt/openncp-configuration/TM_resources
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/validation/gazelle.ehdsi.properties /opt/openncp-configuration/gazelle.ehdsi.template.properties
 
 # We save our atna configuration in another folder.
 COPY ./atna-resources/ /opt/atna-resources
