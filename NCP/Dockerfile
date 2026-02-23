@@ -153,8 +153,11 @@ FROM tomcat-base AS openatna
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openatna-web.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-openatna/config/context.xml \
+    conf/
 
-COPY ./openncp-openatna/config conf/
+COPY ./openncp-openatna/config/server.xml conf/
 COPY ./openncp-openatna/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .

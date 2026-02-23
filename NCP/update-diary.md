@@ -32,6 +32,8 @@ I'll list the different files below.
 - ncp_a/pom.xml (not from ehealth, injects our national connector in ncp_a)
 - ncp_b/entrypoint.sh (replaces openncp-docker/ncp_b/tomcat-config-entrypoint.sh)
 - openncp-configuration/pn-oid.xml (must be mounted, since it may need to be changed)
+- openncp-national-connector/ (our implementation)
+- openncp-openatna/entrypoint.sh (replaces openncp-docker/openncp-openatna/tomcat-config-entrypoint.sh)
 
 ### 2 Patched files
 
@@ -86,4 +88,10 @@ diff ehealth/openncp-docker/ncp_b/ncpb.env ehdsi/NCP/ncp_b/ncpb.env -u > ehdsi/N
 # openncp-configuration
 diff ehealth/openncp-docker/openncp-configuration/tm.properties ehdsi/NCP/openncp-configuration/tm.properties -u > ehdsi/NCP/openncp-configuration/tm.properties.diff
 diff ehealth/openncp-docker/openncp-configuration/tsam.properties ehdsi/NCP/openncp-configuration/tsam.properties -u > ehdsi/NCP/openncp-configuration/tsam.properties.diff
+
+# openncp-openatna
+diff ehealth/openncp-docker/openncp-openatna/config/context.xml ehdsi/NCP/openncp-openatna/config/context.xml -u > ehdsi/NCP/openncp-openatna/config/context.xml.diff
+diff ehealth/openncp-docker/openncp-openatna/config/server.template.xml ehdsi/NCP/openncp-openatna/config/server.xml -u > ehdsi/NCP/openncp-openatna/config/server.xml.diff
+diff ehealth/openncp-docker/openncp-openatna/openatna.database.env ehdsi/NCP/openncp-openatna/openatna.database.env -u > ehdsi/NCP/openncp-openatna/openatna.database.env.diff
+diff ehealth/openncp-docker/openncp-openatna/openatna.env ehdsi/NCP/openncp-openatna/openatna.env -u > ehdsi/NCP/openncp-openatna/openatna.env.diff
 ```
