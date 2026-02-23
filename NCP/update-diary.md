@@ -36,6 +36,7 @@ I'll list the different files below.
 - openncp-openatna/entrypoint.sh (replaces openncp-docker/openncp-openatna/tomcat-config-entrypoint.sh)
 - openncp-translations-and-mappings/entrypoint.sh (replaces openncp-docker/openncp-translations-and-mappings/tomcat-config-entrypoint.sh)
 - openncp-trc-sts/entrypoint.sh (replaces openncp-docker/openncp-trc-sts/tomcat-config-entrypoint.sh)
+- openncp-tsam-exporter/entrypoint.sh (replaces openncp-docker/openncp-tsam-exporter/tomcat-config-entrypoint.sh)
 
 ### 2 Patched files
 
@@ -53,6 +54,8 @@ Additionally, the `context.xml` file in several of the server configurations. Th
 
 The `mysql/[01-05]*.sql` files are copied and not changed, but we need them locally to be able to start a mysql container.
 There is also a configuration file in ehealth, but it's not loaded in their docker-compose.
+
+`openncp-tsam-exporter/application.yml` is also copied.
 
 ### Commands I ran
 
@@ -108,4 +111,7 @@ diff ehealth/openncp-docker/openncp-translations-and-mappings/translations-and-m
 diff ehealth/openncp-docker/openncp-trc-sts/config/server.template.xml ehdsi/NCP/openncp-trc-sts/config/server.xml -u > ehdsi/NCP/openncp-trc-sts/config/server.xml.diff
 diff ehealth/openncp-docker/openncp-trc-sts/.database.env ehdsi/NCP/openncp-trc-sts/.database.env -u > ehdsi/NCP/openncp-trc-sts/.database.env.diff
 diff ehealth/openncp-docker/openncp-trc-sts/.env ehdsi/NCP/openncp-trc-sts/.env -u > ehdsi/NCP/openncp-trc-sts/.env.diff
+
+# openncp-tsam-exporter
+# diff ehealth/openncp-docker/openncp-tsam-exporter/application.yml ehdsi/NCP/openncp-tsam-exporter/application.yml -u > ehdsi/NCP/openncp-tsam-exporter/application.yml.diff
 ```

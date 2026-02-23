@@ -81,9 +81,9 @@ FROM eclipse-temurin:11-jre-jammy AS tsam-exporter
 
 WORKDIR /usr/local/openncp-tsam-exporter
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar .
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-tsam-exporter/application.yml .
 
 COPY ./openncp-tsam-exporter/entrypoint.sh .
-COPY ./openncp-tsam-exporter/application.yml .
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsamexporter.jar"]
