@@ -52,6 +52,8 @@ There is also a configuration file in ehealth, but it's not loaded in their dock
 
 ### Commands I ran
 
+Commented out commands were not necessary, but may still serve as documentation or help in future scripting approaches.
+
 From a root where both ehdsi and ehealth repoes are available:
 
 ```bash
