@@ -38,6 +38,9 @@ I'll list the different files below.
 - openncp-trc-sts/entrypoint.sh (replaces openncp-docker/openncp-trc-sts/tomcat-config-entrypoint.sh)
 - openncp-tsam-exporter/entrypoint.sh (replaces openncp-docker/openncp-tsam-exporter/tomcat-config-entrypoint.sh)
 - openncp-web-manager/entrypoint.sh (replaces openncp-docker/openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh)
+- smp-files/ (these are files we upload to SMP, not actually used in openncp)
+- test-tool/ (used to test that things are still working locally, written by us)
+- openncp-configuration.properties (replaces openncp-docker/openncp-configuration-utility/openncp-configuration.properties, but should still be updated when they update)
 
 ### 2 Patched files
 
@@ -124,4 +127,10 @@ diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/conf
 diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/.database.env ehdsi/NCP/openncp-web-manager/.database.env -u > ehdsi/NCP/openncp-web-manager/.database.env.diff
 diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/.env ehdsi/NCP/openncp-web-manager/.env -u > ehdsi/NCP/openncp-web-manager/.env.diff
 # diff ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/application-docker.yml ehdsi/NCP/openncp-web-manager/application-docker.yml -u > ehdsi/NCP/openncp-web-manager/application-docker.yml.diff
+
+# tsam-synchronizer
+diff ehealth/openncp-docker/openncp-tsam-sync/application.yaml ehdsi/NCP/tsam-synchronizer/application.yml -u > ehdsi/NCP/tsam-synchronizer/application.yml.diff
+
+# openncp-configuration.properties
+diff ehealth/openncp-docker/openncp-configuration-utility/openncp-configuration.properties ehdsi/NCP/openncp-configuration.properties -u > ehdsi/NCP/openncp-configuration.properties.diff
 ```
