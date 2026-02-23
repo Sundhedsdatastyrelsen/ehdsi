@@ -1,0 +1,25 @@
+--- ../ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.properties	2026-02-17 15:46:44
++++ NCP/atna-resources/openatna.properties	2026-02-06 10:35:03
+@@ -1,7 +1,7 @@
+ # OpenATNA properties file
+ 
+ # IHE actor configuration directory
+-ihe.actors.dir=/opt/openncp-configuration/ATNA_resources
++ihe.actors.dir=/opt/atna-resources
+ ihe.actors.file=IheActors.xml
+ 
+ # DB properties
+@@ -19,10 +19,10 @@
+ # mySQL 5
+ hib.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+ db.driver.class=com.mysql.jdbc.Driver
+-db.url=jdbc:mysql://hostname:3306/openatna?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8
++db.url=jdbc:mysql://${env:DB_HOST}:${env:DB_PORT}/openatna?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8
+ 
+ # Database credentials
+-db.username=username
+-db.password=password
++db.username=${env:DB_USERNAME}
++db.password=${env:DB_PASSWORD}
+ hib.hbm2ddl.auto=update
+ 

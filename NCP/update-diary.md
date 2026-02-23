@@ -34,3 +34,12 @@ I'll list these files here:
 ### 3 Copied files
 
 See the list in `Dockerfile`, don't want to write it twice.
+
+### Commands I ran
+
+From a root where both ehdsi and ehealth repoes are available:
+
+```bash
+diff ehealth/openncp-docker/openncp-configuration/ATNA_resources/ArrConnections.xml ehdsi/NCP/atna-resources/ArrConnections.template.xml -u > ehdsi/NCP/atna-resources/ArrConnections.template.xml.diff
+diff ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.properties ehdsi/NCP/atna-resources/openatna.properties -u > ehdsi/NCP/atna-resources/openatna.properties.diff
+```
