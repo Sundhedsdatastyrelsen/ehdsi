@@ -114,8 +114,11 @@ FROM tomcat-base AS node-b
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-client-connector.war /usr/local/tomcat/webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/ncp_b/config/context.xml \
+    conf/
 
-COPY ./ncp_b/config conf/
+COPY ./ncp_b/config/server.xml conf/
 COPY ./ncp_b/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .

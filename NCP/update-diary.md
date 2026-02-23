@@ -30,6 +30,7 @@ I'll list these files here:
 - mysql/initdb/90-grants.sql (not from ehealth, fixes some privileges in the database)
 - ncp_a/entrypoint.sh (replaces openncp-docker/ncp_a/tomcat-config-entrypoint.sh)
 - ncp_a/pom.xml (not from ehealth, injects our national connector in ncp_a)
+- ncp_b/entrypoint.sh (replaces openncp-docker/ncp_b/tomcat-config-entrypoint.sh)
 
 ### 2 Patched files
 
@@ -72,4 +73,10 @@ diff ehealth/openncp-docker/.env ehdsi/NCP/env_default/.env -u > ehdsi/NCP/env_d
 diff ehealth/openncp-docker/ncp_a/config/server.template.xml ehdsi/NCP/ncp_a/config/server.xml -u > ehdsi/NCP/ncp_a/config/server.xml.diff
 diff ehealth/openncp-docker/ncp_a/ncpa.database.env ehdsi/NCP/ncp_a/ncpa.database.env -u > ehdsi/NCP/ncp_a/ncpa.database.env.diff
 diff ehealth/openncp-docker/ncp_a/ncpa.env ehdsi/NCP/ncp_a/ncpa.env -u > ehdsi/NCP/ncp_a/ncpa.env.diff
+
+# ncp_b
+# diff ehealth/openncp-docker/ncp_b/config/context.xml ehdsi/NCP/ncp_b/config/context.xml -u > ehdsi/NCP/ncp_b/config/context.xml.diff
+diff ehealth/openncp-docker/ncp_b/config/server.template.xml ehdsi/NCP/ncp_b/config/server.xml -u > ehdsi/NCP/ncp_b/config/server.xml.diff
+diff ehealth/openncp-docker/ncp_b/ncpb.database.env ehdsi/NCP/ncp_b/ncpb.database.env -u > ehdsi/NCP/ncp_b/ncpb.database.env.diff
+diff ehealth/openncp-docker/ncp_b/ncpb.env ehdsi/NCP/ncp_b/ncpb.env -u > ehdsi/NCP/ncp_b/ncpb.env.diff
 ```
