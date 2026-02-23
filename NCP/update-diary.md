@@ -34,6 +34,7 @@ I'll list the different files below.
 - openncp-configuration/pn-oid.xml (must be mounted, since it may need to be changed)
 - openncp-national-connector/ (our implementation)
 - openncp-openatna/entrypoint.sh (replaces openncp-docker/openncp-openatna/tomcat-config-entrypoint.sh)
+- openncp-translations-and-mappings/entrypoint.sh (replaces openncp-docker/openncp-translations-and-mappings/tomcat-config-entrypoint.sh)
 
 ### 2 Patched files
 
@@ -90,8 +91,20 @@ diff ehealth/openncp-docker/openncp-configuration/tm.properties ehdsi/NCP/opennc
 diff ehealth/openncp-docker/openncp-configuration/tsam.properties ehdsi/NCP/openncp-configuration/tsam.properties -u > ehdsi/NCP/openncp-configuration/tsam.properties.diff
 
 # openncp-openatna
-diff ehealth/openncp-docker/openncp-openatna/config/context.xml ehdsi/NCP/openncp-openatna/config/context.xml -u > ehdsi/NCP/openncp-openatna/config/context.xml.diff
+# diff ehealth/openncp-docker/openncp-openatna/config/context.xml ehdsi/NCP/openncp-openatna/config/context.xml -u > ehdsi/NCP/openncp-openatna/config/context.xml.diff
 diff ehealth/openncp-docker/openncp-openatna/config/server.template.xml ehdsi/NCP/openncp-openatna/config/server.xml -u > ehdsi/NCP/openncp-openatna/config/server.xml.diff
 diff ehealth/openncp-docker/openncp-openatna/openatna.database.env ehdsi/NCP/openncp-openatna/openatna.database.env -u > ehdsi/NCP/openncp-openatna/openatna.database.env.diff
 diff ehealth/openncp-docker/openncp-openatna/openatna.env ehdsi/NCP/openncp-openatna/openatna.env -u > ehdsi/NCP/openncp-openatna/openatna.env.diff
+
+# openncp-translations-and-mappings
+# diff ehealth/openncp-docker/openncp-translations-and-mappings/config/context.xml ehdsi/NCP/openncp-translations-and-mappings/config/context.xml -u > ehdsi/NCP/openncp-translations-and-mappings/config/context.xml.diff
+diff ehealth/openncp-docker/openncp-translations-and-mappings/config/server.template.xml ehdsi/NCP/openncp-translations-and-mappings/config/server.xml -u > ehdsi/NCP/openncp-translations-and-mappings/config/server.xml.diff
+diff ehealth/openncp-docker/openncp-translations-and-mappings/translations-and-mappings.database.env ehdsi/NCP/openncp-translations-and-mappings/translations-and-mappings.database.env -u > ehdsi/NCP/openncp-translations-and-mappings/translations-and-mappings.database.env.diff
+diff ehealth/openncp-docker/openncp-translations-and-mappings/translations-and-mappings.env ehdsi/NCP/openncp-translations-and-mappings/translations-and-mappings.env -u > ehdsi/NCP/openncp-translations-and-mappings/translations-and-mappings.env.diff
+
+# openncp-trc-sts
+# diff ehealth/openncp-docker/openncp-trc-sts/config/context.xml ehdsi/NCP/openncp-trc-sts/config/context.xml -u > ehdsi/NCP/openncp-trc-sts/config/context.xml.diff
+diff ehealth/openncp-docker/openncp-trc-sts/config/server.template.xml ehdsi/NCP/openncp-trc-sts/config/server.xml -u > ehdsi/NCP/openncp-trc-sts/config/server.xml.diff
+diff ehealth/openncp-docker/openncp-trc-sts/.database.env ehdsi/NCP/openncp-trc-sts/.database.env -u > ehdsi/NCP/openncp-trc-sts/.database.env.diff
+diff ehealth/openncp-docker/openncp-trc-sts/.env ehdsi/NCP/openncp-trc-sts/.env -u > ehdsi/NCP/openncp-trc-sts/.env.diff
 ```

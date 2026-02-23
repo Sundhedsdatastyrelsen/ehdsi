@@ -171,8 +171,11 @@ FROM tomcat-base AS translations-and-mappings
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/translations-and-mappings-ws.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-translations-and-mappings/config/context.xml \
+    conf/
 
-COPY ./openncp-translations-and-mappings/config conf/
+COPY ./openncp-translations-and-mappings/config/server.xml conf/
 COPY ./openncp-translations-and-mappings/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
