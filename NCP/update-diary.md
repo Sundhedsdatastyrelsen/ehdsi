@@ -18,7 +18,7 @@ We could write a script that checks these files against the ehealth versions, so
 
 For 3., we document which files they are and copy them at build time into our images.
 
-I'll list these files here:
+I'll list the different files below.
 
 ### 1 Owned files
 
@@ -61,6 +61,9 @@ diff ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.proper
 # .env
 diff ehealth/openncp-docker/.env ehdsi/NCP/env_default/.env -u > ehdsi/NCP/env_default/.env.diff
 
+# evidence - need to copy this some other way.
+diff ehealth/openncp-docker/openncp-configuration/validation/gazelle.ehdsi.properties ehdsi/NCP/evidence/validation/gazelle.ehdsi.properties -u > ehdsi/NCP/evidence/validation/gazelle.ehdsi.properties.diff
+
 # mysql
 # diff ehealth/openncp-docker/mysql/initdb/01-ehealth-properties.sql ehdsi/NCP/mysql/initdb/01-ehealth-properties.sql -u > ehdsi/NCP/mysql/initdb/01-ehealth-properties.sql.diff
 # diff ehealth/openncp-docker/mysql/initdb/02-atna.sql ehdsi/NCP/mysql/initdb/02-atna.sql -u > ehdsi/NCP/mysql/initdb/02-atna.sql.diff
@@ -79,4 +82,9 @@ diff ehealth/openncp-docker/ncp_a/ncpa.env ehdsi/NCP/ncp_a/ncpa.env -u > ehdsi/N
 diff ehealth/openncp-docker/ncp_b/config/server.template.xml ehdsi/NCP/ncp_b/config/server.xml -u > ehdsi/NCP/ncp_b/config/server.xml.diff
 diff ehealth/openncp-docker/ncp_b/ncpb.database.env ehdsi/NCP/ncp_b/ncpb.database.env -u > ehdsi/NCP/ncp_b/ncpb.database.env.diff
 diff ehealth/openncp-docker/ncp_b/ncpb.env ehdsi/NCP/ncp_b/ncpb.env -u > ehdsi/NCP/ncp_b/ncpb.env.diff
+
+# openncp-configuration
+diff ehealth/openncp-docker/openncp-configuration/pn-oid.xml ehdsi/NCP/openncp-configuration/pn-oid.xml -u > ehdsi/NCP/openncp-configuration/pn-oid.xml.diff
+diff ehealth/openncp-docker/openncp-configuration/tm.properties ehdsi/NCP/openncp-configuration/tm.properties -u > ehdsi/NCP/openncp-configuration/tm.properties.diff
+diff ehealth/openncp-docker/openncp-configuration/tsam.properties ehdsi/NCP/openncp-configuration/tsam.properties -u > ehdsi/NCP/openncp-configuration/tsam.properties.diff
 ```

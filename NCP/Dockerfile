@@ -47,7 +47,11 @@ RUN groupadd -g 10001 tomcat && \
 # Add our openncp configuration.
 COPY ./openncp-configuration/ /opt/openncp-configuration
 # Copy the files we use directly from ehealth.
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/audit-backup /opt/openncp-configuration/audit-backup
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/audits /opt/openncp-configuration/audits
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/EADC_resources /opt/openncp-configuration/EADC_resources
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/forms /opt/openncp-configuration/forms
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/integration /opt/openncp-configuration/integration
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/TM_resources /opt/openncp-configuration/TM_resources
 
 # We save our atna configuration in another folder.
