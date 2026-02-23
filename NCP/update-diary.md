@@ -23,10 +23,10 @@ I'll list the different files below.
 ### 1 Owned files
 
 - alloy/ (not from ehealth)
-- common/logback.xml
+- common/logback.xml (replaces openncp's logging)
 - configuration-synchronizer/ (replaces openncp-docker/openncp-configuration-utility)
-- docker-compose.yml
-- Dockerfile
+- docker-compose.yml (replaces openncp's docker-compose.yml)
+- Dockerfile (replaces all openncp's dockerfiles)
 - mysql/initdb/90-grants.sql (not from ehealth, fixes some privileges in the database)
 - ncp_a/entrypoint.sh (replaces openncp-docker/ncp_a/tomcat-config-entrypoint.sh)
 - ncp_a/pom.xml (not from ehealth, injects our national connector in ncp_a)
