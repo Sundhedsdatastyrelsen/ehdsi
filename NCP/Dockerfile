@@ -44,8 +44,24 @@ RUN apt-get update \
 RUN groupadd -g 10001 tomcat && \
     useradd -r -u 10001 -g tomcat tomcat
 
-COPY ./openncp-configuration/ /opt/openncp-configuration
+# Add our openncp configuration.
+COPY ./openncp-configuration/tm.properties /opt/openncp-configuration/tm.properties
+COPY ./openncp-configuration/tsam.properties /opt/openncp-configuration/tsam.properties
+# Copy the files we use directly from ehealth.
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/audit-backup /opt/openncp-configuration/audit-backup
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/audits /opt/openncp-configuration/audits
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/EADC_resources /opt/openncp-configuration/EADC_resources
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/forms /opt/openncp-configuration/forms
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/integration /opt/openncp-configuration/integration
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/TM_resources /opt/openncp-configuration/TM_resources
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/validation/gazelle.ehdsi.properties /opt/openncp-configuration/gazelle.ehdsi.template.properties
+
+# We save our atna configuration in another folder.
 COPY ./atna-resources/ /opt/atna-resources
+# Copy the files we use directly from ehealth.
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/atnacodes.xml /opt/atna-resources/atnacodes.xml
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/entities.xml /opt/atna-resources/entities.xml
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-configuration/ATNA_resources/IheActors.xml /opt/atna-resources/IheActors.xml
 
 # Download OpenTelemetry Java agent
 RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.17.0/opentelemetry-javaagent.jar -o /opt/opentelemetry-javaagent.jar
@@ -65,9 +81,9 @@ FROM eclipse-temurin:11-jre-jammy AS tsam-exporter
 
 WORKDIR /usr/local/openncp-tsam-exporter
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/utilities/openncp-tsamexporter.jar .
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-tsam-exporter/application.yml .
 
 COPY ./openncp-tsam-exporter/entrypoint.sh .
-COPY ./openncp-tsam-exporter/application.yml .
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsamexporter.jar"]
@@ -83,7 +99,11 @@ COPY --from=builder \
     /usr/src/app/ehealth/openncp-docker/target/classes/lib \
     lib/
 
-COPY ./ncp_a/config conf/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/ncp_a/config/context.xml \
+    conf/
+
+COPY ./ncp_a/config/server.xml conf/
 COPY ./ncp_a/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
@@ -100,8 +120,11 @@ FROM tomcat-base AS node-b
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-client-connector.war /usr/local/tomcat/webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib /usr/local/tomcat/lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/ncp_b/config/context.xml \
+    conf/
 
-COPY ./ncp_b/config conf/
+COPY ./ncp_b/config/server.xml conf/
 COPY ./ncp_b/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
@@ -115,8 +138,11 @@ FROM tomcat-base AS trc-sts
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/TRC-STS.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-trc-sts/config/context.xml \
+    conf/
 
-COPY ./openncp-trc-sts/config conf/
+COPY ./openncp-trc-sts/config/server.xml conf/
 COPY ./openncp-trc-sts/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
@@ -130,8 +156,11 @@ FROM tomcat-base AS openatna
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openatna-web.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-openatna/config/context.xml \
+    conf/
 
-COPY ./openncp-openatna/config conf/
+COPY ./openncp-openatna/config/server.xml conf/
 COPY ./openncp-openatna/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
@@ -145,8 +174,11 @@ FROM tomcat-base AS translations-and-mappings
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/translations-and-mappings-ws.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-translations-and-mappings/config/context.xml \
+    conf/
 
-COPY ./openncp-translations-and-mappings/config conf/
+COPY ./openncp-translations-and-mappings/config/server.xml conf/
 COPY ./openncp-translations-and-mappings/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .
@@ -192,10 +224,11 @@ FROM tomcat-base AS web-manager
 
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/context.xml conf/
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config
 COPY --from=web-manager-frontend-builder /app/dist webapps/openncp-web-manager
 
-COPY openncp-web-manager/config conf/
-COPY openncp-web-manager/application-docker.yml /opt/config/
+COPY openncp-web-manager/config/server.xml conf/
 COPY openncp-web-manager/entrypoint.sh bin/
 
 RUN chown -R tomcat:tomcat .

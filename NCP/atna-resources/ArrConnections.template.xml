@@ -24,6 +24,7 @@
       <HostName>openncp-openatna</HostName>
       <Port>2862</Port>
       <!-- Trust and Keystore -->
+      <!-- Changed to enable environment variables -->
       <KeyStore>${KEYSTORE_PATH}</KeyStore>
       <KeyPass>${KEYSTORE_PASSWORD}</KeyPass>
       <TrustStore>${TRUSTSTORE_PATH}</TrustStore>
@@ -35,4 +36,3 @@
       <Port>2861</Port>
    </StandardConnection>
 </Configuration>
-

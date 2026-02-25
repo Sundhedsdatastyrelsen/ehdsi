@@ -140,6 +140,7 @@ services:
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
       - ./heapdumps/tomcat_node_a:/heapdumps
+      - ./openncp-configuration/pn-oid.xml:/opt/openncp-configuration/pn-oid.xml:ro
     environment:
       <<: *opentelemetry-config
       OTEL_SERVICE_NAME: openncp-server
@@ -181,6 +182,7 @@ services:
       - ./evidence/validation:/opt/openncp-configuration/validation
       - ./common/logback.xml:/opt/logging/logback.xml
       - ./heapdumps/tomcat_node_b:/heapdumps
+      - ./openncp-configuration/pn-oid.xml:/opt/openncp-configuration/pn-oid.xml:ro
     environment:
       <<: *opentelemetry-config
       OTEL_SERVICE_NAME: openncp-client
