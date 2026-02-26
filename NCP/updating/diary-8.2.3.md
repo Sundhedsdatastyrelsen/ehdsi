@@ -62,3 +62,19 @@ env_default/.env has a few TLS_PROVIDER values that OpenNCP added. Will try to r
 OpenNCP has replaced hardcoded keystore paths with environment variables. We could use the same approach they do now, possibly. In several server.xml files.
 
 Added three added properties to tm.properties (tm.audittrail.enabled, .transactionnumber and .targetip).
+
+## Testing
+
+Running `docker compose up -d --build` to check that everything still works.
+
+Building goes fine. Checking logs. Only the same errors as when we updated the code.
+
+Running test tool.
+
+Test tool runs green.
+
+## Release notes
+
+Checking release notes for the versions inbetween.
+
+Nothing indicates things breaking for us, so this update is concluded. We will see if dispensing from the portal works when we deploy.
