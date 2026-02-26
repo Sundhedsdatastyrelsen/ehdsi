@@ -8,6 +8,8 @@ Please have a look in the diary files for historical context, lists of files to 
 
 Change the `OPENNCP_BRANCH` in the Dockerfile, and run `docker compose build`. See if anything fails and fix it.
 
+Run the application `docker compose up -d --build` and check the logs of each service for something that seems out of place or downright fails.
+
 ## Configuration
 
 Clone the ehealth repository `git clone https://code.europa.eu/ehdsi/ehealth` and compile a list of changes from the current version to the new version:
@@ -21,6 +23,7 @@ git reset --soft <old version, eg. 8.0.0>
 The changes in the working directory will then be the all the changes from the past version to the new one. Use your favorite tool to navigate it.
 
 Go through the changes to the `openncp-docker` directory, and see if anything needs to be reflected in our docker setup.
+Be especially vigilant with added or deleted files, as they may not be automatically reflected in our setup.
 
 To regenerate the `.diff` files, run [diff.sh](./diff.sh) from a directory where both the ehdsi repo and the ehealth repo reside.
 
@@ -65,7 +68,7 @@ See the list in `Dockerfile`, under `tomcat-base` for the ones copied to the bas
 Additionally, the `context.xml` file in several of the server configurations. This is also visible in the Dockerfile.
 
 The `mysql/[01-05]*.sql` files are copied and not changed, but we need them locally to be able to start a mysql container.
-There is also a configuration file in ehealth, but it's not loaded in their docker-compose.
+There is also a configuration file in ehealth, but it's not loaded in their docker-compose, so we don't include it.
 
 `openncp-tsam-exporter/application.yml` is also copied.
 
