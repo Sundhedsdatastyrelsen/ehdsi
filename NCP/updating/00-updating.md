@@ -52,7 +52,7 @@ Currently, we categorize the openncp configuration into three types of files.
 - openncp-web-manager/entrypoint.sh (replaces openncp-docker/openncp-web-manager/openncp-web-manager-backend/tomcat-config-entrypoint.sh)
 - smp-files/ (these are files we upload to SMP, not actually used in openncp)
 - test-tool/ (used to test that things are still working locally, written by us)
-- openncp-configuration.properties (replaces openncp-docker/openncp-configuration-utility/openncp-configuration.properties)
+- openncp-configuration.properties (replaces openncp-docker/openncp-configuration-utility/openncp-configuration.properties, the diff script also produces a diff of this)
 
 #### Patched files
 
