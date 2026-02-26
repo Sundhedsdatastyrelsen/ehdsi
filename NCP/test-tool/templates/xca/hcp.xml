@@ -20,6 +20,16 @@
         <Role xmlns="urn:hl7-org:v3" code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" displayName="Medical Doctors"/>
       </saml:AttributeValue>
     </saml:Attribute>
+    <saml:Attribute FriendlyName="XSPA Organization" Name="urn:oasis:names:tc:xspa:1.0:subject:organization" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+      <saml:AttributeValue>
+          eHealth OpenNCP EU Portal
+      </saml:AttributeValue>
+    </saml:Attribute>
+    <saml:Attribute FriendlyName="XSPA Organization ID" Name="urn:oasis:names:tc:xspa:1.0:subject:organization-id" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue>
+            urn:hl7ii:1.2.3.4:ABCD
+        </saml:AttributeValue>
+    </saml:Attribute>
     <saml:Attribute FriendlyName="XSPA Purpose of Use" Name="urn:oasis:names:tc:xspa:1.0:subject:purposeofuse" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
       <saml:AttributeValue>
         <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="2.16.840.1.113883.3.18.7.1" codeSystemName="nhin-purpose" displayName="Treatment"/>
@@ -33,12 +43,14 @@
     </saml:Attribute>
     <saml:Attribute FriendlyName="Hl7 Permissions" Name="urn:oasis:names:tc:xspa:1.0:subject:hl7:permission" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
       <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-003</saml:AttributeValue>
-      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-005</saml:AttributeValue>
-      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-016</saml:AttributeValue>
-      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-006</saml:AttributeValue>
       <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-004</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-005</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-006</saml:AttributeValue>
       <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-010</saml:AttributeValue>
-      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-046</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PRD-016</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PPD-032</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PPD-033</saml:AttributeValue>
+      <saml:AttributeValue>urn:oasis:names:tc:xspa:1.0:subject:hl7:permission:PPD-046</saml:AttributeValue>
     </saml:Attribute>
   </saml:AttributeStatement>
 </saml:Assertion>

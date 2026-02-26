@@ -5,16 +5,17 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'country-a-service/**'
+      - 'national-connector/**'
     tags:
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   REPO_NAME: ${{ github.repository }}
+  AZURE_REGISTRY: eppsregistry.azurecr.io
 
 jobs:
-  build-country-a-service:
+  build-national-connector:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -35,6 +36,34 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Generate docker-bake.hcl
+      run: |
+        cat > national-connector/docker-bake.hcl <<EOL
+        group "default" {
+          targets = ["national-connector"]
+        }
+
+        target "national-connector" {
+          dockerfile = "Dockerfile"
+          platforms = ["linux/amd64"]
+          cache-from = [
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:cache"
+          ]
+          cache-to = [
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:cache"
+          ]
+          tags = [
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:latest",
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:build-${{ github.run_number }}"
+          ]
+          output = [
+            "type=image,push=true"
+          ]
+        }
+        EOL
+
     # https://stackoverflow.com/a/75544124
     - name: Build and push images
-      run: cd country-a-service && docker buildx bake --file docker-compose.yml --file docker-compose-cache.json --push
+      run: |
+        cd national-connector
+        docker buildx bake --file docker-bake.hcl --push

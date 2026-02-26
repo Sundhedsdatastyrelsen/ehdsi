@@ -1,0 +1,10 @@
+**/target
+**/.env
+.git
+.dockerignore
+Dockerfile
+docker-compose.yml
+README.md
+config/application.yml
+config/application-docker.yml
+FMK-soapui-project.xml

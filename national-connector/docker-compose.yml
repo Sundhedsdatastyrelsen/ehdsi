@@ -1,0 +1,47 @@
+networks:
+  epps-backend:
+    name: epps
+    external: true
+
+services:
+  # National connector runs as user 10001. In order for it to start correctly,
+  # we need to ensure that user 10001 can write to the database.
+  init:
+    image: busybox
+    user: root
+    entrypoint:
+      - "chown"
+      - "-R"
+      - "10001:10001"
+      - "/app/data"
+    volumes:
+      - ./data:/app/data
+
+  national-connector:
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:latest
+    build: .
+    container_name: national-connector
+    restart: unless-stopped
+    depends_on: [init]
+    ports:
+      - "4443:4443"
+      # - "5008:5008"
+    environment:
+      # JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5008,server=y,suspend=n"
+      SPRING_PROFILES_ACTIVE: "docker"
+      OTEL_SERVICE_NAME: "national-connector"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy-edge:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest}"
+      OTEL_TRACES_SAMPLER: "always_on"
+    volumes:
+      - ./config:/app/config:ro
+      - ./data:/app/data
+      # Secrets are mounted directly to specific paths, since this allows us to use the configtree method to read them into the config.
+      - ./secrets/NC_NCP_CERTIFICATE:/run/secrets/server/ssl/certificate:ro
+      - ./secrets/NC_NCP_PRIVATE_KEY:/run/secrets/server/ssl/certificate-private-key:ro
+      - ./secrets/SOSI_KEYSTORE_PASSWORD:/run/secrets/signing-certificate-keystore/password:ro
+      - ./secrets/LMSFTP_USERNAME:/run/secrets/lmsftp/username:ro
+      - ./secrets/LMSFTP_PASSWORD:/run/secrets/lmsftp/password:ro
+    networks:
+      - epps-backend

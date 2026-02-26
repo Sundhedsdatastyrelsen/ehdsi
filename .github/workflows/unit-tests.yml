@@ -16,9 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Compare API Definition files
-      run: cmp -s "./NCP/openncp-national-connector/src/main/resources/country-a-api.yml" "./country-a-service/epps-api/epps-ncp-api/src/main/openapi/ncp.yaml"
+      run: cmp -s "./NCP/openncp-national-connector/src/main/resources/country-a-api.yml" "./national-connector/epps-api/epps-ncp-api/src/main/openapi/ncp.yaml"
 
-  country-a-service-unit-tests:
+  national-connector-unit-tests:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
@@ -41,7 +41,7 @@ jobs:
         restore-keys: ${{ runner.os }}-sonar
 
     - name: Build, test, and analyze
-      working-directory: country-a-service
+      working-directory: national-connector
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_2 }}

@@ -1,0 +1,373 @@
+<#ftl output_format="XML">
+<#import "commons.ftl" as common>
+<#-- https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.1-2022-09-12T133927.html -->
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.1"/>
+<#--
+    Unique identifier of this instance of the clinical document.
+    Following attributes can be used to uniquely identify the instance:
+
+    - @root: A unique identifier that guarantees the global uniqueness of the
+     instance identifier. The root alone may be the entire instance identifier.
+     Required if @nullFlavor is not present.
+    - @extension: An optional character string as a unique identifier within the
+     scope of the identifier root.
+
+    The @root attribute must be a UID. The allowable formats and values and
+    procedures of this data type are strictly controlled by HL7. At this time,
+    user-assigned identifiers may be certain character representations of ISO
+    Object Identifiers (OID) and DCE Universally Unique Identifiers (UUID).
+
+     - UUIDs SHALL be represented in the form XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX,
+      where each X is a character from the set [0-9a-zA-Z].
+     - OIDs SHALL be represented in dotted decimal notation, where each decimal
+      number is either 0, or starts with a nonzero digit. More formally, an OID
+      SHALL be in the form [0-2](\.(0|[1-9][0-9]*))*.
+-->
+    <id <@common.cdaIdAttrs documentId /> />
+    <code code="57833-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescription for medication"/>
+    <title>${ title }</title>
+    <effectiveTime value="${ effectiveTime }"/>
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" displayName="normal"/>
+    <languageCode code="da-DK"/>
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id <@common.cdaIdAttrs patient.id/> />
+            <@common.address patient.address />
+            <telecom nullFlavor="NI"/>
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+<#list patient.name.givens as given>
+                    <given>${ given }</given>
+</#list>
+                    <family>${ patient.name.family }</family>
+                </name>
+                <administrativeGenderCode <@common.cdaCodeAttrs patient.genderCode /> />
+                <birthTime value="${ patient.birthTime }"/>
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author>
+        <functionCode <@common.cdaCodeAttrs author.functionCode /> />
+        <time value="${ author.time }"/>
+        <assignedAuthor classCode="ASSIGNED">
+            <id <@common.cdaIdAttrs author.id /> />
+<#if author.specialization??>
+            <code <@common.cdaCodeAttrs author.specialization />/>
+</#if>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <family>${ author.name.family }</family>
+<#list author.name.givens as given>
+                    <given>${ given }</given>
+</#list>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id <@common.cdaIdAttrs author.organization.id />/>
+                <name>${ author.organization.name }</name>
+                <telecom use="WP" value="tel:${ author.organization.telephoneNumber }"/>
+                <@common.address author.organization.address />
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+
+<#-- This elements represents the organization that is in charge of maintaining the document. -->
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <#-- The person taking responsibility for the medical content of the document.
+    In Spain this is the regional authority in healthcare. This regional authority
+    healthcare organization will send this to the NCP. The definition of the legal
+    authenticator may vary accoriding to the rules set up in the framework agreement
+    particular to each state. It may be a person or a regional authority, or an NCP.
+    -->
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="${ signatureTime }"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id root="1.2.208.176"/>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson nullFlavor="NI"/>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id <@common.cdaIdAttrs parentDocumentId />/>
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody>
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1"/>
+                    <id <@common.cdaIdAttrs prescriptionId />/>
+                    <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/>
+                    <title>Prescriptions</title>
+                    <#-- This is "the narrative block". It has several rules that make it complex to work with.
+                    Search for "cda narrative block" to learn more. -->
+                    <text>
+                        <content ID="entry-text">
+                            <content ID="product-name">${ product.name }</content><br/>
+                            <content ID="indication-text">${ indicationText }</content><br/>
+                            <content ID="patient-medication-instructions">${ patientMedicationInstructions }</content><br/>
+                            ${ unstructuredActiveIngredients }<br/>
+                            <br/>
+                            ${ dosage.unstructuredText }
+                        </content>
+                        <paragraph>
+                            Data source: FMK 1.4.6<#-- One of the requirements from the ICC audit was that we listed the source of the data -->
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <#-- I Danmark er der én ordination per recept, derfor vil der altid være netop ét "entry"-element -->
+                        <substanceAdministration classCode="SBADM" moodCode="INT">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7"/> -->
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <#-- "A "normal" act that may not contain any subordinate acts" -->
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
+                            <#-- "A act that records combination medication component information in subordinate acts." -->
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.11"/> -->
+                            <#-- "A act that records split dose information in subordinate acts." -->
+                            <#-- <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.9"/> -->
+
+                            <#-- Globalt unikt "prescription item id" - i vores tilfælde det samme som "prescription id",
+                                 da der er et 1-1 forhold. -->
+                            <id <@common.cdaIdAttrs prescriptionId />/>
+                            <text><reference value="#entry-text" /></text>
+                            <statusCode code="active"/>
+                            <effectiveTime xsi:type="IVL_TS">
+                                <@common.valueOrNullField "low" medicationStartTime  />
+                                <@common.valueOrNullField "high" medicationEndTime  /><#-- We should return nullFlavor NA if there is no end time. -->
+                            </effectiveTime>
+<#-- Choice of different types of effective time, or fallback to null. -->
+<#if dosage.tag == "Once">
+                            <effectiveTime operator="A" xsi:type="TS" value="${ dosage.timeValue }"/>
+<#elseif dosage.tag == "PeriodicInterval">
+                            <effectiveTime operator="A" xsi:type="PIVL_TS" institutionSpecified="${ dosage.institutionSpecified?string("true","false") }">
+    <#if dosage.time??>
+                                <phase>
+                                    <low value="${ dosage.time }" inclusive="true"/>
+                                </phase>
+    </#if>
+                                <period unit="${ dosage.period.unit }" value="${ dosage.period.value }" />
+                            </effectiveTime>
+<#elseif dosage.tag == "EventInterval">
+                            <effectiveTime operator="A" xsi:type="EIVL_TS">
+                                <event code="${ dosage.event }" codeSystem="2.16.840.1.113883.5.139"/>
+                            </effectiveTime>
+<#else>
+                            <effectiveTime operator="A" nullFlavor="UNK"/>
+</#if>
+<#if administrationRoute?has_content>
+                            <routeCode <@common.cdaCodeAttrs administrationRoute />/>
+</#if>
+<#if dosage.quantity?? && dosage.quantity.unit.tag == "Translated">
+                            <doseQuantity>
+                                <low value="${ dosage.quantity.minValue }" unit="1">
+                                    <translation nullFlavor="UNK"><#-- This doesn't match the example, but it doesn't validate without nullFlavor -->
+                                        <originalText>${ dosage.quantity.unit.translation }</originalText>
+                                    </translation>
+                                </low>
+                                <high value="${ dosage.quantity.value }" unit="1">
+                                    <translation nullFlavor="UNK"><#-- This doesn't match the example, but it doesn't validate without nullFlavor -->
+                                        <originalText>${ dosage.quantity.unit.translation }</originalText>
+                                    </translation>
+                                </high>
+                            </doseQuantity>
+<#else>
+                            <doseQuantity nullFlavor="UNK" />
+</#if>
+                            <consumable typeCode="CSM">
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+<#if product.drugId??>
+                                        <code <@common.cdaCodeAttrs product.drugId />/>
+</#if>
+                                        <name>${ product.name }</name>
+<#if product.strength??>
+                                        <#-- "Free-text representation of the strength." -->
+                                        <pharm:desc>${ product.strength }</pharm:desc>
+</#if>
+                                        <pharm:formCode <@common.cdaCodeAttrs product.formCode />/>
+                                        <pharm:asContent classCode="CONT">
+<#if product.innermostPackageLayer.unit.tag == "WithCode">
+                                            <pharm:quantity unit="${ product.innermostPackageLayer.unit.code }" value="${ product.innermostPackageLayer.amount }"/>
+<#elseif product.innermostPackageLayer.unit.tag == "WithTranslation">
+                                            <pharm:quantity unit="1" value="${ product.innermostPackageLayer.amount }">
+                                                <translation>
+                                                    <originalText>${ product.innermostPackageLayer.unit.translation }</originalText>
+                                                </translation>
+                                            </pharm:quantity>
+<#else>
+<#stop "Invalid product.innermostPackageLayer.unit.tag">
+</#if>
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+<#if product.innermostPackageLayer.packageCode??>
+                                                <pharm:code <@common.cdaCodeAttrs product.innermostPackageLayer.packageCode/> />
+</#if>
+                                                <#-- "If present, the element SHALL contain a sufficiently detailed description of
+                                                the prescribed medicinal product/package. The description may contain information
+                                                on the brand name, dose form, package (including its type or brand name), strength, etc.
+
+                                                If the detailed description of the product is not available, the element SHALL be skipped." -->
+<#if product.innermostPackageLayer.description??>
+                                                <pharm:name>${ product.innermostPackageLayer.description }</pharm:name>
+</#if>
+<#if (product.innermostPackageLayer.packageFormCode.code)?has_content>
+                                                <pharm:formCode <@common.cdaCodeAttrs product.innermostPackageLayer.packageFormCode/> />
+<#else>
+                                                <pharm:formCode nullFlavor="UNK" />
+</#if>
+<#if (product.innermostPackageLayer.wrappedIn)??>
+                                                <pharm:asContent classCode="CONT">
+    <#if product.innermostPackageLayer.wrappedIn.unit.tag == "WithCode">
+                                                    <pharm:quantity unit="${ product.innermostPackageLayer.wrappedIn.unit.code }" value="${ product.innermostPackageLayer.wrappedIn.amount }"/>
+    <#elseif product.innermostPackageLayer.wrappedIn.unit.tag == "WithTranslation">
+                                                    <pharm:quantity unit="1" value="${ product.innermostPackageLayer.wrappedIn.amount }">
+                                                        <translation>
+                                                            <originalText>${ product.innermostPackageLayer.wrappedIn.unit.translation }</originalText>
+                                                        </translation>
+                                                    </pharm:quantity>
+    <#else>
+    <#stop "Invalid product.innermostPackageLayer.wrappedIn.unit.tag">
+    </#if>
+                                                    <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+    <#if product.innermostPackageLayer.wrappedIn.packageCode??>
+                                                        <pharm:code <@common.cdaCodeAttrs product.innermostPackageLayer.wrappedIn.packageCode/> />
+    </#if>
+                                                        <#-- "If present, the element SHALL contain a sufficiently detailed description of
+                                                        the prescribed medicinal product/package. The description may contain information
+                                                        on the brand name, dose form, package (including its type or brand name), strength, etc.
+
+                                                        If the detailed description of the product is not available, the element SHALL be skipped." -->
+    <#if product.innermostPackageLayer.wrappedIn.description??>
+                                                        <pharm:name>${ product.innermostPackageLayer.wrappedIn.description }</pharm:name>
+    </#if>
+    <#if (product.innermostPackageLayer.wrappedIn.packageFormCode.code)?has_content>
+                                                        <pharm:formCode <@common.cdaCodeAttrs product.innermostPackageLayer.wrappedIn.packageFormCode/> />
+    <#else>
+                                                        <pharm:formCode nullFlavor="UNK" />
+    </#if>
+                                                    </pharm:containerPackagedProduct>
+                                                </pharm:asContent>
+</#if>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind determinerCode="KIND" classCode="MMAT">
+                                                <pharm:code <@common.cdaCodeAttrs product.atcCode /> />
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+<#list activeIngredients as ingredient>
+                                        <pharm:ingredient classCode="ACTI">
+<#if ingredient.quantity??>
+                                            <pharm:quantity>
+<#if ingredient.quantity.translation??>
+                                                <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ">
+                                                    <translation>
+                                                        <originalText>${ ingredient.quantity.translation }</originalText>
+                                                    </translation>
+                                                </numerator>
+<#else>
+                                                <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ"/>
+</#if>
+                                                <denominator value="${ ingredient.quantity.denominator }" unit="${ ingredient.quantity.denominatorUnit }" xsi:type="PQ"/>
+                                            </pharm:quantity>
+<#else>
+                                            <pharm:quantity>
+                                                <numerator nullFlavor="NI" xsi:type="PQ" />
+                                                <denominator nullFlavor="NI" xsi:type="PQ" />
+                                            </pharm:quantity>
+</#if>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code nullFlavor="UNK"/><#-- We don't have the information coded. -->
+                                                <pharm:name>${ ingredient.name }</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+</#list>
+                                    </manufacturedMaterial>
+<#if product.manufacturerOrganizationName?has_content>
+                                    <manufacturerOrganization classCode="ORG" determinerCode="INSTANCE">
+                                      <name>${ product.manufacturerOrganizationName }</name>
+                                    </manufacturerOrganization>
+</#if>
+                                </manufacturedProduct>
+                            </consumable>
+                            <entryRelationship typeCode="COMP">
+                                <supply classCode="SPLY" moodCode="RQO">
+                                    <independentInd value="false"/>
+                                    <quantity unit="1" value="${ packageQuantity }"/>
+                                </supply>
+                            </entryRelationship>
+                            <#--
+                            If substitution is not allowed for a prescription, an entryRelationship must be provided to
+                            indicate this. This observation SHALL have :
+                            - The code element valorized with @code=‟SUBST' and @codeSystem='2.16.840.1.113883.5.6'
+                            - The value element valorized with concept 'N' from the eHDSISubstitutionCode Value Set
+                              (Value Set OID 1.3.6.1.4.1.12559.11.10.1.3.1.42.7).
+                            If this entryRelationship is not provided, or when it is provided where the value element
+                            contains any other concept from the eHDSISubstitutionCode Value Set, substitution of this
+                            prescription is allowed.
+
+                            https://art-decor.ehdsi.eu/publication/epSOS/epsos-html-20240126T203601/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.2-2023-07-03T135239.html
+                            -->
+<#if !substitutionAllowed>
+                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <code code="SUBST" codeSystem="2.16.840.1.113883.5.6" codeSystemName="ActClass" displayName="Substitution"/>
+                                    <#-- The following line gives a validation error:
+                                    org.xml.sax.SAXParseException; lineNumber: 161; columnNumber: 92; cvc-type.2: The type definition cannot be abstract for element value.
+                                    Therefore we leave it out for now.-->
+                                    <!--<value code="N" codeSystem="1.3.6.1.4.1.12559.11.10.1.3.1.42.7" codeSystemName="eHDSISubstitutionCode" displayName="none" />-->
+
+                                </observation>
+                            </entryRelationship>
+</#if>
+                            <entryRelationship typeCode="SUBJ" inversionInd="true">
+                                <act classCode="ACT" moodCode="INT">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.12"/>
+                                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3"/><#-- IHE template root, not required, but used in the display tool -->
+                                    <templateId root="2.16.840.1.113883.10.20.1.49"/>
+                                    <code code="PINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+                                    <text><reference value="#patient-medication-instructions" /></text>
+                                    <statusCode code="completed"/>
+                                </act>
+                            </entryRelationship>
+                        </substanceAdministration>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>

@@ -1,0 +1,645 @@
+<!--
+This is an example of a GetPrescription response in order to better understand how the effectuations, partial
+dispensations, and iterated prescriptions work.
+The request was made with includeEffectuations="true", in order to get the effectuations.
+
+There are four prescriptions:
+- Levodopa. Iterated 4 times 1 day. One effectuation completed, one effectuation open.
+- Arax. Not iterated. One effectuation completed.
+- Pinex. Iterated 2 times 14 days. No effectuations yet.
+- Ibumetin. Iterated 3 times 3 weeks. One effectuation completed.
+
+Things to note are:
+- Nothing in the FMK response states that dispensation should not be allowed. It is up to the pharmacist to decide based
+  on the information available.
+- Orders without effectuations, ie. start and abort effectuation without dispensing anything, are not part of the
+  response. They disappear.
+- The package size and package quantity on iterated prescriptions is for each iteration. So the prescription should only
+  be closed if we're on the last iteration and we've dispensed everything for that iteration.
+- If a prescriptions is open, it means that there is more to dispense on it (except for human errors). But it might be
+  too early in an iterated prescription to dispense anything.
+-->
+<ns4:GetPrescriptionResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01"
+                             xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6"
+                             xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2"
+>
+    <ns4:Patient>
+        <Person>
+            <Name>
+                <GivenName>Sofie</GivenName>
+                <Surname>Bach</Surname>
+            </Name>
+            <PersonIdentifier source="CPR">0410009234</PersonIdentifier>
+            <BirthDate>2000-10-04</BirthDate>
+            <Gender>female</Gender>
+        </Person>
+        <Address>
+            <StreetName>Morbærvej</StreetName>
+            <StreetBuildingIdentifier>200</StreetBuildingIdentifier>
+            <PostCodeIdentifier>1362</PostCodeIdentifier>
+            <DistrictName>København K</DistrictName>
+        </Address>
+    </ns4:Patient>
+    <!-- Levodopa. Iterated 4 times 1 day. One effectuation completed, one effectuation open. -->
+    <ns4:Prescription>
+        <ns4:Identifier>495021753450021</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>8726437</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1757322102819001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:DrugMedicationEnded>Behandling afsluttet</ns4:DrugMedicationEnded>
+        <ns4:AuthorisationDateTime>2025-09-08T09:02:33Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22112211</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-09-08T09:02:33Z</DateTime>
+        </ns4:Created>
+        <ns4:LatestEffectuationDateTime>2025-09-08T09:03:59Z</ns4:LatestEffectuationDateTime>
+        <ns4:ValidFromDate>2025-09-08</ns4:ValidFromDate>
+        <ns4:ValidToDate>2025-10-15</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns5:PackageNumber date="2025-09-08" source="Medicinpriser">440709</ns5:PackageNumber>
+            <ns5:PackageSize>
+                <ns5:Value>100.00</ns5:Value>
+                <ns5:UnitCode date="2025-09-08" source="Medicinpriser">ST</ns5:UnitCode>
+                <ns5:UnitText>stk.</ns5:UnitText>
+                <ns5:PackageSizeText>100 stk.</ns5:PackageSizeText>
+            </ns5:PackageSize>
+            <ns5:PackageQuantity>4</ns5:PackageQuantity>
+            <ns5:IterationNumber>4</ns5:IterationNumber>
+            <ns5:IterationInterval>1</ns5:IterationInterval>
+            <ns5:IterationIntervalUnit>dage</ns5:IterationIntervalUnit>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code date="2025-09-08" source="Medicinpriser">156</Code>
+            <Text>mod rystelammelse</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code date="2025-09-08" source="Medicinpriser">N04BA03</Code>
+                <Text>Levodopa, decarboxylase-hæmmer og comt-hæmmer</Text>
+            </ATC>
+            <Identifier date="2025-09-08" source="Medicinpriser">28104919911</Identifier>
+            <Name>Levodopa/Carbi./Entaca. Orion</Name>
+            <Form>
+                <Code date="2025-09-08" source="Medicinpriser">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Text date="2025-09-08" source="Medicinpriser">75+18,75+200 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText date="2025-09-08" source="Medicinpriser">CARBIDOPAMONOHYDRAT</SubstanceText>
+                </ActiveSubstance>
+                <ActiveSubstance>
+                    <SubstanceText date="2025-09-08" source="Medicinpriser">ENTACAPON</SubstanceText>
+                </ActiveSubstance>
+                <ActiveSubstance>
+                    <SubstanceText date="2025-09-08" source="Medicinpriser">LEVODOPA</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet morgen</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Order>
+            <ns5:Identifier>495021841955021</ns5:Identifier>
+            <ns5:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Udenlandsk apoteker</Role>
+                    <Organisation>
+                        <Name>Udenlandsk Apotek via epSOS</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København</AddressLine>
+                        <TelephoneNumber>72216800</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-08T09:04:02Z</DateTime>
+            </ns5:Created>
+            <ns5:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Udenlandsk apoteker</Role>
+                    <Organisation>
+                        <Name>Udenlandsk Apotek via epSOS</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København</AddressLine>
+                        <TelephoneNumber>72216800</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-08T09:04:02Z</DateTime>
+            </ns5:Modified>
+            <ns5:OrderedAtPharmacy>
+                <Name>Udenlandsk Apotek via epSOS</Name>
+                <AddressLine>Ørestads Boulevard 5</AddressLine>
+                <AddressLine>2300 København</AddressLine>
+                <TelephoneNumber>72216800</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+            </ns5:OrderedAtPharmacy>
+            <ns5:Status>Udført</ns5:Status>
+            <ns5:Effectuation>
+                <ns5:Identifier>495021841955021</ns5:Identifier>
+                <ns5:DateTime>2025-09-08T09:03:59Z</ns5:DateTime>
+                <ns5:EffectuationMethod>en- eller flergangs apoteksudlevering</ns5:EffectuationMethod>
+                <ns5:Created>
+                    <By>
+                        <Other>
+                            <Name>
+                                <GivenName>givenName</GivenName>
+                                <Surname>familyName</Surname>
+                            </Name>
+                        </Other>
+                        <Role>Udenlandsk apoteker</Role>
+                        <Organisation>
+                            <Name>Udenlandsk Apotek via epSOS</Name>
+                            <AddressLine>Ørestads Boulevard 5</AddressLine>
+                            <AddressLine>2300 København</AddressLine>
+                            <TelephoneNumber>72216800</TelephoneNumber>
+                            <Type>Apotek</Type>
+                            <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                        </Organisation>
+                    </By>
+                    <DateTime>2025-09-08T09:04:02Z</DateTime>
+                </ns5:Created>
+                <ns5:PackageDispensed>
+                    <ns5:PackageQuantity>2</ns5:PackageQuantity>
+                    <ns5:PackageNumber date="2025-09-08" source="Local">720000</ns5:PackageNumber>
+                    <ns5:PackageSize>
+                        <ns5:PackageSizeText>100 stk.</ns5:PackageSizeText>
+                    </ns5:PackageSize>
+                </ns5:PackageDispensed>
+                <ns5:DeliverySite>
+                    <Name>Ry Apoteksudsalg</Name>
+                    <Type>Apotek</Type>
+                    <Identifier source="CVR-P">1008648049</Identifier>
+                </ns5:DeliverySite>
+            </ns5:Effectuation>
+        </ns4:Order>
+        <ns4:Order>
+            <ns5:Identifier>495024255020022</ns5:Identifier>
+            <ns5:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Udenlandsk apoteker</Role>
+                    <Organisation>
+                        <Name>Udenlandsk Apotek via epSOS</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København</AddressLine>
+                        <TelephoneNumber>72216800</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-08T09:44:15Z</DateTime>
+            </ns5:Created>
+            <ns5:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Udenlandsk apoteker</Role>
+                    <Organisation>
+                        <Name>Udenlandsk Apotek via epSOS</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København</AddressLine>
+                        <TelephoneNumber>72216800</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-08T09:44:15Z</DateTime>
+            </ns5:Modified>
+            <ns5:OrderedAtPharmacy>
+                <Name>Udenlandsk Apotek via epSOS</Name>
+                <AddressLine>Ørestads Boulevard 5</AddressLine>
+                <AddressLine>2300 København</AddressLine>
+                <TelephoneNumber>72216800</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+            </ns5:OrderedAtPharmacy>
+            <ns5:Status>Ekspedition påbegyndt</ns5:Status>
+        </ns4:Order>
+        <ns4:Version>20042</ns4:Version>
+    </ns4:Prescription>
+    <!-- Arax. Not iterated. One effectuation completed. -->
+    <ns4:Prescription>
+        <ns4:Identifier>495022041093021</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>8726438</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1757322409840001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-09-08T09:07:21Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22112211</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-09-08T09:07:21Z</DateTime>
+        </ns4:Created>
+        <ns4:LatestEffectuationDateTime>2025-09-08T09:46:23Z</ns4:LatestEffectuationDateTime>
+        <ns4:ValidFromDate>2025-09-08</ns4:ValidFromDate>
+        <ns4:ValidToDate>2025-10-17</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns5:PackageNumber date="2025-09-08" source="Medicinpriser">580984</ns5:PackageNumber>
+            <ns5:PackageSize>
+                <ns5:Value>20.00</ns5:Value>
+                <ns5:UnitCode date="2025-09-08" source="Medicinpriser">ST</ns5:UnitCode>
+                <ns5:UnitText>stk.</ns5:UnitText>
+                <ns5:PackageSizeText>20 stk. (blister)</ns5:PackageSizeText>
+            </ns5:PackageSize>
+            <ns5:PackageQuantity>2</ns5:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code date="2025-09-08" source="Medicinpriser">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code date="2025-09-08" source="Medicinpriser">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier date="2025-09-08" source="Medicinpriser">28103909506</Identifier>
+            <Name>Arax</Name>
+            <Form>
+                <Code date="2025-09-08" source="Medicinpriser">TAB</Code>
+                <Text>tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode date="2025-09-08" source="Medicinpriser">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text date="2025-09-08" source="Medicinpriser">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText date="2025-09-08" source="Medicinpriser">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Order>
+            <ns5:Identifier>495024385327022</ns5:Identifier>
+            <ns5:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Udenlandsk apoteker</Role>
+                    <Organisation>
+                        <Name>Udenlandsk Apotek via epSOS</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København</AddressLine>
+                        <TelephoneNumber>72216800</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-08T09:46:25Z</DateTime>
+            </ns5:Created>
+            <ns5:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>givenName</GivenName>
+                            <Surname>familyName</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Udenlandsk apoteker</Role>
+                    <Organisation>
+                        <Name>Udenlandsk Apotek via epSOS</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København</AddressLine>
+                        <TelephoneNumber>72216800</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-08T09:46:26Z</DateTime>
+            </ns5:Modified>
+            <ns5:OrderedAtPharmacy>
+                <Name>Udenlandsk Apotek via epSOS</Name>
+                <AddressLine>Ørestads Boulevard 5</AddressLine>
+                <AddressLine>2300 København</AddressLine>
+                <TelephoneNumber>72216800</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+            </ns5:OrderedAtPharmacy>
+            <ns5:Status>Udført</ns5:Status>
+            <ns5:Effectuation>
+                <ns5:Identifier>495024385327022</ns5:Identifier>
+                <ns5:DateTime>2025-09-08T09:46:23Z</ns5:DateTime>
+                <ns5:EffectuationMethod>en- eller flergangs apoteksudlevering</ns5:EffectuationMethod>
+                <ns5:Created>
+                    <By>
+                        <Other>
+                            <Name>
+                                <GivenName>givenName</GivenName>
+                                <Surname>familyName</Surname>
+                            </Name>
+                        </Other>
+                        <Role>Udenlandsk apoteker</Role>
+                        <Organisation>
+                            <Name>Udenlandsk Apotek via epSOS</Name>
+                            <AddressLine>Ørestads Boulevard 5</AddressLine>
+                            <AddressLine>2300 København</AddressLine>
+                            <TelephoneNumber>72216800</TelephoneNumber>
+                            <Type>Apotek</Type>
+                            <Identifier source="EAN-Lokationsnummer">5790001392277</Identifier>
+                        </Organisation>
+                    </By>
+                    <DateTime>2025-09-08T09:46:26Z</DateTime>
+                </ns5:Created>
+                <ns5:PackageDispensed>
+                    <ns5:PackageQuantity>1</ns5:PackageQuantity>
+                    <ns5:PackageNumber date="2025-09-08" source="Local">720000</ns5:PackageNumber>
+                    <ns5:PackageSize>
+                        <ns5:PackageSizeText>20 stk.</ns5:PackageSizeText>
+                    </ns5:PackageSize>
+                </ns5:PackageDispensed>
+                <ns5:DeliverySite>
+                    <Name>Ry Apoteksudsalg</Name>
+                    <Type>Apotek</Type>
+                    <Identifier source="CVR-P">1008648049</Identifier>
+                </ns5:DeliverySite>
+            </ns5:Effectuation>
+        </ns4:Order>
+        <ns4:Version>4851</ns4:Version>
+    </ns4:Prescription>
+    <!-- Pinex. Iterated 2 times 14 days. No effectuations yet. -->
+    <ns4:Prescription>
+        <ns4:Identifier>495721440360101</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>8730056</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1758021840909001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-09-16T11:24:00Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22112211</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-09-16T11:24:00Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2025-09-16</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-09-16</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns5:PackageNumber date="2025-09-16" source="Medicinpriser">91323</ns5:PackageNumber>
+            <ns5:PackageSize>
+                <ns5:Value>10.00</ns5:Value>
+                <ns5:UnitCode date="2025-09-16" source="Medicinpriser">ST</ns5:UnitCode>
+                <ns5:UnitText>stk.</ns5:UnitText>
+                <ns5:PackageSizeText>10 stk. (blister)</ns5:PackageSizeText>
+            </ns5:PackageSize>
+            <ns5:PackageQuantity>1</ns5:PackageQuantity>
+            <ns5:IterationNumber>2</ns5:IterationNumber>
+            <ns5:IterationInterval>14</ns5:IterationInterval>
+            <ns5:IterationIntervalUnit>dage</ns5:IterationIntervalUnit>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code date="2025-09-16" source="Medicinpriser">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code date="2025-09-16" source="Medicinpriser">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier date="2025-09-16" source="Medicinpriser">28103888005</Identifier>
+            <Name>Pinex</Name>
+            <Form>
+                <Code date="2025-09-16" source="Medicinpriser">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>500.0</Value>
+                <UnitCode date="2025-09-16" source="Medicinpriser">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text date="2025-09-16" source="Medicinpriser">500 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText date="2025-09-16" source="Medicinpriser">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>15666</ns4:Version>
+    </ns4:Prescription>
+    <!-- Ibumetin. Iterated 3 times 3 weeks. One effectuation completed. -->
+    <ns4:Prescription>
+        <ns4:Identifier>495721488257102</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>8730057</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1758021888843001001</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2025-09-16T11:24:48Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>22112211</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-09-16T11:24:48Z</DateTime>
+        </ns4:Created>
+        <ns4:LatestEffectuationDateTime>2025-09-16T11:25:00Z</ns4:LatestEffectuationDateTime>
+        <ns4:ValidFromDate>2025-09-16</ns4:ValidFromDate>
+        <ns4:ValidToDate>2027-09-16</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns5:PackageNumber date="2025-09-16" source="Medicinpriser">469782</ns5:PackageNumber>
+            <ns5:PackageSize>
+                <ns5:Value>20.00</ns5:Value>
+                <ns5:UnitCode date="2025-09-16" source="Medicinpriser">ST</ns5:UnitCode>
+                <ns5:UnitText>stk.</ns5:UnitText>
+                <ns5:PackageSizeText>20 stk. (blister)</ns5:PackageSizeText>
+            </ns5:PackageSize>
+            <ns5:PackageQuantity>1</ns5:PackageQuantity>
+            <ns5:IterationNumber>3</ns5:IterationNumber>
+            <ns5:IterationInterval>3</ns5:IterationInterval>
+            <ns5:IterationIntervalUnit>uger</ns5:IterationIntervalUnit>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code date="2025-09-16" source="Medicinpriser">145</Code>
+            <Text>mod smerter</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code date="2025-09-16" source="Medicinpriser">M01AE01</Code>
+                <Text>Ibuprofen</Text>
+            </ATC>
+            <Identifier date="2025-09-16" source="Medicinpriser">28101060981</Identifier>
+            <Name>Ibumetin</Name>
+            <Form>
+                <Code date="2025-09-16" source="Medicinpriser">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>200.0</Value>
+                <UnitCode date="2025-09-16" source="Medicinpriser">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text date="2025-09-16" source="Medicinpriser">200 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText date="2025-09-16" source="Medicinpriser">IBUPROFEN</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Order>
+            <ns5:Identifier>495721550727001</ns5:Identifier>
+            <ns5:Created>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>Chris Apoteker</GivenName>
+                            <Surname>Christoffersen</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>Ry Apotek</Name>
+                        <AddressLine>Siimtoften 2</AddressLine>
+                        <AddressLine>8680 Ry</AddressLine>
+                        <TelephoneNumber>86893088</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790002270284</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-16T11:25:51Z</DateTime>
+            </ns5:Created>
+            <ns5:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>Chris Apoteker</GivenName>
+                            <Surname>Christoffersen</Surname>
+                        </Name>
+                    </Other>
+                    <Role>Apoteker</Role>
+                    <Organisation>
+                        <Name>Ry Apotek</Name>
+                        <AddressLine>Siimtoften 2</AddressLine>
+                        <AddressLine>8680 Ry</AddressLine>
+                        <TelephoneNumber>86893088</TelephoneNumber>
+                        <Type>Apotek</Type>
+                        <Identifier source="EAN-Lokationsnummer">5790002270284</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-16T11:26:10Z</DateTime>
+            </ns5:Modified>
+            <ns5:OrderedAtPharmacy>
+                <Name>Ry Apotek</Name>
+                <AddressLine>Siimtoften 2</AddressLine>
+                <AddressLine>8680 Ry</AddressLine>
+                <TelephoneNumber>86893088</TelephoneNumber>
+                <Type>Apotek</Type>
+                <Identifier source="EAN-Lokationsnummer">5790002270284</Identifier>
+            </ns5:OrderedAtPharmacy>
+            <ns5:Status>Udført</ns5:Status>
+            <ns5:Effectuation>
+                <ns5:Identifier>495721550727001</ns5:Identifier>
+                <ns5:DateTime>2025-09-16T11:25:00Z</ns5:DateTime>
+                <ns5:EffectuationMethod>en- eller flergangs apoteksudlevering</ns5:EffectuationMethod>
+                <ns5:Created>
+                    <By>
+                        <Other>
+                            <Name>
+                                <GivenName>Chris Apoteker</GivenName>
+                                <Surname>Christoffersen</Surname>
+                            </Name>
+                        </Other>
+                        <Role>Apoteker</Role>
+                        <Organisation>
+                            <Name>Ry Apotek (udl. via Skanderborg Apotek)</Name>
+                            <AddressLine>Siimtoften 2</AddressLine>
+                            <AddressLine>8680 Ry</AddressLine>
+                            <TelephoneNumber>86893088</TelephoneNumber>
+                            <Type>Apotek</Type>
+                            <Identifier source="EAN-Lokationsnummer">5790002270284</Identifier>
+                        </Organisation>
+                    </By>
+                    <DateTime>2025-09-16T11:26:10Z</DateTime>
+                </ns5:Created>
+                <ns5:PackageDispensed>
+                    <ns5:PackageQuantity>1</ns5:PackageQuantity>
+                    <ns5:PackageNumber date="2025-09-16" source="Medicinpriser">469782</ns5:PackageNumber>
+                    <ns5:PackageSize>
+                        <ns5:Value>20.00</ns5:Value>
+                        <ns5:UnitCode date="2025-09-16" source="Medicinpriser">ST</ns5:UnitCode>
+                        <ns5:UnitText>stk.</ns5:UnitText>
+                        <ns5:PackageSizeText>20 stk. (blister)</ns5:PackageSizeText>
+                    </ns5:PackageSize>
+                </ns5:PackageDispensed>
+                <ns5:LabelText>1 tablet 3 gange daglig</ns5:LabelText>
+                <ns5:DeliverySite>
+                    <Name>Skanderborg Apotek</Name>
+                    <AddressLine>Adelgade 61</AddressLine>
+                    <AddressLine>8660 Skanderborg</AddressLine>
+                    <TelephoneNumber>87939080</TelephoneNumber>
+                    <Type>apotek</Type>
+                    <Identifier source="SOR">1436371000016007</Identifier>
+                </ns5:DeliverySite>
+            </ns5:Effectuation>
+        </ns4:Order>
+        <ns4:Version>31178</ns4:Version>
+    </ns4:Prescription>
+</ns4:GetPrescriptionResponse>

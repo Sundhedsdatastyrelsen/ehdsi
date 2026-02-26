@@ -20,18 +20,19 @@
 <!-- The Audit Record Repository Actor Server Connections -->
 <!-- For IHE Actor -->
 <Configuration>
-  <SecureConnection name="arr-tls">
-    <HostName>openncp-openatna</HostName>
-    <Port>2862</Port>
-    <!-- Trust and Keystore -->
-    <KeyStore>${KEYSTORE_PATH}</KeyStore>
-    <KeyPass>${KEYSTORE_PASSWORD}</KeyPass>
-    <TrustStore>${TRUSTSTORE_PATH}</TrustStore>
-    <TrustPass>${TRUSTSTORE_PASSWORD}</TrustPass>
-  </SecureConnection>
-  <!-- use IP address instead of localhost for UDP -->
-  <StandardConnection name="arr-udp">
-    <HostName>openncp-openatna</HostName>
-    <Port>2861</Port>
-  </StandardConnection>
+   <SecureConnection name="arr-tls">
+      <HostName>openncp-openatna</HostName>
+      <Port>2862</Port>
+      <!-- Trust and Keystore -->
+      <KeyStore>${KEYSTORE_PATH}</KeyStore>
+      <KeyPass>${KEYSTORE_PASSWORD}</KeyPass>
+      <TrustStore>${TRUSTSTORE_PATH}</TrustStore>
+      <TrustPass>${TRUSTSTORE_PASSWORD}</TrustPass>
+   </SecureConnection>
+   <!-- use IP address instead of localhost for UDP -->
+   <StandardConnection name="arr-udp">
+      <HostName>openncp-openatna</HostName>
+      <Port>2861</Port>
+   </StandardConnection>
 </Configuration>
+

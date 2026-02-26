@@ -5,6 +5,13 @@ on:
   schedule:
     - cron: "30 04 * * *"
 
+env:
+  # Several jobs, at least "Create a new prescription in FMK" and "Run integration tests", and probably more,
+  # need the system certificate.
+  CERT_BASE_64: ${{ secrets.CERT_BASE_64 }}
+  CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
+  CERT_ALIAS: ${{ vars.CERT_ALIAS }}
+
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
@@ -19,25 +26,27 @@ jobs:
           distribution: temurin
           cache: maven
       - name: Build with Maven
-        run:  |
-          cd country-a-service
+        run: |
+          cd national-connector
           mvn --batch-mode --projects testing-tools --also-make -DskipUTs package
       - name: Create a new prescription in FMK
         run: |
-          java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
+          java -cp national-connector/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
           dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCreator \
-          0201909309
+          0201909309 \
+          target/test-files/prescription-id.txt
       - name: Get the prescription from FMK
         run: |
-          java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
+          java -cp national-connector/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
           dk.sundhedsdatastyrelsen.ncpeh.script.FmkPrescriptionCollector \
           0201909309 \
           target/test-files/get-prescription.xml \
           target/test-files/drug-medication.xml
       - name: Generate ePrescription document
         run: |
-          java -cp country-a-service/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
+          java -cp national-connector/testing-tools/target/testing-tools-1.0.0-SNAPSHOT-shaded.jar \
           dk.sundhedsdatastyrelsen.ncpeh.script.EPrescriptionCdaGenerator \
+          target/test-files/prescription-id.txt \
           target/test-files/get-prescription.xml \
           target/test-files/drug-medication.xml \
           target/test-files/eprescription-cda.xml
@@ -67,8 +76,10 @@ jobs:
           path: target/test-files/
 
       - name: Run integration tests
+        # always run even if the previous steps fail. Because many of the integration tests do not depend on the FMK files generated above.
+        if: success() || failure()
         run: |
-          cd country-a-service
+          cd national-connector
           mvn --batch-mode --projects integration-tests --also-make \
             verify -DskipITs=false -DskipUTs \
             -DeDispensationITPath=${{ github.workspace }}/target/test-files/edispensation-cda.xml
@@ -81,7 +92,7 @@ jobs:
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
         with:
-          report_paths: 'country-a-service/integration-tests/target/failsafe-reports/TEST-*.xml'
+          report_paths: 'national-connector/integration-tests/target/failsafe-reports/TEST-*.xml'
           check_name: Integration Test Report
 
       - name: Prepare commit history

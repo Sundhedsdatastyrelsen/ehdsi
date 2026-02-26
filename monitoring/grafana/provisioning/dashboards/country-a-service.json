@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -102,10 +102,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "rate(http_server_requests_seconds_count{job=\"country-a-service\"}[5m])",
+          "expr": "rate(http_server_requests_seconds_count{job=\"national-connector\"}[5m])",
           "range": true,
           "refId": "A"
         }
@@ -116,7 +116,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -194,9 +194,9 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "mimir"
           },
-          "expr": "rate(http_server_requests_seconds_sum{job=\"country-a-service\"}[5m]) / rate(http_server_requests_seconds_count{job=\"country-a-service\"}[5m])",
+          "expr": "rate(http_server_requests_seconds_sum{job=\"national-connector\"}[5m]) / rate(http_server_requests_seconds_count{job=\"national-connector\"}[5m])",
           "refId": "A"
         }
       ],

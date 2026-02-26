@@ -1,0 +1,15 @@
+{
+    "target": {
+        "national-connector": {
+            "cache-from": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:cache"
+            ],
+            "cache-to": [
+                "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:cache"
+            ],
+            "output": [
+                "type=docker"
+            ]
+        }
+    }
+}
