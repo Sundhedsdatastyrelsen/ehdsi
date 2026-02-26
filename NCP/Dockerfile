@@ -1,6 +1,6 @@
 FROM maven:3.9-eclipse-temurin-17 AS builder
 
-ARG OPENNCP_BRANCH="9.0.0"
+ARG OPENNCP_BRANCH="9.1.0"
 
 WORKDIR /usr/src/app
 
@@ -8,12 +8,6 @@ RUN git clone --branch ${OPENNCP_BRANCH} --depth 1 https://code.europa.eu/ehdsi/
 COPY maven-settings.xml maven-settings.xml
 
 WORKDIR /usr/src/app/ehealth
-
-# Replace deprecated groupid for oracle driver with the current one to avoid dependency resolution errors
-RUN sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' pom.xml && \
-    sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-configuration-utility/pom.xml && \
-    sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-exporter/pom.xml && \
-    sed -i 's|<groupId>com.oracle</groupId>|<groupId>com.oracle.database.jdbc</groupId>|g' openncp-tools/openncp-tsam-sync/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2 mvn -s /usr/src/app/maven-settings.xml -DskipTests install
 
