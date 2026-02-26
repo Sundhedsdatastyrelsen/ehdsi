@@ -53,4 +53,12 @@ openncp-configuration/hcer.properties. Removed.
 
 ### Patched files
 
-Running the diff tool
+Running the diff tool.
+
+Turns out it's a little hard to diff a diff.
+
+env_default/.env has a few TLS_PROVIDER values that OpenNCP added. Will try to run without them. Yeah we already have that.
+
+OpenNCP has replaced hardcoded keystore paths with environment variables. We could use the same approach they do now, possibly. In several server.xml files.
+
+Added three added properties to tm.properties (tm.audittrail.enabled, .transactionnumber and .targetip).

@@ -12,6 +12,9 @@ for dir in ehdsi ehealth; do
     fi
 done
 
+# diff returns 1 if there were any changes, which terminates the script if errexit is on.
+set +e
+
 # Create all the diff files
 # atna
 diff ehealth/openncp-docker/openncp-configuration/ATNA_resources/ArrConnections.xml ehdsi/NCP/atna-resources/ArrConnections.template.xml -u > ehdsi/NCP/atna-resources/ArrConnections.template.xml.diff
@@ -76,3 +79,7 @@ diff ehealth/openncp-docker/openncp-tsam-sync/application.yaml ehdsi/NCP/tsam-sy
 
 # openncp-configuration.properties
 diff ehealth/openncp-docker/openncp-configuration-utility/openncp-configuration.properties ehdsi/NCP/openncp-configuration.properties -u > ehdsi/NCP/openncp-configuration.properties.diff
+
+set -e
+
+exit 0

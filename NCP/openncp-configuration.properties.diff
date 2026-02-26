@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/openncp-configuration-utility/openncp-configuration.properties	2026-02-17 15:46:44
-+++ ehdsi/NCP/openncp-configuration.properties	2026-02-06 11:16:36
+--- ehealth/openncp-docker/openncp-configuration-utility/openncp-configuration.properties	2026-02-25 13:31:18
++++ ehdsi/NCP/openncp-configuration.properties	2026-02-26 12:25:35
 @@ -1,17 +1,20 @@
 +# This file is copied from ehealth openncp-docker/openncp-configuration-utility/openncp-configuration.properties.
 +# NB! If you delete properties here, they are not automatically deleted in the application. See the configuration-synchronizer.
@@ -104,16 +104,7 @@
  ################################################################################### TRC-STS #
  #
  # TRC-STS URL
-@@ -78,7 +84,7 @@
- # automated.validation=true|false
- # automated.validation.remote=true|false
- automated.validation=true
--automated.validation.remote=true
-+automated.validation.remote=false
- 
- ## IP address of the machine running OpenNCP
- # Examples:
-@@ -120,8 +126,8 @@
+@@ -121,8 +127,8 @@
  # Example:
  # ncp.country=PT
  # ncp.email=ncpAdministrator@domain.pt
@@ -124,7 +115,7 @@
  
  ## Interval in which OpenATNA checks if some audit log was not persisted.
  ## In case these logs are found, they will be attempted to re-persist.
-@@ -131,21 +137,21 @@
+@@ -132,21 +138,21 @@
  
  ## Path to folder where the other countries certificates will be stored
  # Example:
@@ -152,7 +143,7 @@
  
  ## Proxy configurations (to be used in case your OpenNCP is running behind a proxy)
  APP_BEHIND_PROXY=false
-@@ -180,11 +186,4 @@
+@@ -186,13 +192,6 @@
  PORTAL_LEGAL_AUTHENTICATOR_POSTALCODE=BE-1040
  PORTAL_LEGAL_AUTHENTICATOR_CITY=Brussels
  
@@ -163,6 +154,6 @@
 -GTW_TRUSTSTORE_PATH=/opt/openncp-configuration/keystore/eu-truststore.jks
 -GTW_TRUSTSTORE_PWD=changeit
 -
--TRANSLATIONS_AND_MAPPINGS_WS_URL=http://openncp-translations-and-mappings:8096/translations-and-mappings-ws
-\ No newline at end of file
-+TRANSLATIONS_AND_MAPPINGS_WS_URL=http://openncp-translations-and-mappings:8096/translations-and-mappings-ws
+ JWT_SECRET=1924a4a0984c6f0eb7a8918820ddc5aaf406fc9dea459bb49e1132b018a71cfd
+ 
+ KEY_ENCIPHERMENT_CHECK_ENABLED=false

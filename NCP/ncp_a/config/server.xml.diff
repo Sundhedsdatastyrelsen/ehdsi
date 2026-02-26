@@ -1,4 +1,4 @@
---- ehealth/openncp-docker/ncp_a/config/server.template.xml	2026-02-17 15:46:44
+--- ehealth/openncp-docker/ncp_a/config/server.template.xml	2026-02-25 13:31:18
 +++ ehdsi/NCP/ncp_a/config/server.xml	2025-02-21 09:09:49
 @@ -1,3 +1,4 @@
 +<?xml version="1.0" encoding="UTF-8"?>
@@ -76,9 +76,9 @@
                    maxThreads="150" scheme="https" secure="true"
 -                  clientAuth="$CLIENT_AUTH" sslProtocol="TLS"
 -                  keyAlias="$KEY_ALIAS"
--                  keystoreFile="/opt/openncp-configuration/keystore/gazelle-service-provider-keystore.jks"
+-                  keystoreFile="$KEYSTORE_PATH"
 -                  keystorePass="$KEYSTORE_PASSWORD"
--                  truststoreFile="/opt/openncp-configuration/keystore/eu-truststore.jks"
+-                  truststoreFile="$TRUSTSTORE_PATH"
 -                  truststorePass="$TRUSTSTORE_PASSWORD"
 +                  clientAuth="${CLIENT_AUTH}" sslProtocol="TLS"
 +                  keyAlias="${KEY_ALIAS}"
