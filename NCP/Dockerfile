@@ -124,11 +124,19 @@ CMD ["catalina.sh", "run"]
 
 # OpenATNA
 
-FROM maven:3.9-eclipse-temurin-11 AS openatna-builder
+# We use alpine because the ubuntu base image has an older git <2.49 which does
+# not support `git clone --revision`.
+FROM maven:3.9-eclipse-temurin-21-alpine AS openatna-builder
 
 WORKDIR /usr/src/app
 
-RUN git clone --branch master --depth 1 https://code.europa.eu/ehdsi/openatna.git
+RUN apk add --no-cache git
+
+# Check out specific revision of openatna (as of 2026-02-26 there are no tags or branches except master)
+RUN git clone \
+    --revision b8da8096c05ba9fcf496baab0a7131e5d2b4405d \
+    --depth 1 \
+    https://code.europa.eu/ehdsi/openatna.git
 
 WORKDIR /usr/src/app/openatna
 
