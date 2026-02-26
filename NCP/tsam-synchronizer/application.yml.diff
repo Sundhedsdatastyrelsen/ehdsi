@@ -1,0 +1,21 @@
+--- ehealth/openncp-docker/openncp-tsam-sync/application.yaml	2026-02-17 15:46:44
++++ ehdsi/NCP/tsam-synchronizer/application.yml	2025-02-21 09:09:49
+@@ -26,13 +26,13 @@
+     username:
+     password:
+   cts:
+-    url: https://webgate.training.ec.europa.eu/ehealth-term-server
+-    username: ncpeh@eu
+-    password: MyNewTrnCTS#2023
++    url: ${TSAM_SYNC_URL}
++    username: ${TSAM_SYNC_USERNAME}
++    password: ${TSAM_SYNC_PASSWORD}
+ spring:
+   jpa:
+     show_sql: false
+   main:
+     allow-circular-references: true
+   profiles:
+-    active: mysql
+\ No newline at end of file
++    active: mysql

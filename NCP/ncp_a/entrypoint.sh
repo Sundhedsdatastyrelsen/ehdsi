@@ -9,6 +9,12 @@ then
     exit 1
 fi
 
+# Only need to copy this in one entrypoint, as all the containers share these volumes and they are not needed for startup.
+if [ ! -f "/opt/openncp-configuration/validation/gazelle.ehdsi.properties" ]
+then
+    cp "/opt/openncp-configuration/gazelle.ehdsi.template.properties" "/opt/openncp-configuration/validation/gazelle.ehdsi.properties"
+fi
+
 # Export secrets as environment variables
 export KEYSTORE_PASSWORD; KEYSTORE_PASSWORD=$(cat /run/secrets/tls_keystore_password)
 export TRUSTSTORE_PASSWORD; TRUSTSTORE_PASSWORD=$(cat /run/secrets/tls_truststore_password)

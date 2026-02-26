@@ -1,0 +1,23 @@
+--- ../ehealth/openncp-docker/openncp-configuration/ATNA_resources/ArrConnections.xml	2026-02-17 15:46:44
++++ NCP/atna-resources/ArrConnections.template.xml	2026-02-23 09:33:04
+@@ -24,10 +24,11 @@
+       <HostName>openncp-openatna</HostName>
+       <Port>2862</Port>
+       <!-- Trust and Keystore -->
+-      <KeyStore>/opt/openncp-configuration/keystore/gazelle-service-consumer-keystore.jks</KeyStore>
+-      <KeyPass>gazelle</KeyPass>
+-      <TrustStore>/opt/openncp-configuration/keystore/eu-truststore.jks</TrustStore>
+-      <TrustPass>changeit</TrustPass>
++      <!-- Changed to enable environment variables -->
++      <KeyStore>${KEYSTORE_PATH}</KeyStore>
++      <KeyPass>${KEYSTORE_PASSWORD}</KeyPass>
++      <TrustStore>${TRUSTSTORE_PATH}</TrustStore>
++      <TrustPass>${TRUSTSTORE_PASSWORD}</TrustPass>
+    </SecureConnection>
+    <!-- use IP address instead of localhost for UDP -->
+    <StandardConnection name="arr-udp">
+@@ -35,4 +36,3 @@
+       <Port>2861</Port>
+    </StandardConnection>
+ </Configuration>
+-

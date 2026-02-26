@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--This file overwrites the following file from the ehealth repo:
-openncp-application\openncp-application-server\src\main\resources\logback.xml -->
-<!-- We overwrite their file with this, so any changes to their logging is not going to into our
-file automatically. -->
-<!-- Please merge manually if logging updates are needed -->
-
+<!-- 
+NCP-DK owns the logback file, so we don't get changes to the ehealth logging automatically,
+as that might expose sensitive data in the logging.
+The logback file in the ehealth repo is here:
+openncp-application\openncp-application-server\src\main\resources\logback.xml
+-->
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">

@@ -1,3 +1,5 @@
+-- Fix privileges in the database.
+
 GRANT SELECT ON *.* TO 'root'@'%';
 GRANT SELECT ON *.* TO '{{DB_USERNAME}}'@'%';
 

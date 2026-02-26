@@ -1,0 +1,72 @@
+--- ehealth/openncp-docker/openncp-trc-sts/config/server.template.xml	2026-02-17 15:46:44
++++ ehdsi/NCP/openncp-trc-sts/config/server.xml	2025-02-21 09:09:49
+@@ -23,30 +23,30 @@
+         <Resource name="jdbc/ConfMgr" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                   type="javax.sql.DataSource" singleton="true"
+                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000"
+-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
++                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+ 
+         <Resource name="jdbc/OPEN_ATNA" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                   type="javax.sql.DataSource" singleton="true"
+                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000"
+-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
++                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+ 
+         <Resource name="jdbc/TSAM" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                   type="javax.sql.DataSource" singleton="true"
+                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000"
+-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
++                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+ 
+         <Resource name="jdbc/EADC" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                   type="javax.sql.DataSource" singleton="true"
+                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="300000"
+-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
+-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes;characterEncoding=UTF-8;serverTimezone=Europe/Brussels;useSSL=FALSE;"
++                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+     </GlobalNamingResources>
+ 
+     <!-- A "Service" is a collection of one or more "Connectors" that share
+@@ -55,18 +55,18 @@
+          Documentation at /docs/config/service.html
+     -->
+     <Service name="Catalina">
+-        <Connector port="$CONNECTOR_PORT" protocol="HTTP/1.1"
++        <Connector port="${CONNECTOR_PORT}" protocol="HTTP/1.1"
+                    connectionTimeout="20000"
+                    maxHttpHeaderSize="1048576"
+-                   redirectPort="$CONNECTOR_SECURE_PORT"/>
+-        <Connector port="$CONNECTOR_SECURE_PORT" SSLEnabled="true" protocol="HTTP/1.1"
++                   redirectPort="${CONNECTOR_SECURE_PORT}"/>
++        <Connector port="${CONNECTOR_SECURE_PORT}" SSLEnabled="true" protocol="HTTP/1.1"
+                    maxThreads="150" scheme="https" secure="true"
+                    clientAuth="false" sslProtocol="TLS"
+-                   keyAlias="$KEY_ALIAS"
+-                   keystoreFile="/opt/openncp-configuration/keystore/gazelle-service-provider-keystore.jks"
+-                   keystorePass="$KEYSTORE_PASSWORD"
+-                   truststoreFile="/opt/openncp-configuration/keystore/eu-truststore.jks"
+-                   truststorePass="$TRUSTSTORE_PASSWORD"
++                   keyAlias="${KEY_ALIAS}"
++                   keystoreFile="${KEYSTORE_PATH}"
++                   keystorePass="${KEYSTORE_PASSWORD}"
++                   truststoreFile="${TRUSTSTORE_PATH}"
++                   truststorePass="${TRUSTSTORE_PASSWORD}"
+                    maxHttpHeaderSize="1048576"
+                    URIEncoding="UTF-8"/>
+         <!-- An Engine represents the entry point (within Catalina) that processes
