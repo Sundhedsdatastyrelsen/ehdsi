@@ -1,6 +1,6 @@
 <#ftl output_format="XML">
 <#import "commons.ftl" as common>
-<#-- hhttps://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.3-2024-04-19T100332.html -->
+<#-- https://art-decor.ehdsi.eu/publication/epsos-html-20250221T122200/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.1.3-2024-04-19T100332.html -->
 <ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <#-- realmCode - art-decor specifies that it should not be used to identify the originating country, but what should
          actually be there is less clear. Nobody else sets it. -->
@@ -151,25 +151,165 @@
     </participant>
 </#if>
 
-    <#-- TODO -->
+    <documentationOf typeCode="DOC">
+        <serviceEvent classCode="PCPR" moodCode="EVN">
+            <effectiveTime>
+                <high value="${ effectiveTime }" />
+            </effectiveTime>
+        </serviceEvent>
+    </documentationOf>
+
+    <relatedDocument typeCode="XFRM">
+        <parentDocument>
+            <id <@common.cdaIdAttrs documentId /> />
+        </parentDocument>
+    </relatedDocument>
+
     <#-- Documentation of -->
     <#-- RelatedDocument -->
     <component>
         <structuredBody>
             <#-- Medication Summary -->
+            <#-- TODO fill in data from FMK -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.3" />
+                    <templateId root="2.16.840.1.113883.10.20.1.8" />
+                    <code code="10160-0" codeSystem="2.16.840.1.113883.6.1" />
+                    <title>Medication Summary</title>
+                    <text></text>
+                    <entry>
+                        <substanceAdministration classCode="SBADM" moodCode="INT">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <id root="1.2.208.176.7.2.2" extension="no-information-available"/>
+                            <code code="no-medication-info" codeSystem="2.16.840.1.113883.5.1150.1" displayName="No information about medications"/>
+                            <statusCode code="completed"/>
+                            <effectiveTime nullFlavor="UNK" xsi:type="IVL_TS"/>
+                            <effectiveTime nullFlavor="NA"/>
+                            <consumable>
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.31"/>
+                                    <manufacturedMaterial nullFlavor="NA"/>
+                                </manufacturedProduct>
+                            </consumable>
+                        </substanceAdministration>
+                    </entry>
+                </section>
+            </component>
+
             <#-- Allergies -->
-            <#-- Immunizations -->
-            <#-- History of past illnesses -->
+            <#-- We don't have allergy information registered in DK yet -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.12"/>
+                    <id nullFlavor="UNK"/>
+                    <code code="48765-2" displayName="Allergies and adverse reactions Document" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+                    <title>Allergies and Other Adverse Reactions</title>
+                    <text>
+                      <content ID="Allergies_NoInformation">Allergies no information.</content>
+                    </text>
+                    <entry>
+                        <act classCode="ACT" moodCode="EVN">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.16"/>
+                            <code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+                            <statusCode code="active"/>
+                            <effectiveTime>
+                                <low nullFlavor="NA"/>
+                            </effectiveTime>
+                            <entryRelationship typeCode="SUBJ" inversionInd="false">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.17"/>
+                                    <code code="419199007" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" codeSystemVersion="2016-07" displayName="Allergy to substance"/>
+                                    <text>
+                                        <reference value="#Allergies_NoInformation"/>
+                                    </text>
+                                    <statusCode code="completed"/>
+                                    <effectiveTime>
+                                        <low nullFlavor="NA"/>
+                                    </effectiveTime>
+                                    <value code="no-allergy-info" displayName="No information about allergies" codeSystem="2.16.840.1.113883.5.1150.1" xsi:type="CD"/>
+                                </observation>
+                            </entryRelationship>
+                        </act>
+                    </entry>
+                </section>
+            </component>
+
+            <#-- Immunizations (not required) -->
+            <#-- History of past illnesses (not required) -->
+
             <#-- List of Surgeries -->
+            <#-- DK has this information, but getting access to it is not in scope -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.11"/>
+                    <code code="47519-4" codeSystem="2.16.840.1.113883.6.1" />
+                    <title>Coded List of Surgeries</title>
+                    <text>
+                        <content ID="Procedures_Unknown">Procedures unknown.</content>
+                    </text>
+                    <entry>
+                        <procedure classCode="PROC" moodCode="EVN">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.26"/>
+                            <id nullFlavor="NA"/>
+                            <code code="no-procedure-info" displayName="No information about past history of procedures" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data"/>
+                            <text><reference value="#Procedures_Unknown"/></text>
+                            <statusCode code="completed"/>
+                            <effectiveTime nullFlavor="NA" xsi:type="IVL_TS"/>
+                        </procedure>
+                    </entry>
+                </section>
+            </component>
+
             <#-- Active Problems -->
+            <#-- TODO what's the status of this in DK? -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.9"/>
+                    <templateId root="2.16.840.1.113883.10.20.1.11"/>
+                    <code code="11450-4" codeSystem="2.16.840.1.113883.6.1" />
+                    <title>Active Problems</title>
+                    <text></text>
+                </section>
+            </component>
+
             <#-- Medical Devices -->
-            <#-- Health Maintenance Care Plan -->
-            <#-- Functional Status -->
-            <#-- Social History -->
-            <#-- Pregnancy History -->
-            <#-- Vital Signs -->
-            <#-- Coded Results -->
-            <#-- Advance Directives -->
+            <#-- DK only has this in a very unstructured format -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.4"/>
+                    <templateId root="2.16.840.1.113883.10.20.1.7"/>
+                    <code code="46264-8" codeSystem="2.16.840.1.113883.6.1" />
+                    <title>Medical Devices Coded</title>
+                    <text>
+                        <content ID="Medical_Devices_Unknown">Medical devices unknown.</content>
+                    </text>
+                    <entry>
+                        <supply classCode="SPLY" moodCode="EVN">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.5"/>
+                            <id nullFlavor="NA"/>
+                            <text><reference value="#Medical_Devices_Unknown"/></text>
+                            <effectiveTime nullFlavor="UNK" xsi:type="IVL_TS"/>
+                            <participant typeCode="DEV">
+                                <participantRole classCode="MANU">
+                                    <playingDevice classCode="DEV" determinerCode="INSTANCE">
+                                        <code code="no-device-info" displayName="No information about devices" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data"/>
+                                    </playingDevice>
+                                </participantRole>
+                            </participant>
+                        </supply>
+                    </entry>
+                </section>
+            </component>
+
+            <#-- Health Maintenance Care Plan (not required) -->
+            <#-- Functional Status (not required) -->
+            <#-- Social History (not required) -->
+            <#-- Pregnancy History (not required) -->
+            <#-- Vital Signs (not required) -->
+            <#-- Coded Results (not required) -->
+            <#-- Advance Directives (not required) -->
         </structuredBody>
     </component>
 </ClinicalDocument>
