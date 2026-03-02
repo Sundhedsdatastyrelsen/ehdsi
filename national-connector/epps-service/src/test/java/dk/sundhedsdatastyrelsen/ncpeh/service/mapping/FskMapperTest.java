@@ -31,5 +31,10 @@ class FskMapperTest {
         assertThat(preferredHealthProfessional.getAddress().getCity(), is("City"));
     }
 
-
+    @Test
+    void noPreferredHpTest() {
+        var cda = testInformationCardCda("informationCards/no-preferred-hp-test-card.xml");
+        var preferredHealthProfessional = FskMapper.preferredHealthProfessional(cda);
+        assertThat(preferredHealthProfessional, is(nullValue()));
+    }
 }

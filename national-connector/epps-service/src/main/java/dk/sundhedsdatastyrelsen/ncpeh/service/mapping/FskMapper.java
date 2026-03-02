@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Class for mapping FSK information card CDAs to the data needed in the patient summary.
@@ -47,10 +48,16 @@ public class FskMapper {
     public static PreferredHealthProfessional preferredHealthProfessional(Document cda) {
         var name = xpath.evalString(XPaths.preferredHpName, cda);
         var telecoms = telecomNodesToTelecoms(xpath.evalNodes(XPaths.preferredHpTelecoms, cda));
-        var address = addressNodeToAddress(xpath.evalNode(XPaths.preferredHpAddress, cda));
+        var address = Optional.ofNullable(xpath.evalNode(XPaths.preferredHpAddress, cda))
+            .map(FskMapper::addressNodeToAddress)
+            .orElse(null);
+
+        if ((name == null || name.isEmpty()) && telecoms.isEmpty() && address == null) {
+            return null;
+        }
 
         return PreferredHealthProfessional.builder()
-            .name(Name.fromFullName(name))
+            .name(name == null ? null : Name.fromFullName(name))
             .telecoms(telecoms)
             .address(address)
             .build();
@@ -71,12 +78,12 @@ public class FskMapper {
     /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if something goes wrong
     private static List<Telecom> telecomNodesToTelecoms(List<Node> telecomNodes) {
         List<Telecom> list = new ArrayList<>();
-        for (Node node : telecomNodes) {
+        for (var node : telecomNodes) {
             var reportedUse = xpath.evalString("@use", node);
             var telecomUse = Arrays.stream(Telecom.Use.values())
                 .filter(v -> Objects.equals(v.value, reportedUse))
                 .findFirst();
-            Telecom build = Telecom.builder()
+            var build = Telecom.builder()
                 .value(xpath.evalString("@value", node))
                 .use(telecomUse.get())
                 .build();
