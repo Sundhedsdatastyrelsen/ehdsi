@@ -8,14 +8,12 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
-import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -25,9 +23,9 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class PatientSummaryL3GeneratorTest {
+class PatientSummaryL3GeneratorTest {
     @Test
-    void generateTest() throws TemplateException, IOException {
+    void generateTest() {
         var oid = Oid.DK_PATIENT_SUMMARY;
         var extension = "1230879456";
         var title = "Generate PS L3 Document Title";
@@ -78,7 +76,10 @@ public class PatientSummaryL3GeneratorTest {
         assertThat("oid matches", xpathEngine.evaluate(oidPath, generatedCda), is(oid.value));
         assertThat("extension matches", xpathEngine.evaluate(idExtensionPath, generatedCda), is(extension));
         assertThat("title matches", xpathEngine.evaluate(titlePath, generatedCda), is(title));
-        assertThat("creation time matches", OffsetDateTime.parse(xpathEngine.evaluate(creationTimestampPath, generatedCda)), is(creationTimestamp));
+        assertThat(
+            "creation time matches",
+            xpathEngine.evaluate(creationTimestampPath, generatedCda),
+            is(Utils.cdaZonedDateTime(creationTimestamp)));
         assertThat("patient birth time matches", xpathEngine.evaluate(patientBirthTimePath, generatedCda), is("19821103"));
         assertThat(
             "patient family name is correct",
