@@ -216,6 +216,8 @@ CMD ["java", "-jar", "openncp-tsam-sync.jar"]
 # Web Manager Frontend
 FROM node:24-alpine AS web-manager-frontend-builder
 
+ENV NODE_OPTIONS="--openssl-legacy-provider"
+
 WORKDIR /app
 
 COPY --from=builder /usr/src/app/ehealth/openncp-web-manager/openncp-web-manager-frontend/package*.json ./
@@ -235,7 +237,7 @@ FROM tomcat-base AS web-manager
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/webapp/openncp-gateway-backend.war webapps/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/target/classes/lib lib/
 COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/context.xml conf/
-COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config
+COPY --from=builder /usr/src/app/ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/application-docker.yml /opt/config/
 COPY --from=web-manager-frontend-builder /app/dist webapps/openncp-web-manager
 
 COPY openncp-web-manager/config/server.xml conf/

@@ -1,4 +1,4 @@
---- ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/server.template.xml	2026-02-17 15:46:44
+--- ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/server.template.xml	2026-02-25 13:31:18
 +++ ehdsi/NCP/openncp-web-manager/config/server.xml	2025-02-21 09:09:49
 @@ -9,7 +9,7 @@
     <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
@@ -71,9 +71,9 @@
                    maxThreads="150" scheme="https" secure="true"
                    sslProtocol="TLS"
 -                  keyAlias="$KEY_ALIAS"
--                  keystoreFile="/opt/openncp-configuration/keystore/gazelle-service-provider-keystore.jks"
+-                  keystoreFile="$KEYSTORE_PATH"
 -                  keystorePass="$KEYSTORE_PASSWORD"
--                  truststoreFile="/opt/openncp-configuration/keystore/eu-truststore.jks"
+-                  truststoreFile="$TRUSTSTORE_PATH"
 -                  truststorePass="$TRUSTSTORE_PASSWORD"
 +                  keyAlias="${KEY_ALIAS}"
 +                  keystoreFile="${KEYSTORE_PATH}"
