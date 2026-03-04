@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/openncp-configuration-utility/openncp-configuration.properties	2026-02-25 13:31:18
-+++ ehdsi/NCP/openncp-configuration.properties	2026-02-26 12:25:35
+--- ehealth/openncp-docker/openncp-configuration-utility/openncp-configuration.properties	2026-02-26 11:11:14.355630036 +0100
++++ ehdsi/NCP/openncp-configuration.properties	2026-03-04 10:41:06.461021862 +0100
 @@ -1,17 +1,20 @@
 +# This file is copied from ehealth openncp-docker/openncp-configuration-utility/openncp-configuration.properties.
 +# NB! If you delete properties here, they are not automatically deleted in the application. See the configuration-synchronizer.
@@ -24,7 +24,7 @@
  
  ################################################################################### Server #
  # Example:
-@@ -21,50 +24,53 @@
+@@ -21,49 +24,52 @@
  #
  # ISO 3166-2 code for country subdivision (used in Portal, Protocol Terminators, TRC-STS and OpenNCP Web Portal for audit purposes)
  # COUNTRY_PRINCIPAL_SUBDIVISION=PT-1
@@ -54,12 +54,12 @@
 -SP_KEYSTORE_PATH=/opt/openncp-configuration/keystore/gazelle-service-provider-keystore.jks
 -SP_PRIVATEKEY_ALIAS=gazelle.ncp-sp.openncp.dg-sante.eu
 -SP_PRIVATEKEY_PASSWORD=gazelle
- 
++
 +SP_KEYSTORE_PATH=${env:TLS_PROVIDER_KEYSTORE_PATH}
 +SP_KEYSTORE_PASSWORD=${env:TLS_KEYSTORE_PASSWORD}
 +SP_PRIVATEKEY_ALIAS=${env:TLS_PROVIDER_KEY_ALIAS}
 +SP_PRIVATEKEY_PASSWORD=${env:TLS_KEYSTORE_PASSWORD}
-+
+ 
  #
  # SC - service consumer
  #
@@ -67,13 +67,13 @@
 -SC_KEYSTORE_PATH=/opt/openncp-configuration/keystore/gazelle-service-consumer-keystore.jks
 -SC_PRIVATEKEY_ALIAS=gazelle.ncp-sc.openncp.dg-sante.eu
 -SC_PRIVATEKEY_PASSWORD=gazelle
- 
++
 +SC_KEYSTORE_PATH=${env:TLS_PROVIDER_KEYSTORE_PATH}
 +SC_KEYSTORE_PASSWORD=${env:TLS_KEYSTORE_PASSWORD}
 +SC_PRIVATEKEY_ALIAS=${env:TLS_PROVIDER_KEY_ALIAS}
 +SC_PRIVATEKEY_PASSWORD=${env:TLS_KEYSTORE_PASSWORD}
 +
-+
+ 
  #
  # SIG - signature
  #
@@ -87,7 +87,7 @@
 -NCP_SIG_PRIVATEKEY_ALIAS=gazelle.ncp-signature.openncp.dg-sante.eu
 -NCP_SIG_PRIVATEKEY_PASSWORD=gazelle
 +# This is where we use the "SEAL" certificate
- 
++
 +NCP_SIG_KEYSTORE_PATH=${env:NCP_SIG_KEYSTORE_PATH}
 +NCP_SIG_KEYSTORE_PASSWORD=${env:SEAL_KEYSTORE_PASSWORD}
 +NCP_SIG_PRIVATEKEY_ALIAS=${env:NCP_SIG_PRIVATEKEY_ALIAS}
@@ -100,10 +100,9 @@
 +GTW_TLS_CLIENT_CERT_PWD=${env:TLS_KEYSTORE_PASSWORD}
 +GTW_TLS_CLIENT_KEYSTORE_PWD=${env:TLS_KEYSTORE_PASSWORD}
 +
-+
+ 
  ################################################################################### TRC-STS #
  #
- # TRC-STS URL
 @@ -121,8 +127,8 @@
  # Example:
  # ncp.country=PT
@@ -143,7 +142,7 @@
  
  ## Proxy configurations (to be used in case your OpenNCP is running behind a proxy)
  APP_BEHIND_PROXY=false
-@@ -186,13 +192,6 @@
+@@ -185,13 +191,6 @@
  PORTAL_LEGAL_AUTHENTICATOR_POSTALCODE=BE-1040
  PORTAL_LEGAL_AUTHENTICATOR_CITY=Brussels
  
@@ -156,4 +155,4 @@
 -
  JWT_SECRET=1924a4a0984c6f0eb7a8918820ddc5aaf406fc9dea459bb49e1132b018a71cfd
  
- KEY_ENCIPHERMENT_CHECK_ENABLED=false
+ TRANSLATIONS_AND_MAPPINGS_WS_URL=http://openncp-translations-and-mappings:8096/translations-and-mappings-ws
