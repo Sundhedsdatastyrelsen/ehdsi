@@ -8,12 +8,12 @@
     <parent>
         <groupId>eu.europa.ec.sante</groupId>
         <artifactId>openncp</artifactId>
-        <version>9.0.0</version>
+        <version>9.1.0</version>
     </parent>
 
     <groupId>dk.sds</groupId>
     <artifactId>openncp-server</artifactId>
-    <version>9.0.0</version>
+    <version>9.1.0</version>
     <packaging>war</packaging>
 
     <name>OpenNCP Denmark Application</name>

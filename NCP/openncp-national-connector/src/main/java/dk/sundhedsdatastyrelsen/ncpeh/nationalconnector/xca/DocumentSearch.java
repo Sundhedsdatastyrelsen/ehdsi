@@ -1,19 +1,27 @@
 package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindEPrescriptionDocumentsRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientSummaryDocumentRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.NationalConnectorService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import eu.europa.ec.sante.openncp.common.ClassCode;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
-import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
+import eu.europa.ec.sante.openncp.common.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.common.assertion.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SimpleConfidentialityEnum;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.*;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentAssociation;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentFactory;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPSOSDocument;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EpListParam;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.OrCDDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.PSDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteria;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteriaImpl;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
-import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +61,10 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             return DocumentFactory.createEPSOSDocument(
                 doc.getPatientId(),
                 ClassCode.getByCode(doc.getClassCode().getValue()),
-                XmlUtil.parseContent(doc.getDocument())
+                XmlUtil.parse(doc.getDocument())
             );
         } catch (ApiException e) {
             throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_GENERIC);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document received was invalid XML");
         }
     }
 

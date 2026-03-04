@@ -8,12 +8,12 @@ import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.NationalConnectorService
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca.DocumentSearch;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
-import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
+import eu.europa.ec.sante.openncp.common.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.common.assertion.exceptions.InsufficientRightsException;
+import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.PatientDemographics;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.PatientId;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
-import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xcpd.PatientSearchInterfaceWithDemographics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +157,7 @@ public class PatientSearch implements NationalConnectorInterface, PatientSearchI
         try {
             var foo = getPatientDemographicsFromCountryA(
                 List.of(new PatientId("1.2.208.176.1.2", "1111111118")),
-                XmlUtil.parseContent("<SomeXml/>").getDocumentElement(),
+                XmlUtil.parse("<SomeXml/>").getDocumentElement(),
                 NationalConnectorService.api());
             return;
         } catch (NIException e) {
