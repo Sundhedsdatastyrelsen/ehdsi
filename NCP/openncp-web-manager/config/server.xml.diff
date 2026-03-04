@@ -1,0 +1,99 @@
+--- ehealth/openncp-docker/openncp-web-manager/openncp-web-manager-backend/config/server.template.xml	2026-02-26 11:11:14.361145122 +0100
++++ ehdsi/NCP/openncp-web-manager/config/server.xml	2026-03-04 13:37:26.042804486 +0100
+@@ -1,3 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!-- We write all env vars as ${VAR_NAME} (with braces), otherwise Tomcat does
++     not resolve them.  In the EU version, they are resolved with envsubst, but
++     that is not necessary when the variables are formatted correctly. -->
+ <Server port="8005" shutdown="SHUTDOWN">
+    <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+    <!-- Security listener. Documentation at /docs/config/listeners.html
+@@ -9,7 +13,7 @@
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+- 
++
+    <!-- Global JNDI resources Documentation at /docs/jndi-resources-howto.html -->
+    <GlobalNamingResources>
+       <!-- Editable user database that can also be used by
+@@ -26,32 +30,32 @@
+        <Resource name="jdbc/ConfMgr" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                  type="javax.sql.DataSource" singleton="true"
+                  minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
+-                 dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                 dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+-                 dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                 dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                 dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
++                 dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+ 
+        <Resource name="jdbc/OPEN_ATNA" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                  type="javax.sql.DataSource" singleton="true"
+                  minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
+-                 dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                 dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+-                 dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                 dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                 dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
++                 dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+ 
+        <Resource name="jdbc/TSAM" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                  type="javax.sql.DataSource" singleton="true"
+                  minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
+-                 dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                 dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+-                 dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                 dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                 dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
++                 dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+ 
+        <Resource name="jdbc/EADC" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
+                  type="javax.sql.DataSource" singleton="true"
+                  minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
+-                 dataSourceClassName="$DATASOURCE_CLASS_NAME"
+-                 dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+-                 dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
++                 dataSourceClassName="${DATASOURCE_CLASS_NAME}"
++                 dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
++                 dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
+    </GlobalNamingResources>
+- 
++
+    <!-- A "Service" is a collection of one or more "Connectors" that share
+         a single "Container" Note:  A "Service" is not itself a "Container",
+         so you may not define subcomponents such as "Valves" at this level.
+@@ -59,24 +63,24 @@
+    -->
+    <Service name="Catalina">
+        <!-- HTTP Connector -->
+-       <Connector port="$CONNECTOR_PORT" protocol="HTTP/1.1"
++       <Connector port="${CONNECTOR_PORT}" protocol="HTTP/1.1"
+                   connectionTimeout="20000"
+                   maxHttpHeaderSize="1048576"
+-                  redirectPort="$CONNECTOR_SECURE_PORT"/>
++                  redirectPort="${CONNECTOR_SECURE_PORT}"/>
+ 
+        <!-- HTTPS Connector - updated tomcat 10.1 format, certificate verification variable is now resolved on the entrypoint.sh file -->
+-       <Connector port="$CONNECTOR_SECURE_PORT" protocol="HTTP/1.1"
++       <Connector port="${CONNECTOR_SECURE_PORT}" protocol="HTTP/1.1"
+                   maxThreads="150" scheme="https" secure="true"
+                   SSLEnabled="true"
+                   maxHttpHeaderSize="1048576"
+                   URIEncoding="UTF-8">
+-           <SSLHostConfig certificateVerification="$CERTIFICATE_VERIFICATION"
+-                          truststoreFile="$TRUSTSTORE_PATH"
+-                          truststorePassword="$TRUSTSTORE_PASSWORD"
++           <SSLHostConfig certificateVerification="${CERTIFICATE_VERIFICATION}"
++                          truststoreFile="${TRUSTSTORE_PATH}"
++                          truststorePassword="${TRUSTSTORE_PASSWORD}"
+                           truststoreType="JKS">
+-               <Certificate certificateKeyAlias="$KEY_ALIAS"
+-                            certificateKeystoreFile="$KEYSTORE_PATH"
+-                            certificateKeystorePassword="$KEYSTORE_PASSWORD"
++               <Certificate certificateKeyAlias="${KEY_ALIAS}"
++                            certificateKeystoreFile="${KEYSTORE_PATH}"
++                            certificateKeystorePassword="${KEYSTORE_PASSWORD}"
+                             certificateKeystoreType="JKS"
+                             type="RSA"/>
+            </SSLHostConfig>

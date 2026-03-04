@@ -1,3 +1,6 @@
+<!-- We write all env vars as ${VAR_NAME} (with braces), otherwise Tomcat does
+     not resolve them.  In the EU version, they are resolved with envsubst, but
+     that is not necessary when the variables are formatted correctly. -->
 <Server port="8005" shutdown="SHUTDOWN">
     <Listener className="org.apache.catalina.startup.VersionLoggerListener"/>
     <!-- Security listener. Documentation at /docs/config/listeners.html
@@ -19,30 +22,30 @@
         <Resource name="jdbc/ConfMgr" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
                   type="javax.sql.DataSource" singleton="true"
                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_properties?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
 
         <Resource name="jdbc/OPEN_ATNA" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
                   type="javax.sql.DataSource" singleton="true"
                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_atna?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
 
         <Resource name="jdbc/TSAM" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
                   type="javax.sql.DataSource" singleton="true"
                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_ltrdb?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
 
         <Resource name="jdbc/EADC" auth="Container" factory="com.zaxxer.hikari.HikariJNDIFactory"
                   type="javax.sql.DataSource" singleton="true"
                   minimumIdle="2" maximumPoolSize="5" connectionTimeout="30000"
-                  dataSourceClassName="$DATASOURCE_CLASS_NAME"
-                  dataSource.url="jdbc:$DB_TYPE://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
-                  dataSource.user="$DB_USER" dataSource.password="$DB_PWD"/>
+                  dataSourceClassName="${DATASOURCE_CLASS_NAME}"
+                  dataSource.url="jdbc:${DB_TYPE}://${DB_HOST}:${DB_PORT}/ehealth_eadc?useUnicode=yes&amp;characterEncoding=UTF-8&amp;serverTimezone=Europe/Brussels&amp;useSSL=FALSE"
+                  dataSource.user="${DB_USER}" dataSource.password="${DB_PWD}"/>
     </GlobalNamingResources>
 
     <!-- A "Service" is a collection of one or more "Connectors" that share
@@ -52,24 +55,24 @@
     -->
     <Service name="Catalina">
         <!-- HTTP Connector -->
-        <Connector port="$CONNECTOR_PORT" protocol="HTTP/1.1"
+        <Connector port="${CONNECTOR_PORT}" protocol="HTTP/1.1"
                    connectionTimeout="20000"
                    maxHttpHeaderSize="1048576"
-                   redirectPort="$CONNECTOR_SECURE_PORT"/>
+                   redirectPort="${CONNECTOR_SECURE_PORT}"/>
 
         <!-- HTTPS Connector - updated tomcat 10.1 format, certificate verification variable is now resolved on the entrypoint.sh file -->
-        <Connector port="$CONNECTOR_SECURE_PORT" protocol="HTTP/1.1"
+        <Connector port="${CONNECTOR_SECURE_PORT}" protocol="HTTP/1.1"
                    maxThreads="150" scheme="https" secure="true"
                    SSLEnabled="true"
                    maxHttpHeaderSize="1048576"
                    URIEncoding="UTF-8">
-            <SSLHostConfig certificateVerification="$CERTIFICATE_VERIFICATION"
-                           truststoreFile="$TRUSTSTORE_PATH"
-                           truststorePassword="$TRUSTSTORE_PASSWORD"
+            <SSLHostConfig certificateVerification="${CERTIFICATE_VERIFICATION}"
+                           truststoreFile="${TRUSTSTORE_PATH}"
+                           truststorePassword="${TRUSTSTORE_PASSWORD}"
                            truststoreType="JKS">
-                <Certificate certificateKeyAlias="$KEY_ALIAS"
-                             certificateKeystoreFile="$KEYSTORE_PATH"
-                             certificateKeystorePassword="$KEYSTORE_PASSWORD"
+                <Certificate certificateKeyAlias="${KEY_ALIAS}"
+                             certificateKeystoreFile="${KEYSTORE_PATH}"
+                             certificateKeystorePassword="${KEYSTORE_PASSWORD}"
                              certificateKeystoreType="JKS"
                              type="RSA"/>
             </SSLHostConfig>
