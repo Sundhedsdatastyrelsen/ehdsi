@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PatientSearch implements NationalConnectorInterface, PatientSearchInterfaceWithDemographics {
-    private static final Logger logger = LoggerFactory.getLogger(DocumentSearch.class);
+    private static final Logger logger = LoggerFactory.getLogger(PatientSearch.class);
 
     /**
      * For use when logging clinical and personal data
