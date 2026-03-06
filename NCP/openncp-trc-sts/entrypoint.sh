@@ -4,15 +4,11 @@ set -o nounset
 set -o pipefail
 
 # Map CLIENT_AUTH to Tomcat 10.x certificateVerification format
-if [ "$CLIENT_AUTH" = "true" ]; then
-    export CERTIFICATE_VERIFICATION="required"
-elif [ "$CLIENT_AUTH" = "false" ]; then
-    export CERTIFICATE_VERIFICATION="none"
-elif [ "$CLIENT_AUTH" = "want" ]; then
-    export CERTIFICATE_VERIFICATION="optional"
-else
-    export CERTIFICATE_VERIFICATION="required"
-fi
+case "${CLIENT_AUTH:-true}" in
+  true)  export CERTIFICATE_VERIFICATION="required" ;;
+  false) export CERTIFICATE_VERIFICATION="none" ;;
+  want)  export CERTIFICATE_VERIFICATION="optional" ;;
+esac
 
 if [ ! -w "/opt/openncp-configuration/obligations" ] || [ ! -w "/opt/openncp-configuration/validation" ]
 then
