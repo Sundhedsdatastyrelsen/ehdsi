@@ -42,6 +42,7 @@ Currently, we categorize the openncp configuration into three types of files.
 - configuration-synchronizer/ (replaces openncp-docker/openncp-configuration-utility)
 - docker-compose.yml (replaces openncp's docker-compose.yml)
 - Dockerfile (replaces all openncp's dockerfiles)
+- maven-settings.xml (not from ehealth, overrides maven repo settings to avoid blocked mirrors)
 - mysql/initdb/90-grants.sql (not from ehealth, fixes some privileges in the database)
 - ncp_a/entrypoint.sh (replaces openncp-docker/ncp_a/tomcat-config-entrypoint.sh)
 - ncp_a/pom.xml (not from ehealth, injects our national connector in ncp_a)
