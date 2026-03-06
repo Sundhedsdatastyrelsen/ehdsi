@@ -1,19 +1,27 @@
 package dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.xca;
 
 import dk.sundhedsdatastyrelsen.ncpeh.ApiException;
+import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindEPrescriptionDocumentsRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFindPatientSummaryDocumentRequest;
-import dk.sundhedsdatastyrelsen.ncpeh.api.model.PostFetchDocumentRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.NationalConnectorService;
 import dk.sundhedsdatastyrelsen.ncpeh.nationalconnector.Utils;
 import eu.europa.ec.sante.openncp.common.ClassCode;
 import eu.europa.ec.sante.openncp.common.error.OpenNCPErrorCode;
+import eu.europa.ec.sante.openncp.common.util.XmlUtil;
+import eu.europa.ec.sante.openncp.core.common.assertion.exceptions.InsufficientRightsException;
 import eu.europa.ec.sante.openncp.core.common.ihe.NationalConnectorInterface;
-import eu.europa.ec.sante.openncp.core.common.ihe.assertionvalidator.exceptions.InsufficientRightsException;
 import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.SimpleConfidentialityEnum;
-import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.*;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentAssociation;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.DocumentFactory;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EPSOSDocument;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.EpListParam;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.OrCDDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.PSDocumentMetaData;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteria;
+import eu.europa.ec.sante.openncp.core.common.ihe.datamodel.xds.SearchCriteriaImpl;
 import eu.europa.ec.sante.openncp.core.common.ihe.exception.NIException;
-import eu.europa.ec.sante.openncp.core.common.ihe.transformation.util.XmlUtil;
 import eu.europa.ec.sante.openncp.core.server.api.ihe.xca.DocumentSearchInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +61,10 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             return DocumentFactory.createEPSOSDocument(
                 doc.getPatientId(),
                 ClassCode.getByCode(doc.getClassCode().getValue()),
-                XmlUtil.parseContent(doc.getDocument())
+                XmlUtil.parse(doc.getDocument())
             );
         } catch (ApiException e) {
             throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_GENERIC);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new NIException(OpenNCPErrorCode.ERROR_GENERIC, "Document received was invalid XML");
         }
     }
 
@@ -82,36 +88,37 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             // TODO L1 should not be the same as L3, fix once we've implemented L1
             final var l1 = md.getLevel3();
             return DocumentFactory.createDocumentAssociation(
-                    DocumentFactory.createPSDocumentXML(
-                        l3.getId(),
-                        l3.getPatientId(),
-                        Utils.offsetDateTimeToDate(l3.getEffectiveTime()),
-                        l3.getRepositoryId(),
-                        l3.getTitle(),
-                        l3.getAuthor(),
-                        SimpleConfidentialityEnum.findByCode(l3.getConfidentiality().getConfidentialityCode()),
-                        l3.getLanguage(),
-                        l3.getSize(),
-                        l3.getHash()
-                    ),
-                    DocumentFactory.createPSDocumentPDF(
-                        l1.getId(),
-                        l1.getPatientId(),
-                        Utils.offsetDateTimeToDate(l1.getEffectiveTime()),
-                        l1.getRepositoryId(),
-                        l1.getTitle(),
-                        l1.getAuthor(),
-                        SimpleConfidentialityEnum.findByCode(l1.getConfidentiality().getConfidentialityCode()),
-                        l1.getLanguage(),
-                        l1.getSize(),
-                        l1.getHash()
-                    ));
+                DocumentFactory.createPSDocumentXML(
+                    l3.getId(),
+                    l3.getPatientId(),
+                    Utils.offsetDateTimeToDate(l3.getEffectiveTime()),
+                    l3.getRepositoryId(),
+                    l3.getTitle(),
+                    l3.getAuthor(),
+                    SimpleConfidentialityEnum.findByCode(l3.getConfidentiality().getConfidentialityCode()),
+                    l3.getLanguage(),
+                    l3.getSize(),
+                    l3.getHash()
+                ),
+                DocumentFactory.createPSDocumentPDF(
+                    l1.getId(),
+                    l1.getPatientId(),
+                    Utils.offsetDateTimeToDate(l1.getEffectiveTime()),
+                    l1.getRepositoryId(),
+                    l1.getTitle(),
+                    l1.getAuthor(),
+                    SimpleConfidentialityEnum.findByCode(l1.getConfidentiality().getConfidentialityCode()),
+                    l1.getLanguage(),
+                    l1.getSize(),
+                    l1.getHash()
+                ));
         } catch (ApiException e) {
             throw Utils.restErrorToNcpException(e, OpenNCPErrorCode.ERROR_GENERIC);
         }
     }
 
-    static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria, Element soapHeader) throws NIException {
+    static List<DocumentAssociation<EPDocumentMetaData>> getEPDocumentListFromCountryA(SearchCriteria searchCriteria,
+            Element soapHeader) throws NIException {
         try {
             logger.info("Querying Country A service for documents...");
             final var request = new PostFindEPrescriptionDocumentsRequest()
@@ -136,13 +143,15 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         md.getLevel3().getDescription(),
                         md.getLevel3().getProductCode(),
                         md.getLevel3().getProductName(),
-                        new EpListParam(md.getLevel3().getDispensable(),
+                        new EpListParam(
+                            md.getLevel3().getDispensable(),
                             md.getLevel3().getAtcCode(),
                             md.getLevel3().getAtcName(),
                             md.getLevel3().getDoseFormCode(),
                             md.getLevel3().getDoseFormName(),
                             md.getLevel3().getStrength(),
-                            new SubstitutionMetadata(md.getLevel3().getSubstitutionCode(),
+                            new SubstitutionMetadata(
+                                md.getLevel3().getSubstitutionCode(),
                                 md.getLevel3().getSubstitutionDisplayName())),
                         SimpleConfidentialityEnum.findByCode(md.getLevel3().getConfidentiality().getConfidentialityCode()),
                         md.getLevel3().getLanguage(),
@@ -159,13 +168,15 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                         md.getLevel1().getDescription(),
                         md.getLevel1().getProductCode(),
                         md.getLevel1().getProductName(),
-                        new EpListParam(md.getLevel1().getDispensable(),
+                        new EpListParam(
+                            md.getLevel1().getDispensable(),
                             md.getLevel1().getAtcCode(),
                             md.getLevel1().getAtcName(),
                             md.getLevel1().getDoseFormCode(),
                             md.getLevel1().getDoseFormName(),
                             md.getLevel1().getStrength(),
-                            new SubstitutionMetadata(md.getLevel1().getSubstitutionCode(),
+                            new SubstitutionMetadata(
+                                md.getLevel1().getSubstitutionCode(),
                                 md.getLevel1().getSubstitutionDisplayName())),
                         SimpleConfidentialityEnum.findByCode(md.getLevel1().getConfidentiality().getConfidentialityCode()),
                         md.getLevel1().getLanguage(),

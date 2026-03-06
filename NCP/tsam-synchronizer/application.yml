@@ -32,6 +32,9 @@ tsam-sync:
 spring:
   jpa:
     show_sql: false
+    hibernate:
+      naming:
+        physical_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   main:
     allow-circular-references: true
   profiles:

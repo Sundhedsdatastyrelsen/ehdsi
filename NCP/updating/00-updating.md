@@ -10,6 +10,9 @@ Change the `OPENNCP_BRANCH` in the Dockerfile, and run `docker compose build`. S
 
 Run the application `docker compose up -d --build` and check the logs of each service for something that seems out of place or downright fails.
 
+For OpenATNA, check if we need to move to a newer commit sha.
+It is currently hardcoded in the Dockerfile.
+
 ## Configuration
 
 Clone the ehealth repository `git clone https://code.europa.eu/ehdsi/ehealth` and compile a list of changes from the current version to the new version:
@@ -42,6 +45,7 @@ Currently, we categorize the openncp configuration into three types of files.
 - configuration-synchronizer/ (replaces openncp-docker/openncp-configuration-utility)
 - docker-compose.yml (replaces openncp's docker-compose.yml)
 - Dockerfile (replaces all openncp's dockerfiles)
+- maven-settings.xml (not from ehealth, overrides maven repo settings to avoid blocked mirrors)
 - mysql/initdb/90-grants.sql (not from ehealth, fixes some privileges in the database)
 - ncp_a/entrypoint.sh (replaces openncp-docker/ncp_a/tomcat-config-entrypoint.sh)
 - ncp_a/pom.xml (not from ehealth, injects our national connector in ncp_a)

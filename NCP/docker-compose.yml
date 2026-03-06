@@ -151,7 +151,7 @@ services:
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
-        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -Xms512m -Xmx1G -XX:MaxMetaspaceSize=256m
         -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
@@ -192,7 +192,7 @@ services:
         -Dlogging.config=/opt/logging/logback.xml
         -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
         -Dfile.encoding=UTF-8
-        -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m
+        -Xms512m -Xmx1G -XX:MaxMetaspaceSize=256m
         -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:

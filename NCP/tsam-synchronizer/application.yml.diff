@@ -1,9 +1,0 @@
---- ehealth/openncp-docker/openncp-tsam-sync/application.yaml	2026-02-25 13:31:18
-+++ ehdsi/NCP/tsam-synchronizer/application.yml	2025-02-21 09:09:49
-@@ -35,4 +35,4 @@
-   main:
-     allow-circular-references: true
-   profiles:
--    active: mysql
-\ No newline at end of file
-+    active: mysql

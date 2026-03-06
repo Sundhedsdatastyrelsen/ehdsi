@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.properties	2026-02-17 15:46:44
-+++ ehdsi/NCP/atna-resources/openatna.properties	2026-02-06 10:35:03
+--- ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.properties	2024-10-08 16:04:22.808662155 +0200
++++ ehdsi/NCP/atna-resources/openatna.properties	2026-02-23 14:11:09.687653687 +0100
 @@ -1,7 +1,7 @@
  # OpenATNA properties file
  
