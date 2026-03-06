@@ -93,7 +93,7 @@ services:
     build:
       target: tsam-exporter
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - tsam-exporter-data:/opt/openncp-configuration/EpsosRepository
     networks:
       - ncp
@@ -111,7 +111,7 @@ services:
       target: "tsam-synchronizer"
     env_file: .env
     volumes:
-      - ./tsam-synchronizer/application.yml:/usr/local/openncp-tsam-sync/application.yml
+      - ./tsam-synchronizer/application.yml:/usr/local/openncp-tsam-sync/application.yml:ro
     networks:
       - ncp
     secrets:
@@ -135,10 +135,10 @@ services:
       - "${NCP_A_SERVER_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
       # - 5005:5005
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml
+      - ./common/logback.xml:/opt/logging/logback.xml:ro
       - ./heapdumps/tomcat_node_a:/heapdumps
       - ./openncp-configuration/pn-oid.xml:/opt/openncp-configuration/pn-oid.xml:ro
     environment:
@@ -177,10 +177,10 @@ services:
       - "${NCP_B_SERVER_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_B_SERVER_CONNECTOR_SECURE_PORT}"
       # - 5006:5006
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml
+      - ./common/logback.xml:/opt/logging/logback.xml:ro
       - ./heapdumps/tomcat_node_b:/heapdumps
       - ./openncp-configuration/pn-oid.xml:/opt/openncp-configuration/pn-oid.xml:ro
     environment:
@@ -219,10 +219,10 @@ services:
       - "2861:2861/udp"
       - "2862:2862"
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml
+      - ./common/logback.xml:/opt/logging/logback.xml:ro
       - ./heapdumps/openncp-openatna:/heapdumps
     environment:
       <<: *opentelemetry-config
@@ -257,10 +257,10 @@ services:
       - "${NCP_TRC_STS_CONNECTOR_PORT_EXTERNAL}:${NCP_TRC_STS_CONNECTOR_PORT}"
       - "${NCP_TRC_STS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRC_STS_CONNECTOR_SECURE_PORT}"
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml
+      - ./common/logback.xml:/opt/logging/logback.xml:ro
       - ./heapdumps/openncp-trc-sts:/heapdumps
     environment:
       <<: *opentelemetry-config
@@ -297,10 +297,10 @@ services:
       - "${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_TRANSLATIONS_MAPPINGS_CONNECTOR_SECURE_PORT}"
       # - 9090:9090
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml
+      - ./common/logback.xml:/opt/logging/logback.xml:ro
       - ./heapdumps/openncp-translations-and-mappings:/heapdumps
     environment:
       <<: *opentelemetry-config
@@ -336,10 +336,10 @@ services:
       - "${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT_EXTERNAL}:${NCP_WEB_MANAGER_BACKEND_CONNECTOR_SECURE_PORT}"
       - "8000:8000"
     volumes:
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
       - ./evidence/obligations:/opt/openncp-configuration/obligations
       - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml
+      - ./common/logback.xml:/opt/logging/logback.xml:ro
       - ./heapdumps/openncp-web-manager:/heapdumps
     environment:
       <<: *opentelemetry-config
@@ -371,7 +371,7 @@ services:
     env_file: .env
     volumes:
       - ./openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
-      - ./keystore:/opt/openncp-configuration/keystore
+      - ./keystore:/opt/openncp-configuration/keystore:ro
     environment:
       OPENNCP_CONFIGURATION_FILE: /opt/openncp-configuration/openncp-configuration.properties
       MARIADB_HOST: ${DB_HOST}

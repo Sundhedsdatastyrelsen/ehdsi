@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.*;
 public class PatientSummaryL3GeneratorTest {
     @Test
     void generateTest() throws TemplateException, IOException {
-        var oid = Oid.DK_FMK_PRESCRIPTION; //TODO This should be replaced with a proper OID. Maybe based on 1.2.208.176.7.200
+        var oid = Oid.DK_PATIENT_SUMMARY;
         var extension = "1230879456";
         var title = "Generate PS L3 Document Title";
         var creationTimestamp = OffsetDateTime.now();
@@ -97,5 +97,35 @@ public class PatientSummaryL3GeneratorTest {
             "preferred health professional phone is correct",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:participant//hl7:telecom/@value", generatedCda),
             is("tel:+4511111111"));
+    }
+
+    @Test
+    void noPreferredHpTest() {
+        var oid = Oid.DK_PATIENT_SUMMARY;
+        var extension = "1230879456";
+        var title = "Generate PS L3 Document Title";
+        var creationTimestamp = OffsetDateTime.now();
+        var patient = Patient.builder()
+            .id(new CdaId(Oid.DK_CPR, "1234567890"))
+            .name(Name.fromFullName("Hans Christian Andersen"))
+            .address(new Address(List.of("Overgaden Oven Vandet 10", "1."), "København K", "1415", "DK"))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                .codeSystemVersion("913-20091020")
+                .code("M")
+                .displayName("Male")
+                .build())
+            .birthTime(LocalDate.of(1982, 11, 3))
+            .build();
+
+        var model = PatientSummaryL3.builder()
+            .documentId(new CdaId(oid, extension))
+            .effectiveTime(creationTimestamp)
+            .title(title)
+            .patient(patient)
+            .preferredHp(null)
+            .build();
+        var cda = PatientSummaryL3Generator.generate(model);
+        Assertions.assertNotNull(cda);
     }
 }

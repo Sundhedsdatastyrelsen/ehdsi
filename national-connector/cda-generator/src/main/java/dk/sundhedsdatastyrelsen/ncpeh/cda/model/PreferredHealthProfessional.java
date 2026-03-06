@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @With
 public class PreferredHealthProfessional {
-    @NonNull Name name;
+    Name name;
     @NonNull List<Telecom> telecoms;
-    @NonNull Address address;
+    Address address;
 }

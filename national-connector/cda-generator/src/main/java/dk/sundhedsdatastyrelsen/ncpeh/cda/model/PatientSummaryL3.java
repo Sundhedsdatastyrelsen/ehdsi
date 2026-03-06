@@ -24,6 +24,6 @@ public class PatientSummaryL3 {
     @NonNull Patient patient;
 
     /// Egen læge
-    /// TODO might be null?
-    @NonNull PreferredHealthProfessional preferredHp;
+    /// Might be null if we don't have the information.
+    PreferredHealthProfessional preferredHp;
 }

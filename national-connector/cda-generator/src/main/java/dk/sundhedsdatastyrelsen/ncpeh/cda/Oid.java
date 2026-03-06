@@ -27,6 +27,11 @@ public enum Oid {
      */
     DK_FMK_PRESCRIPTION("1.2.208.176.7.2.2"),
     /**
+     * Patient summary id
+     * TODO get a real oid here.
+     */
+    DK_PATIENT_SUMMARY("1.2.208.176.7.2.123456789"),
+    /**
      * "Det danske autorisationsregister"
      * <a href="https://oid-base.com/get/1.2.208.176.1.3">Registered.</a>
      */
