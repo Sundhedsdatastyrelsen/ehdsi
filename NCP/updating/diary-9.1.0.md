@@ -44,3 +44,4 @@ Upgrade OpenNCP to `9.1.0` and align our Dockerized deployment with upstream wav
 
 - **OpenATNA split repository**
   - OpenATNA is now built from its separate repository in a dedicated Docker build stage.
+  - We check out a specific commit hash because there are no tags or branches except for master.

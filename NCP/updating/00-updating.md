@@ -10,6 +10,9 @@ Change the `OPENNCP_BRANCH` in the Dockerfile, and run `docker compose build`. S
 
 Run the application `docker compose up -d --build` and check the logs of each service for something that seems out of place or downright fails.
 
+For OpenATNA, check if we need to move to a newer commit sha.
+It is currently hardcoded in the Dockerfile.
+
 ## Configuration
 
 Clone the ehealth repository `git clone https://code.europa.eu/ehdsi/ehealth` and compile a list of changes from the current version to the new version:
