@@ -18,6 +18,32 @@ otelcol.receiver.otlp "default" {
 // Intermediate step, collects batches of otel data before sending it downstream
 otelcol.processor.batch "default" {
   output {
+    metrics = [otelcol.processor.transform.add_environment.input]
+    logs    = [otelcol.processor.transform.add_environment.input]
+    traces  = [otelcol.processor.transform.add_environment.input]
+  }
+}
+
+// Stamp deployment.environment resource attribute on all signals
+otelcol.processor.transform "add_environment" {
+  error_mode = "ignore"
+
+  log_statements {
+    context    = "resource"
+    statements = ["set(attributes[\"deployment.environment\"], sys.env(\"GRAFANA_ENVIRONMENT\"))"]
+  }
+
+  metric_statements {
+    context    = "resource"
+    statements = ["set(attributes[\"deployment.environment\"], sys.env(\"GRAFANA_ENVIRONMENT\"))"]
+  }
+
+  trace_statements {
+    context    = "resource"
+    statements = ["set(attributes[\"deployment.environment\"], sys.env(\"GRAFANA_ENVIRONMENT\"))"]
+  }
+
+  output {
     metrics = [otelcol.exporter.otlp.default.input]
     logs    = [otelcol.exporter.otlp.default.input]
     traces  = [otelcol.exporter.otlp.default.input]

@@ -399,6 +399,7 @@ services:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
     environment:
       OTLP_SERVER_ENDPOINT: http://host.docker.internal:4317
+      GRAFANA_ENVIRONMENT: "Development"
     extra_hosts:
       # https://docs.docker.com/reference/cli/dockerd/#configure-host-gateway-ip
       - "host.docker.internal:host-gateway" # to allow connections to alloy-hub
