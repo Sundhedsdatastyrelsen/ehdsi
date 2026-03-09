@@ -26,21 +26,19 @@ otelcol.processor.batch "default" {
 
 // Stamp deployment.environment resource attribute on all signals
 otelcol.processor.transform "add_environment" {
-  error_mode = "ignore"
-
   log_statements {
     context    = "resource"
-    statements = ["set(attributes[\"deployment.environment\"], sys.env(\"GRAFANA_ENVIRONMENT\"))"]
+    statements = ["set(attributes[\"deployment.environment\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
   }
 
   metric_statements {
     context    = "resource"
-    statements = ["set(attributes[\"deployment.environment\"], sys.env(\"GRAFANA_ENVIRONMENT\"))"]
+    statements = ["set(attributes[\"deployment.environment\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
   }
 
   trace_statements {
     context    = "resource"
-    statements = ["set(attributes[\"deployment.environment\"], sys.env(\"GRAFANA_ENVIRONMENT\"))"]
+    statements = ["set(attributes[\"deployment.environment\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
   }
 
   output {
