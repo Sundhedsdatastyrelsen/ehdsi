@@ -45,3 +45,9 @@ Upgrade OpenNCP to `9.1.0` and align our Dockerized deployment with upstream wav
 - **OpenATNA split repository**
   - OpenATNA is now built from its separate repository in a dedicated Docker build stage.
   - We check out a specific commit hash because there are no tags or branches except for master.
+  - Follow-up from runtime testing:
+    - `atna-resources/openatna.properties` needed adaptation for the standalone build on the new stack:
+      `org.hibernate.dialect.MySQL5InnoDBDialect` -> `org.hibernate.dialect.MySQLDialect`,
+      and DB credentials must use `DB_USER` / `DB_PWD`.
+    - `openncp-openatna/config/server.xml` and `openncp-openatna/entrypoint.sh` also needed the Tomcat 10
+      `SSLHostConfig` / `certificateVerification` migration, otherwise OpenATNA started without a working TLS listener on ATNA port `2862`.
