@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/ncp_b/config/server.template.xml	2026-02-26 11:11:14.355104948 +0100
-+++ ehdsi/NCP/ncp_b/config/server.xml	2026-03-04 13:36:53.912911031 +0100
+--- ehealth/openncp-docker/ncp_b/config/server.template.xml
++++ ehdsi/NCP/ncp_b/config/server.xml
 @@ -1,4 +1,7 @@
  <?xml version="1.0" encoding="UTF-8"?>
 +<!-- We write all env vars as ${VAR_NAME} (with braces), otherwise Tomcat does

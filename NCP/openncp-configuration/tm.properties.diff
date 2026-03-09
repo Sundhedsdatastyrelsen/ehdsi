@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/openncp-configuration/tm.properties	2026-02-26 11:11:14.358849145 +0100
-+++ ehdsi/NCP/openncp-configuration/tm.properties	2026-03-04 08:48:36.572438054 +0100
+--- ehealth/openncp-docker/openncp-configuration/tm.properties
++++ ehdsi/NCP/openncp-configuration/tm.properties
 @@ -99,4 +99,4 @@
  tm.audittrail.severity=2
  

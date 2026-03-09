@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/openncp-configuration/ATNA_resources/ArrConnections.xml	2024-10-08 16:04:22.808377946 +0200
-+++ ehdsi/NCP/atna-resources/ArrConnections.template.xml	2026-02-26 11:06:24.260389348 +0100
+--- ehealth/openncp-docker/openncp-configuration/ATNA_resources/ArrConnections.xml
++++ ehdsi/NCP/atna-resources/ArrConnections.template.xml
 @@ -24,10 +24,11 @@
        <HostName>openncp-openatna</HostName>
        <Port>2862</Port>
