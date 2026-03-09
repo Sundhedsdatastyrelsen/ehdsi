@@ -33,7 +33,13 @@ public class Telecom {
         Use(String value) {
             this.value = value;
         }
-//         Possible values:
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+
+        //         Possible values:
 //
 //            AS answering service
 //            EC emergency contact
