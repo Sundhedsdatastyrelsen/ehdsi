@@ -4,6 +4,11 @@ Release notes for each version are published here: <https://webgate.ec.europa.eu
 
 Please have a look in the diary files for historical context, lists of files to look out for, and scripts to help with the process.
 
+## National Connector
+
+Check if `atc-code-system-version` needs to be updated in national connector's configuration.
+It is updated about once per wave.
+
 ## Code
 
 Change the `OPENNCP_BRANCH` in the Dockerfile, and run `docker compose build`. See if anything fails and fix it.

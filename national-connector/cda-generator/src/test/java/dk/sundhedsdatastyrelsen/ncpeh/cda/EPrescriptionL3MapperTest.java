@@ -15,7 +15,7 @@ class EPrescriptionL3MapperTest {
             var medicationResponse = FmkResponseStorage.storedDrugMedications(FmkResponseStorage.rawResponseCprs()
                 .get(2));
 
-            return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse, "FIN", 1, "Manufacturer"));
+            return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +49,8 @@ class EPrescriptionL3MapperTest {
                 FmkResponseStorage.storedDrugMedications(cpr),
                 "FIN",
                 null,
-                "Manufacturer"));
+                "Manufacturer",
+                "2025-01"));
         assertThat(model.getProduct().getInnermostPackageLayer().getWrappedIn(), is(nullValue()));
         assertThat(model.getProduct().getInnermostPackageLayer().getAmount(), is("100"));
     }

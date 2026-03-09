@@ -10,6 +10,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.config.OptOutConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.config.PatientSummaryConfig;
+import dk.sundhedsdatastyrelsen.ncpeh.config.SemanticConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DiscardDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForEPrescriptionDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -48,6 +49,7 @@ public class Controller {
     private final AuthenticationService authenticationService;
     private final NspDgwsIdentity.System systemIdentity;
     private final PatientSummaryConfig patientSummaryConfig;
+    private final SemanticConfig semanticConfig;
     private final OptOutService optOutService;
 
     public Controller(
@@ -57,7 +59,8 @@ public class Controller {
         AuthenticationService authenticationService,
         NspDgwsIdentity.System systemIdentity,
         OptOutConfig optOutConfig,
-        PatientSummaryConfig patientSummaryConfig
+        PatientSummaryConfig patientSummaryConfig,
+        SemanticConfig semanticConfig
     ) {
         this.prescriptionService = prescriptionService;
         this.patientSummaryService = patientSummaryService;
@@ -65,6 +68,7 @@ public class Controller {
         this.authenticationService = authenticationService;
         this.systemIdentity = systemIdentity;
         this.patientSummaryConfig = patientSummaryConfig;
+        this.semanticConfig = semanticConfig;
 
         if (!patientSummaryConfig.enabled()) {
             log.warn("Patient summary is disabled.");
@@ -121,7 +125,12 @@ public class Controller {
         if (Objects.equals(repoId, Oid.DK_EPRESCRIPTION_REPOSITORY_ID.value)) {
             checkOptOut(params.getPatientId(), OptOutService.Service.EPRESCRIPTION);
             var filter = PrescriptionFilter.fromRootedId(params.getDocumentId(), params.getCreatedBefore(), params.getCreatedAfter());
-            return prescriptionService.getPrescriptions(params.getPatientId(), filter, this.getFmkToken(params.getSoapHeader()));
+            return prescriptionService.getPrescriptions(
+                params.getPatientId(),
+                filter,
+                this.getFmkToken(params.getSoapHeader()),
+                semanticConfig.atcCodeSystemVersion()
+            );
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
             if (!patientSummaryConfig.enabled()) {
                 throw new PublicException(500, "Patient summary is disabled");

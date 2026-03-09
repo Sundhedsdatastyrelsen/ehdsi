@@ -53,6 +53,10 @@ app:
     enabled: false
   patient-summary:
     enabled: true
+  semantics:
+    # This is configuration, since it changes every wave.
+    # It must match the version of the atc code system used in the catalogue in the CTS.
+    atc-code-system-version: "2026-01"
 
 management:
   endpoint:
