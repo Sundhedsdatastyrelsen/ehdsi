@@ -1,5 +1,5 @@
 --- ehealth/openncp-docker/openncp-configuration/ATNA_resources/openatna.properties	2024-10-08 16:04:22.808662155 +0200
-+++ ehdsi/NCP/atna-resources/openatna.properties	2026-02-23 14:11:09.687653687 +0100
++++ ehdsi/NCP/atna-resources/openatna.properties	2026-03-09 08:18:12.196378118 +0100
 @@ -1,7 +1,7 @@
  # OpenATNA properties file
  
@@ -9,9 +9,12 @@
  ihe.actors.file=IheActors.xml
  
  # DB properties
-@@ -19,10 +19,10 @@
+@@ -17,12 +17,11 @@
+ #hib.dialect=org.hibernate.dialect.Oracle10gDialect
+ 
  # mySQL 5
- hib.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+-hib.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
++hib.dialect=org.hibernate.dialect.MySQLDialect
  db.driver.class=com.mysql.jdbc.Driver
 -db.url=jdbc:mysql://hostname:3306/openatna?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8
 +db.url=jdbc:mysql://${env:DB_HOST}:${env:DB_PORT}/openatna?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8
@@ -19,7 +22,7 @@
  # Database credentials
 -db.username=username
 -db.password=password
-+db.username=${env:DB_USERNAME}
-+db.password=${env:DB_PASSWORD}
++db.username=${env:DB_USER}
++db.password=${env:DB_PWD}
  hib.hbm2ddl.auto=update
- 
+-
