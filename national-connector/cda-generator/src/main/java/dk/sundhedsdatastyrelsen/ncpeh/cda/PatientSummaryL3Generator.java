@@ -36,7 +36,7 @@ public class PatientSummaryL3Generator {
         return generate(model);
     }
 
-    private static PatientSummaryL3 inputToModel(PatientSummaryInput input) {
+    static PatientSummaryL3 inputToModel(PatientSummaryInput input) {
         return PatientSummaryL3.builder()
             .documentId(CdaId.fromDocumentId(input.documentId()))
             .effectiveTime(OffsetDateTime.now())
