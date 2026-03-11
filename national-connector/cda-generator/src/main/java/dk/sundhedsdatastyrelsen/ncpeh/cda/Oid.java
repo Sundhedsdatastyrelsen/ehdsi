@@ -1,5 +1,9 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+
 public enum Oid {
     /**
      * EPrescription document repository id.
@@ -136,5 +140,9 @@ public enum Oid {
     Oid(String value, String objectName) {
         this.value = value;
         this.objectName = objectName;
+    }
+
+    public static Optional<Oid> fromOid(String oid) {
+        return Arrays.stream(Oid.values()).filter(o -> Objects.equals(o.value, oid)).findFirst();
     }
 }
