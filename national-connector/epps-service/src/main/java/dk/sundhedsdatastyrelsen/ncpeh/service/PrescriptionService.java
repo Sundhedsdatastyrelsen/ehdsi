@@ -164,8 +164,15 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    public List<EpsosDocumentDto> getPrescriptions(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
-        var input = assembleEPrescriptionInput(patientId, filter, token).findFirst().orElse(null);
+    public List<EpsosDocumentDto> getPrescriptions(
+        String patientId,
+        PrescriptionFilter filter,
+        EuropeanHcpIdwsToken token,
+        String atcCodeSystemVersion
+    ) {
+        var input = assembleEPrescriptionInput(patientId, filter, token, atcCodeSystemVersion)
+            .findFirst()
+            .orElse(null);
         if (input == null) {
             throw new PublicException(404, "Requested prescription not found.");
         }
@@ -183,7 +190,12 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(String patientId, PrescriptionFilter filter, EuropeanHcpIdwsToken token) {
+    private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(
+        String patientId,
+        PrescriptionFilter filter,
+        EuropeanHcpIdwsToken token,
+        String atcCodeSystemVersion
+    ) {
         var cpr = PatientIdMapper.toCpr(patientId);
         final var request = GetPrescriptionRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
@@ -221,7 +233,8 @@ public class PrescriptionService {
                     Optional.ofNullable(authorizations).orElse(List.of()),
                     packageInfo.map(PackageInfo::packageFormCode).orElse(null),
                     packageInfo.map(PackageInfo::numberOfSubPackages).orElse(null),
-                    manufacturerOrganizationName.orElse(null));
+                    manufacturerOrganizationName.orElse(null),
+                    atcCodeSystemVersion);
             });
         } catch (JAXBException e) {
             throw new PublicException(500, "Could not retrieve prescription.", e);

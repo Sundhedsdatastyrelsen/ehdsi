@@ -14,7 +14,8 @@ public record EPrescriptionL3Input(
     @NonNull List<AuthorizationType> authorAuthorizations,
     String packageFormCode,
     Integer numberOfSubPackages,
-    String manufacturerOrganizationName
+    String manufacturerOrganizationName,
+    String atcCodeSystemVersion
 ) {
     public EPrescriptionL3Input(
         GetPrescriptionResponseType fmkPrescriptionResponse,
@@ -22,8 +23,17 @@ public record EPrescriptionL3Input(
         GetDrugMedicationResponseType fmkDrugMedicationResponse,
         String packageFormCode,
         Integer numberOfSubPackages,
-        String manufacturerOrganizationName
+        String manufacturerOrganizationName,
+        String atcCodeSystemVersion
     ) {
-        this(fmkPrescriptionResponse, prescriptionIndex, fmkDrugMedicationResponse, List.of(), packageFormCode, numberOfSubPackages, manufacturerOrganizationName);
+        this(
+            fmkPrescriptionResponse,
+            prescriptionIndex,
+            fmkDrugMedicationResponse,
+            List.of(),
+            packageFormCode,
+            numberOfSubPackages,
+            manufacturerOrganizationName,
+            atcCodeSystemVersion);
     }
 }
