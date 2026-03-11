@@ -37,4 +37,17 @@ class FskMapperTest {
         var preferredHealthProfessional = FskMapper.preferredHealthProfessional(cda);
         assertThat(preferredHealthProfessional, is(nullValue()));
     }
+
+    @Test
+    void patientTest() {
+        var cda = testInformationCardCda("informationCards/test-card.xml");
+        var patient = FskMapper.patient(cda);
+
+        assertThat(patient, is(notNullValue()));
+        assertThat(patient.getId().getExtension(), is("2512484916"));
+        assertThat(patient.getAddress().getCity(), is("Aarhus"));
+        assertThat(patient.getName().getFullName(), is("Nielsen Nielsen"));
+        assertThat(patient.getGenderCode().getCode(), is("F"));
+        assertThat(patient.getBirthTime(), is("20190101"));
+    }
 }
