@@ -149,6 +149,24 @@
             </associatedPerson>
         </associatedEntity>
     </participant>
+<#else>
+    <#-- no preferred HP, fall back to sundhedsdatastyrelsen -->
+    <participant typeCode="IND">
+        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4" />
+        <functionCode code="PCP" codeSystem="2.16.840.1.113883.5.88" codeSystemName="ParticipationFunction" displayName="Primary care physician"/>
+        <associatedEntity classCode="PRS">
+            <addr>
+                <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                <city>København S</city>
+                <postalCode>2300</postalCode>
+                <country>DK</country>
+            </addr>
+            <telecom use="WP" value="tel:+4572216800"/>
+            <scopingOrganization>
+                <name>Sundhedsdatastyrelsen</name>
+            </scopingOrganization>
+        </associatedEntity>
+    </participant>
 </#if>
 
     <documentationOf typeCode="DOC">
