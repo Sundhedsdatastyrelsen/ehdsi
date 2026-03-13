@@ -32,7 +32,7 @@ services:
       OTEL_SERVICE_NAME: "national-connector"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy-edge:4317"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest},deployment.environment.name=${GRAFANA_ENVIRONMENT}"
+      OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest},deployment.environment.name=${GRAFANA_ENVIRONMENT:-Training}"
       OTEL_TRACES_SAMPLER: "always_on"
     volumes:
       - ./config:/app/config:ro
