@@ -18,30 +18,6 @@ otelcol.receiver.otlp "default" {
 // Intermediate step, collects batches of otel data before sending it downstream
 otelcol.processor.batch "default" {
   output {
-    metrics = [otelcol.processor.transform.add_environment.input]
-    logs    = [otelcol.processor.transform.add_environment.input]
-    traces  = [otelcol.processor.transform.add_environment.input]
-  }
-}
-
-// Stamp deployment.environment resource attribute on all signals
-otelcol.processor.transform "add_environment" {
-  log_statements {
-    context    = "resource"
-    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
-  }
-
-  metric_statements {
-    context    = "resource"
-    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
-  }
-
-  trace_statements {
-    context    = "resource"
-    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
-  }
-
-  output {
     metrics = [otelcol.exporter.otlp.default.input]
     logs    = [otelcol.exporter.otlp.default.input]
     traces  = [otelcol.exporter.otlp.default.input]
@@ -68,7 +44,20 @@ prometheus.scrape "node_exporter" {
   forward_to = [otelcol.receiver.prometheus.edge.receiver]
 }
 
+// Stamp deployment.environment resource attribute on prometheus-scraped metrics,
+// as these do not go through the Java OTel agent which sets it for OTLP sources.
 otelcol.receiver.prometheus "edge" {
+  output {
+    metrics = [otelcol.processor.transform.add_environment.input]
+  }
+}
+
+otelcol.processor.transform "add_environment" {
+  metric_statements {
+    context    = "resource"
+    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
+  }
+
   output {
     metrics = [otelcol.processor.batch.default.input]
   }
