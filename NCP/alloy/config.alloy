@@ -28,17 +28,17 @@ otelcol.processor.batch "default" {
 otelcol.processor.transform "add_environment" {
   log_statements {
     context    = "resource"
-    statements = ["set(attributes[\"deployment.environment\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
+    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
   }
 
   metric_statements {
     context    = "resource"
-    statements = ["set(attributes[\"deployment.environment\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
+    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
   }
 
   trace_statements {
     context    = "resource"
-    statements = ["set(attributes[\"deployment.environment\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
+    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
   }
 
   output {
