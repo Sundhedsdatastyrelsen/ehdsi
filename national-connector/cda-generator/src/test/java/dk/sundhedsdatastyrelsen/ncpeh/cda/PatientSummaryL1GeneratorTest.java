@@ -15,7 +15,6 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +28,7 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class PatientSummaryL1GeneratorTest {
+class PatientSummaryL1GeneratorTest {
     private static final String BASE_ID = "test-document-id";
 
     private static PatientSummaryL3 buildL3Model(PreferredHealthProfessional preferredHp) {
@@ -176,9 +175,8 @@ public class PatientSummaryL1GeneratorTest {
 
     @Test
     void noPreferredHpTest() {
-        var model = buildL1Model(null);
-        var cda = PatientSummaryL1Generator.generate(model);
-        Assertions.assertNotNull(cda);
+        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+        Assertions.assertTrue(cda.contains("nonXMLBody"));
     }
 
     @Test

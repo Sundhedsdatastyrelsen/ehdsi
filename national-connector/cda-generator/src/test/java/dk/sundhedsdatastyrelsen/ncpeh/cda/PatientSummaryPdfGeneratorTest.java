@@ -11,7 +11,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;

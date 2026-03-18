@@ -13,15 +13,18 @@ A utility class for translating between internal document IDs, to externally fac
 public class DocumentIdMapper {
     private static final Logger log = LoggerFactory.getLogger(DocumentIdMapper.class);
 
-    private static final String level1Suffix = "L1";
-    private static final String level3Suffix = "L3";
+    private static final String LEVEL1_SUFFIX = "L1";
+    private static final String LEVEL3_SUFFIX = "L3";
+
+    private DocumentIdMapper() {
+    }
 
     public static String level1DocumentId(String documentId) {
-        return String.format("%s%s", documentId, level1Suffix);
+        return String.format("%s%s", documentId, LEVEL1_SUFFIX);
     }
 
     public static String level3DocumentId(String documentId) {
-        return String.format("%s%s", documentId, level3Suffix);
+        return String.format("%s%s", documentId, LEVEL3_SUFFIX);
     }
 
     public static Set<String> possibleIds(String documentId) {
@@ -30,9 +33,9 @@ public class DocumentIdMapper {
 
     /// @throws MapperException if document id can't be parsed
     public static DocumentLevel parseDocumentLevel(@NonNull String documentId) {
-        if (documentId.endsWith(level1Suffix)) {
+        if (documentId.endsWith(LEVEL1_SUFFIX)) {
             return DocumentLevel.LEVEL1;
-        } else if (documentId.endsWith(level3Suffix)) {
+        } else if (documentId.endsWith(LEVEL3_SUFFIX)) {
             return DocumentLevel.LEVEL3;
         }
         log.error("Document id {} could not be mapped", documentId);
