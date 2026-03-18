@@ -2,6 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSString;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -37,6 +40,13 @@ public class PatientSummaryPdfGenerator {
             var page = new PDPage(PDRectangle.A4);
             pdfDocument.addPage(page);
             writeContent(model, page, pdfDocument);
+            pdfDocument.getDocumentInformation().getCOSObject().removeItem(COSName.CREATION_DATE);
+            pdfDocument.getDocumentCatalog().setMetadata(null);
+            var fixedId = new COSString(new byte[16]);
+            var idArray = new COSArray();
+            idArray.add(fixedId);
+            idArray.add(fixedId);
+            pdfDocument.getDocument().getTrailer().setItem(COSName.ID, idArray);
             var baos = new ByteArrayOutputStream();
             pdfDocument.save(baos);
             return baos.toByteArray();
@@ -114,7 +124,8 @@ public class PatientSummaryPdfGenerator {
                     }
                 }
                 for (var telecom : hp.getTelecoms()) {
-                    stream.showText("Phone:         " + telecom.getValue());
+                    var phoneNumber = telecom.getValue().replaceFirst("^tel:", "");
+                    stream.showText("Phone:         " + phoneNumber);
                     stream.newLineAtOffset(0, -BODY_LINE_HEIGHT);
                 }
             }
