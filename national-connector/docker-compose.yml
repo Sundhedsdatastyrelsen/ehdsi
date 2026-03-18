@@ -1,3 +1,7 @@
+x-monitoring-labels: &monitoring-labels
+  monitoring.logs.scrape: "true"
+  monitoring.environment: ${MONITORING_ENVIRONMENT:-Training}
+
 networks:
   epps-backend:
     name: epps
@@ -9,6 +13,8 @@ services:
   init:
     image: busybox
     user: root
+    labels:
+      <<: *monitoring-labels
     entrypoint:
       - "chown"
       - "-R"

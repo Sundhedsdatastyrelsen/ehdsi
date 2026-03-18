@@ -1,3 +1,7 @@
+x-monitoring-labels: &monitoring-labels
+  monitoring.logs.scrape: "true"
+  monitoring.environment: ${MONITORING_ENVIRONMENT:-Training}
+
 networks:
   monitoring:
     name: monitoring
@@ -8,6 +12,8 @@ services:
     image: grafana/mimir:3.0.2
     container_name: mimir
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     command: ["-config.file=/etc/mimir/mimir.yaml"]
     volumes:
       - ./mimir:/etc/mimir
@@ -19,6 +25,8 @@ services:
   loki:
     image: grafana/loki:3.5
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./loki:/etc/loki
@@ -31,6 +39,8 @@ services:
     image: grafana/grafana:12.0.2
     container_name: grafana
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     ports:
       - "3000:3000"
     environment:
@@ -53,6 +63,8 @@ services:
     image: memcached:1.6-alpine
     container_name: memcached
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     ports:
       - "11211:11211"
     environment:
@@ -66,6 +78,8 @@ services:
   tempo-init:
     image: &tempoImage grafana/tempo:2.8.1
     user: root
+    labels:
+      <<: *monitoring-labels
     entrypoint:
       - "chown"
       - "10001:10001"
@@ -78,6 +92,8 @@ services:
     image: *tempoImage
     container_name: tempo
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     ports:
       - "16686:16686" # tempo query frontend
     command: [ "-config.file=/etc/tempo/tempo.yaml" ]
