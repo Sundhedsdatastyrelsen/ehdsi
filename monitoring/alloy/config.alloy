@@ -75,6 +75,13 @@ discovery.docker "local" {
 discovery.relabel "docker_labels" {
   targets = discovery.docker.local.targets
 
+  // Only scrape containers that have the label: monitoring.logs.scrape=true
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_logs_scrape"]
+    regex         = "true"
+    action        = "keep"
+  }
+
   // /foo -> foo
   rule {
     source_labels = ["__meta_docker_container_name"]
@@ -91,6 +98,12 @@ discovery.relabel "docker_labels" {
   rule {
     source_labels = ["__meta_docker_container_log_stream"]
     target_label  = "logstream"
+  }
+
+  // Promote the shared label "monitoring.environment" to a Loki label "environment"
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_environment"]
+    target_label  = "deployment_environment_name"
   }
 }
 
