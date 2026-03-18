@@ -8,7 +8,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.PackageNumberType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.PackageRestrictionType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -74,9 +74,9 @@ public class EPrescriptionMetadataMapper {
 
         String documentId = switch (documentLevel) {
             case DocumentLevel.LEVEL1 ->
-                CdaId.toDocumentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level1DocumentId(model.prescriptionId())));
+                CdaId.toDocumentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, DocumentIdMapper.level1DocumentId(model.prescriptionId())));
             case DocumentLevel.LEVEL3 ->
-                CdaId.toDocumentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(model.prescriptionId())));
+                CdaId.toDocumentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, DocumentIdMapper.level3DocumentId(model.prescriptionId())));
         };
 
         DocumentFormatDto documentFormat = switch (documentLevel) {

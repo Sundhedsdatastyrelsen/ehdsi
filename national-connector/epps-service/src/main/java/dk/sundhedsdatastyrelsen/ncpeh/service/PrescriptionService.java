@@ -21,7 +21,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionDocumentIdMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
@@ -107,7 +107,7 @@ public class PrescriptionService {
 
         private boolean apply(PrescriptionType prescription) {
             var authorisationDateTime = Utils.convertToOffsetDateTime(prescription.getAuthorisationDateTime());
-            return (documentId == null || EPrescriptionDocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier()))
+            return (documentId == null || DocumentIdMapper.possibleIds(String.valueOf(prescription.getIdentifier()))
                 .contains(documentId))
                 && (createdBefore == null || authorisationDateTime.isBefore(createdBefore))
                 && (createdAfter == null || authorisationDateTime.isAfter(createdAfter));
@@ -177,7 +177,7 @@ public class PrescriptionService {
             throw new PublicException(404, "Requested prescription not found.");
         }
         try {
-            var documentLevel = EPrescriptionDocumentIdMapper.parseDocumentLevel(filter.documentId());
+            var documentLevel = DocumentIdMapper.parseDocumentLevel(filter.documentId());
             var cda = switch (documentLevel) {
                 case LEVEL3 -> EPrescriptionL3Generator.generate(input);
                 case LEVEL1 -> EPrescriptionL1Generator.generate(input);

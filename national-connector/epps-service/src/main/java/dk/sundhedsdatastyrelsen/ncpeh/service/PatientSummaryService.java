@@ -5,7 +5,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryDocumentIdMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
@@ -43,8 +43,8 @@ public class PatientSummaryService {
         // We could have introduced a table to remember ids, but that's more work, more data we have to secure, and we
         // don't know when there is new data.
         var baseId = UUID.randomUUID().toString();
-        var l3Id = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^" + PatientSummaryDocumentIdMapper.level3DocumentId(baseId);
-        var l1Id = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^" + PatientSummaryDocumentIdMapper.level1DocumentId(baseId);
+        var l3Id = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^" + DocumentIdMapper.level3DocumentId(baseId);
+        var l1Id = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^" + DocumentIdMapper.level1DocumentId(baseId);
 
         var effectiveTime = OffsetDateTime.now();
 
@@ -89,7 +89,7 @@ public class PatientSummaryService {
     public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, String europeanHealthProfessionalId) {
         var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId);
         try {
-            var documentLevel = PatientSummaryDocumentIdMapper.parseDocumentLevel(rootedDocumentId);
+            var documentLevel = DocumentIdMapper.parseDocumentLevel(rootedDocumentId);
             var cda = switch (documentLevel) {
                 case LEVEL3 -> PatientSummaryL3Generator.generate(input);
                 case LEVEL1 -> PatientSummaryL1Generator.generate(input);

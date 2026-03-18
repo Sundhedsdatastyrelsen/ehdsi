@@ -36,7 +36,7 @@ class PatientSummaryPdfGeneratorTest {
             .build();
         return PatientSummaryL3.builder()
             .documentId(new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
-                PatientSummaryDocumentIdMapper.level1DocumentId("test-base-id")))
+                DocumentIdMapper.level1DocumentId("test-base-id")))
             .effectiveTime(OffsetDateTime.now())
             .title("Patient Summary")
             .patient(patient)

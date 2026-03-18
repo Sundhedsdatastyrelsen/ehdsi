@@ -47,7 +47,7 @@ public class PatientSummaryL1GeneratorTest {
             .build();
         return PatientSummaryL3.builder()
             .documentId(new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
-                PatientSummaryDocumentIdMapper.level1DocumentId(BASE_ID)))
+                DocumentIdMapper.level1DocumentId(BASE_ID)))
             .effectiveTime(OffsetDateTime.now())
             .title("Patient Summary L1 Test")
             .patient(patient)
@@ -59,7 +59,7 @@ public class PatientSummaryL1GeneratorTest {
         var l3Model = buildL3Model(preferredHp);
         var pdf = PatientSummaryPdfGenerator.generate(l3Model);
         var relatedL3DocumentId = new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
-            PatientSummaryDocumentIdMapper.level3DocumentId(BASE_ID));
+            DocumentIdMapper.level3DocumentId(BASE_ID));
         return PatientSummaryL1.builder()
             .modelData(l3Model)
             .base64EncodedDocument(Base64.getEncoder().encodeToString(pdf))
@@ -159,7 +159,7 @@ public class PatientSummaryL1GeneratorTest {
     @Test
     void generateFromInputTest() {
         var rootedDocumentId = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^"
-            + PatientSummaryDocumentIdMapper.level1DocumentId(BASE_ID);
+            + DocumentIdMapper.level1DocumentId(BASE_ID);
         var patient = Patient.builder()
             .id(new CdaId(Oid.DK_CPR, "1234567890"))
             .name(Name.fromFullName("Hans Christian Andersen"))

@@ -84,7 +84,7 @@ public class EPrescriptionL3Mapper {
             prescription.getDrug().getStrength(),
             prescription.getDrug().getSubstances());
         var prescriptionBuilder = EPrescriptionL3.builder()
-            .documentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, EPrescriptionDocumentIdMapper.level3DocumentId(prescriptionId.getExtension())))
+            .documentId(new CdaId(Oid.DK_EPRESCRIPTION_REPOSITORY_ID, DocumentIdMapper.level3DocumentId(prescriptionId.getExtension())))
             .title(makeTitle(response, prescription))
             .effectiveTime(OffsetDateTime.now())
             .patient(patient(response))

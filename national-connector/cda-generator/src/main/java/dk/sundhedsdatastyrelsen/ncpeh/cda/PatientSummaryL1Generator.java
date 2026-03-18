@@ -48,6 +48,6 @@ public class PatientSummaryL1Generator {
         var baseId = extension != null && extension.endsWith("L1")
             ? extension.substring(0, extension.length() - 2)
             : extension;
-        return new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID, PatientSummaryDocumentIdMapper.level3DocumentId(baseId));
+        return new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID, DocumentIdMapper.level3DocumentId(baseId));
     }
 }

@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class PatientSummaryDocumentIdMapper {
-    private static final Logger log = LoggerFactory.getLogger(PatientSummaryDocumentIdMapper.class);
+/*
+A utility class for translating between internal document IDs, to externally facing L1 and L3 document IDs
+ */
+public class DocumentIdMapper {
+    private static final Logger log = LoggerFactory.getLogger(DocumentIdMapper.class);
 
     private static final String level1Suffix = "L1";
     private static final String level3Suffix = "L3";
