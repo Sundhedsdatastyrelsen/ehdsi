@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -113,10 +114,20 @@ public class FskMapper {
                     .orElse(Oid.ADMINISTRATIVE_GENDER))
                 .code(xpath.evalString(XPaths.patientGenderCode, cda))
                 .build())
-            .birthTime(LocalDate.parse(xpath.evalString(XPaths.patientBirthTime, cda), DateTimeFormatter.ofPattern("yyyyMMdd")))
+            .birthTime(parseBirthTime(xpath.evalString(XPaths.patientBirthTime, cda)))
             .address(Optional.ofNullable(xpath.evalNode(XPaths.patientAddressNode, cda))
                 .map(FskMapper::addressNodeToAddress)
                 .orElse(null))
             .build();
+    }
+
+    private static LocalDate parseBirthTime(String birthTime) {
+        if (birthTime.matches("\\d{8}")) {
+            return LocalDate.parse(birthTime, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        } else if (birthTime.matches("\\d{14}\\+\\d{4}")) {
+            return LocalDate.parse(birthTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ"));
+        }
+        log.error("Unable to parse birth time from FSK. Birth time: {}", birthTime);
+        throw new PublicException("Could not read patient birth date, unable to generate patient summary.");
     }
 }

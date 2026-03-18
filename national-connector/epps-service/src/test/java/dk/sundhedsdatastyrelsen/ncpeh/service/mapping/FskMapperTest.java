@@ -50,4 +50,16 @@ class FskMapperTest {
         assertThat(patient.getGenderCode().getCode(), is("F"));
         assertThat(patient.getBirthTime(), is("20190101"));
     }
+
+    @Test
+    void otherPatientBirthDateTest() {
+        var cda = testInformationCardCda("informationCards/test-card.xml");
+        var birthTimeEl = FskMapper.xpath.evalElement("/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:birthTime", cda);
+        // We hit this during testing, apparently FSK returns different birth time formats.
+        birthTimeEl.setAttribute("value", "19600413000000+0000");
+        var patient = FskMapper.patient(cda);
+
+        assertThat(patient, is(notNullValue()));
+        assertThat(patient.getBirthTime(), is("19600413"));
+    }
 }
