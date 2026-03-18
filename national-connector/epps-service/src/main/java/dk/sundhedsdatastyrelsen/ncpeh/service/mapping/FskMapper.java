@@ -1,15 +1,22 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service.mapping;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,11 +44,14 @@ public class FskMapper {
         static final String preferredHpTelecoms = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:providerOrganization/hl7:telecom";
         static final String preferredHpAddress = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:providerOrganization/hl7:addr";
 
-        static final String effectiveTime =
-            "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
-        static final String cdaId =
-            "/hl7:ClinicalDocument/hl7:id";
-
+        static final String patientIdValue = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:id/@extension";
+        static final String patientIdRoot = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:id/@root";
+        static final String patientGivenNames = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:name/hl7:given";
+        static final String patientFamilyName = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:name/hl7:family";
+        static final String patientGenderCodeSystem = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:administrativeGenderCode/@codeSystem";
+        static final String patientGenderCode = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:administrativeGenderCode/@code";
+        static final String patientBirthTime = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:birthTime/@value";
+        static final String patientAddressNode = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:addr";
     }
 
     /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if something goes wrong
@@ -92,4 +102,32 @@ public class FskMapper {
         return list;
     }
 
+    /// @throws dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException if something goes wrong
+    public static Patient patient(Document cda) {
+        return Patient.builder()
+            .id(new CdaId(
+                Oid.fromOid(xpath.evalString(XPaths.patientIdRoot, cda)).orElse(Oid.DK_CPR),
+                xpath.evalString(XPaths.patientIdValue, cda)))
+            .name(new Name(xpath.evalString(XPaths.patientFamilyName, cda), xpath.evalStrings(XPaths.patientGivenNames, cda)))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.fromOid(xpath.evalString(XPaths.patientGenderCodeSystem, cda))
+                    .orElse(Oid.ADMINISTRATIVE_GENDER))
+                .code(xpath.evalString(XPaths.patientGenderCode, cda))
+                .build())
+            .birthTime(parseBirthTime(xpath.evalString(XPaths.patientBirthTime, cda)))
+            .address(Optional.ofNullable(xpath.evalNode(XPaths.patientAddressNode, cda))
+                .map(FskMapper::addressNodeToAddress)
+                .orElse(null))
+            .build();
+    }
+
+    private static LocalDate parseBirthTime(String birthTime) {
+        if (birthTime.matches("\\d{8}")) {
+            return LocalDate.parse(birthTime, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        } else if (birthTime.matches("\\d{14}\\+\\d{4}")) {
+            return LocalDate.parse(birthTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmssZ"));
+        }
+        log.error("Unable to parse birth time from FSK. Birth time: {}", birthTime);
+        throw new PublicException("Could not read patient birth date, unable to generate patient summary.");
+    }
 }

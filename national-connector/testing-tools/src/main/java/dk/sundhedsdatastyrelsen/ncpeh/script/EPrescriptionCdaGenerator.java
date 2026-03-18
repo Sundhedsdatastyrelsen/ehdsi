@@ -64,7 +64,8 @@ public class EPrescriptionCdaGenerator {
                 medicationResponse,
                 "FIN", // Fyldt injektionssprøjte
                 1,
-                "Manufacturer"
+                "Manufacturer",
+                "2025-01"
             ));
 
         var ePCda = Path.of(cdaOutput);

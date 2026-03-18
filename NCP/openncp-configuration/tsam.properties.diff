@@ -1,5 +1,5 @@
---- ehealth/openncp-docker/openncp-configuration/tsam.properties	2024-10-08 16:04:22.818246475 +0200
-+++ ehdsi/NCP/openncp-configuration/tsam.properties	2026-02-26 11:06:24.265597473 +0100
+--- ehealth/openncp-docker/openncp-configuration/tsam.properties
++++ ehdsi/NCP/openncp-configuration/tsam.properties
 @@ -6,7 +6,7 @@
  
  # Language code used by NCP-B for Designations management into the CDA Friendly B documents

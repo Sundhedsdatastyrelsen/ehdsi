@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda.model;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -21,6 +22,11 @@ public class PatientSummaryL3 {
      * "[...] the date and time at which this document was created as an electronic document."
      */
     @NonNull OffsetDateTime effectiveTime;
+
+    public String getEffectiveTime() {
+        return Utils.cdaZonedDateTime(effectiveTime);
+    }
+
     @NonNull Patient patient;
 
     /// Egen læge

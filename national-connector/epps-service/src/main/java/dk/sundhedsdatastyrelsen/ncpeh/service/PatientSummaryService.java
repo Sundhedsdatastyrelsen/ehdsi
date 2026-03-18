@@ -107,7 +107,7 @@ public class PatientSummaryService {
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
         try {
-            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard));
+            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)));
         } catch (XmlException e) {
             // TODO better exception text
             throw new PublicException(400, "Error in received XML", e);

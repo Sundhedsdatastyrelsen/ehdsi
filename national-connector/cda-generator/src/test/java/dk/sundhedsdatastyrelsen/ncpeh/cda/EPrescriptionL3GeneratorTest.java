@@ -35,7 +35,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.storedPrescriptions(cpr);
         var medication = FmkResponseStorage.storedDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", 1, "Manufacturer");
+        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", 1, "Manufacturer", "2026-01");
         var epL3 = EPrescriptionL3Mapper.model(input);
 
         //Generate prescription without null in packageCode
@@ -81,11 +81,13 @@ class EPrescriptionL3GeneratorTest {
                     .build()),
                 drugInfo.packageFormCode(),
                 drugInfo.numberOfSubPackages(),
-                drugInfo.manufacturerOrganization());
+                drugInfo.manufacturerOrganization(),
+                "2025-01");
 
             if (EPrescriptionL3Mapper.isMagistral(p)) {
-                var ex = Assertions.assertThrows(MapperException.class, () ->
-                    EPrescriptionL3Generator.generate(input));
+                var ex = Assertions.assertThrows(
+                    MapperException.class, () ->
+                        EPrescriptionL3Generator.generate(input));
                 assertThat(ex.getMessage(), containsString("magistral"));
                 continue;
             }
