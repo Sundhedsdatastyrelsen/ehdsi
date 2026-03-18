@@ -37,7 +37,7 @@ public class PatientSummaryL1Generator {
         var pdf = PatientSummaryPdfGenerator.generate(l3Model);
         var base64Pdf = Base64.getEncoder().encodeToString(pdf);
         return PatientSummaryL1.builder()
-            .l3(l3Model)
+            .modelData(l3Model)
             .base64EncodedDocument(base64Pdf)
             .relatedL3DocumentId(relatedL3DocumentId)
             .build();

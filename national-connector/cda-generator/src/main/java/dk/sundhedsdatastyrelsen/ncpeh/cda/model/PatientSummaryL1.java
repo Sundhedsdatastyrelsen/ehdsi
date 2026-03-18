@@ -11,7 +11,7 @@ public class PatientSummaryL1 {
     /**
      * The underlying structured document, with the L1 document ID applied.
      */
-    @NonNull PatientSummaryL3 l3;
+    @NonNull PatientSummaryL3 modelData;
     /**
      * The document ID of the corresponding L3 document, used in the relatedDocument element.
      */

@@ -61,7 +61,7 @@ public class PatientSummaryL1GeneratorTest {
         var relatedL3DocumentId = new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
             PatientSummaryDocumentIdMapper.level3DocumentId(BASE_ID));
         return PatientSummaryL1.builder()
-            .l3(l3Model)
+            .modelData(l3Model)
             .base64EncodedDocument(Base64.getEncoder().encodeToString(pdf))
             .relatedL3DocumentId(relatedL3DocumentId)
             .build();
