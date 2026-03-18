@@ -50,16 +50,16 @@ class PatientSummaryPdfGeneratorTest {
         Assertions.assertNotNull(pdf);
         Assertions.assertTrue(pdf.length > 0);
 
-        try {
-            java.nio.file.Files.write(
-                java.nio.file.Path.of("cda-eprescription-l1-" + getModel().getPatient().getId().getExtension() + ".pdf"),
-                pdf,
-                java.nio.file.StandardOpenOption.CREATE,
-                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            java.nio.file.Files.write(
+//                java.nio.file.Path.of("cda-eprescription-l1-" + getModel().getPatient().getId().getExtension() + ".pdf"),
+//                pdf,
+//                java.nio.file.StandardOpenOption.CREATE,
+//                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+//            );
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Test

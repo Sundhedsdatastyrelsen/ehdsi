@@ -2,11 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
@@ -28,33 +27,26 @@ public class PatientSummaryPdfGenerator {
     private static final float START_Y = 790f;
     private static final float TITLE_LINE_HEIGHT = TITLE_FONT_SIZE * 1.5f;
     private static final float BODY_LINE_HEIGHT = BODY_FONT_SIZE * 1.5f;
-    private static final String TEMPLATE = "/pdfTemplates/blank.pdf";
     private static final String SEPARATOR = "----------------------------------------";
 
     private PatientSummaryPdfGenerator() {
     }
 
     public static byte[] generate(PatientSummaryL3 model) {
-        try (var templateStream = PatientSummaryPdfGenerator.class.getResourceAsStream(TEMPLATE)) {
-            if (templateStream == null) {
-                throw new IllegalStateException("Could not find resource: " + TEMPLATE);
-            }
-            try (var pdfDocument = Loader.loadPDF(templateStream.readAllBytes())) {
-                var page = pdfDocument.getPage(0);
-                writeContent(model, page, pdfDocument);
-                // Remove modification timestamp so output is deterministic for the same input
-                pdfDocument.getDocumentInformation().getCOSObject().removeItem(COSName.MOD_DATE);
-                var baos = new ByteArrayOutputStream();
-                pdfDocument.save(baos);
-                return baos.toByteArray();
-            }
+        try (var pdfDocument = new PDDocument()) {
+            var page = new PDPage(PDRectangle.A4);
+            pdfDocument.addPage(page);
+            writeContent(model, page, pdfDocument);
+            var baos = new ByteArrayOutputStream();
+            pdfDocument.save(baos);
+            return baos.toByteArray();
         } catch (IOException e) {
             throw new IllegalStateException("Could not generate patient summary PDF", e);
         }
     }
 
     private static void writeContent(PatientSummaryL3 model, PDPage page, PDDocument doc) throws IOException {
-        try (var stream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true)) {
+        try (var stream = new PDPageContentStream(doc, page)) {
             stream.beginText();
 
             // Title
