@@ -160,7 +160,16 @@ public class PatientSummaryL1GeneratorTest {
     void generateFromInputTest() {
         var rootedDocumentId = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^"
             + PatientSummaryDocumentIdMapper.level1DocumentId(BASE_ID);
-        var input = new PatientSummaryInput(rootedDocumentId, null);
+        var patient = Patient.builder()
+            .id(new CdaId(Oid.DK_CPR, "1234567890"))
+            .name(Name.fromFullName("Hans Christian Andersen"))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                .code("M")
+                .build())
+            .birthTime(LocalDate.of(1982, 11, 3))
+            .build();
+        var input = new PatientSummaryInput(rootedDocumentId, null, patient);
         var cda = PatientSummaryL1Generator.generate(input);
         Assertions.assertNotNull(cda);
     }
