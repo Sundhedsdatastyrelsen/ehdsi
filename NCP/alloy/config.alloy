@@ -35,6 +35,93 @@ otelcol.exporter.otlp "default" {
   }
 }
 
+/// Collect logs from Docker daemon
+
+discovery.docker "local" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_labels" {
+  targets = discovery.docker.local.targets
+
+  // Only scrape containers that have the label: monitoring.logs.scrape=true
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_logs_scrape"]
+    regex         = "true"
+    action        = "keep"
+  }
+
+  // /foo -> foo
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "container_id"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "logstream"
+  }
+
+  // Promote the shared label "monitoring.environment" to a Loki label "deployment_environment_name"
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_environment"]
+    target_label  = "deployment_environment_name"
+  }
+}
+
+loki.process "pipeline" {
+  // Read log lines using the CRI logging format.
+  stage.cri {}
+
+  // Parse multiline log entries.  If a line is indented it is considered part of the previous block.
+  stage.multiline {
+    firstline = "^\\S"
+  }
+
+  // If possible, parse log line as json
+  stage.json {
+    expressions = {
+      level = "level",
+    }
+  }
+
+  // Promote extracted "level" into a Loki label
+  stage.labels {
+    values = {
+      level = "",
+    }
+  }
+
+  stage.static_labels {
+    values = {
+      // to differentiate from the OTLP logs which have exporter = "OTLP"
+      exporter = "docker-daemon",
+    }
+  }
+
+  forward_to = [otelcol.receiver.loki.default.receiver]
+}
+
+// Bridge from Loki-native pipeline into the OTLP pipeline for forwarding to alloy-hub
+otelcol.receiver.loki "default" {
+  output {
+    logs = [otelcol.processor.batch.default.input]
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_labels.output
+  forward_to = [loki.process.pipeline.receiver]
+}
+
 // Metrics scraping
 prometheus.scrape "node_exporter" {
   targets = [
