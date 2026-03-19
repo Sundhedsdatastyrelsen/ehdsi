@@ -44,8 +44,8 @@ public class PatientSummaryPdfGenerator {
             pdfDocument.getDocumentCatalog().setMetadata(null);
             var fixedId = new COSString(new byte[16]);
             var idArray = new COSArray();
-            idArray.add(fixedId);
-            idArray.add(fixedId);
+            idArray.add(fixedId); //Set permanent ID
+            idArray.add(fixedId); //Set revision ID
             pdfDocument.getDocument().getTrailer().setItem(COSName.ID, idArray);
             var baos = new ByteArrayOutputStream();
             pdfDocument.save(baos);
