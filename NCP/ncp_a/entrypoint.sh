@@ -17,10 +17,8 @@ then
 fi
 
 # Only need to copy this in one entrypoint, as all the containers share these volumes and they are not needed for startup.
-if [ ! -f "/opt/openncp-configuration/validation/gazelle.ehdsi.properties" ]
-then
-    cp "/opt/openncp-configuration/gazelle.ehdsi.template.properties" "/opt/openncp-configuration/validation/gazelle.ehdsi.properties"
-fi
+# Overwrite the gazelle.ehdsi.properties file in the evidence folder. They update it every wave.
+cp "/opt/openncp-configuration/gazelle.ehdsi.template.properties" "/opt/openncp-configuration/validation/gazelle.ehdsi.properties"
 
 # Export secrets as environment variables
 export KEYSTORE_PASSWORD; KEYSTORE_PASSWORD=$(cat /run/secrets/tls_keystore_password)
