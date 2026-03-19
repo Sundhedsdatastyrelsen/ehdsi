@@ -19,7 +19,7 @@ public final class EPrescriptionL1Mapper {
     public static EPrescriptionL1 model(EPrescriptionL3 l3Model) {
         var modelWithL1Id = l3Model.withDocumentId(new CdaId(
             Oid.DK_EPRESCRIPTION_REPOSITORY_ID,
-            EPrescriptionDocumentIdMapper.level1DocumentId(l3Model.getPrescriptionId().getExtension())));
+            DocumentIdMapper.level1DocumentId(l3Model.getPrescriptionId().getExtension())));
         var pdfModel = EPrescriptionPdfMapper.map(modelWithL1Id);
         var pdf = EPrescriptionPdfGenerator.generate(pdfModel);
         var base64Pdf = Base64.getEncoder().encodeToString(pdf);
