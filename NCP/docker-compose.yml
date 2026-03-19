@@ -426,6 +426,10 @@ services:
   node-exporter:
     image: prom/node-exporter:v1.9.1
     restart: unless-stopped
+    labels:
+      monitoring.metrics.scrape: "true"
+      monitoring.metrics.port: "9100"
+      monitoring.environment: ${MONITORING_ENVIRONMENT}
     pid: host # Use the host PID namespace
     cap_add:
      - SYS_TIME
