@@ -93,6 +93,14 @@
         </assignedEntity>
     </legalAuthenticator>
 
+    <documentationOf typeCode="DOC">
+        <serviceEvent classCode="PCPR" moodCode="EVN">
+            <effectiveTime>
+                <high value="${ ps.effectiveTime }" />
+            </effectiveTime>
+        </serviceEvent>
+    </documentationOf>
+
     <relatedDocument typeCode="XFRM">
         <parentDocument classCode="DOCCLIN" moodCode="EVN">
             <id <@common.cdaIdAttrs relatedL3DocumentId />/>
