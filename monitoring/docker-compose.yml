@@ -135,7 +135,6 @@ services:
     volumes:
       - alloy_data:/var/lib/alloy
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - monitoring
 
