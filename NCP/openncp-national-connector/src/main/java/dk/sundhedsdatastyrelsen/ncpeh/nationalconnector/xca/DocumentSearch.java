@@ -85,8 +85,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
             final var md = NationalConnectorService.api().postFindPatientSummaryDocument(request);
             logger.info("Got well-formed response from Country A service.");
             final var l3 = md.getLevel3();
-            // TODO L1 should not be the same as L3, fix once we've implemented L1
-            final var l1 = md.getLevel3();
+            final var l1 = md.getLevel1();
             return DocumentFactory.createDocumentAssociation(
                 DocumentFactory.createPSDocumentXML(
                     l3.getId(),
