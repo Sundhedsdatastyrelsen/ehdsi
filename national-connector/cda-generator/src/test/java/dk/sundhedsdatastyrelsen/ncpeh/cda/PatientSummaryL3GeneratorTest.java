@@ -58,7 +58,7 @@ class PatientSummaryL3GeneratorTest {
         var cda = PatientSummaryL3Generator.generate(model);
         Assertions.assertNotNull(cda);
 
-        //Initalize xPath Engine to read the data to validate it
+        //Initialize xPath Engine to read the data to validate it
         XPathEngine xpathEngine = new JAXPXPathEngine();
         Map<String, String> namespaces = new HashMap<>();
         namespaces.put("hl7", "urn:hl7-org:v3");
@@ -128,5 +128,69 @@ class PatientSummaryL3GeneratorTest {
             .build();
         var cda = PatientSummaryL3Generator.generate(model);
         Assertions.assertNotNull(cda);
+    }
+
+    @Test
+    void emptyCountryTest() {
+        // It is an error if the country in an address is there but has no value.
+        var oid = Oid.DK_PATIENT_SUMMARY;
+        var extension = "1230879456";
+        var title = "Generate PS L3 Document Title";
+        var creationTimestamp = OffsetDateTime.now();
+        var patient = Patient.builder()
+            .id(new CdaId(Oid.DK_CPR, "1234567890"))
+            .name(Name.fromFullName("Hans Christian Andersen"))
+            .address(new Address(List.of("Overgaden Oven Vandet 10", "1."), "København K", "1415", ""))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                .codeSystemVersion("913-20091020")
+                .code("M")
+                .displayName("Male")
+                .build())
+            .birthTime(LocalDate.of(1982, 11, 3))
+            .build();
+
+        var preferredHp = PreferredHealthProfessional.builder()
+            .name(Name.fromFullName("Tycho Brahe"))
+            .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
+            .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", ""))
+            .build();
+
+        var model = PatientSummaryL3.builder()
+            .documentId(new CdaId(oid, extension))
+            .effectiveTime(creationTimestamp)
+            .title(title)
+            .patient(patient)
+            .preferredHp(preferredHp)
+            .build();
+        var cda = PatientSummaryL3Generator.generate(model);
+
+        //Initialize xPath Engine to read the data to validate it
+        XPathEngine xpathEngine = new JAXPXPathEngine();
+        Map<String, String> namespaces = new HashMap<>();
+        namespaces.put("hl7", "urn:hl7-org:v3");
+        xpathEngine.setNamespaceContext(namespaces);
+
+        var generatedCda = Input.fromString(cda).build();
+
+        var patientAddressPath = "/hl7:ClinicalDocument/hl7:recordTarget/hl7:patientRole/hl7:addr";
+        var preferredHealthProfessionalAddressPath = "/hl7:ClinicalDocument/hl7:participant/hl7:associatedEntity/hl7:addr";
+
+        assertThat(
+            "patient address is not null",
+            xpathEngine.selectNodes(patientAddressPath, generatedCda),
+            is(not(emptyIterable())));
+        assertThat(
+            "patient country code is not there if it's empty",
+            xpathEngine.selectNodes(patientAddressPath + "/hl7:country", generatedCda),
+            is(emptyIterable()));
+        assertThat(
+            "preferred health professional's address is not null",
+            xpathEngine.selectNodes(preferredHealthProfessionalAddressPath, generatedCda),
+            is(not(emptyIterable())));
+        assertThat(
+            "preferred health professional's country code is not there if it's empty",
+            xpathEngine.selectNodes(preferredHealthProfessionalAddressPath + "/hl7:country", generatedCda),
+            is(emptyIterable()));
     }
 }
