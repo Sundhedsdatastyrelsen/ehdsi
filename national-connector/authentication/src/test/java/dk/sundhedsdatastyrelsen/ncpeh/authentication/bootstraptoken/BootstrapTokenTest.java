@@ -5,6 +5,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -142,6 +144,46 @@ public class BootstrapTokenTest {
                 <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="urn:oasis:names:tc:xspa:1.0" codeSystemName="eHDSI XSPA PurposeOfUse" displayName="TREATMENT" xsi:type="CE"/>"""));
 
         // System.out.println(XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody()));
+    }
+
+    @Test
+    void fromOpenNcpAssertionWithXsNamespacePrefix() throws Exception {
+        // Regression test: an incoming HCP assertion from Finland used xmlns:xs (not xmlns:xsd) on the Assertion element.
+        // When we import raw attribute nodes into our new document, that ancestor namespace declaration is
+        // dropped by importNode().  Verify that every xsi:type QName prefix in the generated request is declared.
+        var cert = testCert();
+        var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(
+            TestUtils.slurp(TestUtils.resource("openncp_soap_header_namespace_bug_regression.xml")));
+        var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, "https://fmk", "https://ehdsi-idp.testkald.nspop.dk");
+        var bstRequest = BootstrapTokenExchangeRequest.of(bstParams, cert, cert);
+
+        // Serialize and re-parse to get exactly what would be sent on the wire, then validate.
+        var reparsed = XmlUtils.parse(XmlUtils.writeDocumentToString(bstRequest.soapBody()));
+        assertAllXsiTypePrefixesDeclared(reparsed);
+    }
+
+    /**
+     * Walks every element in the document and asserts that any xsi:type attribute value whose
+     * content is a QName (prefix:local) has its prefix declared in scope at that element.
+     * This catches cases where namespace declarations from ancestor elements in a source document
+     * are silently dropped during DOM import/serialization.
+     */
+    private static void assertAllXsiTypePrefixesDeclared(Node node) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            var element = (Element) node;
+            var xsiType = element.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type");
+            if (xsiType.contains(":")) {
+                var prefix = xsiType.substring(0, xsiType.indexOf(':'));
+                assertThat(
+                    "xsi:type=\"" + xsiType + "\" uses undeclared prefix \"" + prefix + "\"",
+                    element.lookupNamespaceURI(prefix),
+                    notNullValue());
+            }
+        }
+        var children = node.getChildNodes();
+        for (var i = 0; i < children.getLength(); i++) {
+            assertAllXsiTypePrefixesDeclared(children.item(i));
+        }
     }
 
     private static String soapHeader() {

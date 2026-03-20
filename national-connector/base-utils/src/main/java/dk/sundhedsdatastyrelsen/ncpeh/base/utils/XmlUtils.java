@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.base.utils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -176,6 +177,31 @@ public class XmlUtils {
     public static void declareNamespaces(Element element, XmlNamespace... namespaces) {
         for (var ns : namespaces) {
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + ns.prefix(), ns.uri());
+        }
+    }
+
+    /**
+     * Copies namespace declarations that are in scope for a node (from its ancestors) to a target element.
+     * This is needed when importing nodes via importNode(), which does not carry over ancestor namespace
+     * declarations. Skips namespaces already declared on the target.
+     *
+     * @param source the node whose ancestor chain to inspect
+     * @param target the element to declare the namespaces on
+     */
+    public static void copyAncestorNamespaces(Node source, Element target) {
+        for (var ancestor = source.getParentNode(); ancestor != null; ancestor = ancestor.getParentNode()) {
+            if (ancestor.getNodeType() == Node.ELEMENT_NODE) {
+                var attrs = ancestor.getAttributes();
+                for (var i = 0; i < attrs.getLength(); i++) {
+                    var attr = attrs.item(i);
+                    if ("http://www.w3.org/2000/xmlns/".equals(attr.getNamespaceURI())) {
+                        var localName = attr.getLocalName();
+                        if (target.getAttributeNodeNS("http://www.w3.org/2000/xmlns/", localName) == null) {
+                            target.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + localName, attr.getNodeValue());
+                        }
+                    }
+                }
+            }
         }
     }
 
