@@ -29,6 +29,7 @@ class FskMapperTest {
         assertThat(preferredHealthProfessional.getTelecoms().getFirst().getUse(), is(Telecom.Use.WORK_PLACE));
         assertThat(preferredHealthProfessional.getTelecoms().get(1).getValue(), is("mailto:laege@praksis.dk"));
         assertThat(preferredHealthProfessional.getAddress().getCity(), is("City"));
+        assertThat(preferredHealthProfessional.getAddress().getCountryCode(), is("DK"));
     }
 
     @Test
@@ -49,6 +50,7 @@ class FskMapperTest {
         assertThat(patient.getName().getFullName(), is("Nielsen Nielsen"));
         assertThat(patient.getGenderCode().getCode(), is("F"));
         assertThat(patient.getBirthTime(), is("20190101"));
+        assertThat(patient.getAddress().getCountryCode(), is("DK"));
     }
 
     @Test

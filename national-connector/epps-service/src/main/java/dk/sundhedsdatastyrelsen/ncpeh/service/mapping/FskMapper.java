@@ -81,7 +81,10 @@ public class FskMapper {
             .toList();
         var city = xpath.evalString("hl7:city", addressNode);
         var postalCode = xpath.evalString("hl7:postalCode", addressNode);
-        var countryCode = xpath.evalString("hl7:countryCode", addressNode);
+        // It's safe to assume DK in FSK. Null and empty string mean DK.
+        var countryCode = Optional.ofNullable(xpath.evalString("hl7:country", addressNode))
+            .filter(s -> !s.isEmpty())
+            .orElse("DK");
         return new Address(addressLines, city, postalCode, countryCode);
     }
 
