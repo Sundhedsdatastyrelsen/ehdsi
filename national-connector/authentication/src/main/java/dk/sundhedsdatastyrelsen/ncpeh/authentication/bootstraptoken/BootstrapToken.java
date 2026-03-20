@@ -106,6 +106,11 @@ public class BootstrapToken {
         for (var attr : bst.attributes()) {
             switch (attr) {
                 case BootstrapTokenParams.SamlAttribute.Raw(var node): {
+                    // Carry over namespace declarations from the source context before importing,
+                    // since importNode() does not copy ancestor namespace declarations.
+                    // This is needed when attribute values reference prefixes declared on ancestors
+                    // (e.g. xsi:type="xs:string" where xmlns:xs is on a parent element).
+                    XmlUtils.copyAncestorNamespaces(node, assertion);
                     attributeStatement.appendChild(doc.importNode(node, true));
                     break;
                 }
