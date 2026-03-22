@@ -181,27 +181,35 @@ public class XmlUtils {
     }
 
     /**
-     * Copies namespace declarations that are in scope for a node (from its ancestors) to a target element.
-     * This is needed when importing nodes via importNode(), which does not carry over ancestor namespace
-     * declarations. Skips namespaces already declared on the target.
+     * Walks the subtree of {@code source} and, for every {@code xsi:type} attribute whose value is a
+     * prefixed QName (e.g. {@code xs:string}), ensures that prefix is declared on {@code target}.
+     * <p>
+     * This is needed when importing nodes via {@link org.w3c.dom.Document#importNode}: the import does
+     * not carry over ancestor namespace declarations, so a prefix like {@code xs} that was declared on
+     * a grandparent element in the source document becomes undeclared in the new document.  Only
+     * {@code xsi:type} prefixes are copied — not all ancestor namespaces — to avoid accidentally
+     * changing other namespace context that would invalidate an existing XML signature.
      *
-     * @param source the node whose ancestor chain to inspect
-     * @param target the element to declare the namespaces on
+     * @param source the node whose subtree to inspect (using source's namespace context for lookup)
+     * @param target the element to declare missing prefixes on
      */
-    public static void copyAncestorNamespaces(Node source, Element target) {
-        for (var ancestor = source.getParentNode(); ancestor != null; ancestor = ancestor.getParentNode()) {
-            if (ancestor.getNodeType() == Node.ELEMENT_NODE) {
-                var attrs = ancestor.getAttributes();
-                for (var i = 0; i < attrs.getLength(); i++) {
-                    var attr = attrs.item(i);
-                    if ("http://www.w3.org/2000/xmlns/".equals(attr.getNamespaceURI())) {
-                        var localName = attr.getLocalName();
-                        if (target.getAttributeNodeNS("http://www.w3.org/2000/xmlns/", localName) == null) {
-                            target.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + localName, attr.getNodeValue());
-                        }
+    public static void copyXsiTypePrefixes(Node source, Element target) {
+        if (source.getNodeType() == Node.ELEMENT_NODE) {
+            var element = (Element) source;
+            var xsiType = element.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "type");
+            if (xsiType.contains(":")) {
+                var prefix = xsiType.substring(0, xsiType.indexOf(':'));
+                if (target.getAttributeNodeNS("http://www.w3.org/2000/xmlns/", prefix) == null) {
+                    var uri = element.lookupNamespaceURI(prefix);
+                    if (uri != null) {
+                        target.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + prefix, uri);
                     }
                 }
             }
+        }
+        var children = source.getChildNodes();
+        for (var i = 0; i < children.getLength(); i++) {
+            copyXsiTypePrefixes(children.item(i), target);
         }
     }
 
