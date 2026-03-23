@@ -30,6 +30,10 @@ secrets:
   tls_truststore_password:
     file: tls_truststore_password.txt
 
+x-monitoring-labels: &monitoring-labels
+  monitoring.logs.scrape: "true"
+  monitoring.environment: ${MONITORING_ENVIRONMENT:-Training}
+
 # OpenTelemetry configuration as a YAML anchor for merging into service configurations
 x-opentelemetry-config: &opentelemetry-config
   OTEL_EXPORTER_OTLP_ENDPOINT: http://alloy-edge:4317
@@ -42,6 +46,8 @@ services:
   tomcat-init:
     image: busybox
     user: root
+    labels:
+      <<: *monitoring-labels
     entrypoint:
       - "chown"
       - "-R"
@@ -55,6 +61,8 @@ services:
     container_name: openncp_db
     hostname: ${DB_HOST}
     image: mysql:9
+    labels:
+      <<: *monitoring-labels
     ports:
       - ${DB_EXPOSED_PORT}:${DB_INTERNAL_PORT}
     volumes:
@@ -86,6 +94,8 @@ services:
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     container_name: "tsam-exporter"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:${IMAGE_TAG}
+    labels:
+      <<: *monitoring-labels
     env_file: .env
     environment:
       DB_USER_FILE: /run/secrets/db_username
@@ -107,6 +117,8 @@ services:
   tsam-synchronizer:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:${IMAGE_TAG}
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
+    labels:
+      <<: *monitoring-labels
     build:
       target: "tsam-synchronizer"
     env_file: .env
@@ -368,6 +380,8 @@ services:
     container_name: configuration-synchronizer
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     env_file: .env
     volumes:
       - ./openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
@@ -397,6 +411,7 @@ services:
     command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       OTLP_SERVER_ENDPOINT: http://host.docker.internal:4317
     extra_hosts:
@@ -409,6 +424,10 @@ services:
   node-exporter:
     image: prom/node-exporter:v1.9.1
     restart: unless-stopped
+    labels:
+      monitoring.metrics.scrape: "true"
+      monitoring.metrics.port: "9100"
+      monitoring.environment: ${MONITORING_ENVIRONMENT}
     pid: host # Use the host PID namespace
     cap_add:
      - SYS_TIME
