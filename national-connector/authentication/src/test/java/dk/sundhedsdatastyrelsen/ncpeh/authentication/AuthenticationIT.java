@@ -40,6 +40,15 @@ class AuthenticationIT {
     }
 
     @Test
+    void exchangeTokenNamespaceBugRegressions() throws AuthenticationException {
+        var service = authenticationService();
+        var idwsToken = service.xcaSoapHeaderToIdwsToken(TestUtils.slurp(TestUtils.resource("openncp_soap_header_namespace_bug_regression.xml")), "https://fmk");
+
+        assertThat(idwsToken.audience(), is("https://fmk"));
+        assertThat(idwsToken.assertion(), notNullValue());
+    }
+
+    @Test
     void exchangeTokenWithError() throws AuthenticationException {
         var service = authenticationService();
         assertThrows(
