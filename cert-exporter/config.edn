@@ -1,0 +1,14 @@
+{:keystores
+ [{:path "../NCP/keystore/dev-tls.jks"
+   :type "JKS"
+   :password "password"
+   :label "NCP-dev-tls"}
+  #_
+  {:path "/etc/certs/client.p12"
+   :type "PKCS12"
+   :password #env "PKCS12_PASSWORD"
+   :label "client-pkcs12"}]
+
+ ;; How often to re-read the certificate files
+ :scrape-interval-seconds 60
+ :port 9090}
