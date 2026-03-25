@@ -9,6 +9,9 @@
    :password #env "PKCS12_PASSWORD"
    :label "client-pkcs12"}]
 
+ ;; Prefix all metric names with this
+ :prefix "cert_sds_"
+
  ;; How often to re-read the certificate files
  :scrape-interval-seconds 60
  :port 9090}
