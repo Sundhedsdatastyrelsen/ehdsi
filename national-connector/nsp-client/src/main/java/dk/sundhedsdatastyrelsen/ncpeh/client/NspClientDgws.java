@@ -1,9 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.DgwsAssertion;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;

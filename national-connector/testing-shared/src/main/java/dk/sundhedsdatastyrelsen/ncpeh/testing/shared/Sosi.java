@@ -7,7 +7,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 

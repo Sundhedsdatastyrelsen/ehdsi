@@ -1,8 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
 
 /**

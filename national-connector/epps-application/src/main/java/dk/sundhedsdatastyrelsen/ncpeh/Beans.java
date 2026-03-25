@@ -10,7 +10,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;

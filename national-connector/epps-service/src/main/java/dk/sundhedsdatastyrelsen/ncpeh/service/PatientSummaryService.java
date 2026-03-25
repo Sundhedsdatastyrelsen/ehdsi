@@ -1,6 +1,5 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.FMKConfigurationListType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
