@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import ihe.iti.xds_b._2007.ObjectFactory;
@@ -30,12 +31,12 @@ public class FskClient {
     private static final ihe.iti.xds_b._2007.ObjectFactory factory = new ObjectFactory();
 
     private final URI serviceUri;
-    private final NspClientDgws nspClientDgws;
+    private final AuthenticationService authenticationService;
     private final JAXBContext jaxbContext;
 
-    public FskClient(String fskEndpointUrl, NspClientDgws nspClientDgws) throws URISyntaxException, JAXBException {
+    public FskClient(String fskEndpointUrl, AuthenticationService authenticationService) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(fskEndpointUrl);
-        this.nspClientDgws = nspClientDgws;
+        this.authenticationService = authenticationService;
         this.jaxbContext = JAXBContext.newInstance(
             "ihe.iti.xds_b._2007"
                 + ":oasis.names.tc.ebxml_regrep.xsd.query._3"
@@ -90,11 +91,12 @@ public class FskClient {
         try {
             var fullUri = new URI(new StringBuilder().append(serviceUri).append(specificEndpoint).toString());
             log.info("Calling '{}' with a SOAP action '{}'", fullUri, soapAction);
-            reply = nspClientDgws.request(
+            var assertion = authenticationService.nspDgwsIdentityToAssertion(caller);
+            reply = NspClientDgws.request(
                 fullUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
-                caller
+                assertion
             );
         } catch (NspClientException | URISyntaxException e) {
             throw new NspClientException("FSK request failed", e);

@@ -14,7 +14,7 @@ class AuthorizationRegistryIT {
 
     @Test
     void authorizationLookup() throws JAXBException {
-        var client = new AuthorizationRegistryClient(serviceUrl, Sosi.nspClientDgws);
+        var client = new AuthorizationRegistryClient(serviceUrl, Sosi.authenticationService);
         // 6QF17 is the authorisation code of Charles Babbage
         var response = client.requestByAuthorizationCode("6QF17", TestIdentities.systemIdentity);
 

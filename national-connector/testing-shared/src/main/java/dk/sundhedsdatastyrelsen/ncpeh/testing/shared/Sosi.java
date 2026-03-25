@@ -7,7 +7,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -106,7 +105,7 @@ public class Sosi {
         };
     }
 
-    public static final NspClientDgws nspClientDgws = new NspClientDgws(
+    public static final AuthenticationService authenticationService =
         new AuthenticationServiceCached(
             new AuthenticationServiceImpl(
                 null,
@@ -115,5 +114,5 @@ public class Sosi {
                     "NCPeH-DK",
                     "NCPeH-DK",
                     "Sundhedsdatastyrelsen")),
-            null));
+            null);
 }

@@ -16,7 +16,7 @@ public class MinLog {
 
     public static MinLogClient apiClient() {
         if (minLogClient == null) {
-            minLogClient = new MinLogClient(MINLOG_ENDPOINT_URI, Sosi.nspClientDgws);
+            minLogClient = new MinLogClient(MINLOG_ENDPOINT_URI, Sosi.authenticationService);
         }
         return minLogClient;
     }
