@@ -106,9 +106,9 @@ public class Beans {
     @Bean
     public AuthorizationRegistryClient authorizationRegistryClient(
         @Value("${app.authorization-registry.endpoint.url}") String serviceUri,
-        NspClientDgws nspClientDgws
+        AuthenticationService authenticationService
     ) {
-        return new AuthorizationRegistryClient(serviceUri, nspClientDgws);
+        return new AuthorizationRegistryClient(serviceUri, authenticationService);
     }
 
     @Bean
@@ -119,21 +119,20 @@ public class Beans {
         @Value("${app.minlog.max-attempts:3}") int maxAttempts,
         @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl,
         FmkClientIdws fmkClient,
-        NspClientDgws nspClientDgws
+        AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException, SQLException {
-        var minLogClient = new MinLogClient(minlogEndpointUrl, nspClientDgws);
-        var fskClient = new FskClient(fskEndpointUrl, nspClientDgws);
+        var minLogClient = new MinLogClient(minlogEndpointUrl, authenticationService);
+        var fskClient = new FskClient(fskEndpointUrl, authenticationService);
         var minLogService = new MinLogService(minLogClient, systemCaller, jobQueueDataSource, maxAttempts);
         var informationCardService = new InformationCardService(fskClient, minLogService, systemCaller);
         return new PatientSummaryService(informationCardService, fmkClient);
     }
 
     @Bean
-    public FmkClientIdws fmkClient (
+    public FmkClientIdws fmkClient(
         SigningCertificate signingCertificate,
         @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl
-    )
-    {
+    ) {
         try {
             return new FmkClientIdws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
         } catch (URISyntaxException e) {
@@ -145,9 +144,9 @@ public class Beans {
     public CprService cprService(
         NspDgwsIdentity.System systemCaller,
         @Value("${app.cpr.endpoint.url}") String serviceUri,
-        NspClientDgws nspClientDgws
+        AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException {
-        var cprClient = new CprClient(serviceUri, nspClientDgws);
+        var cprClient = new CprClient(serviceUri, authenticationService);
         return new CprService(cprClient, systemCaller);
     }
 
@@ -170,8 +169,4 @@ public class Beans {
             idwsConfig.issuer());
     }
 
-    @Bean
-    public NspClientDgws nspClientDgws(AuthenticationService authenticationService) {
-        return new NspClientDgws(authenticationService);
-    }
 }

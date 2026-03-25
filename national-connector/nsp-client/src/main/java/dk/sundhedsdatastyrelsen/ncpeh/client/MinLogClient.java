@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
@@ -20,10 +21,10 @@ public class MinLogClient {
 
     private final URI serviceUri;
     private final JAXBContext jaxbContext;
-    private final NspClientDgws nspClientDgws;
+    private final AuthenticationService authenticationService;
 
-    public MinLogClient(String minlogEndpointUrl, NspClientDgws nspClientDgws) {
-        this.nspClientDgws = nspClientDgws;
+    public MinLogClient(String minlogEndpointUrl, AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
         try {
             this.serviceUri = new URI(minlogEndpointUrl);
             this.jaxbContext = JAXBContext.newInstance(
@@ -60,11 +61,12 @@ public class MinLogClient {
         final Element reply;
         try {
             log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
-            reply = nspClientDgws.request(
+            var assertion = authenticationService.nspDgwsIdentityToAssertion(caller);
+            reply = NspClientDgws.request(
                 serviceUri,
                 ClientUtils.toElement(jaxbContext, request),
                 soapAction,
-                caller
+                assertion
             );
         } catch (NspClientException | JAXBException e) {
             throw new NspClientException("MinLog request failed", e);

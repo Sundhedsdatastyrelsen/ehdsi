@@ -106,7 +106,7 @@ public class Sosi {
         };
     }
 
-    public static final NspClientDgws nspClientDgws = new NspClientDgws(
+    public static final AuthenticationService authenticationService =
         new AuthenticationServiceCached(
             new AuthenticationServiceImpl(
                 null,
@@ -115,5 +115,5 @@ public class Sosi {
                     "NCPeH-DK",
                     "NCPeH-DK",
                     "Sundhedsdatastyrelsen")),
-            null));
+            null);
 }

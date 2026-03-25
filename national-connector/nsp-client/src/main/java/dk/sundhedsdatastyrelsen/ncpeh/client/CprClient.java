@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -19,12 +20,12 @@ import java.net.URISyntaxException;
 public class CprClient {
 
     private final URI serviceUri;
-    private final NspClientDgws nspClientDgws;
+    private final AuthenticationService authenticationService;
     private final JAXBContext jaxbContext;
 
-    public CprClient(String serviceUri, NspClientDgws nspClientDgws) throws URISyntaxException, JAXBException {
+    public CprClient(String serviceUri, AuthenticationService authenticationService) throws URISyntaxException, JAXBException {
         this.serviceUri = new URI(serviceUri);
-        this.nspClientDgws = nspClientDgws;
+        this.authenticationService = authenticationService;
         jaxbContext = JAXBContext.newInstance(GetPersonInformationIn.class, GetPersonInformationOut.class);
     }
 
@@ -39,14 +40,16 @@ public class CprClient {
      */
     public GetPersonInformationOut getPersonInformation(String cpr, NspDgwsIdentity caller) throws JAXBException {
         final var requestBody = getPersonInformationIn(cpr);
+
         final Element response;
         try {
             log.info("Calling getPersonInformation at {}", serviceUri);
-            response = nspClientDgws.request(
+            var assertion = authenticationService.nspDgwsIdentityToAssertion(caller);
+            response = NspClientDgws.request(
                 serviceUri,
                 toElement(requestBody),
                 "http://rep.oio.dk/medcom.sundcom.dk/xml/wsdl/2007/06/28/getPersonInformation",
-                caller
+                assertion
             );
         } catch (NspClientException e) {
             throw new NspClientException("CPR registry request failed", e);

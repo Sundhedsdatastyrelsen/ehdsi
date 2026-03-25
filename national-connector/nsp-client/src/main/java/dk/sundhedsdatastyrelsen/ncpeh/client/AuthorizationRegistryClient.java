@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationResponseType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -15,10 +16,10 @@ import java.net.URISyntaxException;
 public class AuthorizationRegistryClient {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(AuthorizationRegistryClient.class);
     private final URI serviceUri;
-    private final NspClientDgws nspClientDgws;
+    private final AuthenticationService authenticationService;
 
-    public AuthorizationRegistryClient(String serviceUri, NspClientDgws nspClientDgws) {
-        this.nspClientDgws = nspClientDgws;
+    public AuthorizationRegistryClient(String serviceUri, AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
         try {
             this.serviceUri = new URI(serviceUri);
         } catch (URISyntaxException e) {
@@ -43,11 +44,12 @@ public class AuthorizationRegistryClient {
         final Element response;
         try {
             log.info("Calling AuthorizationCodeService at {}", serviceUri);
-            response = nspClientDgws.request(
+            var assertion = authenticationService.nspDgwsIdentityToAssertion(caller);
+            response = NspClientDgws.request(
                 serviceUri,
                 authorizationCodeRequestType(authorizationCode),
                 "http://nsi.dk/sdm/Gateway",
-                caller
+                assertion
             );
         } catch (NspClientException | ParserConfigurationException e) {
             throw new NspClientException("AuthorizationCodeService request failed", e);

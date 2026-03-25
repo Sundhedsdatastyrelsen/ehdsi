@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.DgwsAssertion;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
@@ -32,16 +33,14 @@ import java.util.regex.Pattern;
 public class NspClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientDgws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP, XmlNamespace.WST);
-    private final AuthenticationService authenticationService;
 
-    public NspClientDgws(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    private NspClientDgws() {
     }
 
     /// Send a SOAP request to an NSP service.
-    public Element request(URI uri, Element soapBody, String soapAction, NspDgwsIdentity caller, Element... extraHeaders) {
+    public static Element request(URI uri, Element soapBody, String soapAction, DgwsAssertion idCard, Element... extraHeaders) {
         try {
-            var idCard = authenticationService.nspDgwsIdentityToAssertion(caller);
+
             var envelope = makeRequest(
                 soapBody, idCard.assertion(), Instant.now()
                     .truncatedTo(ChronoUnit.SECONDS), extraHeaders);

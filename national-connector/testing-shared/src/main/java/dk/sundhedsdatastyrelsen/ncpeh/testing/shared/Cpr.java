@@ -1,5 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceCached;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationServiceImpl;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
 
 /**
@@ -14,7 +17,7 @@ public class Cpr {
     public static CprClient apiClient() {
         if (cprClient == null) {
             try {
-                cprClient = new CprClient(cprEndpointUri, Sosi.nspClientDgws);
+                cprClient = new CprClient(cprEndpointUri, Sosi.authenticationService);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
