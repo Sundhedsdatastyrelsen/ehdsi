@@ -14,7 +14,7 @@ public class Cpr {
     public static CprClient apiClient() {
         if (cprClient == null) {
             try {
-                cprClient = new CprClient(cprEndpointUri, Sosi.nspClientDgws);
+                cprClient = new CprClient(cprEndpointUri, Sosi.authenticationService);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

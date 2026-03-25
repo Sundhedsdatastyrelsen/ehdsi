@@ -7,6 +7,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.FtpConnection;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.LocalLmsLoader;
@@ -28,6 +29,7 @@ import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -50,13 +52,19 @@ class FmkIT {
     }
 
     private static PrescriptionService prescriptionService(DataSource lmsDataSource) {
-        return new PrescriptionService(
-            Fmk.FMK_IDWS_ENDPOINT_URI,
-            new SigningCertificate(Fmk.getSigningKey()),
-            undoDispensationRepository(),
-            lmsDataSource,
-            authorizationRegistryClient(),
-            TestIdentities.systemIdentity);
+        try {
+            var fmkClient = new FmkClientIdws(
+                new SigningCertificate(Fmk.getSigningKey()).getCertificateAndKey()
+                    .privateKey(), Fmk.FMK_IDWS_ENDPOINT_URI);
+            return new PrescriptionService(
+                fmkClient,
+                undoDispensationRepository(),
+                lmsDataSource,
+                authorizationRegistryClient(),
+                TestIdentities.systemIdentity);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static FtpConnection.ServerInfo lmsServerInfo() {

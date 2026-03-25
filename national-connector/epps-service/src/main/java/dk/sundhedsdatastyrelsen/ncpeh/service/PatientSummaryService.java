@@ -9,6 +9,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -26,9 +27,11 @@ import java.util.UUID;
 @Slf4j
 public class PatientSummaryService {
     private final InformationCardService informationCardService;
+    private final FmkClientIdws fmkService;
 
-    public PatientSummaryService(InformationCardService informationCardService) {
+    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkService) {
         this.informationCardService = informationCardService;
+        this.fmkService = fmkService;
     }
 
     @WithSpan

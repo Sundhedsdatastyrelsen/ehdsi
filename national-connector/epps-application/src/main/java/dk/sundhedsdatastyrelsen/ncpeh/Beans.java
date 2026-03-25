@@ -7,9 +7,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.NspClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.config.AuthenticationServiceConfig;
 import dk.sundhedsdatastyrelsen.ncpeh.service.CprService;
 import dk.sundhedsdatastyrelsen.ncpeh.service.InformationCardService;
@@ -79,16 +79,14 @@ public class Beans {
 
     @Bean
     public PrescriptionService prescriptionService(
-        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl,
-        SigningCertificate signingCertificate,
+        FmkClientIdws fmkClient,
         UndoDispensationRepository undoDispensationRepository,
         @Qualifier("localLmsDataSource") DataSource lmsDataSource,
         AuthorizationRegistryClient authorizationRegistry,
         NspDgwsIdentity.System systemIdentity
     ) {
         return new PrescriptionService(
-            fmkEndpointUrl,
-            signingCertificate,
+            fmkClient,
             undoDispensationRepository,
             lmsDataSource,
             authorizationRegistry,
@@ -107,9 +105,9 @@ public class Beans {
     @Bean
     public AuthorizationRegistryClient authorizationRegistryClient(
         @Value("${app.authorization-registry.endpoint.url}") String serviceUri,
-        NspClientDgws nspClientDgws
+        AuthenticationService authenticationService
     ) {
-        return new AuthorizationRegistryClient(serviceUri, nspClientDgws);
+        return new AuthorizationRegistryClient(serviceUri, authenticationService);
     }
 
     @Bean
@@ -119,22 +117,35 @@ public class Beans {
         @Qualifier("jobQueueDataSource") DataSource jobQueueDataSource,
         @Value("${app.minlog.max-attempts:3}") int maxAttempts,
         @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl,
-        NspClientDgws nspClientDgws
+        FmkClientIdws fmkClient,
+        AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException, SQLException {
-        var minLogClient = new MinLogClient(minlogEndpointUrl, nspClientDgws);
-        var fskClient = new FskClient(fskEndpointUrl, nspClientDgws);
+        var minLogClient = new MinLogClient(minlogEndpointUrl, authenticationService);
+        var fskClient = new FskClient(fskEndpointUrl, authenticationService);
         var minLogService = new MinLogService(minLogClient, systemCaller, jobQueueDataSource, maxAttempts);
         var informationCardService = new InformationCardService(fskClient, minLogService, systemCaller);
-        return new PatientSummaryService(informationCardService);
+        return new PatientSummaryService(informationCardService, fmkClient);
+    }
+
+    @Bean
+    public FmkClientIdws fmkClient(
+        SigningCertificate signingCertificate,
+        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl
+    ) {
+        try {
+            return new FmkClientIdws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Malformed FMK endpoint", e);
+        }
     }
 
     @Bean
     public CprService cprService(
         NspDgwsIdentity.System systemCaller,
         @Value("${app.cpr.endpoint.url}") String serviceUri,
-        NspClientDgws nspClientDgws
+        AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException {
-        var cprClient = new CprClient(serviceUri, nspClientDgws);
+        var cprClient = new CprClient(serviceUri, authenticationService);
         return new CprService(cprClient, systemCaller);
     }
 
@@ -157,8 +168,4 @@ public class Beans {
             idwsConfig.issuer());
     }
 
-    @Bean
-    public NspClientDgws nspClientDgws(AuthenticationService authenticationService) {
-        return new NspClientDgws(authenticationService);
-    }
 }

@@ -72,19 +72,14 @@ public class PrescriptionService {
     private final NspDgwsIdentity.System systemIdentity;
 
     public PrescriptionService(
-        String fmkEndpointUrl,
-        SigningCertificate signingCertificate,
+        FmkClientIdws fmkClient,
         UndoDispensationRepository undoDispensationRepository,
         DataSource lmsDataSource,
         AuthorizationRegistryClient authorizationRegistry,
         NspDgwsIdentity.System systemIdentity
     ) {
         this.systemIdentity = systemIdentity;
-        try {
-            this.fmkClient = new FmkClientIdws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Malformed FMK endpoint", e);
-        }
+        this.fmkClient = fmkClient;
         this.undoDispensationRepository = undoDispensationRepository;
         this.lmsDataProvider = new DataProvider(lmsDataSource);
         this.authorizationRegistry = authorizationRegistry;
