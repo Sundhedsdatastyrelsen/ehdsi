@@ -34,6 +34,7 @@ public class Fmk {
      */
     public static final String cprKarl = "0201909309";
 
+    private static FmkClientIdws dgwsFmkClient;
     private static FmkClientIdws idwsFmkClient;
     private static CertificateAndKey signingKey;
 
@@ -66,5 +67,16 @@ public class Fmk {
             }
         }
         return idwsFmkClient;
+    }
+
+    public static FmkClientDgws dgwsApiClient() {
+        if (idwsFmkClient == null) {
+            try {
+                dgwsApiClient = new FmkClientDgws(, FMK_DGWS_ENDPOINT_URI);
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        return dgwsApiClient;
     }
 }

@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
@@ -140,6 +141,19 @@ public class Beans {
     }
 
     @Bean
+    public FmkClientDgws fmkClientDgws(
+        SigningCertificate signingCertificate,
+        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl
+    ) {
+        try {
+            return new FmkClientDgws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Malformed FMK endpoint", e);
+        }
+    }
+
+
+    @Bean
     public CprService cprService(
         NspDgwsIdentity.System systemCaller,
         @Value("${app.cpr.endpoint.url}") String serviceUri,
@@ -167,5 +181,4 @@ public class Beans {
                     authServiceConfig.dgwsCareProvider())),
             idwsConfig.issuer());
     }
-
 }

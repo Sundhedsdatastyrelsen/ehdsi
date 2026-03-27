@@ -1,6 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.FMKConfigurationListType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
@@ -90,8 +90,8 @@ public class PatientSummaryService {
 
     // TODO Left in the caller, because I think we will need it later.
     @WithSpan
-    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, String europeanHealthProfessionalId) {
-        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId);
+    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, EuropeanHcpIdwsToken token, String europeanHealthProfessionalId) {
+        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId, token);
         try {
             var documentLevel = DocumentIdMapper.parseDocumentLevel(rootedDocumentId);
             var cda = switch (documentLevel) {
@@ -107,9 +107,28 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId) {
+    private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId, EuropeanHcpIdwsToken token) {
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
+
+//        var drugMedicationIds = validPrescriptions.stream().map(Pair::getRight)
+//            .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
+//            .toList();
+//
+//        var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, token);
+//
+//
+//        var drugMedicationRequest = GetDrugMedicationRequestType.builder()
+//            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+//            .withIdentifier(drugMedicationId)
+//            .withIncludePrescriptions(false)
+//            .withIncludeEffectuations(false)
+//            .build();
+//        var fmkCard = fmkService.getDrugMedication();
+
+
+
+        // hent data fra fmk og insert i input.
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)));
         } catch (XmlException e) {

@@ -56,6 +56,7 @@ class PatientSummaryL3GeneratorTest {
             .preferredHp(preferredHp)
             .build();
         var cda = PatientSummaryL3Generator.generate(model);
+        System.out.println(cda);
         Assertions.assertNotNull(cda);
 
         //Initialize xPath Engine to read the data to validate it
