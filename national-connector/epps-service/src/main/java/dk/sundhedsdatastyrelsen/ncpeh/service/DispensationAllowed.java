@@ -103,6 +103,18 @@ public final class DispensationAllowed {
 
     /// The list of regulations we can dispense in other EU countries, with the
     /// ones we cannot commented out. The list was taken from LMS at 2025-04-07.
+    ///
+    /// In Danish: udleveringsbestemmelser.
+    ///
+    /// They are described in "Bekendtgørelse om recepter og dosisdispensering af lægemidler" §6, and in "Bekendtgørelse
+    /// om udleveringsbestemmelser for håndkøbslægemidler til mennesker og dyr" §1 to §3.
+    ///
+    /// Links:
+    /// - [Recepter](https://www.retsinformation.dk/eli/lta/2024/827)
+    /// - [Håndkøb](https://www.retsinformation.dk/eli/lta/2024/815)
+    ///
+    /// Remark that NSB (or NS-B) is described in a complex way, but it is in fact allowed to be dispensed at
+    /// apothecaries, as long as the prescriber has the right specialization or is employed at a hospital.
     private static final List<String> dispensableRegulations = List.of(
         "A", // Receptpligtigt, en udlevering
         // AP,"Udelukkende produktionsdyr, en udlevering"
@@ -126,8 +138,8 @@ public final class DispensationAllowed {
         "HPK", // Produktionsdyr og familiedyr, håndkøb
         "HV", // Håndkøb, veterinær, ikke apoteksforbeholdt
         "HX", // Håndkøb, ikke apoteksforbeholdt, begrænset
-        "HX18" // Håndkøb, ikke apoteksforbeholdt, 18 år el. derover
-        // NBS,Kun til sygehuse og speciallæger,
+        "HX18", // Håndkøb, ikke apoteksforbeholdt, 18 år el. derover
+        "NBS" // Må kun udleveres til borger hvis receptudsteder er sygehuslæge eller har det rigtige speciale
         // PRMIX,Kun til fodermøller efter veterinær ordination,
         // SSI,Kan udleveres fra Statens Seruminstitut,
         // SVS,Kan udleveres fra Statens Vet. Serumlaboratorium,
