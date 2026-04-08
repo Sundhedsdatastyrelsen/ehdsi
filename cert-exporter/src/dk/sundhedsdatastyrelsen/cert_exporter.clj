@@ -2,6 +2,7 @@
   (:require
    [aero.core :as aero]
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [clojure.tools.logging :as log]
    [ring.adapter.jetty :as jetty])
   (:import
@@ -19,6 +20,16 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;; Config
+
+
+;; Allow reading string value from a file with `#file "filename.txt"` in config
+(defmethod aero/reader 'file
+  [{:keys [resolver source]} _tag value]
+  (-> (if (map? resolver)
+        (get resolver value)
+        (resolver source value))
+      slurp
+      str/trimr))
 
 (defn load-config [path]
   (log/info "Loading config from" path)
