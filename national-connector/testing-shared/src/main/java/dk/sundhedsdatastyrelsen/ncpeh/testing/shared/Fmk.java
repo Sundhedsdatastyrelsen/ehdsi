@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateAndKey;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,8 +35,8 @@ public class Fmk {
      */
     public static final String cprKarl = "0201909309";
 
-    private static FmkClientIdws dgwsFmkClient;
     private static FmkClientIdws idwsFmkClient;
+    private static FmkClientDgws dgwsFmkClient;
     private static CertificateAndKey signingKey;
 
     public static CertificateAndKey getSigningKey() {
@@ -70,13 +71,13 @@ public class Fmk {
     }
 
     public static FmkClientDgws dgwsApiClient() {
-        if (idwsFmkClient == null) {
+        if (dgwsFmkClient == null) {
             try {
-                dgwsApiClient = new FmkClientDgws(, FMK_DGWS_ENDPOINT_URI);
+                dgwsFmkClient = new FmkClientDgws(FMK_DGWS_ENDPOINT_URI, Sosi.authenticationService);
             } catch (URISyntaxException e) {
                 throw new IllegalStateException(e);
             }
         }
-        return dgwsApiClient;
+        return dgwsFmkClient;
     }
 }

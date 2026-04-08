@@ -152,11 +152,10 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken(Sosi.Audience.FMK);
 
         // GetMedicineCard should work with IDWS, but it doesn't, so we use DGWS instead.
         // It's not critical for production.
-//        var medicineCard = getMedicineCard(
+//        var medicineCard = Fmk.dgwsApiClient().getMedicineCard(
 //            GetMedicineCardRequestType.builder()
 //                .withPersonIdentifier(personIdentifier)
 //                .withIncludePrescriptions(true)
@@ -165,9 +164,14 @@ class FmkIT {
 //            PredefinedRequestedRole.LÆGE
 //        ).getMedicineCard().getFirst();
 
-        var drugMedication = Fmk.dgwsApiClient().getMedicineCard(getMedicationRequest, token);
-        System.out.println(drugMedication);
-        //assertThat(drugMedication, is(not(empty())));
+        var tmp = Fmk.dgwsApiClient();
+        var tmp2 = tmp.getMedicineCard(getMedicationRequest,TestIdentities.lægeCharlesBabbage,PredefinedRequestedRole.LÆGE).getMedicineCard().getFirst();
+        var tmp3 = tmp2.getDrugMedication().getFirst();
+
+        var drugMedication = Fmk.dgwsApiClient()
+            .getMedicineCard(getMedicationRequest, TestIdentities.lægeCharlesBabbage, PredefinedRequestedRole.LÆGE);
+        assertThat(drugMedications.getPersonIdentifier().getValue(), is(cpr));
+        assertThat(drugMedication, is(not(empty())));
 
     }
 

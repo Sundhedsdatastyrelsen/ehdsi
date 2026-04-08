@@ -1,5 +1,8 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
+import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
@@ -10,6 +13,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
@@ -19,6 +23,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
@@ -28,11 +33,11 @@ import java.util.UUID;
 @Slf4j
 public class PatientSummaryService {
     private final InformationCardService informationCardService;
-    private final FmkClientIdws fmkService;
+    private final FmkClientDgws fmkServiceDgws;
 
-    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkService) {
+    public PatientSummaryService(InformationCardService informationCardService, FmkClientDgws fmkServiceDgws) {
         this.informationCardService = informationCardService;
-        this.fmkService = fmkService;
+        this.fmkServiceDgws = fmkServiceDgws;
     }
 
     @WithSpan
@@ -111,24 +116,21 @@ public class PatientSummaryService {
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
 
-//        var drugMedicationIds = validPrescriptions.stream().map(Pair::getRight)
-//            .map(PrescriptionType::getAttachedToDrugMedicationIdentifier)
-//            .toList();
-//
-//        var drugMedications = getDrugMedicationResponse(cpr, drugMedicationIds, token);
-//
-//
-//        var drugMedicationRequest = GetDrugMedicationRequestType.builder()
-//            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
-//            .withIdentifier(drugMedicationId)
-//            .withIncludePrescriptions(false)
-//            .withIncludeEffectuations(false)
-//            .build();
-//        var fmkCard = fmkService.getDrugMedication();
-
+        var medicationCardRequest = GetMedicineCardRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(patientId).end()
+            .withIncludePrescriptions(false)
+            .withIncludeEffectuations(false)
+            .build();
+        try {
+            var fmkCard = fmkServiceDgws.getMedicineCard(medicationCardRequest, system, PredefinedRequestedRole.SYSTEM);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
 
 
         // hent data fra fmk og insert i input.
+
+
         try {
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)));
         } catch (XmlException e) {

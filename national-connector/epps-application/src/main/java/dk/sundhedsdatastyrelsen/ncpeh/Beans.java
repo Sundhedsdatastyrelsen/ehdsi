@@ -118,18 +118,18 @@ public class Beans {
         @Qualifier("jobQueueDataSource") DataSource jobQueueDataSource,
         @Value("${app.minlog.max-attempts:3}") int maxAttempts,
         @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl,
-        FmkClientIdws fmkClient,
+        FmkClientDgws fmkClientDgws,
         AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException, SQLException {
         var minLogClient = new MinLogClient(minlogEndpointUrl, authenticationService);
         var fskClient = new FskClient(fskEndpointUrl, authenticationService);
         var minLogService = new MinLogService(minLogClient, systemCaller, jobQueueDataSource, maxAttempts);
         var informationCardService = new InformationCardService(fskClient, minLogService, systemCaller);
-        return new PatientSummaryService(informationCardService, fmkClient);
+        return new PatientSummaryService(informationCardService, fmkClientDgws);
     }
 
     @Bean
-    public FmkClientIdws fmkClient(
+    public FmkClientIdws fmkClientIdws(
         SigningCertificate signingCertificate,
         @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl
     ) {
@@ -142,11 +142,11 @@ public class Beans {
 
     @Bean
     public FmkClientDgws fmkClientDgws(
-        SigningCertificate signingCertificate,
-        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl
+        @Value("${app.fmk.endpoint.url}") String fmkEndpointUrl,
+        AuthenticationService authenticationService
     ) {
         try {
-            return new FmkClientDgws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
+            return new FmkClientDgws(fmkEndpointUrl,authenticationService);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Malformed FMK endpoint", e);
         }

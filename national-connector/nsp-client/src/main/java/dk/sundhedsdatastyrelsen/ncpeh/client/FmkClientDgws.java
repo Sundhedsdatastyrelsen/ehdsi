@@ -7,6 +7,7 @@ import dk.sdsd.dgws._2010._08.NameFormat;
 import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.DgwsAssertion;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
@@ -32,12 +33,15 @@ public class FmkClientDgws {
         new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
 
     private final URI serviceUri;
+    private final AuthenticationService authenticationService;
     private final JAXBContext jaxbContext;
 
     public FmkClientDgws(
-        String endpoint
+        String endpoint,
+        AuthenticationService authenticationService
     ) throws URISyntaxException {
         this.serviceUri = new URI(endpoint);
+        this.authenticationService = authenticationService;
         try {
             this.jaxbContext = JAXBContext.newInstance(
                 ":dk.dkma.medicinecard.xml_schema._2015._06._01.e2"
@@ -52,12 +56,12 @@ public class FmkClientDgws {
      * "Hent medicinkort".
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_medicinkort">FMK documentation.</a>
      */
-    public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, DgwsAssertion assertion, PredefinedRequestedRole requestedRole) throws JAXBException {
+    public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, NspDgwsIdentity caller, PredefinedRequestedRole requestedRole) throws JAXBException {
         return fmkRequestDgws(
             facE2.createGetMedicineCardRequest(request),
             "http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2#GetMedicineCard",
             GetMedicineCardResponseType.class,
-            assertion,
+            caller,
             requestedRole,
             false
         );
@@ -73,12 +77,13 @@ public class FmkClientDgws {
         JAXBElement<RequestType> request,
         String soapAction,
         Class<ResponseType> clazz,
-        DgwsAssertion assertion,
+        NspDgwsIdentity caller,
         PredefinedRequestedRole requestedRole,
         boolean requiresMedicineCardConsent
     ) throws JAXBException {
         log.info("Calling '{}' with a SOAP action '{}'", serviceUri, soapAction);
         Element[] extraHeaders;
+        var assertion = authenticationService.nspDgwsIdentityToAssertion(caller);
         if (requiresMedicineCardConsent) {
             extraHeaders = new Element[]{ClientUtils.toElement(jaxbContext, getWhitelistingHeader(requestedRole)), ClientUtils.toElement(jaxbContext, getMedicineReviewConsent())};
         } else {
@@ -91,7 +96,7 @@ public class FmkClientDgws {
                 soapAction,
                 assertion,
                 extraHeaders
-                );
+            );
 
             return jaxbContext.createUnmarshaller().unmarshal(body, clazz).getValue();
         } catch (Exception e) {

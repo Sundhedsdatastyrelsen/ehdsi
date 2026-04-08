@@ -31,6 +31,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
