@@ -21,6 +21,7 @@
 ;;; Config
 
 (defn load-config [path]
+  (log/info "Loading config from" path)
   (aero/read-config (io/file path)))
 
 ;;; ---------------------------------------------------------------------------
@@ -192,7 +193,6 @@
 (defn stop! [{:keys [^ExecutorService executor ^Server jetty]}]
   (.shutdown executor)
   (.stop jetty))
-
 
 (defn -main [& args]
   (let [config-path (or (first args) "config.edn")
