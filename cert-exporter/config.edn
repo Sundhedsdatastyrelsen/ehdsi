@@ -1,17 +1,57 @@
 {:keystores
- [{:path "../NCP/keystore/dev-tls.jks"
-   :type "JKS"
+ [;; NCP: EU TLS keystore (dev)
+  {:path     "../NCP/keystore/dev-tls.jks"
+   :type     "JKS"
    :password "password"
-   :label "NCP-dev-tls"}
-  #_
-  {:path "/etc/certs/client.p12"
-   :type "PKCS12"
-   :password #env "PKCS12_PASSWORD"
-   :label "client-pkcs12"}]
+   :label    "NCP-eu-tls"}
+
+  ;; NCP: EU SEAL keystore (dev)
+  {:path     "../NCP/keystore/dev-seal.jks"
+   :type     "JKS"
+   :password "password"
+   :label    "NCP-eu-seal"}
+
+  ;; NCP: dev truststore (holds the NC->OpenNCP TLS certificate on the OpenNCP side)
+  {:path     "../NCP/keystore/dev-truststore.jks"
+   :type     "JKS"
+   :password "changeit"
+   :label    "NCP-dev-truststore"}
+
+  ;; NCP: EU truststore (trusted EU contact point certificates)
+  {:path     "../NCP/keystore/eu-truststore.jks"
+   :type     "JKS"
+   :password "changeit"
+   :label    "NCP-eu-truststore"}
+
+  ;; NC: signing certificate used for SOSI STS requests (NC->SOSI STS)
+  {:path     "../national-connector/data/epps-sosi-sts-client.jks"
+   :type     "JKS"
+   :password #env "SOSI_KEYSTORE_PASSWORD"
+   :label    "NC-sosi-sts"}
+
+  ;; NC: dev signing keystore (used in tests as NC signing certificate)
+  {:path     "../national-connector/config/dev-keystore.jks"
+   :type     "JKS"
+   :password "Test.1234"
+   :label    "NC-dev-signing"}
+
+  ;; NC: opt-out mTLS client keystore (NC<->Opt-Out)
+  {:path     "../national-connector/config/dev-opt-out-keystore.p12"
+   :type     "PKCS12"
+   :password "changeit"
+   :label    "NC-opt-out-client"}
+
+  ;; NC: opt-out mTLS truststore (NC<->Opt-Out)
+  {:path     "../national-connector/config/dev-opt-out-truststore.p12"
+   :type     "PKCS12"
+   :password "changeit"
+   :label    "NC-opt-out-truststore"}]
 
  ;; Prefix all metric names with this
  :prefix "cert_sds_"
 
  ;; How often to re-read the certificate files
  :scrape-interval-seconds 60
+
+ ;; Port for the http service exposing the /metrics endpoint
  :port 9090}
