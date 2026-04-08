@@ -35,6 +35,7 @@ x-opentelemetry-config: &opentelemetry-config
   OTEL_EXPORTER_OTLP_ENDPOINT: http://alloy-edge:4317
   OTEL_EXPORTER_OTLP_PROTOCOL: grpc
   OTEL_TRACES_SAMPLER: always_on
+  OTEL_RESOURCE_ATTRIBUTES: "deployment.environment.name=${GRAFANA_ENVIRONMENT:-Training}"
 
 services:
   # The tomcat servers run as user 10001. In order for the services to start correctly,
@@ -399,6 +400,7 @@ services:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
     environment:
       OTLP_SERVER_ENDPOINT: http://host.docker.internal:4317
+      GRAFANA_ENVIRONMENT: ${GRAFANA_ENVIRONMENT:-Training}
     extra_hosts:
       # https://docs.docker.com/reference/cli/dockerd/#configure-host-gateway-ip
       - "host.docker.internal:host-gateway" # to allow connections to alloy-hub
