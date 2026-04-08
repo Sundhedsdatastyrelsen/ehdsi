@@ -1,51 +1,43 @@
 {:keystores
- [;; NCP: EU TLS keystore (dev)
-  {:path     "../NCP/keystore/dev-tls.jks"
-   :type     "JKS"
-   :password "password"
-   :label    "NCP-eu-tls"}
+ [{:description "NCP: EU TLS keystore (dev)"
+   :path "../NCP/keystore/dev-tls.jks"
+   :type "JKS"
+   :password "password"}
 
-  ;; NCP: EU SEAL keystore (dev)
-  {:path     "../NCP/keystore/dev-seal.jks"
-   :type     "JKS"
-   :password "password"
-   :label    "NCP-eu-seal"}
+  {:description "NCP: EU SEAL keystore (dev)"
+   :path "../NCP/keystore/dev-seal.jks"
+   :type "JKS"
+   :password "password"}
 
-  ;; NCP: dev truststore (holds the NC->OpenNCP TLS certificate on the OpenNCP side)
-  {:path     "../NCP/keystore/dev-truststore.jks"
-   :type     "JKS"
-   :password "changeit"
-   :label    "NCP-dev-truststore"}
+  {:description "NCP: dev truststore (holds the NC->OpenNCP TLS certificate on the OpenNCP side)"
+   :path "../NCP/keystore/dev-truststore.jks"
+   :type "JKS"
+   :password "changeit"}
 
-  ;; NCP: EU truststore (trusted EU contact point certificates)
-  {:path     "../NCP/keystore/eu-truststore.jks"
-   :type     "JKS"
-   :password "changeit"
-   :label    "NCP-eu-truststore"}
+  {:description "NCP: EU truststore (trusted EU contact point certificates)"
+   :path "../NCP/keystore/eu-truststore.jks"
+   :type "JKS"
+   :password "changeit"}
 
-  ;; NC: signing certificate used for SOSI STS requests (NC->SOSI STS)
-  {:path     "../national-connector/data/epps-sosi-sts-client.jks"
-   :type     "JKS"
-   :password #env "SOSI_KEYSTORE_PASSWORD"
-   :label    "NC-sosi-sts"}
+  {:description "NC: signing certificate used for SOSI STS requests (NC->SOSI STS)"
+   :path "../national-connector/data/epps-sosi-sts-client.jks"
+   :type "JKS"
+   :password #env "SOSI_KEYSTORE_PASSWORD"}
 
-  ;; NC: dev signing keystore (used in tests as NC signing certificate)
-  {:path     "../national-connector/config/dev-keystore.jks"
-   :type     "JKS"
-   :password "Test.1234"
-   :label    "NC-dev-signing"}
+  {:description "NC: dev signing keystore (used in tests as NC signing certificate)"
+   :path "../national-connector/config/dev-keystore.jks"
+   :type "JKS"
+   :password "Test.1234"}
 
-  ;; NC: opt-out mTLS client keystore (NC<->Opt-Out)
-  {:path     "../national-connector/config/dev-opt-out-keystore.p12"
-   :type     "PKCS12"
-   :password "changeit"
-   :label    "NC-opt-out-client"}
+  {:description "NC: opt-out mTLS client keystore (NC<->Opt-Out)"
+   :path "../national-connector/config/dev-opt-out-keystore.p12"
+   :type "PKCS12"
+   :password "changeit"}
 
-  ;; NC: opt-out mTLS truststore (NC<->Opt-Out)
-  {:path     "../national-connector/config/dev-opt-out-truststore.p12"
-   :type     "PKCS12"
-   :password "changeit"
-   :label    "NC-opt-out-truststore"}]
+  {:description "NC: opt-out mTLS truststore (NC<->Opt-Out)"
+   :path "../national-connector/config/dev-opt-out-truststore.p12"
+   :type "PKCS12"
+   :password "changeit"}]
 
  ;; Prefix all metric names with this
  :prefix "cert_sds_"

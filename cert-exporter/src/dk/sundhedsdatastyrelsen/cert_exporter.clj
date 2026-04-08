@@ -53,13 +53,13 @@
 
 (defn keystore-certs
   "Returns a seq of maps with certificate metadata for every alias in the keystore."
-  [{:keys [label path] :as ks-config}]
+  [{:keys [description path] :as ks-config}]
   (let [ks (load-keystore ks-config)]
     (for [alias (enumeration-seq (.aliases ks))
           :let  [cert (leaf-cert ks alias)]
           :when (instance? X509Certificate cert)]
       (assoc (cert-info cert)
-             :label label
+             :description description
              :path path
              :alias alias))))
 
@@ -95,13 +95,13 @@
 (def not-after-gauge
   {:name "not_after_timestamp_seconds"
    :help "Unix timestamp of certificate expiry (not-after)"
-   :labels [:label :path :alias :subject :issuer]
+   :labels [:description :path :alias :subject :issuer]
    :value-fn (fn [cert-data] (.getEpochSecond ^Instant (:not-after cert-data)))})
 
 (def not-before-gauge
   {:name "not_before_timestamp_seconds"
    :help "Unix timestamp of certificate validity start (not-before)"
-   :labels [:label :path :alias :subject :issuer]
+   :labels [:description :path :alias :subject :issuer]
    :value-fn (fn [cert-data] (.getEpochSecond ^Instant (:not-before cert-data)))})
 
 (defn set-gauge!
@@ -119,7 +119,7 @@
           data (try
                  (keystore-certs ks-config)
                  (catch Exception e
-                   (log/error "failed to read keystore" (:label ks-config) ":" (.getMessage e))))
+                   (log/error "failed to read keystore" (:path ks-config) ":" (.getMessage e))))
           :when data
           gauge gauges]
     (set-gauge! gauge data)))
@@ -130,7 +130,7 @@
   (update-metrics! [{:path "../NCP/keystore/dev-tls.jks"
                      :type "JKS"
                      :password "password"
-                     :label "NCP-dev-tls"}]
+                     :description "NCP-dev-tls"}]
                    *gauges)
   )
 
