@@ -89,4 +89,12 @@ class DispensationAllowedTest {
         var res1 = DispensationAllowed.getDispensationRestrictions(prescription, pInfo);
         assertThat(res1, is("Dose dispensed medications are not supported."));
     }
+
+    @Test
+    void narcoticPrescriptionsAreBlocked() {
+        var prescription = PrescriptionType.builder().build();
+        var pInfo = new PackageInfo("", "AP4", "", 1);
+        var res1 = DispensationAllowed.getDispensationRestrictions(prescription, pInfo);
+        assertThat(res1, is("Medicine dispensation regulation prohibits cross border dispensation."));
+    }
 }
