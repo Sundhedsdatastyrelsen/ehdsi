@@ -32,4 +32,8 @@ public class PatientSummaryL3 {
     /// Egen læge
     /// Might be null if we don't have the information.
     PreferredHealthProfessional preferredHp;
+
+
+
+
 }

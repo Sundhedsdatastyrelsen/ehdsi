@@ -73,6 +73,7 @@ public class FmkClientDgws {
 
     /// We only need DGWS to create prescriptions and drug medications for tests. Foreign health professionals should
     /// not be able to create Danish prescriptions. So we keep it in here.
+    /// Additionally due to limitations of IDWS, we also allow retrieval of MedicineCards (For now).
     private <RequestType, ResponseType> ResponseType fmkRequestDgws(
         JAXBElement<RequestType> request,
         String soapAction,
@@ -132,20 +133,4 @@ public class FmkClientDgws {
 
         return objectFactory.createConsentHeader(consentHeader);
     }
-
-    /**
-     * Convert a ZonedDateTime to XMLGregorianCalendar.
-     */
-    private  XMLGregorianCalendar xmlGregorianCalendar(ZonedDateTime zdt) {
-        return DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar(GregorianCalendar.from(zdt));
-    }
-
-    /**
-     * Convert a LocalDate to XMLGregorianCalendar.
-     */
-    private  XMLGregorianCalendar xmlGregorianCalendar(LocalDate date) {
-        return xmlGregorianCalendar(date.atStartOfDay(ZoneId.of("Z")));
-    }
-
-
 }

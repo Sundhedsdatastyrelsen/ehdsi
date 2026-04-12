@@ -48,6 +48,8 @@ class PatientSummaryL3GeneratorTest {
             .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
             .build();
 
+        var medicineCard = "";
+
         var model = PatientSummaryL3.builder()
             .documentId(new CdaId(oid, extension))
             .effectiveTime(creationTimestamp)

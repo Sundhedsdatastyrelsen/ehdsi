@@ -144,7 +144,6 @@ class FmkIT {
     void getMedicationTest() throws Exception {
         var cpr = Fmk.cprHelleReadOnly;
 
-
         var getMedicationRequest = GetMedicineCardRequestType.builder()
             .withPersonIdentifier()
             .withSource("CPR")
@@ -152,27 +151,17 @@ class FmkIT {
             .end()
             .build();
 
-
         // GetMedicineCard should work with IDWS, but it doesn't, so we use DGWS instead.
         // It's not critical for production.
-//        var medicineCard = Fmk.dgwsApiClient().getMedicineCard(
-//            GetMedicineCardRequestType.builder()
-//                .withPersonIdentifier(personIdentifier)
-//                .withIncludePrescriptions(true)
-//                .build(),
-//            TestIdentities.lægeCharlesBabbage,
-//            PredefinedRequestedRole.LÆGE
-//        ).getMedicineCard().getFirst();
+        var medicineCard = Fmk.dgwsApiClient().getMedicineCard(
+            getMedicationRequest,
+            TestIdentities.lægeCharlesBabbage,
+            PredefinedRequestedRole.LÆGE
+        ).getMedicineCard();
 
-        var tmp = Fmk.dgwsApiClient();
-        var tmp2 = tmp.getMedicineCard(getMedicationRequest,TestIdentities.lægeCharlesBabbage,PredefinedRequestedRole.LÆGE).getMedicineCard().getFirst();
-        var tmp3 = tmp2.getDrugMedication().getFirst();
-
-        var drugMedication = Fmk.dgwsApiClient()
-            .getMedicineCard(getMedicationRequest, TestIdentities.lægeCharlesBabbage, PredefinedRequestedRole.LÆGE);
-        assertThat(drugMedications.getPersonIdentifier().getValue(), is(cpr));
-        assertThat(drugMedication, is(not(empty())));
-
+        var firstMedicineCard = medicineCard.getFirst();
+        var drugMedication = medicineCard.getFirst().getDrugMedication().getFirst();
+        assertThat(medicineCard, is(not(empty())));
     }
 
     @Test

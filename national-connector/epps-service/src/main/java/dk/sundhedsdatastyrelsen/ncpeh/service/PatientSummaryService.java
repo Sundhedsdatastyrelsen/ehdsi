@@ -122,7 +122,7 @@ public class PatientSummaryService {
             .withIncludeEffectuations(false)
             .build();
         try {
-            var fmkCard = fmkServiceDgws.getMedicineCard(medicationCardRequest, system, PredefinedRequestedRole.SYSTEM);
+            var fmkCard = fmkServiceDgws.getMedicineCard(medicationCardRequest, system, PredefinedRequestedRole.LÆGE);
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
