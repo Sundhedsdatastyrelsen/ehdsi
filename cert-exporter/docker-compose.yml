@@ -30,5 +30,10 @@ services:
       - seal_keystore_password
       - tls_truststore_password
       - sosi_keystore_password
+    labels:
+      monitoring.logs.scrape: "true"
+      monitoring.metrics.scrape: "true"
+      monitoring.metrics.port: "9090"
+      monitoring.environment: ${GRAFANA_ENVIRONMENT:-Training}
     networks:
       - ncp
