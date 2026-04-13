@@ -6,6 +6,7 @@
    [clojure.tools.logging :as log]
    [ring.adapter.jetty :as jetty])
   (:import
+   [dev.scheibelhofer.crypto.provider JctProvider]
    [io.prometheus.metrics.core.metrics Gauge Gauge$DataPoint]
    [io.prometheus.metrics.expositionformats ExpositionFormats]
    [io.prometheus.metrics.model.registry PrometheusRegistry]
@@ -38,10 +39,17 @@
 ;;; ---------------------------------------------------------------------------
 ;;; Keystore parsing
 
+(defn keystore ^KeyStore [type]
+  (if (= "pem" type)
+    ;; we use a special keystore implementation to handle raw pem files:
+    ;; https://www.scheibelhofer.dev/
+    (KeyStore/getInstance ^String type (JctProvider/getInstance))
+    (KeyStore/getInstance type)))
+
 (defn load-keystore ^KeyStore [{:keys [path type password]}]
-  (let [ks (KeyStore/getInstance type)]
-    (with-open [stream (io/input-stream path)]
-      (.load ks stream (char-array password)))
+  (let [ks (keystore type)]
+    (with-open [is (io/input-stream path)]
+      (.load ks is (char-array password)))
     ks))
 
 (defn leaf-cert

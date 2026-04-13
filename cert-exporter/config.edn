@@ -24,10 +24,9 @@
    :type "JKS"
    :password #file "/run/secrets/sosi_keystore_password"}
 
-  ;; TODO: PEM support not yet implemented
-  #_{:description "NC: NC->OpenNCP TLS certificate"
-     :path "/certs/nc-secrets/NC_NCP_CERTIFICATE"
-     :type "PEM"}
+  {:description "NC: NC->OpenNCP TLS certificate"
+   :path "/certs/nc-secrets/NC_NCP_CERTIFICATE"
+   :type "pem"}
 
   {:description "NC: opt-out mTLS client keystore (NC<->Opt-Out)"
    :path "/certs/nc-config/dev-opt-out-keystore.p12"

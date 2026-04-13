@@ -3,6 +3,7 @@
 
          aero/aero {:mvn/version "1.1.6"} ; config file parsing
          ch.qos.logback/logback-classic {:mvn/version "1.5.32"}
+         dev.scheibelhofer/crypto-tools {:mvn/version "0.0.8"}
          io.prometheus/prometheus-metrics-core {:mvn/version "1.5.0"}
          io.prometheus/prometheus-metrics-exposition-formats {:mvn/version "1.5.0"}
          ring/ring-core {:mvn/version "1.15.3"} ; web server
