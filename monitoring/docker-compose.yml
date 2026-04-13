@@ -1,6 +1,6 @@
 x-monitoring-labels: &monitoring-labels
   monitoring.logs.scrape: "true"
-  monitoring.environment: ${MONITORING_ENVIRONMENT:-Training}
+  monitoring.environment: ${GRAFANA_ENVIRONMENT:-Training}
 
 networks:
   monitoring:
