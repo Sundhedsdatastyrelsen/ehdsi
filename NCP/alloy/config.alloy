@@ -190,20 +190,7 @@ prometheus.scrape "docker_metrics" {
   forward_to = [otelcol.receiver.prometheus.edge.receiver]
 }
 
-// Stamp deployment.environment resource attribute on prometheus-scraped metrics,
-// as these do not go through the Java OTel agent which sets it for OTLP sources.
 otelcol.receiver.prometheus "edge" {
-  output {
-    metrics = [otelcol.processor.transform.add_environment.input]
-  }
-}
-
-otelcol.processor.transform "add_environment" {
-  metric_statements {
-    context    = "resource"
-    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
-  }
-
   output {
     metrics = [otelcol.processor.batch.default.input]
   }
