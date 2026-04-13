@@ -1,43 +1,43 @@
 {:keystores
- [{:description "NCP: EU TLS keystore (dev)"
-   :path "../NCP/keystore/dev-tls.jks"
+ [{:description "NCP: EU TLS keystore"
+   :path "/certs/ncp/dev-tls.jks"
    :type "JKS"
-   :password "password"}
+   :password #file "/run/secrets/tls_keystore_password"}
 
-  {:description "NCP: EU SEAL keystore (dev)"
-   :path "../NCP/keystore/dev-seal.jks"
+  {:description "NCP: EU SEAL keystore"
+   :path "/certs/ncp/dev-seal.jks"
    :type "JKS"
-   :password "password"}
+   :password #file "/run/secrets/seal_keystore_password"}
 
   {:description "NCP: dev truststore (holds the NC->OpenNCP TLS certificate on the OpenNCP side)"
-   :path "../NCP/keystore/dev-truststore.jks"
+   :path "/certs/ncp/dev-truststore.jks"
    :type "JKS"
-   :password "changeit"}
+   :password #file "/run/secrets/tls_truststore_password"}
 
   {:description "NCP: EU truststore (trusted EU contact point certificates)"
-   :path "../NCP/keystore/eu-truststore.jks"
+   :path "/certs/ncp/eu-truststore.jks"
    :type "JKS"
-   :password "changeit"}
+   :password #file "/run/secrets/tls_truststore_password"}
 
   {:description "NC: signing certificate used for SOSI STS requests (NC->SOSI STS)"
-   :path "../national-connector/data/epps-sosi-sts-client.jks"
+   :path "/certs/nc-data/epps-sosi-sts-client.jks"
    :type "JKS"
-   :password #env "SOSI_KEYSTORE_PASSWORD"}
+   :password #file "/run/secrets/sosi_keystore_password"}
 
-  {:description "NC: dev signing keystore (used in tests as NC signing certificate)"
-   :path "../national-connector/config/dev-keystore.jks"
-   :type "JKS"
-   :password "Test.1234"}
+  ;; TODO: PEM support not yet implemented
+  #_{:description "NC: NC->OpenNCP TLS certificate"
+     :path "/certs/nc-secrets/NC_NCP_CERTIFICATE"
+     :type "PEM"}
 
   {:description "NC: opt-out mTLS client keystore (NC<->Opt-Out)"
-   :path "../national-connector/config/dev-opt-out-keystore.p12"
+   :path "/certs/nc-config/dev-opt-out-keystore.p12"
    :type "PKCS12"
-   :password "changeit"}
+   :password #file "/run/secrets/tls_truststore_password"}
 
   {:description "NC: opt-out mTLS truststore (NC<->Opt-Out)"
-   :path "../national-connector/config/dev-opt-out-truststore.p12"
+   :path "/certs/nc-config/dev-opt-out-truststore.p12"
    :type "PKCS12"
-   :password "changeit"}]
+   :password #file "/run/secrets/tls_truststore_password"}]
 
  ;; Prefix all metric names with this
  :prefix "cert_sds_"
