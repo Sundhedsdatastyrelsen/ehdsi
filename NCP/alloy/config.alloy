@@ -35,29 +35,162 @@ otelcol.exporter.otlp "default" {
   }
 }
 
-// Metrics scraping
-prometheus.scrape "node_exporter" {
-  targets = [
-    {"__address__" = "node-exporter:9100"},
-  ]
-  job_name = "ncp-server-node-exporter"
+/// Collect logs from Docker daemon
+
+discovery.docker "local" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "log_scrape_targets" {
+  targets = discovery.docker.local.targets
+
+  // Only scrape containers that have the label: monitoring.logs.scrape=true
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_logs_scrape"]
+    regex         = "true"
+    action        = "keep"
+  }
+
+  // /foo -> foo
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+    replacement   = "$1"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "container_id"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "logstream"
+  }
+
+  // Promote the container label "monitoring.environment" to a Loki label "deployment_environment_name"
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_environment"]
+    target_label  = "deployment_environment_name"
+  }
+}
+
+loki.process "pipeline" {
+  // Read log lines using the CRI logging format.
+  stage.cri {}
+
+  // Parse multiline log entries.  If a line is indented it is considered part of the previous block.
+  stage.multiline {
+    firstline = "^\\S"
+  }
+
+  // If possible, parse log line as json
+  stage.json {
+    expressions = {
+      level = "level",
+    }
+  }
+
+  // Promote extracted "level" into a Loki label
+  stage.labels {
+    values = {
+      level = "",
+    }
+  }
+
+  stage.static_labels {
+    values = {
+      // to differentiate from the OTLP logs which have exporter = "OTLP"
+      exporter = "docker-daemon",
+    }
+  }
+
+  forward_to = [otelcol.receiver.loki.default.receiver]
+}
+
+// Bridge from Loki-native pipeline into the OTLP pipeline for forwarding to alloy-hub
+otelcol.receiver.loki "default" {
+  output {
+    logs = [otelcol.processor.batch.default.input]
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.log_scrape_targets.output
+  forward_to = [loki.process.pipeline.receiver]
+}
+
+// Metrics scraping via Docker label discovery
+
+discovery.relabel "metrics_targets" {
+  targets = discovery.docker.local.targets
+
+  // Only scrape containers that have the label: monitoring.metrics.scrape=true
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_metrics_scrape"]
+    regex         = "true"
+    action        = "keep"
+  }
+
+  // Strip leading slash from container name into a reusable label
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "__container_name"
+    replacement   = "$1"
+  }
+
+  // Use container name as the job label
+  rule {
+    source_labels = ["__container_name"]
+    target_label  = "job"
+  }
+
+  // Default port to 9100; override with monitoring.metrics.port label if set
+  rule {
+    target_label = "__metrics_port"
+    replacement  = "9100"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_metrics_port"]
+    regex         = "(.+)"
+    target_label  = "__metrics_port"
+  }
+
+  // Set __address__ to <container_name>:<port>
+  rule {
+    source_labels = ["__container_name", "__metrics_port"]
+    separator     = ":"
+    target_label  = "__address__"
+  }
+
+  // Default path to /metrics; override with monitoring.metrics.path label if set
+  // __metrics_path__ is picked up as an argument to prometheus.scrape
+  rule {
+    target_label = "__metrics_path__"
+    replacement  = "/metrics"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_metrics_path"]
+    regex         = "(.+)"
+    target_label  = "__metrics_path__"
+  }
+
+  // Carry over deployment_environment_name
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_environment"]
+    target_label  = "deployment_environment_name"
+  }
+}
+
+prometheus.scrape "docker_metrics" {
+  targets    = discovery.relabel.metrics_targets.output
   forward_to = [otelcol.receiver.prometheus.edge.receiver]
 }
 
-// Stamp deployment.environment resource attribute on prometheus-scraped metrics,
-// as these do not go through the Java OTel agent which sets it for OTLP sources.
 otelcol.receiver.prometheus "edge" {
-  output {
-    metrics = [otelcol.processor.transform.add_environment.input]
-  }
-}
-
-otelcol.processor.transform "add_environment" {
-  metric_statements {
-    context    = "resource"
-    statements = ["set(attributes[\"deployment.environment.name\"], \"" + sys.env("GRAFANA_ENVIRONMENT") + "\")"]
-  }
-
   output {
     metrics = [otelcol.processor.batch.default.input]
   }

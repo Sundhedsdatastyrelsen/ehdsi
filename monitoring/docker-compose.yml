@@ -1,3 +1,7 @@
+x-monitoring-labels: &monitoring-labels
+  monitoring.logs.scrape: "true"
+  monitoring.environment: ${GRAFANA_ENVIRONMENT:-Training}
+
 networks:
   monitoring:
     name: monitoring
@@ -8,6 +12,8 @@ services:
     image: grafana/mimir:3.0.2
     container_name: mimir
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     command: ["-config.file=/etc/mimir/mimir.yaml"]
     volumes:
       - ./mimir:/etc/mimir
@@ -19,6 +25,8 @@ services:
   loki:
     image: grafana/loki:3.5
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./loki:/etc/loki
@@ -31,6 +39,8 @@ services:
     image: grafana/grafana:12.0.2
     container_name: grafana
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     ports:
       - "3000:3000"
     environment:
@@ -53,6 +63,8 @@ services:
     image: memcached:1.6-alpine
     container_name: memcached
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     ports:
       - "11211:11211"
     environment:
@@ -66,6 +78,8 @@ services:
   tempo-init:
     image: &tempoImage grafana/tempo:2.8.1
     user: root
+    labels:
+      <<: *monitoring-labels
     entrypoint:
       - "chown"
       - "10001:10001"
@@ -78,6 +92,8 @@ services:
     image: *tempoImage
     container_name: tempo
     restart: unless-stopped
+    labels:
+      <<: *monitoring-labels
     ports:
       - "16686:16686" # tempo query frontend
     command: [ "-config.file=/etc/tempo/tempo.yaml" ]
@@ -90,25 +106,6 @@ services:
       - memcached
       - tempo-init
 
-  # node-exporter for host VM metrics
-  node-exporter:
-    image: prom/node-exporter:v1.9.1
-    container_name: node-exporter
-    restart: unless-stopped
-    pid: host # Use the host PID namespace
-    cap_add:
-     - SYS_TIME
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/rootfs'
-    networks:
-      - monitoring
-
   # Grafana Alloy is the node that receives all telemetrics and distributes them to the backends
   alloy-hub:
     image: grafana/alloy:v1.12.2
@@ -119,7 +116,6 @@ services:
     volumes:
       - alloy_data:/var/lib/alloy
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - monitoring
 
