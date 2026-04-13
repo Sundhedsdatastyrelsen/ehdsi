@@ -133,4 +133,15 @@ public class FmkClientDgws {
 
         return objectFactory.createConsentHeader(consentHeader);
     }
+
+
+    private  XMLGregorianCalendar xmlGregorianCalendar(ZonedDateTime zdt) {
+        return DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar(GregorianCalendar.from(zdt));
+    }
+
+    private  XMLGregorianCalendar xmlGregorianCalendar(LocalDate date) {
+        return xmlGregorianCalendar(date.atStartOfDay(ZoneId.of("Z")));
+    }
+
+
 }

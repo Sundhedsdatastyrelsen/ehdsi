@@ -33,13 +33,6 @@ public class PatientSummaryL3Generator {
     }
 
     static PatientSummaryL3 inputToModel(PatientSummaryInput input) {
-        return PatientSummaryL3.builder()
-            .documentId(CdaId.fromDocumentId(input.documentId()))
-            .effectiveTime(OffsetDateTime.now())
-            // TODO is the title correct?
-            .title("Patient Summary")
-            .patient(input.patient())
-            .preferredHp(input.preferredHealthProfessional())
-            .build();
+        return PatientSummaryL3Mapper.model(input);
     }
 }

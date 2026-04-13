@@ -160,8 +160,10 @@ class FmkIT {
         ).getMedicineCard();
 
         var firstMedicineCard = medicineCard.getFirst();
-        var drugMedication = medicineCard.getFirst().getDrugMedication().getFirst();
+        var drugMedications = medicineCard.getFirst().getDrugMedication();
+        var drugMedication = drugMedications.getFirst();
         assertThat(medicineCard, is(not(empty())));
+        assertThat(drugMedications, is(not(empty())));
     }
 
     @Test

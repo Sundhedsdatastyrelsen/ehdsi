@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @Value
 @Builder
 @With
-public class PatientSummaryL3 {
+public class    PatientSummaryL3 {
     /**
      * Unique ID identifying the CDA document (not the summary itself).
      */
@@ -23,17 +23,17 @@ public class PatientSummaryL3 {
      */
     @NonNull OffsetDateTime effectiveTime;
 
-    public String getEffectiveTime() {
-        return Utils.cdaZonedDateTime(effectiveTime);
-    }
-
     @NonNull Patient patient;
 
     /// Egen læge
     /// Might be null if we don't have the information.
     PreferredHealthProfessional preferredHp;
 
+    Author author;
 
+    @NonNull MedicalSummary medicalSummary;
 
-
+    public String getEffectiveTime() {
+        return Utils.cdaZonedDateTime(effectiveTime);
+    }
 }
