@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class PatientSummaryL3Mapper {
-    private  PatientSummaryL3Mapper(){
+    private PatientSummaryL3Mapper() {
 
     }
 
@@ -88,7 +88,6 @@ public class PatientSummaryL3Mapper {
         return String.format(
             "eHDSI Patient Summary %s - %s", patientName, documentId);
     }
-
 
     private static MedicalSummary medicalSummary(List<DrugMedicationType> medications) {
         return MedicalSummary.builder()
@@ -194,13 +193,6 @@ public class PatientSummaryL3Mapper {
             .formCode(formCode)
             .atcCode(atcCode)
             .build();
-    }
-
-    /// Public for testing
-    public static BigDecimal calculateInnerPackageAmount(BigDecimal numericalPackageSize, Integer numberOfSubPackages) {
-        return numericalPackageSize
-            .setScale(2, RoundingMode.UNNECESSARY)
-            .divide(BigDecimal.valueOf(numberOfSubPackages == null || numberOfSubPackages == 0 ? 1 : numberOfSubPackages, 0), RoundingMode.UNNECESSARY);
     }
 
     private static CdaId organizationId(OrganisationIdentifierType fmkOrgId) {
@@ -342,6 +334,7 @@ public class PatientSummaryL3Mapper {
         @NonNull String unstructured
     ) {}
 
+    /// @throws MapperException if something can't be mapped
     private static ActiveIngredients activeIngredients(DrugMedicationType medication) {
         var drug = medication.getDrug();
         if (drug == null) {
@@ -385,6 +378,7 @@ public class PatientSummaryL3Mapper {
         return null;
     }
 
+    /// @throws MapperException if something can't be mapped
     private static String getSubstanceStrengthText(DrugStrengthType strength) {
         return Optional.ofNullable(strength)
             .map(DrugStrengthType::getText)
@@ -392,13 +386,7 @@ public class PatientSummaryL3Mapper {
             .orElse(null);
     }
 
-//    /// @throws MapperException if something can't be mapped
-//    public static String drugStrengthText(@NonNull PrescriptionType prescription) {
-//        return Optional.ofNullable(prescription.getDrug())
-//            .map(DrugType::getStrength)
-//            .map(EPrescriptionL3Mapper::getSubstanceStrengthText)
-//            .orElse(null);
-//    }
+
 //
 //    /// @throws MapperException if something can't be mapped
 //    public static String productDescription(@NonNull PrescriptionType prescription) {

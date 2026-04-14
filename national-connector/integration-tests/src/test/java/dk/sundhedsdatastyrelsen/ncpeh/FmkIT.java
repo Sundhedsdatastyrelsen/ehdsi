@@ -24,6 +24,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.service.undo.UndoDispensationRepository;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Sosi;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.TestIdentities;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
@@ -162,6 +163,7 @@ class FmkIT {
         var firstMedicineCard = medicineCard.getFirst();
         var drugMedications = medicineCard.getFirst().getDrugMedication();
         var drugMedication = drugMedications.getFirst();
+
         assertThat(medicineCard, is(not(empty())));
         assertThat(drugMedications, is(not(empty())));
     }
