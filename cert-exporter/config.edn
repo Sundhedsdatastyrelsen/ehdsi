@@ -26,7 +26,7 @@
 
   {:description "NC: NC->OpenNCP TLS certificate"
    :path "/certs/nc-secrets/NC_NCP_CERTIFICATE"
-   :type "pem"}
+   :type "PEM"}
 
   {:description "NC: opt-out mTLS client keystore (NC<->Opt-Out)"
    :path "/certs/nc-config/dev-opt-out-keystore.p12"

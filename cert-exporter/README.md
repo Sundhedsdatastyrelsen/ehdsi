@@ -51,4 +51,4 @@ If a keystore cannot be read (wrong password, missing file, etc.) an error is lo
 ## Dashboard
 
 `dashboards/cert-exporter.json` can be imported directly into Grafana.
-It shows a table of all certificates with expiry colour-coded green (> 12 months), orange (6–12 months), and red (< 6 months).
+It shows a table of all certificates with expiry colour-coded green (> 12 months), orange (3–12 months), and red (< 3 months).

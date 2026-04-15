@@ -6,13 +6,12 @@
    [clojure.tools.logging :as log]
    [ring.adapter.jetty :as jetty])
   (:import
-   [dev.scheibelhofer.crypto.provider JctProvider]
    [io.prometheus.metrics.core.metrics Gauge Gauge$DataPoint]
    [io.prometheus.metrics.expositionformats ExpositionFormats]
    [io.prometheus.metrics.model.registry PrometheusRegistry]
    [java.io ByteArrayOutputStream]
    [java.security KeyStore]
-   [java.security.cert X509Certificate]
+   [java.security.cert CertificateFactory X509Certificate]
    [java.time Instant]
    [java.util.concurrent Executors ExecutorService TimeUnit]
    [org.eclipse.jetty.server Server]))
@@ -21,7 +20,6 @@
 
 ;;; ---------------------------------------------------------------------------
 ;;; Config
-
 
 ;; Allow reading string value from a file with `#file "filename.txt"` in config
 (defmethod aero/reader 'file
@@ -39,15 +37,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;; Keystore parsing
 
-(defn keystore ^KeyStore [type]
-  (if (= "pem" type)
-    ;; we use a special keystore implementation to handle raw pem files:
-    ;; https://www.scheibelhofer.dev/
-    (KeyStore/getInstance ^String type (JctProvider/getInstance))
-    (KeyStore/getInstance type)))
-
 (defn load-keystore ^KeyStore [{:keys [path type password]}]
-  (let [ks (keystore type)]
+  (let [ks (KeyStore/getInstance type)]
     (with-open [is (io/input-stream path)]
       (.load ks is (char-array password)))
     ks))
@@ -61,9 +52,7 @@
 
     (.isKeyEntry ks alias)
     (when-let [chain (.getCertificateChain ks alias)]
-      (first chain))
-
-    :else nil))
+      (first chain))))
 
 (defn cert-info [^X509Certificate cert]
   {:subject (-> cert .getSubjectX500Principal .getName)
@@ -71,8 +60,9 @@
    :not-before (-> cert .getNotBefore .toInstant)
    :not-after (-> cert .getNotAfter .toInstant)})
 
-(defn keystore-certs
-  "Returns a seq of maps with certificate metadata for every alias in the keystore."
+(defn java-keystore-certs
+  "Returns a seq of maps with certificate metadata for every alias in the keystore.
+  Keystore has to be compatible with JCA (Java Cryptography Architecture)."
   [{:keys [description path] :as ks-config}]
   (let [ks (load-keystore ks-config)]
     (for [alias (enumeration-seq (.aliases ks))
@@ -82,6 +72,23 @@
              :description description
              :path path
              :alias alias))))
+
+(defn pem-cert
+  "Returns certificate metadata for a single PEM-encoded X.509 certificate."
+  [{:keys [description path]}]
+  (with-open [is (io/input-stream path)]
+    (-> (CertificateFactory/getInstance "X.509")
+        (.generateCertificate is)
+        cert-info
+        (assoc :description description
+               :path path))))
+
+(defn keystore-certs
+  "Returns a seq of maps with certificate metadata for every alias in the keystore."
+  [ks-config]
+  (if (= "pem" (str/lower-case (:type ks-config)))
+    [(pem-cert ks-config)]
+    (java-keystore-certs ks-config)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; Prometheus metrics
@@ -127,7 +134,7 @@
 (defn set-gauge!
   "Update a gauge with a data point"
   [gauge data]
-  (let [label-values (into-array String (map #(get data %) (:labels gauge)))
+  (let [label-values (into-array String (map #(get data % "") (:labels gauge)))
         ^double value ((:value-fn gauge) data)]
     (-> gauge
         ^Gauge (:raw)
@@ -143,16 +150,6 @@
           :when data
           gauge gauges]
     (set-gauge! gauge data)))
-
-(comment
-  (def *gauges (mapv register-gauge! [not-after-gauge not-before-gauge]))
-
-  (update-metrics! [{:path "../NCP/keystore/dev-tls.jks"
-                     :type "JKS"
-                     :password "password"
-                     :description "NCP-dev-tls"}]
-                   *gauges)
-  )
 
 ;;; ---------------------------------------------------------------------------
 ;;; HTTP handler
@@ -174,7 +171,7 @@
     {:status 404 :headers {} :body "Not found"}))
 
 (comment
-  (-> (handler {:method :GET :uri "/metrics"})
+  (-> (handler {:request-method :get :uri "/metrics"})
       :body
       println)
   )
