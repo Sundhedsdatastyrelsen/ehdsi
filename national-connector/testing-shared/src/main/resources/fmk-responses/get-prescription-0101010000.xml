@@ -18,4 +18,136 @@
             <DistrictName>Ulstrup</DistrictName>
         </Address>
     </ns4:Patient>
+    <ns4:Prescription>
+        <ns4:Identifier>513334773498022</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>66046798</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1775635173342001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2026-04-08T07:59:33Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T07:59:33Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2026-04-08</ns4:ValidFromDate>
+        <ns4:ValidToDate>2028-04-08</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2026-03-16">111955</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2026-03-16">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk.</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2026-03-16">613</Code>
+            <Text>febernedsættende</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2026-03-16">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2026-03-16">28101674394</Identifier>
+            <Name>Panodil</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2026-03-16">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>1000.0</Value>
+                <UnitCode source="Medicinpriser" date="2026-03-16">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2026-03-16">1000 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2026-03-16">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet 3 gange daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>26198</ns4:Version>
+    </ns4:Prescription>
+    <ns4:Prescription>
+        <ns4:Identifier>513334832576021</ns4:Identifier>
+        <ns4:AttachedToDrugMedicationIdentifier>66046799</ns4:AttachedToDrugMedicationIdentifier>
+        <ns4:CreatedFromDrugMedicationVersion>1775635232886001002</ns4:CreatedFromDrugMedicationVersion>
+        <ns4:AuthorisationDateTime>2026-04-08T08:00:33Z</ns4:AuthorisationDateTime>
+        <ns4:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T08:00:33Z</DateTime>
+        </ns4:Created>
+        <ns4:ValidFromDate>2026-04-08</ns4:ValidFromDate>
+        <ns4:ValidToDate>2028-04-08</ns4:ValidToDate>
+        <ns4:PackageRestriction>
+            <ns2:PackageNumber source="Medicinpriser" date="2026-03-16">546483</ns2:PackageNumber>
+            <ns2:PackageSize>
+                <ns2:Value>100.00</ns2:Value>
+                <ns2:UnitCode source="Medicinpriser" date="2026-03-16">ST</ns2:UnitCode>
+                <ns2:UnitText>stk.</ns2:UnitText>
+                <ns2:PackageSizeText>100 stk. (blister)</ns2:PackageSizeText>
+            </ns2:PackageSize>
+            <ns2:PackageQuantity>1</ns2:PackageQuantity>
+        </ns4:PackageRestriction>
+        <ns4:Indication>
+            <Code source="Medicinpriser" date="2026-03-16">107</Code>
+            <Text>mod vandladningsbesvær</Text>
+        </ns4:Indication>
+        <ns4:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2026-03-16">G04CB01</Code>
+                <Text>Finasterid</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2026-03-16">28106153918</Identifier>
+            <Name>Finasterid "Amarox"</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2026-03-16">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>5.0</Value>
+                <UnitCode source="Medicinpriser" date="2026-03-16">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2026-03-16">5 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2026-03-16">FINASTERID</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns4:Drug>
+        <ns4:DosageText>1 tablet daglig</ns4:DosageText>
+        <ns4:SubstitutionAllowed>true</ns4:SubstitutionAllowed>
+        <ns4:Status>åben</ns4:Status>
+        <ns4:Version>6383</ns4:Version>
+    </ns4:Prescription>
 </ns4:GetPrescriptionResponse>

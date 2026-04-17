@@ -150,6 +150,8 @@ class FmkIT {
             .withSource("CPR")
             .withValue(cpr)
             .end()
+            .withIncludePrescriptions(true)
+            .withIncludeNonRelevantPrescriptions(true)
             .build();
 
         // GetMedicineCard should work with IDWS, but it doesn't, so we use DGWS instead.
@@ -159,6 +161,8 @@ class FmkIT {
             TestIdentities.lægeCharlesBabbage,
             PredefinedRequestedRole.LÆGE
         ).getMedicineCard();
+
+
 
         var firstMedicineCard = medicineCard.getFirst();
         var drugMedications = medicineCard.getFirst().getDrugMedication();

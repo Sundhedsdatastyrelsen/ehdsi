@@ -14,7 +14,7 @@ import java.util.List;
 public class MedicationItem {
     /**
      * Identifier for this medication entry in the CDA.
-     * Uses FMK medication id if available, otherwise derives a stable id from the documentID. #Todo: follow up on this with @JV or @HBG
+     * Uses FMK medication id if available, otherwise derives a stable id from the documentID.
      */
     @NonNull
     CdaId medicationId;
