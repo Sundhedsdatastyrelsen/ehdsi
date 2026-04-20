@@ -14,11 +14,6 @@
    :type "JKS"
    :password #file "/run/secrets/tls_truststore_password"}
 
-  {:description "NCP: EU truststore (trusted EU contact point certificates)"
-   :path "/certs/ncp/eu-truststore.jks"
-   :type "JKS"
-   :password #file "/run/secrets/tls_truststore_password"}
-
   {:description "NC: signing certificate used for SOSI STS requests (NC->SOSI STS)"
    :path "/certs/nc-data/epps-sosi-sts-client.jks"
    :type "JKS"
@@ -31,12 +26,12 @@
   {:description "NC: opt-out mTLS client keystore (NC<->Opt-Out)"
    :path "/certs/nc-config/dev-opt-out-keystore.p12"
    :type "PKCS12"
-   :password #file "/run/secrets/tls_truststore_password"}
+   :password "changeit"}
 
   {:description "NC: opt-out mTLS truststore (NC<->Opt-Out)"
    :path "/certs/nc-config/dev-opt-out-truststore.p12"
    :type "PKCS12"
-   :password #file "/run/secrets/tls_truststore_password"}]
+   :password "changeit"}]
 
  ;; Prefix all metric names with this
  :prefix "cert_sds_"
