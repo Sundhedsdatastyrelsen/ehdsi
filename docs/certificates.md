@@ -77,3 +77,10 @@ docker containers. Make sure you restart with the same image as they're already
 running with - and `docker restart` is not enough. Some variant of
 `cd NCP && docker compose up -d tomcat_node_a:VERSION` should do it, and similar
 for the national connector.
+
+## Monitoring and alerting
+
+The certificates can be monitored in Grafana via the cert-exporter dashboard.
+The dashboard is based on Prometheus data exposed by the cert-exporter service.
+
+Grafana can be used for alerting, e.g. by notifying when a certificate is about to expire.
