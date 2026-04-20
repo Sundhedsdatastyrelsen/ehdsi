@@ -24,11 +24,8 @@ import org.xmlunit.xpath.XPathEngine;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;

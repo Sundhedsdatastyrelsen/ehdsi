@@ -1,13 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import freemarker.template.TemplateException;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.OffsetDateTime;
 
 public class PatientSummaryL3Generator {
     private PatientSummaryL3Generator() {

@@ -31,7 +31,7 @@ public class    PatientSummaryL3 {
 
     Author author;
 
-    @NonNull MedicalSummary medicalSummary;
+    MedicalSummary medicalSummary;
 
     public String getEffectiveTime() {
         return Utils.cdaZonedDateTime(effectiveTime);
