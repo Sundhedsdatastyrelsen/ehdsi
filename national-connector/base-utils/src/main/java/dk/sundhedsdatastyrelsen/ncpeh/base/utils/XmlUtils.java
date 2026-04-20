@@ -31,7 +31,11 @@ public class XmlUtils {
      * @throws XmlException if parsing fails
      */
     public static Document parse(String xml) {
-        return parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        try {
+            return parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        } catch (XmlException exc) {
+            throw new XmlException(exc.getMessage(), exc.getCause(), xml);
+        }
     }
 
     /**
