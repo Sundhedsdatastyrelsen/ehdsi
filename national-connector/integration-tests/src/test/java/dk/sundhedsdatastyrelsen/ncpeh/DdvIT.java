@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh;
 
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.service.VaccinationService;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Ddv;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.Fmk;
@@ -15,7 +16,12 @@ class DdvIT {
     @Test
     void getVaccinationTest() throws Exception {
         var token = Sosi.getToken(Sosi.Audience.DDV);
-        var vaccinations = vaccinationService.getVaccinationsForCpr(Fmk.cprKarl, token);
-        assertThat(vaccinations, is(not(empty())));
+        try {
+            var vaccinations = vaccinationService.getVaccinationsForCpr(Fmk.cprKarl, token);
+            assertThat(vaccinations, is(not(empty())));
+        } catch (XmlException xmlException) {
+            System.out.println(xmlException.getFullText() != null ? xmlException.getFullText() : "No full text in exception");
+            throw xmlException;
+        }
     }
 }
