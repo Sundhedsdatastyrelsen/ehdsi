@@ -6,6 +6,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,9 +43,16 @@ class PatientSummaryL3MapperTest {
                 ))
                 .build();
 
+            var preferredHp = PreferredHealthProfessional.builder()
+                .name(Name.fromFullName("Tycho Brahe"))
+                .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
+                .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
+                .build();
+
+
             var input = new PatientSummaryInput(
                 "test-document-id",
-                null,
+                preferredHp,
                 patient,
                 response
             );
@@ -59,16 +68,16 @@ class PatientSummaryL3MapperTest {
         var model = getModel();
         Assertions.assertNotNull(model);
         Assertions.assertNotNull(model.getPatient());
-        Assertions.assertNotNull(model.getMedicalSummary());
-        Assertions.assertNotNull(model.getMedicalSummary().getEntries());
-        assertThat(model.getMedicalSummary().getEntries(), is(not(empty())));
+        Assertions.assertNotNull(model.getMedicationSummary());
+        Assertions.assertNotNull(model.getMedicationSummary().getEntries());
+        assertThat(model.getMedicationSummary().getEntries(), is(not(empty())));
     }
 
     @Test
     void getPatientMedicationInstructions() {
         var model = getModel();
 
-        var firstMedication = model.getMedicalSummary().getEntries().getFirst();
+        var firstMedication = model.getMedicationSummary().getEntries().getFirst();
 
         Assertions.assertNotNull(firstMedication);
         Assertions.assertNotNull(firstMedication.getMedicationId());
@@ -80,9 +89,20 @@ class PatientSummaryL3MapperTest {
     void getMedicationStartDate() {
         var model = getModel();
 
-        var firstMedication = model.getMedicalSummary().getEntries().getFirst();
+        var firstMedication = model.getMedicationSummary().getEntries().getFirst();
 
         Assertions.assertNotNull(firstMedication);
         Assertions.assertNotNull(firstMedication.getMedicationStartTime());
+    }
+
+
+    @Test
+    void getPreferredHealthProfessional() {
+        var model = getModel();
+
+        var preferredHealthProfessional = model.getPreferredHp();
+
+        Assertions.assertNotNull(preferredHealthProfessional);
+        Assertions.assertNotNull(preferredHealthProfessional.getName());
     }
 }

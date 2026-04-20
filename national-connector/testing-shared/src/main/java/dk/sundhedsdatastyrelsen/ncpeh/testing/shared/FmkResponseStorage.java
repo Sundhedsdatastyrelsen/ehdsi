@@ -67,8 +67,6 @@ public class FmkResponseStorage {
         return testCprs;
     }
 
-
-
     public FmkResponseStorage(@NonNull FmkClientIdws fmkClient, FmkClientDgws fmkClientDgws) {
         this.fmkClient = fmkClient;
         this.fmkClientDgws = fmkClientDgws;
@@ -142,7 +140,6 @@ public class FmkResponseStorage {
         return fmkClientDgws.getMedicineCard(request, caller, requestedRole);
     }
 
-
     public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response) {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e6.ObjectFactory();
         return fac.createGetPrescriptionResponse(response);
@@ -196,7 +193,6 @@ public class FmkResponseStorage {
         var name = "medicine-card-" + cpr + ".xml";
         return readStoredMedicineCard(name, resourceDir);
     }
-
 
     public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName, String resourceDir) throws JAXBException {
         var url = FmkResponseStorage.class.getClassLoader()

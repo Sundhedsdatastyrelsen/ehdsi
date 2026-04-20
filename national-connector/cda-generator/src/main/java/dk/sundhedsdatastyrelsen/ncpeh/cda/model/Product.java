@@ -15,6 +15,8 @@ public class Product {
     String strength;
     @NonNull CdaCode formCode;
     @NonNull CdaCode atcCode;
+
+    /// InnermostPackageLayer is mandatory in ePrescription but required in PatientSummary
     PackageLayer innermostPackageLayer;
     String manufacturerOrganizationName;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Value
 @Builder
 @With
-public class MedicalSummary {
+public class MedicationSummary {
     /**
      * One entry per medication item in the patient summary medication section.
      */

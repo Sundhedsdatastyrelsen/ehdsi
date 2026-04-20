@@ -204,7 +204,7 @@ public class FmkClientIdws {
     }
 
     /**
-     * "Hent medicinkort".
+     * "Hent medicinkort". - Per 2026-04-20 kan man ikke hente medicin kort via IDWS, der er oprettet en sag hos FMK for at rettet dette.
      * <a href="https://wiki.fmk-teknik.dk/doku.php?id=fmk:1.4.6:hent_medicinkort">FMK documentation.</a>
      */
     public GetMedicineCardResponseType getMedicineCard(GetMedicineCardRequestType request, EuropeanHcpIdwsToken token) throws JAXBException {

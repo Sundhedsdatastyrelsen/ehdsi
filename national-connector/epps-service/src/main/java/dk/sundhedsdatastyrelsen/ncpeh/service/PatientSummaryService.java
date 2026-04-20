@@ -120,8 +120,6 @@ public class PatientSummaryService {
             .withIncludeEffectuations(false)
             .build();
 
-
-
         try {
             var fmkCard = fmkServiceDgws.getMedicineCard(medicationCardRequest, system, PredefinedRequestedRole.LÆGE);
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard);
@@ -129,7 +127,7 @@ public class PatientSummaryService {
             // TODO better exception text
             throw new PublicException(400, "Error in received XML", e);
         } catch (JAXBException e) {
-            throw new RuntimeException(e);
+            throw new PublicException(500, "Failed to read medicineCards.", e);
         }
     }
 }

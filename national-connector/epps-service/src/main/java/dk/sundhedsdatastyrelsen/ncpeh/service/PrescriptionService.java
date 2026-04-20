@@ -31,7 +31,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
-import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.DataProvider;
 import dk.sundhedsdatastyrelsen.ncpeh.locallms.PackageInfo;
@@ -51,7 +50,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;

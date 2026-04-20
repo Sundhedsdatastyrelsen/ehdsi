@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.With;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class MedicationItem {
     /**
      * Identifier for this medication entry in the CDA.
-     * Uses FMK medication id if available, otherwise derives a stable id from the documentID.
+     * Uses FMK medication id.
      */
     @NonNull
     CdaId medicationId;
@@ -25,12 +26,20 @@ public class MedicationItem {
     OffsetDateTime medicationStartTime;
     OffsetDateTime medicationEndTime;
 
+    public String getMedicationStartTime() {
+        return medicationStartTime == null ? null : Utils.cdaDate(medicationStartTime);
+    }
+
+    public String getMedicationEndTime() {
+        return medicationEndTime == null ? null : Utils.cdaDate(medicationEndTime);
+    }
+
     /**
      * The element specifies the route of administration using the EDQM route of administration vocabulary. A code must
      * be specified if the route is known, and the displayName attribute should be specified. If the route is unknown,
      * this element shall not be sent.
      */
-    CdaCode administrationRoute;
+    CdaCode routeOfAdministration;
 
     /**
      * Dosage/posology information.
@@ -61,15 +70,8 @@ public class MedicationItem {
     String indicationText;
 
     /**
-     * Optional patient-facing medication instructions. #Todo: probably not needed since this is for medical professionals
+     * Optional patient-facing medication instructions.
      */
     String patientMedicationInstructions;
 
-    public String getMedicationStartTime() {
-        return medicationStartTime == null ? null : Utils.cdaDate(medicationStartTime);
-    }
-
-    public String getMedicationEndTime() {
-        return medicationEndTime == null ? null : Utils.cdaDate(medicationEndTime);
-    }
 }
