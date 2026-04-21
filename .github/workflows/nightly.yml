@@ -3,7 +3,7 @@ name: Nightly integration test
 on:
   workflow_dispatch:
   schedule:
-    - cron: "00 07 * * *"
+    - cron: "30 04 * * *"
 
 env:
   # Several jobs, at least "Create a new prescription in FMK" and "Run integration tests", and probably more,
