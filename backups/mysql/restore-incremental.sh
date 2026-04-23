@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Replay binary log files for point-in-time recovery on top of a full restore
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 BACKUP_DIR="$BACKUP_ROOT/mysql/binlog"

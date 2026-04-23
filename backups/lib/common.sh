@@ -8,18 +8,18 @@ set -o pipefail
 # Paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-BACKUP_ROOT="${EHDSI_BACKUP_DIR:-/opt/backup}"
+export BACKUP_ROOT="${EHDSI_BACKUP_DIR:-/opt/backup}"
 
 NCP_DIR="$REPO_ROOT/NCP"
-NC_DIR="$REPO_ROOT/national-connector"
+export NC_DIR="$REPO_ROOT/national-connector"
 
 # Container names
 MYSQL_CONTAINER="${MYSQL_CONTAINER:-openncp_db}"
 NC_CONTAINER="${NC_CONTAINER:-national-connector}"
 
 # Database lists
-MYSQL_DATABASES=(ehealth_properties ehealth_atna ehealth_ltrdb ehealth_eadc)
-SQLITE_DATABASES=(undo-db.sqlite local-lms-db.sqlite job-queue.sqlite)
+export MYSQL_DATABASES=(ehealth_properties ehealth_atna ehealth_ltrdb ehealth_eadc)
+export SQLITE_DATABASES=(undo-db.sqlite local-lms-db.sqlite job-queue.sqlite)
 
 # Retention defaults
 FULL_BACKUP_RETAIN="${FULL_BACKUP_RETAIN:-7}"

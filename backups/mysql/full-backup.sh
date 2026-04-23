@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Full backup of all MySQL databases via mysqldump
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 BACKUP_DIR="$BACKUP_ROOT/mysql/full"

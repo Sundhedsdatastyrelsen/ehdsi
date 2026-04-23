@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Incremental backup: copy rotated MySQL binary log files to host
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 BACKUP_DIR="$BACKUP_ROOT/mysql/binlog"

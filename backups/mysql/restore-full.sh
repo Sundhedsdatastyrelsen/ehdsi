@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Restore a full MySQL backup from a mysqldump file
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 BACKUP_DIR="$BACKUP_ROOT/mysql/full"

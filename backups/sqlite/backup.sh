@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Online-safe backup of all national-connector SQLite databases
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 TS=$(timestamp)

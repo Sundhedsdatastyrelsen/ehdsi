@@ -5,6 +5,7 @@
 # Respects $MYSQL_CONTAINER and $MYSQL_ROOT_PASSWORD env vars, so it can
 # target a disposable test container as well as the live source DB.
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 LABEL="${1:-}"

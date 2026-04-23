@@ -5,6 +5,7 @@
 # Respects $MYSQL_CONTAINER and $MYSQL_ROOT_PASSWORD — point at the live
 # source DB (default) or a restored test container to inspect state.
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 assert_container_running "$MYSQL_CONTAINER"

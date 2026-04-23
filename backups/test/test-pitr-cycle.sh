@@ -16,6 +16,7 @@
 #   8. Restore full backup                         → expect only A
 #   9. Restore incremental --stop-datetime=cutoff  → expect A and B, not C
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 RUN_ID=$(timestamp)
@@ -30,6 +31,7 @@ TEST_DIR="$SCRIPT_DIR_ABS"
 
 ROOT_PASSWORD=""
 
+# shellcheck disable=SC2317  # invoked via `trap cleanup EXIT`
 cleanup() {
     log "Cleaning up test sentinels..."
     if [[ -n "$ROOT_PASSWORD" ]]; then

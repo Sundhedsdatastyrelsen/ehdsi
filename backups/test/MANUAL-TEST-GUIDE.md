@@ -25,13 +25,6 @@ clear pass/fail signal.
 
 Run all commands from the repo root unless stated otherwise.
 
-## Glossary
-
-- **PITR** — Point-In-Time Recovery. Restore the database to an exact moment
-  between your last full backup and now, by replaying binary logs from that
-  coordinate and stopping at a chosen timestamp. This is how you undo "someone
-  dropped the wrong table at 14:37" without losing the writes from 14:36.
-
 ---
 
 ## Test 1 — Full backup + restore cycle (automated)
@@ -52,8 +45,6 @@ into a fresh MySQL server; table counts match; a sentinel row round-trips.
 - Every `ehealth_*` database reports matching source/restored table counts.
 - No `ERROR` lines during `gunzip | mysql` phase.
 
-**What this test does NOT cover:** binlog backup, incremental/PITR restore,
-crash-during-backup, corrupted file handling. Those are tests 2–5 below.
 
 ---
 
@@ -128,8 +119,6 @@ Both honour `$MYSQL_CONTAINER` and `$MYSQL_ROOT_PASSWORD`.
 ./backups/test/test-pitr-cycle.sh
 ```
 
-**Pass:** exits 0, final line reads `PITR CYCLE TEST PASSED`.
-**Fail:** any `FAIL:` line — see "known failure modes" below.
 
 ### 3b. Manual walkthrough
 
@@ -152,9 +141,9 @@ echo "Full backup: $FULL"
 # 4. Rotate + back up the binlog that contains B's write
 ./backups/mysql/binlog-backup.sh
 
-# 5. Record cutoff in CONTAINER-LOCAL time (see note on timezones below)
+# 5. Record cutoff in CONTAINER-LOCAL time 
 sleep 2
-STOP_AT=$(docker exec openncp_db date '+%Y-%m-%d %H:%M:%S')
+STOP_AT=$(docker exec openncp_db date '+%Y-%m-%d %H:%M:%S')  # Get timezone in the container to avoid timezone problems
 echo "Cutoff: $STOP_AT"
 sleep 2
 
@@ -187,51 +176,16 @@ docker exec openncp_db mysql -u root \
 
 **Pass:** step 8 shows `A` only; step 9 shows `A` and `B`.
 
-### Timezone gotcha
-
-`mysqlbinlog --stop-datetime` interprets the string in **the container's**
-local timezone, not the host's. If the host is (say) CEST and the container
-is UTC, a naive `STOP_AT=$(date …)` on the host gets interpreted as UTC
-inside the container and the cutoff lands two hours in the wrong place — C
-gets replayed.
-
-The walkthrough above uses `docker exec openncp_db date …` to avoid this.
-Always capture the cutoff from the container you're targeting.
-
-### Known failure modes
-
-- **A present twice, or PK conflict during replay** → binlog replay is
-  double-applying writes that are already in the dump. Usually means
-  `restore-incremental.sh` is starting earlier than the dump's embedded
-  coordinate. Check `--after` is picking up the right position.
-- **B missing after step 9** → the binlog containing B was not captured on
-  the host (step 4 didn't run, or ran before the write), or `--after` is
-  starting *after* B. Inspect `/opt/backup/mysql/binlog/` timestamps.
-- **C present after step 9** → `--stop-datetime` mismatch. Most often
-  timezone (see above); occasionally a too-tight cutoff where C's event
-  shares a second with the cutoff (events with `ts >= stop-datetime` are
-  excluded — so make sure C is at least 1s after the cutoff).
-
 ### Continuity check
 
 `restore-incremental.sh` refuses to replay if there are gaps in the binlog
 sequence (e.g. `binlog.000050, binlog.000052` with `000051` missing), or if
-the dump's start file is not on disk. Errors look like:
-
-```
-ERROR: Binlog sequence has 1 gap(s) in /opt/backup/mysql/binlog:
-  missing: binlog.000051
-```
-
-or
-
-```
-ERROR: Required start binlog 'binlog.000048' is not in /opt/backup/mysql/binlog
-       The binlog was either never backed up or has been purged by retention.
-```
+the dump's start file is not on disk. 
 
 Pass `--allow-gaps` only if you deliberately want to skip a known-corrupt
 file; accept the silent data loss that comes with it.
+
+Test this by renaming a binlog partway through it.
 
 ---
 
@@ -260,10 +214,7 @@ rm -f /tmp/corrupt.sql.gz
 ```
 
 **Pass:** non-zero exit code, visible `gzip: unexpected end of file` or
-similar. The fact that `gunzip | mysql` returns non-zero is what `set -o pipefail`
-in `common.sh` relies on.
-
-**Fail:** exit 0 despite truncation → your pipeline is swallowing errors.
+similar. 
 
 ---
 
@@ -292,8 +243,7 @@ echo "Before: $BEFORE, After: $AFTER, Retain: ${FULL_BACKUP_RETAIN:-7}"
 rm -f /opt/backup/mysql/full/mysql-full-fake-*.sql.gz
 ```
 
-**Pass:** `AFTER == FULL_BACKUP_RETAIN` (default 7). The oldest files were pruned.
-**Fail:** `AFTER > FULL_BACKUP_RETAIN` → retention is broken.
+**Pass:** `AFTER == FULL_BACKUP_RETAIN` (default 7).
 
 ---
 
@@ -304,12 +254,3 @@ docker rm -f pitr-test corrupt-test backup-test-mysql 2>/dev/null
 # Optional: wipe test binlogs/dumps accumulated during testing
 # rm -rf /opt/backup/mysql/full/*fake*
 ```
-
----
-
-## Reporting
-
-Record for each test: pass/fail, duration, and any unexpected output.
-If test 3 (PITR) fails with A=2 or PK conflicts, **that's the review's
-issue #1 reproducing live** — fix `full-backup.sh` to include
-`--source-data=2` before trusting the incremental path in production.

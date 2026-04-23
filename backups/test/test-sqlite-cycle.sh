@@ -7,12 +7,14 @@
 # 3. Compares table counts between live and backup
 # 4. Restores to a temp directory and verifies checksums
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 SQLITE_DATA_DIR="$NC_DIR/data"
 FAILURES=0
 TEMP_RESTORE_DIR=""
 
+# shellcheck disable=SC2317  # invoked via `trap cleanup EXIT`
 cleanup() {
     if [[ -n "$TEMP_RESTORE_DIR" && -d "$TEMP_RESTORE_DIR" ]]; then
         rm -rf "$TEMP_RESTORE_DIR"

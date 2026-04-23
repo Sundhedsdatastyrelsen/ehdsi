@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Restore SQLite databases from a backup snapshot
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 AUTO_YES=false

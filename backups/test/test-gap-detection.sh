@@ -7,6 +7,7 @@
 # proceed past the check may fail downstream on the bogus files — we assert
 # only on the gap-check behaviour.
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 SCRIPT_DIR_ABS="$(cd "$(dirname "$0")" && pwd)"
@@ -18,6 +19,7 @@ FULL_DIR="$TEST_ROOT/mysql/full"
 mkdir -p "$BINLOG_DIR" "$FULL_DIR"
 FAKE_DUMP="$FULL_DIR/fake-dump.sql.gz"
 
+# shellcheck disable=SC2317  # invoked via `trap cleanup EXIT`
 cleanup() {
     rm -rf "$TEST_ROOT"
     # Tests 1 and 4 proceed past the gap check and leak scratch files into
@@ -52,8 +54,13 @@ run_restore() {
     LAST_EXIT=${exit_code:-0}
 }
 
+# Predicates invoked via `check <label> <predicate> <args>`; shellcheck can't
+# see the indirect calls.
+# shellcheck disable=SC2317
 contains() { grep -qF "$1" <<< "$LAST_OUTPUT"; }
+# shellcheck disable=SC2317
 not_contains() { ! grep -qF "$1" <<< "$LAST_OUTPUT"; }
+# shellcheck disable=SC2317
 exit_was() { [[ "$LAST_EXIT" == "$1" ]]; }
 
 check() {
@@ -62,7 +69,9 @@ check() {
         echo "  PASS: $label"
     else
         echo "  FAIL: $label"
-        echo "$LAST_OUTPUT" | sed 's/^/    | /'
+        while IFS= read -r line; do
+            echo "    | $line"
+        done <<< "$LAST_OUTPUT"
         FAILURES=$((FAILURES + 1))
     fi
 }

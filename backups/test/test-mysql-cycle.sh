@@ -9,6 +9,7 @@
 # 5. Verifies databases, tables, and sentinel row
 # 6. Cleans up
 
+# shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 TEST_CONTAINER="backup-test-mysql"
@@ -17,6 +18,7 @@ TEST_ROOT_PASSWORD="test-backup-root"
 SENTINEL_KEY="_backup_test_$(timestamp)"
 FAILURES=0
 
+# shellcheck disable=SC2317  # invoked via `trap cleanup EXIT`
 cleanup() {
     log "Cleaning up..."
     docker rm -f "$TEST_CONTAINER" 2>/dev/null || true
