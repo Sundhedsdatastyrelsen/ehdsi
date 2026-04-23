@@ -43,6 +43,17 @@ read_secret() {
     tr -d '[:space:]' < "$secret_file"
 }
 
+# MySQL root password resolver: honours $MYSQL_ROOT_PASSWORD env var if set
+# (useful for restoring into disposable test containers), otherwise reads
+# the NCP secret file.
+read_mysql_password() {
+    if [[ -n "${MYSQL_ROOT_PASSWORD:-}" ]]; then
+        printf '%s' "$MYSQL_ROOT_PASSWORD"
+    else
+        read_secret "$NCP_DIR/db_root_password.txt"
+    fi
+}
+
 ensure_dir() {
     local dir="$1"
     if [[ ! -d "$dir" ]]; then

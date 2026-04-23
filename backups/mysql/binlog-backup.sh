@@ -8,7 +8,7 @@ ensure_dir "$BACKUP_DIR"
 
 assert_container_running "$MYSQL_CONTAINER"
 
-ROOT_PASSWORD=$(read_secret "$NCP_DIR/db_root_password.txt")
+ROOT_PASSWORD=$(read_mysql_password)
 
 log "Starting binlog backup..."
 

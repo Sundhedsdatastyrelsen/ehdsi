@@ -8,7 +8,7 @@ ensure_dir "$BACKUP_DIR"
 
 assert_container_running "$MYSQL_CONTAINER"
 
-ROOT_PASSWORD=$(read_secret "$NCP_DIR/db_root_password.txt")
+ROOT_PASSWORD=$(read_mysql_password)
 TS=$(timestamp)
 OUTPUT_FILE="$BACKUP_DIR/mysql-full-${TS}.sql.gz"
 
@@ -19,10 +19,10 @@ docker exec "$MYSQL_CONTAINER" \
     mysqldump \
         -u root -p"$ROOT_PASSWORD" \
         --single-transaction \
+        --source-data=2 \
         --routines \
         --triggers \
         --events \
-        --flush-logs \
         --databases "${MYSQL_DATABASES[@]}" \
     | gzip > "$OUTPUT_FILE"
 

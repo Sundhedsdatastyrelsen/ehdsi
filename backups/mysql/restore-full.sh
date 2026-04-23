@@ -45,9 +45,17 @@ if [[ "$AUTO_YES" != true ]]; then
     fi
 fi
 
-ROOT_PASSWORD=$(read_secret "$NCP_DIR/db_root_password.txt")
+ROOT_PASSWORD=$(read_mysql_password)
 
 log "Starting restore from: $BACKUP_FILE"
+
+# Drop target databases so stale tables not present in the dump don't survive.
+# The dump recreates each database via CREATE DATABASE IF NOT EXISTS.
+for db in "${MYSQL_DATABASES[@]}"; do
+    docker exec "$MYSQL_CONTAINER" \
+        mysql -u root -p"$ROOT_PASSWORD" \
+        -e "DROP DATABASE IF EXISTS \`$db\`;" 2>/dev/null
+done
 
 gunzip -c "$BACKUP_FILE" | \
     docker exec -i "$MYSQL_CONTAINER" \
