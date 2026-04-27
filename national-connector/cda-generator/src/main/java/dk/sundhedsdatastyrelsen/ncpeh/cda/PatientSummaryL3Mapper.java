@@ -38,6 +38,16 @@ public class PatientSummaryL3Mapper {
      * @throws MapperException if something goes wrong
      */
     public static PatientSummaryL3 model(PatientSummaryInput input) {
+        if (input == null) {
+            throw new MapperException("Input is null");
+        }
+        if (input.patient() == null) {
+            throw new MapperException("Patient is missing");
+        }
+        if (input.documentId() == null || input.documentId().isBlank()) {
+            throw new MapperException("Document ID is missing");
+        }
+
         var response = input.fmkMedicineCardResponse();
         var patient = input.patient();
         var preferredHP = input.preferredHealthProfessional();
@@ -85,8 +95,12 @@ public class PatientSummaryL3Mapper {
     }
 
     private static MedicationItem medicationItem(DrugMedicationType medication) {
+        if (medication == null) {
+            throw new MapperException("Medication is null");
+        }
 
-        /// We currently only look at drug medications, therefore null in prescriptionDosageText. #TODO: Check if it is okay not to include overridden dosage from prescription
+        /// We currently only look at drug medications, therefore null in prescriptionDosageText.
+        ///#TODO: Check if it is okay not to include overridden dosage from prescription
         var dosage = DosageMapper.model(
             medication.getDosage(),
             null
@@ -97,12 +111,15 @@ public class PatientSummaryL3Mapper {
         }
 
         var routeOfAdministration = Optional.ofNullable(medication.getRouteOfAdministration())
+            .filter(route -> route.getCode() != null)
             .map(route -> CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)
                 .code(route.getCode().getValue())
                 .displayName(route.getText())
                 .build())
             .orElse(null);
+
+        var activeIngredients = activeIngredients(medication);
 
         return MedicationItem.builder()
             .medicationId(medicationId(medication))
@@ -114,9 +131,9 @@ public class PatientSummaryL3Mapper {
                 .orElse(null))
             .routeOfAdministration(routeOfAdministration)
             .dosage(dosage)
-            .product(product(medication)) //Might not be needed? #Todo Check this with @JV
-            .activeIngredients(activeIngredients(medication).structured())
-            .unstructuredActiveIngredients(activeIngredients(medication).unstructured())
+            .product(product(medication))
+            .activeIngredients(activeIngredients.structured())
+            .unstructuredActiveIngredients(activeIngredients.unstructured())
             .indicationText(indicationText(medication))
             .patientMedicationInstructions(patientMedicationInstructions(medication))
             .build();
@@ -189,7 +206,6 @@ public class PatientSummaryL3Mapper {
         @NonNull String unstructured
     ) {}
 
-    /// @throws MapperException if something can't be mapped
     private static ActiveIngredients activeIngredients(DrugMedicationType medication) {
         var drug = medication.getDrug();
         if (drug == null) {
@@ -208,7 +224,7 @@ public class PatientSummaryL3Mapper {
         var unstructured = structured.stream()
             .map(ActiveIngredient::getName)
             .filter(s -> !s.isBlank())
-            .collect(Collectors.joining(", "));
+            .collect(Collectors.joining("; "));
 
         return new ActiveIngredients(structured, unstructured);
     }
@@ -233,7 +249,6 @@ public class PatientSummaryL3Mapper {
         return null;
     }
 
-    /// @throws MapperException if something can't be mapped
     private static String getSubstanceStrengthText(DrugStrengthType strength) {
         return Optional.ofNullable(strength)
             .map(DrugStrengthType::getText)

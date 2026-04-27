@@ -22,7 +22,7 @@ class PatientSummaryL3MapperTest {
 
     static PatientSummaryL3 getModel() {
         try {
-            var cpr = FmkResponseStorage.rawResponseCprs().get(2);
+            var cpr = FmkResponseStorage.rawResponseCprs().get(3);
             var response = FmkResponseStorage.storedMedicineCards(cpr);
 
             var patient = Patient.builder()
@@ -31,8 +31,8 @@ class PatientSummaryL3MapperTest {
                 .genderCode(CdaCode.builder()
                     .codeSystem(Oid.ADMINISTRATIVE_GENDER)
                     .codeSystemVersion("913-20091020")
-                    .code("M")
-                    .displayName("Male")
+                    .code("F")
+                    .displayName("Female")
                     .build())
                 .birthTime(LocalDate.of(1982, 11, 3))
                 .address(new Address(
