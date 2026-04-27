@@ -104,7 +104,7 @@ public class PatientSummaryService {
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._60591_5));
         } catch (MapperException | XmlException e) {
-            throw new PublicException(500, "Failed to get PatientSummary.", e);
+            throw new PublicException(500, "Failed to get Patient Summary.", e);
         }
     }
 
@@ -123,7 +123,7 @@ public class PatientSummaryService {
             var fmkCard = fmkServiceDgws.getMedicineCard(medicationCardRequest, system, PredefinedRequestedRole.LÆGE);
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard);
         }  catch (JAXBException e) {
-            throw new PublicException(500, "Could not retrieve medicineCards.", e);
+            throw new PublicException(500, "Could not retrieve prescriptions.", e);
         }
     }
 }
