@@ -199,9 +199,9 @@
                                         Therefore this is a best-effort solution         -->
                    <#-- TODO: validate the narrative block is correct and/or similar to other EU countries-->
                     <text>
-                    <#if medicationSummary?? && medicationSummary.entries?has_content>
+                    <#if medicationSummary?? && medicationSummary.items?has_content>
                         <list>
-                        <#list medicationSummary.entries as med>
+                        <#list medicationSummary.items as med>
                             <item ID="med-${med?index}">
                                 <#if med.product??>
                                 <content ID="product-name-med-${med?index}">${ med.product.name }</content><br/>
@@ -226,8 +226,8 @@
                         <content ID="Medications_NoInformation">No information about medications.</content>
                     </#if>
                     </text>
-                    <#if (medicationSummary.entries)?has_content>
-                    <#list medicationSummary.entries as med>
+                    <#if (medicationSummary.items)?has_content>
+                    <#list medicationSummary.items as med>
                         <entry typeCode="COMP">
                             <#-- https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.4-2024-01-25T135932.html -->
                             <substanceAdministration classCode="SBADM" moodCode="INT">
