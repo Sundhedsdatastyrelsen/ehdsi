@@ -3,9 +3,14 @@ package dk.sundhedsdatastyrelsen.ncpeh.testing.shared;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetDrugMedicationResponseType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -50,6 +55,8 @@ public class FmkResponseStorage {
     @NonNull
     private final FmkClientIdws fmkClient;
 
+    private FmkClientDgws fmkClientDgws;
+
     private static final List<String> rawResponseCprs = List.of("1111111118", "0101010000", "0201909309", "0410009234", "1011649927");
 
     public static List<String> rawResponseCprs() {
@@ -58,6 +65,11 @@ public class FmkResponseStorage {
 
     public static List<String> e2eTestCprs() {
         return testCprs;
+    }
+
+    public FmkResponseStorage(@NonNull FmkClientIdws fmkClient, FmkClientDgws fmkClientDgws) {
+        this.fmkClient = fmkClient;
+        this.fmkClientDgws = fmkClientDgws;
     }
 
     public FmkResponseStorage(@NonNull FmkClientIdws fmkClient) {
@@ -112,6 +124,22 @@ public class FmkResponseStorage {
         return fmkClient.getDrugMedication(drugMedicationRequest, caller);
     }
 
+    public GetMedicineCardResponseType getMedicineCardResponse(
+        String cpr,
+        NspDgwsIdentity caller,
+        PredefinedRequestedRole requestedRole
+    ) throws JAXBException {
+        if (fmkClientDgws == null) {
+            throw new IllegalStateException("fmkClientDgws is not configured");
+        }
+
+        var request = GetMedicineCardRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
+            .build();
+
+        return fmkClientDgws.getMedicineCard(request, caller, requestedRole);
+    }
+
     public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response) {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e6.ObjectFactory();
         return fac.createGetPrescriptionResponse(response);
@@ -120,6 +148,11 @@ public class FmkResponseStorage {
     public JAXBElement<GetDrugMedicationResponseType> createXmlFromDrugMedication(GetDrugMedicationResponseType response) {
         var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
         return fac.createGetDrugMedicationResponse(response);
+    }
+
+    public JAXBElement<GetMedicineCardResponseType> createXmlFromMedicineCard(GetMedicineCardResponseType response) {
+        var fac = new dk.dkma.medicinecard.xml_schema._2015._06._01.e2.ObjectFactory();
+        return fac.createGetMedicineCardResponse(response);
     }
 
     public static GetPrescriptionResponseType getTestPrescriptions(String cpr) throws JAXBException {
@@ -146,6 +179,19 @@ public class FmkResponseStorage {
     public static GetDrugMedicationResponseType storedDrugMedications(String cpr, String resourceDir) throws JAXBException {
         var name = "drug-medication-" + cpr + ".xml";
         return readStoredMedication(name, resourceDir);
+    }
+
+    public static GetMedicineCardResponseType getTestMedicineCards(String cpr) throws JAXBException {
+        return storedMedicineCards(cpr, testDataDir);
+    }
+
+    public static GetMedicineCardResponseType storedMedicineCards(String cpr) throws JAXBException {
+        return storedMedicineCards(cpr, rawResponseDir);
+    }
+
+    public static GetMedicineCardResponseType storedMedicineCards(String cpr, String resourceDir) throws JAXBException {
+        var name = "medicine-card-" + cpr + ".xml";
+        return readStoredMedicineCard(name, resourceDir);
     }
 
     public static GetPrescriptionResponseType readStoredPrescriptions(String resourceName, String resourceDir) throws JAXBException {
@@ -178,6 +224,21 @@ public class FmkResponseStorage {
         throw new IllegalStateException("File does not contain GetDrugMedicationResponseType data");
     }
 
+    public static GetMedicineCardResponseType readStoredMedicineCard(String resourceName, String resourceDir) throws JAXBException {
+        var url = FmkResponseStorage.class.getClassLoader()
+            .getResource(String.format("%s/%s", resourceDir, resourceName));
+        if (url == null) {
+            throw new IllegalArgumentException("resourceName does not exist");
+        }
+        var unmarshaller = jaxbContext.createUnmarshaller();
+        var result = (JAXBElement<?>) unmarshaller.unmarshal(url);
+        var value = result.getValue();
+        if (value instanceof GetMedicineCardResponseType getMedicineCardResponseType) {
+            return getMedicineCardResponseType;
+        }
+        throw new IllegalStateException("File does not contain GetMedicineCardResponseType data");
+    }
+
     public static GetDrugMedicationResponseType readStoredMedication(File f) throws JAXBException {
         var unmarshaller = jaxbContext.createUnmarshaller();
         var result = (JAXBElement<?>) unmarshaller.unmarshal(f);
@@ -198,12 +259,25 @@ public class FmkResponseStorage {
         throw new IllegalStateException("File does not contain GetPrescriptionResponseType data");
     }
 
+    public static GetMedicineCardResponseType readStoredMedicineCard(File f) throws JAXBException {
+        var unmarshaller = jaxbContext.createUnmarshaller();
+        var result = (JAXBElement<?>) unmarshaller.unmarshal(f);
+        var value = result.getValue();
+        if (value instanceof GetMedicineCardResponseType getMedicineCardResponseType) {
+            return getMedicineCardResponseType;
+        }
+        throw new IllegalStateException("File does not contain GetMedicineCardResponseType data");
+    }
+
     /**
      * Download and replace the existing stored FMK responses.
      */
     public static void main(String[] args) throws Exception {
-        var frs = new FmkResponseStorage(Fmk.idwsApiClient());
+        var frs = new FmkResponseStorage(Fmk.idwsApiClient(), Fmk.dgwsApiClient());
         var token = Sosi.getToken(Sosi.Audience.FMK);
+        var dgwsCaller = TestIdentities.lægeCharlesBabbage;
+        var requestedRole = PredefinedRequestedRole.LÆGE;
+
         var dir = Files.createDirectories(
             Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
         for (var cpr : rawResponseCprs) {
@@ -219,7 +293,13 @@ public class FmkResponseStorage {
                 .toList();
             var drugMedications = frs.getDrugMedicationResponse(cpr, medicationIds, token);
             serializeToFile(frs.createXmlFromDrugMedication(drugMedications), dmf);
-            System.out.printf("Wrote drug-medications to %s", dmf.getAbsolutePath());
+            System.out.printf("Wrote drug-medications to %s%n", dmf.getAbsolutePath());
+
+            var mcf = dir.resolve("medicine-card-" + cpr + ".xml").toFile();
+            var medicineCard = frs.getMedicineCardResponse(cpr, dgwsCaller, requestedRole);
+            serializeToFile(frs.createXmlFromMedicineCard(medicineCard), mcf);
+            System.out.printf("Wrote medicine-card to %s%n", mcf.getAbsolutePath());
+
         }
     }
 }

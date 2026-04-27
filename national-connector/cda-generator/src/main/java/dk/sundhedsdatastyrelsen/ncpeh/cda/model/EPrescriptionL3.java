@@ -47,7 +47,7 @@ public class EPrescriptionL3 {
      * be specified if the route is known, and the displayName attribute should be specified. If the route is unknown,
      * this element shall not be sent.
      */
-    CdaCode administrationRoute;
+    CdaCode routeOfAdministration;
 
     /**
      * Dosage/posology information for the medication.

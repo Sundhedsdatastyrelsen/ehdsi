@@ -3,7 +3,9 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PrescriptionStatusType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
+import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
@@ -129,6 +131,39 @@ class FmkIT {
         var drugMedications = prescriptionService.getDrugMedicationResponse(cpr, drugMedicationIds, token);
         assertThat(drugMedications.getPersonIdentifier().getValue(), is(cpr));
         assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
+    }
+
+    /**
+     * This test simply checks that we can connect to FMK and get an answer on the medication data need by PatientSummary.
+     *
+     * @throws Exception
+     */
+    @Test
+    void getMedicationTest() throws Exception {
+        var cpr = Fmk.cprLotteSvendsen;
+
+        var getMedicationRequest = GetMedicineCardRequestType.builder()
+            .withPersonIdentifier()
+            .withSource("CPR")
+            .withValue(cpr)
+            .end()
+            .withIncludePrescriptions(false)
+            .withIncludeNonRelevantPrescriptions(false)
+            .build();
+
+        // GetMedicineCard should work with IDWS, but it doesn't, so we use DGWS instead.
+        var medicineCard = Fmk.dgwsApiClient().getMedicineCard(
+            getMedicationRequest,
+            TestIdentities.lægeCharlesBabbage,
+            PredefinedRequestedRole.LÆGE
+        ).getMedicineCard();
+
+        var firstMedicineCard = medicineCard.getFirst();
+        var drugMedications = medicineCard.getFirst().getDrugMedication();
+        var drugMedication = drugMedications.getFirst();
+
+        assertThat(medicineCard, is(not(empty())));
+        assertThat(drugMedications, is(not(empty())));
     }
 
     @Test

@@ -50,7 +50,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Document;
 
 import javax.sql.DataSource;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;

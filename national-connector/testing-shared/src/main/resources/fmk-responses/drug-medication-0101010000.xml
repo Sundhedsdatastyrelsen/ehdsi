@@ -1,4 +1,222 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns2:GetDrugMedicationResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
     <ns2:PersonIdentifier source="CPR">0101010000</ns2:PersonIdentifier>
+    <ns2:DrugMedication>
+        <ns2:Identifier>66046798</ns2:Identifier>
+        <ns2:Version>1775635173342001002</ns2:Version>
+        <ns2:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T07:59:33Z</DateTime>
+        </ns2:Created>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T07:59:33Z</DateTime>
+        </ns2:Modified>
+        <ns2:Type>Lægeordineret</ns2:Type>
+        <ns2:BeginEndDate>
+            <CreatedDateTime>2026-04-08T07:59:33Z</CreatedDateTime>
+            <TreatmentStartDate>2026-04-08</TreatmentStartDate>
+            <TreatmentEndingUndetermined/>
+        </ns2:BeginEndDate>
+        <ns2:Indication>
+            <Code source="Medicinpriser" date="2026-03-16">613</Code>
+            <Text>febernedsættende</Text>
+        </ns2:Indication>
+        <ns2:RouteOfAdministration>
+            <Code source="Medicinpriser" date="2026-03-16">OR</Code>
+            <Text>Oral anvendelse</Text>
+        </ns2:RouteOfAdministration>
+        <ns2:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2026-03-16">N02BE01</Code>
+                <Text>Paracetamol</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2026-03-16">28101674394</Identifier>
+            <Name>Panodil</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2026-03-16">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>1000.0</Value>
+                <UnitCode source="Medicinpriser" date="2026-03-16">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2026-03-16">1000 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2026-03-16">PARACETAMOL</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns2:Drug>
+        <ns2:Dosage>
+            <ns2:UnitTexts>
+                <ns2:Singular>tablet</ns2:Singular>
+                <ns2:Plural>tabletter</ns2:Plural>
+            </ns2:UnitTexts>
+            <ns2:StructuresFixed>
+                <Structure>
+                    <IterationInterval>1</IterationInterval>
+                    <StartDate>2026-04-08</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Day>
+                        <Number>1</Number>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                    </Day>
+                    <DosageTranslation>
+                        <ShortText>1 tablet 3 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet 3 gange hver dag</LongText>
+                    </DosageTranslation>
+                </Structure>
+                <DosageTranslationCombined>
+                    <ShortText>1 tablet 3 gange daglig</ShortText>
+                    <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet 3 gange hver dag</LongText>
+                </DosageTranslationCombined>
+            </ns2:StructuresFixed>
+            <ns2:Type>fast</ns2:Type>
+        </ns2:Dosage>
+        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+    </ns2:DrugMedication>
+    <ns2:DrugMedication>
+        <ns2:Identifier>66046799</ns2:Identifier>
+        <ns2:Version>1775635232886001002</ns2:Version>
+        <ns2:Created>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T08:00:32Z</DateTime>
+        </ns2:Created>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T08:00:32Z</DateTime>
+        </ns2:Modified>
+        <ns2:Type>Lægeordineret</ns2:Type>
+        <ns2:BeginEndDate>
+            <CreatedDateTime>2026-04-08T08:00:32Z</CreatedDateTime>
+            <TreatmentStartDate>2026-04-08</TreatmentStartDate>
+            <TreatmentEndingUndetermined/>
+        </ns2:BeginEndDate>
+        <ns2:Indication>
+            <Code source="Medicinpriser" date="2026-03-16">107</Code>
+            <Text>mod vandladningsbesvær</Text>
+        </ns2:Indication>
+        <ns2:RouteOfAdministration>
+            <Code source="Medicinpriser" date="2026-03-16">OR</Code>
+            <Text>Oral anvendelse</Text>
+        </ns2:RouteOfAdministration>
+        <ns2:Drug>
+            <ATC>
+                <Code source="Medicinpriser" date="2026-03-16">G04CB01</Code>
+                <Text>Finasterid</Text>
+            </ATC>
+            <Identifier source="Medicinpriser" date="2026-03-16">28106153918</Identifier>
+            <Name>Finasterid "Amarox"</Name>
+            <Form>
+                <Code source="Medicinpriser" date="2026-03-16">TABFILM</Code>
+                <Text>filmovertrukne tabletter</Text>
+            </Form>
+            <Strength>
+                <Value>5.0</Value>
+                <UnitCode source="Medicinpriser" date="2026-03-16">MG</UnitCode>
+                <UnitText>mg</UnitText>
+                <Text source="Medicinpriser" date="2026-03-16">5 mg</Text>
+            </Strength>
+            <Substances>
+                <ActiveSubstance>
+                    <SubstanceText source="Medicinpriser" date="2026-03-16">FINASTERID</SubstanceText>
+                </ActiveSubstance>
+            </Substances>
+        </ns2:Drug>
+        <ns2:Dosage>
+            <ns2:UnitTexts>
+                <ns2:Singular>tablet</ns2:Singular>
+                <ns2:Plural>tabletter</ns2:Plural>
+            </ns2:UnitTexts>
+            <ns2:StructuresFixed>
+                <Structure>
+                    <IterationInterval>1</IterationInterval>
+                    <StartDate>2026-04-08</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Day>
+                        <Number>1</Number>
+                        <Dose>
+                            <Quantity>1</Quantity>
+                        </Dose>
+                    </Day>
+                    <DosageTranslation>
+                        <ShortText>1 tablet daglig</ShortText>
+                        <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet hver dag</LongText>
+                    </DosageTranslation>
+                </Structure>
+                <DosageTranslationCombined>
+                    <ShortText>1 tablet daglig</ShortText>
+                    <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet hver dag</LongText>
+                </DosageTranslationCombined>
+            </ns2:StructuresFixed>
+            <ns2:Type>fast</ns2:Type>
+        </ns2:Dosage>
+        <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+    </ns2:DrugMedication>
 </ns2:GetDrugMedicationResponse>

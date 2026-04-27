@@ -1,13 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import freemarker.template.TemplateException;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.OffsetDateTime;
 
 public class PatientSummaryL3Generator {
     private PatientSummaryL3Generator() {
@@ -33,13 +31,6 @@ public class PatientSummaryL3Generator {
     }
 
     static PatientSummaryL3 inputToModel(PatientSummaryInput input) {
-        return PatientSummaryL3.builder()
-            .documentId(CdaId.fromDocumentId(input.documentId()))
-            .effectiveTime(OffsetDateTime.now())
-            // TODO is the title correct?
-            .title("Patient Summary")
-            .patient(input.patient())
-            .preferredHp(input.preferredHealthProfessional())
-            .build();
+        return PatientSummaryL3Mapper.model(input);
     }
 }

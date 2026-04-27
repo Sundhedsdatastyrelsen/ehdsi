@@ -1,0 +1,3152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:GetMedicineCardResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns2:MedicineCard>
+        <ns2:Patient>
+            <Person>
+                <Name>
+                    <GivenName>Lene</GivenName>
+                    <MiddleName>Johansson</MiddleName>
+                    <Surname>Sørensen</Surname>
+                </Name>
+                <PersonIdentifier source="CPR">0101010000</PersonIdentifier>
+                <BirthDate>1901-01-01</BirthDate>
+                <Gender>female</Gender>
+            </Person>
+            <Address>
+                <StreetName>Weidekampsgade</StreetName>
+                <StreetBuildingIdentifier>40A</StreetBuildingIdentifier>
+                <PostCodeIdentifier>8860</PostCodeIdentifier>
+                <DistrictName>Ulstrup</DistrictName>
+            </Address>
+        </ns2:Patient>
+        <ns2:Version>1775635232866001002</ns2:Version>
+        <ns2:PreviousVersion>1775635173315001002</ns2:PreviousVersion>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                    <Name>Grete Bach</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Allan Kristensen</Name>
+                    <AddressLine>Dronninggårds Allé17</AddressLine>
+                    <AddressLine>1875 Frederiksberg C</AddressLine>
+                    <TelephoneNumber>99998887</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">6955</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-08T08:00:32Z</DateTime>
+        </ns2:Modified>
+        <ns2:Reviewed>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                    <Name>Anne Pedersen</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Læge Casper Kristensen</Name>
+                    <AddressLine>Højgårdsparken36</AddressLine>
+                    <AddressLine>3955 Kangaatsiaq</AddressLine>
+                    <TelephoneNumber>86859200</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">66001</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2016-04-30T17:56:11Z</DateTime>
+        </ns2:Reviewed>
+        <ns2:PatientOrganisationRelation>
+            <Identifier>1462038778805001851</Identifier>
+            <Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Lægerne Papirfabrikken</Name>
+                        <AddressLine>Papirfabrikken 36 B</AddressLine>
+                        <AddressLine>8600 Silkeborg</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-04-30T17:52:58Z</DateTime>
+            </Created>
+            <Organisation>
+                <Name>Lægerne Papirfabrikken</Name>
+                <AddressLine>Papirfabrikken 36 B</AddressLine>
+                <AddressLine>8600 Silkeborg</AddressLine>
+                <TelephoneNumber>86859200</TelephoneNumber>
+                <Type>Yder</Type>
+                <Identifier source="Yder">66001</Identifier>
+            </Organisation>
+            <Type>Indlagt</Type>
+        </ns2:PatientOrganisationRelation>
+        <ns2:PrivateDrugMedication>
+            <Identifier>1065822</Identifier>
+            <Version>1505826280533001238</Version>
+        </ns2:PrivateDrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>66046799</ns2:Identifier>
+            <ns2:Version>1775635232886001002</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                        <Name>Grete Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Allan Kristensen</Name>
+                        <AddressLine>Dronninggårds Allé17</AddressLine>
+                        <AddressLine>1875 Frederiksberg C</AddressLine>
+                        <TelephoneNumber>99998887</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">6955</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2026-04-08T08:00:32Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                        <Name>Grete Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Allan Kristensen</Name>
+                        <AddressLine>Dronninggårds Allé17</AddressLine>
+                        <AddressLine>1875 Frederiksberg C</AddressLine>
+                        <TelephoneNumber>99998887</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">6955</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2026-04-08T08:00:32Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2026-04-08T08:00:32Z</CreatedDateTime>
+                <TreatmentStartDate>2026-04-08</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2026-03-16">107</Code>
+                <Text>mod vandladningsbesvær</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2026-03-16">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2026-03-16">G04CB01</Code>
+                    <Text>Finasterid</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2026-03-16">28106153918</Identifier>
+                <Name>Finasterid "Amarox"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2026-03-16">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>5.0</Value>
+                    <UnitCode source="Medicinpriser" date="2026-03-16">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2026-03-16">5 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2026-03-16">FINASTERID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>tablet</ns2:Singular>
+                    <ns2:Plural>tabletter</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2026-04-08</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet daglig</ShortText>
+                            <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet daglig</ShortText>
+                        <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>66046798</ns2:Identifier>
+            <ns2:Version>1775635173342001002</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                        <Name>Grete Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Allan Kristensen</Name>
+                        <AddressLine>Dronninggårds Allé17</AddressLine>
+                        <AddressLine>1875 Frederiksberg C</AddressLine>
+                        <TelephoneNumber>99998887</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">6955</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2026-04-08T07:59:33Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                        <Name>Grete Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Allan Kristensen</Name>
+                        <AddressLine>Dronninggårds Allé17</AddressLine>
+                        <AddressLine>1875 Frederiksberg C</AddressLine>
+                        <TelephoneNumber>99998887</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">6955</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2026-04-08T07:59:33Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2026-04-08T07:59:33Z</CreatedDateTime>
+                <TreatmentStartDate>2026-04-08</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2026-03-16">613</Code>
+                <Text>febernedsættende</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2026-03-16">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2026-03-16">N02BE01</Code>
+                    <Text>Paracetamol</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2026-03-16">28101674394</Identifier>
+                <Name>Panodil</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2026-03-16">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>1000.0</Value>
+                    <UnitCode source="Medicinpriser" date="2026-03-16">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2026-03-16">1000 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2026-03-16">PARACETAMOL</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>tablet</ns2:Singular>
+                    <ns2:Plural>tabletter</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2026-04-08</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet 3 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet 3 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet 3 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 8. apr. 2026:
+1 tablet 3 gange hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>16575489</ns2:Identifier>
+            <ns2:Version>1642513079040001034</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:58Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:58Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2022-01-18T13:37:58Z</CreatedDateTime>
+                <TreatmentStartDate>2018-07-04</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2022-01-18">287</Code>
+                <Text>mod allergi</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2022-01-18">SC</Code>
+                <Text>Subkutan anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2020-12-23">V01AA11</Code>
+                    <Text>Dyr</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2020-12-23">28101247685</Identifier>
+                <Name>Alk (552) Hesteskæl</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2020-12-23">INJASQ</Code>
+                    <Text>injektionsvæske, Alutard-sq</Text>
+                </Form>
+                <Strength>
+                    <Value>100000.0</Value>
+                    <UnitCode source="Medicinpriser" date="2020-12-23">SQM</UnitCode>
+                    <UnitText>standardized quantity units/ml</UnitText>
+                    <Text source="Medicinpriser" date="2020-12-23">100.000 sq-u/ml</Text>
+                </Strength>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>IE</ns2:UnitText>
+                <ns2:StructuresAccordingToNeed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2018-07-04</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 IE efter behov, højst 1 gang dagligt</ShortText>
+                            <LongText>Dosering fra d. 4. juli 2018:
+1 IE efter behov, højst 1 gang dagligt</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 IE efter behov, højst 1 gang dagligt</ShortText>
+                        <LongText>Dosering fra d. 4. juli 2018:
+1 IE efter behov, højst 1 gang dagligt</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresAccordingToNeed>
+                <ns2:Type>efter behov</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>16575355</ns2:Identifier>
+            <ns2:Version>1642513079508001034</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:59Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:59Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2022-01-18T13:37:59Z</CreatedDateTime>
+                <TreatmentStartDate>2018-07-04</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2022-01-18">287</Code>
+                <Text>mod allergi</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2022-01-18">SC</Code>
+                <Text>Subkutan anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2022-01-18">V01AA11</Code>
+                    <Text>Dyr</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2022-01-18">28101130083</Identifier>
+                <Name>Alk (555) Kattehår</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2022-01-18">INJASQ</Code>
+                    <Text>injektionsvæske, Alutard-sq</Text>
+                </Form>
+                <Strength>
+                    <Value>100000.0</Value>
+                    <UnitCode source="Medicinpriser" date="2022-01-18">SQM</UnitCode>
+                    <UnitText>standardized quantity units/ml</UnitText>
+                    <Text source="Medicinpriser" date="2022-01-18">100.000 sq-u/ml</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2022-01-18">Kattehår</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>dråber</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2018-07-04</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 dråbe daglig</ShortText>
+                            <LongText>Dosering fra d. 4. juli 2018:
+1 dråbe hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 dråbe daglig</ShortText>
+                        <LongText>Dosering fra d. 4. juli 2018:
+1 dråbe hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>16575354</ns2:Identifier>
+            <ns2:Version>1642513079269001034</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:59Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:59Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2022-01-18T13:37:59Z</CreatedDateTime>
+                <TreatmentStartDate>2018-07-04</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2022-01-18">287</Code>
+                <Text>mod allergi</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2022-01-18">SC</Code>
+                <Text>Subkutan anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2022-01-18">V01AA11</Code>
+                    <Text>Dyr</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2022-01-18">28101248185</Identifier>
+                <Name>Alk (553) Hundehår</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2022-01-18">INJVSKS</Code>
+                    <Text>injektionsvæske, suspension</Text>
+                </Form>
+                <Strength>
+                    <Value>100000.0</Value>
+                    <UnitCode source="Medicinpriser" date="2022-01-18">SQM</UnitCode>
+                    <UnitText>standardized quantity units/ml</UnitText>
+                    <Text source="Medicinpriser" date="2022-01-18">100.000 sq-u/ml</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2022-01-18">Hundehår</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <StartDate>2018-07-04</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Text>Ved behov 1 IE højst 1 gang dagligt + max 1,00 efter behov</Text>
+                </ns2:FreeText>
+                <ns2:Type>ikke angivet</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>16575353</ns2:Identifier>
+            <ns2:Version>1642513078779001034</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:58Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC15</AuthorisationIdentifier>
+                        <Name>Jytte Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-01-18T13:37:58Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2022-01-18T13:37:58Z</CreatedDateTime>
+                <TreatmentStartDate>2016-09-01</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2022-01-18">107</Code>
+                <Text>mod vandladningsbesvær</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2022-01-18">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2022-01-18">G04CA01</Code>
+                    <Text>Alfuzosin</Text>
+                </ATC>
+                <Name>Alfuzosin "Orifarm"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2022-01-18">DEPTAB</Code>
+                    <Text>depottabletter</Text>
+                </Form>
+                <Strength>
+                    <Text source="Medicinpriser" date="2022-01-18">10 mg</Text>
+                </Strength>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <StartDate>2019-12-06</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Text>1+1+1</Text>
+                </ns2:FreeText>
+                <ns2:Type>ikke angivet</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>13286313</ns2:Identifier>
+            <ns2:Version>1623924658460001034</ns2:Version>
+            <ns2:PreviousVersion>1623917844674001034</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Lægerne Kongevejscentret</Name>
+                        <AddressLine>Kongevejs-Centret 8,1</AddressLine>
+                        <AddressLine>2970 Hørsholm</AddressLine>
+                        <TelephoneNumber>33966051</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">18856</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2021-06-17T08:13:08Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Lægerne Kongevejscentret</Name>
+                        <AddressLine>Kongevejs-Centret 8,1</AddressLine>
+                        <AddressLine>2970 Hørsholm</AddressLine>
+                        <TelephoneNumber>33966051</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">18856</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2021-06-17T10:10:58Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:FollowUpDates>
+                <Date>2021-06-17</Date>
+                <Date>2021-07-01</Date>
+            </ns2:FollowUpDates>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2021-06-17T08:13:08Z</CreatedDateTime>
+                <TreatmentStartDate>2021-06-17</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2019-12-13">68</Code>
+                <Text>blodfortyndende</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2019-12-13">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2019-12-13">B01AA03</Code>
+                    <Text>Warfarin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2019-12-13">28101005764</Identifier>
+                <Name>Marevan</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2019-12-13">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>2.5</Value>
+                    <UnitCode source="Medicinpriser" date="2019-12-13">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2019-12-13">2,5 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2019-12-13">WARFARINNATRIUM</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>7</IterationInterval>
+                        <StartDate>2021-06-19</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>2</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>3</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>4</Number>
+                            <Dose>
+<Quantity>1.5</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>5</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>6</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>7</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <LongText>Dosering fra d. 19. juni 2021 - gentages hver uge:
+Mandag: 1 tablet
+Tirsdag: 1,5 tabletter
+Onsdag: 1 tablet
+Torsdag: 1 tablet
+Fredag: 1 tablet
+Lørdag: 1 tablet
+Søndag: 1 tablet</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 19. juni 2021 - gentages hver uge:
+Mandag: 1 tablet
+Tirsdag: 1,5 tabletter
+Onsdag: 1 tablet
+Torsdag: 1 tablet
+Fredag: 1 tablet
+Lørdag: 1 tablet
+Søndag: 1 tablet</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>6008715</ns2:Identifier>
+            <ns2:Version>1565960737724001851</ns2:Version>
+            <ns2:PreviousVersion>1542809917505001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2018-11-21T14:18:37Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2019-08-16T13:05:37Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2018-11-21T14:18:37Z</CreatedDateTime>
+                <TreatmentStartDate>2018-11-21</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2019-07-01">202</Code>
+                <Text>mod astma</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2019-07-01">IH</Code>
+                <Text>Til inhalation</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2019-07-01">R03AK07</Code>
+                    <Text>Formoterol og budesonid</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2019-07-01">28103485403</Identifier>
+                <Name>Symbicort Forte Turbuhaler</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2019-07-01">INHPUL</Code>
+                    <Text>inhalationspulver</Text>
+                </Form>
+                <Strength>
+                    <Text source="Medicinpriser" date="2019-07-01">9+320 mikrog./dosis</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2019-07-01">FORMOTEROLFUMARAT DIHYDRAT</SubstanceText>
+                    </ActiveSubstance>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2019-07-01">BUDESONID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>sug</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2018-11-21</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 sug 2 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 21. nov. 2018:
+1 sug 2 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 sug 2 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 21. nov. 2018:
+1 sug 2 gange hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>5268432</ns2:Identifier>
+            <ns2:Version>1517384813497001238</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                        <Name>Grete Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Ishøjcentrets Læger</Name>
+                        <AddressLine>Ishøj Store Torv 22,2</AddressLine>
+                        <AddressLine>2635 Ishøj</AddressLine>
+                        <TelephoneNumber>38770040</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">1279</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2018-01-31T07:46:53Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>WNP01</AuthorisationIdentifier>
+                        <Name>Grete Bach</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Ishøjcentrets Læger</Name>
+                        <AddressLine>Ishøj Store Torv 22,2</AddressLine>
+                        <AddressLine>2635 Ishøj</AddressLine>
+                        <TelephoneNumber>38770040</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">1279</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2018-01-31T07:46:53Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2018-01-31T07:46:53Z</CreatedDateTime>
+                <TreatmentStartDate>2018-01-31</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2018-01-01">202</Code>
+                <Text>mod astma</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2018-01-01">IH</Code>
+                <Text>Til inhalation</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2018-01-01">R03BA02</Code>
+                    <Text>Budesonid</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2018-01-01">28101339688</Identifier>
+                <Name>Spirocort Turbuhaler</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2018-01-01">INHPUL</Code>
+                    <Text>inhalationspulver</Text>
+                </Form>
+                <Strength>
+                    <Value>400.0</Value>
+                    <UnitCode source="Medicinpriser" date="2018-01-01">RGD</UnitCode>
+                    <UnitText>mikrogram/dosis</UnitText>
+                    <Text source="Medicinpriser" date="2018-01-01">400 mikrogram/dosis</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2018-01-01">BUDESONID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>sug</ns2:Singular>
+                    <ns2:Plural>sug</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2018-01-31</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>2 sug 2 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 31. jan. 2018:
+2 sug 2 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>2 sug 2 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 31. jan. 2018:
+2 sug 2 gange hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>1566989</ns2:Identifier>
+            <ns2:Version>1472738725661001238</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T14:05:25Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T14:05:25Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-09-01T14:05:25Z</CreatedDateTime>
+                <TreatmentStartDate>2016-09-01</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">156</Code>
+                <Text>mod rystelammelse</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">N04BD01</Code>
+                    <Text>Selegilin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101406290</Identifier>
+                <Name>Eldepryl</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>10.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">10 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">SELEGILINHYDROCHLORID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <StartDate>2016-09-01</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Text>- 2-3 ptværinger om dagen + max 1,00 efter behov</Text>
+                </ns2:FreeText>
+                <ns2:Type>ikke angivet</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>1561339</ns2:Identifier>
+            <ns2:Version>1572534595670001851</ns2:Version>
+            <ns2:PreviousVersion>1472726167144001851</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T10:36:07Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>System</GivenName>
+                            <Surname>Bruger</Surname>
+                        </Name>
+                    </Other>
+                    <Role>System</Role>
+                    <Organisation>
+                        <Name>Sundhedsdatastyrelsen</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København S</AddressLine>
+                        <TelephoneNumber>+4532683900</TelephoneNumber>
+                        <EmailAddress>servicedesk@sundhedsdata.dk</EmailAddress>
+                        <Type>Administrator</Type>
+                        <Identifier source="CVR">33257872</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2019-10-31T15:06:31Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-09-01T10:36:07Z</CreatedDateTime>
+                <TreatmentStartDate>2016-09-01</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">115</Code>
+                <Text>mod nedsat stofskifte</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">H03AA01</Code>
+                    <Text>Levothyroxinnatrium</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28100020455</Identifier>
+                <Name>Eltroxin</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>100.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">RG</UnitCode>
+                    <UnitText>mikrogram</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">100 mikrogram</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">LEVOTHYROXINNATRIUM</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <NotIterated/>
+                        <StartDate>2016-09-01</StartDate>
+                        <EndDate>2016-09-01</EndDate>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet morgen i 1 dag</ShortText>
+                            <LongText>Dosering kun d. 1. sep. 2016:
+1 tablet morgen</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet morgen i 1 dag</ShortText>
+                        <LongText>Dosering kun d. 1. sep. 2016:
+1 tablet morgen</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>1561091</ns2:Identifier>
+            <ns2:Version>1472726168119001238</ns2:Version>
+            <ns2:PreviousVersion>1472725763405001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T10:20:04Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T10:36:08Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-09-01T10:20:04Z</CreatedDateTime>
+                <TreatmentStartDate>2016-09-01</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">115</Code>
+                <Text>mod nedsat stofskifte</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">H03AA01</Code>
+                    <Text>Levothyroxinnatrium</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101006679</Identifier>
+                <Name>Eltroxin</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>50.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">RG</UnitCode>
+                    <UnitText>mikrogram</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">50 mikrogram</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">LEVOTHYROXINNATRIUM</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2016-09-01</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet daglig</ShortText>
+                            <LongText>Dosering fra d. 1. sep. 2016:
+1 tablet hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet daglig</ShortText>
+                        <LongText>Dosering fra d. 1. sep. 2016:
+1 tablet hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>1560508</ns2:Identifier>
+            <ns2:Version>1572534626545001851</ns2:Version>
+            <ns2:PreviousVersion>1506077811169001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T09:08:45Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <Other>
+                        <Name>
+                            <GivenName>System</GivenName>
+                            <Surname>Bruger</Surname>
+                        </Name>
+                    </Other>
+                    <Role>System</Role>
+                    <Organisation>
+                        <Name>Sundhedsdatastyrelsen</Name>
+                        <AddressLine>Ørestads Boulevard 5</AddressLine>
+                        <AddressLine>2300 København S</AddressLine>
+                        <TelephoneNumber>+4532683900</TelephoneNumber>
+                        <EmailAddress>servicedesk@sundhedsdata.dk</EmailAddress>
+                        <Type>Administrator</Type>
+                        <Identifier source="CVR">33257872</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2019-10-31T15:06:31Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-09-01T09:08:45Z</CreatedDateTime>
+                <TreatmentStartDate>2016-09-01</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">165</Code>
+                <Text>sovemedicin</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">N05CF01</Code>
+                    <Text>Zopiclon</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101183984</Identifier>
+                <Name>Imovane</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>7.5</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">7,5 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">ZOPICLON</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <NotIterated/>
+                        <StartDate>2017-09-22</StartDate>
+                        <EndDate>2017-09-22</EndDate>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>night</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet nat i 1 dag</ShortText>
+                            <LongText>Dosering kun d. 22. sep. 2017:
+1 tablet nat</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet nat i 1 dag</ShortText>
+                        <LongText>Dosering kun d. 22. sep. 2017:
+1 tablet nat</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>963305</ns2:Identifier>
+            <ns2:Version>1456316611709001851</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:23:31Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:23:31Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-02-24T12:23:31Z</CreatedDateTime>
+                <TreatmentStartDate>2016-02-24</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">312</Code>
+                <Text>mod betændelse</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2016-02-24">P01AB01</Code>
+                    <Text>Metronidazol</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2016-02-24">28100533567</Identifier>
+                <Name>Metronidazol "Actavis"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2016-02-24">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>250.0</Value>
+                    <UnitCode source="Medicinpriser" date="2016-02-24">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2016-02-24">250 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2016-02-24">METRONIDAZOL</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <DosageStartedPreviously/>
+                    <DosageEndingUndetermined/>
+                    <Text>dosering efter skriftlig anvisning</Text>
+                </ns2:FreeText>
+                <ns2:Type>ikke angivet</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>963304</ns2:Identifier>
+            <ns2:Version>1456316599825001851</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:23:19Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:23:19Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-02-24T12:23:19Z</CreatedDateTime>
+                <TreatmentStartDate>2016-02-24</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <FreeText>min</FreeText>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">IV</Code>
+                <Text>Intravenøs anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2016-02-24">L01AB01</Code>
+                    <Text>Busulfan</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2016-02-24">28103362802</Identifier>
+                <Name>Busilvex</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2016-02-24">KONCINF</Code>
+                    <Text>koncentrat til infusionsvæske, opløsning</Text>
+                </Form>
+                <Strength>
+                    <Value>6.0</Value>
+                    <UnitCode source="Medicinpriser" date="2016-02-24">MGM</UnitCode>
+                    <UnitText>mg/ml</UnitText>
+                    <Text source="Medicinpriser" date="2016-02-24">6 mg/ml</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2016-02-24">BUSULFAN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <DosageStartedPreviously/>
+                    <DosageEndingUndetermined/>
+                    <Text>1 * 1</Text>
+                </ns2:FreeText>
+                <ns2:Type>ikke angivet</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>963092</ns2:Identifier>
+            <ns2:Version>1484930712761001238</ns2:Version>
+            <ns2:PreviousVersion>1484928141197001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:15:32Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2017-01-20T16:45:12Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-02-24T12:15:32Z</CreatedDateTime>
+                <TreatmentStartDate>2016-02-24</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">123</Code>
+                <Text>mod lungebetændelse</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">J01FA01</Code>
+                    <Text>Erythromycin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101356689</Identifier>
+                <Name>Erycin</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">ENTTAB</Code>
+                    <Text>enterotabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>250.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">250 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">ERYTHROMYCIN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2017-01-20</StartDate>
+                        <EndDate>2018-01-20</EndDate>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>0.5</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>0.5</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>0.5</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>night</Time>
+<Quantity>0.5</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>0,5 tablet morgen, middag, aften og nat</ShortText>
+                            <LongText>Dosering fra d. 20. jan. 2017 til d. 20. jan. 2018:
+0,5 tablet morgen, 0,5 tablet middag, 0,5 tablet aften og 0,5 tablet nat - hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>0,5 tablet morgen, middag, aften og nat</ShortText>
+                        <LongText>Dosering fra d. 20. jan. 2017 til d. 20. jan. 2018:
+0,5 tablet morgen, 0,5 tablet middag, 0,5 tablet aften og 0,5 tablet nat - hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>963091</ns2:Identifier>
+            <ns2:Version>1456316118026001238</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:15:17Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-02-24T12:15:17Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2016-02-24T12:15:17Z</CreatedDateTime>
+                <TreatmentStartDate>2016-02-24</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">54</Code>
+                <Text>for blodtrykket</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2016-02-24">C08CA01</Code>
+                    <Text>Amlodipin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2016-02-24">28103370602</Identifier>
+                <Name>Amlodipin "Actavis"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2016-02-24">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>10.0</Value>
+                    <UnitCode source="Medicinpriser" date="2016-02-24">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2016-02-24">10 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2016-02-24">AMLODIPINMESILATMONOHYDRAT</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2016-02-24</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet morgen</ShortText>
+                            <LongText>Dosering fra d. 24. feb. 2016:
+1 tablet hver morgen</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet morgen</ShortText>
+                        <LongText>Dosering fra d. 24. feb. 2016:
+1 tablet hver morgen</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>917205</ns2:Identifier>
+            <ns2:Version>1527856845031001851</ns2:Version>
+            <ns2:PreviousVersion>1485276339259001851</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC14</AuthorisationIdentifier>
+                        <Name>Lene Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-11-23T11:48:31Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2018-06-01T12:40:44Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-11-23T11:48:31Z</CreatedDateTime>
+                <TreatmentStartDate>2015-11-23</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">145</Code>
+                <Text>mod smerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">M01AE01</Code>
+                    <Text>Ibuprofen</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28104303108</Identifier>
+                <Name>Ibuprofen "Teva"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>200.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">200 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">IBUPROFEN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2018-06-01</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet morgen og aften</ShortText>
+                            <LongText>Dosering fra d. 1. juni 2018:
+1 tablet morgen og 1 tablet aften - hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet morgen og aften</ShortText>
+                        <LongText>Dosering fra d. 1. juni 2018:
+1 tablet morgen og 1 tablet aften - hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>913630</ns2:Identifier>
+            <ns2:Version>1511131102159001238</ns2:Version>
+            <ns2:PreviousVersion>1447243670419001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-11-11T12:01:52Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2017-11-19T22:38:21Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-11-11T12:01:52Z</CreatedDateTime>
+                <TreatmentStartDate>2012-01-12</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">142</Code>
+                <Text>mod gigt</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">M01AB08</Code>
+                    <Text>Etodolac</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101744995</Identifier>
+                <Name>Todolac</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>200.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">200 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">ETODOLAC</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <NotIterated/>
+                        <StartDate>2017-11-19</StartDate>
+                        <EndDate>2017-11-25</EndDate>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>2</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>3</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>4</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>5</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>6</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <Day>
+                            <Number>7</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <LongText>Dosering fra d. 19. nov. 2017 til d. 25. nov. 2017:
+Søndag d. 19. nov. 2017: 2 tabletter morgen, 1 tablet middag og 2 tabletter aften
+Mandag d. 20. nov. 2017: 2 tabletter morgen, 1 tablet middag og 2 tabletter aften
+Tirsdag d. 21. nov. 2017: 2 tabletter morgen, 1 tablet middag og 1 tablet aften
+Onsdag d. 22. nov. 2017: 2 tabletter morgen, 1 tablet middag og 1 tablet aften
+Torsdag d. 23. nov. 2017: 1 tablet morgen, 1 tablet middag og 1 tablet aften
+Fredag d. 24. nov. 2017: 1 tablet morgen, 1 tablet middag og 1 tablet aften
+Lørdag d. 25. nov. 2017: 1 tablet morgen og 1 tablet aften</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 19. nov. 2017 til d. 25. nov. 2017:
+Søndag d. 19. nov. 2017: 2 tabletter morgen, 1 tablet middag og 2 tabletter aften
+Mandag d. 20. nov. 2017: 2 tabletter morgen, 1 tablet middag og 2 tabletter aften
+Tirsdag d. 21. nov. 2017: 2 tabletter morgen, 1 tablet middag og 1 tablet aften
+Onsdag d. 22. nov. 2017: 2 tabletter morgen, 1 tablet middag og 1 tablet aften
+Torsdag d. 23. nov. 2017: 1 tablet morgen, 1 tablet middag og 1 tablet aften
+Fredag d. 24. nov. 2017: 1 tablet morgen, 1 tablet middag og 1 tablet aften
+Lørdag d. 25. nov. 2017: 1 tablet morgen og 1 tablet aften</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908798</ns2:Identifier>
+            <ns2:Version>1459865271112001851</ns2:Version>
+            <ns2:PreviousVersion>1459864749886001851</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-11-03T14:39:11Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-04-05T14:07:51Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-11-03T14:39:11Z</CreatedDateTime>
+                <TreatmentStartDate>2015-11-03</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">42</Code>
+                <Text>kaliumtilskud</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">A12BA01</Code>
+                    <Text>Kaliumchlorid</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28100493671</Identifier>
+                <Name>Kaleorid</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">DEPTAB</Code>
+                    <Text>depottabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>750.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">750 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">KALIUMCHLORID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2016-04-05</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>night</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet morgen, aften og nat</ShortText>
+                            <LongText>Dosering fra d. 5. apr. 2016:
+1 tablet morgen, 1 tablet aften og 1 tablet nat - hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet morgen, aften og nat</ShortText>
+                        <LongText>Dosering fra d. 5. apr. 2016:
+1 tablet morgen, 1 tablet aften og 1 tablet nat - hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908106</ns2:Identifier>
+            <ns2:Version>1484928141178001238</ns2:Version>
+            <ns2:PreviousVersion>1448125752737001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-10-28T14:31:11Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2017-01-20T16:02:21Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-10-28T14:31:11Z</CreatedDateTime>
+                <TreatmentStartDate>2014-01-07</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">84</Code>
+                <Text>mod infektion</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">J01CF01</Code>
+                    <Text>Dicloxacillin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101579793</Identifier>
+                <Name>Dicillin</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">KAPH</Code>
+                    <Text>kapsler, hårde</Text>
+                </Form>
+                <Strength>
+                    <Value>500.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">500 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">DICLOXACILLINNATRIUM (vandfrit)</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>kapsler</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2015-11-21</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 kapsel morgen, middag og aften</ShortText>
+                            <LongText>Dosering fra d. 21. nov. 2015:
+1 kapsel morgen, 1 kapsel middag og 1 kapsel aften - hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 kapsel morgen, middag og aften</ShortText>
+                        <LongText>Dosering fra d. 21. nov. 2015:
+1 kapsel morgen, 1 kapsel middag og 1 kapsel aften - hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908105</ns2:Identifier>
+            <ns2:Version>1530193890316001851</ns2:Version>
+            <ns2:PreviousVersion>1446042669648001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-10-28T14:31:09Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2018-06-28T13:51:30Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-10-28T14:31:09Z</CreatedDateTime>
+                <TreatmentStartDate>2015-09-22</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">158</Code>
+                <Text>nervemedicin</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">N06AB03</Code>
+                    <Text>Fluoxetin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28103255201</Identifier>
+                <Name>Fluoxetin "Actavis"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TABOPL</Code>
+                    <Text>opløselige tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>20.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">20 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">FLUOXETINHYDROCHLORID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2018-06-28</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet 2 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 28. juni 2018:
+1 tablet 2 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet 2 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 28. juni 2018:
+1 tablet 2 gange hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908104</ns2:Identifier>
+            <ns2:Version>1472728699027001851</ns2:Version>
+            <ns2:PreviousVersion>1463043189496001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-10-28T14:31:07Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-09-01T11:18:18Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-10-28T14:31:07Z</CreatedDateTime>
+                <TreatmentStartDate>2015-08-31</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">151</Code>
+                <Text>mod stærke smerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">N02AA04</Code>
+                    <Text>Nicomorphin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28101013160</Identifier>
+                <Name>Vilan</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>5.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">5 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">NICOMORPHINHYDROCHLORID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <StartDate>2016-09-01</StartDate>
+                    <EndDate>2017-09-01</EndDate>
+                    <Text>2 tabletter 2 gange dagligt. Ved behov 1 højst 1 gang + max 1,00 efter behov</Text>
+                </ns2:FreeText>
+                <ns2:Type>ikke angivet</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908056</ns2:Identifier>
+            <ns2:Version>1448023215770001238</ns2:Version>
+            <ns2:PreviousVersion>1446045866771001851</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>T0DPQ</AuthorisationIdentifier>
+                        <Name>Grete Rasmussen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>RGKX</Name>
+                        <Type>Sygehus</Type>
+                        <Identifier source="SKS">0341</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2012-12-04T09:47:28Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-11-20T12:40:15Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2012-12-04T09:47:28Z</CreatedDateTime>
+                <TreatmentStartDate>2011-09-09</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2015-09-15">23</Code>
+                <Text>mod morbus Crohn</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2015-09-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2015-09-15">A07EC02</Code>
+                    <Text>Mesalazin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2015-09-15">28103346402</Identifier>
+                <Name>Asacol</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2015-09-15">ENTTAB</Code>
+                    <Text>enterotabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>800.0</Value>
+                    <UnitCode source="Medicinpriser" date="2015-09-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2015-09-15">800 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2015-09-15">MESALAZIN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2015-11-20</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>2 tabletter 3 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 20. nov. 2015:
+2 tabletter 3 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 20. nov. 2015:
+2 tabletter 3 gange hver dag
+
+Dosering fra d. 20. nov. 2015:
+2 tabletter efter behov, højst 1 gang dagligt</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:StructuresAccordingToNeed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2015-11-20</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>2 tabletter efter behov, højst 1 gang dagligt</ShortText>
+                            <LongText>Dosering fra d. 20. nov. 2015:
+2 tabletter efter behov, højst 1 gang dagligt</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 20. nov. 2015:
+2 tabletter 3 gange hver dag
+
+Dosering fra d. 20. nov. 2015:
+2 tabletter efter behov, højst 1 gang dagligt</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresAccordingToNeed>
+                <ns2:Type>kombineret</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908055</ns2:Identifier>
+            <ns2:Version>1354614451917001210</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>C9930</AuthorisationIdentifier>
+                        <Name>Morten Rasmussen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>AZCBTUULXM</Name>
+                        <AddressLine>IAAZBER</AddressLine>
+                        <AddressLine>Y</AddressLine>
+                        <AddressLine>GMLDSQJAUGEK</AddressLine>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">385799</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2012-04-03T09:34:17Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>T0DPQ</AuthorisationIdentifier>
+                        <Name>Grete Rasmussen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>RGKX</Name>
+                        <Type>Sygehus</Type>
+                        <Identifier source="SKS">0341</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2012-12-04T09:47:31Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2012-04-03T09:34:17Z</CreatedDateTime>
+                <TreatmentStartDate>2011-12-07</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2012-12-04">48</Code>
+                <Text>for hjertet</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2012-12-04">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2012-12-04">C07AB07</Code>
+                    <Text>Bisoprolol</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2012-12-04">28103194500</Identifier>
+                <Name>Bisoprolol "Actavis"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2012-12-04">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>5.0</Value>
+                    <UnitCode source="Medicinpriser" date="2012-12-04">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2012-12-04">5 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2012-12-04">BISOPROLOLFUMARAT</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>stk</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2012-12-04</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 stk morgen</ShortText>
+                            <LongText>Dosering fra d. 4. dec. 2012:
+1 stk hver morgen</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 stk morgen</ShortText>
+                        <LongText>Dosering fra d. 4. dec. 2012:
+1 stk hver morgen</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>908054</ns2:Identifier>
+            <ns2:Version>1478252289841001238</ns2:Version>
+            <ns2:PreviousVersion>1463478268623001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>T0DPQ</AuthorisationIdentifier>
+                        <Name>Grete Rasmussen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>RGKX</Name>
+                        <Type>Sygehus</Type>
+                        <Identifier source="SKS">0341</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2012-12-04T09:47:35Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-11-04T09:38:09Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2012-12-04T09:47:35Z</CreatedDateTime>
+                <TreatmentStartDate>2011-09-09</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2016-11-01">79</Code>
+                <Text>mod forhøjet kolesterol</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2016-11-01">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2016-11-01">C10AA01</Code>
+                    <Text>Simvastatin</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2016-11-01">28103464102</Identifier>
+                <Name>Simvastatin "KRKA"</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2016-11-01">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>10.0</Value>
+                    <UnitCode source="Medicinpriser" date="2016-11-01">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2016-11-01">10 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2016-11-01">SIMVASTATIN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2016-11-04</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet aften</ShortText>
+                            <LongText>Dosering fra d. 4. nov. 2016:
+1 tablet hver aften</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet aften</ShortText>
+                        <LongText>Dosering fra d. 4. nov. 2016:
+1 tablet hver aften</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>907962</ns2:Identifier>
+            <ns2:Version>1649057121562001034</ns2:Version>
+            <ns2:PreviousVersion>1630493869977001034</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-10-28T14:31:11Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC14</AuthorisationIdentifier>
+                        <Name>Lene Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Karl Svendsen</Name>
+                        <AddressLine>Saturnvej57</AddressLine>
+                        <AddressLine>535 Fuglafjørdur</AddressLine>
+                        <TelephoneNumber>12312312</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">123456</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2022-04-04T07:25:21Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-10-28T14:31:11Z</CreatedDateTime>
+                <TreatmentStartDate>2015-11-28</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2022-03-29">145</Code>
+                <Text>mod smerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2022-03-29">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2022-03-29">N02BE01</Code>
+                    <Text>Paracetamol</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2022-03-29">28101674394</Identifier>
+                <Name>Panodil</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2022-03-29">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>1000.0</Value>
+                    <UnitCode source="Medicinpriser" date="2022-03-29">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2022-03-29">1000 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2022-03-29">PARACETAMOL</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2022-04-04</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>2 tabletter 1 gang daglig</ShortText>
+                            <LongText>Dosering fra d. 4. apr. 2022:
+2 tabletter hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>2 tabletter 1 gang daglig</ShortText>
+                        <LongText>Dosering fra d. 4. apr. 2022:
+2 tabletter hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>907961</ns2:Identifier>
+            <ns2:Version>1478252289818001238</ns2:Version>
+            <ns2:PreviousVersion>1472726929594001238</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC13</AuthorisationIdentifier>
+                        <Name>Casper Kristensen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2015-10-28T14:31:10Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>MYC04</AuthorisationIdentifier>
+                        <Name>Anne Pedersen</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Læge Casper Kristensen</Name>
+                        <AddressLine>Højgårdsparken36</AddressLine>
+                        <AddressLine>3955 Kangaatsiaq</AddressLine>
+                        <TelephoneNumber>86859200</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">66001</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2016-11-04T09:38:09Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2015-10-28T14:31:10Z</CreatedDateTime>
+                <TreatmentStartDate>2014-01-07</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2016-11-01">54</Code>
+                <Text>for blodtrykket</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2016-11-01">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2016-11-01">C03CA01</Code>
+                    <Text>Furosemid</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2016-11-01">28101275086</Identifier>
+                <Name>Furix</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2016-11-01">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>20.0</Value>
+                    <UnitCode source="Medicinpriser" date="2016-11-01">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2016-11-01">20 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2016-11-01">FUROSEMID</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitText>tabletter</ns2:UnitText>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2016-11-04</StartDate>
+                        <EndDate>2017-11-04</EndDate>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet morgen og aften</ShortText>
+                            <LongText>Dosering fra d. 4. nov. 2016 til d. 4. nov. 2017:
+1 tablet morgen og 1 tablet aften - hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 4. nov. 2016 til d. 4. nov. 2017:
+1 tablet morgen og 1 tablet aften - hver dag
+
+Dosering fra d. 4. nov. 2016 til d. 4. nov. 2017:
+1 tablet efter behov, højst 2 gange dagligt</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:StructuresAccordingToNeed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2016-11-04</StartDate>
+                        <EndDate>2017-11-04</EndDate>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet efter behov, højst 2 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 4. nov. 2016 til d. 4. nov. 2017:
+1 tablet efter behov, højst 2 gange dagligt</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 4. nov. 2016 til d. 4. nov. 2017:
+1 tablet morgen og 1 tablet aften - hver dag
+
+Dosering fra d. 4. nov. 2016 til d. 4. nov. 2017:
+1 tablet efter behov, højst 2 gange dagligt</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresAccordingToNeed>
+                <ns2:Type>kombineret</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:HasOpenDosageDispensingPrescriptions>false</ns2:HasOpenDosageDispensingPrescriptions>
+        <ns2:OrderedPrescriptionsExist>false</ns2:OrderedPrescriptionsExist>
+    </ns2:MedicineCard>
+</ns2:GetMedicineCardResponse>

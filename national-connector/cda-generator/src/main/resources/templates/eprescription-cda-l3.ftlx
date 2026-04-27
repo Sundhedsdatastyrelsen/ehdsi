@@ -187,8 +187,8 @@
 <#else>
                             <effectiveTime operator="A" nullFlavor="UNK"/>
 </#if>
-<#if administrationRoute?has_content>
-                            <routeCode <@common.cdaCodeAttrs administrationRoute />/>
+<#if routeOfAdministration?has_content>
+                            <routeCode <@common.cdaCodeAttrs routeOfAdministration />/>
 </#if>
 <#if dosage.quantity?? && dosage.quantity.unit.tag == "Translated">
                             <doseQuantity>
