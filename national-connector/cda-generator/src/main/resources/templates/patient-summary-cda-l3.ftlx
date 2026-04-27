@@ -205,15 +205,15 @@
                             <item ID="med-${med?index}">
                                 <#if med.product??>
                                 <content ID="product-name-med-${med?index}">${ med.product.name }</content><br/>
-                                <#if med.product.strength?has_content>
+                                <#if (med.product.strength)?has_content>
                                 <content ID="product-strength-med-${med?index}">${ med.product.strength }</content><br/>
                                 </#if>
                                 <#else>
                                     Unknown medication
                                 </#if>
-                                <#if med.patientMedicationInstructions?? && med.patientMedicationInstructions?has_content>
+                                <#if (med.patientMedicationInstructions)?has_content>
                                 <content ID="patient-medication-instructions-med-${med?index}">${ med.patientMedicationInstructions }</content><br/>
-                                <#elseif med.indicationText?? && med.indicationText?has_content>
+                                <#elseif (med.indicationText)?has_content>
                                 <content ID="indication-text-med-${med?index}">${ med.indicationText }</content><br/>
                                 </#if>
                                 <paragraph>
@@ -226,7 +226,7 @@
                         <content ID="Medications_NoInformation">No information about medications.</content>
                     </#if>
                     </text>
-                    <#if medicationSummary?? && medicationSummary.entries?has_content>
+                    <#if (medicationSummary.entries)?has_content>
                     <#list medicationSummary.entries as med>
                         <entry typeCode="COMP">
                             <#-- https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.4-2024-01-25T135932.html -->
@@ -310,7 +310,7 @@
 
                                             <#if med.product??>
                                             <name>${med.product.name}</name>
-                                            <#if med.product.strength?? && med.product.strength?has_content>
+                                            <#if (med.product.strength)?has_content>
                                             <pharm:desc>${med.product.strength}</pharm:desc>
                                             </#if>
                                             <#if med.product.formCode??>
@@ -331,7 +331,7 @@
                                             <#list med.activeIngredients as ingredient>
                                                 <pharm:ingredient classCode="ACTI">
                                                     <pharm:quantity>
-                                                        <#if ingredient.quantity??>
+                                                    <#if ingredient.quantity??>
                                                         <#if ingredient.quantity.translation??>
                                                         <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ">
                                                             <translation>
@@ -342,10 +342,10 @@
                                                         <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ"/>
                                                         </#if>
                                                         <denominator value="${ ingredient.quantity.denominator }" unit="${ ingredient.quantity.denominatorUnit }" xsi:type="PQ"/>
-                                                        <#else>
+                                                    <#else>
                                                         <numerator nullFlavor="NI" xsi:type="PQ"/>
                                                         <denominator nullFlavor="NI" xsi:type="PQ"/>
-                                                        </#if>
+                                                    </#if>
                                                     </pharm:quantity>
                                                     <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
                                                         <pharm:code nullFlavor="UNK"/>
@@ -366,14 +366,14 @@
                                             </pharm:ingredient>
                                             </#if>
                                         </manufacturedMaterial>
-                                        <#if med.product?? && med.product.manufacturerOrganizationName?has_content>
+                                        <#if (med.product.manufacturerOrganizationName)?has_content>
                                         <manufacturerOrganization classCode="ORG" determinerCode="INSTANCE">
                                             <name>${ med.product.manufacturerOrganizationName }</name>
                                         </manufacturerOrganization>
                                         </#if>
                                     </manufacturedProduct>
                                 </consumable>
-                                <#if med.indication?? || (med.indicationText?? && med.indicationText?has_content)>
+                                <#if med.indication?? || (med.indicationText)?has_content>
                                 <entryRelationship typeCode="RSON">
                                     <observation classCode="OBS" moodCode="EVN">
                                         <code code="404684003"
@@ -391,7 +391,7 @@
                                     </observation>
                                 </entryRelationship>
                                 </#if>
-                                <#if med.patientMedicationInstructions?? && med.patientMedicationInstructions?has_content>
+                                <#if (med.patientMedicationInstructions)?has_content>
                                 <entryRelationship typeCode="SUBJ" inversionInd="true">
                                     <act classCode="ACT" moodCode="INT">
                                         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.12"/>

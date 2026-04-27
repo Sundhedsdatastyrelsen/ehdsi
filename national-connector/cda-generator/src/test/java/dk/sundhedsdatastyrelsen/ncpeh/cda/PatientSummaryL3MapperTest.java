@@ -69,15 +69,34 @@ class PatientSummaryL3MapperTest {
         Assertions.assertNotNull(model);
         Assertions.assertNotNull(model.getPatient());
         Assertions.assertNotNull(model.getMedicationSummary());
-        Assertions.assertNotNull(model.getMedicationSummary().getEntries());
-        assertThat(model.getMedicationSummary().getEntries(), is(not(empty())));
+        Assertions.assertNotNull(model.getMedicationSummary().getItems());
+        assertThat(model.getMedicationSummary().getItems(), is(not(empty())));
     }
+
+    @Test
+    void medicationEntriesHaveRequiredCoreFields() {
+        var model = getModel();
+
+        for (var medication : model.getMedicationSummary().getItems()) {
+            Assertions.assertNotNull(medication.getMedicationId());
+            Assertions.assertNotNull(medication.getMedicationId().getRoot());
+            Assertions.assertNotNull(medication.getMedicationId().getExtension());
+
+            Assertions.assertNotNull(medication.getDosage());
+            Assertions.assertNotNull(medication.getDosage().getTag());
+            Assertions.assertNotNull(medication.getDosage().getUnstructuredText());
+
+            Assertions.assertNotNull(medication.getActiveIngredients());
+            Assertions.assertNotNull(medication.getUnstructuredActiveIngredients());
+        }
+    }
+
 
     @Test
     void getPatientMedicationInstructions() {
         var model = getModel();
 
-        var firstMedication = model.getMedicationSummary().getEntries().getFirst();
+        var firstMedication = model.getMedicationSummary().getItems().getFirst();
 
         Assertions.assertNotNull(firstMedication);
         Assertions.assertNotNull(firstMedication.getMedicationId());
@@ -89,7 +108,7 @@ class PatientSummaryL3MapperTest {
     void getMedicationStartDate() {
         var model = getModel();
 
-        var firstMedication = model.getMedicationSummary().getEntries().getFirst();
+        var firstMedication = model.getMedicationSummary().getItems().getFirst();
 
         Assertions.assertNotNull(firstMedication);
         Assertions.assertNotNull(firstMedication.getMedicationStartTime());
