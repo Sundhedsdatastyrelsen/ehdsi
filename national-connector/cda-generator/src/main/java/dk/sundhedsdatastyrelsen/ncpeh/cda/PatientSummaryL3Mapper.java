@@ -1,19 +1,17 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.AuthorisedHealthcareProfessionalWithOptionalAuthorisationIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationItem;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary.MedicationItem;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
@@ -88,7 +86,7 @@ public class PatientSummaryL3Mapper {
 
     private static MedicationSummary medicationSummary(List<DrugMedicationType> medications) {
         return MedicationSummary.builder()
-            .entries(medications.stream()
+            .items(medications.stream()
                 .map(PatientSummaryL3Mapper::medicationItem)
                 .toList())
             .build();

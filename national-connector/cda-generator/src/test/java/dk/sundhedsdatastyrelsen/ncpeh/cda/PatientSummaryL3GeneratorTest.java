@@ -6,7 +6,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationItem;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary.MedicationItem;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageLayer;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
@@ -156,7 +156,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medicationSummary = MedicationSummary.builder()
-            .entries(List.of(medication1, medication2))
+            .items(List.of(medication1, medication2))
             .build();
 
         var model = PatientSummaryL3.builder()
@@ -345,7 +345,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medicationSummary = MedicationSummary.builder()
-            .entries(List.of(medication1, medication2))
+            .items(List.of(medication1, medication2))
             .build();
 
         var model = PatientSummaryL3.builder()
@@ -486,7 +486,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medicationSummary = MedicationSummary.builder()
-            .entries(List.of(medication1, medication2))
+            .items(List.of(medication1, medication2))
             .build();
 
         var model = PatientSummaryL3.builder()
