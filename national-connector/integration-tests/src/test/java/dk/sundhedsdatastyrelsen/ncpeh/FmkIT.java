@@ -2,7 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.GetPrescriptionRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrderStatusPredefinedType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.PersonIdentifierType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PrescriptionStatusType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -282,6 +284,28 @@ class FmkIT {
         assertDoesNotThrow(() ->
             prescriptionService.submitDispensation(patientId(cpr), otherHealthProfessionalDispensation, otherHealthProfessionalToken)
         );
+    }
+
+    @Test
+    void getMedicineCardTest() throws Exception {
+        var cpr = Fmk.cprKarl;
+        var personIdentifier = PersonIdentifierType.builder()
+            .withSource("CPR")
+            .withValue(cpr)
+            .build();
+        var fmkClient = new FmkClientIdws(
+            new SigningCertificate(Fmk.getSigningKey()).getCertificateAndKey().privateKey(),
+            Fmk.FMK_IDWS_ENDPOINT_URI);
+        var medicineCard = fmkClient.getMedicineCard(
+            GetMedicineCardRequestType.builder()
+                .withPersonIdentifier(personIdentifier)
+                .withIncludeEffectuations(false)
+                .withIncludePrescriptions(false)
+                .build(),
+            Sosi.getToken(Sosi.Audience.FMK, "221")
+        );
+
+        assertThat(medicineCard, is(notNullValue()));
     }
 
     private Document dispensationCda(String cpr, String prescriptionId) {
