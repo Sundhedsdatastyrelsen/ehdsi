@@ -152,16 +152,14 @@ class FmkIT {
             .withIncludeNonRelevantPrescriptions(false)
             .build();
 
-        // GetMedicineCard should work with IDWS, but it doesn't, so we use DGWS instead.
-        var medicineCard = Fmk.dgwsApiClient().getMedicineCard(
+        var token = Sosi.getToken(Sosi.Audience.FMK, "221");
+
+        var medicineCard = Fmk.idwsApiClient().getMedicineCard(
             getMedicationRequest,
-            TestIdentities.lægeCharlesBabbage,
-            PredefinedRequestedRole.LÆGE
+            token
         ).getMedicineCard();
 
-        var firstMedicineCard = medicineCard.getFirst();
         var drugMedications = medicineCard.getFirst().getDrugMedication();
-        var drugMedication = drugMedications.getFirst();
 
         assertThat(medicineCard, is(not(empty())));
         assertThat(drugMedications, is(not(empty())));

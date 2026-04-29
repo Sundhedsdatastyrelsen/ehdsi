@@ -118,14 +118,14 @@ public class Beans {
         @Qualifier("jobQueueDataSource") DataSource jobQueueDataSource,
         @Value("${app.minlog.max-attempts:3}") int maxAttempts,
         @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl,
-        FmkClientDgws fmkClientDgws,
+        FmkClientIdws fmkClientIdws,
         AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException, SQLException {
         var minLogClient = new MinLogClient(minlogEndpointUrl, authenticationService);
         var fskClient = new FskClient(fskEndpointUrl, authenticationService);
         var minLogService = new MinLogService(minLogClient, systemCaller, jobQueueDataSource, maxAttempts);
         var informationCardService = new InformationCardService(fskClient, minLogService, systemCaller);
-        return new PatientSummaryService(informationCardService, fmkClientDgws);
+        return new PatientSummaryService(informationCardService, fmkClientIdws);
     }
 
     @Bean

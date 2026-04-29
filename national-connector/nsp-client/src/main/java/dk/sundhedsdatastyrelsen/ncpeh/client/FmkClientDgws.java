@@ -8,7 +8,6 @@ import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sdsd.dgws._2012._06.ObjectFactory;
 import dk.sdsd.dgws._2012._06.WhitelistingHeader;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.DgwsAssertion;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.utils.ClientUtils;
 import jakarta.xml.bind.JAXBContext;
@@ -17,14 +16,9 @@ import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.GregorianCalendar;
+
 
 public class FmkClientDgws {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(FmkClientDgws.class);
@@ -35,6 +29,7 @@ public class FmkClientDgws {
     private final URI serviceUri;
     private final AuthenticationService authenticationService;
     private final JAXBContext jaxbContext;
+
 
     public FmkClientDgws(
         String endpoint,
@@ -106,12 +101,14 @@ public class FmkClientDgws {
     }
 
     private  JAXBElement<WhitelistingHeader> getWhitelistingHeader(PredefinedRequestedRole requestedRole) {
+        final var organisation = "Sundhedsdatastyrelsen";
+
         final var header = WhitelistingHeader.builder()
             .withSystemName("ePPS PoC")
-            .withSystemOwnerName("Sundhedsdatastyrelsen")
+            .withSystemOwnerName(organisation)
             .withSystemVersion("0.1.0")
-            .withOrgResponsibleName("Sundhedsdatastyrelsen")
-            .withOrgUsingName("Sundhedsdatastyrelsen")
+            .withOrgResponsibleName(organisation)
+            .withOrgUsingName(organisation)
             .withOrgUsingID()
             .withNameFormat(NameFormat.MEDCOM_LOCATIONNUMBER).withValue("5790000120512").end()
             .withRequestedRole(requestedRole.value())
@@ -133,15 +130,5 @@ public class FmkClientDgws {
 
         return objectFactory.createConsentHeader(consentHeader);
     }
-
-
-    private  XMLGregorianCalendar xmlGregorianCalendar(ZonedDateTime zdt) {
-        return DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar(GregorianCalendar.from(zdt));
-    }
-
-    private  XMLGregorianCalendar xmlGregorianCalendar(LocalDate date) {
-        return xmlGregorianCalendar(date.atStartOfDay(ZoneId.of("Z")));
-    }
-
 
 }
