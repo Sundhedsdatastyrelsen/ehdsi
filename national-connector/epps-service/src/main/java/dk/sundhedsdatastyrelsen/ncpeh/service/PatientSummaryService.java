@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
-import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
@@ -12,7 +11,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
-import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
+import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentAssociationForPatientSummaryDocumentMetadataDto;
@@ -31,11 +30,11 @@ import java.util.UUID;
 @Slf4j
 public class PatientSummaryService {
     private final InformationCardService informationCardService;
-    private final FmkClientDgws fmkServiceDgws;
+    private final FmkClientIdws fmkServiceIdws;
 
-    public PatientSummaryService(InformationCardService informationCardService, FmkClientDgws fmkServiceDgws) {
+    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkServiceIdws) {
         this.informationCardService = informationCardService;
-        this.fmkServiceDgws = fmkServiceDgws;
+        this.fmkServiceIdws = fmkServiceIdws;
     }
 
     @WithSpan
@@ -120,9 +119,9 @@ public class PatientSummaryService {
             .build();
 
         try {
-            var fmkCard = fmkServiceDgws.getMedicineCard(medicationCardRequest, system, PredefinedRequestedRole.LÆGE);
+            var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, token);
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard);
-        }  catch (JAXBException e) {
+        } catch (JAXBException e) {
             throw new PublicException(500, "Could not retrieve prescriptions.", e);
         }
     }

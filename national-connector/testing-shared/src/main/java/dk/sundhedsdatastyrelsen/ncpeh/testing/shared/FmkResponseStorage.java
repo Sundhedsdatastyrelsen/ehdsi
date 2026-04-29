@@ -7,10 +7,7 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestTy
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.GetPrescriptionResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
-import dk.sdsd.dgws._2010._08.PredefinedRequestedRole;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
-import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientDgws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -55,8 +52,6 @@ public class FmkResponseStorage {
     @NonNull
     private final FmkClientIdws fmkClient;
 
-    private FmkClientDgws fmkClientDgws;
-
     private static final List<String> rawResponseCprs = List.of("1111111118", "0101010000", "0201909309", "0410009234", "1011649927");
 
     public static List<String> rawResponseCprs() {
@@ -65,11 +60,6 @@ public class FmkResponseStorage {
 
     public static List<String> e2eTestCprs() {
         return testCprs;
-    }
-
-    public FmkResponseStorage(@NonNull FmkClientIdws fmkClient, FmkClientDgws fmkClientDgws) {
-        this.fmkClient = fmkClient;
-        this.fmkClientDgws = fmkClientDgws;
     }
 
     public FmkResponseStorage(@NonNull FmkClientIdws fmkClient) {
@@ -126,18 +116,14 @@ public class FmkResponseStorage {
 
     public GetMedicineCardResponseType getMedicineCardResponse(
         String cpr,
-        NspDgwsIdentity caller,
-        PredefinedRequestedRole requestedRole
+        EuropeanHcpIdwsToken caller
     ) throws JAXBException {
-        if (fmkClientDgws == null) {
-            throw new IllegalStateException("fmkClientDgws is not configured");
-        }
 
         var request = GetMedicineCardRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .build();
 
-        return fmkClientDgws.getMedicineCard(request, caller, requestedRole);
+        return fmkClient.getMedicineCard(request, caller);
     }
 
     public JAXBElement<GetPrescriptionResponseType> createXmlFromPrescription(GetPrescriptionResponseType response) {
@@ -273,10 +259,8 @@ public class FmkResponseStorage {
      * Download and replace the existing stored FMK responses.
      */
     public static void main(String[] args) throws Exception {
-        var frs = new FmkResponseStorage(Fmk.idwsApiClient(), Fmk.dgwsApiClient());
-        var token = Sosi.getToken(Sosi.Audience.FMK);
-        var dgwsCaller = TestIdentities.lægeCharlesBabbage;
-        var requestedRole = PredefinedRequestedRole.LÆGE;
+        var frs = new FmkResponseStorage(Fmk.idwsApiClient());
+        var token = Sosi.getToken(Sosi.Audience.FMK, "221");
 
         var dir = Files.createDirectories(
             Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
@@ -296,7 +280,7 @@ public class FmkResponseStorage {
             System.out.printf("Wrote drug-medications to %s%n", dmf.getAbsolutePath());
 
             var mcf = dir.resolve("medicine-card-" + cpr + ".xml").toFile();
-            var medicineCard = frs.getMedicineCardResponse(cpr, dgwsCaller, requestedRole);
+            var medicineCard = frs.getMedicineCardResponse(cpr, token);
             serializeToFile(frs.createXmlFromMedicineCard(medicineCard), mcf);
             System.out.printf("Wrote medicine-card to %s%n", mcf.getAbsolutePath());
 
