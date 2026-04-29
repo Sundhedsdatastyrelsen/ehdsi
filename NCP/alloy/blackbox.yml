@@ -5,3 +5,6 @@ modules:
     http:
       tls_config:
         insecure_skip_verify: true
+  tcp:
+    prober: tcp
+    timeout: 5s
