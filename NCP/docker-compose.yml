@@ -409,9 +409,12 @@ services:
   alloy-edge:
     image: grafana/alloy:v1.12.2
     restart: unless-stopped
-    command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
+    ports:
+      - "12345:12345"
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "/etc/alloy/config.alloy", "--stability.level=experimental"]
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - ./alloy/blackbox.yml:/etc/alloy/blackbox.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       OTLP_SERVER_ENDPOINT: http://host.docker.internal:4317

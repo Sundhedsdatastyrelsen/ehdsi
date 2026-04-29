@@ -195,3 +195,72 @@ otelcol.receiver.prometheus "edge" {
     metrics = [otelcol.processor.batch.default.input]
   }
 }
+
+
+/// Blackbox probing via Docker label discovery
+
+discovery.relabel "blackbox_targets" {
+  targets = discovery.docker.local.targets
+
+  // Only probe containers that have the label: monitoring.blackbox.url=<url>
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_blackbox_url"]
+    regex         = "(.+)"
+    action        = "keep"
+  }
+
+  // Use container name as the probe name
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "name"
+    replacement   = "$1"
+  }
+
+  // Set address (URL to probe) from docker label
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_blackbox_url"]
+    target_label  = "address"
+  }
+
+  // Set module; default to http, override with monitoring.blackbox.module
+  rule {
+    target_label = "module"
+    replacement  = "http"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_blackbox_module"]
+    regex         = "(.+)"
+    target_label  = "module"
+  }
+
+  // Carry over deployment_environment_name (default: unknown)
+  rule {
+    target_label = "deployment_environment_name"
+    replacement = "unknown"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_monitoring_environment"]
+    target_label  = "deployment_environment_name"
+  }
+}
+
+prometheus.exporter.blackbox "integrations_blackbox" {
+  config_file = "/etc/alloy/blackbox.yml"
+  targets     = discovery.relabel.blackbox_targets.output
+}
+
+discovery.relabel "blackbox_scrape_targets" {
+  targets = prometheus.exporter.blackbox.integrations_blackbox.targets
+
+  // Override instance to be the probe URL rather than the component name
+  rule {
+    source_labels = ["__param_target"]
+    target_label  = "instance"
+  }
+}
+
+prometheus.scrape "blackbox" {
+  targets    = discovery.relabel.blackbox_scrape_targets.output
+  forward_to = [otelcol.receiver.prometheus.edge.receiver]
+}
