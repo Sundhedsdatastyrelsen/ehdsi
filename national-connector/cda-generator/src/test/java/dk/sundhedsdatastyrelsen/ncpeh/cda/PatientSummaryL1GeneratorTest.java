@@ -45,8 +45,7 @@ class PatientSummaryL1GeneratorTest {
             .birthTime(LocalDate.of(1982, 11, 3))
             .build();
         return PatientSummaryL3.builder()
-            .documentId(new CdaId(
-                Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
+            .documentId(new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
                 DocumentIdMapper.level1DocumentId(BASE_ID)))
             .effectiveTime(OffsetDateTime.now())
             .title("Patient Summary L1 Test")
@@ -58,8 +57,7 @@ class PatientSummaryL1GeneratorTest {
     private static PatientSummaryL1 buildL1Model(PreferredHealthProfessional preferredHp) {
         var l3Model = buildL3Model(preferredHp);
         var pdf = PatientSummaryPdfGenerator.generate(l3Model);
-        var relatedL3DocumentId = new CdaId(
-            Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
+        var relatedL3DocumentId = new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
             DocumentIdMapper.level3DocumentId(BASE_ID));
         return PatientSummaryL1.builder()
             .modelData(l3Model)
@@ -95,12 +93,10 @@ class PatientSummaryL1GeneratorTest {
 
         var generatedCda = Input.fromString(cda).build();
 
-        assertThat(
-            "document id root matches repository OID",
+        assertThat("document id root matches repository OID",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:id/@root", generatedCda),
             is(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value));
-        assertThat(
-            "document id extension has L1 suffix",
+        assertThat("document id extension has L1 suffix",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:id/@extension", generatedCda),
             endsWith("L1"));
     }
@@ -116,8 +112,7 @@ class PatientSummaryL1GeneratorTest {
 
         var generatedCda = Input.fromString(cda).build();
 
-        assertThat(
-            "related document id extension has L3 suffix",
+        assertThat("related document id extension has L3 suffix",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:relatedDocument/hl7:parentDocument/hl7:id/@extension", generatedCda),
             endsWith("L3"));
     }
@@ -133,12 +128,10 @@ class PatientSummaryL1GeneratorTest {
 
         var generatedCda = Input.fromString(cda).build();
 
-        assertThat(
-            "nonXMLBody has pdf mediaType",
+        assertThat("nonXMLBody has pdf mediaType",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:component/hl7:nonXMLBody/hl7:text/@mediaType", generatedCda),
             is("application/pdf"));
-        assertThat(
-            "nonXMLBody text content is non-empty",
+        assertThat("nonXMLBody text content is non-empty",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:component/hl7:nonXMLBody/hl7:text", generatedCda),
             not(emptyString()));
     }
@@ -154,12 +147,10 @@ class PatientSummaryL1GeneratorTest {
 
         var generatedCda = Input.fromString(cda).build();
 
-        assertThat(
-            "patient birth time matches",
+        assertThat("patient birth time matches",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value", generatedCda),
             is("19821103"));
-        assertThat(
-            "patient family name is correct",
+        assertThat("patient family name is correct",
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:family", generatedCda),
             is("Andersen"));
     }

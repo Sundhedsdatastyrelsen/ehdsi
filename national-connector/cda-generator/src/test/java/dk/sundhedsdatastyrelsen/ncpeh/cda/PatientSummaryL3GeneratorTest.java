@@ -111,7 +111,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medication2 = MedicationItem.builder()
-            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280999"))
+            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION , "13143641280999"))
             .medicationStartTime(OffsetDateTime.parse("2025-02-01T00:00:00+01:00"))
             .routeOfAdministration(CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)
@@ -300,7 +300,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medication2 = MedicationItem.builder()
-            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280999"))
+            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION , "13143641280999"))
             .medicationStartTime(OffsetDateTime.parse("2025-02-01T00:00:00+01:00"))
             .routeOfAdministration(CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)
@@ -441,7 +441,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medication2 = MedicationItem.builder()
-            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280999"))
+            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION , "13143641280999"))
             .medicationStartTime(OffsetDateTime.parse("2025-02-01T00:00:00+01:00"))
             .routeOfAdministration(CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)

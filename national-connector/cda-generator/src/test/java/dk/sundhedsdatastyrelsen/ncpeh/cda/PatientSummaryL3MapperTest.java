@@ -91,6 +91,7 @@ class PatientSummaryL3MapperTest {
         }
     }
 
+
     @Test
     void getPatientMedicationInstructions() {
         var model = getModel();
@@ -112,6 +113,7 @@ class PatientSummaryL3MapperTest {
         Assertions.assertNotNull(firstMedication);
         Assertions.assertNotNull(firstMedication.getMedicationStartTime());
     }
+
 
     @Test
     void getPreferredHealthProfessional() {
