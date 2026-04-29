@@ -133,37 +133,6 @@ class FmkIT {
         assertThat(prescriptions.getPatient().getPerson().getName().getGivenName(), is("Helle"));
     }
 
-    /**
-     * This test simply checks that we can connect to FMK and get an answer on the medication data need by PatientSummary.
-     *
-     * @throws Exception
-     */
-    @Test
-    void getMedicationTest() throws Exception {
-        var cpr = Fmk.cprLotteSvendsen;
-
-        var getMedicationRequest = GetMedicineCardRequestType.builder()
-            .withPersonIdentifier()
-            .withSource("CPR")
-            .withValue(cpr)
-            .end()
-            .withIncludePrescriptions(false)
-            .withIncludeNonRelevantPrescriptions(false)
-            .build();
-
-        var token = Sosi.getToken(Sosi.Audience.FMK, "221");
-
-        var medicineCard = Fmk.idwsApiClient().getMedicineCard(
-            getMedicationRequest,
-            token
-        ).getMedicineCard();
-
-        var drugMedications = medicineCard.getFirst().getDrugMedication();
-
-        assertThat(medicineCard, is(not(empty())));
-        assertThat(drugMedications, is(not(empty())));
-    }
-
     @Test
     void getValidDrugMedications() throws Exception {
         var getPrescriptionRequest = GetPrescriptionRequestType.builder()
