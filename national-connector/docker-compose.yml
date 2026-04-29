@@ -40,7 +40,6 @@ services:
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_RESOURCE_ATTRIBUTES: "service.version=${VERSION:-latest},deployment.environment.name=${GRAFANA_ENVIRONMENT:-Training}"
       OTEL_TRACES_SAMPLER: "always_on"
-      OTEL_JMX_TARGET_SYSTEM: "tomcat"
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data
