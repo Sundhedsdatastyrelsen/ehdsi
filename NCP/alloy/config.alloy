@@ -253,9 +253,11 @@ prometheus.exporter.blackbox "integrations_blackbox" {
 discovery.relabel "blackbox_scrape_targets" {
   targets = prometheus.exporter.blackbox.integrations_blackbox.targets
 
-  // Override instance to be the probe URL rather than the component name
+  // Override instance to be "(env) url" rather than the component name
   rule {
-    source_labels = ["__param_target"]
+    source_labels = ["deployment_environment_name", "__param_target"]
+    regex         = "(.+);(.+)"
+    replacement   = "($1) $2"
     target_label  = "instance"
   }
 }
