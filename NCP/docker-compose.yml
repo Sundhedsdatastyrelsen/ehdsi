@@ -30,9 +30,12 @@ secrets:
   tls_truststore_password:
     file: tls_truststore_password.txt
 
-x-monitoring-labels: &monitoring-labels
-  monitoring.logs.scrape: "true"
+x-common-labels: &common-labels
   monitoring.environment: ${GRAFANA_ENVIRONMENT:-Training}
+
+x-monitoring-labels: &log-scraping
+  <<: *common-labels
+  monitoring.logs.scrape: "true"
 
 # OpenTelemetry configuration as a YAML anchor for merging into service configurations
 x-opentelemetry-config: &opentelemetry-config
@@ -48,7 +51,7 @@ services:
     image: busybox
     user: root
     labels:
-      <<: *monitoring-labels
+      <<: *log-scraping
     entrypoint:
       - "chown"
       - "-R"
@@ -63,7 +66,9 @@ services:
     hostname: ${DB_HOST}
     image: mysql:9
     labels:
-      <<: *monitoring-labels
+      <<: *log-scraping
+      monitoring.blackbox.url: "openncp_db:3306"
+      monitoring.blackbox.module: "tcp"
     ports:
       - ${DB_EXPOSED_PORT}:${DB_INTERNAL_PORT}
     volumes:
@@ -96,7 +101,7 @@ services:
     container_name: "tsam-exporter"
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-exporter:${IMAGE_TAG}
     labels:
-      <<: *monitoring-labels
+      <<: *log-scraping
     env_file: .env
     environment:
       DB_USER_FILE: /run/secrets/db_username
@@ -119,7 +124,7 @@ services:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-tsam-synchronizer:${IMAGE_TAG}
     profiles: ["initialization"] # prevents service from starting on `docker compose up`
     labels:
-      <<: *monitoring-labels
+      <<: *log-scraping
     build:
       target: "tsam-synchronizer"
     env_file: .env
@@ -174,6 +179,9 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    labels:
+      <<: *common-labels
+      monitoring.blackbox.url: http://openncp-server:8090/openncp-ws-server/
 
   tomcat_node_b:
     build:
@@ -215,6 +223,9 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    labels:
+      <<: *common-labels
+      monitoring.blackbox.url: http://openncp-client:8091/openncp-client-connector/
 
   openncp-openatna:
     container_name: openncp-openatna
@@ -255,6 +266,9 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    labels:
+      <<: *common-labels
+      monitoring.blackbox.url: http://openncp-openatna:8084/openatna-web/
 
   openncp-trc-sts:
     container_name: openncp-trc-sts
@@ -294,6 +308,9 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    labels:
+      <<: *common-labels
+      monitoring.blackbox.url: http://openncp-trc-sts:8095/TRC-STS/
 
   openncp-translations-and-mappings:
     container_name: openncp-translations-and-mappings
@@ -333,6 +350,9 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    labels:
+      <<: *common-labels
+      monitoring.blackbox.url: http://openncp-translations-and-mappings:8096/translations-and-mappings-ws/
 
   openncp-web-manager:
     container_name: openncp-web-manager
@@ -374,6 +394,9 @@ services:
       - tls_truststore_password
       - db_username
       - db_password
+    labels:
+      <<: *common-labels
+      monitoring.blackbox.url: http://openncp-web-manager:8097/openncp-gateway-backend/
 
   configuration-synchronizer:
     build:
@@ -382,7 +405,7 @@ services:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/dk-ncp-configuration-utility:${IMAGE_TAG}
     restart: unless-stopped
     labels:
-      <<: *monitoring-labels
+      <<: *log-scraping
     env_file: .env
     volumes:
       - ./openncp-configuration.properties:/opt/openncp-configuration/openncp-configuration.properties:ro
@@ -409,9 +432,12 @@ services:
   alloy-edge:
     image: grafana/alloy:v1.12.2
     restart: unless-stopped
-    command: ["run", "/etc/alloy/config.alloy", "--stability.level=experimental"]
+    ports:
+      - "12345:12345"
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "/etc/alloy/config.alloy", "--stability.level=experimental"]
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - ./alloy/blackbox.yml:/etc/alloy/blackbox.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       OTLP_SERVER_ENDPOINT: http://host.docker.internal:4317
