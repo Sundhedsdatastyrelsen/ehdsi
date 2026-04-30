@@ -115,7 +115,7 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken(Sosi.Audience.FMK);
+        var token = Sosi.getToken(Sosi.Audience.FMK, cpr);
 
         var prescriptions = Fmk.idwsApiClient()
             .getPrescription(getPrescriptionRequest, token);
@@ -144,7 +144,7 @@ class FmkIT {
             .end()
             .build();
 
-        var token = Sosi.getToken(Sosi.Audience.FMK);
+        var token = Sosi.getToken(Sosi.Audience.FMK, Fmk.cprKarl);
 
         var prescriptions = Fmk.idwsApiClient()
             .getPrescription(getPrescriptionRequest, token);
@@ -172,7 +172,7 @@ class FmkIT {
             .getFirst());
         var eDispensation = dispensationCda(cpr, prescriptionId);
 
-        var token = Sosi.getToken(Sosi.Audience.FMK);
+        var token = Sosi.getToken(Sosi.Audience.FMK, Fmk.cprKarl);
 
         try {
             prescriptionService.submitDispensation(patientId(cpr), eDispensation, token, true);
@@ -228,7 +228,7 @@ class FmkIT {
             eDispensationPath.toFile(),
             is(aReadableFile()));
         var eDispensation = XmlUtils.parse(Files.newInputStream(eDispensationPath));
-        var token = Sosi.getToken(Sosi.Audience.FMK);
+        var token = Sosi.getToken(Sosi.Audience.FMK, Fmk.cprKarl);
 
         // shouldn't throw:
         prescriptionService.submitDispensation(
@@ -259,13 +259,19 @@ class FmkIT {
         var pharmacyWorkerDispensation = dispensationCda(cpr, prescriptionId, "3213", "Pharmaceutical technicians and assistants");
         assertThat(DispensationMapper.authorRole(pharmacyWorkerDispensation), is("Udenlandsk apoteksansat"));
         var otherHealthProfessionalDispensation = dispensationCda(cpr, prescriptionId, "221", "Medical Doctors");
-        var pharmacistToken = Sosi.getToken(Sosi.Audience.FMK, "2262", "John House");
+        var tokenArgs = Sosi.TokenArgs.builder()
+            .audience(Sosi.Audience.FMK)
+            .patientCpr(cpr)
+            .build();
+        var pharmacistToken = Sosi.getToken(
+            tokenArgs.withHealthProfessionalRole("2262").withHealthProfessionalName("John House"));
 
         assertDoesNotThrow(() ->
             prescriptionService.submitDispensation(patientId(cpr), pharmacistDispensation, pharmacistToken)
         );
 
-        var pharmacyWorkerToken = Sosi.getToken(Sosi.Audience.FMK, "3213", "Mark Twain");
+        var pharmacyWorkerToken = Sosi.getToken(
+            tokenArgs.withHealthProfessionalRole("3213").withHealthProfessionalName("Mark Twain"));
 
         assertDoesNotThrow(() ->
             prescriptionService.undoDispensation(patientId(cpr), pharmacistDispensation, pharmacyWorkerToken)
@@ -275,7 +281,8 @@ class FmkIT {
             prescriptionService.submitDispensation(patientId(cpr), pharmacyWorkerDispensation, pharmacyWorkerToken)
         );
 
-        var otherHealthProfessionalToken = Sosi.getToken(Sosi.Audience.FMK, "221", "Oscar Wilde");
+        var otherHealthProfessionalToken = Sosi.getToken(
+            tokenArgs.withHealthProfessionalRole("221").withHealthProfessionalName("Oscar Wilde"));
 
         assertDoesNotThrow(() ->
             prescriptionService.undoDispensation(patientId(cpr), pharmacyWorkerDispensation, otherHealthProfessionalToken)
@@ -302,8 +309,11 @@ class FmkIT {
                 .withIncludeEffectuations(false)
                 .withIncludePrescriptions(false)
                 .build(),
-            Sosi.getToken(Sosi.Audience.FMK, "221")
-        );
+            Sosi.getToken(Sosi.TokenArgs.builder()
+                .audience(Sosi.Audience.FMK)
+                .patientCpr(cpr)
+                .healthProfessionalRole("221")
+                .build()));
 
         assertThat(medicineCard, is(notNullValue()));
     }

@@ -7,12 +7,17 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.CertificateUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
+import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.Value;
+import lombok.With;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /// Only for use in tests.
@@ -30,16 +35,26 @@ public class Sosi {
         Audience DDV = () -> "https://ddv";
     }
 
-    public static EuropeanHcpIdwsToken getToken(Audience audience) {
-        return getToken(audience, "2262");
+    @Builder
+    @Value
+    @With
+    public static class TokenArgs {
+        @NonNull
+        Audience audience;
+        /// Defaults to "2262", the pharmacist role.
+        String healthProfessionalRole;
+        ///  Defaults to "John House".
+        String healthProfessionalName;
+        @NonNull
+        String patientCpr;
     }
 
-    public static EuropeanHcpIdwsToken getToken(Audience audience, String role) {
-        return getToken(audience, role, null);
+    public static EuropeanHcpIdwsToken getToken(Audience audience, String patientCpr) {
+        return getToken(TokenArgs.builder().audience(audience).patientCpr(patientCpr).build());
     }
 
     @SneakyThrows
-    public static EuropeanHcpIdwsToken getToken(Audience audience, String role, String name) {
+    public static EuropeanHcpIdwsToken getToken(TokenArgs tokenArgs) {
         if (authService == null) {
             var base64 = System.getenv("CERT_BASE_64");
             var alias = System.getenv("CERT_ALIAS");
@@ -63,9 +78,22 @@ public class Sosi {
         if (soapHeader == null) {
             soapHeader = TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
         }
-        var headerWithRoleChange = changeRoleInHeader(soapHeader, role);
-        var headerWithNameChange = name == null ? headerWithRoleChange : changeNameInHeader(headerWithRoleChange, name);
-        return authService.xcaSoapHeaderToIdwsToken(headerWithNameChange, audience.value());
+        var headerWithRoleChange = Optional.ofNullable(tokenArgs.getHealthProfessionalRole())
+            .map(r -> changeRoleInHeader(soapHeader, r))
+            .orElse(soapHeader);
+        var headerWithNameChange = Optional.ofNullable(tokenArgs.getHealthProfessionalName())
+            .map(n -> changeNameInHeader(headerWithRoleChange, n))
+            .orElse(headerWithRoleChange);
+        var headerWithPatientIdChange = changePatientIdInHeader(headerWithNameChange, tokenArgs.getPatientCpr());
+        return authService.xcaSoapHeaderToIdwsToken(headerWithPatientIdChange, tokenArgs.getAudience().value());
+    }
+
+    private static String changePatientIdInHeader(String soapHeader, String patientId) {
+        var patientIdPattern = Pattern.compile("<saml2:Attribute\\b[^>]*\\bName\\s*=\\s*\"urn:oasis:names:tc:xspa:1.0:subject:subject-id\"[^>]*>.*?\\d{10}\\^\\^\\^&amp;1\\.2\\.208\\.176\\.1\\.2&amp;ISO.*?</saml2:Attribute>");
+        var requestedPatientIdElement = String.format(
+            "<saml2:Attribute FriendlyName=\"XSPA Subject\" Name=\"urn:oasis:names:tc:xspa:1.0:subject:subject-id\" NameFormat=\"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\"><saml2:AttributeValue xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">%s^^^&amp;1.2.208.176.1.2&amp;ISO</saml2:AttributeValue></saml2:Attribute>",
+            patientId);
+        return patientIdPattern.matcher(soapHeader).replaceFirst(requestedPatientIdElement);
     }
 
     private static String changeNameInHeader(String soapHeader, String name) {
