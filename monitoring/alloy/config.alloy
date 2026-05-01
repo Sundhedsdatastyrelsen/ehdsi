@@ -18,13 +18,29 @@ otelcol.receiver.otlp "default" {
 // Intermediate step, collects batches of otel data before sending it downstream
 otelcol.processor.batch "default" {
   output {
-    metrics = [otelcol.exporter.prometheus.default.input]
+    metrics = [otelcol.processor.transform.default.input]
     logs    = [otelcol.processor.attributes.loki_labels.input]
     traces  = [otelcol.exporter.otlp.tempo.input]
   }
 }
 
 // Prometheus exporter
+
+// Promote environment resource attribute to Prometheus label
+// https://grafana.com/docs/alloy/latest/reference/components/otelcol/otelcol.exporter.prometheus/#create-prometheus-labels-from-otlp-resource-attributes
+
+otelcol.processor.transform "default" {
+  error_mode = "ignore"
+
+  statements {
+    metric = [`set(datapoint.attributes["deployment_environment_name"], resource.attributes["deployment.environment.name"])`]
+  }
+
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+  }
+}
+
 otelcol.exporter.prometheus "default" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
