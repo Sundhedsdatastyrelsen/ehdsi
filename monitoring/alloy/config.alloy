@@ -19,7 +19,7 @@ otelcol.receiver.otlp "default" {
 otelcol.processor.batch "default" {
   output {
     metrics = [otelcol.exporter.prometheus.default.input]
-    logs    = [otelcol.exporter.loki.default.input]
+    logs    = [otelcol.processor.attributes.loki_labels.input]
     traces  = [otelcol.exporter.otlp.tempo.input]
   }
 }
@@ -36,6 +36,20 @@ prometheus.remote_write "default" {
 }
 
 // Loki exporter
+otelcol.processor.attributes "loki_labels" {
+  // Promote resource attribute to labels so that we can search and filter on the environment.
+  // (fairly obscure config option documented here: https://grafana.com/docs/alloy/latest/reference/components/otelcol/otelcol.exporter.loki/)
+  action {
+    key    = "loki.resource.labels"
+    action = "insert"
+    value  = "deployment.environment.name"
+  }
+
+  output {
+    logs = [otelcol.exporter.loki.default.input]
+  }
+}
+
 otelcol.exporter.loki "default" {
   forward_to = [loki.write.default.receiver]
 }
@@ -56,4 +70,3 @@ otelcol.exporter.otlp "tempo" {
     }
  }
 }
-
