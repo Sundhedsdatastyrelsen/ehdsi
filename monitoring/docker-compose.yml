@@ -112,7 +112,8 @@ services:
     restart: unless-stopped
     ports:
       - "4317:4317"   # OTLP/gRPC
-    command: ["run", "/etc/alloy/config.alloy"]
+      # - "12346:12345" # alloy UI
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "/etc/alloy/config.alloy"]
     volumes:
       - alloy_data:/var/lib/alloy
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
