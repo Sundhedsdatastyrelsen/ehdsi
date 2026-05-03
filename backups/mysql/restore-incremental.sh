@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Replay binary log files for point-in-time recovery on top of a full restore
+# Replays binary logs onto a freshly-restored full backup for PITR.
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -30,7 +30,6 @@ Options:
 EOF
 }
 
-# Parse arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --after)          AFTER_DUMP="$2"; shift 2 ;;
@@ -48,15 +47,14 @@ assert_container_running "$MYSQL_CONTAINER"
 
 ROOT_PASSWORD=$(read_mysql_password)
 
-# If --after was given, extract the binlog coordinate from the dump header.
-# This requires the dump to have been produced with --source-data=2.
 if [[ -n "$AFTER_DUMP" ]]; then
     if [[ ! -f "$AFTER_DUMP" ]]; then
         log "ERROR: Dump file not found: $AFTER_DUMP"
         exit 1
     fi
 
-    # Subshell locally disables pipefail because head may exit before gunzip finishes.
+    # Subshell disables pipefail because head exits before gunzip finishes,
+    # which would otherwise be reported as a pipeline failure.
     COORD_LINE=$(
         set +o pipefail
         gunzip -c "$AFTER_DUMP" 2>/dev/null | head -c 4096 \
@@ -80,8 +78,8 @@ if [[ -n "$AFTER_DUMP" ]]; then
     log "Derived from dump: start at $FROM_FILE position $START_POS"
 fi
 
-# List available binlog files, sorted. Regex (not glob) to restrict to the
-# canonical binlog.<digits> form and exclude any .bak/.tmp/etc. siblings.
+# Regex (not glob) restricts to the canonical binlog.<digits> form, excluding
+# .bak/.tmp/etc. siblings that may appear during operations.
 AVAILABLE=$(find "$BACKUP_DIR" -maxdepth 1 -regextype posix-extended \
     -regex '.*/binlog\.[0-9]+' -printf '%f\n' 2>/dev/null | sort)
 
@@ -90,10 +88,8 @@ if [[ -z "$AVAILABLE" ]]; then
     exit 1
 fi
 
-# If the caller named a specific start file, it must actually exist on disk.
-# The most common reason this fails is retention purging: the full backup is
-# older than the binlog retention window, so the binlog the dump references
-# is already gone and recovery is impossible from this dump.
+# Most common cause: retention purging. The chosen full backup is older than
+# the binlog window, so the start binlog has already been deleted.
 if [[ -n "$FROM_FILE" ]] && ! grep -qxF "$FROM_FILE" <<< "$AVAILABLE"; then
     log "ERROR: Required start binlog '$FROM_FILE' is not in $BACKUP_DIR"
     log "       The binlog was either never backed up or has been purged by retention."
@@ -103,7 +99,6 @@ if [[ -n "$FROM_FILE" ]] && ! grep -qxF "$FROM_FILE" <<< "$AVAILABLE"; then
     exit 1
 fi
 
-# Filter range
 IN_RANGE=false
 if [[ -z "$FROM_FILE" ]]; then
     IN_RANGE=true
@@ -114,11 +109,9 @@ while read -r logfile; do
     if [[ -n "$FROM_FILE" && "$logfile" == "$FROM_FILE" ]]; then
         IN_RANGE=true
     fi
-
     if [[ "$IN_RANGE" == true ]]; then
         REPLAY_FILES+=("$logfile")
     fi
-
     if [[ -n "$TO_FILE" && "$logfile" == "$TO_FILE" ]]; then
         break
     fi
@@ -132,10 +125,9 @@ if [[ ${#REPLAY_FILES[@]} -eq 0 ]]; then
     exit 1
 fi
 
-# Continuity check. MySQL binlogs are named <prefix>.<zero-padded-seq> (e.g.
-# binlog.000050). A missing number in the sequence means writes between the
-# surrounding files are lost — replay would apply later events as if nothing
-# were missing, producing an inconsistent recovery target. Abort by default.
+# A gap means writes between surrounding files are silently lost — replay
+# would apply later events as if nothing were missing. Abort by default;
+# --allow-gaps is the explicit override for skipping a known-bad file.
 if [[ "$ALLOW_GAPS" != true && ${#REPLAY_FILES[@]} -gt 1 ]]; then
     MISSING=()
     PREV_NUM=""
@@ -173,21 +165,15 @@ log "Replaying ${#REPLAY_FILES[@]} binlog file(s): ${REPLAY_FILES[0]} ... ${REPL
 [[ -n "$START_POS" ]] && log "Start position: $START_POS (first file only)"
 [[ -n "$STOP_DATETIME" ]] && log "Stop datetime: $STOP_DATETIME (last file only)"
 
-# mysqlbinlog ships under /usr/libexec/mysqlsh/ in the MySQL 9 image and is
-# not on $PATH, so the bare name cannot be used with docker exec.
-MYSQLBINLOG=/usr/libexec/mysqlsh/mysqlbinlog
-
 LAST_INDEX=$(( ${#REPLAY_FILES[@]} - 1 ))
 
 for i in "${!REPLAY_FILES[@]}"; do
     logfile="${REPLAY_FILES[$i]}"
     log "Replaying: $logfile"
 
-    # Copy binlog into the container
     docker cp "$BACKUP_DIR/$logfile" "$MYSQL_CONTAINER:/tmp/$logfile"
 
-    # Build mysqlbinlog argv. --disable-log-bin prevents the replay from
-    # generating new binlogs on the target.
+    # --disable-log-bin so the replay does not regenerate binlogs on the target.
     mysqlbinlog_args=(--disable-log-bin)
     if [[ -n "$START_POS" && "$i" -eq 0 ]]; then
         mysqlbinlog_args+=(--start-position="$START_POS")
@@ -197,14 +183,12 @@ for i in "${!REPLAY_FILES[@]}"; do
     fi
     mysqlbinlog_args+=("/tmp/$logfile")
 
-    # Two separate docker execs connected by a host-side pipe — avoids
-    # `bash -c` string interpolation so $STOP_DATETIME and $ROOT_PASSWORD
-    # pass through as real argv entries.
-    docker exec "$MYSQL_CONTAINER" "$MYSQLBINLOG" "${mysqlbinlog_args[@]}" \
+    # Two execs piped on the host so $STOP_DATETIME and $ROOT_PASSWORD pass
+    # through as real argv entries — avoids `bash -c` quoting traps.
+    docker exec "$MYSQL_CONTAINER" "$MYSQLBINLOG_PATH" "${mysqlbinlog_args[@]}" \
         | docker exec -i "$MYSQL_CONTAINER" \
             mysql -u root -p"$ROOT_PASSWORD"
 
-    # Clean up
     docker exec "$MYSQL_CONTAINER" rm -f "/tmp/$logfile"
 done
 

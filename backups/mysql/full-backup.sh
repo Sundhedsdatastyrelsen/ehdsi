@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Full backup of all MySQL databases via mysqldump
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -16,6 +15,8 @@ OUTPUT_FILE="$BACKUP_DIR/mysql-full-${TS}.sql.gz"
 log "Starting full MySQL backup..."
 log "Databases: ${MYSQL_DATABASES[*]}"
 
+# --source-data=2 embeds the binlog coordinate as a comment in the dump,
+# which restore-incremental.sh later parses to find the PITR replay start.
 docker exec "$MYSQL_CONTAINER" \
     mysqldump \
         -u root -p"$ROOT_PASSWORD" \
@@ -27,7 +28,6 @@ docker exec "$MYSQL_CONTAINER" \
         --databases "${MYSQL_DATABASES[@]}" \
     | gzip > "$OUTPUT_FILE"
 
-# Validate the gzip file
 if ! gzip -t "$OUTPUT_FILE" 2>/dev/null; then
     log "ERROR: Backup file failed gzip validation: $OUTPUT_FILE"
     rm -f "$OUTPUT_FILE"

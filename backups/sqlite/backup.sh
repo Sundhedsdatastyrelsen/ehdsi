@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Online-safe backup of all national-connector SQLite databases
+# Online-safe (.backup) snapshot of all configured SQLite databases.
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -7,8 +7,6 @@ source "$(dirname "$0")/../lib/common.sh"
 TS=$(timestamp)
 BACKUP_DIR="$BACKUP_ROOT/sqlite/$TS"
 ensure_dir "$BACKUP_DIR"
-
-SQLITE_DATA_DIR="$NC_DIR/data"
 
 if ! command -v sqlite3 &>/dev/null; then
     log "ERROR: sqlite3 is not installed on the host. Install it with: apt install sqlite3"
@@ -35,7 +33,6 @@ for db in "${SQLITE_DATABASES[@]}"; do
     log "Backing up: $db"
     sqlite3 "$SRC" ".backup '$DEST'"
 
-    # Verify the backup
     RESULT=$(sqlite3 "$DEST" "PRAGMA integrity_check;" 2>&1)
     if [[ "$RESULT" != "ok" ]]; then
         log "ERROR: Integrity check failed for $DEST: $RESULT"

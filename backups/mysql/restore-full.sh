@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
-# Restore a full MySQL backup from a mysqldump file
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
 BACKUP_DIR="$BACKUP_ROOT/mysql/full"
 AUTO_YES=false
-
-# Parse arguments
 BACKUP_FILE=""
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --yes) AUTO_YES=true; shift ;;
@@ -16,7 +14,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# If no file specified, use the latest
 if [[ -z "$BACKUP_FILE" ]]; then
     BACKUP_FILE=$(find "$BACKUP_DIR" -maxdepth 1 -name '*.sql.gz' | sort | tail -n 1)
     if [[ -z "$BACKUP_FILE" ]]; then
@@ -33,7 +30,6 @@ fi
 
 assert_container_running "$MYSQL_CONTAINER"
 
-# Confirmation prompt
 if [[ "$AUTO_YES" != true ]]; then
     echo "This will OVERWRITE the following databases:"
     printf "  - %s\n" "${MYSQL_DATABASES[@]}"
@@ -50,8 +46,8 @@ ROOT_PASSWORD=$(read_mysql_password)
 
 log "Starting restore from: $BACKUP_FILE"
 
-# Drop target databases so stale tables not present in the dump don't survive.
-# The dump recreates each database via CREATE DATABASE IF NOT EXISTS.
+# Drop first so tables present in the live DB but absent from the dump
+# don't survive the restore.
 for db in "${MYSQL_DATABASES[@]}"; do
     docker exec "$MYSQL_CONTAINER" \
         mysql -u root -p"$ROOT_PASSWORD" \
@@ -62,7 +58,6 @@ gunzip -c "$BACKUP_FILE" | \
     docker exec -i "$MYSQL_CONTAINER" \
         mysql -u root -p"$ROOT_PASSWORD"
 
-# Verify restoration
 log "Verifying restored databases..."
 docker exec "$MYSQL_CONTAINER" \
     mysql -u root -p"$ROOT_PASSWORD" \

@@ -1,30 +1,15 @@
 #!/usr/bin/env bash
-# Shared library for EHDSI backup scripts
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
-# Paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-export BACKUP_ROOT="${EHDSI_BACKUP_DIR:-/opt/backup}"
+REPO_ROOT="${REPO_ROOT:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+export REPO_ROOT
 
-NCP_DIR="$REPO_ROOT/NCP"
-export NC_DIR="${NC_DIR:-$REPO_ROOT/national-connector}"
-
-# Container names
-MYSQL_CONTAINER="${MYSQL_CONTAINER:-openncp_db}"
-NC_CONTAINER="${NC_CONTAINER:-national-connector}"
-
-# Database lists
-export MYSQL_DATABASES=(ehealth_properties ehealth_atna ehealth_ltrdb ehealth_eadc)
-export SQLITE_DATABASES=(undo-db.sqlite local-lms-db.sqlite job-queue.sqlite)
-
-# Retention defaults
-FULL_BACKUP_RETAIN="${FULL_BACKUP_RETAIN:-7}"
-BINLOG_RETAIN_DAYS="${BINLOG_RETAIN_DAYS:-14}"
-SQLITE_BACKUP_RETAIN="${SQLITE_BACKUP_RETAIN:-7}"
+# shellcheck source=SCRIPTDIR/config.sh
+source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >&2
@@ -43,14 +28,13 @@ read_secret() {
     tr -d '[:space:]' < "$secret_file"
 }
 
-# MySQL root password resolver: honours $MYSQL_ROOT_PASSWORD env var if set
-# (useful for restoring into disposable test containers), otherwise reads
-# the NCP secret file.
+# Honours $MYSQL_ROOT_PASSWORD so disposable test containers can be restored
+# into without touching the on-disk secret.
 read_mysql_password() {
     if [[ -n "${MYSQL_ROOT_PASSWORD:-}" ]]; then
         printf '%s' "$MYSQL_ROOT_PASSWORD"
     else
-        read_secret "$NCP_DIR/db_root_password.txt"
+        read_secret "$MYSQL_PASSWORD_FILE"
     fi
 }
 
@@ -62,8 +46,7 @@ ensure_dir() {
     fi
 }
 
-# Remove all but the N most recent entries (files or directories) in a directory.
-# Entries are sorted by name (which sorts chronologically due to timestamp naming).
+# Sorts entries by name; correct because backup names are timestamp-prefixed.
 cleanup_old_backups() {
     local dir="$1"
     local keep_count="$2"
@@ -83,7 +66,6 @@ cleanup_old_backups() {
     fi
 }
 
-# Remove files in a directory older than N days.
 cleanup_old_backups_by_age() {
     local dir="$1"
     local max_age_days="$2"

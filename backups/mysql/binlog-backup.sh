@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Incremental backup: copy rotated MySQL binary log files to host
+# Copies rotated MySQL binary logs out of the container.
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -13,11 +13,10 @@ ROOT_PASSWORD=$(read_mysql_password)
 
 log "Starting binlog backup..."
 
-# Flush binary logs to rotate the current one
+# Force rotation so the previously-active log becomes safe to copy.
 docker exec "$MYSQL_CONTAINER" \
     mysql -u root -p"$ROOT_PASSWORD" -e "FLUSH BINARY LOGS;" 2>/dev/null
 
-# List all binary logs (name, size, encrypted)
 BINLOGS=$(docker exec "$MYSQL_CONTAINER" \
     mysql -u root -p"$ROOT_PASSWORD" \
     --batch --skip-column-names \
@@ -28,35 +27,31 @@ if [[ -z "$BINLOGS" ]]; then
     exit 0
 fi
 
-# Get the last line (active binlog) — we skip this one
+# Last entry from SHOW BINARY LOGS is the currently-active file; mysqld
+# is still writing to it, so skip.
 ACTIVE_BINLOG=$(echo "$BINLOGS" | tail -n 1 | awk '{print $1}')
 
-# Calculate the cutoff timestamp for retention (skip files older than this)
 RETENTION_CUTOFF=$(date -d "$BINLOG_RETAIN_DAYS days ago" '+%s')
 
 COPIED=0
 SKIPPED_OLD=0
 while IFS=$'\t' read -r logfile _size _encrypted; do
-    # Skip the currently active binlog
     if [[ "$logfile" == "$ACTIVE_BINLOG" ]]; then
         continue
     fi
-
-    # Skip if already backed up
     if [[ -f "$BACKUP_DIR/$logfile" ]]; then
         continue
     fi
 
-    # Check file age inside the container — skip if older than retention period
     FILE_EPOCH=$(docker exec "$MYSQL_CONTAINER" \
-        stat -c '%Y' "/var/lib/mysql/$logfile" 2>/dev/null) || continue
+        stat -c '%Y' "$MYSQL_DATA_DIR_IN_CONTAINER/$logfile" 2>/dev/null) || continue
     if (( FILE_EPOCH < RETENTION_CUTOFF )); then
         SKIPPED_OLD=$((SKIPPED_OLD + 1))
         continue
     fi
 
     log "Copying: $logfile"
-    docker cp "$MYSQL_CONTAINER:/var/lib/mysql/$logfile" "$BACKUP_DIR/"
+    docker cp "$MYSQL_CONTAINER:$MYSQL_DATA_DIR_IN_CONTAINER/$logfile" "$BACKUP_DIR/"
     COPIED=$((COPIED + 1))
 done <<< "$BINLOGS"
 
