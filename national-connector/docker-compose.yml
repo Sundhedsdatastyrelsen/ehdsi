@@ -51,3 +51,6 @@ services:
       - ./secrets/LMSFTP_PASSWORD:/run/secrets/lmsftp/password:ro
     networks:
       - epps-backend
+    labels:
+      monitoring.blackbox.url: https://national-connector:4443/actuator/health
+      monitoring.environment: ${GRAFANA_ENVIRONMENT:-Training}

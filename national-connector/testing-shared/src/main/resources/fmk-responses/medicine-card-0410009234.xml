@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:GetMedicineCardResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns2:MedicineCard>
+        <ns2:Patient>
+            <Person>
+                <Name>
+                    <GivenName>Sofie</GivenName>
+                    <Surname>Bach</Surname>
+                </Name>
+                <PersonIdentifier source="CPR">0410009234</PersonIdentifier>
+                <BirthDate>2000-10-04</BirthDate>
+                <Gender>female</Gender>
+            </Person>
+            <Address>
+                <StreetName>Morbærvej</StreetName>
+                <StreetBuildingIdentifier>200</StreetBuildingIdentifier>
+                <PostCodeIdentifier>1362</PostCodeIdentifier>
+                <DistrictName>København K</DistrictName>
+            </Address>
+        </ns2:Patient>
+        <ns2:Version>1764944101486001001</ns2:Version>
+        <ns2:PreviousVersion>1764943146997001001</ns2:PreviousVersion>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <TelephoneNumber>88888888</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2025-12-05T14:15:01Z</DateTime>
+        </ns2:Modified>
+        <ns2:DrugMedication>
+            <ns2:Identifier>54845936</ns2:Identifier>
+            <ns2:Version>1764944101506001001</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <TelephoneNumber>88888888</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-12-05T14:15:01Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <TelephoneNumber>88888888</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-12-05T14:15:01Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2025-12-05T14:15:01Z</CreatedDateTime>
+                <TreatmentStartDate>2025-12-05</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2025-12-05">146</Code>
+                <Text>mod menstruationssmerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2025-12-05">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2025-12-05">M01AE01</Code>
+                    <Text>Ibuprofen</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2025-12-05">28101088281</Identifier>
+                <Name>Brufen</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2025-12-05">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>600.0</Value>
+                    <UnitCode source="Medicinpriser" date="2025-12-05">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2025-12-05">600 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2025-12-05">IBUPROFEN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>tablet</ns2:Singular>
+                    <ns2:Plural>tabletter</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2025-12-05</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet 3 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 5. dec. 2025:
+1 tablet 3 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet 3 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 5. dec. 2025:
+1 tablet 3 gange hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>54845926</ns2:Identifier>
+            <ns2:Version>1764943147014001001</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <TelephoneNumber>88888888</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-12-05T13:59:06Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <TelephoneNumber>88888888</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-12-05T13:59:06Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2025-12-05T13:59:06Z</CreatedDateTime>
+                <TreatmentStartDate>2025-12-05</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2025-12-05">145</Code>
+                <Text>mod smerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2025-12-05">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2025-12-05">M01AE01</Code>
+                    <Text>Ibuprofen</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2025-12-05">28101088281</Identifier>
+                <Name>Brufen</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2025-12-05">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>600.0</Value>
+                    <UnitCode source="Medicinpriser" date="2025-12-05">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2025-12-05">600 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2025-12-05">IBUPROFEN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>tablet</ns2:Singular>
+                    <ns2:Plural>tabletter</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2025-12-05</StartDate>
+                        <DosageEndingUndetermined/>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>1 tablet 3 gange daglig</ShortText>
+                            <LongText>Dosering fra d. 5. dec. 2025:
+1 tablet 3 gange hver dag</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <ShortText>1 tablet 3 gange daglig</ShortText>
+                        <LongText>Dosering fra d. 5. dec. 2025:
+1 tablet 3 gange hver dag</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>50302410</ns2:Identifier>
+            <ns2:Version>1760517935129001002</ns2:Version>
+            <ns2:PreviousVersion>1760517882897001002</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-10-15T08:44:42Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-10-15T08:45:35Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2025-10-15T08:44:42Z</CreatedDateTime>
+                <TreatmentStartDate>2025-10-15</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2025-10-15">145</Code>
+                <Text>mod smerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2025-10-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2025-10-15">N02BE01</Code>
+                    <Text>Paracetamol</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2025-10-15">28103909506</Identifier>
+                <Name>Arax</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2025-10-15">TAB</Code>
+                    <Text>tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>500.0</Value>
+                    <UnitCode source="Medicinpriser" date="2025-10-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2025-10-15">500 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2025-10-15">PARACETAMOL</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:FreeText>
+                    <StartDate>2025-10-15</StartDate>
+                    <DosageEndingUndetermined/>
+                    <Text>Tyg lidt på dem, så spyt dem ud og skyl efter med asparges.
+
+Derudover skal du sørge for ikke at overgå dit dagsbehov for gåture.</Text>
+                </ns2:FreeText>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>50302409</ns2:Identifier>
+            <ns2:Version>1760517052803001002</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-10-15T08:30:52Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-10-15T08:30:52Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2025-10-15T08:30:52Z</CreatedDateTime>
+                <TreatmentStartDate>2025-10-15</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2025-10-15">145</Code>
+                <Text>mod smerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2025-10-15">PR</Code>
+                <Text>Rektal anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2025-10-15">N02BE01</Code>
+                    <Text>Paracetamol</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2025-10-15">28103054698</Identifier>
+                <Name>Pinex</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2025-10-15">SUP</Code>
+                    <Text>suppositorier</Text>
+                </Form>
+                <Strength>
+                    <Value>1000.0</Value>
+                    <UnitCode source="Medicinpriser" date="2025-10-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2025-10-15">1000 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2025-10-15">PARACETAMOL</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:AdministrationAccordingToSchemaInLocalSystem>
+                    <StartDate>2025-10-15</StartDate>
+                    <DosageEndingUndetermined/>
+                </ns2:AdministrationAccordingToSchemaInLocalSystem>
+                <ns2:Type>fast</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>48694645</ns2:Identifier>
+            <ns2:Version>1760518414927001002</ns2:Version>
+            <ns2:PreviousVersion>1758637040768001002</ns2:PreviousVersion>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <TelephoneNumber>88888888</TelephoneNumber>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-09-23T14:17:20Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                        <Name>Charles Babbage</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Udenfor organisation</Name>
+                        <Type>Yder</Type>
+                        <Identifier source="Yder">990027</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2025-10-15T08:53:34Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2025-09-23T14:17:20Z</CreatedDateTime>
+                <TreatmentStartDate>2025-09-23</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2025-09-23">307</Code>
+                <Text>mod erektil dysfunktion</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2025-10-15">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2025-10-15">G04BE03</Code>
+                    <Text>Sildenafil</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2025-10-15">28101907197</Identifier>
+                <Name>Viagra</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2025-10-15">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>100.0</Value>
+                    <UnitCode source="Medicinpriser" date="2025-10-15">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2025-10-15">100 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2025-10-15">SILDENAFILCITRAT</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>tablet</ns2:Singular>
+                    <ns2:Plural>tabletter</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresAccordingToNeed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2025-10-15</StartDate>
+                        <DosageEndingUndetermined/>
+                        <SupplementaryText>Indtages 20 min før behov.</SupplementaryText>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Quantity>1</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <LongText>Dosering fra d. 15. okt. 2025:
+1 tablet efter behov, højst 1 gang dagligt
+Bemærk: Indtages 20 min før behov.</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 15. okt. 2025:
+1 tablet efter behov, højst 1 gang dagligt
+Bemærk: Indtages 20 min før behov.</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresAccordingToNeed>
+                <ns2:Type>efter behov</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:HasOpenDosageDispensingPrescriptions>false</ns2:HasOpenDosageDispensingPrescriptions>
+        <ns2:OrderedPrescriptionsExist>false</ns2:OrderedPrescriptionsExist>
+    </ns2:MedicineCard>
+</ns2:GetMedicineCardResponse>

@@ -31,7 +31,11 @@ public class Sosi {
     }
 
     public static EuropeanHcpIdwsToken getToken(Audience audience) {
-        return getToken(audience, "2262", null);
+        return getToken(audience, "2262");
+    }
+
+    public static EuropeanHcpIdwsToken getToken(Audience audience, String role) {
+        return getToken(audience, role, null);
     }
 
     @SneakyThrows

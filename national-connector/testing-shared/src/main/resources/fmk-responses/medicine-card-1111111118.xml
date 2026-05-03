@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:GetMedicineCardResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns2:MedicineCard>
+        <ns2:Patient>
+            <Person>
+                <Name>
+                    <GivenName>Helle</GivenName>
+                    <Surname>Bonde</Surname>
+                </Name>
+                <PersonIdentifier source="CPR">1111111118</PersonIdentifier>
+                <BirthDate>1911-11-11</BirthDate>
+                <Gender>female</Gender>
+            </Person>
+            <Address>
+                <StreetName>Niels Bohrs Vej</StreetName>
+                <StreetBuildingIdentifier>322B</StreetBuildingIdentifier>
+                <PostCodeIdentifier>1473</PostCodeIdentifier>
+                <DistrictName>København K</DistrictName>
+            </Address>
+        </ns2:Patient>
+        <ns2:Version>1775566805133001001</ns2:Version>
+        <ns2:PreviousVersion>1775566805061001001</ns2:PreviousVersion>
+        <ns2:Modified>
+            <By>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                    <Name>Helle Bonde</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Hansen og Junge</Name>
+                    <AddressLine>Vingårdsgade 9,3.</AddressLine>
+                    <AddressLine>9000 Aalborg</AddressLine>
+                    <TelephoneNumber>98120473</TelephoneNumber>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">76333</Identifier>
+                </Organisation>
+            </By>
+            <DateTime>2026-04-07T13:00:05Z</DateTime>
+        </ns2:Modified>
+        <ns2:PrivateDrugMedication>
+            <Identifier>66044262</Identifier>
+            <Version>1775566804848001001</Version>
+        </ns2:PrivateDrugMedication>
+        <ns2:DrugMedication>
+            <ns2:Identifier>66044263</ns2:Identifier>
+            <ns2:Version>1775566804875001001</ns2:Version>
+            <ns2:Created>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                        <Name>Helle Bonde</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Amager og Hvidovre Hospital, Geriatrisk ambulatorium</Name>
+                        <AddressLine>Testvej 1</AddressLine>
+                        <AddressLine>1000 Testby</AddressLine>
+                        <TelephoneNumber>20225083</TelephoneNumber>
+                        <Type>Sygehus</Type>
+                        <Identifier source="SKS">1330599</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2026-04-07T13:00:04Z</DateTime>
+            </ns2:Created>
+            <ns2:Modified>
+                <By>
+                    <AuthorisedHealthcareProfessional>
+                        <AuthorisationIdentifier>12345</AuthorisationIdentifier>
+                        <Name>Helle Bonde</Name>
+                    </AuthorisedHealthcareProfessional>
+                    <Organisation>
+                        <Name>Amager og Hvidovre Hospital, Geriatrisk ambulatorium</Name>
+                        <AddressLine>Testvej 1</AddressLine>
+                        <AddressLine>1000 Testby</AddressLine>
+                        <TelephoneNumber>20225083</TelephoneNumber>
+                        <Type>Sygehus</Type>
+                        <Identifier source="SKS">1330599</Identifier>
+                    </Organisation>
+                </By>
+                <DateTime>2026-04-07T13:00:04Z</DateTime>
+            </ns2:Modified>
+            <ns2:Type>Lægeordineret</ns2:Type>
+            <ns2:BeginEndDate>
+                <CreatedDateTime>2026-04-07T13:00:04Z</CreatedDateTime>
+                <TreatmentStartDate>2013-05-01</TreatmentStartDate>
+                <TreatmentEndingUndetermined/>
+            </ns2:BeginEndDate>
+            <ns2:Indication>
+                <Code source="Medicinpriser" date="2011-03-09">143</Code>
+                <Text>mod muskelsmerter</Text>
+            </ns2:Indication>
+            <ns2:RouteOfAdministration>
+                <Code source="Medicinpriser" date="2011-03-09">OR</Code>
+                <Text>Oral anvendelse</Text>
+            </ns2:RouteOfAdministration>
+            <ns2:Drug>
+                <ATC>
+                    <Code source="Medicinpriser" date="2011-03-09">M01AE01</Code>
+                    <Text>Ibuprofen</Text>
+                </ATC>
+                <Identifier source="Medicinpriser" date="2011-03-09">28101344588</Identifier>
+                <Name>Ipren</Name>
+                <Form>
+                    <Code source="Medicinpriser" date="2011-03-09">TABFILM</Code>
+                    <Text>filmovertrukne tabletter</Text>
+                </Form>
+                <Strength>
+                    <Value>200.0</Value>
+                    <UnitCode source="Medicinpriser" date="2011-03-09">MG</UnitCode>
+                    <UnitText>mg</UnitText>
+                    <Text source="Medicinpriser" date="2011-03-09">200 mg</Text>
+                </Strength>
+                <Substances>
+                    <ActiveSubstance>
+                        <SubstanceText source="Medicinpriser" date="2011-03-09">IBUPROFEN</SubstanceText>
+                    </ActiveSubstance>
+                </Substances>
+            </ns2:Drug>
+            <ns2:Dosage>
+                <ns2:UnitTexts>
+                    <ns2:Singular>tablet</ns2:Singular>
+                    <ns2:Plural>tabletter</ns2:Plural>
+                </ns2:UnitTexts>
+                <ns2:StructuresFixed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2013-06-01</StartDate>
+                        <DosageEndingUndetermined/>
+                        <SupplementaryText>ved smerter</SupplementaryText>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>morning</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                            <Dose>
+<Time>noon</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>2 tabletter morgen og middag.
+Bemærk: ved smerter</ShortText>
+                            <LongText>Dosering fra d. 1. juni 2013:
+2 tabletter morgen og 2 tabletter middag - hver dag
+Bemærk: ved smerter</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 1. juni 2013:
+2 tabletter morgen og 2 tabletter middag - hver dag
+Bemærk: ved smerter
+
+Dosering fra d. 1. juni 2013:
+2 tabletter hver aften efter behov
+Bemærk: ved smerter</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresFixed>
+                <ns2:StructuresAccordingToNeed>
+                    <Structure>
+                        <IterationInterval>1</IterationInterval>
+                        <StartDate>2013-06-01</StartDate>
+                        <DosageEndingUndetermined/>
+                        <SupplementaryText>ved smerter</SupplementaryText>
+                        <Day>
+                            <Number>1</Number>
+                            <Dose>
+<Time>evening</Time>
+<Quantity>2</Quantity>
+                            </Dose>
+                        </Day>
+                        <DosageTranslation>
+                            <ShortText>2 tabletter aften efter behov.
+Bemærk: ved smerter</ShortText>
+                            <LongText>Dosering fra d. 1. juni 2013:
+2 tabletter hver aften efter behov
+Bemærk: ved smerter</LongText>
+                        </DosageTranslation>
+                    </Structure>
+                    <DosageTranslationCombined>
+                        <LongText>Dosering fra d. 1. juni 2013:
+2 tabletter morgen og 2 tabletter middag - hver dag
+Bemærk: ved smerter
+
+Dosering fra d. 1. juni 2013:
+2 tabletter hver aften efter behov
+Bemærk: ved smerter</LongText>
+                    </DosageTranslationCombined>
+                </ns2:StructuresAccordingToNeed>
+                <ns2:Type>kombineret</ns2:Type>
+            </ns2:Dosage>
+            <ns2:SubstitutionAllowed>true</ns2:SubstitutionAllowed>
+        </ns2:DrugMedication>
+        <ns2:HasOpenDosageDispensingPrescriptions>false</ns2:HasOpenDosageDispensingPrescriptions>
+        <ns2:OrderedPrescriptionsExist>false</ns2:OrderedPrescriptionsExist>
+    </ns2:MedicineCard>
+</ns2:GetMedicineCardResponse>

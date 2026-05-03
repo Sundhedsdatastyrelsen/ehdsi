@@ -1,0 +1,43 @@
+{:keystores
+ [{:description "NCP: EU TLS keystore"
+   :path "/certs/ncp/dev-tls.jks"
+   :type "JKS"
+   :password #file "/run/secrets/tls_keystore_password"}
+
+  {:description "NCP: EU SEAL keystore"
+   :path "/certs/ncp/dev-seal.jks"
+   :type "JKS"
+   :password #file "/run/secrets/seal_keystore_password"}
+
+  {:description "NCP: dev truststore (holds the NC->OpenNCP TLS certificate on the OpenNCP side)"
+   :path "/certs/ncp/dev-truststore.jks"
+   :type "JKS"
+   :password #file "/run/secrets/tls_truststore_password"}
+
+  {:description "NC: signing certificate used for SOSI STS requests (NC->SOSI STS)"
+   :path "/certs/nc-data/epps-sosi-sts-client.jks"
+   :type "JKS"
+   :password #file "/run/secrets/sosi_keystore_password"}
+
+  {:description "NC: NC->OpenNCP TLS certificate"
+   :path "/certs/nc-secrets/NC_NCP_CERTIFICATE"
+   :type "PEM"}
+
+  {:description "NC: opt-out mTLS client keystore (NC<->Opt-Out)"
+   :path "/certs/nc-config/dev-opt-out-keystore.p12"
+   :type "PKCS12"
+   :password "changeit"}
+
+  {:description "NC: opt-out mTLS truststore (NC<->Opt-Out)"
+   :path "/certs/nc-config/dev-opt-out-truststore.p12"
+   :type "PKCS12"
+   :password "changeit"}]
+
+ ;; Prefix all metric names with this
+ :prefix "cert_sds_"
+
+ ;; How often to re-read the certificate files
+ :scrape-interval-seconds 60
+
+ ;; Port for the http service exposing the /metrics endpoint
+ :port 9090}

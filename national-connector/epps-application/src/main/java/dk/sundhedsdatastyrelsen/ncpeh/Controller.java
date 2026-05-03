@@ -141,6 +141,7 @@ public class Controller {
                 params.getPatientId(),
                 params.getDocumentId(),
                 systemIdentity,
+                this.getFmkToken(params.getSoapHeader()),
                 // TODO pick out the right identity from the soap header.
                 "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1");
         }

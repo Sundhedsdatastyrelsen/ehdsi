@@ -1,5 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
@@ -18,6 +20,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
@@ -27,11 +30,11 @@ import java.util.UUID;
 @Slf4j
 public class PatientSummaryService {
     private final InformationCardService informationCardService;
-    private final FmkClientIdws fmkService;
+    private final FmkClientIdws fmkServiceIdws;
 
-    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkService) {
+    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkServiceIdws) {
         this.informationCardService = informationCardService;
-        this.fmkService = fmkService;
+        this.fmkServiceIdws = fmkServiceIdws;
     }
 
     @WithSpan
@@ -89,8 +92,8 @@ public class PatientSummaryService {
 
     // TODO Left in the caller, because I think we will need it later.
     @WithSpan
-    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, String europeanHealthProfessionalId) {
-        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId);
+    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, EuropeanHcpIdwsToken token, String europeanHealthProfessionalId) {
+        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId, token);
         try {
             var documentLevel = DocumentIdMapper.parseDocumentLevel(rootedDocumentId);
             var cda = switch (documentLevel) {
@@ -100,20 +103,26 @@ public class PatientSummaryService {
 
             return List.of(new EpsosDocumentDto(patientId, cda, ClassCodeDto._60591_5));
         } catch (MapperException | XmlException e) {
-            // TODO exception text
-            throw new PublicException(500, e);
+            throw new PublicException(500, "Failed to get Patient Summary.", e);
         }
     }
 
     @WithSpan
-    private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId) {
+    private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId, EuropeanHcpIdwsToken token) {
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
+
+        var medicationCardRequest = GetMedicineCardRequestType.builder()
+            .withPersonIdentifier().withSource("CPR").withValue(patientId).end()
+            .withIncludePrescriptions(false)
+            .withIncludeEffectuations(false)
+            .build();
+
         try {
-            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)));
-        } catch (XmlException e) {
-            // TODO better exception text
-            throw new PublicException(400, "Error in received XML", e);
+            var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, token);
+            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard);
+        } catch (JAXBException e) {
+            throw new PublicException(500, "Could not retrieve prescriptions.", e);
         }
     }
 }

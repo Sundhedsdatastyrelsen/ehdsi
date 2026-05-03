@@ -1,0 +1,39 @@
+networks:
+  ncp:
+    name: epps
+    external: true
+
+secrets:
+  tls_keystore_password:
+    file: ../NCP/tls_keystore_password.txt
+  seal_keystore_password:
+    file: ../NCP/seal_keystore_password.txt
+  tls_truststore_password:
+    file: ../NCP/tls_truststore_password.txt
+  sosi_keystore_password:
+    file: ../national-connector/secrets/SOSI_KEYSTORE_PASSWORD
+
+services:
+  cert-exporter:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config.edn:/app/config.edn:ro
+      - ../NCP/keystore:/certs/ncp:ro
+      - ../national-connector/config:/certs/nc-config:ro
+      - ../national-connector/data:/certs/nc-data:ro
+      - ../national-connector/secrets:/certs/nc-secrets:ro
+    secrets:
+      - tls_keystore_password
+      - seal_keystore_password
+      - tls_truststore_password
+      - sosi_keystore_password
+    labels:
+      monitoring.logs.scrape: "true"
+      monitoring.metrics.scrape: "true"
+      monitoring.metrics.port: "9090"
+      monitoring.environment: ${GRAFANA_ENVIRONMENT:-Training}
+    networks:
+      - ncp

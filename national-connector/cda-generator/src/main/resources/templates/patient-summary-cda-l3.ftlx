@@ -122,8 +122,8 @@
         </assignedEntity>
     </legalAuthenticator>
 
-<#-- Sometimes we don't have the preferred HP -->
-<#if preferredHp??>
+    <#-- Sometimes we don't have the preferred HP -->
+    <#if preferredHp??>
     <participant typeCode="IND">
         <templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4" />
         <#-- I am in doubt about these. The code and codeSystem are fixed, and could be left out. The name and
@@ -149,7 +149,7 @@
             </associatedPerson>
         </associatedEntity>
     </participant>
-<#else>
+    <#else>
     <#-- no preferred HP, fall back to sundhedsdatastyrelsen -->
     <participant typeCode="IND">
         <templateId root="1.3.6.1.4.1.19376.1.5.3.1.2.4" />
@@ -167,7 +167,7 @@
             </scopingOrganization>
         </associatedEntity>
     </participant>
-</#if>
+    </#if>
 
     <documentationOf typeCode="DOC">
         <serviceEvent classCode="PCPR" moodCode="EVN">
@@ -187,35 +187,266 @@
     <#-- RelatedDocument -->
     <component>
         <structuredBody>
-            <#-- Medication Summary -->
-            <#-- TODO fill in data from FMK -->
+            <#-- Medication Summary: https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.2.3-2020-09-07T095657.html -->
             <component>
                 <section>
                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.3" />
                     <templateId root="2.16.840.1.113883.10.20.1.8" />
                     <code code="10160-0" codeSystem="2.16.840.1.113883.6.1" />
                     <title>Medication Summary</title>
-                    <text></text>
-                    <entry>
+                    <#-- This is "the narrative block". It has several rules that make it complex to work with.
+                                        Search for "cda narrative block" to learn more.
+                                        Therefore this is a best-effort solution         -->
+                   <#-- TODO: validate the narrative block is correct and/or similar to other EU countries-->
+                    <text>
+                    <#if medicationSummary?? && medicationSummary.items?has_content>
+                        <list>
+                        <#list medicationSummary.items as med>
+                            <item ID="med-${med?index}">
+                                <#if med.product??>
+                                <content ID="product-name-med-${med?index}">${ med.product.name }</content><br/>
+                                <#if (med.product.strength)?has_content>
+                                <content ID="product-strength-med-${med?index}">${ med.product.strength }</content><br/>
+                                </#if>
+                                <#else>
+                                    Unknown medication
+                                </#if>
+                                <#if (med.patientMedicationInstructions)?has_content>
+                                <content ID="patient-medication-instructions-med-${med?index}">${ med.patientMedicationInstructions }</content><br/>
+                                <#elseif (med.indicationText)?has_content>
+                                <content ID="indication-text-med-${med?index}">${ med.indicationText }</content><br/>
+                                </#if>
+                                <paragraph>
+                                    Data source: FMK 1.4.6<#-- One of the requirements from the ICC audit was that we listed the source of the data -->
+                                </paragraph>
+                            </item>
+                        </#list>
+                        </list>
+                    <#else>
+                        <content ID="Medications_NoInformation">No information about medications.</content>
+                    </#if>
+                    </text>
+                    <#if (medicationSummary.items)?has_content>
+                    <#list medicationSummary.items as med>
+                        <entry typeCode="COMP">
+                            <#-- https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.4-2024-01-25T135932.html -->
+                            <substanceAdministration classCode="SBADM" moodCode="INT">
+                                <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
+                                <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                                <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
+
+                                <id <@common.cdaIdAttrs med.medicationId /> />
+                                <text><reference value="#med-${med?index}" /></text>
+                                <statusCode code="active"/>
+                                <#if med.medicationStartTime?? || med.medicationEndTime??>
+                                <effectiveTime xsi:type="IVL_TS">
+                                    <#if med.medicationStartTime??>
+                                    <low value="${ med.medicationStartTime }"/>
+                                    <#else>
+                                    <low nullFlavor="UNK"/>
+                                    </#if>
+                                    <#if med.medicationEndTime??>
+                                    <high value="${ med.medicationEndTime }"/>
+                                    <#else>
+                                    <high nullFlavor="NA"/>
+                                    </#if>
+                                </effectiveTime>
+                                <#else>
+                                <effectiveTime xsi:type="IVL_TS" nullFlavor="UNK"/>
+                                </#if>
+
+                                <#if med.dosage.tag == "Once">
+                                <effectiveTime operator="A" xsi:type="TS" value="${ med.dosage.timeValue }"/>
+                                <#elseif med.dosage.tag == "PeriodicInterval">
+                                <effectiveTime operator="A" xsi:type="PIVL_TS" institutionSpecified="${ med.dosage.institutionSpecified?string("true","false") }">
+                                    <#if med.dosage.time??>
+                                    <phase>
+                                        <low value="${ med.dosage.time }" inclusive="true"/>
+                                    </phase>
+                                    </#if>
+                                    <period unit="${med.dosage.period.unit }" value="${ med.dosage.period.value }" />
+                                </effectiveTime>
+                                <#elseif med.dosage.tag == "EventInterval">
+                                <effectiveTime operator="A" xsi:type="EIVL_TS">
+                                    <event code="${ med.dosage.event }" codeSystem="2.16.840.1.113883.5.139"/>
+                                </effectiveTime>
+                                <#else>
+                                <effectiveTime operator="A" nullFlavor="UNK"/>
+                                </#if>
+                                <#if med.routeOfAdministration??>
+                                <routeCode <@common.cdaCodeAttrs med.routeOfAdministration /> />
+                                </#if>
+                                <#if med.dosage.quantity?? && med.dosage.quantity.unit.tag == "Translated">
+                                <doseQuantity>
+                                    <low value="${ med.dosage.quantity.minValue }" unit="1">
+                                        <translation nullFlavor="UNK">
+                                            <originalText>${ med.dosage.quantity.unit.translation }</originalText>
+                                        </translation>
+                                    </low>
+                                    <high value="${ med.dosage.quantity.value }" unit="1">
+                                        <translation nullFlavor="UNK">
+                                            <originalText>${ med.dosage.quantity.unit.translation }</originalText>
+                                        </translation>
+                                    </high>
+                                </doseQuantity>
+                                <#else>
+                                <doseQuantity nullFlavor="UNK"/>
+                                </#if>
+                                <consumable typeCode="CSM">
+                                    <manufacturedProduct classCode="MANU">
+                                    <#-- https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.31-2022-01-11T164400.html -->
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.31"/>
+
+                                        <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.32"/>
+
+                                            <#if med.product?? && med.product.drugId??>
+                                            <code <@common.cdaCodeAttrs med.product.drugId /> />
+                                            <#elseif med.product?? && med.product.atcCode??>
+                                            <code <@common.cdaCodeAttrs med.product.atcCode /> />
+                                            <#else>
+                                            <code nullFlavor="UNK" />
+                                            </#if>
+
+                                            <#if med.product??>
+                                            <name>${med.product.name}</name>
+                                            <#if (med.product.strength)?has_content>
+                                            <pharm:desc>${med.product.strength}</pharm:desc>
+                                            </#if>
+                                            <#if med.product.formCode??>
+                                            <pharm:formCode <@common.cdaCodeAttrs med.product.formCode />/>
+                                            </#if>
+                                            <#else>
+                                            <name>Unknown medication</name>
+                                            </#if>
+                                            <#if med.product?? && med.product.atcCode??>
+                                            <pharm:asSpecializedKind classCode="GRIC">
+                                                <pharm:generalizedMaterialKind determinerCode="KIND" classCode="MMAT">
+                                                    <pharm:code <@common.cdaCodeAttrs med.product.atcCode /> />
+                                                </pharm:generalizedMaterialKind>
+                                            </pharm:asSpecializedKind>
+                                            </#if>
+
+                                            <#if med.activeIngredients?has_content>
+                                            <#list med.activeIngredients as ingredient>
+                                                <pharm:ingredient classCode="ACTI">
+                                                    <pharm:quantity>
+                                                    <#if ingredient.quantity??>
+                                                        <#if ingredient.quantity.translation??>
+                                                        <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ">
+                                                            <translation>
+                                                                <originalText>${ ingredient.quantity.translation }</originalText>
+                                                            </translation>
+                                                        </numerator>
+                                                        <#else>
+                                                        <numerator value="${ ingredient.quantity.numerator }" unit="${ ingredient.quantity.numeratorUnit }" xsi:type="PQ"/>
+                                                        </#if>
+                                                        <denominator value="${ ingredient.quantity.denominator }" unit="${ ingredient.quantity.denominatorUnit }" xsi:type="PQ"/>
+                                                    <#else>
+                                                        <numerator nullFlavor="NI" xsi:type="PQ"/>
+                                                        <denominator nullFlavor="NI" xsi:type="PQ"/>
+                                                    </#if>
+                                                    </pharm:quantity>
+                                                    <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                        <pharm:code nullFlavor="UNK"/>
+                                                        <pharm:name>${ingredient.name}</pharm:name>
+                                                    </pharm:ingredientSubstance>
+                                                </pharm:ingredient>
+                                            </#list>
+                                            <#else>
+                                            <pharm:ingredient classCode="ACTI">
+                                                <pharm:quantity>
+                                                    <numerator nullFlavor="NI" xsi:type="PQ"/>
+                                                    <denominator nullFlavor="NI" xsi:type="PQ"/>
+                                                </pharm:quantity>
+                                                <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                    <pharm:code nullFlavor="UNK"/>
+                                                    <pharm:name>Unknown active ingredient</pharm:name>
+                                                </pharm:ingredientSubstance>
+                                            </pharm:ingredient>
+                                            </#if>
+                                        </manufacturedMaterial>
+                                        <#if (med.product.manufacturerOrganizationName)?has_content>
+                                        <manufacturerOrganization classCode="ORG" determinerCode="INSTANCE">
+                                            <name>${ med.product.manufacturerOrganizationName }</name>
+                                        </manufacturerOrganization>
+                                        </#if>
+                                    </manufacturedProduct>
+                                </consumable>
+                                <#if med.indication?? || (med.indicationText)?has_content>
+                                <entryRelationship typeCode="RSON">
+                                    <observation classCode="OBS" moodCode="EVN">
+                                        <code code="404684003"
+                                              codeSystem="2.16.840.1.113883.6.96"
+                                              displayName="Clinical finding"/>
+                                        <#if med.indicationText?? && med.indicationText?has_content>
+                                        <text>${med.indicationText}</text>
+                                        </#if>
+                                        <statusCode code="completed"/>
+                                        <#if med.indication??>
+                                        <value xsi:type="CD" <@common.cdaCodeAttrs med.indication /> />
+                                        <#else>
+                                        <value xsi:type="CD" nullFlavor="UNK"/>
+                                        </#if>
+                                    </observation>
+                                </entryRelationship>
+                                </#if>
+                                <#if (med.patientMedicationInstructions)?has_content>
+                                <entryRelationship typeCode="SUBJ" inversionInd="true">
+                                    <act classCode="ACT" moodCode="INT">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.12"/>
+                                        <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3"/>
+                                        <templateId root="2.16.840.1.113883.10.20.1.49"/>
+                                        <code code="PINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+                                        <text><reference value="#patient-medication-instructions-med-${med?index}" /></text>
+                                        <statusCode code="completed"/>
+                                    </act>
+                                </entryRelationship>
+                                </#if>
+                            </substanceAdministration>
+                        </entry>
+                    </#list>
+                    <#else>
+                    <entry typeCode="COMP">
+                        <#-- https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.3.4-2024-01-25T135932.html -->
                         <substanceAdministration classCode="SBADM" moodCode="INT">
                             <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.4"/>
                             <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
                             <id root="1.2.208.176.7.2.2" extension="no-information-available"/>
-                            <code code="no-medication-info" codeSystem="2.16.840.1.113883.5.1150.1" displayName="No information about medications"/>
+                            <code nullFlavor="UNK"/>
                             <statusCode code="completed"/>
-                            <effectiveTime nullFlavor="UNK" xsi:type="IVL_TS"/>
-                            <effectiveTime nullFlavor="NA"/>
-                            <consumable>
+                            <effectiveTime xsi:type="IVL_TS">
+                                <low nullFlavor="UNK"/>
+                                <high nullFlavor="NA"/>
+                            </effectiveTime>
+                            <effectiveTime operator="A" nullFlavor="UNK"/>
+                            <doseQuantity nullFlavor="UNK"/>
+                            <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.31"/>
-                                    <manufacturedMaterial nullFlavor="NA"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.32"/>
+                                        <code nullFlavor="UNK"/>
+                                        <name>No information about medications</name>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator nullFlavor="NI" xsi:type="PQ"/>
+                                                <denominator nullFlavor="NI" xsi:type="PQ"/>
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code nullFlavor="UNK"/>
+                                                <pharm:name>Unknown active ingredient</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                    </manufacturedMaterial>
                                 </manufacturedProduct>
                             </consumable>
                         </substanceAdministration>
                     </entry>
+                    </#if>
                 </section>
             </component>
-
             <#-- Allergies -->
             <#-- We don't have allergy information registered in DK yet -->
             <component>

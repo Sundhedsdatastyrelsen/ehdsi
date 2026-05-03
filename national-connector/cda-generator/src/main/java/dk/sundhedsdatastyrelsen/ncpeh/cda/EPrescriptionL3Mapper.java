@@ -118,14 +118,14 @@ public class EPrescriptionL3Mapper {
                 .medicationEndTime(Utils.convertToOffsetDateTime(drugMedicationType.getBeginEndDate()
                     .getTreatmentEndDate()));
 
-            var administrationRoute = drugMedicationType.getRouteOfAdministration();
-            if (administrationRoute != null) {
-                var administrationRouteCdaCode = CdaCode.builder()
+            var routeOfAdministration = drugMedicationType.getRouteOfAdministration();
+            if (routeOfAdministration != null) {
+                var routeOfAdministrationCdaCode = CdaCode.builder()
                     .codeSystem(Oid.DK_LMS11)
-                    .code(administrationRoute.getCode().getValue())
-                    .displayName(administrationRoute.getText())
+                    .code(routeOfAdministration.getCode().getValue())
+                    .displayName(routeOfAdministration.getText())
                     .build();
-                prescriptionBuilder.administrationRoute(administrationRouteCdaCode);
+                prescriptionBuilder.routeOfAdministration(routeOfAdministrationCdaCode);
             }
         } else {
             prescriptionBuilder.dosage(new Dosage.Unstructured("No unstructured dosage text.", "No medication."));

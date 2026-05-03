@@ -168,7 +168,8 @@ class PatientSummaryL1GeneratorTest {
                 .build())
             .birthTime(LocalDate.of(1982, 11, 3))
             .build();
-        var input = new PatientSummaryInput(rootedDocumentId, null, patient);
+
+        var input = new PatientSummaryInput(rootedDocumentId, null, patient, null);
         var cda = PatientSummaryL1Generator.generate(input);
         Assertions.assertNotNull(cda);
     }
