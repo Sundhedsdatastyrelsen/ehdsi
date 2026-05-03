@@ -11,7 +11,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 export BACKUP_ROOT="${EHDSI_BACKUP_DIR:-/opt/backup}"
 
 NCP_DIR="$REPO_ROOT/NCP"
-export NC_DIR="$REPO_ROOT/national-connector"
+export NC_DIR="${NC_DIR:-$REPO_ROOT/national-connector}"
 
 # Container names
 MYSQL_CONTAINER="${MYSQL_CONTAINER:-openncp_db}"

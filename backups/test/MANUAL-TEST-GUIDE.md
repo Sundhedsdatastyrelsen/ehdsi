@@ -247,6 +247,118 @@ rm -f /opt/backup/mysql/full/mysql-full-fake-*.sql.gz
 
 ---
 
+## Test 6 — SQLite snapshot cycle
+
+What it proves: SQLite backups are full snapshots; restoring one brings the
+database back to exactly that point and discards any writes made after it.
+This is the SQLite analogue of Test 3, but **without** a `--stop-datetime`
+knob — SQLite has no binary log, so you can only restore to snapshot
+boundaries, never to a moment between them.
+
+```
+t0 ─ sentinel A ─┬─ snapshot S1
+                 │
+                 ├─ sentinel B ─┬─ snapshot S2
+                 │              │
+                 │              └─ sentinel C ─┬─ restore S1 → only A
+                 │                             │
+                 │                             └─ restore S2 → A, B (never C)
+```
+
+### Helper scripts
+
+Mirror of the MySQL helpers, operating on `undo-db.sqlite`:
+
+- [`sqlite-add-sentinel.sh <label>`](sqlite-add-sentinel.sh) — insert a row
+  `(label, ts)` into a `_sentinel` table (created on first call).
+- [`sqlite-list-sentinels.sh`](sqlite-list-sentinels.sh) — dump the
+  `_sentinel` rows currently visible.
+
+Both target `$NC_DIR/data/undo-db.sqlite`, where `$NC_DIR` defaults to
+`national-connector/` and can be overridden for testing.
+
+### 6a. Automated
+
+```bash
+./backups/test/test-sqlite-snapshot-cycle.sh
+```
+
+Runs the full flow inside a temp `$NC_DIR` + `$EHDSI_BACKUP_DIR` so the real
+data and backup directories are untouched.
+
+**Pass:** exits 0, final line reads `SQLITE SNAPSHOT CYCLE TEST PASSED`.
+
+### 6b. Manual walkthrough
+
+Run this against the real dev data if you want to inspect the filesystem
+between steps. It is **destructive** — step 6 overwrites
+`national-connector/data/undo-db.sqlite` with the snapshot contents. Dev only.
+
+```bash
+# 0. Make sure undo-db.sqlite exists and has at least one table.
+#    (The NC container creates it on first run; if you're coming from an
+#    empty data dir, seed it from the latest backup:)
+LATEST=$(ls -td /opt/backup/sqlite/*/ | head -1)
+[[ -f national-connector/data/undo-db.sqlite ]] || \
+    cp "$LATEST/undo-db.sqlite" national-connector/data/
+
+# 1. Add sentinel A
+./backups/test/sqlite-add-sentinel.sh A
+
+# 2. Snapshot S1 (captures A)
+./backups/sqlite/backup.sh
+S1=$(ls -td /opt/backup/sqlite/*/ | head -1 | sed 's:/$::')
+echo "S1 = $S1"
+
+# 3. Add sentinel B
+./backups/test/sqlite-add-sentinel.sh B
+
+# 4. Snapshot S2 (captures A and B). Sleep 1s so the timestamp-named dir
+#    doesn't collide with S1.
+sleep 1
+./backups/sqlite/backup.sh
+S2=$(ls -td /opt/backup/sqlite/*/ | head -1 | sed 's:/$::')
+echo "S2 = $S2"
+
+# 5. Add sentinel C (after both snapshots — should not be in either)
+./backups/test/sqlite-add-sentinel.sh C
+
+# Confirm the live state
+./backups/test/sqlite-list-sentinels.sh
+# Expect: A, B, C
+
+# 6. Restore S1, verify
+./backups/sqlite/restore.sh "$S1" --yes
+./backups/test/sqlite-list-sentinels.sh
+# Expect: A only
+
+# 7. Restore S2, verify
+./backups/sqlite/restore.sh "$S2" --yes
+./backups/test/sqlite-list-sentinels.sh
+# Expect: A and B — never C
+
+# Cleanup: drop the test table
+sqlite3 national-connector/data/undo-db.sqlite "DROP TABLE IF EXISTS _sentinel;"
+```
+
+**Pass:** step 6 shows `A` only; step 7 shows `A` and `B`.
+
+### Known failure modes
+
+- **Both snapshots resolve to the same directory** → `sqlite/backup.sh`
+  names snapshots by `YYYYMMDD-HHMMSS`. Two backups within the same second
+  collide; make sure there's at least a 1-second gap between steps 2 and 4.
+- **`chown` error during restore** → if you are not root and the data dir
+  isn't already owned by uid 10001, `sqlite/restore.sh` skips the chown
+  with a NOTE. The restore itself completes; the NC container's init step
+  fixes permissions on next start.
+- **C visible after step 6 or 7** → the snapshot file was modified after
+  it was taken (e.g. another process wrote to `$SNAPSHOT_DIR`), or
+  `sqlite-add-sentinel.sh` is writing into the wrong database. Check
+  `$NC_DIR` / `SQLITE_DATA_DIR`.
+
+---
+
 ## Cleanup after all tests
 
 ```bash

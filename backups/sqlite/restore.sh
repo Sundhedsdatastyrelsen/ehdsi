@@ -93,8 +93,11 @@ for db in "${RESTORE_FILES[@]}"; do
     done
 done
 
-# Fix ownership to match the init container's chown
-chown -R 10001:10001 "$SQLITE_DATA_DIR"
+# Fix ownership to match the init container's chown. Best-effort: in dev
+# environments (non-root user, volume not owned by uid 10001) this fails,
+# which is fine — the NC container's init step will re-chown on startup.
+chown -R 10001:10001 "$SQLITE_DATA_DIR" 2>/dev/null \
+    || log "NOTE: chown 10001:10001 skipped (not root?); NC init will fix on start"
 
 # Restart national-connector
 log "Starting national-connector container..."
