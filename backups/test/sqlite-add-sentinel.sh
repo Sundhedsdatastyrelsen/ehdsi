@@ -27,9 +27,27 @@ if ! command -v sqlite3 &>/dev/null; then
 fi
 
 TARGET_DB="$NC_DIR/data/undo-db.sqlite"
+TARGET_DIR=$(dirname "$TARGET_DB")
 
 if [[ ! -f "$TARGET_DB" ]]; then
     log "ERROR: Target database not found: $TARGET_DB"
+    exit 1
+fi
+
+# SQLite needs to write to both the DB file (for the data) and its parent
+# directory (for the rollback journal / WAL). In production the data dir is
+# owned by uid 10001 (the NC container's user); from the host, cbrams gets
+# read-only, which produces a confusing "attempt to write a readonly
+# database (8)" error. Detect that up front.
+if [[ ! -w "$TARGET_DB" || ! -w "$TARGET_DIR" ]]; then
+    log "ERROR: $TARGET_DB is not writable as $(id -un) (uid $(id -u))"
+    log "       File owner: $(stat -c '%U:%G (uid %u)' "$TARGET_DB" 2>/dev/null)"
+    log ""
+    log "       The data dir is typically owned by uid 10001 (the NC container user)."
+    log "       Either:"
+    log "         (a) sudo $0 $LABEL"
+    log "         (b) sudo chown -R \$(id -u):\$(id -g) $TARGET_DIR  # run test, then chown back"
+    log "         (c) ./backups/test/test-sqlite-snapshot-cycle.sh   # automated, uses temp dir"
     exit 1
 fi
 

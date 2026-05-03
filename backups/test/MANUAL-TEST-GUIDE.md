@@ -294,6 +294,12 @@ Run this against the real dev data if you want to inspect the filesystem
 between steps. It is **destructive** — step 6 overwrites
 `national-connector/data/undo-db.sqlite` with the snapshot contents. Dev only.
 
+> **Permissions:** the NC container runs as uid 10001 and owns
+> `national-connector/data/`. From the host, your user can read but not
+> write, so `sqlite-add-sentinel.sh` and `sqlite/restore.sh` need either
+> `sudo` or a temporary `chown` to your uid. The automated test (6a)
+> avoids this by using a temp directory.
+
 ```bash
 # 0. Make sure undo-db.sqlite exists and has at least one table.
 #    (The NC container creates it on first run; if you're coming from an
@@ -303,42 +309,40 @@ LATEST=$(ls -td /opt/backup/sqlite/*/ | head -1)
     cp "$LATEST/undo-db.sqlite" national-connector/data/
 
 # 1. Add sentinel A
-./backups/test/sqlite-add-sentinel.sh A
+sudo ./backups/test/sqlite-add-sentinel.sh A
 
 # 2. Snapshot S1 (captures A)
-./backups/sqlite/backup.sh
+sudo ./backups/sqlite/backup.sh
 S1=$(ls -td /opt/backup/sqlite/*/ | head -1 | sed 's:/$::')
 echo "S1 = $S1"
 
 # 3. Add sentinel B
-./backups/test/sqlite-add-sentinel.sh B
+sudo ./backups/test/sqlite-add-sentinel.sh B
 
-# 4. Snapshot S2 (captures A and B). Sleep 1s so the timestamp-named dir
-#    doesn't collide with S1.
-sleep 1
-./backups/sqlite/backup.sh
+# 4. Snapshot S2 (captures A and B). 
+sudo ./backups/sqlite/backup.sh
 S2=$(ls -td /opt/backup/sqlite/*/ | head -1 | sed 's:/$::')
 echo "S2 = $S2"
 
 # 5. Add sentinel C (after both snapshots — should not be in either)
-./backups/test/sqlite-add-sentinel.sh C
+sudo ./backups/test/sqlite-add-sentinel.sh C
 
 # Confirm the live state
-./backups/test/sqlite-list-sentinels.sh
+sudo ./backups/test/sqlite-list-sentinels.sh
 # Expect: A, B, C
 
 # 6. Restore S1, verify
-./backups/sqlite/restore.sh "$S1" --yes
-./backups/test/sqlite-list-sentinels.sh
+sudo ./backups/sqlite/restore.sh "$S1" --yes
+sudo ./backups/test/sqlite-list-sentinels.sh
 # Expect: A only
 
 # 7. Restore S2, verify
-./backups/sqlite/restore.sh "$S2" --yes
-./backups/test/sqlite-list-sentinels.sh
+sudo ./backups/sqlite/restore.sh "$S2" --yes
+sudo ./backups/test/sqlite-list-sentinels.sh
 # Expect: A and B — never C
 
 # Cleanup: drop the test table
-sqlite3 national-connector/data/undo-db.sqlite "DROP TABLE IF EXISTS _sentinel;"
+sudo sqlite3 national-connector/data/undo-db.sqlite "DROP TABLE IF EXISTS _sentinel;"
 ```
 
 **Pass:** step 6 shows `A` only; step 7 shows `A` and `B`.
