@@ -19,6 +19,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindDocumentsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.FindPatientsResponseDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFetchDocumentRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindEPrescriptionDocumentsRequestDto;
+import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindPatientSummaryDocumentRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.PostFindPatientsRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.SubmitDispensationRequestDto;
 import dk.sundhedsdatastyrelsen.ncpeh.optout.OptOutService;
@@ -106,7 +107,7 @@ public class Controller {
     /// but we want all the business logic in national connector.
     @PostMapping(path = "/api/find-patient-summary-document/")
     public DocumentAssociationForPatientSummaryDocumentMetadataDto findPatientSummaryDocument(
-        @Valid @RequestBody FindDocumentsRequestDto params
+        @Valid @RequestBody PostFindPatientSummaryDocumentRequestDto params
     ) {
         if (!patientSummaryConfig.enabled()) {
             throw new PublicException(500, "Patient summary is disabled");
@@ -114,7 +115,7 @@ public class Controller {
 
         checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
         // TODO should maybe be a user identity instead? It's not used in patient summary yet.
-        return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
+        return patientSummaryService.getDocumentMetadata(params.getPatientId(), this.getFmkToken(params.getSoapHeader()));
     }
 
     @PostMapping(path = "/api/fetch-document/")

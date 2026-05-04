@@ -38,7 +38,7 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    public DocumentAssociationForPatientSummaryDocumentMetadataDto getDocumentMetadata(String patientId, NspDgwsIdentity identity) {
+    public DocumentAssociationForPatientSummaryDocumentMetadataDto getDocumentMetadata(String patientId, EuropeanHcpIdwsToken identity) {
         // We generate a new id every time, as we cannot tell when the underlying data is updated. The drawback is that
         // if clients ask for an old ID, they will still get the most recent data. Other options were considered.
         // We could have returned the same id every time, and just used the patient id in the request to figure out who
@@ -53,21 +53,25 @@ public class PatientSummaryService {
         var l1Id = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^" + DocumentIdMapper.level1DocumentId(baseId);
 
         var effectiveTime = OffsetDateTime.now();
+        var repositoryId = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value;
+        var author = "Sundhedsdatastyrelsen";
+        var title = "eHDSI Patient Summary"; //TODO: Double check this
+        var language = "da-DK"; //We always include danish text in free-text
+
+        var confidentiality = new ConfidentialityMetadataDto()
+            .confidentialityCode("N")
+            .confidentialityDisplay("Normal");
 
         var l3 = new EpsosDocumentMetadataDto(l3Id);
         l3.setPatientId(patientId);
         l3.setEffectiveTime(effectiveTime);
-        l3.setRepositoryId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value);
-        // TODO who's the author?
-        l3.setAuthor("Not implemented");
-        // TODO what should the title be?
-        l3.setTitle("Not implemented");
+        l3.setRepositoryId(repositoryId);
+        l3.setAuthor(author);
+        l3.setTitle(title);
         l3.setClassCode(ClassCodeDto._60591_5); // Patient summary document
         l3.setFormat(DocumentFormatDto.XML);
-        // TODO Double check these values
-        l3.setLanguage("da-DK"); //We always include danish text in free-text
-        l3.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
-            .confidentialityDisplay("Normal"));
+        l3.setLanguage(language);
+        l3.setConfidentiality(confidentiality);
         //The following data is set to this by convention to indicate a document generated on-demand
         // https://profiles.ihe.net/ITI/TF/Volume2/ITI-38.html
         l3.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709"); //SHA1 hash of a zero length file
@@ -76,14 +80,13 @@ public class PatientSummaryService {
         var l1 = new EpsosDocumentMetadataDto(l1Id);
         l1.setPatientId(patientId);
         l1.setEffectiveTime(effectiveTime);
-        l1.setRepositoryId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value);
-        l1.setAuthor("Not implemented");
-        l1.setTitle("Not implemented");
+        l1.setRepositoryId(repositoryId);
+        l1.setAuthor(author);
+        l1.setTitle(title);
         l1.setClassCode(ClassCodeDto._60591_5);
         l1.setFormat(DocumentFormatDto.PDF);
-        l1.setLanguage("da-DK");
-        l1.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
-            .confidentialityDisplay("Normal"));
+        l1.setLanguage(language);
+        l1.setConfidentiality(confidentiality);
         l1.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709");
         l1.setSize(0L);
 
