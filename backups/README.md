@@ -25,6 +25,8 @@ backups/
 ├── sqlite/
 │   ├── backup.sh         # sqlite3 .backup of every configured DB → snapshot dir
 │   └── restore.sh        # stop container, cp files, chown, start container
+├── systemd/
+│   └── install.sh        # install/uninstall/status for systemd timers
 └── test/
     ├── tests.sh                # all five tests, dispatched by subcommand
     ├── sentinels.sh            # MySQL + SQLite sentinel helpers
@@ -76,6 +78,38 @@ backups/
 
 Retention is automatic: `FULL_BACKUP_RETAIN=7` dumps, `BINLOG_RETAIN_DAYS=14`,
 `SQLITE_BACKUP_RETAIN=7` snapshots. Override via env var.
+
+## Scheduling (systemd)
+
+Install three timers — one per backup script — using
+[`systemd/install.sh`](systemd/install.sh):
+
+```bash
+sudo ./backups/systemd/install.sh install      # use defaults
+sudo ./backups/systemd/install.sh install \
+    --full   "*-*-* 03:00:00" \    # daily 03:00
+    --binlog "*:0/15" \             # every 15 min
+    --sqlite "*-*-* 0/6:00:00"      # every 6 hours
+sudo ./backups/systemd/install.sh uninstall
+     ./backups/systemd/install.sh status
+     ./backups/systemd/install.sh install --dry-run   # preview, no root needed
+```
+
+Defaults match the three lines above. Other flags: `--user` (default
+`$SUDO_USER`), `--prefix` (default `ehdsi-`), `--no-start`. Once installed,
+adjust schedules without re-running the installer:
+
+```bash
+sudo systemctl edit ehdsi-mysql-binlog-backup.timer   # creates a drop-in
+sudo systemctl list-timers 'ehdsi-*'
+journalctl -u ehdsi-mysql-full-backup.service
+```
+
+The service user needs docker-group membership, write access to `$BACKUP_ROOT`,
+and read access to `MYSQL_PASSWORD_FILE` (or `MYSQL_ROOT_PASSWORD` set in a
+`systemctl edit` drop-in). systemd starts services with a clean environment,
+so any env-var overrides for [config.sh](lib/config.sh) belong in a drop-in,
+not in your shell rc.
 
 ## How it works (the non-obvious bits)
 
