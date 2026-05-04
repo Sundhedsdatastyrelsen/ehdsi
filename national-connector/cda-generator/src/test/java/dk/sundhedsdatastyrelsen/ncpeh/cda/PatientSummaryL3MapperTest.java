@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
@@ -25,23 +26,7 @@ class PatientSummaryL3MapperTest {
             var cpr = FmkResponseStorage.rawResponseCprs().get(3);
             var response = FmkResponseStorage.storedMedicineCards(cpr);
 
-            var patient = Patient.builder()
-                .id(new CdaId(Oid.DK_CPR, cpr))
-                .name(new Name("Patient", List.of("Test")))
-                .genderCode(CdaCode.builder()
-                    .codeSystem(Oid.ADMINISTRATIVE_GENDER)
-                    .codeSystemVersion("913-20091020")
-                    .code("F")
-                    .displayName("Female")
-                    .build())
-                .birthTime(LocalDate.of(1982, 11, 3))
-                .address(new Address(
-                    List.of("Testvej 1"),
-                    "København",
-                    "2100",
-                    "DK"
-                ))
-                .build();
+            var patient = validPatient(cpr);
 
             var preferredHp = PreferredHealthProfessional.builder()
                 .name(Name.fromFullName("Tycho Brahe"))
@@ -61,6 +46,26 @@ class PatientSummaryL3MapperTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Patient validPatient(String cpr) {
+        return Patient.builder()
+            .id(new CdaId(Oid.DK_CPR, cpr))
+            .name(new Name("Bach", List.of("Sofie")))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                .codeSystemVersion("913-20091020")
+                .code("F")
+                .displayName("Female")
+                .build())
+            .birthTime(LocalDate.of(2000, 10, 4))
+            .address(new Address(
+                List.of("Morbærvej 200"),
+                "København K",
+                "1362",
+                "DK"
+            ))
+            .build();
     }
 
     @Test
@@ -91,7 +96,6 @@ class PatientSummaryL3MapperTest {
         }
     }
 
-
     @Test
     void getPatientMedicationInstructions() {
         var model = getModel();
@@ -105,17 +109,6 @@ class PatientSummaryL3MapperTest {
     }
 
     @Test
-    void getMedicationStartDate() {
-        var model = getModel();
-
-        var firstMedication = model.getMedicationSummary().getItems().getFirst();
-
-        Assertions.assertNotNull(firstMedication);
-        Assertions.assertNotNull(firstMedication.getMedicationStartTime());
-    }
-
-
-    @Test
     void getPreferredHealthProfessional() {
         var model = getModel();
 
@@ -124,4 +117,67 @@ class PatientSummaryL3MapperTest {
         Assertions.assertNotNull(preferredHealthProfessional);
         Assertions.assertNotNull(preferredHealthProfessional.getName());
     }
+
+    @Test
+    void nullPreferredHealthProfessionalIsHandled() throws Exception {
+        var cpr = FmkResponseStorage.rawResponseCprs().get(3);
+        var response = FmkResponseStorage.storedMedicineCards(cpr);
+
+        var input = new PatientSummaryInput(
+            "test-document-id",
+            null,
+            validPatient(cpr),
+            response
+        );
+
+        var model = PatientSummaryL3Mapper.model(input);
+
+        assertThat(model.getPreferredHp(), is(nullValue()));
+    }
+
+    @Test
+    void mapsAllMedicationEntriesFromMedicineCard() {
+        var model = getModel();
+
+        assertThat(model.getMedicationSummary().getItems(), hasSize(5));
+    }
+
+    @Test
+    void mapsPatientFromInput() {
+        var patient = getModel().getPatient();
+
+        assertThat(patient.getId().getExtension(), is("0410009234"));
+        assertThat(patient.getName().getFamily(), is("Bach"));
+        assertThat(patient.getName().getGivens(), contains("Sofie"));
+        assertThat(patient.getBirthTime(), is("20001004"));
+        assertThat(patient.getGenderCode().getCode(), is("F"));
+    }
+
+    @Test
+    void medicationEntriesHaveActiveIngredientText() {
+        var ingredients = getModel().getMedicationSummary().getItems().stream()
+            .map(MedicationSummary.MedicationItem::getUnstructuredActiveIngredients)
+            .toList();
+
+        assertThat(ingredients, hasItem(containsString("IBUPROFEN")));
+        assertThat(ingredients, hasItem(containsString("PARACETAMOL")));
+        assertThat(ingredients, hasItem(containsString("SILDENAFILCITRAT")));
+    }
+
+    @Test
+    void patientInputReflectsMedicineCardXmlPatient() {
+        var patient = getModel().getPatient();
+
+        assertThat(patient.getId().getExtension(), is("0410009234"));
+        assertThat(patient.getName().getFamily(), is("Bach"));
+        assertThat(patient.getName().getGivens(), contains("Sofie"));
+        assertThat(patient.getBirthTime(), is("20001004"));
+        assertThat(patient.getGenderCode().getCode(), is("F"));
+        assertThat(patient.getAddress().getStreetAddressLines(), contains("Morbærvej 200"));
+        assertThat(patient.getAddress().getCity(), is("København K"));
+        assertThat(patient.getAddress().getPostalCode(), is("1362"));
+        assertThat(patient.getAddress().getCountryCode(), is("DK"));
+    }
+
+    //TODO: Negative tests for e.g nullPatientThrowsException, nullFmkResponseThrowsException, Empty medicine card (Should ever happen, but if it does), All optional inputs null except required (only have for medication right now)
 }

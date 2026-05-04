@@ -32,16 +32,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 class PatientSummaryL3GeneratorTest {
-    @Test
-    void generateTest() {
-        var oid = Oid.DK_PATIENT_SUMMARY;
-        var extension = "1230879456";
-        var title = "Generate PS L3 Document Title";
-        var creationTimestamp = OffsetDateTime.now();
-        var patient = Patient.builder()
+
+    private static Patient patient(String country) {
+        return Patient.builder()
             .id(new CdaId(Oid.DK_CPR, "1234567890"))
             .name(Name.fromFullName("Hans Christian Andersen"))
-            .address(new Address(List.of("Overgaden Oven Vandet 10", "1."), "København K", "1415", "DK"))
+            .address(new Address(List.of("Overgaden Oven Vandet 10", "1."), "København K", "1415", country))
             .genderCode(CdaCode.builder()
                 .codeSystem(Oid.ADMINISTRATIVE_GENDER)
                 .codeSystemVersion("913-20091020")
@@ -50,13 +46,61 @@ class PatientSummaryL3GeneratorTest {
                 .build())
             .birthTime(LocalDate.of(1982, 11, 3))
             .build();
-        var preferredHp = PreferredHealthProfessional.builder()
-            .name(Name.fromFullName("Tycho Brahe"))
-            .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
-            .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
-            .build();
+    }
 
-        var medication1 = MedicationItem.builder()
+    private static PreferredHealthProfessional preferredHp(String country) {
+        return PreferredHealthProfessional.builder()
+            .name(Name.fromFullName("Tycho Brahe"))
+            .telecoms(List.of(Telecom.builder()
+                .use(Telecom.Use.WORK_PLACE)
+                .value("tel:+4511111111")
+                .build()))
+            .address(new Address(
+                List.of("Rundetårn", "Købmagergade 52A", "Kælderen"),
+                "København K",
+                "1150",
+                country))
+            .build();
+    }
+
+    private static Product product(
+        String drugId,
+        String name,
+        String strength,
+        String formCode,
+        String formName,
+        String atcCode,
+        String atcName
+    ) {
+        return Product.builder()
+            .drugId(CdaCode.builder()
+                .codeSystem(Oid.DK_DRUG_ID)
+                .code(drugId)
+                .displayName(name)
+                .build())
+            .name(name)
+            .strength(strength)
+            .formCode(CdaCode.builder()
+                .codeSystem(Oid.DK_LMS22)
+                .code(formCode)
+                .displayName(formName)
+                .build())
+            .atcCode(CdaCode.builder()
+                .codeSystem(Oid.ATC)
+                .code(atcCode)
+                .displayName(atcName)
+                .build())
+            .innermostPackageLayer(PackageLayer.builder()
+                .amount(BigDecimal.valueOf(20))
+                .unit(new PackageUnit.WithCode("1"))
+                .description("20 tablets")
+                .build())
+            .manufacturerOrganizationName("Test Pharma A/S")
+            .build();
+    }
+
+    private static MedicationItem medication1() {
+        return MedicationItem.builder()
             .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280998"))
             .medicationStartTime(OffsetDateTime.parse("2025-01-10T00:00:00+01:00"))
             .medicationEndTime(OffsetDateTime.parse("2025-01-20T00:00:00+01:00"))
@@ -69,103 +113,73 @@ class PatientSummaryL3GeneratorTest {
                 "1 tablet morgen og aften",
                 true,
                 new Dosage.Period.Simple("d", BigDecimal.ONE),
-                new Dosage.Quantity(
-                    BigDecimal.ONE,
-                    new Dosage.Unit.Translated("tablet"),
-                    null
-                ),
-                null
-            ))
-            .product(Product.builder()
-                .drugId(CdaCode.builder()
-                    .codeSystem(Oid.DK_DRUG_ID)
-                    .code("28100902676")
-                    .displayName("Primcillin")
-                    .build())
-                .name("Primcillin")
-                .strength("250 mg")
-                .formCode(CdaCode.builder()
-                    .codeSystem(Oid.DK_LMS22)
-                    .code("TABFILM")
-                    .displayName("filmovertrukne tabletter")
-                    .build())
-                .atcCode(CdaCode.builder()
-                    .codeSystem(Oid.ATC)
-                    .code("J01CE02")
-                    .displayName("Phenoxymethylpenicillin")
-                    .build())
-                .innermostPackageLayer(PackageLayer.builder()
-                    .amount(BigDecimal.valueOf(20))
-                    .unit(new PackageUnit.WithCode("1"))
-                    .description("20 tablets")
-                    .build())
-                .manufacturerOrganizationName("Test Pharma A/S")
-                .build())
-            .activeIngredients(List.of(
-                ActiveIngredient.builder()
-                    .name("Phenoxymethylpenicillinkalium")
-                    .build()))
+                new Dosage.Quantity(BigDecimal.ONE, new Dosage.Unit.Translated("tablet"), null),
+                null))
+            .product(product(
+                "28100902676",
+                "Primcillin",
+                "250 mg",
+                "TABFILM",
+                "filmovertrukne tabletter",
+                "J01CE02",
+                "Phenoxymethylpenicillin"))
+            .activeIngredients(List.of(ActiveIngredient.builder()
+                .name("Phenoxymethylpenicillinkalium")
+                .build()))
             .unstructuredActiveIngredients("Phenoxymethylpenicillinkalium")
             .indicationText("behandling af infektion")
             .patientMedicationInstructions("Tag 2 tabletter om morgen og 2 tabletter om aftenen")
             .build();
+    }
 
-        var medication2 = MedicationItem.builder()
-            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION , "13143641280999"))
+    private static MedicationItem medication2() {
+        return MedicationItem.builder()
+            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280999"))
             .medicationStartTime(OffsetDateTime.parse("2025-02-01T00:00:00+01:00"))
             .routeOfAdministration(CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)
                 .code("OR")
                 .displayName("Oral use")
                 .build())
-            .dosage(new Dosage.Unstructured(
-                "1 tablet dagligt",
-                "Test dosage"))
-            .product(Product.builder()
-                .drugId(CdaCode.builder()
-                    .codeSystem(Oid.DK_DRUG_ID)
-                    .code("28107001111")
-                    .displayName("Panodil")
-                    .build())
-                .name("Panodil")
-                .strength("500 mg")
-                .formCode(CdaCode.builder()
-                    .codeSystem(Oid.DK_LMS22)
-                    .code("TAB")
-                    .displayName("tabletter")
-                    .build())
-                .atcCode(CdaCode.builder()
-                    .codeSystem(Oid.ATC)
-                    .code("N02BE01")
-                    .displayName("Paracetamol")
-                    .build())
-                .innermostPackageLayer(PackageLayer.builder()
-                    .amount(BigDecimal.valueOf(10))
-                    .unit(new PackageUnit.WithCode("1"))
-                    .description("10 tabletter")
-                    .build())
-                .manufacturerOrganizationName("Test Pharma A/S")
-                .build())
-            .activeIngredients(List.of(
-                ActiveIngredient.builder()
-                    .name("Paracetamol")
-                    .build()))
+            .dosage(new Dosage.Unstructured("1 tablet dagligt", "Test dosage"))
+            .product(product(
+                "28107001111",
+                "Panodil",
+                "500 mg",
+                "TAB",
+                "tabletter",
+                "N02BE01",
+                "Paracetamol"))
+            .activeIngredients(List.of(ActiveIngredient.builder()
+                .name("Paracetamol")
+                .build()))
             .unstructuredActiveIngredients("Paracetamol")
             .indicationText("Smertestillende")
             .patientMedicationInstructions("Tag 1 tablet dagligt")
             .build();
+    }
 
-        var medicationSummary = MedicationSummary.builder()
-            .items(List.of(medication1, medication2))
+    private static MedicationSummary medicationSummary() {
+        return MedicationSummary.builder()
+            .items(List.of(medication1(), medication2()))
             .build();
+    }
+
+    @Test
+    void generateTest() {
+        var oid = Oid.DK_PATIENT_SUMMARY;
+        var extension = "1230879456";
+        var title = "Generate PS L3 Document Title";
+        var creationTimestamp = OffsetDateTime.now();
+
 
         var model = PatientSummaryL3.builder()
             .documentId(new CdaId(oid, extension))
             .effectiveTime(creationTimestamp)
             .title(title)
-            .patient(patient)
-            .preferredHp(preferredHp)
-            .medicationSummary(medicationSummary)
+            .patient(patient("DK"))
+            .preferredHp(preferredHp("DK"))
+            .medicationSummary(medicationSummary())
             .build();
         var cda = PatientSummaryL3Generator.generate(model);
         Assertions.assertNotNull(cda);
@@ -300,7 +314,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medication2 = MedicationItem.builder()
-            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION , "13143641280999"))
+            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280999"))
             .medicationStartTime(OffsetDateTime.parse("2025-02-01T00:00:00+01:00"))
             .routeOfAdministration(CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)
@@ -441,7 +455,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medication2 = MedicationItem.builder()
-            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION , "13143641280999"))
+            .medicationId(new CdaId(Oid.DK_FMK_MEDICATION, "13143641280999"))
             .medicationStartTime(OffsetDateTime.parse("2025-02-01T00:00:00+01:00"))
             .routeOfAdministration(CdaCode.builder()
                 .codeSystem(Oid.DK_LMS11)
