@@ -3,6 +3,22 @@
 An operational backup and recovery plan for the NCPeH (National Contact Point eHealth)
 installation run by Sundhedsdatastyrelsen (SDS).
 
+> **Status — read this first.** As of writing, the installation runs in
+> **acceptance only**, exchanging partner-test traffic; it is not yet
+> citizen-facing. This plan therefore reflects setup experience plus pre-go-live
+> design, not an operational track record. Specifically:
+>
+> - **Backup-failure alerting is planned but not yet implemented.** Until the
+>   Loki/Grafana alert rules are in place, rely on `systemctl list-timers
+>   'ehdsi-*'` and `journalctl -u 'ehdsi-*.service'` to confirm the timers ran.
+> - **Steady-state size of `/opt/backup` has not been measured.** Allow generous
+>   headroom on first deploy and revisit once a few weeks of retention have
+>   accumulated.
+> - **No real recovery has been exercised in production.** The procedures below
+>   have been tested against the automated test harness (`backups/test/tests.sh`)
+>   and during initial server setup, but a full Scenario 1 rebuild has not yet
+>   been performed under incident conditions.
+
 ---
 
 ## Recovery Objectives
@@ -24,14 +40,75 @@ The production installation spans five servers:
 
 | Server | Role |
 |--------|------|
-| `sds-openncp-01p` | OpenNCP (NCP-A / NCP-B), MySQL, job queue, undo log |
-| `sds-ncpdata-01p` | National connector, FSEU SQLite data |
+| `sds-openncp-01p` | OpenNCP (NCP-A / NCP-B), MySQL, national connector, job queue, undo log |
+| `sds-ncpdata-01p` | FSEU service (also referred to as the **opt-out service** — same thing under two names), FSEU SQLite data |
 | `sds-openncp-01t` | OpenNCP — test environment |
-| `sds-ncpdata-01t` | National connector — test environment |
-| `sds-openncp-mon` | Grafana, Loki, Mimir, Tempo (monitoring stack) |
+| `sds-ncpdata-01t` | FSEU / opt-out — test environment |
+| `sds-openncp-mon` | **Vault**, Grafana, Loki, Mimir, Tempo (monitoring stack) |
 
 All persistent state lives in Docker containers managed from the `NCP/` and
 `national-connector/` directories of this repository.
+
+A few topology facts that matter during recovery:
+
+- **Vault runs on `sds-openncp-mon`**, alongside the monitoring stack — not on a
+  dedicated server. Every other service depends on Vault to fetch its secrets at
+  startup, which makes mon a hard prerequisite for any cold-start recovery
+  sequence (see [Recovery ordering](#recovery-ordering) below).
+- **Ingress goes through an external SDS/SIT load balancer.** EU partners,
+  Danish health services, and the opt-out callers do not hit the VM IPs directly.
+- **Static IPs are allow-listed by partners.** A rebuilt VM that comes up on a
+  new IP will be potentially silently rejected by EU partner NCPs, FMK, NSP, and others
+  until the address is restored. The IP records are held by SIT / the network
+  team — not in this repo. **Confirm the rebuilt VM has the original IP before
+  attempting any partner-facing test.**
+- **National connector and FSEU are distinct services.** The national connector
+  on `sds-openncp-01p` integrates with Danish prescription services for outbound
+  cross-border requests and owns the three SQLite files in
+  `national-connector/data/`. FSEU on `sds-ncpdata-01p` is a separate service
+  with its own SQLite database and its own `backups/lib/config.sh` overrides.
+
+---
+
+## Network & External Dependencies
+
+A rebuilt or restored server is operationally useful only when it can talk to
+the rest of the world. The required outbound destinations are:
+
+| Destination | Purpose | Failure mode if blocked |
+|-------------|---------|-------------------------|
+| Azure DevOps (HTTPS) | Cloning this repo and the sibling gitops repo | Recovery cannot start; operator cannot fetch source |
+| Azure Container Registry | Pulling production Docker images | `docker compose pull` fails; no images to start |
+| EU SMP / SML directories | Service-metadata lookups for cross-border partners | NCP-A / NCP-B fail to resolve partner endpoints |
+| TSAM source | Terminology master-data sync | Stale code translations; cron catches up later |
+| EU partner NCPs | Direct cross-border NCP-to-NCP calls | Patient-summary / e-prescription exchange fails |
+| FMK, NSPen, other Danish health services | National-side prescription / dispensing flows | Outbound prescription operations fail |
+| Vault (`sds-openncp-mon`) on the management network | Secret retrieval for every service at startup | Containers refuse to start (or restart) |
+
+A few authentication notes that affect what a recovering operator should
+expect to see:
+
+- **Cross-border (EU) traffic** uses certificates issued by the EU eHealth
+  network CA. These are signed externally and are not regenerable in-house;
+  they live in git encrypted at rest, decryption keys gotten by the secrets-fetch
+  scripts at deploy time. The decryption key is bundled into the fetch
+  script's logic — operators do not need to handle it manually.
+
+- **Danish health services** authenticate primarily via **SOSI ticket** (an
+  STS-signed federation token). A handful of legacy services still
+  use certificate-based auth, but this is a dying breed and only used where
+  services do not yet support SOSI.
+
+- **Inter-service connections** (NC↔OpenNCP, NC↔FSEU/opt-out) use self-signed
+  certificates managed by a rotation script that runs only when rotating.
+  After a restore the existing certs come back from backup — the script is
+  **not** run as part of recovery.
+
+- **Ingress** terminates at the SDS/SIT load balancer in front of the VMs.
+  Partners and Danish services do not connect to VM IPs directly. This means
+  health-checks executed *from the VM itself* using `localhost` exercise the
+  service container only; an end-to-end check requires going through the load
+  balancer's public hostname.
 
 ---
 
@@ -65,7 +142,7 @@ each server to an offsite backup system.
 | `sds-ncpdata-01p` | `/opt/backup` | Every 30 min | FSEU SQLite data |
 | `sds-openncp-01t` | `/opt/backup` | Every 24h | Test MySQL + SQLite data |
 | `sds-ncpdata-01t` | `/opt/backup` | Every 24h | Test SQLite data |
-| `sds-openncp-mon` | `/opt/backup` | Every 30 min | Grafana dashboards, metrics, log exports |
+| `sds-openncp-mon` | `/opt/backup` | Every 30 min | Vault data directory, Grafana dashboards, metrics, log exports |
 
 **To restore application backups from offsite:** contact SIT/the hosting provider and
 specify the server name and timestamp you need. SIT will restore `/opt/backup` (or a
@@ -145,14 +222,16 @@ should be set according to how much data loss between snapshots is acceptable.
 
 ### Vault Server
 
-The Vault server manages encrypted secrets for the entire installation. Its data
-directory is backed up as a complete set of files to `/opt/backup` and picked up by the
-SIT net-backup agent alongside the other application backups.
+Vault runs on **`sds-openncp-mon`**, co-located with the monitoring stack — it
+does not have a dedicated server. It manages encrypted secrets for the entire
+installation. Its data directory is backed up as a complete set of files to
+`/opt/backup` on mon and picked up by the SIT net-backup agent alongside the
+other application backups every 30 minutes.
 
-The **Vault unseal key** is not stored digitally. It is printed and held physically in a
-secure location (safe). Without it, a restored Vault instance will start in sealed state
-and cannot serve secrets to any dependent service. See
-[Scenario 2](#scenario-2--vault-server-recovery) for restore instructions.
+The **Vault unseal key** is a single printed copy (no Shamir splitting) held
+physically in a secure location (safe). Without it, a restored Vault instance
+will start in sealed state and cannot serve secrets to any dependent service.
+See [Scenario 2](#scenario-2--vault-server-recovery) for restore instructions.
 
 ### Secrets
 
@@ -200,7 +279,10 @@ sudo systemctl edit ehdsi-mysql-binlog-backup.timer
 sudo ./backups/systemd/install.sh uninstall
 ```
 
-The service user needs:
+In production the timers run as **root**, which already satisfies the access
+requirements below. If you adapt the units to run as a different user instead,
+that user needs:
+
 - membership of the `docker` group
 - write access to `/opt/backup`
 - read access to `NCP/db_root_password.txt` (or `MYSQL_ROOT_PASSWORD` set in a drop-in)
@@ -225,13 +307,63 @@ Each script logs timestamped output to stderr. Run them from the repo root or se
 
 ## Recovery Procedures
 
+### Recovery ordering
+
+Vault sits on `sds-openncp-mon`, and every other service fetches its secrets
+from Vault at startup. That puts mon on the critical path for any cold-start
+recovery, even when mon itself is healthy from the operator's perspective. Two
+rules follow:
+
+1. **If both prod (`sds-openncp-01p` and/or `sds-ncpdata-01p`) and mon are
+   down, restore mon first — always.** Until Vault is back, nothing else can
+   start cleanly. The relevant subset of [Scenario 2](#scenario-2--vault-server-recovery)
+   is a hard prerequisite for [Scenario 1](#scenario-1--full-server-loss-restore-from-scratch).
+2. **If only mon is down**, the impact is **service-affecting on restart only.**
+   Already-running OpenNCP, national connector and FSEU containers keep
+   functioning with their cached, file-mounted secrets. But any container that
+   restarts (deploy, OOM, reboot, image pull) will fail until Vault is reachable
+   and unsealed again. Treat a mon outage as an active production incident even
+   though the gateway still answers, because the next restart of any container
+   will turn it into a partial outage.
+
 ### Before Starting Any Recovery
 
 1. Identify **when** the incident occurred (from logs, monitoring, or user reports).
 2. Confirm that the required backup files are present on-disk under `/opt/backup`. If
    not, request them from SIT (Layer 2 offsite restore).
-3. Record the recovery start time. If the incident requires audit documentation, preserve
-   the current state (logs, `docker ps`, disk listing) before overwriting anything.
+3. Record the recovery start time and **preserve the current state before
+   overwriting anything.** A restore is destructive, and once it runs the broken
+   state is gone — capture it first, even if you don't yet know whether it will
+   be needed for incident analysis. The minimum checklist:
+
+   ```bash
+   mkdir -p /opt/forensics/$(date +%Y%m%d-%H%M%S) && cd "$_"
+
+   # Container state and logs
+   docker ps -a > docker-ps.txt
+   for c in $(docker ps -a --format '{{.Names}}'); do
+       docker logs --tail 5000 "$c" > "docker-logs-$c.txt" 2>&1
+   done
+
+   # MySQL — dump the broken databases before they are overwritten
+   docker exec openncp_db mysqldump -u root \
+       -p"$(tr -d '[:space:]' < /var/ehdsi/NCP/db_root_password.txt)" \
+       --all-databases --single-transaction --routines --triggers \
+       2>mysqldump.err | gzip > mysql-broken.sql.gz
+
+   # SQLite — copy aside (include WAL/SHM, they hold uncommitted writes)
+   cp -av /var/ehdsi/national-connector/data/*.sqlite* ./
+
+   # Host logs around the incident window
+   journalctl --since "1 hour ago" > journal.txt
+   tar -czf var-log.tgz /var/log/ 2>/dev/null
+   ```
+
+   Logs are also shipped to the Loki/Grafana stack, so a snapshot of the
+   monitoring database (Layer 2 picks up `sds-openncp-mon:/opt/backup` every
+   30 min) covers most of the log-based forensics. Local capture is still
+   worthwhile for container `docker logs` output that may not have been
+   shipped yet.
 4. Confirm that the relevant Docker container is running before attempting a restore into
    it. Stop the container only when the restore script requires it (SQLite restore does;
    MySQL restore does not).
@@ -303,26 +435,58 @@ locally, and re-upload it. Then restart the OpenNCP containers:
 cd NCP && docker compose up -d tomcat_node_a tomcat_node_b
 ```
 
-**NC↔Opt-Out mTLS** (mutual TLS on both sides)
+**NC↔Opt-Out (FSEU) mTLS** (mutual TLS on both sides)
 
-The national connector and the opt-out service use mutual TLS. Each side holds the
-other's certificate in its own trust store. After a restore, both sides may need the
-certificate re-imported:
+The national connector on `sds-openncp-01p` and the **opt-out service — which is
+the same service as FSEU on `sds-ncpdata-01p`** — communicate over mutual TLS.
+Each side holds the other's certificate in its own trust store. After a restore,
+both sides may need the certificate re-imported:
 
 - National connector trust store: `national-connector/config/<env>-opt-out-truststore.p12`
-- Opt-out service trust store: its equivalent config on the opt-out server
+- FSEU / opt-out trust store on `sds-ncpdata-01p`: its equivalent config on that server
 
-If the opt-out service is on a separate host, the restore steps above must be carried out
-on both servers before the mTLS connection works.
+Both servers must be touched for the mTLS connection to come back. If only one
+side is restored, the handshake fails silently from the caller's perspective —
+the symptom is a 503 / connection refused on the national connector, not an
+explicit certificate error.
 
 To verify the connection manually before starting full service:
 
 ```bash
-# From the national connector server, test that the opt-out endpoint responds over mTLS
+# From sds-openncp-01p, test that the FSEU/opt-out endpoint responds over mTLS
 curl --cert national-connector/config/<env>-opt-out-keystore.p12 \
      --cacert national-connector/config/<env>-opt-out-truststore.p12 \
-     https://<opt-out-host>:<port>/actuator/health
+     https://<fseu-host>:<port>/health //TODO real health endpoint
 ```
+
+#### Static IP not preserved on VM rebuild
+
+EU partner NCPs, FMK, NSP, and other Danish health services all might allow-list this
+installation **by source IP**. A VM that comes up on a new IP after rebuild might be 
+silently rejected by some partners — the symptom is connection timeouts or
+generic TLS errors against partner endpoints, even though all certificates and
+trust stores look correct locally.
+
+The IP records are held by SIT / the network team, not in this repository.
+Confirm with them that the rebuilt VM has the original IP **before** running
+any of the post-restore liveness checks below; otherwise you will spend hours
+chasing certificate issues that aren't there.
+
+```bash
+# On the rebuilt VM, confirm the externally-visible source IP is the expected one
+curl -sS https://api.ipify.org; echo
+ip -4 addr show | grep inet
+```
+
+#### Vault TLS verification on FSEU only
+
+Most services in this installation reach Vault with TLS verification disabled
+(closed network, ingress is the trust boundary). FSEU on `sds-ncpdata-01p` is
+the exception: its Hoplite integration cannot skip verification and reads the
+Vault server certificate from `vault-truststore.jks`. If Vault's certificate
+has been regenerated during recovery, FSEU is the one service that will fail to
+start with a TLS handshake error until the cert is re-imported. See
+[Scenario 2 Step 5](#scenario-2--vault-server-recovery) for the procedure.
 
 #### Verifying inter-service connectivity manually
 
@@ -334,7 +498,7 @@ relying on container health checks:
 curl -k https://localhost:8443/openncp-gateway-backend/
 
 # National connector health
-curl -k https://localhost:4443/actuator/health
+curl -k https://localhost:4443/health //TODO real endpoint
 
 # MySQL is accepting connections and databases are intact
 docker exec openncp_db mysql -u root \
@@ -351,14 +515,78 @@ Only once all four checks pass should the automatic secret-fetch script be enabl
 
 ---
 
+### Restore semantics — what to expect from each layer
+
+Behaviours that aren't obvious from the scripts but matter when you decide
+which scenario to run:
+
+- **MySQL restore is all-or-nothing.** The current scripts replace all four
+  databases (`ehealth_properties`, `ehealth_atna`, `ehealth_ltrdb`,
+  `ehealth_eadc`) together. There is no supported flag to restore a single one
+  while leaving the others untouched; if you need that, do it by hand by
+  extracting the relevant section of the dump and applying it to a running
+  instance. Plan accordingly when only one database is corrupted.
+
+- **MySQL and SQLite layers are independent.** They share no foreign-key-style
+  references, so it is acceptable for a PITR'd MySQL state to be at a different
+  timestamp than the SQLite snapshot you restore. Operators do **not** need to
+  align timestamps across layers. (The undo log, LMS cache, and job queue are
+  scoped to themselves.)
+
+- **The job queue is not idempotent.** When `job-queue.sqlite` is restored from
+  a snapshot, any pending jobs at the time of the snapshot will be re-executed.
+  Some handlers have observable side effects that may duplicate. **The operating principle
+  is that duplicates are less harmful than missing data: proceed with the
+  restore.** Notify affected partners (EU partner NCPs, FMK / NSP / other
+  Danish recipients) that duplicates are possible during the restore window so
+  they can de-duplicate downstream. Do not try to hand-prune the queue before
+  restart unless you have a specific reason — the cost of accidentally dropping
+  a real pending job is higher than the cost of a duplicate.
+
+- **TSAM synchronization is deferred.** OpenNCP and the national connector
+  start and serve traffic without waiting for the TSAM synchronizer cron. The
+  next 03:00 cron run will refresh terminology data; if you need it sooner,
+  trigger it manually:
+
+  ```bash
+  cd /var/ehdsi/NCP && docker compose run tsam-synchronizer
+  ```
+
+- **The undo log and LMS cache are best-effort.** They will be slightly out of
+  date relative to MySQL after a restore, but neither blocks normal operation —
+  `undo-db.sqlite` only matters if a user invokes the undo flow within its
+  retention window, and `local-lms-db.sqlite` is a refreshable cache.
+
+- **The inter-service self-signed certificates are restored from backup, not
+  regenerated.** A rotation script exists, but it is run only when certificates
+  are actually being rotated — not as part of a restore. Do not run it during
+  recovery unless you have a specific cert-rotation reason; doing so will
+  cascade into trust-store re-imports on every dependent service.
+
+---
+
 ### Scenario 1 — Full Server Loss (Restore from Scratch)
 
 Use this procedure when a server is lost and must be rebuilt from nothing, or when
 provisioning a replacement server.
 
-Production uses pre-built Docker images published to the GitHub Container Registry
-(`ghcr.io/sundhedsdatastyrelsen/ehdsi/`) by the CI workflows in `.github/workflows/`.
-**No build step is required on the server itself** — all images are pulled at deploy time.
+> Before starting, confirm two preconditions:
+> 1. **If mon is also down, restore mon first** — see
+>    [Recovery ordering](#recovery-ordering). The other servers cannot start
+>    without Vault.
+> 2. **The rebuilt VM must come up on the original IP.** EU partner NCPs, FMK,
+>    NSPen, and Danish health services allow-list this installation by source
+>    IP, and a different IP will be silently rejected. Coordinate with SIT /
+>    the network team before any partner-facing test.
+
+Production pulls pre-built Docker images from a SDS-managed **Azure Container
+Registry** (longer image-tag retention than ghcr.io) and clones source from
+**Azure DevOps**. CI is also hosted in Azure DevOps. **No build step is required
+on the server itself** — all images are pulled at deploy time.
+
+If both Azure DevOps and the Azure Container Registry are unavailable
+simultaneously, there is no documented fallback. (The public mirror on GitHub
+is not used in production and may lag the Azure source of truth.)
 
 #### Step 1 — Prerequisites
 
@@ -383,10 +611,24 @@ chown <username>:<username> /opt/backup
 
 #### Step 2 — Clone the Repository
 
+Production uses **Azure DevOps over HTTPS with a personal access token (PAT)**.
+Each operator authenticates with their own PAT — there is no shared service
+account in Vault for git access (and Vault would not be reachable yet at this
+step anyway). If you do not already have a PAT for the SDS Azure DevOps
+organisation, generate one with **Code (read)** scope before starting.
+
 ```bash
-git clone https://github.com/Sundhedsdatastyrelsen/ehdsi.git /var/ehdsi
+# Replace <pat> with your own Azure DevOps PAT.
+git clone https://globeteam@dev.azure.com/globeteam/ePPS-ops/_git/ePPS-ops /opt/ehdsi
 cd /var/ehdsi
 ```
+
+Production and acceptance are seperate **sibling "gitops" repositories** in 
+Azure DevOps that holds environment-specific configuration. It is
+designed to be self-sufficient at deploy time — secrets fetched from Vault, env
+files generated by its own scripts — but a recovering operator will likely need
+read access to the github repository for debugging deployment-specific values that are not in this
+repo.
 
 #### Step 3 — Obtain Application Backups from SIT
 
@@ -443,9 +685,19 @@ require production-specific values. Follow `docs/prod-environment.md` in full. K
 
 #### Step 6 — Authenticate with the Container Registry
 
+Production images live in a Globeteam-managed **Azure Container Registry** (ACR).
+Authenticate using the credentials set up for this installation — typically a
+service principal or admin account configured for the registry; see the gitops
+repo for the canonical credentials path.
+
 ```bash
-echo "<TOKEN>" | docker login ghcr.io -u <github-username> --password-stdin
+# Service principal / admin login (substitute the actual registry name and credentials)
+echo "<password>" | docker login <registry-name>.azurecr.io \
+    -u <username-or-app-id> --password-stdin
 ```
+
+The Azure CLI alternative (`az acr login --name <registry-name>`) works too if
+the host already has `az` installed and a session.
 
 #### Step 7 — Pull Images and Start MySQL
 
@@ -546,17 +798,26 @@ systemctl list-timers 'ehdsi-*'
 
 ### Scenario 2 — Vault Server Recovery
 
-Use this procedure when only the Vault server is lost or its data directory is corrupted,
-while the other servers remain intact.
+Use this procedure when only the Vault server (`sds-openncp-mon`) is lost or its
+data directory is corrupted, while the other servers remain intact. Note that
+mon also hosts the monitoring stack; restoring it brings Grafana / Loki / Mimir /
+Tempo back at the same time.
 
-**Prerequisites:** the physical printed copy of the Vault unseal key must be in hand
-before starting. Without it, Vault cannot be unsealed and will not serve secrets to any
-dependent service.
+**Prerequisites:**
+
+- The **physical printed copy of the Vault unseal key** must be in hand before
+  starting. The current Vault is configured **without Shamir splitting** —
+  there is one printed key, and that single key unseals the vault. Without it,
+  Vault cannot be unsealed and will not serve secrets to any dependent service.
+- If the unseal key has been lost, Vault data cannot be recovered from backup
+  alone. The fallback is to rebuild Vault, re-issue secrets to it, and have
+  every dependent service re-fetch — which is significantly more work than this
+  scenario covers.
 
 #### Step 1 — Restore Vault Data Files from SIT
 
 Contact SIT to restore the Vault data directory from the offsite backup. Provide the
-Vault server name and the target snapshot timestamp.
+Vault server name (`sds-openncp-mon`) and the target snapshot timestamp.
 
 #### Step 2 — Start the Vault Container
 
@@ -573,8 +834,8 @@ docker exec -it vault vault operator unseal
 # Enter the physical printed unseal key when prompted
 ```
 
-Repeat if the threshold requires multiple key shares. Vault logs that it is unsealed when
-ready.
+A single entry of the printed key is sufficient (no Shamir threshold). Vault
+logs that it is unsealed when ready.
 
 #### Step 4 — Verify and Re-fetch Secrets
 
@@ -584,6 +845,32 @@ docker exec vault vault status   # Sealed: false
 
 Run the secrets-fetching scripts so all dependent services have current credentials. Then
 verify that the NCP and national connector services can authenticate normally.
+
+#### Step 5 — Re-import the Vault Server Certificate into FSEU's Trust Store
+
+This step is **only required if Vault's TLS server certificate has changed**
+during the recovery (e.g. because the data directory was re-bootstrapped, or a
+rotation happened in parallel). Skip if the same certificate is in use.
+
+Most callers of Vault in this installation are configured to skip TLS
+verification — they run on a closed network and trust the network boundary
+rather than the certificate. **FSEU on `sds-ncpdata-01p` is the exception.**
+It uses a Hoplite integration that does not support disabling verification, and
+it ships with a dedicated truststore at `vault-truststore.jks` in the
+FSEU/Hoplite repository. After any Vault certificate change, the new server
+cert must be imported into that truststore and the FSEU service restarted.
+
+```bash
+# On sds-ncpdata-01p, after fetching the new Vault server cert:
+keytool -keystore <path-to>/vault-truststore.jks -storepass <password> \
+    -delete -alias vault-server 2>/dev/null || true
+keytool -keystore <path-to>/vault-truststore.jks -storepass <password> \
+    -import -file vault-server.crt -alias vault-server -noprompt
+docker compose restart fseu
+```
+
+Without this step, FSEU will fail to start with a TLS handshake error against
+Vault, even though every other service is fine.
 
 ---
 
@@ -610,7 +897,21 @@ recent full dump.
 
 `restore-incremental.sh` parses the binlog start coordinate from the dump's embedded
 `CHANGE REPLICATION SOURCE TO` comment — `--after <dump>` is all that is needed to
-anchor the replay start. The `--stop-datetime` is in **container-local time**.
+anchor the replay start.
+
+The `--stop-datetime` value is interpreted in **container-local time, which is
+UTC** for the production MySQL container. If you have an incident timestamp in
+Europe/Copenhagen (CET/CEST), convert it to UTC first — getting this wrong by
+one or two hours is the most common PITR mistake. Check the running container's
+clock with:
+
+```bash
+docker exec openncp_db date          # Should print UTC
+```
+
+If the host VM's NTP source has drifted, the binlog timestamps themselves may
+be off, in which case `--stop-datetime` is unreliable and you should fall back
+to a `--stop-position` coordinate from `mysqlbinlog` output.
 
 If binlog files are unavailable (purged or lost after the retention window), skip step 2.
 The databases will be at the full dump boundary.
@@ -664,6 +965,65 @@ the most recent snapshot before the incident is the best available recovery poin
 
 ---
 
+### Post-restore liveness checks
+
+The `localhost`-based connectivity checks under [Common Problems on Restore](#verifying-inter-service-connectivity-manually)
+confirm only that the container internals are wired correctly. They do not
+prove that EU partners or Danish health services can actually reach the
+installation through the SDS/SIT load balancer. Run the following in order
+before declaring the restore complete:
+
+1. **Internal health endpoints** — confirm each service is alive:
+
+   ```bash
+   # National connector (sds-openncp-01p)
+   curl -k https://localhost:4443/health //TODO real endpoint
+
+   # FSEU / opt-out (sds-ncpdata-01p)
+   curl -k https://localhost:<fseu-port>/health //TODO real endpoint
+   ```
+
+2. **OpenNCP cross-border connectivity** — the most authoritative "are we
+   back?" signal from a partner's perspective is a successful **patient
+   fetch** through OpenNCP. This exercises the full chain (load balancer →
+   OpenNCP → national connector → Danish back-end → response) and is
+   **non-destructive** — no side effects on the Danish or partner side.
+   Use a known test patient against a partner test environment.
+
+3. **Selective use of the integration test suite.** A full integration test
+   exists that simulates more of the cross-border flows. **Do not run it
+   wholesale in production** — some of its steps are destructive (e.g.
+   creating or modifying records). In production, run **only the fetch /
+   read portions manually**, picking out the relevant test cases. Treat the
+   integration test as a toolbox for individual checks during recovery, not
+   as a press-the-button verification.
+
+4. **Trust-store diff check.** Trust stores are the most common source of
+   silent post-restore failure. Confirm each is current:
+
+   ```bash
+   # OpenNCP trust store contains the national connector cert
+   keytool -list -keystore NCP/keystore/<env>-truststore.jks -storepass changeit \
+       -alias national-connector
+
+   # NC trust store contains the FSEU/opt-out cert
+   keytool -list -keystore national-connector/config/<env>-opt-out-truststore.p12 \
+       -storetype PKCS12
+   ```
+
+5. **Backup timers re-enabled.** A successful restore is not complete until
+   the timers are armed and the next run has been confirmed:
+
+   ```bash
+   systemctl list-timers 'ehdsi-*'
+   journalctl -u ehdsi-mysql-binlog-backup.service --since '1 hour ago'
+   ```
+
+Only after all five steps pass should the **automatic** secret-fetch script be
+re-enabled (see [Manual verification before enabling automatic secret fetching](#manual-verification-before-enabling-automatic-secret-fetching)).
+
+---
+
 ## Secrets Management
 
 All application secrets are stored in Vault. Scripts exist to fetch secrets from Vault
@@ -704,8 +1064,10 @@ repository. They are always derived from Vault.
 The **Vault unseal key** and the **Frabedelsesservice EU (FSEU) encryption key** are
 printed and stored physically in a secure location (safe). Neither is stored digitally.
 
-- The Vault unseal key is required to bring Vault out of sealed state after any restart
-  or recovery. Without it, Vault starts but cannot serve secrets to any service.
+- The Vault unseal key is a **single printed key (no Shamir threshold)** required
+  to bring Vault out of sealed state after any restart or recovery. Without it,
+  Vault starts but cannot serve secrets to any service, and there is no
+  digital recovery path.
 - The FSEU encryption key is required to read Frabedelsesservice EU cross-border
   prescription data.
 
