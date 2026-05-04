@@ -26,15 +26,9 @@ backups/
 │   ├── backup.sh         # sqlite3 .backup of every configured DB → snapshot dir
 │   └── restore.sh        # stop container, cp files, chown, start container
 └── test/
-    ├── test-all.sh                  # run the two cycle tests
-    ├── test-mysql-cycle.sh          # full backup + restore into disposable container
-    ├── test-pitr-cycle.sh           # DESTRUCTIVE: full + binlog PITR on dev DB
-    ├── test-sqlite-cycle.sh         # backup live SQLite, verify integrity
-    ├── test-sqlite-snapshot-cycle.sh # fully isolated snapshot↔restore↔snapshot
-    ├── test-gap-detection.sh        # synthetic binlog gap-check assertions
-    ├── add-sentinel.sh / list-sentinels.sh           # MySQL sentinel helpers
-    ├── sqlite-add-sentinel.sh / sqlite-list-sentinels.sh  # SQLite equivalents
-    └── MANUAL-TEST-GUIDE.md         # step-by-step walkthrough
+    ├── tests.sh                # all five tests, dispatched by subcommand
+    ├── sentinels.sh            # MySQL + SQLite sentinel helpers
+    └── MANUAL-TEST-GUIDE.md    # step-by-step walkthrough
 ```
 
 ## Setup
@@ -105,15 +99,22 @@ Retention is automatic: `FULL_BACKUP_RETAIN=7` dumps, `BINLOG_RETAIN_DAYS=14`,
 ## Testing
 
 ```bash
-./backups/test/test-all.sh              # safe — runs two cycle tests
-./backups/test/test-sqlite-snapshot-cycle.sh   # safe — fully isolated
-./backups/test/test-gap-detection.sh    # safe — synthetic data
-./backups/test/test-mysql-cycle.sh      # safe — disposable test container
-./backups/test/test-pitr-cycle.sh       # DESTRUCTIVE — drops/recreates dev DBs
+./backups/test/tests.sh                  # safe tests (the four below)
+./backups/test/tests.sh sqlite-snapshot  # fully isolated, no live state touched
+./backups/test/tests.sh sqlite-cycle     # backup live SQLite, verify integrity
+./backups/test/tests.sh mysql-cycle      # backup + restore into disposable container
+./backups/test/tests.sh gap-detection    # synthetic binlog gap-check assertions
+./backups/test/tests.sh pitr-cycle       # DESTRUCTIVE — drops/recreates dev DBs
+./backups/test/tests.sh -h               # show usage
 ```
 
-The MySQL tests need `openncp_db` running and the password file readable.
-`test/MANUAL-TEST-GUIDE.md` walks through what each test proves.
+The MySQL tests need `openncp_db` running and the password file readable
+(or `MYSQL_ROOT_PASSWORD` exported). `test/MANUAL-TEST-GUIDE.md` walks
+through what each test proves.
+
+For ad-hoc inspection while debugging, [`sentinels.sh`](test/sentinels.sh)
+exposes four subcommands: `mysql-add <label>`, `mysql-list`,
+`sqlite-add <label>`, `sqlite-list`.
 
 ## Porting to another repo
 
@@ -134,6 +135,6 @@ repo. Touch only `lib/config.sh`:
 | `SQLITE_DATA_OWNER` | UID:GID applied to restored files (set empty to skip) |
 | `BACKUP_ROOT`, `*_RETAIN*` | output paths and retention knobs |
 
-After editing config.sh, run `./backups/test/test-sqlite-snapshot-cycle.sh`
-to validate the SQLite path with no live state, then a manual `full-backup.sh`
+After editing config.sh, run `./backups/test/tests.sh sqlite-snapshot` to
+validate the SQLite path with no live state, then a manual `full-backup.sh`
 + `restore-full.sh` round-trip into a throwaway container for MySQL.

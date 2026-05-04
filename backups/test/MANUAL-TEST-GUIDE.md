@@ -33,7 +33,7 @@ What it proves: a full `mysqldump` can be gzipped, decompressed, and re-loaded
 into a fresh MySQL server; table counts match; a sentinel row round-trips.
 
 ```bash
-./backups/test/test-mysql-cycle.sh
+./backups/test/tests.sh mysql-cycle
 ```
 
 
@@ -102,13 +102,13 @@ writes), not later (replayed past the intended recovery point).
 `ehealth_*` databases on `openncp_db` and rolls them back to a point in time.
 Do not run on anything you care about.
 
-### Helper scripts
+### Helper subcommands
 
-Two small utilities drive the test, both under [backups/test/](.):
+[`sentinels.sh`](sentinels.sh) drives the manual walkthrough below:
 
-- [`add-sentinel.sh <label>`](add-sentinel.sh) — inserts a row
+- `./backups/test/sentinels.sh mysql-add <label>` — inserts
   `NAME='_sentinel_<label>'` into `ehealth_properties.EHNCP_PROPERTY`.
-- [`list-sentinels.sh`](list-sentinels.sh) — lists every sentinel currently
+- `./backups/test/sentinels.sh mysql-list` — lists every sentinel currently
   visible in the target container.
 
 Both honour `$MYSQL_CONTAINER` and `$MYSQL_ROOT_PASSWORD`.
@@ -116,7 +116,7 @@ Both honour `$MYSQL_CONTAINER` and `$MYSQL_ROOT_PASSWORD`.
 ### 3a. Automated
 
 ```bash
-./backups/test/test-pitr-cycle.sh
+./backups/test/tests.sh pitr-cycle
 ```
 
 
@@ -128,7 +128,7 @@ scenario.
 
 ```bash
 # 1. Insert sentinel A (in source DB, before any backup)
-./backups/test/add-sentinel.sh A
+./backups/test/sentinels.sh mysql-add A
 
 # 2. Full backup — captures A into the dump (with embedded binlog coordinate)
 ./backups/mysql/full-backup.sh
@@ -136,7 +136,7 @@ FULL=$(ls -t /opt/backup/mysql/full/*.sql.gz | head -1)
 echo "Full backup: $FULL"
 
 # 3. Insert sentinel B (must be recovered via binlog replay)
-./backups/test/add-sentinel.sh B
+./backups/test/sentinels.sh mysql-add B
 
 # 4. Rotate + back up the binlog that contains B's write
 ./backups/mysql/binlog-backup.sh
@@ -148,24 +148,24 @@ echo "Cutoff: $STOP_AT"
 sleep 2
 
 # 6. Insert sentinel C (AFTER cutoff — must NOT be in the restored DB)
-./backups/test/add-sentinel.sh C
+./backups/test/sentinels.sh mysql-add C
 
 # 7. Back up the binlog containing C's write (still needed on the host so
 #    --stop-datetime has something to filter in the replay)
 ./backups/mysql/binlog-backup.sh
 
 # Confirm everything is in the source right now
-./backups/test/list-sentinels.sh
+./backups/test/sentinels.sh mysql-list
 # Expect: A, B, C
 
 # 8. Restore only the full backup
 ./backups/mysql/restore-full.sh "$FULL" --yes
-./backups/test/list-sentinels.sh
+./backups/test/sentinels.sh mysql-list
 # Expect: A only (B and C were written after the dump)
 
 # 9. Replay binlogs, stopping at the cutoff
 ./backups/mysql/restore-incremental.sh --after "$FULL" --stop-datetime "$STOP_AT"
-./backups/test/list-sentinels.sh
+./backups/test/sentinels.sh mysql-list
 # Expect: A and B — NOT C
 
 # Cleanup: remove all test sentinels
@@ -265,14 +265,14 @@ t0 ─ sentinel A ─┬─ snapshot S1
                  │                             └─ restore S2 → A, B (never C)
 ```
 
-### Helper scripts
+### Helper subcommands
 
 Mirror of the MySQL helpers, operating on `undo-db.sqlite`:
 
-- [`sqlite-add-sentinel.sh <label>`](sqlite-add-sentinel.sh) — insert a row
+- `./backups/test/sentinels.sh sqlite-add <label>` — insert a row
   `(label, ts)` into a `_sentinel` table (created on first call).
-- [`sqlite-list-sentinels.sh`](sqlite-list-sentinels.sh) — dump the
-  `_sentinel` rows currently visible.
+- `./backups/test/sentinels.sh sqlite-list` — dump the `_sentinel` rows
+  currently visible.
 
 Both target `$SQLITE_DATA_DIR/undo-db.sqlite`, where `$SQLITE_DATA_DIR`
 defaults to `national-connector/data/` and can be overridden for testing.
@@ -280,7 +280,7 @@ defaults to `national-connector/data/` and can be overridden for testing.
 ### 6a. Automated
 
 ```bash
-./backups/test/test-sqlite-snapshot-cycle.sh
+./backups/test/tests.sh sqlite-snapshot
 ```
 
 Runs the full flow inside a temp `$SQLITE_DATA_DIR` + `$EHDSI_BACKUP_DIR` so
@@ -296,7 +296,7 @@ between steps. It is **destructive** — step 6 overwrites
 
 > **Permissions:** the NC container runs as uid 10001 and owns
 > `national-connector/data/`. From the host, your user can read but not
-> write, so `sqlite-add-sentinel.sh` and `sqlite/restore.sh` need either
+> write, so `sentinels.sh sqlite-add` and `sqlite/restore.sh` need either
 > `sudo` or a temporary `chown` to your uid. The automated test (6a)
 > avoids this by using a temp directory.
 
@@ -309,7 +309,7 @@ LATEST=$(ls -td /opt/backup/sqlite/*/ | head -1)
     cp "$LATEST/undo-db.sqlite" national-connector/data/
 
 # 1. Add sentinel A
-sudo ./backups/test/sqlite-add-sentinel.sh A
+sudo ./backups/test/sentinels.sh sqlite-add A
 
 # 2. Snapshot S1 (captures A)
 sudo ./backups/sqlite/backup.sh
@@ -317,7 +317,7 @@ S1=$(ls -td /opt/backup/sqlite/*/ | head -1 | sed 's:/$::')
 echo "S1 = $S1"
 
 # 3. Add sentinel B
-sudo ./backups/test/sqlite-add-sentinel.sh B
+sudo ./backups/test/sentinels.sh sqlite-add B
 
 # 4. Snapshot S2 (captures A and B). 
 sudo ./backups/sqlite/backup.sh
@@ -325,20 +325,20 @@ S2=$(ls -td /opt/backup/sqlite/*/ | head -1 | sed 's:/$::')
 echo "S2 = $S2"
 
 # 5. Add sentinel C (after both snapshots — should not be in either)
-sudo ./backups/test/sqlite-add-sentinel.sh C
+sudo ./backups/test/sentinels.sh sqlite-add C
 
 # Confirm the live state
-sudo ./backups/test/sqlite-list-sentinels.sh
+sudo ./backups/test/sentinels.sh sqlite-list
 # Expect: A, B, C
 
 # 6. Restore S1, verify
 sudo ./backups/sqlite/restore.sh "$S1" --yes
-sudo ./backups/test/sqlite-list-sentinels.sh
+sudo ./backups/test/sentinels.sh sqlite-list
 # Expect: A only
 
 # 7. Restore S2, verify
 sudo ./backups/sqlite/restore.sh "$S2" --yes
-sudo ./backups/test/sqlite-list-sentinels.sh
+sudo ./backups/test/sentinels.sh sqlite-list
 # Expect: A and B — never C
 
 # Cleanup: drop the test table
@@ -358,7 +358,7 @@ sudo sqlite3 national-connector/data/undo-db.sqlite "DROP TABLE IF EXISTS _senti
   fixes permissions on next start.
 - **C visible after step 6 or 7** → the snapshot file was modified after
   it was taken (e.g. another process wrote to `$SNAPSHOT_DIR`), or
-  `sqlite-add-sentinel.sh` is writing into the wrong database. Check
+  `sentinels.sh sqlite-add` is writing into the wrong database. Check
   `$SQLITE_DATA_DIR`.
 
 ---
