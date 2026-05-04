@@ -260,11 +260,11 @@ public class FmkResponseStorage {
      */
     public static void main(String[] args) throws Exception {
         var frs = new FmkResponseStorage(Fmk.idwsApiClient());
-        var token = Sosi.getToken(Sosi.Audience.FMK, "221");
 
         var dir = Files.createDirectories(
             Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
         for (var cpr : rawResponseCprs) {
+            var token = Sosi.getToken(Sosi.Audience.FMK, cpr);
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             var prescriptions = frs.getPrescriptionResponse(cpr, token);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);

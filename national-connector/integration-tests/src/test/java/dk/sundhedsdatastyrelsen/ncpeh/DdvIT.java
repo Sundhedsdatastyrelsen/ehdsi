@@ -15,7 +15,11 @@ class DdvIT {
 
     @Test
     void getVaccinationTest() throws Exception {
-        var token = Sosi.getToken(Sosi.Audience.DDV);
+        var token = Sosi.getToken(Sosi.TokenArgs.builder()
+            .audience(Sosi.Audience.DDV)
+            .healthProfessionalRole("221")
+            .patientCpr(Fmk.cprKarl)
+            .build());
         try {
             var vaccinations = vaccinationService.getVaccinationsForCpr(Fmk.cprKarl, token);
             assertThat(vaccinations, is(not(empty())));
