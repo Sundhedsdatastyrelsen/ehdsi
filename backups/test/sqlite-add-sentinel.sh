@@ -2,8 +2,8 @@
 # Insert a labeled sentinel row into the _sentinel table of a SQLite
 # database for backup/restore testing. Creates the table if missing.
 #
-# Respects $NC_DIR (indirectly via common.sh) so it can target a temporary
-# data directory in tests.
+# Respects $SQLITE_DATA_DIR (set by common.sh / config.sh) so it can target
+# a temporary data directory in tests.
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -11,7 +11,7 @@ source "$(dirname "$0")/../lib/common.sh"
 LABEL="${1:-}"
 if [[ -z "$LABEL" ]]; then
     echo "Usage: $0 <label>" >&2
-    echo "  Inserts a row (label, ts) into _sentinel in \$NC_DIR/data/undo-db.sqlite" >&2
+    echo "  Inserts a row (label, ts) into _sentinel in \$SQLITE_DATA_DIR/undo-db.sqlite" >&2
     exit 1
 fi
 
@@ -26,7 +26,7 @@ if ! command -v sqlite3 &>/dev/null; then
     exit 1
 fi
 
-TARGET_DB="$NC_DIR/data/undo-db.sqlite"
+TARGET_DB="$SQLITE_DATA_DIR/undo-db.sqlite"
 TARGET_DIR=$(dirname "$TARGET_DB")
 
 if [[ ! -f "$TARGET_DB" ]]; then

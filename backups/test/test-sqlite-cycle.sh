@@ -10,7 +10,6 @@
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
 
-SQLITE_DATA_DIR="$NC_DIR/data"
 FAILURES=0
 TEMP_RESTORE_DIR=""
 

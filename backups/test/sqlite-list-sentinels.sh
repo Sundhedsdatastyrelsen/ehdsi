@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# List all sentinel rows currently in \$NC_DIR/data/undo-db.sqlite.
+# List all sentinel rows currently in $SQLITE_DATA_DIR/undo-db.sqlite.
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -9,7 +9,7 @@ if ! command -v sqlite3 &>/dev/null; then
     exit 1
 fi
 
-TARGET_DB="$NC_DIR/data/undo-db.sqlite"
+TARGET_DB="$SQLITE_DATA_DIR/undo-db.sqlite"
 
 if [[ ! -f "$TARGET_DB" ]]; then
     log "ERROR: Target database not found: $TARGET_DB"

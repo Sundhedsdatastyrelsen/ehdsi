@@ -40,7 +40,7 @@ assert_fail() {
 
 assert_container_running "$MYSQL_CONTAINER"
 
-ROOT_PASSWORD=$(read_secret "$NCP_DIR/db_root_password.txt")
+ROOT_PASSWORD=$(read_mysql_password)
 
 # Step 1: Insert sentinel row
 log "Step 1: Inserting sentinel row (key=$SENTINEL_KEY)..."

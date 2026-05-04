@@ -8,8 +8,8 @@
 #   2. Restoring an older snapshot discards writes made after it.
 #   3. Restoring a newer snapshot brings those writes back.
 #
-# Everything runs in a temporary $NC_DIR + $EHDSI_BACKUP_DIR so the real
-# data and backup directories are untouched.
+# Everything runs in a temporary $SQLITE_DATA_DIR + $EHDSI_BACKUP_DIR so the
+# real data and backup directories are untouched.
 
 # shellcheck source=SCRIPTDIR/../lib/common.sh
 source "$(dirname "$0")/../lib/common.sh"
@@ -23,16 +23,18 @@ if ! command -v sqlite3 &>/dev/null; then
     exit 1
 fi
 
-# Isolated dirs. Re-export NC_DIR so child scripts (backup.sh, restore.sh,
-# sentinel helpers) pick up the override when they source common.sh. Also
-# point NC_CONTAINER at a bogus name so the restore script's stop/start
-# fallbacks don't touch the real national-connector container.
+# Isolated dirs. Re-export so child scripts (backup.sh, restore.sh, sentinel
+# helpers) pick up the overrides when they source common.sh. SQLITE_CONTAINER
+# is a bogus name so the restore script's stop/start can't touch the real
+# national-connector container; SQLITE_COMPOSE_FILE is empty to bypass the
+# compose path entirely.
 TEST_ROOT=$(mktemp -d)
-export NC_DIR="$TEST_ROOT/nc"
 export EHDSI_BACKUP_DIR="$TEST_ROOT/backup"
-export NC_CONTAINER="sqlite-test-no-such-container"
-TARGET_DB="$NC_DIR/data/undo-db.sqlite"
-mkdir -p "$NC_DIR/data"
+export SQLITE_DATA_DIR="$TEST_ROOT/data"
+export SQLITE_CONTAINER="sqlite-test-no-such-container"
+export SQLITE_COMPOSE_FILE=""
+TARGET_DB="$SQLITE_DATA_DIR/undo-db.sqlite"
+mkdir -p "$SQLITE_DATA_DIR"
 
 RUN_ID=$(timestamp)
 LABEL_A="A_${RUN_ID}"

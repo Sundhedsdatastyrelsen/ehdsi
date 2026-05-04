@@ -274,8 +274,8 @@ Mirror of the MySQL helpers, operating on `undo-db.sqlite`:
 - [`sqlite-list-sentinels.sh`](sqlite-list-sentinels.sh) — dump the
   `_sentinel` rows currently visible.
 
-Both target `$NC_DIR/data/undo-db.sqlite`, where `$NC_DIR` defaults to
-`national-connector/` and can be overridden for testing.
+Both target `$SQLITE_DATA_DIR/undo-db.sqlite`, where `$SQLITE_DATA_DIR`
+defaults to `national-connector/data/` and can be overridden for testing.
 
 ### 6a. Automated
 
@@ -283,8 +283,8 @@ Both target `$NC_DIR/data/undo-db.sqlite`, where `$NC_DIR` defaults to
 ./backups/test/test-sqlite-snapshot-cycle.sh
 ```
 
-Runs the full flow inside a temp `$NC_DIR` + `$EHDSI_BACKUP_DIR` so the real
-data and backup directories are untouched.
+Runs the full flow inside a temp `$SQLITE_DATA_DIR` + `$EHDSI_BACKUP_DIR` so
+the real data and backup directories are untouched.
 
 **Pass:** exits 0, final line reads `SQLITE SNAPSHOT CYCLE TEST PASSED`.
 
@@ -359,7 +359,7 @@ sudo sqlite3 national-connector/data/undo-db.sqlite "DROP TABLE IF EXISTS _senti
 - **C visible after step 6 or 7** → the snapshot file was modified after
   it was taken (e.g. another process wrote to `$SNAPSHOT_DIR`), or
   `sqlite-add-sentinel.sh` is writing into the wrong database. Check
-  `$NC_DIR` / `SQLITE_DATA_DIR`.
+  `$SQLITE_DATA_DIR`.
 
 ---
 

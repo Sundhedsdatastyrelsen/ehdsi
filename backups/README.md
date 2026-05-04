@@ -134,9 +134,6 @@ repo. Touch only `lib/config.sh`:
 | `SQLITE_DATA_OWNER` | UID:GID applied to restored files (set empty to skip) |
 | `BACKUP_ROOT`, `*_RETAIN*` | output paths and retention knobs |
 
-The `NC_*` / `NCP_DIR` variables in config.sh are legacy; only the test
-scripts in this repo read them. New repos can ignore or remove them.
-
 After editing config.sh, run `./backups/test/test-sqlite-snapshot-cycle.sh`
 to validate the SQLite path with no live state, then a manual `full-backup.sh`
 + `restore-full.sh` round-trip into a throwaway container for MySQL.
