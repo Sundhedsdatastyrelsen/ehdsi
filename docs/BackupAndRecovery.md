@@ -18,6 +18,8 @@ installation run by Sundhedsdatastyrelsen (SDS).
 >   have been tested against the automated test harness (`backups/test/tests.sh`)
 >   and during initial server setup, but a full Scenario 1 rebuild has not yet
 >   been performed under incident conditions.
+> - **Access to the gitops repo should be available when reading this. These descriptions
+>   general, specific implementation will be fluid and will be documented in the gitops repo.
 
 ---
 
