@@ -81,7 +81,7 @@ public class PatientSummaryL3Mapper {
         var patientName = patient.getName();
         // #TODO: Figure out correct title format
         return String.format(
-            "epSOS Patient Summary %s - %s", patientName, documentId);
+            "epSOS Patient Summary %s - %s", patientName.getFullName(), documentId);
     }
 
     private static MedicationSummary medicationSummary(List<DrugMedicationType> medications) {
