@@ -23,7 +23,7 @@ class PatientSummaryL3MapperTest {
 
     static PatientSummaryL3 getModel() {
         try {
-            var cpr = FmkResponseStorage.rawResponseCprs().get(3);
+            var cpr = "0410009234";
             var response = FmkResponseStorage.getTestMedicineCards(cpr);
 
             var patient = Patient.builder()
@@ -43,7 +43,6 @@ class PatientSummaryL3MapperTest {
                     "DK"
                 ))
                 .build();
-            ;
 
             var preferredHp = PreferredHealthProfessional.builder()
                 .name(Name.fromFullName("Tycho Brahe"))
@@ -66,7 +65,7 @@ class PatientSummaryL3MapperTest {
 
     static PatientSummaryL3 getModelWithEmptyMedicineCard() {
         try {
-            var cpr = FmkResponseStorage.rawResponseCprs().get(5);
+            var cpr = "1004219992";
             var response = FmkResponseStorage.getTestMedicineCards(cpr);
 
             var patient = Patient.builder()
@@ -86,7 +85,6 @@ class PatientSummaryL3MapperTest {
                     "DK"
                 ))
                 .build();
-            ;
 
             var preferredHp = PreferredHealthProfessional.builder()
                 .name(Name.fromFullName("Tycho Brahe"))

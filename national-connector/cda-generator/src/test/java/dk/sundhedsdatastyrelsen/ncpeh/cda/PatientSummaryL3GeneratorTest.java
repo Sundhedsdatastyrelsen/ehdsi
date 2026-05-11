@@ -16,7 +16,6 @@ import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ class PatientSummaryL3GeneratorTest {
         var oid = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID;
         var extension = "testtestL3";
         var documentId = "testtest";
-        var creationTimestamp = OffsetDateTime.now();
         var title = "epSOS Patient Summary Hans Christian Andersen - testtest";
         var cpr = "0410009234";
 
@@ -61,7 +59,6 @@ class PatientSummaryL3GeneratorTest {
         String oidPath = "/hl7:ClinicalDocument/hl7:id/@root";
         String idExtensionPath = "/hl7:ClinicalDocument/hl7:id/@extension";
         String titlePath = "/hl7:ClinicalDocument/hl7:title";
-        String creationTimestampPath = "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         String patientBirthTimePath = "/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value";
         String softwareNamePath = "/hl7:ClinicalDocument/hl7:author//hl7:softwareName";
 
@@ -124,7 +121,6 @@ class PatientSummaryL3GeneratorTest {
         var oid = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID;
         var extension = "testtestL3";
         var documentId = "testtest";
-        var creationTimestamp = OffsetDateTime.now();
         var title = "epSOS Patient Summary Hans Christian Andersen - testtest";
         var cpr = "1004219992";
 
@@ -147,7 +143,6 @@ class PatientSummaryL3GeneratorTest {
         String oidPath = "/hl7:ClinicalDocument/hl7:id/@root";
         String idExtensionPath = "/hl7:ClinicalDocument/hl7:id/@extension";
         String titlePath = "/hl7:ClinicalDocument/hl7:title";
-        String creationTimestampPath = "/hl7:ClinicalDocument/hl7:effectiveTime/@value";
         String patientBirthTimePath = "/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value";
         String softwareNamePath = "/hl7:ClinicalDocument/hl7:author//hl7:softwareName";
 
@@ -191,7 +186,6 @@ class PatientSummaryL3GeneratorTest {
     void noPreferredHpTest() throws JAXBException {
 
         var documentId = "testtest";
-        var creationTimestamp = OffsetDateTime.now();
         var cpr = "0410009234";
         var patient = Patient.builder()
             .id(new CdaId(Oid.DK_CPR, "1234567890"))
