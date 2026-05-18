@@ -69,10 +69,34 @@
   #log .err { color: var(--err); }
   #log .warn { color: var(--warn); }
   #log .ok { color: var(--ok); }
+  #dep-error {
+    display: none;
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--err);
+    border-left: 5px solid var(--err);
+    border-radius: 6px;
+    background: #fdecea;
+    color: #7f1d1d;
+  }
+  #dep-error h2 { font-size: 15px; margin: 0 0 6px; }
+  #dep-error ul { margin: 6px 0; padding-left: 20px; }
+  #dep-error p { margin: 6px 0 0; }
 </style>
 </head>
 <body>
 <h1>LMS converter</h1>
+
+<div id="dep-error">
+  <h2>Required components could not be loaded</h2>
+  <p>This tool needs to download two helper libraries the first time it runs. The following could not be loaded:</p>
+  <ul id="dep-error-list"></ul>
+  <p>
+    This usually means there is no internet connection, or a firewall/proxy is blocking
+    <code>cdn.jsdelivr.net</code>. Connect to the internet and reload the page.
+  </p>
+</div>
+
 <p class="lede">
   Converts fixed-width LMS files from
   <a href="https://ftp.medicinpriser.dk" target="_blank" rel="noopener">ftp.medicinpriser.dk</a>
@@ -388,6 +412,29 @@ const els = {
 };
 let lastZipBlob = null;
 
+// ----- Dependency check -----
+// CDN scripts are classic <script> tags in <head>, so by the time this code
+// runs they have either defined their globals or failed. Report missing ones.
+function checkDependencies() {
+  const missing = [];
+  if (typeof XLSX === "undefined") missing.push("SheetJS (xlsx) — schema spreadsheet parsing");
+  if (typeof JSZip === "undefined") missing.push("JSZip — output ZIP packaging");
+  if (missing.length === 0) return true;
+
+  const box = document.getElementById("dep-error");
+  const list = document.getElementById("dep-error-list");
+  list.innerHTML = "";
+  for (const name of missing) {
+    const li = document.createElement("li");
+    li.textContent = name;
+    list.appendChild(li);
+  }
+  box.style.display = "block";
+  els.convert.disabled = true;
+  els.status.textContent = "Required components missing — see message above.";
+  return false;
+}
+
 function log(kind, msg) {
   const span = document.createElement("div");
   if (kind === "err" || kind === "warn" || kind === "ok") span.className = kind;
@@ -414,7 +461,8 @@ function setZoneState(zoneEl, kind, message, list) {
 }
 
 function updateConvertButton() {
-  els.convert.disabled = !(state.xlsx && state.system && state.lms.length > 0);
+  const depsOk = typeof XLSX !== "undefined" && typeof JSZip !== "undefined";
+  els.convert.disabled = !(depsOk && state.xlsx && state.system && state.lms.length > 0);
 }
 
 function acceptFiles(kind, files) {
@@ -478,6 +526,7 @@ window.addEventListener("dragover", (e) => e.preventDefault());
 window.addEventListener("drop",     (e) => e.preventDefault());
 
 els.convert.addEventListener("click", async () => {
+  if (!checkDependencies()) return;
   els.log.innerHTML = "";
   els.download.disabled = true;
   els.convert.disabled = true;
@@ -498,6 +547,8 @@ els.convert.addEventListener("click", async () => {
     updateConvertButton();
   }
 });
+
+checkDependencies();
 
 els.download.addEventListener("click", () => {
   if (!lastZipBlob) return;
