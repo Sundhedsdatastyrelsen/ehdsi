@@ -172,8 +172,26 @@ function decodeCp850(buf) {
 }
 
 // ----- CSV writer (mirrors Python's csv.writer, QUOTE_MINIMAL) -----
-// Default Python csv dialect: delimiter=',', quotechar='"', lineterminator='\r\n'.
-// QUOTE_MINIMAL quotes a field iff it contains the delimiter, quotechar, CR, or LF.
+//
+// This is deliberately hand-rolled rather than using a CSV library. The
+// acceptance test for this tool is a byte-exact `diff -r` against the output
+// of convert_lms.py, so every formatting detail below must match Python's
+// behavior precisely. General CSV libraries pick their own quoting policy and
+// record terminator and would silently break that parity. The rules here are
+// small and frozen (defined entirely by what Python emits), so encoding them
+// directly is safer and more maintainable than depending on a library.
+//
+// Two distinct Python writers are reproduced via the options:
+//   * LMS CSVs   -> csv.writer default dialect: delimiter=',', terminator='\r\n'
+//   * concept CSVs -> pandas DataFrame.to_csv(sep='|'): delimiter='|',
+//                     terminator='\n' (os.linesep on the macOS box where
+//                     convert_lms.py is run).
+//
+// Both use QUOTE_MINIMAL: a field is quoted iff it contains the delimiter,
+// the quotechar ('"'), CR, or LF — and an embedded '"' is escaped by
+// doubling it ('"' -> '""'). The delimiter is regex-escaped before being
+// placed in the character class so a metacharacter delimiter (e.g. '|')
+// is matched literally.
 function makeCsvWriter({ delimiter = ",", lineTerminator = "\r\n" } = {}) {
   const needsQuoteRe = new RegExp("[" + delimiter.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") + '"\\r\\n]');
   const quoteField = (v) => {
