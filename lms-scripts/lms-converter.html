@@ -211,8 +211,7 @@ function makeCsvWriter({ delimiter = ",", lineTerminator = "\r\n" } = {}) {
 
 // ----- Python port: parse_system_file -----
 function parseSystemFile(text) {
-  const matches = text.match(/LMS\d+\.txt/gi) || [];
-  return matches.map((m) => m); // preserve order, allow duplicates as Python does
+  return text.match(/LMS\d+\.txt/gi) || [];
 }
 
 // ----- Python port: get_schema_for_file -----
@@ -246,7 +245,7 @@ function getSchemaForFile(rows, lmsFile) {
     const fieldName = String(row[2] ?? "").trim();
     const positionStr = String(row[5] ?? "").trim();
 
-    if (positionStr === "" || positionStr.toLowerCase() === "nan") continue;
+    if (positionStr === "") continue;
 
     let startPos, endPos;
     if (positionStr.includes("-")) {
@@ -258,6 +257,10 @@ function getSchemaForFile(rows, lmsFile) {
     }
     const length = endPos - startPos + 1;
 
+    if (!length || Number.isNaN(length)) {
+        throw new Error(`Cannot extract length for ${lmsFile}, format unexpected: ${positionStr}`);
+    }
+
     // Special case: split "Administrationsvej" in LMS01 into four 2-char fields.
     if (lmsFile.toLowerCase() === "lms01.txt" && fieldName === "Administrationsvej") {
       for (let i = 0; i < 4; i++) {
@@ -268,7 +271,7 @@ function getSchemaForFile(rows, lmsFile) {
 
     // Sanity check against column E (expected length).
     const expectedRaw = String(row[4] ?? "").trim();
-    if (expectedRaw !== "" && expectedRaw.toLowerCase() !== "nan") {
+    if (expectedRaw !== "") {
       const expected = parseInt(expectedRaw, 10);
       if (!Number.isNaN(expected) && length !== expected) {
         throw new Error(
@@ -332,7 +335,8 @@ function generateCodeSystemVersionConcepts(lmsCsvs, lmsNumbers, log) {
       const k = (row[iKode] ?? "").trim();
       const t = (row[iTekst] ?? "").trim();
       if (k === "" || t === "") continue;
-      const key = k + " " + t;
+      // null byte to ensure that the k and t combo cannot occur by accident
+      const key = k + "\0" + t;
       if (seen.has(key)) continue;
       seen.add(key);
       writer.writerow([k, t]);
