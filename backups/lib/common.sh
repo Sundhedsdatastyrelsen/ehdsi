@@ -99,12 +99,7 @@ assert_binary_logging_enabled() {
     local container="$1"
     local password="$2"
     if ! is_binary_logging_enabled "$container" "$password"; then
-        log "ERROR: Binary logging is disabled on container '$container'."
-        log "       Add to my.cnf and restart the container:"
-        log "           server-id = 1"
-        log "           log-bin = binlog"
-        log "           binlog-format = ROW"
-        log "           binlog-expire-logs-seconds = 1209600"
+        log "ERROR: Binary logging is disabled on container '$container'"
         return 1
     fi
 }
