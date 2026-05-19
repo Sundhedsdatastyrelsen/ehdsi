@@ -113,7 +113,12 @@ def generate_code_system_version_concepts(output_dir: str, lms_numbers: Iterable
             print(f"Skipping LMS{number}: CSV not found at {input_csv}.")
             continue
 
-        df = pd.read_csv(input_csv)
+        # dtype=str + keep_default_na=False so pandas does not coerce valid
+        # codes into NaN: e.g. the literal code "NA" (and "NULL", "None", …)
+        # are in pandas' default na_values list and would otherwise be
+        # silently dropped, and numeric-looking codes would lose leading zeros.
+        # ("NA" is a code in LMS11: "Administrationsvej ikke relevant")
+        df = pd.read_csv(input_csv, dtype=str, keep_default_na=False)
         missing_columns = {"Kode", "Tekst"} - set(df.columns)
         if missing_columns:
             missing_list = ", ".join(sorted(missing_columns))

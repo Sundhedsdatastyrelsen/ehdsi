@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LMS converter</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+  :root {
+    --ok: #2e7d32;
+    --warn: #b26a00;
+    --err: #c62828;
+    --bg: #fafafa;
+    --border: #cfcfcf;
+    --hi: #1976d2;
+  }
+  body {
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px;
+    color: #222;
+    background: var(--bg);
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p.lede { margin: 0 0 20px; color: #555; }
+  .zones { display: grid; gap: 12px; }
+  .zone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+    transition: border-color .15s, background .15s;
+  }
+  .zone.dragover { border-color: var(--hi); background: #e8f1fb; }
+  .zone.ok { border-color: var(--ok); }
+  .zone.err { border-color: var(--err); }
+  .zone h2 { font-size: 14px; margin: 0 0 4px; font-weight: 600; }
+  .zone .hint { color: #666; font-size: 12.5px; margin: 0 0 8px; }
+  .zone .state { font-size: 12.5px; }
+  .zone .state.ok { color: var(--ok); }
+  .zone .state.err { color: var(--err); }
+  .zone input[type=file] { display: block; margin-top: 6px; font-size: 12px; }
+  .zone ul { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; color: #444; }
+  .actions { margin-top: 16px; display: flex; gap: 8px; align-items: center; }
+  button {
+    font: inherit;
+    padding: 8px 16px;
+    border: 1px solid var(--hi);
+    background: var(--hi);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:disabled { background: #aaa; border-color: #aaa; cursor: not-allowed; }
+  button.secondary { background: #fff; color: var(--hi); }
+  #log {
+    margin-top: 16px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    min-height: 60px;
+    max-height: 320px;
+    overflow: auto;
+  }
+  #log .err { color: var(--err); }
+  #log .warn { color: var(--warn); }
+  #log .ok { color: var(--ok); }
+  #dep-error {
+    display: none;
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--err);
+    border-left: 5px solid var(--err);
+    border-radius: 6px;
+    background: #fdecea;
+    color: #7f1d1d;
+  }
+  #dep-error h2 { font-size: 15px; margin: 0 0 6px; }
+  #dep-error ul { margin: 6px 0; padding-left: 20px; }
+  #dep-error p { margin: 6px 0 0; }
+</style>
+</head>
+<body>
+<h1>LMS converter</h1>
+
+<div id="dep-error">
+  <h2>Required components could not be loaded</h2>
+  <p>This tool needs to download two helper libraries the first time it runs. The following could not be loaded:</p>
+  <ul id="dep-error-list"></ul>
+  <p>
+    This usually means there is no internet connection, or a firewall/proxy is blocking
+    <code>cdn.jsdelivr.net</code>. Connect to the internet and reload the page.
+  </p>
+</div>
+
+<p class="lede">
+  Converts fixed-width LMS files from
+  <a href="https://ftp.medicinpriser.dk" target="_blank" rel="noopener">ftp.medicinpriser.dk</a>
+  into UTF-8 CSV files. Drop the three required inputs below, then click <b>Convert</b> and
+  save the resulting ZIP.
+</p>
+
+<div class="zones">
+  <div class="zone" id="zone-xlsx" data-kind="xlsx">
+    <h2>1. Schema spreadsheet</h2>
+    <p class="hint">Drop <code>databeskrivelse.xlsx</code> here (exactly one .xlsx file).</p>
+    <input type="file" accept=".xlsx" data-kind="xlsx">
+    <div class="state">No file selected.</div>
+  </div>
+
+  <div class="zone" id="zone-system" data-kind="system">
+    <h2>2. system.txt</h2>
+    <p class="hint">Drop <code>system.txt</code> here. It lists which LMS files to expect.</p>
+    <input type="file" accept=".txt" data-kind="system">
+    <div class="state">No file selected.</div>
+  </div>
+
+  <div class="zone" id="zone-lms" data-kind="lms">
+    <h2>3. LMS data files</h2>
+    <p class="hint">Drop all <code>LMS*.txt</code> files here (multiple allowed). You can select the whole folder contents.</p>
+    <input type="file" accept=".txt" data-kind="lms" multiple>
+    <div class="state">No files selected.</div>
+    <ul></ul>
+  </div>
+</div>
+
+<div class="actions">
+  <button id="convert" disabled>Convert</button>
+  <button id="download" class="secondary" disabled>Download lms-output.zip</button>
+  <span id="status" style="color:#666"></span>
+</div>
+
+<div id="log" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+// ----- CP850 -> Unicode lookup table -----
+// Bytes 0-127 are plain ASCII; the 128 entries below cover 0x80..0xFF.
+// Source: the frozen CP850 mapping (IBM PC code page 850).
+const CP850_HIGH = [
+  /* 0x80 */ 0x00C7,0x00FC,0x00E9,0x00E2,0x00E4,0x00E0,0x00E5,0x00E7,
+  /* 0x88 */ 0x00EA,0x00EB,0x00E8,0x00EF,0x00EE,0x00EC,0x00C4,0x00C5,
+  /* 0x90 */ 0x00C9,0x00E6,0x00C6,0x00F4,0x00F6,0x00F2,0x00FB,0x00F9,
+  /* 0x98 */ 0x00FF,0x00D6,0x00DC,0x00F8,0x00A3,0x00D8,0x00D7,0x0192,
+  /* 0xA0 */ 0x00E1,0x00ED,0x00F3,0x00FA,0x00F1,0x00D1,0x00AA,0x00BA,
+  /* 0xA8 */ 0x00BF,0x00AE,0x00AC,0x00BD,0x00BC,0x00A1,0x00AB,0x00BB,
+  /* 0xB0 */ 0x2591,0x2592,0x2593,0x2502,0x2524,0x00C1,0x00C2,0x00C0,
+  /* 0xB8 */ 0x00A9,0x2563,0x2551,0x2557,0x255D,0x00A2,0x00A5,0x2510,
+  /* 0xC0 */ 0x2514,0x2534,0x252C,0x251C,0x2500,0x253C,0x00E3,0x00C3,
+  /* 0xC8 */ 0x255A,0x2554,0x2569,0x2566,0x2560,0x2550,0x256C,0x00A4,
+  /* 0xD0 */ 0x00F0,0x00D0,0x00CA,0x00CB,0x00C8,0x0131,0x00CD,0x00CE,
+  /* 0xD8 */ 0x00CF,0x2518,0x250C,0x2588,0x2584,0x00A6,0x00CC,0x2580,
+  /* 0xE0 */ 0x00D3,0x00DF,0x00D4,0x00D2,0x00F5,0x00D5,0x00B5,0x00FE,
+  /* 0xE8 */ 0x00DE,0x00DA,0x00DB,0x00D9,0x00FD,0x00DD,0x00AF,0x00B4,
+  /* 0xF0 */ 0x00AD,0x00B1,0x2017,0x00BE,0x00B6,0x00A7,0x00F7,0x00B8,
+  /* 0xF8 */ 0x00B0,0x00A8,0x00B7,0x00B9,0x00B3,0x00B2,0x25A0,0x00A0,
+];
+
+// Decodes a CP850 encoded string to Unicode.
+// This function was round-trip tested with the string generated by
+//   python3 -c "import sys; sys.stdout.buffer.write(bytes(range(0x80,0x100)))" | iconv -f CP850 -t UTF-8
+function decodeCp850(buf) {
+  const bytes = new Uint8Array(buf);
+  let out = "";
+  for (let i = 0; i < bytes.length; i++) {
+    const b = bytes[i];
+    out += String.fromCharCode(b < 0x80 ? b : CP850_HIGH[b - 0x80]);
+  }
+  return out;
+}
+
+// ----- CSV writer (mirrors Python's csv.writer, QUOTE_MINIMAL) -----
+//
+// This is deliberately hand-rolled rather than using a CSV library. The
+// acceptance test for this tool is a byte-exact `diff -r` against the output
+// of convert_lms.py, so every formatting detail below must match Python's
+// behavior precisely. General CSV libraries pick their own quoting policy and
+// record terminator and would silently break that parity. The rules here are
+// small and frozen (defined entirely by what Python emits), so encoding them
+// directly is safer and more maintainable than depending on a library.
+//
+// Two distinct Python writers are reproduced via the options:
+//   * LMS CSVs   -> csv.writer default dialect: delimiter=',', terminator='\r\n'
+//   * concept CSVs -> pandas DataFrame.to_csv(sep='|'): delimiter='|',
+//                     terminator='\n' (os.linesep on the macOS box where
+//                     convert_lms.py is run).
+//
+// Both use QUOTE_MINIMAL: a field is quoted iff it contains the delimiter,
+// the quotechar ('"'), CR, or LF — and an embedded '"' is escaped by
+// doubling it ('"' -> '""'). The delimiter is regex-escaped before being
+// placed in the character class so a metacharacter delimiter (e.g. '|')
+// is matched literally.
+function makeCsvWriter({ delimiter = ",", lineTerminator = "\r\n" } = {}) {
+  const needsQuoteRe = new RegExp("[" + delimiter.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") + '"\\r\\n]');
+  const quoteField = (v) => {
+    const s = v == null ? "" : String(v);
+    if (needsQuoteRe.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  };
+  let out = "";
+  return {
+    writerow(row) { out += row.map(quoteField).join(delimiter) + lineTerminator; },
+    toString() { return out; },
+  };
+}
+
+// ----- Python port: parse_system_file -----
+function parseSystemFile(text) {
+  return text.match(/LMS\d+\.txt/gi) || [];
+}
+
+// ----- Python port: get_schema_for_file -----
+// `rows` is the array-of-arrays from SheetJS sheet_to_json({ header: 1, defval: "" }).
+// Returns array of [fieldName, startZeroBased, length], or null if not found.
+function getSchemaForFile(rows, lmsFile) {
+  const isAllEmpty = (row) => row.every((c) => c === "" || c == null);
+  // Reproduce pandas df.dropna(how="all").reset_index(drop=True)
+  const df = rows.filter((r) => !isAllEmpty(r));
+
+  const target = lmsFile.replace(/\.txt$/i, "");
+  // Find row whose column A contains the target (case-sensitive, like pandas str.contains default).
+  let start = -1;
+  for (let i = 0; i < df.length; i++) {
+    const cell = df[i][0];
+    if (cell != null && String(cell).includes(target)) { start = i; break; }
+  }
+  if (start === -1) return null;
+
+  // Walk forward until next LMSxx or SYSTEM row.
+  let end = start + 1;
+  while (end < df.length) {
+    const cell = String(df[end][0] ?? "");
+    if (cell.startsWith("LMS") || cell === "SYSTEM") break;
+    end++;
+  }
+
+  const schema = [];
+  for (let idx = start + 1; idx < end; idx++) {
+    const row = df[idx];
+    const fieldName = String(row[2] ?? "").trim();
+    const positionStr = String(row[5] ?? "").trim();
+
+    if (positionStr === "") continue;
+
+    let startPos, endPos;
+    if (positionStr.includes("-")) {
+      const [a, b] = positionStr.split("-");
+      startPos = parseInt(a, 10);
+      endPos = parseInt(b, 10);
+    } else {
+      startPos = endPos = parseInt(positionStr, 10);
+    }
+    const length = endPos - startPos + 1;
+
+    if (!length || Number.isNaN(length)) {
+        throw new Error(`Cannot extract length for ${lmsFile}, format unexpected: ${positionStr}`);
+    }
+
+    // Special case: split "Administrationsvej" in LMS01 into four 2-char fields.
+    if (lmsFile.toLowerCase() === "lms01.txt" && fieldName === "Administrationsvej") {
+      for (let i = 0; i < 4; i++) {
+        schema.push([`Administrationsvej ${i + 1}`, (startPos - 1) + i * 2, 2]);
+      }
+      continue;
+    }
+
+    // Sanity check against column E (expected length).
+    const expectedRaw = String(row[4] ?? "").trim();
+    if (expectedRaw !== "") {
+      const expected = parseInt(expectedRaw, 10);
+      if (!Number.isNaN(expected) && length !== expected) {
+        throw new Error(
+          `Length mismatch in ${lmsFile} row ${idx + 1}: calculated length ${length} ` +
+          `doesn't match expected length ${expected} for field ${fieldName}`
+        );
+      }
+    }
+
+    if (fieldName) schema.push([fieldName, startPos - 1, length]);
+  }
+
+  return schema;
+}
+
+// ----- Python port: convert_fixed_to_csv -----
+function convertFixedToCsv(decodedText, schema) {
+  const writer = makeCsvWriter();
+  writer.writerow(schema.map((f) => f[0]));
+
+  // Match Python `for line in f`: universal newlines, no trailing empty line.
+  const lines = decodedText.split(/\r\n|\r|\n/);
+  if (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
+
+  for (const line of lines) {
+    const values = schema.map(([, start, length]) =>
+      line.substring(start, start + length).trim()
+    );
+    writer.writerow(values);
+  }
+  return writer.toString();
+}
+
+// ----- Python port: generate_code_system_version_concepts -----
+// Takes a map { "11": csvString, ... } of just-generated LMS CSVs and returns
+// a map { "lms11-code-system-version-concept.csv": csvString, ... } plus log messages.
+function generateCodeSystemVersionConcepts(lmsCsvs, lmsNumbers, log) {
+  const out = {};
+  for (const number of lmsNumbers) {
+    const csv = lmsCsvs[number];
+    if (!csv) {
+      log("warn", `Skipping LMS${number}: CSV not generated.`);
+      continue;
+    }
+    const parsed = parseSimpleCsv(csv);
+    if (parsed.rows.length === 0) {
+      log("warn", `Skipping LMS${number}: CSV is empty.`);
+      continue;
+    }
+    const required = ["Kode", "Tekst"];
+    const missing = required.filter((c) => !parsed.headers.includes(c));
+    if (missing.length) {
+      log("warn", `Skipping LMS${number}: missing required columns ${missing.sort().join(", ")}.`);
+      continue;
+    }
+    const iKode = parsed.headers.indexOf("Kode");
+    const iTekst = parsed.headers.indexOf("Tekst");
+    const seen = new Set();
+    const writer = makeCsvWriter({ delimiter: "|", lineTerminator: "\n" });
+    for (const row of parsed.rows) {
+      const k = (row[iKode] ?? "").trim();
+      const t = (row[iTekst] ?? "").trim();
+      if (k === "" || t === "") continue;
+      // null byte to ensure that the k and t combo cannot occur by accident
+      const key = k + "\0" + t;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      writer.writerow([k, t]);
+    }
+    const path = `lms${number}-code-system-version-concept.csv`;
+    out[path] = writer.toString();
+    log("ok", `Generated code system version concept file for LMS${number}: csv/${path}`);
+  }
+  return out;
+}
+
+// ----- Tiny CSV parser (handles our own QUOTE_MINIMAL output) -----
+function parseSimpleCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\r") { /* skip; treat \r\n as one line break */ }
+      else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+      else field += c;
+    }
+  }
+  if (field !== "" || row.length > 0) { row.push(field); rows.push(row); }
+  const headers = rows.shift() || [];
+  return { headers, rows };
+}
+
+// ----- Orchestrator (Python port: process_lms_files) -----
+async function processLmsFiles({ xlsxFile, systemFile, lmsFiles }, log) {
+  log("info", "Parsing schema spreadsheet…");
+  const xlsxBuf = await xlsxFile.arrayBuffer();
+  const wb = XLSX.read(xlsxBuf, { type: "array" });
+  const sheet = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+
+  log("info", "Reading system.txt…");
+  const systemText = decodeCp850(await systemFile.arrayBuffer());
+  const expectedLmsNames = parseSystemFile(systemText);
+  log("info", `system.txt references ${expectedLmsNames.length} LMS file(s).`);
+
+  // Map filenames (case-insensitive) -> File object
+  const lmsByName = new Map();
+  for (const f of lmsFiles) lmsByName.set(f.name.toLowerCase(), f);
+
+  const zip = new JSZip();
+  const folder = zip.folder("csv");
+  const lmsCsvsByNumber = {}; // "11" -> csvString
+
+  for (const lmsName of expectedLmsNames) {
+    const file = lmsByName.get(lmsName.toLowerCase());
+    if (!file) {
+      log("warn", `Skipping ${lmsName}: file not provided.`);
+      continue;
+    }
+    let schema;
+    try { schema = getSchemaForFile(rows, lmsName); }
+    catch (e) { log("err", e.message); continue; }
+    if (!schema) { log("warn", `No schema found for ${lmsName}.`); continue; }
+
+    const text = decodeCp850(await file.arrayBuffer());
+    const csv = convertFixedToCsv(text, schema);
+    const outName = lmsName.replace(/\.txt$/i, ".csv");
+    folder.file(outName, csv);
+    const m = lmsName.match(/^LMS(\d+)/i);
+    if (m) lmsCsvsByNumber[m[1]] = csv;
+    log("ok", `Converted ${lmsName} to CSV.`);
+  }
+
+  const concepts = generateCodeSystemVersionConcepts(
+    lmsCsvsByNumber,
+    ["11", "14", "15", "22"],
+    log
+  );
+  for (const [name, csv] of Object.entries(concepts)) folder.file(name, csv);
+
+  log("info", "Packaging ZIP…");
+  return await zip.generateAsync({ type: "blob" });
+}
+
+// ----- UI -----
+const state = { xlsx: null, system: null, lms: [] };
+const els = {
+  zones: document.querySelectorAll(".zone"),
+  convert: document.getElementById("convert"),
+  download: document.getElementById("download"),
+  status: document.getElementById("status"),
+  log: document.getElementById("log"),
+};
+let lastZipBlob = null;
+
+// ----- Dependency check -----
+// CDN scripts are classic <script> tags in <head>, so by the time this code
+// runs they have either defined their globals or failed. Report missing ones.
+function checkDependencies() {
+  const missing = [];
+  if (typeof XLSX === "undefined") missing.push("SheetJS (xlsx) — schema spreadsheet parsing");
+  if (typeof JSZip === "undefined") missing.push("JSZip — output ZIP packaging");
+  if (missing.length === 0) return true;
+
+  const box = document.getElementById("dep-error");
+  const list = document.getElementById("dep-error-list");
+  list.innerHTML = "";
+  for (const name of missing) {
+    const li = document.createElement("li");
+    li.textContent = name;
+    list.appendChild(li);
+  }
+  box.style.display = "block";
+  els.convert.disabled = true;
+  els.status.textContent = "Required components missing — see message above.";
+  return false;
+}
+
+function log(kind, msg) {
+  const span = document.createElement("div");
+  if (kind === "err" || kind === "warn" || kind === "ok") span.className = kind;
+  span.textContent = msg;
+  els.log.appendChild(span);
+  els.log.scrollTop = els.log.scrollHeight;
+}
+
+function setZoneState(zoneEl, kind, message, list) {
+  zoneEl.classList.remove("ok", "err");
+  if (kind) zoneEl.classList.add(kind);
+  const s = zoneEl.querySelector(".state");
+  s.className = "state" + (kind ? " " + kind : "");
+  s.textContent = message;
+  const ul = zoneEl.querySelector("ul");
+  if (ul) {
+    ul.innerHTML = "";
+    if (list) for (const item of list) {
+      const li = document.createElement("li");
+      li.textContent = item;
+      ul.appendChild(li);
+    }
+  }
+}
+
+function updateConvertButton() {
+  const depsOk = typeof XLSX !== "undefined" && typeof JSZip !== "undefined";
+  els.convert.disabled = !(depsOk && state.xlsx && state.system && state.lms.length > 0);
+}
+
+function acceptFiles(kind, files) {
+  if (kind === "xlsx") {
+    const f = files.find((x) => /\.xlsx$/i.test(x.name)) || files[0];
+    if (!f) return;
+    if (!/\.xlsx$/i.test(f.name)) {
+      setZoneState(document.getElementById("zone-xlsx"), "err", `Not an .xlsx file: ${f.name}`);
+      state.xlsx = null;
+    } else {
+      state.xlsx = f;
+      setZoneState(document.getElementById("zone-xlsx"), "ok", `Loaded: ${f.name}`);
+    }
+  } else if (kind === "system") {
+    const f = files.find((x) => /^system\.txt$/i.test(x.name)) || files[0];
+    if (!f) return;
+    if (!/^system\.txt$/i.test(f.name)) {
+      setZoneState(document.getElementById("zone-system"), "err",
+        `Expected system.txt but got: ${f.name}`);
+      state.system = null;
+    } else {
+      state.system = f;
+      setZoneState(document.getElementById("zone-system"), "ok", `Loaded: ${f.name}`);
+    }
+  } else if (kind === "lms") {
+    const lms = files.filter((x) => /^LMS\d+\.txt$/i.test(x.name));
+    const rejected = files.filter((x) => !/^LMS\d+\.txt$/i.test(x.name));
+    state.lms = lms;
+    const zoneEl = document.getElementById("zone-lms");
+    if (lms.length === 0) {
+      setZoneState(zoneEl, "err",
+        rejected.length ? `No LMS*.txt files in selection (${rejected.length} ignored).`
+                        : "No files selected.", []);
+    } else {
+      const names = lms.map((f) => f.name).sort();
+      setZoneState(zoneEl, "ok",
+        `Loaded ${lms.length} LMS file(s)` +
+        (rejected.length ? ` (${rejected.length} ignored)` : "") + ":",
+        names);
+    }
+  }
+  updateConvertButton();
+}
+
+// Wire drop zones + file inputs
+for (const zone of els.zones) {
+  const kind = zone.dataset.kind;
+  const input = zone.querySelector("input[type=file]");
+  input.addEventListener("change", () => acceptFiles(kind, Array.from(input.files)));
+  zone.addEventListener("dragenter", (e) => { e.preventDefault(); zone.classList.add("dragover"); });
+  zone.addEventListener("dragover",  (e) => { e.preventDefault(); zone.classList.add("dragover"); });
+  zone.addEventListener("dragleave", () => zone.classList.remove("dragover"));
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    zone.classList.remove("dragover");
+    acceptFiles(kind, Array.from(e.dataTransfer.files));
+  });
+}
+// Avoid the browser opening dropped files if released outside a zone.
+window.addEventListener("dragover", (e) => e.preventDefault());
+window.addEventListener("drop",     (e) => e.preventDefault());
+
+els.convert.addEventListener("click", async () => {
+  if (!checkDependencies()) return;
+  els.log.innerHTML = "";
+  els.download.disabled = true;
+  els.convert.disabled = true;
+  els.status.textContent = "Working…";
+  try {
+    lastZipBlob = await processLmsFiles(
+      { xlsxFile: state.xlsx, systemFile: state.system, lmsFiles: state.lms },
+      log
+    );
+    log("ok", "Done.");
+    els.download.disabled = false;
+    els.status.textContent = "Ready to download.";
+  } catch (e) {
+    log("err", `Error: ${e.message}`);
+    els.status.textContent = "Failed.";
+    console.error(e);
+  } finally {
+    updateConvertButton();
+  }
+});
+
+checkDependencies();
+
+els.download.addEventListener("click", () => {
+  if (!lastZipBlob) return;
+  const url = URL.createObjectURL(lastZipBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "lms-output.zip";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+</script>
+</body>
+</html>
