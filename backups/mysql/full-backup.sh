@@ -17,15 +17,17 @@ log "Databases: ${MYSQL_DATABASES[*]}"
 
 # --source-data=2 embeds the binlog coordinate as a comment in the dump,
 # which restore-incremental.sh later parses to find the PITR replay start.
-docker exec "$MYSQL_CONTAINER" \
-    mysqldump \
-        -u root -p"$ROOT_PASSWORD" \
-        --single-transaction \
-        --source-data=2 \
-        --routines \
-        --triggers \
-        --events \
-        --databases "${MYSQL_DATABASES[@]}" \
+# When binary logging is disabled, fall back to a plain dump — PITR is then
+# unavailable but the full snapshot still restores cleanly.
+mysqldump_args=(-u root -p"$ROOT_PASSWORD" --single-transaction --routines --triggers --events)
+if is_binary_logging_enabled "$MYSQL_CONTAINER" "$ROOT_PASSWORD"; then
+    mysqldump_args+=(--source-data=2)
+else
+    log "Binary logging disabled — producing dump without PITR coordinate"
+fi
+mysqldump_args+=(--databases "${MYSQL_DATABASES[@]}")
+
+docker exec "$MYSQL_CONTAINER" mysqldump "${mysqldump_args[@]}" \
     | gzip > "$OUTPUT_FILE"
 
 if ! gzip -t "$OUTPUT_FILE" 2>/dev/null; then

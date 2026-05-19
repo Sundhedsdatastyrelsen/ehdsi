@@ -10,6 +10,7 @@ ensure_dir "$BACKUP_DIR"
 assert_container_running "$MYSQL_CONTAINER"
 
 ROOT_PASSWORD=$(read_mysql_password)
+assert_binary_logging_enabled "$MYSQL_CONTAINER" "$ROOT_PASSWORD"
 
 log "Starting binlog backup..."
 
@@ -23,8 +24,8 @@ BINLOGS=$(docker exec "$MYSQL_CONTAINER" \
     -e "SHOW BINARY LOGS;" 2>/dev/null)
 
 if [[ -z "$BINLOGS" ]]; then
-    log "WARNING: No binary logs found. Is binary logging enabled?"
-    exit 0
+    log "ERROR: No binary logs returned despite log_bin=ON"
+    exit 1
 fi
 
 # Last entry from SHOW BINARY LOGS is the currently-active file; mysqld

@@ -84,3 +84,27 @@ assert_container_running() {
         return 1
     fi
 }
+
+is_binary_logging_enabled() {
+    local container="$1"
+    local password="$2"
+    local log_bin
+    log_bin=$(docker exec "$container" \
+        mysql -u root -p"$password" --batch --skip-column-names \
+        -e "SELECT @@log_bin;" 2>/dev/null) || return 1
+    [[ "$log_bin" == "1" ]]
+}
+
+assert_binary_logging_enabled() {
+    local container="$1"
+    local password="$2"
+    if ! is_binary_logging_enabled "$container" "$password"; then
+        log "ERROR: Binary logging is disabled on container '$container'."
+        log "       Add to my.cnf and restart the container:"
+        log "           server-id = 1"
+        log "           log-bin = binlog"
+        log "           binlog-format = ROW"
+        log "           binlog-expire-logs-seconds = 1209600"
+        return 1
+    fi
+}

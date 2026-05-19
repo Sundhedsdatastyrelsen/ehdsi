@@ -7,32 +7,6 @@ Backup and restore scripts for the two databases this repo runs:
 - **SQLite** (`national-connector` container's data dir) — online-safe `.backup`
   snapshots of each `.sqlite` file.
 
-Everything is plain bash + `docker exec`. No daemon, no scheduler. Wire the
-scripts into cron / systemd / your CI of choice.
-
-## Layout
-
-```
-backups/
-├── lib/
-│   ├── config.sh         ← per-repo config; this is the only file you edit
-│   └── common.sh         ← generic helpers (logging, retention, etc.)
-├── mysql/
-│   ├── full-backup.sh           # mysqldump → /opt/backup/mysql/full/*.sql.gz
-│   ├── binlog-backup.sh         # FLUSH + docker cp rotated binlogs
-│   ├── restore-full.sh          # gunzip | mysql, with confirm prompt
-│   └── restore-incremental.sh   # mysqlbinlog replay for PITR
-├── sqlite/
-│   ├── backup.sh         # sqlite3 .backup of every configured DB → snapshot dir
-│   └── restore.sh        # stop container, cp files, chown, start container
-├── systemd/
-│   └── install.sh        # install/uninstall/status for systemd timers
-└── test/
-    ├── tests.sh                # all five tests, dispatched by subcommand
-    ├── sentinels.sh            # MySQL + SQLite sentinel helpers
-    └── MANUAL-TEST-GUIDE.md    # step-by-step walkthrough
-```
-
 ## Setup
 
 1. Install host-side tools: `sqlite3`, `docker`, `gzip`. `mysqlbinlog` runs
@@ -40,15 +14,6 @@ backups/
 2. Make `$BACKUP_ROOT` writable. Default is `/opt/backup` — override with
    `EHDSI_BACKUP_DIR=/some/other/path`.
 3. Ensure `NCP/db_root_password.txt` exists (or export `MYSQL_ROOT_PASSWORD`).
-4. Confirm the MySQL container has binary logging enabled. The repo's
-   `NCP/mysql/my.cnf` already does:
-   ```ini
-   server-id = 1
-   log-bin = binlog
-   binlog-format = ROW
-   binlog-expire-logs-seconds = 1209600   # 14 days
-   ```
-   Without this, `binlog-backup.sh` and `restore-incremental.sh` won't work.
 
 ## Running it
 
