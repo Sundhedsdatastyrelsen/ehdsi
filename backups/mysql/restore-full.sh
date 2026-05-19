@@ -15,7 +15,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$BACKUP_FILE" ]]; then
-    BACKUP_FILE=$(find "$BACKUP_DIR" -maxdepth 1 -name '*.sql.gz' | sort | tail -n 1)
+    BACKUP_FILE=$(find "$BACKUP_DIR" -maxdepth 1 -name '*.sql.gz' | sort | tail --lines=1)
     if [[ -z "$BACKUP_FILE" ]]; then
         log "ERROR: No backup files found in $BACKUP_DIR"
         exit 1
@@ -50,19 +50,19 @@ log "Starting restore from: $BACKUP_FILE"
 # don't survive the restore.
 for db in "${MYSQL_DATABASES[@]}"; do
     docker exec "$MYSQL_CONTAINER" \
-        mysql -u root -p"$ROOT_PASSWORD" \
-        -e "DROP DATABASE IF EXISTS \`$db\`;" 2>/dev/null
+        mysql --user=root --password="$ROOT_PASSWORD" \
+        --execute "DROP DATABASE IF EXISTS \`$db\`;" 2>/dev/null
 done
 
-gunzip -c "$BACKUP_FILE" | \
-    docker exec -i "$MYSQL_CONTAINER" \
-        mysql -u root -p"$ROOT_PASSWORD"
+gunzip --stdout "$BACKUP_FILE" | \
+    docker exec --interactive "$MYSQL_CONTAINER" \
+        mysql --user=root --password="$ROOT_PASSWORD"
 
 log "Verifying restored databases..."
 docker exec "$MYSQL_CONTAINER" \
-    mysql -u root -p"$ROOT_PASSWORD" \
+    mysql --user=root --password="$ROOT_PASSWORD" \
     --batch --skip-column-names \
-    -e "SELECT TABLE_SCHEMA, COUNT(*) AS table_count
+    --execute "SELECT TABLE_SCHEMA, COUNT(*) AS table_count
         FROM information_schema.TABLES
         WHERE TABLE_SCHEMA IN ($(printf "'%s'," "${MYSQL_DATABASES[@]}" | sed 's/,$//'))
         GROUP BY TABLE_SCHEMA

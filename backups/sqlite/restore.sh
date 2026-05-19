@@ -14,7 +14,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$SNAPSHOT_DIR" ]]; then
-    SNAPSHOT_DIR=$(find "$BACKUP_ROOT/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail -n 1)
+    SNAPSHOT_DIR=$(find "$BACKUP_ROOT/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail --lines=1)
     if [[ -z "$SNAPSHOT_DIR" ]]; then
         log "ERROR: No snapshot directories found in $BACKUP_ROOT/sqlite/"
         exit 1
@@ -68,7 +68,7 @@ done
 
 log "Stopping $SQLITE_CONTAINER container..."
 if [[ -n "$SQLITE_COMPOSE_FILE" && -f "$SQLITE_COMPOSE_FILE" ]]; then
-    docker compose -f "$SQLITE_COMPOSE_FILE" stop "$SQLITE_COMPOSE_SERVICE" 2>/dev/null || \
+    docker compose --file "$SQLITE_COMPOSE_FILE" stop "$SQLITE_COMPOSE_SERVICE" 2>/dev/null || \
         docker stop "$SQLITE_CONTAINER" 2>/dev/null || true
 else
     docker stop "$SQLITE_CONTAINER" 2>/dev/null || true
@@ -83,7 +83,7 @@ for db in "${RESTORE_FILES[@]}"; do
         if [[ -f "$SNAPSHOT_DIR/${db}${suffix}" ]]; then
             cp "$SNAPSHOT_DIR/${db}${suffix}" "$SQLITE_DATA_DIR/${db}${suffix}"
         else
-            rm -f "$SQLITE_DATA_DIR/${db}${suffix}"
+            rm --force "$SQLITE_DATA_DIR/${db}${suffix}"
         fi
     done
 done
@@ -91,13 +91,13 @@ done
 # Best-effort: in dev (non-root) the chown fails and the container's init
 # step re-chowns on startup, so we only warn.
 if [[ -n "$SQLITE_DATA_OWNER" ]]; then
-    chown -R "$SQLITE_DATA_OWNER" "$SQLITE_DATA_DIR" 2>/dev/null \
+    chown --recursive "$SQLITE_DATA_OWNER" "$SQLITE_DATA_DIR" 2>/dev/null \
         || log "NOTE: chown $SQLITE_DATA_OWNER skipped (not root?); container init will fix on start"
 fi
 
 log "Starting $SQLITE_CONTAINER container..."
 if [[ -n "$SQLITE_COMPOSE_FILE" && -f "$SQLITE_COMPOSE_FILE" ]]; then
-    docker compose -f "$SQLITE_COMPOSE_FILE" start "$SQLITE_COMPOSE_SERVICE" 2>/dev/null || \
+    docker compose --file "$SQLITE_COMPOSE_FILE" start "$SQLITE_COMPOSE_SERVICE" 2>/dev/null || \
         docker start "$SQLITE_CONTAINER" 2>/dev/null || true
 else
     docker start "$SQLITE_CONTAINER" 2>/dev/null || true

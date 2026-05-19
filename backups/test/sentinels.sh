@@ -40,8 +40,8 @@ mysql_add_sentinel() {
     value="inserted_at_$(date '+%Y-%m-%dT%H:%M:%S')"
 
     docker exec "$MYSQL_CONTAINER" \
-        mysql -u root -p"$pw" \
-        -e "INSERT INTO ehealth_properties.EHNCP_PROPERTY (NAME, VALUE)
+        mysql --user=root --password="$pw" \
+        --execute "INSERT INTO ehealth_properties.EHNCP_PROPERTY (NAME, VALUE)
             VALUES ('$key', '$value');" 2>/dev/null
 
     log "Added sentinel in $MYSQL_CONTAINER: $key = $value"
@@ -55,8 +55,8 @@ mysql_list_sentinels() {
     # ESCAPE forces the literal underscore to match — bare `_` in LIKE is a
     # single-char wildcard.
     docker exec "$MYSQL_CONTAINER" \
-        mysql -u root -p"$pw" \
-        -e "SELECT NAME, VALUE FROM ehealth_properties.EHNCP_PROPERTY
+        mysql --user=root --password="$pw" \
+        --execute "SELECT NAME, VALUE FROM ehealth_properties.EHNCP_PROPERTY
             WHERE NAME LIKE '\\_sentinel\\_%' ESCAPE '\\\\'
             ORDER BY NAME;" 2>/dev/null
 }
@@ -89,11 +89,11 @@ sqlite_add_sentinel() {
     # 10001 in production, which from the host produces a confusing
     # "attempt to write a readonly database (8)" error. Detect up front.
     if [[ ! -w "$target_db" || ! -w "$target_dir" ]]; then
-        log "ERROR: $target_db is not writable as $(id -un) (uid $(id -u))"
-        log "       File owner: $(stat -c '%U:%G (uid %u)' "$target_db" 2>/dev/null)"
+        log "ERROR: $target_db is not writable as $(id --user --name) (uid $(id --user))"
+        log "       File owner: $(stat --format='%U:%G (uid %u)' "$target_db" 2>/dev/null)"
         log "       Either:"
         log "         (a) sudo $0 sqlite-add $label"
-        log "         (b) sudo chown -R \$(id -u):\$(id -g) $target_dir  # then chown back"
+        log "         (b) sudo chown --recursive \$(id --user):\$(id --group) $target_dir  # then chown back"
         log "         (c) ./tests.sh sqlite-snapshot   # automated, uses temp dir"
         return 1
     fi

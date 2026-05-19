@@ -19,7 +19,7 @@ log "Databases: ${MYSQL_DATABASES[*]}"
 # which restore-incremental.sh later parses to find the PITR replay start.
 # When binary logging is disabled, fall back to a plain dump — PITR is then
 # unavailable but the full snapshot still restores cleanly.
-mysqldump_args=(-u root -p"$ROOT_PASSWORD" --single-transaction --routines --triggers --events)
+mysqldump_args=(--user=root --password="$ROOT_PASSWORD" --single-transaction --routines --triggers --events)
 if is_binary_logging_enabled "$MYSQL_CONTAINER" "$ROOT_PASSWORD"; then
     mysqldump_args+=(--source-data=2)
 else
@@ -30,13 +30,13 @@ mysqldump_args+=(--databases "${MYSQL_DATABASES[@]}")
 docker exec "$MYSQL_CONTAINER" mysqldump "${mysqldump_args[@]}" \
     | gzip > "$OUTPUT_FILE"
 
-if ! gzip -t "$OUTPUT_FILE" 2>/dev/null; then
+if ! gzip --test "$OUTPUT_FILE" 2>/dev/null; then
     log "ERROR: Backup file failed gzip validation: $OUTPUT_FILE"
-    rm -f "$OUTPUT_FILE"
+    rm --force "$OUTPUT_FILE"
     exit 1
 fi
 
-SIZE=$(du -h "$OUTPUT_FILE" | cut -f1)
+SIZE=$(du --human-readable "$OUTPUT_FILE" | cut --fields=1)
 log "Full backup completed: $OUTPUT_FILE ($SIZE)"
 
 cleanup_old_backups "$BACKUP_DIR" "$FULL_BACKUP_RETAIN"

@@ -16,12 +16,12 @@ log "Starting binlog backup..."
 
 # Force rotation so the previously-active log becomes safe to copy.
 docker exec "$MYSQL_CONTAINER" \
-    mysql -u root -p"$ROOT_PASSWORD" -e "FLUSH BINARY LOGS;" 2>/dev/null
+    mysql --user=root --password="$ROOT_PASSWORD" --execute "FLUSH BINARY LOGS;" 2>/dev/null
 
 BINLOGS=$(docker exec "$MYSQL_CONTAINER" \
-    mysql -u root -p"$ROOT_PASSWORD" \
+    mysql --user=root --password="$ROOT_PASSWORD" \
     --batch --skip-column-names \
-    -e "SHOW BINARY LOGS;" 2>/dev/null)
+    --execute "SHOW BINARY LOGS;" 2>/dev/null)
 
 if [[ -z "$BINLOGS" ]]; then
     log "ERROR: No binary logs returned despite log_bin=ON"
@@ -30,9 +30,9 @@ fi
 
 # Last entry from SHOW BINARY LOGS is the currently-active file; mysqld
 # is still writing to it, so skip.
-ACTIVE_BINLOG=$(echo "$BINLOGS" | tail -n 1 | awk '{print $1}')
+ACTIVE_BINLOG=$(echo "$BINLOGS" | tail --lines=1 | awk '{print $1}')
 
-RETENTION_CUTOFF=$(date -d "$BINLOG_RETAIN_DAYS days ago" '+%s')
+RETENTION_CUTOFF=$(date --date="$BINLOG_RETAIN_DAYS days ago" '+%s')
 
 COPIED=0
 SKIPPED_OLD=0
@@ -45,7 +45,7 @@ while IFS=$'\t' read -r logfile _size _encrypted; do
     fi
 
     FILE_EPOCH=$(docker exec "$MYSQL_CONTAINER" \
-        stat -c '%Y' "$MYSQL_DATA_DIR_IN_CONTAINER/$logfile" 2>/dev/null) || continue
+        stat --format='%Y' "$MYSQL_DATA_DIR_IN_CONTAINER/$logfile" 2>/dev/null) || continue
     if (( FILE_EPOCH < RETENTION_CUTOFF )); then
         SKIPPED_OLD=$((SKIPPED_OLD + 1))
         continue

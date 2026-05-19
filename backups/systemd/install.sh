@@ -27,7 +27,7 @@ set -o nounset
 set -o pipefail
 
 PREFIX="ehdsi-"
-RUN_USER="${SUDO_USER:-$(id -un)}"
+RUN_USER="${SUDO_USER:-$(id --user --name)}"
 FULL_CAL="*-*-* 03:00:00"
 BINLOG_CAL="*:0/15"
 SQLITE_CAL="*-*-* 0/6:00:00"
@@ -40,7 +40,7 @@ BACKUPS_DIR="$REPO_ROOT/backups"
 SYSTEMD_DIR="/etc/systemd/system"
 
 usage() {
-    sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
+    sed --quiet '2,/^$/p' "$0" | sed 's/^# \?//'
 }
 
 require_root() {
@@ -98,7 +98,7 @@ Type=oneshot
 User=${RUN_USER}
 WorkingDirectory=${REPO_ROOT}
 ExecStart=${BACKUPS_DIR}/${script_rel}
-# Logs go to journalctl -u ${PREFIX}${kind}.service
+# Logs go to journalctl --unit ${PREFIX}${kind}.service
 StandardOutput=journal
 StandardError=journal
 EOF
@@ -138,7 +138,7 @@ cmd_install() {
         check_systemd
     fi
 
-    if ! $DRY_RUN && ! id -u "$RUN_USER" &>/dev/null; then
+    if ! $DRY_RUN && ! id --user "$RUN_USER" &>/dev/null; then
         echo "ERROR: user '$RUN_USER' does not exist" >&2
         exit 1
     fi
@@ -177,7 +177,7 @@ cmd_install() {
     echo ""
     echo "Done. Inspect with:"
     echo "  systemctl list-timers '${PREFIX}*'"
-    echo "  journalctl -u ${PREFIX}mysql-full-backup.service"
+    echo "  journalctl --unit ${PREFIX}mysql-full-backup.service"
     echo "  systemctl edit ${PREFIX}mysql-full-backup.timer   # change schedule via drop-in"
 }
 
@@ -189,8 +189,8 @@ cmd_uninstall() {
         [[ -z "$kind" ]] && continue
         systemctl stop    "${PREFIX}${kind}.timer"   2>/dev/null || true
         systemctl disable "${PREFIX}${kind}.timer"   2>/dev/null || true
-        rm -f "$SYSTEMD_DIR/${PREFIX}${kind}.service"
-        rm -f "$SYSTEMD_DIR/${PREFIX}${kind}.timer"
+        rm --force "$SYSTEMD_DIR/${PREFIX}${kind}.service"
+        rm --force "$SYSTEMD_DIR/${PREFIX}${kind}.timer"
         echo "removed: ${PREFIX}${kind}.{service,timer}"
     done < <(units)
 
@@ -205,10 +205,10 @@ cmd_status() {
     while read -r kind _script_rel _tag; do
         [[ -z "$kind" ]] && continue
         local timer="${PREFIX}${kind}.timer"
-        if systemctl list-unit-files "$timer" --no-legend 2>/dev/null | grep -q .; then
+        if systemctl list-unit-files "$timer" --no-legend 2>/dev/null | grep --quiet .; then
             any=true
             echo "=== $timer ==="
-            systemctl --no-pager --full status "$timer" 2>&1 | head -10
+            systemctl --no-pager --full status "$timer" 2>&1 | head --lines=10
             echo ""
         fi
     done < <(units)

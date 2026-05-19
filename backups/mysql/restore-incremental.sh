@@ -57,7 +57,7 @@ if [[ -n "$AFTER_DUMP" ]]; then
     # which would otherwise be reported as a pipeline failure.
     COORD_LINE=$(
         set +o pipefail
-        gunzip -c "$AFTER_DUMP" 2>/dev/null \
+        gunzip --stdout "$AFTER_DUMP" 2>/dev/null \
             | grep --max-count=1 "CHANGE REPLICATION SOURCE TO SOURCE_LOG_FILE="
     ) || true
 
@@ -67,8 +67,8 @@ if [[ -n "$AFTER_DUMP" ]]; then
         exit 1
     fi
 
-    FROM_FILE=$(printf '%s' "$COORD_LINE" | grep -oE "SOURCE_LOG_FILE='[^']+'" | cut -d\' -f2)
-    START_POS=$(printf '%s' "$COORD_LINE" | grep -oE "SOURCE_LOG_POS=[0-9]+" | cut -d= -f2)
+    FROM_FILE=$(printf '%s' "$COORD_LINE" | grep --only-matching --extended-regexp "SOURCE_LOG_FILE='[^']+'" | cut --delimiter=\' --fields=2)
+    START_POS=$(printf '%s' "$COORD_LINE" | grep --only-matching --extended-regexp "SOURCE_LOG_POS=[0-9]+" | cut --delimiter='=' --fields=2)
 
     if [[ -z "$FROM_FILE" || -z "$START_POS" ]]; then
         log "ERROR: Failed to parse coordinate from: $COORD_LINE"
@@ -90,7 +90,7 @@ fi
 
 # Most common cause: retention purging. The chosen full backup is older than
 # the binlog window, so the start binlog has already been deleted.
-if [[ -n "$FROM_FILE" ]] && ! grep -qxF "$FROM_FILE" <<< "$AVAILABLE"; then
+if [[ -n "$FROM_FILE" ]] && ! grep --quiet --line-regexp --fixed-strings "$FROM_FILE" <<< "$AVAILABLE"; then
     log "ERROR: Required start binlog '$FROM_FILE' is not in $BACKUP_DIR"
     log "       The binlog was either never backed up or has been purged by retention."
     log "       Recovery from the chosen dump is not possible without this file."
@@ -186,10 +186,10 @@ for i in "${!REPLAY_FILES[@]}"; do
     # Two execs piped on the host so $STOP_DATETIME and $ROOT_PASSWORD pass
     # through as real argv entries — avoids `bash -c` quoting traps.
     docker exec "$MYSQL_CONTAINER" "$MYSQLBINLOG_PATH" "${mysqlbinlog_args[@]}" \
-        | docker exec -i "$MYSQL_CONTAINER" \
-            mysql -u root -p"$ROOT_PASSWORD"
+        | docker exec --interactive "$MYSQL_CONTAINER" \
+            mysql --user=root --password="$ROOT_PASSWORD"
 
-    docker exec "$MYSQL_CONTAINER" rm -f "/tmp/$logfile"
+    docker exec "$MYSQL_CONTAINER" rm --force "/tmp/$logfile"
 done
 
 log "Incremental restore completed: replayed ${#REPLAY_FILES[@]} binlog file(s)"

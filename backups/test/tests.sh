@@ -40,14 +40,14 @@ test_sqlite_snapshot() (
     # Isolated dirs. SQLITE_CONTAINER points at a bogus name so the restore
     # script's stop/start can't touch the real container; SQLITE_COMPOSE_FILE
     # is empty to bypass the compose path entirely.
-    TEST_ROOT=$(mktemp -d)
-    trap 'rm -rf "$TEST_ROOT"' EXIT
+    TEST_ROOT=$(mktemp --directory)
+    trap 'rm --recursive --force "$TEST_ROOT"' EXIT
     export EHDSI_BACKUP_DIR="$TEST_ROOT/backup"
     export SQLITE_DATA_DIR="$TEST_ROOT/data"
     export SQLITE_CONTAINER="sqlite-test-no-such-container"
     export SQLITE_COMPOSE_FILE=""
     TARGET_DB="$SQLITE_DATA_DIR/undo-db.sqlite"
-    mkdir -p "$SQLITE_DATA_DIR"
+    mkdir --parents "$SQLITE_DATA_DIR"
 
     RUN_ID=$(timestamp)
     LABEL_A="A_${RUN_ID}"
@@ -75,7 +75,7 @@ SQL
 
     log "Step 2/7: Take snapshot S1 (should capture A)"
     "$SQLITE_DIR/backup.sh"
-    SNAPSHOT_1=$(find "$EHDSI_BACKUP_DIR/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail -1)
+    SNAPSHOT_1=$(find "$EHDSI_BACKUP_DIR/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail --lines=1)
     log "  S1 = $SNAPSHOT_1"
 
     # Snapshot dirs are named to the second; back-to-back backups would collide.
@@ -86,7 +86,7 @@ SQL
 
     log "Step 4/7: Take snapshot S2 (should capture A and B)"
     "$SQLITE_DIR/backup.sh"
-    SNAPSHOT_2=$(find "$EHDSI_BACKUP_DIR/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail -1)
+    SNAPSHOT_2=$(find "$EHDSI_BACKUP_DIR/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail --lines=1)
     log "  S2 = $SNAPSHOT_2"
 
     if [[ "$SNAPSHOT_1" == "$SNAPSHOT_2" ]]; then
@@ -137,13 +137,13 @@ test_sqlite_cycle() (
 
     FAILURES=0
     TEMP_RESTORE_DIR=""
-    trap '[[ -n "$TEMP_RESTORE_DIR" && -d "$TEMP_RESTORE_DIR" ]] && rm -rf "$TEMP_RESTORE_DIR"' EXIT
+    trap '[[ -n "$TEMP_RESTORE_DIR" && -d "$TEMP_RESTORE_DIR" ]] && rm --recursive --force "$TEMP_RESTORE_DIR"' EXIT
     assert_fail() { log "FAIL: $1"; FAILURES=$((FAILURES + 1)); }
 
     log "Step 1: Running SQLite backup..."
     "$SQLITE_DIR/backup.sh"
 
-    SNAPSHOT_DIR=$(find "$BACKUP_ROOT/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail -n 1)
+    SNAPSHOT_DIR=$(find "$BACKUP_ROOT/sqlite" -maxdepth 1 -mindepth 1 -type d | sort | tail --lines=1)
     if [[ -z "$SNAPSHOT_DIR" ]]; then
         log "ERROR: No snapshot directory produced"
         exit 1
@@ -182,7 +182,7 @@ test_sqlite_cycle() (
     done
 
     log "Step 4: Verifying restore produces identical files..."
-    TEMP_RESTORE_DIR=$(mktemp -d)
+    TEMP_RESTORE_DIR=$(mktemp --directory)
     for db in "${SQLITE_DATABASES[@]}"; do
         BACKUP_FILE="$SNAPSHOT_DIR/$db"
         [[ -f "$BACKUP_FILE" ]] || continue
@@ -217,11 +217,11 @@ test_mysql_cycle() (
 
     cleanup() {
         log "Cleaning up..."
-        docker rm -f "$TEST_CONTAINER" 2>/dev/null || true
+        docker rm --force "$TEST_CONTAINER" 2>/dev/null || true
         if [[ -n "$ROOT_PASSWORD" ]]; then
             docker exec "$MYSQL_CONTAINER" \
-                mysql -u root -p"$ROOT_PASSWORD" \
-                -e "DELETE FROM ehealth_properties.EHNCP_PROPERTY WHERE NAME='$SENTINEL_KEY';" 2>/dev/null || true
+                mysql --user=root --password="$ROOT_PASSWORD" \
+                --execute "DELETE FROM ehealth_properties.EHNCP_PROPERTY WHERE NAME='$SENTINEL_KEY';" 2>/dev/null || true
         fi
     }
     trap cleanup EXIT
@@ -232,12 +232,12 @@ test_mysql_cycle() (
 
     log "Step 1: Inserting sentinel row (key=$SENTINEL_KEY)..."
     docker exec "$MYSQL_CONTAINER" \
-        mysql -u root -p"$ROOT_PASSWORD" \
-        -e "INSERT INTO ehealth_properties.EHNCP_PROPERTY (NAME, VALUE) VALUES ('$SENTINEL_KEY', 'backup_test_value');" 2>/dev/null
+        mysql --user=root --password="$ROOT_PASSWORD" \
+        --execute "INSERT INTO ehealth_properties.EHNCP_PROPERTY (NAME, VALUE) VALUES ('$SENTINEL_KEY', 'backup_test_value');" 2>/dev/null
 
     log "Step 2: Running full backup..."
     "$MYSQL_DIR/full-backup.sh"
-    BACKUP_FILE=$(find "$BACKUP_ROOT/mysql/full" -maxdepth 1 -name '*.sql.gz' | sort | tail -n 1)
+    BACKUP_FILE=$(find "$BACKUP_ROOT/mysql/full" -maxdepth 1 -name '*.sql.gz' | sort | tail --lines=1)
     if [[ -z "$BACKUP_FILE" ]]; then
         log "ERROR: No backup file produced"
         exit 1
@@ -245,16 +245,16 @@ test_mysql_cycle() (
     log "Backup file: $BACKUP_FILE"
 
     log "Step 3: Starting temporary MySQL container..."
-    docker rm -f "$TEST_CONTAINER" 2>/dev/null || true
-    docker run -d \
+    docker rm --force "$TEST_CONTAINER" 2>/dev/null || true
+    docker run --detach \
         --name "$TEST_CONTAINER" \
-        -e MYSQL_ROOT_PASSWORD="$TEST_ROOT_PASSWORD" \
-        -p "$TEST_PORT:3306" \
+        --env MYSQL_ROOT_PASSWORD="$TEST_ROOT_PASSWORD" \
+        --publish "$TEST_PORT:3306" \
         mysql:9 >/dev/null
 
     log "Waiting for temporary MySQL to be ready..."
     for i in $(seq 1 60); do
-        if docker exec "$TEST_CONTAINER" mysqladmin ping -u root -p"$TEST_ROOT_PASSWORD" 2>/dev/null | grep -q alive; then
+        if docker exec "$TEST_CONTAINER" mysqladmin ping --user=root --password="$TEST_ROOT_PASSWORD" 2>/dev/null | grep --quiet alive; then
             break
         fi
         if (( i == 60 )); then
@@ -266,16 +266,16 @@ test_mysql_cycle() (
     log "Temporary MySQL is ready"
 
     log "Step 4: Restoring backup into temporary container..."
-    gunzip -c "$BACKUP_FILE" | \
-        docker exec -i "$TEST_CONTAINER" \
-            mysql -u root -p"$TEST_ROOT_PASSWORD" 2>/dev/null
+    gunzip --stdout "$BACKUP_FILE" | \
+        docker exec --interactive "$TEST_CONTAINER" \
+            mysql --user=root --password="$TEST_ROOT_PASSWORD" 2>/dev/null
 
     log "Step 5: Verifying restoration..."
     for db in "${MYSQL_DATABASES[@]}"; do
         EXISTS=$(docker exec "$TEST_CONTAINER" \
-            mysql -u root -p"$TEST_ROOT_PASSWORD" \
+            mysql --user=root --password="$TEST_ROOT_PASSWORD" \
             --batch --skip-column-names \
-            -e "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='$db';" 2>/dev/null)
+            --execute "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='$db';" 2>/dev/null)
         if [[ "$EXISTS" != "$db" ]]; then
             assert_fail "Database '$db' not found in restored backup"
         fi
@@ -283,13 +283,13 @@ test_mysql_cycle() (
 
     for db in "${MYSQL_DATABASES[@]}"; do
         SRC_COUNT=$(docker exec "$MYSQL_CONTAINER" \
-            mysql -u root -p"$ROOT_PASSWORD" \
+            mysql --user=root --password="$ROOT_PASSWORD" \
             --batch --skip-column-names \
-            -e "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$db';" 2>/dev/null)
+            --execute "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$db';" 2>/dev/null)
         DST_COUNT=$(docker exec "$TEST_CONTAINER" \
-            mysql -u root -p"$TEST_ROOT_PASSWORD" \
+            mysql --user=root --password="$TEST_ROOT_PASSWORD" \
             --batch --skip-column-names \
-            -e "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$db';" 2>/dev/null)
+            --execute "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='$db';" 2>/dev/null)
         if [[ "$SRC_COUNT" != "$DST_COUNT" ]]; then
             assert_fail "Table count mismatch for '$db': source=$SRC_COUNT restored=$DST_COUNT"
         else
@@ -298,9 +298,9 @@ test_mysql_cycle() (
     done
 
     SENTINEL_VALUE=$(docker exec "$TEST_CONTAINER" \
-        mysql -u root -p"$TEST_ROOT_PASSWORD" \
+        mysql --user=root --password="$TEST_ROOT_PASSWORD" \
         --batch --skip-column-names \
-        -e "SELECT VALUE FROM ehealth_properties.EHNCP_PROPERTY WHERE NAME='$SENTINEL_KEY';" 2>/dev/null)
+        --execute "SELECT VALUE FROM ehealth_properties.EHNCP_PROPERTY WHERE NAME='$SENTINEL_KEY';" 2>/dev/null)
     if [[ "$SENTINEL_VALUE" != "backup_test_value" ]]; then
         assert_fail "Sentinel row not found (expected 'backup_test_value', got '$SENTINEL_VALUE')"
     else
@@ -326,17 +326,17 @@ test_mysql_cycle() (
 # the gap-check behaviour.
 test_gap_detection() (
     RESTORE_SCRIPT="$MYSQL_DIR/restore-incremental.sh"
-    TEST_ROOT=$(mktemp -d)
+    TEST_ROOT=$(mktemp --directory)
     BINLOG_DIR="$TEST_ROOT/mysql/binlog"
     FULL_DIR="$TEST_ROOT/mysql/full"
-    mkdir -p "$BINLOG_DIR" "$FULL_DIR"
+    mkdir --parents "$BINLOG_DIR" "$FULL_DIR"
     FAKE_DUMP="$FULL_DIR/fake-dump.sql.gz"
 
     cleanup() {
-        rm -rf "$TEST_ROOT"
+        rm --recursive --force "$TEST_ROOT"
         # Tests 1 and 4 proceed past the gap check and leak scratch files
         # into /tmp inside the container before dying on the bogus binlog.
-        docker exec "$MYSQL_CONTAINER" sh -c 'rm -f /tmp/binlog.*' 2>/dev/null || true
+        docker exec "$MYSQL_CONTAINER" sh -c 'rm --force /tmp/binlog.*' 2>/dev/null || true
     }
     trap cleanup EXIT
 
@@ -352,7 +352,7 @@ test_gap_detection() (
         } | gzip > "$FAKE_DUMP"
     }
     make_binlogs() {
-        rm -f "$BINLOG_DIR"/binlog.*
+        rm --force "$BINLOG_DIR"/binlog.*
         for n in "$@"; do
             touch "$BINLOG_DIR/binlog.$(printf '%06d' "$n")"
         done
@@ -363,8 +363,8 @@ test_gap_detection() (
         LAST_OUTPUT="$out"
         LAST_EXIT=${exit_code:-0}
     }
-    contains()     { grep -qF "$1" <<< "$LAST_OUTPUT"; }
-    not_contains() { ! grep -qF "$1" <<< "$LAST_OUTPUT"; }
+    contains()     { grep --quiet --fixed-strings "$1" <<< "$LAST_OUTPUT"; }
+    not_contains() { ! grep --quiet --fixed-strings "$1" <<< "$LAST_OUTPUT"; }
     exit_was()     { [[ "$LAST_EXIT" == "$1" ]]; }
     check() {
         local label="$1"; shift
@@ -483,8 +483,8 @@ test_pitr_cycle() (
         log "Cleaning up test sentinels..."
         if [[ -n "$ROOT_PASSWORD" ]]; then
             docker exec "$MYSQL_CONTAINER" \
-                mysql -u root -p"$ROOT_PASSWORD" \
-                -e "DELETE FROM ehealth_properties.EHNCP_PROPERTY
+                mysql --user=root --password="$ROOT_PASSWORD" \
+                --execute "DELETE FROM ehealth_properties.EHNCP_PROPERTY
                     WHERE NAME IN ('_sentinel_${LABEL_A}',
                                    '_sentinel_${LABEL_B}',
                                    '_sentinel_${LABEL_C}');" 2>/dev/null || true
@@ -495,9 +495,9 @@ test_pitr_cycle() (
 
     count_sentinel() {
         docker exec "$MYSQL_CONTAINER" \
-            mysql -u root -p"$ROOT_PASSWORD" \
+            mysql --user=root --password="$ROOT_PASSWORD" \
             --batch --skip-column-names \
-            -e "SELECT COUNT(*) FROM ehealth_properties.EHNCP_PROPERTY
+            --execute "SELECT COUNT(*) FROM ehealth_properties.EHNCP_PROPERTY
                 WHERE NAME='_sentinel_$1';" 2>/dev/null
     }
 
@@ -509,7 +509,7 @@ test_pitr_cycle() (
 
     log "Step 2/9: Running full backup"
     "$MYSQL_DIR/full-backup.sh"
-    FULL_BACKUP=$(find "$BACKUP_ROOT/mysql/full" -maxdepth 1 -name '*.sql.gz' | sort | tail -1)
+    FULL_BACKUP=$(find "$BACKUP_ROOT/mysql/full" -maxdepth 1 -name '*.sql.gz' | sort | tail --lines=1)
     if [[ -z "$FULL_BACKUP" ]]; then
         log "ERROR: No full backup file produced"
         exit 1
@@ -602,7 +602,7 @@ run_safe() {
 }
 
 usage() {
-    sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
+    sed --quiet '2,/^$/p' "$0" | sed 's/^# \?//'
 }
 
 if [[ $# -eq 0 ]]; then set -- all; fi

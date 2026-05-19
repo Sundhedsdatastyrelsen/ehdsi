@@ -25,7 +25,7 @@ read_secret() {
         log "ERROR: Secret file not found: $secret_file"
         return 1
     fi
-    tr -d '[:space:]' < "$secret_file"
+    tr --delete '[:space:]' < "$secret_file"
 }
 
 # Honours $MYSQL_ROOT_PASSWORD so disposable test containers can be restored
@@ -41,7 +41,7 @@ read_mysql_password() {
 ensure_dir() {
     local dir="$1"
     if [[ ! -d "$dir" ]]; then
-        mkdir -p "$dir"
+        mkdir --parents "$dir"
         log "Created directory: $dir"
     fi
 }
@@ -54,13 +54,13 @@ cleanup_old_backups() {
     local entries
     entries=$(find "$dir" -maxdepth 1 -mindepth 1 | sort)
     local total
-    total=$(echo "$entries" | grep -c . || true)
+    total=$(echo "$entries" | grep --count . || true)
 
     if (( total > keep_count )); then
         local to_remove
-        to_remove=$(echo "$entries" | head -n $(( total - keep_count )))
+        to_remove=$(echo "$entries" | head --lines=$(( total - keep_count )))
         echo "$to_remove" | while read -r entry; do
-            rm -rf "$entry"
+            rm --recursive --force "$entry"
             log "Removed old backup: $entry"
         done
     fi
@@ -72,14 +72,14 @@ cleanup_old_backups_by_age() {
 
     find "$dir" -maxdepth 1 -mindepth 1 -mtime +"$max_age_days" -print0 \
         | while IFS= read -r -d '' entry; do
-            rm -rf "$entry"
+            rm --recursive --force "$entry"
             log "Removed old backup (age): $entry"
         done
 }
 
 assert_container_running() {
     local container="$1"
-    if ! docker inspect --format='{{.State.Running}}' "$container" 2>/dev/null | grep -q true; then
+    if ! docker inspect --format='{{.State.Running}}' "$container" 2>/dev/null | grep --quiet true; then
         log "ERROR: Container '$container' is not running"
         return 1
     fi
@@ -90,8 +90,8 @@ is_binary_logging_enabled() {
     local password="$2"
     local log_bin
     log_bin=$(docker exec "$container" \
-        mysql -u root -p"$password" --batch --skip-column-names \
-        -e "SELECT @@log_bin;" 2>/dev/null) || return 1
+        mysql --user=root --password="$password" --batch --skip-column-names \
+        --execute "SELECT @@log_bin;" 2>/dev/null) || return 1
     [[ "$log_bin" == "1" ]]
 }
 

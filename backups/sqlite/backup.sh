@@ -38,7 +38,7 @@ for db in "${SQLITE_DATABASES[@]}"; do
         log "ERROR: Integrity check failed for $DEST: $RESULT"
         FAILED=1
     else
-        SIZE=$(du -h "$DEST" | cut -f1)
+        SIZE=$(du --human-readable "$DEST" | cut --fields=1)
         log "Verified: $db ($SIZE)"
     fi
 done
