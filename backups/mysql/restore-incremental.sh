@@ -53,12 +53,12 @@ if [[ -n "$AFTER_DUMP" ]]; then
         exit 1
     fi
 
-    # Subshell disables pipefail because head exits before gunzip finishes,
+    # Subshell disables pipefail because grep exits before gunzip finishes,
     # which would otherwise be reported as a pipeline failure.
     COORD_LINE=$(
         set +o pipefail
-        gunzip -c "$AFTER_DUMP" 2>/dev/null | head -c 4096 \
-            | grep -m1 "CHANGE REPLICATION SOURCE TO SOURCE_LOG_FILE="
+        gunzip -c "$AFTER_DUMP" 2>/dev/null \
+            | grep --max-count=1 "CHANGE REPLICATION SOURCE TO SOURCE_LOG_FILE="
     ) || true
 
     if [[ -z "$COORD_LINE" ]]; then
