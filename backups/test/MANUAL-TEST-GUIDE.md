@@ -1,13 +1,13 @@
 ---
-name: MySQL Backup — Manual Test Guide
-description: Step-by-step instructions for verifying the MySQL backup/restore scripts in a disposable environment
+name: Backup — Manual Test Guide
+description: Step-by-step instructions for verifying the MySQL and SQLite backup/restore scripts in a disposable environment
 ---
 
-# MySQL Backup — Manual Test Guide
+# Backup — Manual Test Guide
 
-This guide walks through validating the scripts in [backups/mysql/](../mysql/) end-to-end.
-The goal is to **prove the scripts work**, not just that they exit 0. Each test has a
-clear pass/fail signal.
+This guide walks through validating the scripts in [backups/mysql/](../mysql/) and
+[backups/sqlite/](../sqlite/) end-to-end. The goal is to **prove the scripts work**,
+not just that they exit 0. Each test has a clear pass/fail signal.
 
 **Time budget:** ~30 min for the full run.
 
@@ -24,6 +24,34 @@ clear pass/fail signal.
   back to whatever point-in-time it's validating.
 
 Run all commands from the repo root unless stated otherwise.
+
+---
+
+## Automated test runner
+
+[`tests.sh`](tests.sh) bundles the automated tests in this guide. Run it
+without arguments to execute the safe set (everything except `pitr-cycle`):
+
+```bash
+./backups/test/tests.sh                  # safe tests (everything except pitr-cycle)
+./backups/test/tests.sh sqlite-snapshot  # fully isolated, no live state touched
+./backups/test/tests.sh sqlite-cycle     # backup live SQLite, verify integrity
+./backups/test/tests.sh mysql-cycle      # backup + restore into disposable container
+./backups/test/tests.sh gap-detection    # synthetic binlog gap-check assertions
+./backups/test/tests.sh pitr-cycle       # DESTRUCTIVE — drops/recreates dev DBs
+./backups/test/tests.sh -h               # show usage
+```
+
+Each subcommand maps to a section below:
+
+- `mysql-cycle` → Test 1
+- `pitr-cycle` → Test 3a
+- `sqlite-snapshot` → Test 6a
+- `sqlite-cycle` → Test 7
+- `gap-detection` → Test 8
+
+The MySQL-touching tests (`mysql-cycle`, `gap-detection`, `pitr-cycle`)
+require the prerequisites in section 0.
 
 ---
 
@@ -360,6 +388,61 @@ sudo sqlite3 national-connector/data/undo-db.sqlite "DROP TABLE IF EXISTS _senti
   it was taken (e.g. another process wrote to `$SNAPSHOT_DIR`), or
   `sentinels.sh sqlite-add` is writing into the wrong database. Check
   `$SQLITE_DATA_DIR`.
+
+---
+
+## Test 7 — SQLite backup integrity (automated)
+
+What it proves: `sqlite/backup.sh` run against the **live** data dir produces
+files that pass `PRAGMA integrity_check`, retain the same table count as the
+source, and hash-match a copied restore. Complements Test 6 (which exercises
+the cycle semantics in isolation) by validating against the real container.
+
+```bash
+./backups/test/tests.sh sqlite-cycle
+```
+
+**Pass:** exits 0, final line reads `ALL CHECKS PASSED`.
+
+**What to look for in the logs:**
+- Each `$SQLITE_DATABASES` entry reports `integrity OK`.
+- Live-vs-backup table counts match per database.
+- SHA256 of the restored file matches the snapshot file.
+
+---
+
+## Test 8 — Binlog gap detection (automated)
+
+What it proves: `restore-incremental.sh`'s gap check accepts contiguous
+binlog chains, refuses chains with missing files, names every missing
+number, honours `--allow-gaps`, and detects when the dump's start file has
+been purged by retention.
+
+The test builds a synthetic `$EHDSI_BACKUP_DIR` with empty binlog files and
+a hand-crafted dump header, then runs the real script against it. Empty
+files are enough because the check operates on filenames; scenarios that
+proceed past the gap check fail downstream on the bogus contents, but the
+assertions only inspect gap-check behaviour.
+
+```bash
+./backups/test/tests.sh gap-detection
+```
+
+**Pass:** exits 0, final line reads `ALL GAP DETECTION TESTS PASSED`.
+
+The eight scenarios:
+
+1. Contiguous chain passes.
+2. Single interior gap is detected and named.
+3. Multi-file gap names every missing number.
+4. `--allow-gaps` bypasses the check.
+5. Dump's start file missing → specific "purged by retention" error.
+6. Two-file chain with no gap is accepted.
+7. Single-file range skips the gap check cleanly.
+8. Glob does not match sibling files like `.bak`.
+
+This complements the "Continuity check" notes under Test 3 — that section
+explains the behaviour; this test asserts it.
 
 ---
 

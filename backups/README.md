@@ -39,10 +39,9 @@ Backup and restore scripts for the two databases this repo runs:
 ```
 
 `--yes` on the MySQL/SQLite restore scripts skips the confirmation prompt
-(use it from automation; never on a hot prompt).
 
-Retention is automatic: `FULL_BACKUP_RETAIN=7` dumps, `BINLOG_RETAIN_DAYS=14`,
-`SQLITE_BACKUP_RETAIN=7` snapshots. Override via env var.
+Retention is automatic — see `FULL_BACKUP_RETAIN`, `BINLOG_RETAIN_DAYS`, and
+`SQLITE_BACKUP_RETAIN` in [`lib/config.sh`](lib/config.sh). Override via env var.
 
 ## Scheduling (systemd)
 
@@ -97,23 +96,18 @@ not in your shell rc.
 
 ## Testing
 
-```bash
-./backups/test/tests.sh                  # safe tests (the four below)
-./backups/test/tests.sh sqlite-snapshot  # fully isolated, no live state touched
-./backups/test/tests.sh sqlite-cycle     # backup live SQLite, verify integrity
-./backups/test/tests.sh mysql-cycle      # backup + restore into disposable container
-./backups/test/tests.sh gap-detection    # synthetic binlog gap-check assertions
-./backups/test/tests.sh pitr-cycle       # DESTRUCTIVE — drops/recreates dev DBs
-./backups/test/tests.sh -h               # show usage
-```
+See [`test/MANUAL-TEST-GUIDE.md`](test/MANUAL-TEST-GUIDE.md) for the
+automated runner ([`tests.sh`](test/tests.sh)) and the manual walkthroughs
+for restore scenarios that aren't fully automated.
 
-The MySQL tests need `openncp_db` running and the password file readable
-(or `MYSQL_ROOT_PASSWORD` exported). `test/MANUAL-TEST-GUIDE.md` walks
-through what each test proves.
+## Debugging helpers
 
-For ad-hoc inspection while debugging, [`sentinels.sh`](test/sentinels.sh)
-exposes four subcommands: `mysql-add <label>`, `mysql-list`,
-`sqlite-add <label>`, `sqlite-list`.
+[`sentinels.sh`](test/sentinels.sh) inserts and lists labelled marker rows
+in either database, so you can verify what survives an ad-hoc backup/restore
+round-trip:
+
+- `mysql-add <label>` / `mysql-list` — writes to `ehealth_properties.EHNCP_PROPERTY` in `$MYSQL_CONTAINER`
+- `sqlite-add <label>` / `sqlite-list` — writes to `_sentinel` in `$SQLITE_DATA_DIR/undo-db.sqlite`
 
 ## Porting to another repo
 
