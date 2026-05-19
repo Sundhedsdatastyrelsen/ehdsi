@@ -7,6 +7,29 @@ Backup and restore scripts for the two databases this repo runs:
 - **SQLite** (`national-connector` container's data dir) — online-safe `.backup`
   snapshots of each `.sqlite` file.
 
+## Porting to another repo
+
+The whole `backups/` directory is meant to be copy-pasted into a sibling
+repo. Touch only `lib/config.sh`:
+
+| Variable | Meaning |
+|---|---|
+| `MYSQL_CONTAINER` | name of the MySQL container |
+| `MYSQL_DATABASES` | list of DBs to dump/restore |
+| `MYSQL_PASSWORD_FILE` | host path to root-password file (or set `MYSQL_ROOT_PASSWORD`) |
+| `MYSQLBINLOG_PATH` | absolute path to `mysqlbinlog` inside the container |
+| `MYSQL_DATA_DIR_IN_CONTAINER` | container path holding binlog files (defaults to `/var/lib/mysql`) |
+| `SQLITE_CONTAINER` | name of the container that owns the SQLite files |
+| `SQLITE_DATABASES` | list of `.sqlite` filenames to back up |
+| `SQLITE_DATA_DIR` | host-side path to the directory holding those files |
+| `SQLITE_COMPOSE_FILE` / `SQLITE_COMPOSE_SERVICE` | optional, used to stop/start during restore — falls back to plain `docker stop`/`start` |
+| `SQLITE_DATA_OWNER` | UID:GID applied to restored files (set empty to skip) |
+| `BACKUP_ROOT`, `*_RETAIN*` | output paths and retention knobs |
+
+After editing config.sh, run `./backups/test/tests.sh sqlite-snapshot` to
+validate the SQLite path with no live state, then a manual `full-backup.sh`
++ `restore-full.sh` round-trip into a throwaway container for MySQL.
+
 ## Setup
 
 1. Install host-side tools: `sqlite3`, `docker`, `gzip`. `mysqlbinlog` runs
@@ -109,25 +132,4 @@ round-trip:
 - `mysql-add <label>` / `mysql-list` — writes to `ehealth_properties.EHNCP_PROPERTY` in `$MYSQL_CONTAINER`
 - `sqlite-add <label>` / `sqlite-list` — writes to `_sentinel` in `$SQLITE_DATA_DIR/undo-db.sqlite`
 
-## Porting to another repo
 
-The whole `backups/` directory is meant to be copy-pasted into a sibling
-repo. Touch only `lib/config.sh`:
-
-| Variable | Meaning |
-|---|---|
-| `MYSQL_CONTAINER` | name of the MySQL container |
-| `MYSQL_DATABASES` | list of DBs to dump/restore |
-| `MYSQL_PASSWORD_FILE` | host path to root-password file (or set `MYSQL_ROOT_PASSWORD`) |
-| `MYSQLBINLOG_PATH` | absolute path to `mysqlbinlog` inside the container |
-| `MYSQL_DATA_DIR_IN_CONTAINER` | container path holding binlog files (defaults to `/var/lib/mysql`) |
-| `SQLITE_CONTAINER` | name of the container that owns the SQLite files |
-| `SQLITE_DATABASES` | list of `.sqlite` filenames to back up |
-| `SQLITE_DATA_DIR` | host-side path to the directory holding those files |
-| `SQLITE_COMPOSE_FILE` / `SQLITE_COMPOSE_SERVICE` | optional, used to stop/start during restore — falls back to plain `docker stop`/`start` |
-| `SQLITE_DATA_OWNER` | UID:GID applied to restored files (set empty to skip) |
-| `BACKUP_ROOT`, `*_RETAIN*` | output paths and retention knobs |
-
-After editing config.sh, run `./backups/test/tests.sh sqlite-snapshot` to
-validate the SQLite path with no live state, then a manual `full-backup.sh`
-+ `restore-full.sh` round-trip into a throwaway container for MySQL.
