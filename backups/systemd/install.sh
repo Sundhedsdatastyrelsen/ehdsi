@@ -35,7 +35,7 @@ NO_START=false
 DRY_RUN=false
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)"
 BACKUPS_DIR="$REPO_ROOT/backups"
 SYSTEMD_DIR="/etc/systemd/system"
 
