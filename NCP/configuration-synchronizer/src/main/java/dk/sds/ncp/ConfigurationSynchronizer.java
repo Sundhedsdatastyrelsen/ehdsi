@@ -1,7 +1,9 @@
 package dk.sds.ncp;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +27,12 @@ public class ConfigurationSynchronizer {
         // We use Apache Commons Configuration to allow for interpolation (e.g. ${env:FOO_BAR})
         var m = new HashMap<String, String>();
         try {
-            var c = new PropertiesConfiguration();
-            // So that e.g. "ncp.countries=be,at,eu,hu,is,se" gets parsed correctly
-            c.setDelimiterParsingDisabled(true);
-            c.setIncludesAllowed(true);
-            c.load(configFile);
+            var c = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                .configure(new Parameters().properties()
+                    .setFile(configFile)
+                    .setIncludesAllowed(true))
+                .getConfiguration();
+
             c.getKeys().forEachRemaining(key -> {
                 var val = c.getString(key);
                 if (val.contains("${")) {
