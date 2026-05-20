@@ -5,6 +5,7 @@
         </encoder>
     </appender>
 
+    <logger name="org.apache.commons.beanutils.FluentPropertyBeanIntrospector" level="WARN"/>
     <root level="${log.level:-INFO}">
         <appender-ref ref="STDOUT" />
     </root>
