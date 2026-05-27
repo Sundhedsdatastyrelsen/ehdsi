@@ -19,6 +19,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.DocumentFormatDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
+import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
@@ -109,11 +110,12 @@ public class PatientSummaryService {
 
     @WithSpan
     private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId, EuropeanHcpIdwsToken token) {
+        var cpr = PatientIdMapper.toCpr(patientId);
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
 
         var medicationCardRequest = GetMedicineCardRequestType.builder()
-            .withPersonIdentifier().withSource("CPR").withValue(patientId).end()
+            .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
             .withIncludePrescriptions(false)
             .withIncludeEffectuations(false)
             .build();
