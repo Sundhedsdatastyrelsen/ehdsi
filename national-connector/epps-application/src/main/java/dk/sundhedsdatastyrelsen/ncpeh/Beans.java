@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.idcard.DgwsIdCardRequest;
 import dk.sundhedsdatastyrelsen.ncpeh.client.AuthorizationRegistryClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.CprClient;
+import dk.sundhedsdatastyrelsen.ncpeh.client.DdvClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FskClient;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
@@ -118,13 +119,14 @@ public class Beans {
         @Value("${app.minlog.max-attempts:3}") int maxAttempts,
         @Value("${app.minlog.endpoint.url}") String minlogEndpointUrl,
         FmkClientIdws fmkClientIdws,
+        DdvClientIdws ddvClientIdws,
         AuthenticationService authenticationService
     ) throws JAXBException, URISyntaxException, SQLException {
         var minLogClient = new MinLogClient(minlogEndpointUrl, authenticationService);
         var fskClient = new FskClient(fskEndpointUrl, authenticationService);
         var minLogService = new MinLogService(minLogClient, systemCaller, jobQueueDataSource, maxAttempts);
         var informationCardService = new InformationCardService(fskClient, minLogService, systemCaller);
-        return new PatientSummaryService(informationCardService, fmkClientIdws);
+        return new PatientSummaryService(informationCardService, fmkClientIdws, ddvClientIdws);
     }
 
     @Bean
@@ -136,6 +138,18 @@ public class Beans {
             return new FmkClientIdws(signingCertificate.getCertificateAndKey().privateKey(), fmkEndpointUrl);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Malformed FMK endpoint", e);
+        }
+    }
+
+    @Bean
+    public DdvClientIdws ddvClientIdws(
+        SigningCertificate signingCertificate,
+        @Value("${app.ddv.endpoint.url}") String ddvEndpointUrl
+    ) {
+        try {
+            return new DdvClientIdws(signingCertificate.getCertificateAndKey().privateKey(), ddvEndpointUrl);
+        } catch (URISyntaxException | JAXBException e) {
+            throw new IllegalArgumentException("Malformed DDV endpoint", e);
         }
     }
 
