@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:GetMedicineCardResponse xmlns="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01" xmlns:ns2="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E2" xmlns:ns3="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E5" xmlns:ns4="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E6" xmlns:ns5="http://www.dkma.dk/medicinecard/xml.schema/2015/06/01/E3" xmlns:ns6="http://www.sdsd.dk/dgws/2010/08" xmlns:ns7="http://www.sdsd.dk/dgws/2012/06">
+    <ns2:MedicineCard>
+        <ns2:Patient>
+            <Person>
+                <Name>
+                    <GivenName>Bente</GivenName>
+                    <MiddleName>Ireland</MiddleName>
+                    <Surname>Svendsen</Surname>
+                </Name>
+                <PersonIdentifier source="CPR">1004219992</PersonIdentifier>
+                <BirthDate>2021-04-10</BirthDate>
+                <Gender>female</Gender>
+            </Person>
+            <Address>
+                <StreetName>Spørringgård</StreetName>
+                <StreetBuildingIdentifier>154</StreetBuildingIdentifier>
+                <PostCodeIdentifier>7673</PostCodeIdentifier>
+                <DistrictName>Harboøre</DistrictName>
+            </Address>
+        </ns2:Patient>
+        <ns2:Version>0</ns2:Version>
+        <ns2:HasOpenDosageDispensingPrescriptions>false</ns2:HasOpenDosageDispensingPrescriptions>
+        <ns2:OrderedPrescriptionsExist>false</ns2:OrderedPrescriptionsExist>
+    </ns2:MedicineCard>
+</ns2:GetMedicineCardResponse>

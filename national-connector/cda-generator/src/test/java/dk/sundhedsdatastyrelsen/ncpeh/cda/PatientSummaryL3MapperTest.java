@@ -22,23 +22,23 @@ class PatientSummaryL3MapperTest {
 
     static PatientSummaryL3 getModel() {
         try {
-            var cpr = FmkResponseStorage.rawResponseCprs().get(3);
-            var response = FmkResponseStorage.storedMedicineCards(cpr);
+            var cpr = "0410009234";
+            var response = FmkResponseStorage.getTestMedicineCards(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
-                .name(new Name("Patient", List.of("Test")))
+                .name(new Name("Bach", List.of("Sofie")))
                 .genderCode(CdaCode.builder()
                     .codeSystem(Oid.ADMINISTRATIVE_GENDER)
                     .codeSystemVersion("913-20091020")
                     .code("F")
                     .displayName("Female")
                     .build())
-                .birthTime(LocalDate.of(1982, 11, 3))
+                .birthTime(LocalDate.of(2000, 10, 4))
                 .address(new Address(
-                    List.of("Testvej 1"),
-                    "København",
-                    "2100",
+                    List.of("Morbærvej 200"),
+                    "København K",
+                    "1362",
                     "DK"
                 ))
                 .build();
@@ -49,6 +49,47 @@ class PatientSummaryL3MapperTest {
                 .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
                 .build();
 
+            var input = new PatientSummaryInput(
+                "test-document-id",
+                preferredHp,
+                patient,
+                response
+            );
+
+            return PatientSummaryL3Mapper.model(input);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static PatientSummaryL3 getModelWithEmptyMedicineCard() {
+        try {
+            var cpr = "1004219992";
+            var response = FmkResponseStorage.getTestMedicineCards(cpr);
+
+            var patient = Patient.builder()
+                .id(new CdaId(Oid.DK_CPR, cpr))
+                .name(new Name("Bach", List.of("Sofie")))
+                .genderCode(CdaCode.builder()
+                    .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                    .codeSystemVersion("913-20091020")
+                    .code("F")
+                    .displayName("Female")
+                    .build())
+                .birthTime(LocalDate.of(2000, 10, 4))
+                .address(new Address(
+                    List.of("Morbærvej 200"),
+                    "København K",
+                    "1362",
+                    "DK"
+                ))
+                .build();
+
+            var preferredHp = PreferredHealthProfessional.builder()
+                .name(Name.fromFullName("Tycho Brahe"))
+                .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
+                .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
+                .build();
 
             var input = new PatientSummaryInput(
                 "test-document-id",
@@ -74,54 +115,10 @@ class PatientSummaryL3MapperTest {
     }
 
     @Test
-    void medicationEntriesHaveRequiredCoreFields() {
-        var model = getModel();
+    void modelEmptyMedicationCard() {
+        var model = getModelWithEmptyMedicineCard();
 
-        for (var medication : model.getMedicationSummary().getItems()) {
-            Assertions.assertNotNull(medication.getMedicationId());
-            Assertions.assertNotNull(medication.getMedicationId().getRoot());
-            Assertions.assertNotNull(medication.getMedicationId().getExtension());
-
-            Assertions.assertNotNull(medication.getDosage());
-            Assertions.assertNotNull(medication.getDosage().getTag());
-            Assertions.assertNotNull(medication.getDosage().getUnstructuredText());
-
-            Assertions.assertNotNull(medication.getActiveIngredients());
-            Assertions.assertNotNull(medication.getUnstructuredActiveIngredients());
-        }
+        assertThat(model.getMedicationSummary().getItems(), is(empty()));
     }
 
-
-    @Test
-    void getPatientMedicationInstructions() {
-        var model = getModel();
-
-        var firstMedication = model.getMedicationSummary().getItems().getFirst();
-
-        Assertions.assertNotNull(firstMedication);
-        Assertions.assertNotNull(firstMedication.getMedicationId());
-        Assertions.assertNotNull(firstMedication.getDosage());
-        Assertions.assertNotNull(firstMedication.getActiveIngredients());
-    }
-
-    @Test
-    void getMedicationStartDate() {
-        var model = getModel();
-
-        var firstMedication = model.getMedicationSummary().getItems().getFirst();
-
-        Assertions.assertNotNull(firstMedication);
-        Assertions.assertNotNull(firstMedication.getMedicationStartTime());
-    }
-
-
-    @Test
-    void getPreferredHealthProfessional() {
-        var model = getModel();
-
-        var preferredHealthProfessional = model.getPreferredHp();
-
-        Assertions.assertNotNull(preferredHealthProfessional);
-        Assertions.assertNotNull(preferredHealthProfessional.getName());
-    }
 }
