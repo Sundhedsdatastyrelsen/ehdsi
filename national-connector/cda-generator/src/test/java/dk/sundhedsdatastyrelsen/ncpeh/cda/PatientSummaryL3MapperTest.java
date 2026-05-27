@@ -3,7 +3,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Address;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
