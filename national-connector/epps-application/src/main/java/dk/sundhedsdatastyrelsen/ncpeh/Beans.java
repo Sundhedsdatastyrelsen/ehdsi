@@ -148,7 +148,7 @@ public class Beans {
     ) {
         try {
             return new DdvClientIdws(signingCertificate.getCertificateAndKey().privateKey(), ddvEndpointUrl);
-        } catch (URISyntaxException | JAXBException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Malformed DDV endpoint", e);
         }
     }
