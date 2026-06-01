@@ -112,7 +112,7 @@ not in your shell rc.
 - **Active binlog.** `binlog-backup.sh` always issues `FLUSH BINARY LOGS`
   first to rotate the active log, then skips the new active one when
   copying. The currently-written file is unsafe to copy.
-- **SQLite WAL/SHM.** `restore.sh` carries WAL/SHM files over from the
+- **SQLite WAL/SHM.** `restore.sh` carries WAL/SHM (Write ahead log and shared memory - for the most recent commits) files over from the
   snapshot if present, and otherwise removes any stale ones in the live
   data dir, so SQLite doesn't reuse an old journal against the restored
   database.

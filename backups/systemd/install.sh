@@ -39,6 +39,8 @@ REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)"
 BACKUPS_DIR="$REPO_ROOT/backups"
 SYSTEMD_DIR="/etc/systemd/system"
 
+
+# Prints the comment header (lines until the first empty line) (i.e. via -h or --help)
 usage() {
     sed --quiet '2,/^$/p' "$0" | sed 's/^# \?//'
 }
@@ -208,6 +210,7 @@ cmd_status() {
         if systemctl list-unit-files "$timer" --no-legend 2>/dev/null | grep --quiet .; then
             any=true
             echo "=== $timer ==="
+            #Prints both the status, and then the log lines. We onæy need the status, so we only take the status.
             systemctl --no-pager --full status "$timer" 2>&1 | head --lines=10
             echo ""
         fi
