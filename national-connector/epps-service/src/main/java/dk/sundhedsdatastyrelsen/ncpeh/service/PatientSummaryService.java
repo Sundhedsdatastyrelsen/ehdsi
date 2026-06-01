@@ -11,6 +11,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
+import dk.sundhedsdatastyrelsen.ncpeh.client.DdvClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.client.FmkClientIdws;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ClassCodeDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.ConfidentialityMetadataDto;
@@ -20,6 +21,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentDto;
 import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
+import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,10 +34,12 @@ import java.util.UUID;
 public class PatientSummaryService {
     private final InformationCardService informationCardService;
     private final FmkClientIdws fmkServiceIdws;
+    private final DdvClientIdws ddvClientIdws;
 
-    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkServiceIdws) {
+    public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkServiceIdws, DdvClientIdws ddvClientIdws) {
         this.informationCardService = informationCardService;
         this.fmkServiceIdws = fmkServiceIdws;
+        this.ddvClientIdws = ddvClientIdws;
     }
 
     @WithSpan
@@ -120,9 +124,14 @@ public class PatientSummaryService {
             .withIncludeEffectuations(false)
             .build();
 
+        var vaccineCard = GetVaccinationCardRequestType.builder()
+            .withPersonCivilRegistrationIdentifier(cpr)
+            .build();
+
         try {
             var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, token);
-            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard);
+            var ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, token);
+            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
         } catch (JAXBException e) {
             throw new PublicException(500, "Could not retrieve prescriptions.", e);
         }

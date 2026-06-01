@@ -53,7 +53,8 @@ class PatientSummaryL3MapperTest {
                 "test-document-id",
                 preferredHp,
                 patient,
-                response
+                response,
+                null
             );
 
             return PatientSummaryL3Mapper.model(input);
@@ -95,7 +96,8 @@ class PatientSummaryL3MapperTest {
                 "test-document-id",
                 preferredHp,
                 patient,
-                response
+                response,
+                null
             );
 
             return PatientSummaryL3Mapper.model(input);

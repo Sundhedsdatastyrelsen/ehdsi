@@ -78,5 +78,9 @@
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-instrumentation-annotations</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dk.sundhedsdatastyrelsen.ncpeh</groupId>
+            <artifactId>epps-ddv-api</artifactId>
+        </dependency>
     </dependencies>
 </project>

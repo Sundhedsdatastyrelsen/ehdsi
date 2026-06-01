@@ -23,12 +23,18 @@ public class DdvClientIdws {
     private static final dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory requestFactory =
         new dk.vaccinationsregister.schemas._2013._12._01.ObjectFactory();
 
-    public DdvClientIdws(PrivateKey signingKey, String endpoint) throws URISyntaxException, JAXBException {
+    public DdvClientIdws(PrivateKey signingKey, String endpoint) throws URISyntaxException {
         this.serviceUri = new URI(endpoint);
-        this.jaxbContext = JAXBContext.newInstance(
-            ":dk.vaccinationsregister.schemas._2013._12._01"
-                + ":dk.sdsd.ddv.dgws._2012._06"
-        );
+
+        try {
+            this.jaxbContext = JAXBContext.newInstance(
+                ":dk.vaccinationsregister.schemas._2013._12._01"
+                    + ":dk.sdsd.ddv.dgws._2012._06"
+            );
+        } catch (JAXBException e) {
+            throw new IllegalStateException(e);
+        }
+
         this.signingKey = signingKey;
     }
 
