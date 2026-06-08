@@ -35,6 +35,12 @@ public enum Oid {
      * TODO get a real oid here.
      */
     DK_FMK_MEDICATION("1.2.208.176.7.2.123456788"),
+    /** FMK prescription ids
+     * TODO get a real oid here.
+        */
+    DK_DDV_VACCINATION("1.2.208.176.7.2.123456888"),
+    /**
+
     /**
      * Patient summary id
      * TODO get a real oid here.

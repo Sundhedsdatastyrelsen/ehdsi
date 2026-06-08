@@ -12,13 +12,20 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary.MedicationItem;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Immunizations;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Immunizations.ImmunizationItem;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
+import dk.vaccinationsregister.schemas._2013._12._01.EffectuatedPlannedItemType;
+import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
+import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
+import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,7 +57,8 @@ public class PatientSummaryL3Mapper {
         var patient = input.patient();
         var preferredHP = input.preferredHealthProfessional();
         var documentId = input.documentId();
-        var medications = medications(response);
+        var medications = medications(input.fmkMedicineCardResponse());
+        var vaccinations = vaccinations(input.ddvVaccinationCardResponse());
 
         var patientSummaryBuilder = PatientSummaryL3.builder()
             .documentId(new CdaId(
@@ -61,6 +69,7 @@ public class PatientSummaryL3Mapper {
             .patient(patient)
             .preferredHp(preferredHP)
             .medicationSummary(medicationSummary(medications));
+            //.immunizations(vaccinations);
 
         return patientSummaryBuilder.build();
     }
@@ -77,6 +86,30 @@ public class PatientSummaryL3Mapper {
             .toList();
     }
 
+    private static List<VaccinationType> vaccinations(GetVaccinationCardResponseType response) {
+        if (response == null) {
+            return List.of();
+        }
+
+        // Sort by vaccination identifier, then by vaccination plan identifier,
+        // and finally by vaccination plan item index. For easier reading in the CDA
+        //TODO: maybe do the sorting after mapping?
+
+        return response.getVaccination().stream()
+            .filter(Objects::nonNull)
+            .filter(v -> Boolean.FALSE.equals(v.isNegativeConsentIndicator()))
+            .sorted(
+                Comparator.comparing(VaccinationType::getVaccinationIdentifier)
+                    .thenComparing(v -> Optional.ofNullable(v.getEffectuatedPlannedItem())
+                        .map(EffectuatedPlannedItemType::getVaccinationPlanIdentifier)
+                        .orElse(null), Comparator.nullsLast(Long::compareTo))
+                    .thenComparing(v -> Optional.ofNullable(v.getEffectuatedPlannedItem())
+                        .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
+                        .orElse(null), Comparator.nullsLast(Long::compareTo))
+            )
+            .toList();
+    }
+
     public static String makeTitle(String documentId, Patient patient) {
         var patientName = patient.getName();
         // #TODO: Figure out correct title format
@@ -88,6 +121,14 @@ public class PatientSummaryL3Mapper {
         return MedicationSummary.builder()
             .items(medications.stream()
                 .map(PatientSummaryL3Mapper::medicationItem)
+                .toList())
+            .build();
+    }
+
+    private static Immunizations immunizations(List<VaccinationType> vaccinations) {
+        return Immunizations.builder()
+            .items(vaccinations.stream()
+                .map(PatientSummaryL3Mapper::immunizationItem)
                 .toList())
             .build();
     }
@@ -136,6 +177,57 @@ public class PatientSummaryL3Mapper {
             .patientMedicationInstructions(patientMedicationInstructions(medication))
             .build();
     }
+
+    private static ImmunizationItem immunizationItem(VaccinationType immunization){
+        if (immunization == null) {
+            return null;
+        }
+
+        var plannedItem = immunization.getEffectuatedPlannedItem();
+        var ssiDrug = immunization.getSSIDrug();
+
+//        /**
+//         * hl7:consumable / eHDSI Immunization SSIDrug.
+//         */
+//        CdaCode drugId;
+//        @NonNull String name;
+//        String strength;
+//        @NonNull CdaCode formCode;
+//        @NonNull CdaCode atcCode;
+//
+//
+        return ImmunizationItem.builder()
+            .immunizationId(new CdaId(Oid.DK_DDV_VACCINATION,
+                Long.toString(immunization.getVaccinationIdentifier())))
+            .vaccinationDate(Utils.convertToOffsetDateTime(immunization.getEffectuatedDateTime()))
+//            .dosage(Dosage.Unstructured.builder()
+//                .text(immunization.getDosageText())
+//                .reason("DDV vaccination dosage is mapped as unstructured text")
+//                .build())
+//            .drugId(Optional.ofNullable(ssiDrug)
+//                .map(SSIDrugType::getDrugIdentifier)
+//                .orElse(null))
+//            .strength(Optional.ofNullable(ssiDrug)
+//                .map(SSIDrugType::getDrugStrength)
+//                .orElse(null))
+            .doseNumber(Optional.ofNullable(plannedItem)
+                .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
+                .map(Long::intValue)
+                .orElse(null))
+            .batchNumber(immunization.getBatchNumber())
+            .coverageDuration(immunization.getCoverageDuration())
+            .vaccinationPlanName(Optional.ofNullable(plannedItem)
+                .map(EffectuatedPlannedItemType::getVaccinationPlanName)
+                .orElse(null))
+            .vaccinationPlanItemDescription(Optional.ofNullable(plannedItem)
+                .map(EffectuatedPlannedItemType::getVaccinationPlanItemDescription)
+                .orElse(null))
+            .confirmedByPrescriptionServer(immunization.isConfirmedByPrescriptionServer()) //TODO: Check if needed
+            .activeStatus(immunization.isActiveStatus())
+            .build();
+        }
+
+
 
     private static CdaId medicationId(DrugMedicationType medication) {
         var id = medication.getIdentifier();

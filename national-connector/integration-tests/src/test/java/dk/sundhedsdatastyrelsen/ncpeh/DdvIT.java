@@ -28,4 +28,20 @@ class DdvIT {
             throw xmlException;
         }
     }
+
+    @Test
+    void getEmptyVaccinationTest() throws Exception {
+        var token = Sosi.getToken(Sosi.TokenArgs.builder()
+            .audience(Sosi.Audience.DDV)
+            .healthProfessionalRole("221")
+            .patientCpr(Fmk.cprHelleReadOnly)
+            .build());
+        try {
+            var vaccinations = vaccinationService.getVaccinationsForCpr(Fmk.cprHelleReadOnly, token);
+            assertThat(vaccinations, is(empty()));
+        } catch (XmlException xmlException) {
+            System.out.println(xmlException.getFullText() != null ? xmlException.getFullText() : "No full text in exception");
+            throw xmlException;
+        }
+    }
 }

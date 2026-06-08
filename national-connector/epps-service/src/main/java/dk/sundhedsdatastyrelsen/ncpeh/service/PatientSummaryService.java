@@ -33,6 +33,7 @@ public class PatientSummaryService {
     private final InformationCardService informationCardService;
     private final FmkClientIdws fmkServiceIdws;
 
+
     public PatientSummaryService(InformationCardService informationCardService, FmkClientIdws fmkServiceIdws) {
         this.informationCardService = informationCardService;
         this.fmkServiceIdws = fmkServiceIdws;
@@ -122,6 +123,7 @@ public class PatientSummaryService {
 
         try {
             var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, token);
+
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard);
         } catch (JAXBException e) {
             throw new PublicException(500, "Could not retrieve prescriptions.", e);
