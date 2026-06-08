@@ -23,8 +23,8 @@ import jakarta.xml.bind.annotation.XmlType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <element name="DrugStrengthValue" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthValueType"/>
- *         <element name="DrugStrengthUnitCode" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitCodeType"/>
+ *         <element name="DrugStrengthValue" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthValueType" minOccurs="0"/>
+ *         <element name="DrugStrengthUnitCode" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitCodeType" minOccurs="0"/>
  *         <element name="DrugStrengthUnitText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitTextType" minOccurs="0"/>
  *         <element name="DrugStrengthText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthTextType" minOccurs="0"/>
  *       </sequence>
@@ -44,9 +44,9 @@ import jakarta.xml.bind.annotation.XmlType;
 })
 public class DrugStrengthType {
 
-    @XmlElement(name = "DrugStrengthValue", required = true)
+    @XmlElement(name = "DrugStrengthValue")
     protected BigDecimal drugStrengthValue;
-    @XmlElement(name = "DrugStrengthUnitCode", required = true)
+    @XmlElement(name = "DrugStrengthUnitCode")
     protected String drugStrengthUnitCode;
     @XmlElement(name = "DrugStrengthUnitText")
     protected String drugStrengthUnitText;

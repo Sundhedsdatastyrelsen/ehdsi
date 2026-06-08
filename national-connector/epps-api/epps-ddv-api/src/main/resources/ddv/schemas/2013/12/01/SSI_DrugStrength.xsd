@@ -16,27 +16,26 @@
 	<complexType name="DrugStrengthType">
         <!-- NCP: We simplify this choice to enable more useful code generation at the cost of precision -->
         <!-- Original: -->
-<!--        <choice>-->
-<!--            <sequence>-->
-<!--                <element name="DrugStrengthValue" type="vaccinationcard:DrugStrengthValueType"/>-->
-<!--                <element name="DrugStrengthUnitCode" type="vaccinationcard:DrugStrengthUnitCodeType"/>-->
-<!--                <element name="DrugStrengthUnitText" type="vaccinationcard:DrugStrengthUnitTextType" minOccurs="0"/>-->
-<!--            </sequence>-->
-<!--            <sequence>-->
-<!--                <element name="DrugStrengthValue" type="vaccinationcard:DrugStrengthValueType"/>-->
-<!--                <element name="DrugStrengthText" type="vaccinationcard:DrugStrengthTextType" minOccurs="0"/>-->
-<!--                <element name="DrugStrengthUnitText" type="vaccinationcard:DrugStrengthUnitTextType" minOccurs="0"/>-->
-<!--            </sequence>-->
-<!--        </choice>-->
+        <!--        <choice>-->
+        <!--            <sequence>-->
+        <!--                <element name="DrugStrengthValue" type="vaccinationcard:DrugStrengthValueType"/>-->
+        <!--                <element name="DrugStrengthUnitCode" type="vaccinationcard:DrugStrengthUnitCodeType"/>-->
+        <!--                <element name="DrugStrengthUnitText" type="vaccinationcard:DrugStrengthUnitTextType" minOccurs="0"/>-->
+        <!--            </sequence>-->
+        <!--            <sequence>-->
+        <!--                <element name="DrugStrengthValue" type="vaccinationcard:DrugStrengthValueType"/>-->
+        <!--                <element name="DrugStrengthText" type="vaccinationcard:DrugStrengthTextType" minOccurs="0"/>-->
+        <!--                <element name="DrugStrengthUnitText" type="vaccinationcard:DrugStrengthUnitTextType" minOccurs="0"/>-->
+        <!--            </sequence>-->
+        <!--        </choice>-->
         <!--		&lt;!&ndash; A convoluted construction for either value+unit, text or both but not neither &ndash;&gt;-->
         <!-- Replacement: -->
         <sequence>
-            <element name="DrugStrengthValue" type="vaccinationcard:DrugStrengthValueType" inOccurs="0"/>
-            <element name="DrugStrengthUnitCode" type="vaccinationcard:DrugStrengthUnitCodeType" inOccurs="0"/>
+            <element name="DrugStrengthValue" type="vaccinationcard:DrugStrengthValueType" minOccurs="0"/>
+            <element name="DrugStrengthUnitCode" type="vaccinationcard:DrugStrengthUnitCodeType" minOccurs="0"/>
             <element name="DrugStrengthUnitText" type="vaccinationcard:DrugStrengthUnitTextType" minOccurs="0"/>
             <element name="DrugStrengthText" type="vaccinationcard:DrugStrengthTextType" minOccurs="0"/>
         </sequence>
         <!-- End replacement -->
-
 	</complexType>
 </schema>

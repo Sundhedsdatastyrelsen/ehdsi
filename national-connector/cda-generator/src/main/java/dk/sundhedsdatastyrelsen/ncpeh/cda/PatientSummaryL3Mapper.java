@@ -31,6 +31,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static dk.sundhedsdatastyrelsen.ncpeh.cda.ImmunizationMapper.fallbackVaccineName;
+
 @Slf4j
 public class PatientSummaryL3Mapper {
     private PatientSummaryL3Mapper() {
@@ -69,7 +71,7 @@ public class PatientSummaryL3Mapper {
             .patient(patient)
             .preferredHp(preferredHP)
             .medicationSummary(medicationSummary(medications));
-            //.immunizations(vaccinations);
+        //.immunizations(vaccinations);
 
         return patientSummaryBuilder.build();
     }
@@ -100,12 +102,14 @@ public class PatientSummaryL3Mapper {
             .filter(v -> Boolean.FALSE.equals(v.isNegativeConsentIndicator()))
             .sorted(
                 Comparator.comparing(VaccinationType::getVaccinationIdentifier)
-                    .thenComparing(v -> Optional.ofNullable(v.getEffectuatedPlannedItem())
-                        .map(EffectuatedPlannedItemType::getVaccinationPlanIdentifier)
-                        .orElse(null), Comparator.nullsLast(Long::compareTo))
-                    .thenComparing(v -> Optional.ofNullable(v.getEffectuatedPlannedItem())
-                        .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
-                        .orElse(null), Comparator.nullsLast(Long::compareTo))
+                    .thenComparing(
+                        v -> Optional.ofNullable(v.getEffectuatedPlannedItem())
+                            .map(EffectuatedPlannedItemType::getVaccinationPlanIdentifier)
+                            .orElse(null), Comparator.nullsLast(Long::compareTo))
+                    .thenComparing(
+                        v -> Optional.ofNullable(v.getEffectuatedPlannedItem())
+                            .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
+                            .orElse(null), Comparator.nullsLast(Long::compareTo))
             )
             .toList();
     }
@@ -178,56 +182,50 @@ public class PatientSummaryL3Mapper {
             .build();
     }
 
-    private static ImmunizationItem immunizationItem(VaccinationType immunization){
-        if (immunization == null) {
-            return null;
-        }
+    private static ImmunizationItem immunizationItem(VaccinationType v) {
+        var planned = v.getEffectuatedPlannedItem();
+        var drug = v.getSSIDrug();
+        var vaccine = v.getVaccine();
+        var product = ImmunizationMapper.product(drug);
 
-        var plannedItem = immunization.getEffectuatedPlannedItem();
-        var ssiDrug = immunization.getSSIDrug();
-
-//        /**
-//         * hl7:consumable / eHDSI Immunization SSIDrug.
-//         */
-//        CdaCode drugId;
-//        @NonNull String name;
-//        String strength;
-//        @NonNull CdaCode formCode;
-//        @NonNull CdaCode atcCode;
-//
-//
         return ImmunizationItem.builder()
-            .immunizationId(new CdaId(Oid.DK_DDV_VACCINATION,
-                Long.toString(immunization.getVaccinationIdentifier())))
-            .vaccinationDate(Utils.convertToOffsetDateTime(immunization.getEffectuatedDateTime()))
-//            .dosage(Dosage.Unstructured.builder()
-//                .text(immunization.getDosageText())
-//                .reason("DDV vaccination dosage is mapped as unstructured text")
-//                .build())
-//            .drugId(Optional.ofNullable(ssiDrug)
-//                .map(SSIDrugType::getDrugIdentifier)
-//                .orElse(null))
-//            .strength(Optional.ofNullable(ssiDrug)
-//                .map(SSIDrugType::getDrugStrength)
-//                .orElse(null))
-            .doseNumber(Optional.ofNullable(plannedItem)
+            .immunizationId(new CdaId(
+                Oid.DK_DDV_VACCINATION,
+                Long.toString(v.getVaccinationIdentifier())))
+
+            .vaccinationDate(Utils.convertToOffsetDateTime(v.getEffectuatedDateTime()))
+
+            // target disease / agent: DDV does not give a clean SNOMED target disease here.
+            // Use VaccineName as text, and only code it if you have a DDV->eHDSI/SNOMED map.
+            .targetDiseaseCode(null)
+            .targetDiseaseText(vaccine != null ? vaccine.getVaccineName() : null)
+
+            // Product / consumable
+            .drugId(product.getDrugId())
+            .name(drug != null ? product.getName() : fallbackVaccineName(v))
+            .strength(product.getStrength())
+            .formCode(product.getFormCode())
+            .atcCode(product.getAtcCode())
+
+            .doseNumber(Optional.ofNullable(planned)
                 .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
                 .map(Long::intValue)
                 .orElse(null))
-            .batchNumber(immunization.getBatchNumber())
-            .coverageDuration(immunization.getCoverageDuration())
-            .vaccinationPlanName(Optional.ofNullable(plannedItem)
-                .map(EffectuatedPlannedItemType::getVaccinationPlanName)
-                .orElse(null))
-            .vaccinationPlanItemDescription(Optional.ofNullable(plannedItem)
-                .map(EffectuatedPlannedItemType::getVaccinationPlanItemDescription)
-                .orElse(null))
-            .confirmedByPrescriptionServer(immunization.isConfirmedByPrescriptionServer()) //TODO: Check if needed
-            .activeStatus(immunization.isActiveStatus())
+            .batchNumber(v.getBatchNumber())
+            .coverageDuration(v.getCoverageDuration())
+            .vaccinationPlanName(planned != null ? planned.getVaccinationPlanName() : null)
+            .vaccinationPlanItemDescription(planned != null ? planned.getVaccinationPlanItemDescription() : null)
+
+            .healthProfessionalIdentifier(ImmunizationMapper.getCreatedAuthorisationId(v))
+            .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(v))
+            .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(v))
+            .administeringCentreName(ImmunizationMapper.getCreatedOrganisationName(v))
+
+            //.vaccinationCredibility(v.getVaccinationCredibility()) //TODO: probably not needed
+            .confirmedByPrescriptionServer(v.isConfirmedByPrescriptionServer())
+            .activeStatus(v.isActiveStatus())
             .build();
-        }
-
-
+    }
 
     private static CdaId medicationId(DrugMedicationType medication) {
         var id = medication.getIdentifier();
@@ -261,6 +259,12 @@ public class PatientSummaryL3Mapper {
             return null;
         }
 
+        var drugId = drug.getIdentifier();
+        var codedId = drugId != null ? CdaCode.builder()
+            .codeSystem(Oid.DK_DRUG_ID)
+            .code(String.valueOf(drugId.getValue()))
+            .build() : null;
+
         var form = drug.getForm();
         if (form == null || form.getCode() == null || form.getText() == null) {
             return null;
@@ -284,6 +288,7 @@ public class PatientSummaryL3Mapper {
             .build();
 
         return Product.builder()
+            .drugId(codedId)
             .name(drug.getName())
             .strength(getSubstanceStrengthText(drug.getStrength()))
             .formCode(formCode)
@@ -345,5 +350,4 @@ public class PatientSummaryL3Mapper {
             .map(DrugStrengthTextType::getValue)
             .orElse(null);
     }
-
 }

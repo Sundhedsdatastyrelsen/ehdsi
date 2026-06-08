@@ -1,19 +1,14 @@
 
 package dk.vaccinationsregister.schemas._2013._12._01;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.kscs.util.jaxb.Buildable;
 import com.kscs.util.jaxb.PropertyTree;
 import com.kscs.util.jaxb.PropertyTreeUse;
-import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElementRef;
-import jakarta.xml.bind.annotation.XmlElementRefs;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 
@@ -27,16 +22,11 @@ import jakarta.xml.bind.annotation.XmlType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <choice>
- *           <sequence>
- *             <element name="AuthorisedHealthcareProfessional" type="{http://vaccinationsregister.dk/schemas/2013/12/01}AuthorisedHealthcareProfessionalType"/>
- *             <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType"/>
- *           </sequence>
- *           <sequence>
- *             <element name="Other" type="{http://vaccinationsregister.dk/schemas/2013/12/01}ModificatorPersonType"/>
- *             <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType" minOccurs="0"/>
- *           </sequence>
- *         </choice>
+ *         <sequence>
+ *           <element name="AuthorisedHealthcareProfessional" type="{http://vaccinationsregister.dk/schemas/2013/12/01}AuthorisedHealthcareProfessionalType" minOccurs="0"/>
+ *           <element name="Other" type="{http://vaccinationsregister.dk/schemas/2013/12/01}ModificatorPersonType" minOccurs="0"/>
+ *           <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType" minOccurs="0"/>
+ *         </sequence>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -47,57 +37,89 @@ import jakarta.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AuthorisedModificatorType", propOrder = {
-    "content"
+    "authorisedHealthcareProfessional",
+    "other",
+    "organisation"
 })
 public class AuthorisedModificatorType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "AuthorisedHealthcareProfessional", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "Organisation", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "Other", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false)
-    })
-    protected List<JAXBElement<?>> content;
+    @XmlElement(name = "AuthorisedHealthcareProfessional")
+    protected AuthorisedHealthcareProfessionalType authorisedHealthcareProfessional;
+    @XmlElement(name = "Other")
+    protected ModificatorPersonType other;
+    @XmlElement(name = "Organisation")
+    protected OrganisationType organisation;
 
     /**
-     * Gets the rest of the content model. 
-     * 
-     * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "Organisation" is used by two different parts of a schema. See: 
-     * line 58 of file:/home/chillhound/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
-     * line 54 of file:/home/chillhound/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_Modificator.xsd
-     * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names:Gets the value of the content property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the Jakarta XML Binding object.
-     * This is why there is not a {@code set} method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link AuthorisedHealthcareProfessionalType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ModificatorPersonType }{@code >}
-     * {@link JAXBElement }{@code <}{@link OrganisationType }{@code >}
-     * 
+     * Gets the value of the authorisedHealthcareProfessional property.
      * 
      * @return
-     *     The value of the content property.
+     *     possible object is
+     *     {@link AuthorisedHealthcareProfessionalType }
+     *     
      */
-    public List<JAXBElement<?>> getContent() {
-        if (content == null) {
-            content = new ArrayList<>();
-        }
-        return this.content;
+    public AuthorisedHealthcareProfessionalType getAuthorisedHealthcareProfessional() {
+        return authorisedHealthcareProfessional;
+    }
+
+    /**
+     * Sets the value of the authorisedHealthcareProfessional property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link AuthorisedHealthcareProfessionalType }
+     *     
+     */
+    public void setAuthorisedHealthcareProfessional(AuthorisedHealthcareProfessionalType value) {
+        this.authorisedHealthcareProfessional = value;
+    }
+
+    /**
+     * Gets the value of the other property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ModificatorPersonType }
+     *     
+     */
+    public ModificatorPersonType getOther() {
+        return other;
+    }
+
+    /**
+     * Sets the value of the other property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ModificatorPersonType }
+     *     
+     */
+    public void setOther(ModificatorPersonType value) {
+        this.other = value;
+    }
+
+    /**
+     * Gets the value of the organisation property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link OrganisationType }
+     *     
+     */
+    public OrganisationType getOrganisation() {
+        return organisation;
+    }
+
+    /**
+     * Sets the value of the organisation property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link OrganisationType }
+     *     
+     */
+    public void setOrganisation(OrganisationType value) {
+        this.organisation = value;
     }
 
     /**
@@ -108,14 +130,9 @@ public class AuthorisedModificatorType {
      *     A builder instance to which the state of this object will be copied.
      */
     public<_B >void copyTo(final AuthorisedModificatorType.Builder<_B> _other) {
-        if (this.content == null) {
-            _other.content = null;
-        } else {
-            _other.content = new ArrayList<>();
-            for (JAXBElement<?> _item: this.content) {
-                _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-            }
-        }
+        _other.authorisedHealthcareProfessional = ((this.authorisedHealthcareProfessional == null)?null:this.authorisedHealthcareProfessional.newCopyBuilder(_other));
+        _other.other = ((this.other == null)?null:this.other.newCopyBuilder(_other));
+        _other.organisation = ((this.organisation == null)?null:this.organisation.newCopyBuilder(_other));
     }
 
     public<_B >AuthorisedModificatorType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
@@ -144,16 +161,17 @@ public class AuthorisedModificatorType {
      *     A builder instance to which the state of this object will be copied.
      */
     public<_B >void copyTo(final AuthorisedModificatorType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
-        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
-            if (this.content == null) {
-                _other.content = null;
-            } else {
-                _other.content = new ArrayList<>();
-                for (JAXBElement<?> _item: this.content) {
-                    _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-                }
-            }
+        final PropertyTree authorisedHealthcareProfessionalPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("authorisedHealthcareProfessional"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(authorisedHealthcareProfessionalPropertyTree!= null):((authorisedHealthcareProfessionalPropertyTree == null)||(!authorisedHealthcareProfessionalPropertyTree.isLeaf())))) {
+            _other.authorisedHealthcareProfessional = ((this.authorisedHealthcareProfessional == null)?null:this.authorisedHealthcareProfessional.newCopyBuilder(_other, authorisedHealthcareProfessionalPropertyTree, _propertyTreeUse));
+        }
+        final PropertyTree otherPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("other"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(otherPropertyTree!= null):((otherPropertyTree == null)||(!otherPropertyTree.isLeaf())))) {
+            _other.other = ((this.other == null)?null:this.other.newCopyBuilder(_other, otherPropertyTree, _propertyTreeUse));
+        }
+        final PropertyTree organisationPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("organisation"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(organisationPropertyTree!= null):((organisationPropertyTree == null)||(!organisationPropertyTree.isLeaf())))) {
+            _other.organisation = ((this.organisation == null)?null:this.organisation.newCopyBuilder(_other, organisationPropertyTree, _propertyTreeUse));
         }
     }
 
@@ -184,21 +202,18 @@ public class AuthorisedModificatorType {
 
         protected final _B _parentBuilder;
         protected final AuthorisedModificatorType _storedValue;
-        private List<Buildable> content;
+        private AuthorisedHealthcareProfessionalType.Builder<AuthorisedModificatorType.Builder<_B>> authorisedHealthcareProfessional;
+        private ModificatorPersonType.Builder<AuthorisedModificatorType.Builder<_B>> other;
+        private OrganisationType.Builder<AuthorisedModificatorType.Builder<_B>> organisation;
 
         public Builder(final _B _parentBuilder, final AuthorisedModificatorType _other, final boolean _copy) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
                     _storedValue = null;
-                    if (_other.content == null) {
-                        this.content = null;
-                    } else {
-                        this.content = new ArrayList<>();
-                        for (JAXBElement<?> _item: _other.content) {
-                            this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-                        }
-                    }
+                    this.authorisedHealthcareProfessional = ((_other.authorisedHealthcareProfessional == null)?null:_other.authorisedHealthcareProfessional.newCopyBuilder(this));
+                    this.other = ((_other.other == null)?null:_other.other.newCopyBuilder(this));
+                    this.organisation = ((_other.organisation == null)?null:_other.organisation.newCopyBuilder(this));
                 } else {
                     _storedValue = _other;
                 }
@@ -212,16 +227,17 @@ public class AuthorisedModificatorType {
             if (_other!= null) {
                 if (_copy) {
                     _storedValue = null;
-                    final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
-                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
-                        if (_other.content == null) {
-                            this.content = null;
-                        } else {
-                            this.content = new ArrayList<>();
-                            for (JAXBElement<?> _item: _other.content) {
-                                this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-                            }
-                        }
+                    final PropertyTree authorisedHealthcareProfessionalPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("authorisedHealthcareProfessional"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(authorisedHealthcareProfessionalPropertyTree!= null):((authorisedHealthcareProfessionalPropertyTree == null)||(!authorisedHealthcareProfessionalPropertyTree.isLeaf())))) {
+                        this.authorisedHealthcareProfessional = ((_other.authorisedHealthcareProfessional == null)?null:_other.authorisedHealthcareProfessional.newCopyBuilder(this, authorisedHealthcareProfessionalPropertyTree, _propertyTreeUse));
+                    }
+                    final PropertyTree otherPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("other"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(otherPropertyTree!= null):((otherPropertyTree == null)||(!otherPropertyTree.isLeaf())))) {
+                        this.other = ((_other.other == null)?null:_other.other.newCopyBuilder(this, otherPropertyTree, _propertyTreeUse));
+                    }
+                    final PropertyTree organisationPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("organisation"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(organisationPropertyTree!= null):((organisationPropertyTree == null)||(!organisationPropertyTree.isLeaf())))) {
+                        this.organisation = ((_other.organisation == null)?null:_other.organisation.newCopyBuilder(this, organisationPropertyTree, _propertyTreeUse));
                     }
                 } else {
                     _storedValue = _other;
@@ -236,67 +252,105 @@ public class AuthorisedModificatorType {
         }
 
         protected<_P extends AuthorisedModificatorType >_P init(final _P _product) {
-            if (this.content!= null) {
-                final List<JAXBElement<?>> content = new ArrayList<>(this.content.size());
-                for (Buildable _item: this.content) {
-                    content.add(((JAXBElement<?> ) _item.build()));
-                }
-                _product.content = content;
-            }
+            _product.authorisedHealthcareProfessional = ((this.authorisedHealthcareProfessional == null)?null:this.authorisedHealthcareProfessional.build());
+            _product.other = ((this.other == null)?null:this.other.build());
+            _product.organisation = ((this.organisation == null)?null:this.organisation.build());
             return _product;
         }
 
         /**
-         * Adds the given items to the value of "content"
+         * Sets the new value of "authorisedHealthcareProfessional" (any previous value
+         * will be replaced)
          * 
-         * @param content
-         *     Items to add to the value of the "content" property
+         * @param authorisedHealthcareProfessional
+         *     New value of the "authorisedHealthcareProfessional" property.
          */
-        public AuthorisedModificatorType.Builder<_B> addContent(final Iterable<? extends JAXBElement<?>> content) {
-            if (content!= null) {
-                if (this.content == null) {
-                    this.content = new ArrayList<>();
-                }
-                for (JAXBElement<?> _item: content) {
-                    this.content.add(new Buildable.PrimitiveBuildable(_item));
-                }
+        public AuthorisedModificatorType.Builder<_B> withAuthorisedHealthcareProfessional(final AuthorisedHealthcareProfessionalType authorisedHealthcareProfessional) {
+            this.authorisedHealthcareProfessional = ((authorisedHealthcareProfessional == null)?null:new AuthorisedHealthcareProfessionalType.Builder<>(this, authorisedHealthcareProfessional, false));
+            return this;
+        }
+
+        /**
+         * Returns the existing builder or a new builder to build the value of the
+         * "authorisedHealthcareProfessional" property.
+         * Use {@link
+         * dk.vaccinationsregister.schemas._2013._12._01.AuthorisedHealthcareProfessionalType.Builder#end()}
+         * to return to the current builder.
+         * 
+         * @return
+         *     A new builder to build the value of the "authorisedHealthcareProfessional"
+         *     property.
+         *     Use {@link
+         *     dk.vaccinationsregister.schemas._2013._12._01.AuthorisedHealthcareProfessionalType.Builder#end()}
+         *     to return to the current builder.
+         */
+        public AuthorisedHealthcareProfessionalType.Builder<? extends AuthorisedModificatorType.Builder<_B>> withAuthorisedHealthcareProfessional() {
+            if (this.authorisedHealthcareProfessional!= null) {
+                return this.authorisedHealthcareProfessional;
             }
+            return this.authorisedHealthcareProfessional = new AuthorisedHealthcareProfessionalType.Builder<>(this, null, false);
+        }
+
+        /**
+         * Sets the new value of "other" (any previous value will be replaced)
+         * 
+         * @param other
+         *     New value of the "other" property.
+         */
+        public AuthorisedModificatorType.Builder<_B> withOther(final ModificatorPersonType other) {
+            this.other = ((other == null)?null:new ModificatorPersonType.Builder<>(this, other, false));
             return this;
         }
 
         /**
-         * Sets the new value of "content" (any previous value will be replaced)
+         * Returns the existing builder or a new builder to build the value of the "other"
+         * property.
+         * Use {@link
+         * dk.vaccinationsregister.schemas._2013._12._01.ModificatorPersonType.Builder#end()}
+         * to return to the current builder.
          * 
-         * @param content
-         *     New value of the "content" property.
+         * @return
+         *     A new builder to build the value of the "other" property.
+         *     Use {@link
+         *     dk.vaccinationsregister.schemas._2013._12._01.ModificatorPersonType.Builder#end()}
+         *     to return to the current builder.
          */
-        public AuthorisedModificatorType.Builder<_B> withContent(final Iterable<? extends JAXBElement<?>> content) {
-            if (this.content!= null) {
-                this.content.clear();
+        public ModificatorPersonType.Builder<? extends AuthorisedModificatorType.Builder<_B>> withOther() {
+            if (this.other!= null) {
+                return this.other;
             }
-            return addContent(content);
+            return this.other = new ModificatorPersonType.Builder<>(this, null, false);
         }
 
         /**
-         * Adds the given items to the value of "content"
+         * Sets the new value of "organisation" (any previous value will be replaced)
          * 
-         * @param content
-         *     Items to add to the value of the "content" property
+         * @param organisation
+         *     New value of the "organisation" property.
          */
-        public AuthorisedModificatorType.Builder<_B> addContent(JAXBElement<?> ... content) {
-            addContent(Arrays.asList(content));
+        public AuthorisedModificatorType.Builder<_B> withOrganisation(final OrganisationType organisation) {
+            this.organisation = ((organisation == null)?null:new OrganisationType.Builder<>(this, organisation, false));
             return this;
         }
 
         /**
-         * Sets the new value of "content" (any previous value will be replaced)
+         * Returns the existing builder or a new builder to build the value of the
+         * "organisation" property.
+         * Use {@link
+         * dk.vaccinationsregister.schemas._2013._12._01.OrganisationType.Builder#end()} to
+         * return to the current builder.
          * 
-         * @param content
-         *     New value of the "content" property.
+         * @return
+         *     A new builder to build the value of the "organisation" property.
+         *     Use {@link
+         *     dk.vaccinationsregister.schemas._2013._12._01.OrganisationType.Builder#end()} to
+         *     return to the current builder.
          */
-        public AuthorisedModificatorType.Builder<_B> withContent(JAXBElement<?> ... content) {
-            withContent(Arrays.asList(content));
-            return this;
+        public OrganisationType.Builder<? extends AuthorisedModificatorType.Builder<_B>> withOrganisation() {
+            if (this.organisation!= null) {
+                return this.organisation;
+            }
+            return this.organisation = new OrganisationType.Builder<>(this, null, false);
         }
 
         @Override
@@ -338,7 +392,9 @@ public class AuthorisedModificatorType {
         extends com.kscs.util.jaxb.Selector<TRoot, TParent>
     {
 
-        private com.kscs.util.jaxb.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> content = null;
+        private AuthorisedHealthcareProfessionalType.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> authorisedHealthcareProfessional = null;
+        private ModificatorPersonType.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> other = null;
+        private OrganisationType.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> organisation = null;
 
         public Selector(final TRoot root, final TParent parent, final String propertyName) {
             super(root, parent, propertyName);
@@ -348,14 +404,28 @@ public class AuthorisedModificatorType {
         public Map<String, PropertyTree> buildChildren() {
             final Map<String, PropertyTree> products = new HashMap<>();
             products.putAll(super.buildChildren());
-            if (this.content!= null) {
-                products.put("content", this.content.init());
+            if (this.authorisedHealthcareProfessional!= null) {
+                products.put("authorisedHealthcareProfessional", this.authorisedHealthcareProfessional.init());
+            }
+            if (this.other!= null) {
+                products.put("other", this.other.init());
+            }
+            if (this.organisation!= null) {
+                products.put("organisation", this.organisation.init());
             }
             return products;
         }
 
-        public com.kscs.util.jaxb.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> content() {
-            return ((this.content == null)?this.content = new com.kscs.util.jaxb.Selector<>(this._root, this, "content"):this.content);
+        public AuthorisedHealthcareProfessionalType.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> authorisedHealthcareProfessional() {
+            return ((this.authorisedHealthcareProfessional == null)?this.authorisedHealthcareProfessional = new AuthorisedHealthcareProfessionalType.Selector<>(this._root, this, "authorisedHealthcareProfessional"):this.authorisedHealthcareProfessional);
+        }
+
+        public ModificatorPersonType.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> other() {
+            return ((this.other == null)?this.other = new ModificatorPersonType.Selector<>(this._root, this, "other"):this.other);
+        }
+
+        public OrganisationType.Selector<TRoot, AuthorisedModificatorType.Selector<TRoot, TParent>> organisation() {
+            return ((this.organisation == null)?this.organisation = new OrganisationType.Selector<>(this._root, this, "organisation"):this.organisation);
         }
 
     }

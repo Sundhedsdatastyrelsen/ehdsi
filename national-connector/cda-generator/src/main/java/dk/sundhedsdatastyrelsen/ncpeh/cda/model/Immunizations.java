@@ -45,6 +45,7 @@ public class Immunizations {
         CdaCode targetDiseaseCode;
         String targetDiseaseText;
 
+
         /**
          * hl7:consumable / eHDSI Immunization SSIDrug.
          */
@@ -61,9 +62,14 @@ public class Immunizations {
         Integer doseNumber;
 
         /**
+         * hl7:manufacturedMaterial lotNumberText.
+         * DDV BatchNumber.
+         */
+        String batchNumber;  //lotNumberText
+
+        /**
          * DDV/eHDSI useful narrative fields.
          */
-        String batchNumber;
         String coverageDuration;
         String vaccinationPlanName;
         String vaccinationPlanItemDescription;
@@ -83,7 +89,6 @@ public class Immunizations {
         Integer vaccinationCredibility;
         Boolean confirmedByPrescriptionServer;
         Boolean activeStatus;
-        Boolean previous;
 
         /**
          * Optional comments/reason text.
