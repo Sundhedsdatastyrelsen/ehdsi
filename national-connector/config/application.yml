@@ -40,6 +40,7 @@ app:
   minlog.endpoint.url: "https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling"
   authorization-registry.endpoint.url: https://test2.ekstern-test.nspop.dk:8443/stamdata-authorization-lookup-ws/service/AuthorizationCodeService-20240105
   fsk.endpoint.url: https://test2-cnsp.ekstern-test.nspop.dk:8443/decoupling
+  ddv.endpoint.url: https://test1.fmk.netic.dk/idws_xua/ddv_xua_140
   minlog:
     max-attempts: 3
   opt-out:
