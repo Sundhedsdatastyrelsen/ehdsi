@@ -542,19 +542,17 @@
                                                 <reference value="#immunization-name-${imm?index}"/>
                                             </originalText>
                                         </code>
-
                                         <name>${imm.name}</name>
                                         <#if (imm.strength)?has_content>
                                         <pharm:desc>${imm.strength}</pharm:desc>
                                         </#if>
                                         <pharm:formCode <@common.cdaCodeAttrs imm.formCode />/>
-                                        <#if imm.batchNumber?has_content>
+                                        <#if (imm.batchNumber)?has_content>
                                         <lotNumberText>${imm.batchNumber}</lotNumberText>
                                         </#if>
                                     </manufacturedMaterial>
                                 </manufacturedProduct>
                             </consumable>
-
                             <#if imm.doseNumber??>
                             <entryRelationship typeCode="SUBJ">
                                 <observation classCode="OBS" moodCode="EVN">
@@ -568,7 +566,6 @@
                                 </observation>
                             </entryRelationship>
                             </#if>
-
                             <#if imm.targetDiseaseCode?? || imm.targetDiseaseText?has_content>
                             <entryRelationship inversionInd="false" typeCode="CAUS">
                                 <observation classCode="OBS" moodCode="EVN">
@@ -609,6 +606,26 @@
 
             <#-- List of Surgeries -->
             <#-- DK has this information, but getting access to it is not in scope -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.11"/>
+                    <code code="47519-4" codeSystem="2.16.840.1.113883.6.1" />
+                    <title>Coded List of Surgeries</title>
+                    <text>
+                        <content ID="Procedures_Unknown">Procedures unknown.</content>
+                    </text>
+                    <entry>
+                        <procedure classCode="PROC" moodCode="EVN">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.26"/>
+                            <id nullFlavor="NA"/>
+                            <code code="no-procedure-info" displayName="No information about past history of procedures" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data"/>
+                            <text><reference value="#Procedures_Unknown"/></text>
+                            <statusCode code="completed"/>
+                            <effectiveTime nullFlavor="NA" xsi:type="IVL_TS"/>
+                        </procedure>
+                    </entry>
+                </section>
+            </component>
 
             <#-- History of past illnesses (not required) -->
             <#-- Active Problems -->
