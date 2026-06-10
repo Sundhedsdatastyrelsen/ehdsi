@@ -17,11 +17,11 @@ import java.util.Optional;
 
 public class ImmunizationMapper {
 
-    public static CdaId ImmunizationId(DrugMedicationType medication) {
-        var id = medication.getIdentifier();
+    public static CdaId ImmunizationId(VaccinationType vaccine) {
+        var id = vaccine.getVaccinationIdentifier();
 
         return new CdaId(
-            Oid.DK_FMK_MEDICATION,
+            Oid.DK_DDV_VACCINATION,
             Long.toString(id)
         );
     }

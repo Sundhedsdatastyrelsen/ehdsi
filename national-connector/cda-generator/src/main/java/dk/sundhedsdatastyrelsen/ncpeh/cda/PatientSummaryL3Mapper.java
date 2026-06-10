@@ -1,9 +1,11 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ActiveSubstanceType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageFreeTextForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthTextType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.DrugStrengthType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.SubstancesType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DosageForResponseType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
@@ -54,8 +56,7 @@ public class PatientSummaryL3Mapper {
         if (input.documentId() == null || input.documentId().isBlank()) {
             throw new MapperException("Document ID is missing");
         }
-
-        var response = input.fmkMedicineCardResponse();
+        
         var patient = input.patient();
         var preferredHP = input.preferredHealthProfessional();
         var documentId = input.documentId();
@@ -70,8 +71,8 @@ public class PatientSummaryL3Mapper {
             .effectiveTime(OffsetDateTime.now())
             .patient(patient)
             .preferredHp(preferredHP)
-            .medicationSummary(medicationSummary(medications));
-        //.immunizations(vaccinations);
+            .medicationSummary(medicationSummary(medications))
+            .immunizations(immunizations(vaccinations));
 
         return patientSummaryBuilder.build();
     }
@@ -182,18 +183,15 @@ public class PatientSummaryL3Mapper {
             .build();
     }
 
-    private static ImmunizationItem immunizationItem(VaccinationType v) {
-        var planned = v.getEffectuatedPlannedItem();
-        var drug = v.getSSIDrug();
-        var vaccine = v.getVaccine();
+    private static ImmunizationItem immunizationItem(VaccinationType vaccination) {
+        var planned = vaccination.getEffectuatedPlannedItem();
+        var drug = vaccination.getSSIDrug();
+        var vaccine = vaccination.getVaccine();
         var product = ImmunizationMapper.product(drug);
 
         return ImmunizationItem.builder()
-            .immunizationId(new CdaId(
-                Oid.DK_DDV_VACCINATION,
-                Long.toString(v.getVaccinationIdentifier())))
-
-            .vaccinationDate(Utils.convertToOffsetDateTime(v.getEffectuatedDateTime()))
+            .immunizationId(ImmunizationMapper.ImmunizationId(vaccination))
+            .vaccinationDate(Utils.convertToOffsetDateTime(vaccination.getEffectuatedDateTime()))
 
             // target disease / agent: DDV does not give a clean SNOMED target disease here.
             // Use VaccineName as text, and only code it if you have a DDV->eHDSI/SNOMED map.
@@ -202,7 +200,7 @@ public class PatientSummaryL3Mapper {
 
             // Product / consumable
             .drugId(product.getDrugId())
-            .name(drug != null ? product.getName() : fallbackVaccineName(v))
+            .name(drug != null ? product.getName() : fallbackVaccineName(vaccination))
             .strength(product.getStrength())
             .formCode(product.getFormCode())
             .atcCode(product.getAtcCode())
@@ -211,19 +209,19 @@ public class PatientSummaryL3Mapper {
                 .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
                 .map(Long::intValue)
                 .orElse(null))
-            .batchNumber(v.getBatchNumber())
-            .coverageDuration(v.getCoverageDuration())
+            .batchNumber(vaccination.getBatchNumber())
+            .coverageDuration(vaccination.getCoverageDuration())
             .vaccinationPlanName(planned != null ? planned.getVaccinationPlanName() : null)
             .vaccinationPlanItemDescription(planned != null ? planned.getVaccinationPlanItemDescription() : null)
 
-            .healthProfessionalIdentifier(ImmunizationMapper.getCreatedAuthorisationId(v))
-            .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(v))
-            .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(v))
-            .administeringCentreName(ImmunizationMapper.getCreatedOrganisationName(v))
+            .healthProfessionalIdentifier(ImmunizationMapper.getCreatedAuthorisationId(vaccination))
+            .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(vaccination))
+            .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(vaccination))
+            .administeringCentreName(ImmunizationMapper.getCreatedOrganisationName(vaccination))
 
             //.vaccinationCredibility(v.getVaccinationCredibility()) //TODO: probably not needed
-            .confirmedByPrescriptionServer(v.isConfirmedByPrescriptionServer())
-            .activeStatus(v.isActiveStatus())
+            .confirmedByPrescriptionServer(vaccination.isConfirmedByPrescriptionServer())
+            .activeStatus(vaccination.isActiveStatus())
             .build();
     }
 
@@ -248,8 +246,8 @@ public class PatientSummaryL3Mapper {
 
     private static String patientMedicationInstructions(DrugMedicationType medication) {
         return Optional.ofNullable(medication.getDosage())
-            .map(d -> d.getFreeText())
-            .map(d -> d.getText())
+            .map(DosageForResponseType::getFreeText)
+            .map(DosageFreeTextForResponseType::getText)
             .orElse(null);
     }
 
