@@ -96,7 +96,6 @@ public class PatientSummaryL3Mapper {
 
         // Sort by vaccination identifier, then by vaccination plan identifier,
         // and finally by vaccination plan item index. For easier reading in the CDA
-        //TODO: maybe do the sorting after mapping?
 
         return response.getVaccination().stream()
             .filter(Objects::nonNull)
@@ -218,7 +217,7 @@ public class PatientSummaryL3Mapper {
             .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(vaccination))
             .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(vaccination))
             .administeringCentreName(ImmunizationMapper.getCreatedOrganisationName(vaccination))
-            
+
             .confirmedByPrescriptionServer(vaccination.isConfirmedByPrescriptionServer())
             .activeStatus(vaccination.isActiveStatus())
             .build();
