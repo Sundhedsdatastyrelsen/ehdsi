@@ -636,6 +636,9 @@
                 </section>
             </component>
 
+            <#-- List of Surgeries -->
+            <#-- DK has this information, but getting access to it is not in scope -->
+
             <#-- History of past illnesses (not required) -->
             <#-- Active Problems -->
             <#-- TODO what's the status of this in DK? -->
