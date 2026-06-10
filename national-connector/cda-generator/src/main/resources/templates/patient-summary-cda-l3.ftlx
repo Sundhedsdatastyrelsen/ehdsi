@@ -493,41 +493,22 @@
                     <templateId root="2.16.840.1.113883.10.20.1.6"/>
                     <code code="11369-6" codeSystem="2.16.840.1.113883.6.1"/>
                     <title>Immunizations</title>
-                    <#-- This is "the narrative block". It has several rules that make it complex to work with.
-                                                            Search for "cda narrative block" to learn more.
-                                                            Therefore this is a best-effort solution         -->
-                                       <#-- TODO: validate the narrative block is correct and/or similar to other EU countries-->
+
                     <text>
-                    <#if vaccinations?has_content>
+                    <#if (immunizations.items)?has_content>
                     <list>
-                    <#list vaccinations as vaccination>
-                        <item ID="immunization-${vaccination?index}">
-                            <#if vaccination.vaccineName?has_content>
-                            <content ID="immunization-name-${vaccination?index}">
-                                ${vaccination.vaccineName}
-                            </content><br/>
-                            <#else>
-                                Unknown vaccine<br/>
+                    <#list immunizations.items as imm>
+                        <item ID="immunization-${imm?index}">
+                            <content ID="immunization-name-${imm?index}">${imm.name}</content><br/>
+                            <#if imm.vaccinationDate?has_content>
+                            <content ID="immunization-date-${imm?index}">${imm.vaccinationDate}</content><br/>
                             </#if>
-                            <#if vaccination.effectuatedDateTime?has_content>
-                            <content ID="immunization-date-${vaccination?index}">
-                                Date: ${vaccination.effectuatedDateTime}
+                            <#if imm.vaccinationPlanName?has_content>
+                            <content ID="immunization-plan-${imm?index}">
+                                ${imm.vaccinationPlanName}<#if imm.vaccinationPlanItemDescription?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
                             </content><br/>
                             </#if>
-
-                            <#if vaccination.batchNumber?has_content>
-                            <content ID="immunization-batch-${vaccination?index}">
-                                Batch: ${vaccination.batchNumber}
-                            </content><br/>
-                            </#if>
-
-                            <#if vaccination.vaccinationPlanName?has_content>
-                            <content ID="immunization-plan-${vaccination?index}">
-                                Plan: ${vaccination.vaccinationPlanName}
-                            </content><br/>
-                            </#if>
-
-                            <paragraph>Data source: DDV 1.4.0 </paragraph>
+                            <paragraph>Data source: DDV 1.4.0</paragraph>
                         </item>
                     </#list>
                     </list>
@@ -535,110 +516,114 @@
                         <content ID="Immunizations_NoInformation">No information about immunizations.</content>
                     </#if>
                     </text>
-
-                    <#if vaccinations?has_content>
-                    <#list vaccinations as vaccination>
+                    <#if (immunizations.items)?has_content>
+                    <#list immunizations.items as imm>
                     <entry typeCode="COMP">
                         <substanceAdministration classCode="SBADM" moodCode="EVN">
-                            <#-- Immunization Activity / Vaccination Entry -->
                             <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.19"/>
-
-                            <#if vaccination.vaccinationId??>
-                            <id <@common.cdaIdAttrs vaccination.vaccinationId />/>
-                            <#else>
-                            <id nullFlavor="NI"/>
-                            </#if>
-
-                            <text>
-                                <reference value="#immunization-${vaccination?index}"/>
-                            </text>
-
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <id <@common.cdaIdAttrs imm.immunizationId />/>
+                            <code code="IMMUNIZ"
+                                  codeSystem="1.3.5.1.4.1.19376.1.5.3.2"
+                                  codeSystemName="IHEActCode"/>
+                            <text><reference value="#immunization-${imm?index}"/></text>
                             <statusCode code="completed"/>
-
-                            <#if vaccination.effectuatedDateTime?has_content>
-                            <effectiveTime value="${vaccination.effectuatedDateTime}"/>
+                            <#if imm.vaccinationDate?has_content>
+                            <effectiveTime value="${imm.vaccinationDate}"/>
                             <#else>
                             <effectiveTime nullFlavor="UNK"/>
                             </#if>
-
-                            <#-- Route is not visible in the sample; keep unknown unless mapped elsewhere -->
                             <routeCode nullFlavor="UNK"/>
-
+                            <doseQuantity nullFlavor="UNK"/>
                             <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.18"/>
+
                                     <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <code <@common.cdaCodeAttrs imm.atcCode />>
+                                            <originalText>
+                                                <reference value="#immunization-name-${imm?index}"/>
+                                            </originalText>
+                                        </code>
 
-                                        <#-- Prefer ATC code if present -->
-                                        <#if vaccination.atcCode?has_content>
-                                        <code code="${vaccination.atcCode}"
-                                              codeSystem="2.16.840.1.113883.6.73"
-                                              displayName="${vaccination.atcText!vaccination.vaccineName}"/>
-                                        <#else>
-                                        <code nullFlavor="UNK"/>
+                                        <name>${imm.name}</name>
+                                        <#if (imm.strength)?has_content>
+                                        <pharm:desc>${imm.strength}</pharm:desc>
                                         </#if>
-
-                                        <#if vaccination.drugName?has_content>
-                                        <name>${vaccination.drugName}</name>
-                                        <#elseif vaccination.vaccineName?has_content>
-                                        <name>${vaccination.vaccineName}</name>
-                                        <#else>
-                                        <name>Unknown vaccine</name>
-                                        </#if>
-
-                                        <#if vaccination.drugStrengthText?has_content>
-                                        <pharm:desc>${vaccination.drugStrengthText}</pharm:desc>
-                                        </#if>
-
-                                        <#if vaccination.drugFormCode?has_content>
-                                        <pharm:formCode code="${vaccination.drugFormCode}"
-                                                        displayName="${vaccination.drugFormText!''}"/>
+                                        <pharm:formCode <@common.cdaCodeAttrs imm.formCode />/>
+                                        <#if imm.batchNumber?has_content>
+                                        <lotNumberText>${imm.batchNumber}</lotNumberText>
                                         </#if>
                                     </manufacturedMaterial>
                                 </manufacturedProduct>
                             </consumable>
 
-                            <#if vaccination.batchNumber?has_content>
-                            <entryRelationship typeCode="COMP">
-                                <act classCode="ACT" moodCode="EVN">
-                                    <code code="LOT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
-                                    <text>
-                                        <reference value="#immunization-batch-${vaccination?index}"/>
-                                    </text>
+                            <#if imm.doseNumber??>
+                            <entryRelationship typeCode="SUBJ">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <templateId root="2.16.840.1.113883.10.20.1.46"/>
+                                    <code code="30973-2"
+                                          displayName="Dose Number"
+                                          codeSystem="2.16.840.1.113883.6.1"
+                                          codeSystemName="LOINC"/>
                                     <statusCode code="completed"/>
-                                </act>
+                                    <value xsi:type="INT" value="${imm.doseNumber}"/>
+                                </observation>
                             </entryRelationship>
                             </#if>
 
-                            <#if vaccination.vaccinationPlanName?has_content || vaccination.vaccinationPlanItemDescription?has_content>
-                            <entryRelationship typeCode="REFR">
-                                <act classCode="ACT" moodCode="INT">
-                                    <code nullFlavor="UNK"/>
-                                    <text>
-                                        <reference value="#immunization-plan-${vaccination?index}"/>
-                                    </text>
-                                    <statusCode code="active"/>
+                            <#if imm.targetDiseaseCode?? || imm.targetDiseaseText?has_content>
+                            <entryRelationship inversionInd="false" typeCode="CAUS">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+                                    <id nullFlavor="NI"/>
+                                    <code code="64572001"
+                                          displayName="Disease"
+                                          codeSystem="2.16.840.1.113883.6.96"
+                                          codeSystemName="SNOMED CT"/>
+                                    <statusCode code="completed"/>
+                                    <#if imm.targetDiseaseCode??>
+                                    <value xsi:type="CD" <@common.cdaCodeAttrs imm.targetDiseaseCode />/>
+                                    <#else>
+                                    <value xsi:type="CD" nullFlavor="UNK">
+                                        <originalText>${imm.targetDiseaseText}</originalText>
+                                    </value>
+                                    </#if>
+                                </observation>
+                            </entryRelationship>
+                            </#if>
+                            <#if (imm.comments)?has_content>
+                            <#list imm.comments as comment>
+                            <entryRelationship typeCode="SUBJ" inversionInd="true">
+                                <act classCode="ACT" moodCode="EVN">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.11"/>
+                                    <code nullFlavor="NA"/>
+                                    <text>${comment}</text>
+                                    <statusCode code="completed"/>
                                 </act>
                             </entryRelationship>
+                            </#list>
                             </#if>
                         </substanceAdministration>
                     </entry>
                     </#list>
                     <#else>
                     <entry typeCode="COMP">
-                        <substanceAdministration classCode="SBADM" moodCode="EVN">
+                        <substanceAdministration classCode="SBADM" moodCode="EVN" negationInd="true">
                             <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.19"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
                             <id nullFlavor="NA"/>
-                            <code code="no-immunization-info"
-                                  displayName="No information about immunizations"
-                                  codeSystem="2.16.840.1.113883.5.1150.1"
-                                  codeSystemName="IPS Absent and Unknown Data"/>
-                            <text>
-                                <reference value="#Immunizations_NoInformation"/>
-                            </text>
+                            <code code="IMMUNIZ"
+                                  codeSystem="1.3.5.1.4.1.19376.1.5.3.2"
+                                  codeSystemName="IHEActCode"/>
+                            <text><reference value="#Immunizations_NoInformation"/></text>
                             <statusCode code="completed"/>
                             <effectiveTime nullFlavor="NA"/>
                             <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.18"/>
                                     <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
                                         <code nullFlavor="UNK"/>
                                         <name>No information about immunizations</name>
@@ -648,28 +633,6 @@
                         </substanceAdministration>
                     </entry>
                     </#if>
-                </section>
-            </component>
-            <#-- List of Surgeries -->
-            <#-- DK has this information, but getting access to it is not in scope -->
-            <component>
-                <section>
-                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.11"/>
-                    <code code="47519-4" codeSystem="2.16.840.1.113883.6.1" />
-                    <title>Coded List of Surgeries</title>
-                    <text>
-                        <content ID="Procedures_Unknown">Procedures unknown.</content>
-                    </text>
-                    <entry>
-                        <procedure classCode="PROC" moodCode="EVN">
-                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.26"/>
-                            <id nullFlavor="NA"/>
-                            <code code="no-procedure-info" displayName="No information about past history of procedures" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data"/>
-                            <text><reference value="#Procedures_Unknown"/></text>
-                            <statusCode code="completed"/>
-                            <effectiveTime nullFlavor="NA" xsi:type="IVL_TS"/>
-                        </procedure>
-                    </entry>
                 </section>
             </component>
 
