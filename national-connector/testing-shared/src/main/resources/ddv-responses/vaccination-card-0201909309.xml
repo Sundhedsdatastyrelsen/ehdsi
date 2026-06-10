@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GetVaccinationCardResponse xmlns="http://vaccinationsregister.dk/schemas/2013/12/01" xmlns:ns2="http://www.sdsd.dk/dgws/2010/08" xmlns:ns3="http://www.sdsd.dk/dgws/2012/06">
+    <Vaccination>
+        <VaccinationIdentifier>32116019614</VaccinationIdentifier>
+        <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
+        <Modified>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <ModifiedDateTime>2025-11-24T10:55:50Z</ModifiedDateTime>
+        </Modified>
+        <Created>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2025-11-24T10:55:50Z</CreatedDateTime>
+        </Created>
+        <Reviewed>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2025-11-24T10:55:50Z</CreatedDateTime>
+        </Reviewed>
+        <Vaccine>
+            <VaccineIdentifier>32115821143</VaccineIdentifier>
+            <VaccineName>Pfizer Orig./Omicron BA. 4-5, børn 5-11 år</VaccineName>
+            <Disease>
+                <DiseaseIdentifier>32115515735</DiseaseIdentifier>
+                <DiseaseName>Covid-19</DiseaseName>
+                <DiseaseNameDK>Covid-19 sygdom</DiseaseNameDK>
+                <ATC>
+                    <Code>J07BN</Code>
+                    <Text>Covid-19 vacciner</Text>
+                </ATC>
+            </Disease>
+            <ATC>
+                <Code>J07BN01</Code>
+                <Text>Covid-19, rna-baseret vaccine</Text>
+            </ATC>
+        </Vaccine>
+        <VaccinationCredibility>Oprettet af læge / medhjælp</VaccinationCredibility>
+        <SSIDrug>
+            <ATC/>
+            <DrugIdentifier>32115821138</DrugIdentifier>
+            <DrugName>Pfizer BA. 4-5 børn 5-11 år </DrugName>
+            <DrugForm>
+                <DrugFormText>Injektionsvæske, suspension</DrugFormText>
+            </DrugForm>
+            <DrugStrength>
+                <DrugStrengthText>5/5 mikrogr.</DrugStrengthText>
+            </DrugStrength>
+        </SSIDrug>
+        <BatchNumber>1234123412341234123412341234123412341234</BatchNumber>
+        <DosageOptionIdentifier>32115821144</DosageOptionIdentifier>
+        <EffectuatedDateTime>2025-11-24T10:55:43Z</EffectuatedDateTime>
+        <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
+        <ActiveStatus>true</ActiveStatus>
+        <IsPrevious>false</IsPrevious>
+    </Vaccination>
+</GetVaccinationCardResponse>
