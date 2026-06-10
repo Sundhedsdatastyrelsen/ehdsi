@@ -75,6 +75,7 @@ services:
       - db-data:/var/lib/mysql
       - ./mysql/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
       - ./mysql/initdb:/docker-entrypoint-initdb.d-original:ro
+      - ./mysql/my.cnf:/etc/mysql/conf.d/backup.cnf:ro
     entrypoint: /usr/local/bin/entrypoint.sh
     environment:
       MYSQL_ROOT_USER: ${DB_ROOT_USER}

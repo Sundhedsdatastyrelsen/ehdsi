@@ -35,4 +35,6 @@ public class PatientSummaryL3 {
 
     MedicationSummary medicationSummary;
 
+    Immunizations immunizations;
+
 }
