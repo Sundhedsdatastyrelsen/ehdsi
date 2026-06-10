@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * These methods are concerned with retrieving and serializing responses (ePrescriptions) from FMK
+ * These methods are concerned with retrieving and serializing responses (ePrescriptions and medicationCards) from FMK
  * so that they can be used as reliable test data for e.g. CDA generation.
  */
 @SuppressWarnings("java:S106")

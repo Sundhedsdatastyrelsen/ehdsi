@@ -1,21 +1,15 @@
 
 package dk.vaccinationsregister.schemas._2013._12._01;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.kscs.util.jaxb.Buildable;
 import com.kscs.util.jaxb.PropertyTree;
 import com.kscs.util.jaxb.PropertyTreeUse;
-import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElementRef;
-import jakarta.xml.bind.annotation.XmlElementRefs;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 
@@ -28,17 +22,12 @@ import jakarta.xml.bind.annotation.XmlType;
  * <complexType name="DrugStrengthType">
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       <choice>
- *         <sequence>
- *           <element name="DrugStrengthValue" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthValueType"/>
- *           <element name="DrugStrengthUnitCode" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitCodeType"/>
- *           <element name="DrugStrengthUnitText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitTextType" minOccurs="0"/>
- *         </sequence>
- *         <sequence>
- *           <element name="DrugStrengthText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthTextType" minOccurs="0"/>
- *           <element name="DrugStrengthUnitText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitTextType" minOccurs="0"/>
- *         </sequence>
- *       </choice>
+ *       <sequence>
+ *         <element name="DrugStrengthValue" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthValueType" minOccurs="0"/>
+ *         <element name="DrugStrengthUnitCode" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitCodeType" minOccurs="0"/>
+ *         <element name="DrugStrengthUnitText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthUnitTextType" minOccurs="0"/>
+ *         <element name="DrugStrengthText" type="{http://vaccinationsregister.dk/schemas/2013/12/01}DrugStrengthTextType" minOccurs="0"/>
+ *       </sequence>
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -48,59 +37,116 @@ import jakarta.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DrugStrengthType", propOrder = {
-    "content"
+    "drugStrengthValue",
+    "drugStrengthUnitCode",
+    "drugStrengthUnitText",
+    "drugStrengthText"
 })
 public class DrugStrengthType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "DrugStrengthValue", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "DrugStrengthUnitCode", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "DrugStrengthUnitText", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "DrugStrengthText", namespace = "http://vaccinationsregister.dk/schemas/2013/12/01", type = JAXBElement.class, required = false)
-    })
-    protected List<JAXBElement<? extends Serializable>> content;
+    @XmlElement(name = "DrugStrengthValue")
+    protected BigDecimal drugStrengthValue;
+    @XmlElement(name = "DrugStrengthUnitCode")
+    protected String drugStrengthUnitCode;
+    @XmlElement(name = "DrugStrengthUnitText")
+    protected String drugStrengthUnitText;
+    @XmlElement(name = "DrugStrengthText")
+    protected String drugStrengthText;
 
     /**
-     * Gets the rest of the content model. 
-     * 
-     * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "DrugStrengthUnitText" is used by two different parts of a schema. See: 
-     * line 25 of file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_DrugStrength.xsd
-     * line 21 of file:/Users/hansbugge/gtsrc/sds/ehdsi/national-connector/epps-api/epps-ddv-api/src/main/resources/ddv/schemas/2013/12/01/SSI_DrugStrength.xsd
-     * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names:Gets the value of the content property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the Jakarta XML Binding object.
-     * This is why there is not a {@code set} method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link BigDecimal }{@code >}
-     * 
+     * Gets the value of the drugStrengthValue property.
      * 
      * @return
-     *     The value of the content property.
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
      */
-    public List<JAXBElement<? extends Serializable>> getContent() {
-        if (content == null) {
-            content = new ArrayList<>();
-        }
-        return this.content;
+    public BigDecimal getDrugStrengthValue() {
+        return drugStrengthValue;
+    }
+
+    /**
+     * Sets the value of the drugStrengthValue property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setDrugStrengthValue(BigDecimal value) {
+        this.drugStrengthValue = value;
+    }
+
+    /**
+     * Gets the value of the drugStrengthUnitCode property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDrugStrengthUnitCode() {
+        return drugStrengthUnitCode;
+    }
+
+    /**
+     * Sets the value of the drugStrengthUnitCode property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDrugStrengthUnitCode(String value) {
+        this.drugStrengthUnitCode = value;
+    }
+
+    /**
+     * Gets the value of the drugStrengthUnitText property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDrugStrengthUnitText() {
+        return drugStrengthUnitText;
+    }
+
+    /**
+     * Sets the value of the drugStrengthUnitText property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDrugStrengthUnitText(String value) {
+        this.drugStrengthUnitText = value;
+    }
+
+    /**
+     * Gets the value of the drugStrengthText property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDrugStrengthText() {
+        return drugStrengthText;
+    }
+
+    /**
+     * Sets the value of the drugStrengthText property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDrugStrengthText(String value) {
+        this.drugStrengthText = value;
     }
 
     /**
@@ -111,14 +157,10 @@ public class DrugStrengthType {
      *     A builder instance to which the state of this object will be copied.
      */
     public<_B >void copyTo(final DrugStrengthType.Builder<_B> _other) {
-        if (this.content == null) {
-            _other.content = null;
-        } else {
-            _other.content = new ArrayList<>();
-            for (JAXBElement<? extends Serializable> _item: this.content) {
-                _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-            }
-        }
+        _other.drugStrengthValue = this.drugStrengthValue;
+        _other.drugStrengthUnitCode = this.drugStrengthUnitCode;
+        _other.drugStrengthUnitText = this.drugStrengthUnitText;
+        _other.drugStrengthText = this.drugStrengthText;
     }
 
     public<_B >DrugStrengthType.Builder<_B> newCopyBuilder(final _B _parentBuilder) {
@@ -147,16 +189,21 @@ public class DrugStrengthType {
      *     A builder instance to which the state of this object will be copied.
      */
     public<_B >void copyTo(final DrugStrengthType.Builder<_B> _other, final PropertyTree _propertyTree, final PropertyTreeUse _propertyTreeUse) {
-        final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
-        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
-            if (this.content == null) {
-                _other.content = null;
-            } else {
-                _other.content = new ArrayList<>();
-                for (JAXBElement<? extends Serializable> _item: this.content) {
-                    _other.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-                }
-            }
+        final PropertyTree drugStrengthValuePropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthValue"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthValuePropertyTree!= null):((drugStrengthValuePropertyTree == null)||(!drugStrengthValuePropertyTree.isLeaf())))) {
+            _other.drugStrengthValue = this.drugStrengthValue;
+        }
+        final PropertyTree drugStrengthUnitCodePropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthUnitCode"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthUnitCodePropertyTree!= null):((drugStrengthUnitCodePropertyTree == null)||(!drugStrengthUnitCodePropertyTree.isLeaf())))) {
+            _other.drugStrengthUnitCode = this.drugStrengthUnitCode;
+        }
+        final PropertyTree drugStrengthUnitTextPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthUnitText"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthUnitTextPropertyTree!= null):((drugStrengthUnitTextPropertyTree == null)||(!drugStrengthUnitTextPropertyTree.isLeaf())))) {
+            _other.drugStrengthUnitText = this.drugStrengthUnitText;
+        }
+        final PropertyTree drugStrengthTextPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthText"));
+        if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthTextPropertyTree!= null):((drugStrengthTextPropertyTree == null)||(!drugStrengthTextPropertyTree.isLeaf())))) {
+            _other.drugStrengthText = this.drugStrengthText;
         }
     }
 
@@ -187,21 +234,20 @@ public class DrugStrengthType {
 
         protected final _B _parentBuilder;
         protected final DrugStrengthType _storedValue;
-        private List<Buildable> content;
+        private BigDecimal drugStrengthValue;
+        private String drugStrengthUnitCode;
+        private String drugStrengthUnitText;
+        private String drugStrengthText;
 
         public Builder(final _B _parentBuilder, final DrugStrengthType _other, final boolean _copy) {
             this._parentBuilder = _parentBuilder;
             if (_other!= null) {
                 if (_copy) {
                     _storedValue = null;
-                    if (_other.content == null) {
-                        this.content = null;
-                    } else {
-                        this.content = new ArrayList<>();
-                        for (JAXBElement<? extends Serializable> _item: _other.content) {
-                            this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-                        }
-                    }
+                    this.drugStrengthValue = _other.drugStrengthValue;
+                    this.drugStrengthUnitCode = _other.drugStrengthUnitCode;
+                    this.drugStrengthUnitText = _other.drugStrengthUnitText;
+                    this.drugStrengthText = _other.drugStrengthText;
                 } else {
                     _storedValue = _other;
                 }
@@ -215,16 +261,21 @@ public class DrugStrengthType {
             if (_other!= null) {
                 if (_copy) {
                     _storedValue = null;
-                    final PropertyTree contentPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("content"));
-                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(contentPropertyTree!= null):((contentPropertyTree == null)||(!contentPropertyTree.isLeaf())))) {
-                        if (_other.content == null) {
-                            this.content = null;
-                        } else {
-                            this.content = new ArrayList<>();
-                            for (JAXBElement<? extends Serializable> _item: _other.content) {
-                                this.content.add(((_item == null)?null:new Buildable.PrimitiveBuildable(_item)));
-                            }
-                        }
+                    final PropertyTree drugStrengthValuePropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthValue"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthValuePropertyTree!= null):((drugStrengthValuePropertyTree == null)||(!drugStrengthValuePropertyTree.isLeaf())))) {
+                        this.drugStrengthValue = _other.drugStrengthValue;
+                    }
+                    final PropertyTree drugStrengthUnitCodePropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthUnitCode"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthUnitCodePropertyTree!= null):((drugStrengthUnitCodePropertyTree == null)||(!drugStrengthUnitCodePropertyTree.isLeaf())))) {
+                        this.drugStrengthUnitCode = _other.drugStrengthUnitCode;
+                    }
+                    final PropertyTree drugStrengthUnitTextPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthUnitText"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthUnitTextPropertyTree!= null):((drugStrengthUnitTextPropertyTree == null)||(!drugStrengthUnitTextPropertyTree.isLeaf())))) {
+                        this.drugStrengthUnitText = _other.drugStrengthUnitText;
+                    }
+                    final PropertyTree drugStrengthTextPropertyTree = ((_propertyTree == null)?null:_propertyTree.get("drugStrengthText"));
+                    if (((_propertyTreeUse == PropertyTreeUse.INCLUDE)?(drugStrengthTextPropertyTree!= null):((drugStrengthTextPropertyTree == null)||(!drugStrengthTextPropertyTree.isLeaf())))) {
+                        this.drugStrengthText = _other.drugStrengthText;
                     }
                 } else {
                     _storedValue = _other;
@@ -239,66 +290,56 @@ public class DrugStrengthType {
         }
 
         protected<_P extends DrugStrengthType >_P init(final _P _product) {
-            if (this.content!= null) {
-                final List<JAXBElement<? extends Serializable>> content = new ArrayList<>(this.content.size());
-                for (Buildable _item: this.content) {
-                    content.add(((JAXBElement<? extends Serializable> ) _item.build()));
-                }
-                _product.content = content;
-            }
+            _product.drugStrengthValue = this.drugStrengthValue;
+            _product.drugStrengthUnitCode = this.drugStrengthUnitCode;
+            _product.drugStrengthUnitText = this.drugStrengthUnitText;
+            _product.drugStrengthText = this.drugStrengthText;
             return _product;
         }
 
         /**
-         * Adds the given items to the value of "content"
+         * Sets the new value of "drugStrengthValue" (any previous value will be replaced)
          * 
-         * @param content
-         *     Items to add to the value of the "content" property
+         * @param drugStrengthValue
+         *     New value of the "drugStrengthValue" property.
          */
-        public DrugStrengthType.Builder<_B> addContent(final Iterable<? extends JAXBElement<? extends Serializable>> content) {
-            if (content!= null) {
-                if (this.content == null) {
-                    this.content = new ArrayList<>();
-                }
-                for (JAXBElement<? extends Serializable> _item: content) {
-                    this.content.add(new Buildable.PrimitiveBuildable(_item));
-                }
-            }
+        public DrugStrengthType.Builder<_B> withDrugStrengthValue(final BigDecimal drugStrengthValue) {
+            this.drugStrengthValue = drugStrengthValue;
             return this;
         }
 
         /**
-         * Sets the new value of "content" (any previous value will be replaced)
+         * Sets the new value of "drugStrengthUnitCode" (any previous value will be
+         * replaced)
          * 
-         * @param content
-         *     New value of the "content" property.
+         * @param drugStrengthUnitCode
+         *     New value of the "drugStrengthUnitCode" property.
          */
-        public DrugStrengthType.Builder<_B> withContent(final Iterable<? extends JAXBElement<? extends Serializable>> content) {
-            if (this.content!= null) {
-                this.content.clear();
-            }
-            return addContent(content);
-        }
-
-        /**
-         * Adds the given items to the value of "content"
-         * 
-         * @param content
-         *     Items to add to the value of the "content" property
-         */
-        public DrugStrengthType.Builder<_B> addContent(JAXBElement<? extends Serializable> ... content) {
-            addContent(Arrays.asList(content));
+        public DrugStrengthType.Builder<_B> withDrugStrengthUnitCode(final String drugStrengthUnitCode) {
+            this.drugStrengthUnitCode = drugStrengthUnitCode;
             return this;
         }
 
         /**
-         * Sets the new value of "content" (any previous value will be replaced)
+         * Sets the new value of "drugStrengthUnitText" (any previous value will be
+         * replaced)
          * 
-         * @param content
-         *     New value of the "content" property.
+         * @param drugStrengthUnitText
+         *     New value of the "drugStrengthUnitText" property.
          */
-        public DrugStrengthType.Builder<_B> withContent(JAXBElement<? extends Serializable> ... content) {
-            withContent(Arrays.asList(content));
+        public DrugStrengthType.Builder<_B> withDrugStrengthUnitText(final String drugStrengthUnitText) {
+            this.drugStrengthUnitText = drugStrengthUnitText;
+            return this;
+        }
+
+        /**
+         * Sets the new value of "drugStrengthText" (any previous value will be replaced)
+         * 
+         * @param drugStrengthText
+         *     New value of the "drugStrengthText" property.
+         */
+        public DrugStrengthType.Builder<_B> withDrugStrengthText(final String drugStrengthText) {
+            this.drugStrengthText = drugStrengthText;
             return this;
         }
 
@@ -341,7 +382,10 @@ public class DrugStrengthType {
         extends com.kscs.util.jaxb.Selector<TRoot, TParent>
     {
 
-        private com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> content = null;
+        private com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthValue = null;
+        private com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthUnitCode = null;
+        private com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthUnitText = null;
+        private com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthText = null;
 
         public Selector(final TRoot root, final TParent parent, final String propertyName) {
             super(root, parent, propertyName);
@@ -351,14 +395,35 @@ public class DrugStrengthType {
         public Map<String, PropertyTree> buildChildren() {
             final Map<String, PropertyTree> products = new HashMap<>();
             products.putAll(super.buildChildren());
-            if (this.content!= null) {
-                products.put("content", this.content.init());
+            if (this.drugStrengthValue!= null) {
+                products.put("drugStrengthValue", this.drugStrengthValue.init());
+            }
+            if (this.drugStrengthUnitCode!= null) {
+                products.put("drugStrengthUnitCode", this.drugStrengthUnitCode.init());
+            }
+            if (this.drugStrengthUnitText!= null) {
+                products.put("drugStrengthUnitText", this.drugStrengthUnitText.init());
+            }
+            if (this.drugStrengthText!= null) {
+                products.put("drugStrengthText", this.drugStrengthText.init());
             }
             return products;
         }
 
-        public com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> content() {
-            return ((this.content == null)?this.content = new com.kscs.util.jaxb.Selector<>(this._root, this, "content"):this.content);
+        public com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthValue() {
+            return ((this.drugStrengthValue == null)?this.drugStrengthValue = new com.kscs.util.jaxb.Selector<>(this._root, this, "drugStrengthValue"):this.drugStrengthValue);
+        }
+
+        public com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthUnitCode() {
+            return ((this.drugStrengthUnitCode == null)?this.drugStrengthUnitCode = new com.kscs.util.jaxb.Selector<>(this._root, this, "drugStrengthUnitCode"):this.drugStrengthUnitCode);
+        }
+
+        public com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthUnitText() {
+            return ((this.drugStrengthUnitText == null)?this.drugStrengthUnitText = new com.kscs.util.jaxb.Selector<>(this._root, this, "drugStrengthUnitText"):this.drugStrengthUnitText);
+        }
+
+        public com.kscs.util.jaxb.Selector<TRoot, DrugStrengthType.Selector<TRoot, TParent>> drugStrengthText() {
+            return ((this.drugStrengthText == null)?this.drugStrengthText = new com.kscs.util.jaxb.Selector<>(this._root, this, "drugStrengthText"):this.drugStrengthText);
         }
 
     }
