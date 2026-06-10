@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class ImmunizationMapper {
 
-    public static CdaId ImmunizationId(VaccinationType vaccine) {
+    public static CdaId immunizationId(VaccinationType vaccine) {
         var id = vaccine.getVaccinationIdentifier();
 
         return new CdaId(
@@ -68,11 +68,9 @@ public class ImmunizationMapper {
             .build();
     }
 
-
     private static String getSubstanceStrengthText(DrugStrengthType strength) {
         return strength.getDrugStrengthText();
     }
-
 
     public static String fallbackVaccineName(VaccinationType vaccination) {
         return Optional.ofNullable(vaccination.getVaccine())

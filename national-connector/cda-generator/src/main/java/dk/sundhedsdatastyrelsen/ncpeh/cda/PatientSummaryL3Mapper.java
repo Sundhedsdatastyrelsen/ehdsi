@@ -56,7 +56,7 @@ public class PatientSummaryL3Mapper {
         if (input.documentId() == null || input.documentId().isBlank()) {
             throw new MapperException("Document ID is missing");
         }
-        
+
         var patient = input.patient();
         var preferredHP = input.preferredHealthProfessional();
         var documentId = input.documentId();
@@ -190,7 +190,7 @@ public class PatientSummaryL3Mapper {
         var product = ImmunizationMapper.product(drug);
 
         return ImmunizationItem.builder()
-            .immunizationId(ImmunizationMapper.ImmunizationId(vaccination))
+            .immunizationId(ImmunizationMapper.immunizationId(vaccination))
             .vaccinationDate(Utils.convertToOffsetDateTime(vaccination.getEffectuatedDateTime()))
 
             // target disease / agent: DDV does not give a clean SNOMED target disease here.
