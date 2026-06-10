@@ -218,8 +218,7 @@ public class PatientSummaryL3Mapper {
             .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(vaccination))
             .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(vaccination))
             .administeringCentreName(ImmunizationMapper.getCreatedOrganisationName(vaccination))
-
-            //.vaccinationCredibility(v.getVaccinationCredibility()) //TODO: probably not needed
+            
             .confirmedByPrescriptionServer(vaccination.isConfirmedByPrescriptionServer())
             .activeStatus(vaccination.isActiveStatus())
             .build();
