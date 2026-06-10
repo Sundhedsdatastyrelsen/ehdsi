@@ -199,7 +199,7 @@
                                         Therefore this is a best-effort solution         -->
                    <#-- TODO: validate the narrative block is correct and/or similar to other EU countries-->
                     <text>
-                    <#if medicationSummary?? && medicationSummary.items?has_content>
+                    <#if (medicationSummary.items)?has_content>
                         <list>
                         <#list medicationSummary.items as med>
                             <item ID="med-${med?index}">
@@ -485,8 +485,125 @@
                 </section>
             </component>
 
-            <#-- Immunizations (not required) -->
-            <#-- History of past illnesses (not required) -->
+            <#-- Immunizations -->
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.15"/>
+                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.23"/>
+                    <templateId root="2.16.840.1.113883.10.20.1.6"/>
+                    <code code="11369-6" codeSystem="2.16.840.1.113883.6.1"/>
+                    <title>Immunizations</title>
+                    <text>
+                    <#if (immunizations.items)?has_content>
+                    <list>
+                    <#list immunizations.items as imm>
+                        <item ID="immunization-${imm?index}">
+                            <content ID="immunization-name-${imm?index}">${imm.name}</content><br/>
+                            <#if imm.vaccinationDate?has_content>
+                            <content ID="immunization-date-${imm?index}">${imm.vaccinationDate}</content><br/>
+                            </#if>
+                            <#if imm.vaccinationPlanName?has_content>
+                            <content ID="immunization-plan-${imm?index}">
+                                ${imm.vaccinationPlanName}<#if imm.vaccinationPlanItemDescription?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
+                            </content><br/>
+                            </#if>
+                            <paragraph>Data source: DDV 1.4.0</paragraph>
+                        </item>
+                    </#list>
+                    </list>
+                    </#if>
+                    </text>
+                    <#if (immunizations.items)?has_content>
+                    <#list immunizations.items as imm>
+                    <entry typeCode="COMP">
+                        <substanceAdministration classCode="SBADM" moodCode="EVN">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.19"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.12"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <id <@common.cdaIdAttrs imm.immunizationId />/>
+                            <code code="IMMUNIZ"
+                                    codeSystem="1.3.5.1.4.1.19376.1.5.3.2"
+                                    codeSystemName="IHEActCode"/>
+                            <text><reference value="#immunization-${imm?index}"/></text>
+                            <statusCode code="completed"/>
+                            <#if imm.vaccinationDate?has_content>
+                            <effectiveTime value="${imm.vaccinationDate}"/>
+                            <#else>
+                            <effectiveTime nullFlavor="UNK"/>
+                            </#if>
+                            <routeCode nullFlavor="UNK"/>
+                            <doseQuantity nullFlavor="UNK"/>
+                            <consumable typeCode="CSM">
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.18"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <code <@common.cdaCodeAttrs imm.atcCode />>
+                                            <originalText>
+                                                <reference value="#immunization-name-${imm?index}"/>
+                                            </originalText>
+                                        </code>
+                                        <name>${imm.name}</name>
+                                        <#if (imm.strength)?has_content>
+                                        <pharm:desc>${imm.strength}</pharm:desc>
+                                        </#if>
+                                        <pharm:formCode <@common.cdaCodeAttrs imm.formCode />/>
+                                        <#if (imm.batchNumber)?has_content>
+                                        <lotNumberText>${imm.batchNumber}</lotNumberText>
+                                        </#if>
+                                    </manufacturedMaterial>
+                                </manufacturedProduct>
+                            </consumable>
+                            <#if imm.doseNumber??>
+                            <entryRelationship typeCode="SUBJ">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <templateId root="2.16.840.1.113883.10.20.1.46"/>
+                                    <code code="30973-2"
+                                            displayName="Dose Number"
+                                            codeSystem="2.16.840.1.113883.6.1"
+                                            codeSystemName="LOINC"/>
+                                    <statusCode code="completed"/>
+                                    <value xsi:type="INT" value="${imm.doseNumber}"/>
+                                </observation>
+                            </entryRelationship>
+                            </#if>
+                            <#if imm.targetDiseaseCode?? || imm.targetDiseaseText?has_content>
+                            <entryRelationship inversionInd="false" typeCode="CAUS">
+                                <observation classCode="OBS" moodCode="EVN">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
+                                    <id nullFlavor="NI"/>
+                                    <code code="64572001"
+                                            displayName="Disease"
+                                            codeSystem="2.16.840.1.113883.6.96"
+                                            codeSystemName="SNOMED CT"/>
+                                    <statusCode code="completed"/>
+                                    <#if imm.targetDiseaseCode??>
+                                    <value xsi:type="CD" <@common.cdaCodeAttrs imm.targetDiseaseCode />/>
+                                    <#else>
+                                    <value xsi:type="CD" nullFlavor="UNK">
+                                        <originalText>${imm.targetDiseaseText}</originalText>
+                                    </value>
+                                    </#if>
+                                </observation>
+                            </entryRelationship>
+                            </#if>
+                            <#if (imm.comments)?has_content>
+                            <#list imm.comments as comment>
+                            <entryRelationship typeCode="SUBJ" inversionInd="true">
+                                <act classCode="ACT" moodCode="EVN">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.11"/>
+                                    <code nullFlavor="NA"/>
+                                    <text>${comment}</text>
+                                    <statusCode code="completed"/>
+                                </act>
+                            </entryRelationship>
+                            </#list>
+                            </#if>
+                        </substanceAdministration>
+                    </entry>
+                    </#list>
+                </#if>
+                </section>
+            </component>
 
             <#-- List of Surgeries -->
             <#-- DK has this information, but getting access to it is not in scope -->
@@ -511,6 +628,7 @@
                 </section>
             </component>
 
+            <#-- History of past illnesses (not required) -->
             <#-- Active Problems -->
             <#-- TODO what's the status of this in DK? -->
             <component>

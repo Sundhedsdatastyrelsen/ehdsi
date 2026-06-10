@@ -264,7 +264,11 @@ public class FmkResponseStorage {
         var dir = Files.createDirectories(
             Path.of("testing-shared", "src", "main", "resources", rawResponseDir));
         for (var cpr : rawResponseCprs) {
-            var token = Sosi.getToken(Sosi.Audience.FMK, cpr);
+            var token = Sosi.getToken(Sosi.TokenArgs.builder()
+                .audience(Sosi.Audience.FMK)
+                .patientCpr(cpr)
+                .healthProfessionalRole("221")
+                .build());
             var f = dir.resolve("get-prescription-" + cpr + ".xml").toFile();
             var prescriptions = frs.getPrescriptionResponse(cpr, token);
             serializeToFile(frs.createXmlFromPrescription(prescriptions), f);
