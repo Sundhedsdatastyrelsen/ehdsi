@@ -493,7 +493,6 @@
                     <templateId root="2.16.840.1.113883.10.20.1.6"/>
                     <code code="11369-6" codeSystem="2.16.840.1.113883.6.1"/>
                     <title>Immunizations</title>
-
                     <text>
                     <#if (immunizations.items)?has_content>
                     <list>
@@ -512,6 +511,7 @@
                         </item>
                     </#list>
                     </list>
+                    </#if>
                     </text>
                     <#if (immunizations.items)?has_content>
                     <#list immunizations.items as imm>
@@ -601,6 +601,7 @@
                         </substanceAdministration>
                     </entry>
                     </#list>
+                </#if>
                 </section>
             </component>
 
