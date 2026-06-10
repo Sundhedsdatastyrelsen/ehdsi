@@ -5,9 +5,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
@@ -97,8 +97,15 @@ public class PatientSummaryService {
 
     // TODO Left in the caller, because I think we will need it later.
     @WithSpan
-    public List<EpsosDocumentDto> getPatientSummary(String patientId, String rootedDocumentId, NspDgwsIdentity system, EuropeanHcpIdwsToken token, String europeanHealthProfessionalId) {
-        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId, token);
+    public List<EpsosDocumentDto> getPatientSummary(
+        String patientId,
+        String rootedDocumentId,
+        NspDgwsIdentity system,
+        EuropeanHcpIdwsToken fmkToken,
+        EuropeanHcpIdwsToken ddvToken,
+        String europeanHealthProfessionalId
+    ) {
+        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId, fmkToken, ddvToken);
         try {
             var documentLevel = DocumentIdMapper.parseDocumentLevel(rootedDocumentId);
             var cda = switch (documentLevel) {
@@ -113,7 +120,14 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    private PatientSummaryInput assembleInput(String patientId, NspDgwsIdentity system, String europeanHealthProfessionalId, String docId, EuropeanHcpIdwsToken token) {
+    private PatientSummaryInput assembleInput(
+        String patientId,
+        NspDgwsIdentity system,
+        String europeanHealthProfessionalId,
+        String docId,
+        EuropeanHcpIdwsToken fmkToken,
+        EuropeanHcpIdwsToken ddvToken
+    ) {
         var cpr = PatientIdMapper.toCpr(patientId);
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
         var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
@@ -129,8 +143,8 @@ public class PatientSummaryService {
             .build();
 
         try {
-            var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, token);
-            var ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, token);
+            var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, fmkToken);
+            var ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, ddvToken);
             return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
         } catch (JAXBException e) {
             throw new PublicException(500, "Could not retrieve prescriptions.", e);

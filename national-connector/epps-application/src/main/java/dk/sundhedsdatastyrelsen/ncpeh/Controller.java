@@ -98,7 +98,7 @@ public class Controller {
         return prescriptionService.findEPrescriptionDocuments(
             params.getPatientId(),
             filter,
-            this.getFmkToken(params.getSoapHeader()));
+            this.getIdwsToken(params.getSoapHeader(), Audience.FMK));
     }
 
     /// There is only one patient summary per patient, but the MyHealth@EU api functions like a document repository, so
@@ -128,7 +128,7 @@ public class Controller {
             return prescriptionService.getPrescriptions(
                 params.getPatientId(),
                 filter,
-                this.getFmkToken(params.getSoapHeader()),
+                this.getIdwsToken(params.getSoapHeader(), Audience.FMK),
                 semanticConfig.atcCodeSystemVersion()
             );
         } else if (Objects.equals(repoId, Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value)) {
@@ -141,7 +141,8 @@ public class Controller {
                 params.getPatientId(),
                 params.getDocumentId(),
                 systemIdentity,
-                this.getFmkToken(params.getSoapHeader()),
+                this.getIdwsToken(params.getSoapHeader(), Audience.FMK),
+                this.getIdwsToken(params.getSoapHeader(), Audience.DDV),
                 // TODO pick out the right identity from the soap header.
                 "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1");
         }
@@ -165,7 +166,7 @@ public class Controller {
             prescriptionService.submitDispensation(
                 request.getPatientId(),
                 parsedRequestDocument,
-                this.getFmkToken(request.getSoapHeader()));
+                this.getIdwsToken(request.getSoapHeader(), Audience.FMK));
         } catch (Exception e) {
             log.error("Dispensation failed", e);
             try {
@@ -192,7 +193,7 @@ public class Controller {
             prescriptionService.undoDispensation(
                 request.getDiscardDispenseDetails().getPatientId(),
                 parsedRequestDocument,
-                this.getFmkToken(request.getSoapHeader()));
+                this.getIdwsToken(request.getSoapHeader(), Audience.FMK));
         } catch (Exception e) {
             log.error("Dispensation discard failed.", e);
             try {
@@ -204,9 +205,9 @@ public class Controller {
         }
     }
 
-    private EuropeanHcpIdwsToken getFmkToken(String soapHeader) {
+    private EuropeanHcpIdwsToken getIdwsToken(String soapHeader, Audience audience) {
         try {
-            return this.authenticationService.xcaSoapHeaderToIdwsToken(soapHeader, "https://fmk");
+            return this.authenticationService.xcaSoapHeaderToIdwsToken(soapHeader, audience.value);
         } catch (AuthenticationException e) {
             throw new PublicException(401, "Could not authenticate.", e);
         }
@@ -215,6 +216,17 @@ public class Controller {
     private void checkOptOut(String patientId, OptOutService.Service service) {
         if (optOutService.hasOptedOut(PatientIdMapper.toCpr(patientId), service)) {
             throw new PublicException(400, "Citizen has opted out of service: %s".formatted(service));
+        }
+    }
+
+    enum Audience {
+        FMK("https://fmk"),
+        DDV("https://ddv");
+
+        public final String value;
+
+        Audience(String value) {
+            this.value = value;
         }
     }
 }
