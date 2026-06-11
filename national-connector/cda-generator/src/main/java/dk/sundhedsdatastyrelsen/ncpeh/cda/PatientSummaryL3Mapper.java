@@ -97,7 +97,6 @@ public class PatientSummaryL3Mapper {
 
         // Sort by vaccination identifier, then by vaccination plan identifier,
         // and finally by vaccination plan item index. For easier reading in the CDA
-
         return response.getVaccination().stream()
             .filter(Objects::nonNull)
             .filter(v -> v.isNegativeConsentIndicator() == null || !v.isNegativeConsentIndicator())

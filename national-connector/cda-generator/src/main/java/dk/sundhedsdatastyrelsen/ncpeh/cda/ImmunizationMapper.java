@@ -47,7 +47,7 @@ public class ImmunizationMapper {
             .orElse(null);
     }
 
-    public static CdaCode getAtcCode (SSIDrugType ssiDrug){
+    public static CdaCode getAtcCode(SSIDrugType ssiDrug) {
         return Optional.ofNullable(ssiDrug)
             .map(SSIDrugType::getATC)
             .filter(atc -> atc.getCode() != null && atc.getText() != null)
