@@ -99,7 +99,7 @@ public class PatientSummaryL3Mapper {
 
         return response.getVaccination().stream()
             .filter(Objects::nonNull)
-            .filter(v -> Boolean.FALSE.equals(v.isNegativeConsentIndicator()))
+            .filter(v -> v.isNegativeConsentIndicator() == null || !v.isNegativeConsentIndicator())
             .sorted(
                 Comparator.comparing(VaccinationType::getVaccinationIdentifier)
                     .thenComparing(
