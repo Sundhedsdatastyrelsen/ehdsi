@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static dk.sundhedsdatastyrelsen.ncpeh.cda.ImmunizationMapper.fallbackVaccineName;
+import static dk.sundhedsdatastyrelsen.ncpeh.cda.ImmunizationMapper.immunizationId;
 
 @Slf4j
 public class PatientSummaryL3Mapper {
@@ -186,7 +187,6 @@ public class PatientSummaryL3Mapper {
         var planned = vaccination.getEffectuatedPlannedItem();
         var drug = vaccination.getSSIDrug();
         var vaccine = vaccination.getVaccine();
-        var product = ImmunizationMapper.product(drug);
 
         return ImmunizationItem.builder()
             .immunizationId(ImmunizationMapper.immunizationId(vaccination))
@@ -198,11 +198,11 @@ public class PatientSummaryL3Mapper {
             .targetDiseaseText(vaccine != null ? vaccine.getVaccineName() : null)
 
             // Product / consumable
-            .drugId(product.getDrugId())
-            .name(drug != null ? product.getName() : fallbackVaccineName(vaccination))
-            .strength(product.getStrength())
-            .formCode(product.getFormCode())
-            .atcCode(product.getAtcCode())
+            .drugId(ImmunizationMapper.getDrugId(drug))
+            .name(drug != null ? ImmunizationMapper.getDrugName(drug) : fallbackVaccineName(vaccination))
+            .strength(ImmunizationMapper.getStrength(drug))
+            .formCode(ImmunizationMapper.getFormCode(drug))
+            .atcCode(ImmunizationMapper.getAtcCode(drug))
 
             .doseNumber(Optional.ofNullable(planned)
                 .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
@@ -212,7 +212,6 @@ public class PatientSummaryL3Mapper {
             .coverageDuration(vaccination.getCoverageDuration())
             .vaccinationPlanName(planned != null ? planned.getVaccinationPlanName() : null)
             .vaccinationPlanItemDescription(planned != null ? planned.getVaccinationPlanItemDescription() : null)
-
             .healthProfessionalIdentifier(ImmunizationMapper.getCreatedAuthorisationId(vaccination))
             .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(vaccination))
             .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(vaccination))

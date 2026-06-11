@@ -50,10 +50,10 @@ public class Immunizations {
          * hl7:consumable / eHDSI Immunization SSIDrug.
          */
         CdaCode drugId;
-        @NonNull String name;
+        String name;
         String strength;
-        @NonNull CdaCode formCode;
-        @NonNull CdaCode atcCode;
+        CdaCode formCode;
+        CdaCode atcCode;
 
         /**
          * hl7:entryRelationship Dose Number.

@@ -498,13 +498,15 @@
                     <list>
                     <#list immunizations.items as imm>
                         <item ID="immunization-${imm?index}">
-                            <content ID="immunization-name-${imm?index}">${imm.name}</content><br/>
-                            <#if imm.vaccinationDate?has_content>
+                            <content ID="immunization-name-${imm?index}">
+                                <#if imm.name?has_content>${imm.name}</#if>
+                            </content><br/>
+                            <#if (imm.vaccinationDate)?has_content>
                             <content ID="immunization-date-${imm?index}">${imm.vaccinationDate}</content><br/>
                             </#if>
-                            <#if imm.vaccinationPlanName?has_content>
+                            <#if (imm.vaccinationPlanName)?has_content>
                             <content ID="immunization-plan-${imm?index}">
-                                ${imm.vaccinationPlanName}<#if imm.vaccinationPlanItemDescription?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
+                                ${imm.vaccinationPlanName}<#if (imm.vaccinationPlanItemDescription)?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
                             </content><br/>
                             </#if>
                             <paragraph>Data source: DDV 1.4.0</paragraph>
@@ -537,16 +539,33 @@
                                 <manufacturedProduct classCode="MANU">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.18"/>
                                     <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <#if imm.atcCode??>
                                         <code <@common.cdaCodeAttrs imm.atcCode />>
                                             <originalText>
                                                 <reference value="#immunization-name-${imm?index}"/>
                                             </originalText>
                                         </code>
+                                        <#else>
+                                        <code nullFlavor="UNK">
+                                            <originalText>
+                                                <reference value="#immunization-name-${imm?index}"/>
+                                            </originalText>
+                                        </code>
+                                        </#if>
+                                        <#if (imm.name)?has_content>
                                         <name>${imm.name}</name>
+                                        </#if>
+
                                         <#if (imm.strength)?has_content>
                                         <pharm:desc>${imm.strength}</pharm:desc>
                                         </#if>
+
+                                        <#if imm.formCode??>
                                         <pharm:formCode <@common.cdaCodeAttrs imm.formCode />/>
+                                        <#else>
+                                        <pharm:formCode nullFlavor="UNK"/>
+                                        </#if>
+
                                         <#if (imm.batchNumber)?has_content>
                                         <lotNumberText>${imm.batchNumber}</lotNumberText>
                                         </#if>

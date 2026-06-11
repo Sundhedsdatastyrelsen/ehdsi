@@ -8,6 +8,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.DdvResponseStorage;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class PatientSummaryL3MapperTest {
     static PatientSummaryL3 getModel() {
         try {
             var cpr = "0410009234";
-            var response = FmkResponseStorage.getTestMedicineCards(cpr);
+            var fmkresponse = FmkResponseStorage.getTestMedicineCards(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -53,7 +54,7 @@ class PatientSummaryL3MapperTest {
                 "test-document-id",
                 preferredHp,
                 patient,
-                response,
+                fmkresponse,
                 null
             );
 
