@@ -1,12 +1,10 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
-import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.DrugMedicationType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.vaccinationsregister.schemas._2013._12._01.AuthorisedHealthcareProfessionalType;
 import dk.vaccinationsregister.schemas._2013._12._01.CreatedType;
 import dk.vaccinationsregister.schemas._2013._12._01.DrugStrengthType;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.vaccinationsregister.schemas._2013._12._01.ModificatorType;
 import dk.vaccinationsregister.schemas._2013._12._01.OrganisationType;
 import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
@@ -26,46 +24,51 @@ public class ImmunizationMapper {
         );
     }
 
-    public static Product product(SSIDrugType ssiDrug) {
+    public static CdaCode getDrugId(SSIDrugType ssiDrug) {
+        return Optional.ofNullable(ssiDrug)
+            .map(SSIDrugType::getDrugIdentifier)
+            .map(id -> CdaCode.builder()
+                .codeSystem(Oid.DK_DDV_SSI_DRUG)
+                .code(String.valueOf(id))
+                .build())
+            .orElse(null);
+    }
 
-        if (ssiDrug == null || ssiDrug.getDrugName() == null) {
-            return null;
-        }
-        var drugId = ssiDrug.getDrugIdentifier();
-        var codedId = drugId != null ? CdaCode.builder()
-            .codeSystem(Oid.DK_DDV_SSI_DRUG)
-            .code(String.valueOf(drugId))
-            .build() : null;
+    public static String getDrugName(SSIDrugType ssiDrug) {
+        return Optional.ofNullable(ssiDrug)
+            .map(SSIDrugType::getDrugName)
+            .orElse(null);
+    }
 
-        var form = ssiDrug.getDrugForm();
-        if (form == null || form.getDrugFormCode() == null || form.getDrugFormText() == null) {
-            return null;
-        }
+    public static String getStrength(SSIDrugType ssiDrug) {
+        return Optional.ofNullable(ssiDrug)
+            .map(SSIDrugType::getDrugStrength)
+            .map(ImmunizationMapper::getSubstanceStrengthText)
+            .orElse(null);
+    }
 
-        var atc = ssiDrug.getATC();
-        if (atc == null || atc.getCode() == null || atc.getText() == null) {
-            return null;
-        }
+    public static CdaCode getAtcCode(SSIDrugType ssiDrug) {
+        return Optional.ofNullable(ssiDrug)
+            .map(SSIDrugType::getATC)
+            .filter(atc -> atc.getCode() != null && atc.getText() != null)
+            .map(atc -> CdaCode.builder()
+                .codeSystem(Oid.ATC)
+                .code(atc.getCode())
+                .displayName(atc.getText())
+                .build())
+            .orElse(null);
+    }
 
-        var formCode = CdaCode.builder()
-            .codeSystem(Oid.DK_LMS22) //TODO: Check if this is the right code.
-            .code(form.getDrugFormCode())
-            .displayName(form.getDrugFormText())
-            .build();
-
-        var atcCode = CdaCode.builder()
-            .codeSystem(Oid.ATC)
-            .code(atc.getCode())
-            .displayName(atc.getText())
-            .build();
-
-        return Product.builder()
-            .drugId(codedId)
-            .name(ssiDrug.getDrugName())
-            .strength(getSubstanceStrengthText(ssiDrug.getDrugStrength()))
-            .formCode(formCode)
-            .atcCode(atcCode)
-            .build();
+    public static CdaCode getFormCode(SSIDrugType ssiDrug) {
+        return Optional.ofNullable(ssiDrug)
+            .map(SSIDrugType::getDrugForm)
+            .filter(form -> form.getDrugFormCode() != null && form.getDrugFormText() != null)
+            .map(form -> CdaCode.builder()
+                .codeSystem(Oid.DK_LMS22)
+                .code(form.getDrugFormCode())
+                .displayName(form.getDrugFormText())
+                .build())
+            .orElse(null);
     }
 
     private static String getSubstanceStrengthText(DrugStrengthType strength) {

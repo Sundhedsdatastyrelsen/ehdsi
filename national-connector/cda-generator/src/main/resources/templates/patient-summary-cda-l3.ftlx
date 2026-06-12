@@ -498,13 +498,15 @@
                     <list>
                     <#list immunizations.items as imm>
                         <item ID="immunization-${imm?index}">
-                            <content ID="immunization-name-${imm?index}">${imm.name}</content><br/>
-                            <#if imm.vaccinationDate?has_content>
+                            <content ID="immunization-name-${imm?index}">
+                                <#if imm.name?has_content>${imm.name}</#if>
+                            </content><br/>
+                            <#if (imm.vaccinationDate)?has_content>
                             <content ID="immunization-date-${imm?index}">${imm.vaccinationDate}</content><br/>
                             </#if>
-                            <#if imm.vaccinationPlanName?has_content>
+                            <#if (imm.vaccinationPlanName)?has_content>
                             <content ID="immunization-plan-${imm?index}">
-                                ${imm.vaccinationPlanName}<#if imm.vaccinationPlanItemDescription?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
+                                ${imm.vaccinationPlanName}<#if (imm.vaccinationPlanItemDescription)?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
                             </content><br/>
                             </#if>
                             <paragraph>Data source: DDV 1.4.0</paragraph>
@@ -536,17 +538,36 @@
                             <consumable typeCode="CSM">
                                 <manufacturedProduct classCode="MANU">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.18"/>
+                                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.2"/>
+                                    <templateId root="2.16.840.1.113883.10.20.1.53"/>
                                     <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <#if imm.atcCode??>
                                         <code <@common.cdaCodeAttrs imm.atcCode />>
                                             <originalText>
                                                 <reference value="#immunization-name-${imm?index}"/>
                                             </originalText>
                                         </code>
+                                        <#else>
+                                        <code nullFlavor="UNK">
+                                            <originalText>
+                                                <reference value="#immunization-name-${imm?index}"/>
+                                            </originalText>
+                                        </code>
+                                        </#if>
+                                        <#if (imm.name)?has_content>
                                         <name>${imm.name}</name>
+                                        </#if>
+
                                         <#if (imm.strength)?has_content>
                                         <pharm:desc>${imm.strength}</pharm:desc>
                                         </#if>
+
+                                        <#if imm.formCode??>
                                         <pharm:formCode <@common.cdaCodeAttrs imm.formCode />/>
+                                        <#else>
+                                        <pharm:formCode nullFlavor="UNK"/>
+                                        </#if>
+
                                         <#if (imm.batchNumber)?has_content>
                                         <lotNumberText>${imm.batchNumber}</lotNumberText>
                                         </#if>
@@ -566,7 +587,8 @@
                                 </observation>
                             </entryRelationship>
                             </#if>
-                            <#if imm.targetDiseaseCode?? || imm.targetDiseaseText?has_content>
+                            <#if false>
+                            <#-- DK does not have information on adverse reactions to the vaccination. -->
                             <entryRelationship inversionInd="false" typeCode="CAUS">
                                 <observation classCode="OBS" moodCode="EVN">
                                     <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.7"/>
@@ -619,7 +641,7 @@
                         <procedure classCode="PROC" moodCode="EVN">
                             <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.26"/>
                             <id nullFlavor="NA"/>
-                            <code code="no-procedure-info" displayName="No information about past history of procedures" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data"/>
+                            <code code="no-procedure-info" displayName="No information about past history of procedures" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent And Unknown Data"/>
                             <text><reference value="#Procedures_Unknown"/></text>
                             <statusCode code="completed"/>
                             <effectiveTime nullFlavor="NA" xsi:type="IVL_TS"/>
@@ -661,7 +683,7 @@
                             <participant typeCode="DEV">
                                 <participantRole classCode="MANU">
                                     <playingDevice classCode="DEV" determinerCode="INSTANCE">
-                                        <code code="no-device-info" displayName="No information about devices" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent and Unknown Data"/>
+                                        <code code="no-device-info" displayName="No information about devices" codeSystem="2.16.840.1.113883.5.1150.1" codeSystemName="IPS Absent And Unknown Data"/>
                                     </playingDevice>
                                 </participantRole>
                             </participant>
