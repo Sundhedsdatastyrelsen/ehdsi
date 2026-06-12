@@ -25,6 +25,7 @@ class PatientSummaryL3MapperTest {
         try {
             var cpr = "0410009234";
             var fmkresponse = FmkResponseStorage.getTestMedicineCards(cpr);
+            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -55,7 +56,7 @@ class PatientSummaryL3MapperTest {
                 preferredHp,
                 patient,
                 fmkresponse,
-                null
+                ddvresponse
             );
 
             return PatientSummaryL3Mapper.model(input);

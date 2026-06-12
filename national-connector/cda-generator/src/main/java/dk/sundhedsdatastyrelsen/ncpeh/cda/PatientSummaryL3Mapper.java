@@ -21,7 +21,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.vaccinationsregister.schemas._2013._12._01.EffectuatedPlannedItemType;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
-import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static dk.sundhedsdatastyrelsen.ncpeh.cda.ImmunizationMapper.fallbackVaccineName;
-import static dk.sundhedsdatastyrelsen.ncpeh.cda.ImmunizationMapper.immunizationId;
 
 @Slf4j
 public class PatientSummaryL3Mapper {
@@ -198,7 +194,7 @@ public class PatientSummaryL3Mapper {
 
             // Product / consumable
             .drugId(ImmunizationMapper.getDrugId(drug))
-            .name(drug != null ? ImmunizationMapper.getDrugName(drug) : fallbackVaccineName(vaccination))
+            .name(drug != null ? ImmunizationMapper.getDrugName(drug) : ImmunizationMapper.fallbackVaccineName(vaccination))
             .strength(ImmunizationMapper.getStrength(drug))
             .formCode(ImmunizationMapper.getFormCode(drug))
             .atcCode(ImmunizationMapper.getAtcCode(drug))
