@@ -83,9 +83,9 @@ public class Immunizations {
          * Can be filled from Created modificator.
          */
         String healthProfessionalIdentifier;
-        String healthProfessionalName;
+        String performerName;
         String administeringCentreIdentifier;
-        String administeringCentreName;
+        String performerOrganizationName;
 
         /**
          * Local DDV status/metadata.

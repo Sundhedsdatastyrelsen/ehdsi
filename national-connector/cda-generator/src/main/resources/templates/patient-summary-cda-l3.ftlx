@@ -500,10 +500,12 @@
     <#list immunizations.items as imm>
                         <item ID="immunization-${imm?index}">
                             <content ID="immunization-name-${imm?index}">
-                                <#if imm.name?has_content>${imm.name}</#if>
+                                Vaccine name: ${(imm.name)!"Unknown"}
                             </content><br/>
+                            Disease: ${(imm.targetDiseaseText)!"Unknown"}<br/>
+                            ATC: ${(imm.atcCode.displayName)!"Unknown"}<br/>
         <#if (imm.vaccinationDate)?has_content>
-                            <content ID="immunization-date-${imm?index}">${imm.friendlyVaccinationDate}</content><br/>
+                            <content ID="immunization-date-${imm?index}">Date: ${imm.friendlyVaccinationDate}</content><br/>
         </#if>
         <#if (imm.vaccinationPlanName)?has_content>
                             <content ID="immunization-plan-${imm?index}">
@@ -575,6 +577,23 @@
                                     </manufacturedMaterial>
                                 </manufacturedProduct>
                             </consumable>
+        <#if (imm.performerName)?has_content || (imm.performerOrganizationName)?has_content>
+                            <performer>
+                                <assignedEntity>
+                                    <id nullFlavor="NA"/>
+            <#if (imm.performerName)?has_content>
+                                    <assignedPerson>
+                                        <name>${imm.performerName}</name>
+                                    </assignedPerson>
+            </#if>
+            <#if (imm.performerOrganizationName)?has_content>
+                                    <representedOrganization>
+                                        <name>${imm.performerOrganizationName}</name>
+                                    </representedOrganization>
+            </#if>
+                                </assignedEntity>
+                            </performer>
+        </#if>
         <#if imm.doseNumber??>
                             <entryRelationship typeCode="SUBJ">
                                 <observation classCode="OBS" moodCode="EVN">

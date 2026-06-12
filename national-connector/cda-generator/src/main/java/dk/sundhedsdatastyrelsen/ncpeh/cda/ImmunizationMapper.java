@@ -1,10 +1,10 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.vaccinationsregister.schemas._2013._12._01.AuthorisedHealthcareProfessionalType;
 import dk.vaccinationsregister.schemas._2013._12._01.CreatedType;
 import dk.vaccinationsregister.schemas._2013._12._01.DrugStrengthType;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.vaccinationsregister.schemas._2013._12._01.ModificatorType;
 import dk.vaccinationsregister.schemas._2013._12._01.OrganisationType;
 import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
@@ -47,9 +47,11 @@ public class ImmunizationMapper {
             .orElse(null);
     }
 
-    public static CdaCode getAtcCode(SSIDrugType ssiDrug) {
-        return Optional.ofNullable(ssiDrug)
-            .map(SSIDrugType::getATC)
+    public static CdaCode getAtcCode(VaccinationType vaccination) {
+        // There is an ATC code on both SSI drug and vaccine, but so far we've found that it is mostly set
+        // on the vaccine.
+        return Optional.ofNullable(vaccination.getVaccine())
+            .map(VaccineType::getATC)
             .filter(atc -> atc.getCode() != null && atc.getText() != null)
             .map(atc -> CdaCode.builder()
                 .codeSystem(Oid.ATC)

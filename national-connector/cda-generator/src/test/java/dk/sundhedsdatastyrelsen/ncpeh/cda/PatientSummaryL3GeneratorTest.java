@@ -37,7 +37,7 @@ class PatientSummaryL3GeneratorTest {
         var oid = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID;
         var extension = "testtestL3";
         var documentId = "testtest";
-        var title = "epSOS Patient Summary Hans Christian Andersen - testtest";
+        var title = "Patient Summary Hans Christian Andersen - testtest";
         var cpr = "0410009234";
 
         var preferredHP = preferredHp("DK");
@@ -121,7 +121,7 @@ class PatientSummaryL3GeneratorTest {
         var oid = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID;
         var extension = "testtestL3";
         var documentId = "testtest";
-        var title = "epSOS Patient Summary Hans Christian Andersen - testtest";
+        var title = "Patient Summary Hans Christian Andersen - testtest";
         var cpr = "1004219992";
 
         var preferredHP = preferredHp("DK");
