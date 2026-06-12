@@ -503,7 +503,7 @@
                                 <#if imm.name?has_content>${imm.name}</#if>
                             </content><br/>
         <#if (imm.vaccinationDate)?has_content>
-                            <content ID="immunization-date-${imm?index}">${imm.vaccinationDate}</content><br/>
+                            <content ID="immunization-date-${imm?index}">${imm.friendlyVaccinationDate}</content><br/>
         </#if>
         <#if (imm.vaccinationPlanName)?has_content>
                             <content ID="immunization-plan-${imm?index}">
