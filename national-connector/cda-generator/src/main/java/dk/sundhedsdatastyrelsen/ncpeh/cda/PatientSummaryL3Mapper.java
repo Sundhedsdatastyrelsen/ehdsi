@@ -12,16 +12,17 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Dosage;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary.MedicationItem;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Immunizations;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Immunizations.ImmunizationItem;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary.MedicationItem;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
 import dk.vaccinationsregister.schemas._2013._12._01.EffectuatedPlannedItemType;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
+import dk.vaccinationsregister.schemas._2013._12._01.VaccineType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -112,9 +113,8 @@ public class PatientSummaryL3Mapper {
 
     public static String makeTitle(String documentId, Patient patient) {
         var patientName = patient.getName();
-        // #TODO: Figure out correct title format
         return String.format(
-            "epSOS Patient Summary %s - %s", patientName.getFullName(), documentId);
+            "Patient Summary %s - %s", patientName.getFullName(), documentId);
     }
 
     private static MedicationSummary medicationSummary(List<DrugMedicationType> medications) {
@@ -181,7 +181,6 @@ public class PatientSummaryL3Mapper {
     private static ImmunizationItem immunizationItem(VaccinationType vaccination) {
         var planned = vaccination.getEffectuatedPlannedItem();
         var drug = vaccination.getSSIDrug();
-        var vaccine = vaccination.getVaccine();
 
         return ImmunizationItem.builder()
             .immunizationId(ImmunizationMapper.immunizationId(vaccination))
@@ -190,14 +189,21 @@ public class PatientSummaryL3Mapper {
             // target disease / agent: DDV does not give a clean SNOMED target disease here.
             // Use VaccineName as text, and only code it if you have a DDV->eHDSI/SNOMED map.
             .targetDiseaseCode(null)
-            .targetDiseaseText(vaccine != null ? vaccine.getVaccineName() : null)
+            .targetDiseaseText(Optional.ofNullable(vaccination.getVaccine())
+                .map(VaccineType::getDisease)
+                .map(l -> l.stream()
+                    .map(d -> Optional.ofNullable(d.getDiseaseName()).orElse(d.getDiseaseNameDK()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining("; ")))
+                .filter(s -> !s.isEmpty())
+                .orElse(null))
 
             // Product / consumable
             .drugId(ImmunizationMapper.getDrugId(drug))
             .name(drug != null ? ImmunizationMapper.getDrugName(drug) : ImmunizationMapper.fallbackVaccineName(vaccination))
             .strength(ImmunizationMapper.getStrength(drug))
             .formCode(ImmunizationMapper.getFormCode(drug))
-            .atcCode(ImmunizationMapper.getAtcCode(drug))
+            .atcCode(ImmunizationMapper.getAtcCode(vaccination))
 
             .doseNumber(Optional.ofNullable(planned)
                 .map(EffectuatedPlannedItemType::getVaccinationPlanItemIndex)
@@ -208,9 +214,9 @@ public class PatientSummaryL3Mapper {
             .vaccinationPlanName(planned != null ? planned.getVaccinationPlanName() : null)
             .vaccinationPlanItemDescription(planned != null ? planned.getVaccinationPlanItemDescription() : null)
             .healthProfessionalIdentifier(ImmunizationMapper.getCreatedAuthorisationId(vaccination))
-            .healthProfessionalName(ImmunizationMapper.getCreatedAuthorName(vaccination))
+            .performerName(ImmunizationMapper.getCreatedAuthorName(vaccination))
             .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(vaccination))
-            .administeringCentreName(ImmunizationMapper.getCreatedOrganisationName(vaccination))
+            .performerOrganizationName(ImmunizationMapper.getCreatedOrganisationName(vaccination))
 
             .confirmedByPrescriptionServer(vaccination.isConfirmedByPrescriptionServer())
             .activeStatus(vaccination.isActiveStatus())

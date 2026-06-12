@@ -7,6 +7,7 @@ import lombok.Value;
 import lombok.With;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Value
@@ -38,13 +39,16 @@ public class Immunizations {
             return vaccinationDate == null ? null : Utils.cdaDate(vaccinationDate);
         }
 
+        public String getFriendlyVaccinationDate() {
+            return vaccinationDate == null ? null : vaccinationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+
         /**
          * hl7:code / target disease or agent.
          * Example: rabies, influenza, covid-19.
          */
         CdaCode targetDiseaseCode;
         String targetDiseaseText;
-
 
         /**
          * hl7:consumable / eHDSI Immunization SSIDrug.
@@ -79,9 +83,9 @@ public class Immunizations {
          * Can be filled from Created modificator.
          */
         String healthProfessionalIdentifier;
-        String healthProfessionalName;
+        String performerName;
         String administeringCentreIdentifier;
-        String administeringCentreName;
+        String performerOrganizationName;
 
         /**
          * Local DDV status/metadata.

@@ -7,6 +7,7 @@ import lombok.Value;
 import lombok.With;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Value
 @Builder
@@ -37,4 +38,6 @@ public class PatientSummaryL3 {
 
     Immunizations immunizations;
 
+    /// Used for ids for empty sections.
+    String randomUuid = UUID.randomUUID().toString();
 }
