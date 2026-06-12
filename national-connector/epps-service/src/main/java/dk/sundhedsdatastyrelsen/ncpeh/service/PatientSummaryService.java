@@ -2,7 +2,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
@@ -29,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Slf4j
 public class PatientSummaryService {
@@ -43,7 +43,7 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    public DocumentAssociationForPatientSummaryDocumentMetadataDto getDocumentMetadata(String patientId, NspDgwsIdentity identity) {
+    public DocumentAssociationForPatientSummaryDocumentMetadataDto getDocumentMetadata(String patientId) {
         // We generate a new id every time, as we cannot tell when the underlying data is updated. The drawback is that
         // if clients ask for an old ID, they will still get the most recent data. Other options were considered.
         // We could have returned the same id every time, and just used the patient id in the request to figure out who
@@ -59,38 +59,29 @@ public class PatientSummaryService {
 
         var effectiveTime = OffsetDateTime.now();
 
-        var l3 = new EpsosDocumentMetadataDto(l3Id);
-        l3.setPatientId(patientId);
-        l3.setEffectiveTime(effectiveTime);
-        l3.setRepositoryId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value);
-        // TODO who's the author?
-        l3.setAuthor("Not implemented");
-        // TODO what should the title be?
-        l3.setTitle("Not implemented");
-        l3.setClassCode(ClassCodeDto._60591_5); // Patient summary document
-        l3.setFormat(DocumentFormatDto.XML);
-        // TODO Double check these values
-        l3.setLanguage("da-DK"); //We always include danish text in free-text
-        l3.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
-            .confidentialityDisplay("Normal"));
-        //The following data is set to this by convention to indicate a document generated on-demand
-        // https://profiles.ihe.net/ITI/TF/Volume2/ITI-38.html
-        l3.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709"); //SHA1 hash of a zero length file
-        l3.setSize(0L);
+        Function<String, EpsosDocumentMetadataDto> commonMetadata = id -> {
+            var md = new EpsosDocumentMetadataDto(id);
+            md.setPatientId(patientId);
+            md.setEffectiveTime(effectiveTime);
+            md.setRepositoryId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value);
+            md.setAuthor("The Danish Health Data Authority");
+            md.setTitle("Patient Summary");
+            md.setClassCode(ClassCodeDto._60591_5); // Patient summary document
+            md.setLanguage("da-DK"); //We always include Danish text in free-text
+            md.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
+                .confidentialityDisplay("Normal"));
+            //The following data is set to this by convention to indicate a document generated on-demand
+            // https://profiles.ihe.net/ITI/TF/Volume2/ITI-38.html
+            md.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709"); //SHA1 hash of a zero length file
+            md.setSize(0L);
+            return md;
+        };
 
-        var l1 = new EpsosDocumentMetadataDto(l1Id);
-        l1.setPatientId(patientId);
-        l1.setEffectiveTime(effectiveTime);
-        l1.setRepositoryId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value);
-        l1.setAuthor("Not implemented");
-        l1.setTitle("Not implemented");
-        l1.setClassCode(ClassCodeDto._60591_5);
+        var l3 = commonMetadata.apply(l3Id);
+        l3.setFormat(DocumentFormatDto.XML);
+
+        var l1 = commonMetadata.apply(l1Id);
         l1.setFormat(DocumentFormatDto.PDF);
-        l1.setLanguage("da-DK");
-        l1.setConfidentiality(new ConfidentialityMetadataDto().confidentialityCode("N")
-            .confidentialityDisplay("Normal"));
-        l1.setHash("da39a3ee5e6b4b0d3255bfef95601890afd80709");
-        l1.setSize(0L);
 
         return new DocumentAssociationForPatientSummaryDocumentMetadataDto(l3, l1);
     }
@@ -100,12 +91,11 @@ public class PatientSummaryService {
     public List<EpsosDocumentDto> getPatientSummary(
         String patientId,
         String rootedDocumentId,
-        NspDgwsIdentity system,
         EuropeanHcpIdwsToken fmkToken,
         EuropeanHcpIdwsToken ddvToken,
         String europeanHealthProfessionalId
     ) {
-        var input = assembleInput(patientId, system, europeanHealthProfessionalId, rootedDocumentId, fmkToken, ddvToken);
+        var input = assembleInput(patientId, europeanHealthProfessionalId, rootedDocumentId, fmkToken, ddvToken);
         try {
             var documentLevel = DocumentIdMapper.parseDocumentLevel(rootedDocumentId);
             var cda = switch (documentLevel) {
@@ -122,7 +112,6 @@ public class PatientSummaryService {
     @WithSpan
     private PatientSummaryInput assembleInput(
         String patientId,
-        NspDgwsIdentity system,
         String europeanHealthProfessionalId,
         String docId,
         EuropeanHcpIdwsToken fmkToken,
