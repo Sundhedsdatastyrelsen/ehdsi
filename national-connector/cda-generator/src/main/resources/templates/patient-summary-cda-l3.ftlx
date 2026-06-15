@@ -496,26 +496,26 @@
                     <title>Immunizations</title>
                     <text>
 <#if (immunizations.items)?has_content>
-                    <list>
+                        <list>
     <#list immunizations.items as imm>
-                        <item ID="immunization-${imm?index}">
-                            <content ID="immunization-name-${imm?index}">
-                                Vaccine name: ${(imm.name)!"Unknown"}
-                            </content><br/>
-                            Disease: ${(imm.targetDiseaseText)!"Unknown"}<br/>
-                            ATC: ${(imm.atcCode.displayName)!"Unknown"}<br/>
+                            <item ID="immunization-${imm?index}">
+                                <content ID="immunization-name-${imm?index}">
+                                    Vaccine name: ${(imm.name)!"Unknown"}
+                                </content><br/>
+                                Disease: ${(imm.targetDiseaseText)!"Unknown"}<br/>
+                                ATC: ${(imm.atcCode.code)!"Unknown"}<br/>
         <#if (imm.vaccinationDate)?has_content>
-                            <content ID="immunization-date-${imm?index}">Date: ${imm.friendlyVaccinationDate}</content><br/>
+                                <content ID="immunization-date-${imm?index}">Date: ${imm.friendlyVaccinationDate}</content><br/>
         </#if>
         <#if (imm.vaccinationPlanName)?has_content>
-                            <content ID="immunization-plan-${imm?index}">
-                                ${imm.vaccinationPlanName}<#if (imm.vaccinationPlanItemDescription)?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
-                            </content><br/>
+                                <content ID="immunization-plan-${imm?index}">
+                                    ${imm.vaccinationPlanName}<#if (imm.vaccinationPlanItemDescription)?has_content> - ${imm.vaccinationPlanItemDescription}</#if>
+                                </content><br/>
         </#if>
-                            <paragraph>Data source: DDV 1.4.0</paragraph>
-                        </item>
+                                <paragraph>Data source: DDV 1.4.0</paragraph>
+                            </item>
     </#list>
-                    </list>
+                        </list>
 </#if>
                     </text>
 <#if (immunizations.items)?has_content>
