@@ -3,7 +3,6 @@ package dk.sundhedsdatastyrelsen.ncpeh;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationException;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.AuthenticationService;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
@@ -47,7 +46,6 @@ public class Controller {
     private final PatientSummaryService patientSummaryService;
     private final CprService cprService;
     private final AuthenticationService authenticationService;
-    private final NspDgwsIdentity.System systemIdentity;
     private final PatientSummaryConfig patientSummaryConfig;
     private final SemanticConfig semanticConfig;
     private final OptOutService optOutService;
@@ -57,7 +55,6 @@ public class Controller {
         PatientSummaryService patientSummaryService,
         CprService cprService,
         AuthenticationService authenticationService,
-        NspDgwsIdentity.System systemIdentity,
         OptOutConfig optOutConfig,
         PatientSummaryConfig patientSummaryConfig,
         SemanticConfig semanticConfig
@@ -66,7 +63,6 @@ public class Controller {
         this.patientSummaryService = patientSummaryService;
         this.cprService = cprService;
         this.authenticationService = authenticationService;
-        this.systemIdentity = systemIdentity;
         this.patientSummaryConfig = patientSummaryConfig;
         this.semanticConfig = semanticConfig;
 
@@ -113,8 +109,7 @@ public class Controller {
         }
 
         checkOptOut(params.getPatientId(), OptOutService.Service.PATIENT_SUMMARY);
-        // TODO should maybe be a user identity instead? It's not used in patient summary yet.
-        return patientSummaryService.getDocumentMetadata(params.getPatientId(), systemIdentity);
+        return patientSummaryService.getDocumentMetadata(params.getPatientId());
     }
 
     @PostMapping(path = "/api/fetch-document/")
@@ -140,7 +135,6 @@ public class Controller {
             return patientSummaryService.getPatientSummary(
                 params.getPatientId(),
                 params.getDocumentId(),
-                systemIdentity,
                 this.getIdwsToken(params.getSoapHeader(), Audience.FMK),
                 this.getIdwsToken(params.getSoapHeader(), Audience.DDV),
                 // TODO pick out the right identity from the soap header.
