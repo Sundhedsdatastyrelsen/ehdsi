@@ -260,28 +260,28 @@ class PatientSummaryL3GeneratorTest {
             xpathEngine.evaluate(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:name)[1]",
                 generatedCda),
-            is(not(emptyOrNullString())));
+            is("Pfizer BioNTech COVID-19 Vacc"));
 
         assertThat(
-            "immunization drug name is present in first second",
+            "immunization drug name is present in second entry",
             xpathEngine.evaluate(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:name)[2]",
                 generatedCda),
-            is(not(emptyOrNullString())));
+            is("Rabies-imovax"));
 
         assertThat(
             "immunization effective time is present in first",
             xpathEngine.evaluate(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:substanceAdministration/hl7:effectiveTime/@value)[1]",
                 generatedCda),
-            is(not(emptyOrNullString())));
+            is("20240605"));
 
         assertThat(
             "immunization effective time is present in second",
             xpathEngine.evaluate(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:substanceAdministration/hl7:effectiveTime/@value)[2]",
                 generatedCda),
-            is(not(emptyOrNullString())));
+            is("20260614"));
 
         assertThat(
             "immunization manufactured material code exists in first",
@@ -291,7 +291,7 @@ class PatientSummaryL3GeneratorTest {
             is(not(emptyIterable())));
 
         assertThat(
-            "immunization manufactured material code exists in first",
+            "immunization manufactured material code exists in second",
             xpathEngine.selectNodes(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:code)[2]",
                 generatedCda),
@@ -353,12 +353,12 @@ class PatientSummaryL3GeneratorTest {
             xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:participant//hl7:telecom/@value", generatedCda),
             is("tel:+4511111111"));
         assertThat(
-            "there are five medication entries",
+            "there are 1 medication entry",
             xpathEngine.evaluate("count(/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component[1]/hl7:section/hl7:entry)", generatedCda),
             is("1"));
 
         assertThat(
-            "there is one immunization entry",
+            "there is 0 immunization entry",
             xpathEngine.evaluate(
                 "count(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']/hl7:entry)",
                 generatedCda),
