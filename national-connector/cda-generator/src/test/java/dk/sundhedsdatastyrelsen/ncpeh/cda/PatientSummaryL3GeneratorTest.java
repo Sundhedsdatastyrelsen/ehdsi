@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.DdvResponseStorage;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Assertions;
@@ -180,6 +181,188 @@ class PatientSummaryL3GeneratorTest {
             xpathEngine.evaluate("(/hl7:ClinicalDocument//hl7:section[hl7:code/@code='10160-0']//hl7:manufacturedMaterial/hl7:name)[1]", generatedCda),
             is("No information about medications"));
 
+    }
+
+    @Test
+    void testMultipleImmunization() throws JAXBException {
+        var oid = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID;
+        var extension = "testtestL3";
+        var documentId = "testtest";
+        var title = "Patient Summary Hans Christian Andersen - testtest";
+        var cpr = "0410009234";
+
+        var preferredHP = preferredHp("DK");
+        var patient = patient("DK");
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
+        var immunization = DdvResponseStorage.getTestVaccination(cpr);
+
+        var input = new PatientSummaryInput(documentId, preferredHP, patient, medicationSummary, immunization);
+        var psL3 = PatientSummaryL3Mapper.model(input);
+        var cda = PatientSummaryL3Generator.generate(psL3);
+
+        Assertions.assertNotNull(cda);
+
+        //Initialize xPath Engine to read the data to validate it
+        XPathEngine xpathEngine = new JAXPXPathEngine();
+        Map<String, String> namespaces = new HashMap<>();
+        namespaces.put("hl7", "urn:hl7-org:v3");
+        xpathEngine.setNamespaceContext(namespaces);
+
+        String oidPath = "/hl7:ClinicalDocument/hl7:id/@root";
+        String idExtensionPath = "/hl7:ClinicalDocument/hl7:id/@extension";
+        String titlePath = "/hl7:ClinicalDocument/hl7:title";
+        String patientBirthTimePath = "/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value";
+        String softwareNamePath = "/hl7:ClinicalDocument/hl7:author//hl7:softwareName";
+
+        var generatedCda = Input.fromString(cda).build();
+
+        assertThat("oid matches", xpathEngine.evaluate(oidPath, generatedCda), is(oid.value));
+        assertThat("extension matches", xpathEngine.evaluate(idExtensionPath, generatedCda), is(extension));
+        assertThat("title matches", xpathEngine.evaluate(titlePath, generatedCda), is(title));
+        assertThat("patient birth time matches", xpathEngine.evaluate(patientBirthTimePath, generatedCda), is("19821103"));
+        assertThat(
+            "patient family name is correct",
+            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:family", generatedCda),
+            is("Andersen"));
+        assertThat(
+            "patient first name is correct",
+            xpathEngine.evaluate("(/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:given)[1]", generatedCda),
+            is("Hans"));
+        assertThat(
+            "patient middle name is correct",
+            xpathEngine.evaluate("(/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:given)[2]", generatedCda),
+            is("Christian"));
+        assertThat("software name is there", xpathEngine.evaluate(softwareNamePath, generatedCda), is("NCPeH Denmark"));
+        assertThat(
+            "preferred health professional phone is correct",
+            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:participant//hl7:telecom/@value", generatedCda),
+            is("tel:+4511111111"));
+        assertThat(
+            "there are five medication entries",
+            xpathEngine.evaluate("count(/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component[1]/hl7:section/hl7:entry)", generatedCda),
+            is("5"));
+        assertThat(
+            "there is two immunization entry",
+            xpathEngine.evaluate(
+                "count(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']/hl7:entry)",
+                generatedCda),
+            is("2"));
+
+        assertThat(
+            "immunization section title is correct",
+            xpathEngine.evaluate(
+                "/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']/hl7:title",
+                generatedCda),
+            is("Immunizations"));
+
+        assertThat(
+            "immunization drug name is present in first entry",
+            xpathEngine.evaluate(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:name)[1]",
+                generatedCda),
+            is("Pfizer BioNTech COVID-19 Vacc"));
+
+        assertThat(
+            "immunization drug name is present in second entry",
+            xpathEngine.evaluate(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:name)[2]",
+                generatedCda),
+            is("Rabies-imovax"));
+
+        assertThat(
+            "immunization effective time is present in first",
+            xpathEngine.evaluate(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:substanceAdministration/hl7:effectiveTime/@value)[1]",
+                generatedCda),
+            is("20240605"));
+
+        assertThat(
+            "immunization effective time is present in second",
+            xpathEngine.evaluate(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:substanceAdministration/hl7:effectiveTime/@value)[2]",
+                generatedCda),
+            is("20260614"));
+
+        assertThat(
+            "immunization manufactured material code exists in first",
+            xpathEngine.selectNodes(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:code)[1]",
+                generatedCda),
+            is(not(emptyIterable())));
+
+        assertThat(
+            "immunization manufactured material code exists in second",
+            xpathEngine.selectNodes(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:code)[2]",
+                generatedCda),
+            is(not(emptyIterable())));
+    }
+
+    @Test
+    void testEmptyImmunization() throws JAXBException {
+        var oid = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID;
+        var extension = "testtestL3";
+        var documentId = "testtest";
+        var title = "Patient Summary Hans Christian Andersen - testtest";
+        var cpr = "1004219992";
+
+        var preferredHP = preferredHp("DK");
+        var patient = patient("DK");
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
+        var immunization = DdvResponseStorage.getTestVaccination(cpr);
+
+        var input = new PatientSummaryInput(documentId, preferredHP, patient, medicationSummary, immunization);
+        var psL3 = PatientSummaryL3Mapper.model(input);
+        var cda = PatientSummaryL3Generator.generate(psL3);
+
+        Assertions.assertNotNull(cda);
+
+        //Initialize xPath Engine to read the data to validate it
+        XPathEngine xpathEngine = new JAXPXPathEngine();
+        Map<String, String> namespaces = new HashMap<>();
+        namespaces.put("hl7", "urn:hl7-org:v3");
+        xpathEngine.setNamespaceContext(namespaces);
+
+        String oidPath = "/hl7:ClinicalDocument/hl7:id/@root";
+        String idExtensionPath = "/hl7:ClinicalDocument/hl7:id/@extension";
+        String titlePath = "/hl7:ClinicalDocument/hl7:title";
+        String patientBirthTimePath = "/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value";
+        String softwareNamePath = "/hl7:ClinicalDocument/hl7:author//hl7:softwareName";
+
+        var generatedCda = Input.fromString(cda).build();
+
+        assertThat("oid matches", xpathEngine.evaluate(oidPath, generatedCda), is(oid.value));
+        assertThat("extension matches", xpathEngine.evaluate(idExtensionPath, generatedCda), is(extension));
+        assertThat("title matches", xpathEngine.evaluate(titlePath, generatedCda), is(title));
+        assertThat("patient birth time matches", xpathEngine.evaluate(patientBirthTimePath, generatedCda), is("19821103"));
+        assertThat(
+            "patient family name is correct",
+            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:family", generatedCda),
+            is("Andersen"));
+        assertThat(
+            "patient first name is correct",
+            xpathEngine.evaluate("(/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:given)[1]", generatedCda),
+            is("Hans"));
+        assertThat(
+            "patient middle name is correct",
+            xpathEngine.evaluate("(/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:given)[2]", generatedCda),
+            is("Christian"));
+        assertThat("software name is there", xpathEngine.evaluate(softwareNamePath, generatedCda), is("NCPeH Denmark"));
+        assertThat(
+            "preferred health professional phone is correct",
+            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:participant//hl7:telecom/@value", generatedCda),
+            is("tel:+4511111111"));
+        assertThat(
+            "there are 1 medication entry",
+            xpathEngine.evaluate("count(/hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component[1]/hl7:section/hl7:entry)", generatedCda),
+            is("1"));
+
+        assertThat(
+            "there is 0 immunization entry",
+            xpathEngine.evaluate(
+                "count(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']/hl7:entry)",
+                generatedCda),
+            is("0"));
     }
 
     @Test

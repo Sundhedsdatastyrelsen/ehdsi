@@ -1,2 +1,172 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<GetVaccinationCardResponse xmlns="http://vaccinationsregister.dk/schemas/2013/12/01" xmlns:ns2="http://www.sdsd.dk/dgws/2010/08" xmlns:ns3="http://www.sdsd.dk/dgws/2012/06"/>
+<GetVaccinationCardResponse xmlns="http://vaccinationsregister.dk/schemas/2013/12/01" xmlns:ns2="http://www.sdsd.dk/dgws/2010/08" xmlns:ns3="http://www.sdsd.dk/dgws/2012/06">
+    <Vaccination>
+        <VaccinationIdentifier>32116052971</VaccinationIdentifier>
+        <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
+        <Modified>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <ModifiedDateTime>2026-06-12T08:34:41Z</ModifiedDateTime>
+        </Modified>
+        <Created>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-12T08:34:41Z</CreatedDateTime>
+        </Created>
+        <Reviewed>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-12T08:34:41Z</CreatedDateTime>
+        </Reviewed>
+        <Vaccine>
+            <VaccineIdentifier>32115515736</VaccineIdentifier>
+            <VaccineName>Pfizer BioNTech Covid-19 vacc</VaccineName>
+            <Disease>
+                <DiseaseIdentifier>32115515735</DiseaseIdentifier>
+                <DiseaseName>Covid-19</DiseaseName>
+                <DiseaseNameDK>Covid-19 sygdom</DiseaseNameDK>
+                <ATC>
+                    <Code>J07BN</Code>
+                    <Text>Covid-19 vacciner</Text>
+                </ATC>
+            </Disease>
+            <ATC>
+                <Code>J07BN01</Code>
+                <Text>Covid-19, rna-baseret vaccine</Text>
+            </ATC>
+        </Vaccine>
+        <VaccinationCredibility>Oprettet af læge / medhjælp</VaccinationCredibility>
+        <SSIDrug>
+            <ATC/>
+            <DrugIdentifier>32115514735</DrugIdentifier>
+            <DrugName>Pfizer BioNTech COVID-19 Vacc</DrugName>
+            <DrugForm>
+                <DrugFormText>injektionsvæske, suspension</DrugFormText>
+            </DrugForm>
+            <DrugStrength/>
+        </SSIDrug>
+        <BatchNumber>513452435</BatchNumber>
+        <DosageOptionIdentifier>32115515737</DosageOptionIdentifier>
+        <EffectuatedDateTime>2024-06-05T22:00:00Z</EffectuatedDateTime>
+        <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
+        <ActiveStatus>true</ActiveStatus>
+        <IsPrevious>false</IsPrevious>
+    </Vaccination>
+    <Vaccination>
+        <VaccinationIdentifier>32116054015</VaccinationIdentifier>
+        <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
+        <Modified>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <ModifiedDateTime>2026-06-17T07:23:41Z</ModifiedDateTime>
+        </Modified>
+        <Created>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-17T07:23:41Z</CreatedDateTime>
+        </Created>
+        <Reviewed>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-17T07:23:41Z</CreatedDateTime>
+        </Reviewed>
+        <Vaccine>
+            <VaccineIdentifier>1617175465</VaccineIdentifier>
+            <VaccineName>Rabies</VaccineName>
+            <Disease>
+                <DiseaseIdentifier>21</DiseaseIdentifier>
+                <DiseaseName>Rabies</DiseaseName>
+                <DiseaseNameDK>Hundegalskab</DiseaseNameDK>
+                <ATC>
+                    <Code>J07BG</Code>
+                    <Text>Rabies vacciner</Text>
+                </ATC>
+            </Disease>
+            <ATC>
+                <Code>J07BG01</Code>
+                <Text>Rabies, inaktiveret, hele virus</Text>
+            </ATC>
+            <VaccineKeywordsText>Imovax Rage
+                Lyssavac N
+                Rabdomune
+                Rabipur
+                Rabivac
+                Rasilvax
+                RDCV
+                SMBV
+                Vaccin Rabique Pasteur
+                Verorab</VaccineKeywordsText>
+        </Vaccine>
+        <VaccinationCredibility>Oprettet af læge / medhjælp</VaccinationCredibility>
+        <SSIDrug>
+            <ATC/>
+            <DrugIdentifier>191316</DrugIdentifier>
+            <DrugName>Rabies-imovax</DrugName>
+            <DrugForm>
+                <DrugFormText>pulver og solvens til injektionsvæske, opløsning</DrugFormText>
+            </DrugForm>
+            <DrugStrength>
+                <DrugStrengthText>&gt;2,5 IE</DrugStrengthText>
+            </DrugStrength>
+        </SSIDrug>
+        <BatchNumber>testtest1234</BatchNumber>
+        <EffectuatedDateTime>2026-06-14T22:00:00Z</EffectuatedDateTime>
+        <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
+        <ActiveStatus>true</ActiveStatus>
+        <IsPrevious>false</IsPrevious>
+    </Vaccination>
+</GetVaccinationCardResponse>
