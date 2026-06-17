@@ -47,20 +47,11 @@ public class DdvResponseStorage {
 
     private static final String rawResponseDir = "ddv-responses";
     private static final String testVaccinationsDir = "test-vaccinations";
-    private static final List<String> testCprs = List.of("0201909309", "0410009234", "1004219992");
 
     @NonNull
     private final DdvClientIdws ddvClient;
 
-    private static final List<String> rawResponseCprs = List.of("0201909309", "0410009234","1004219992");
-
-    public static List<String> rawResponseCprs() {
-        return rawResponseCprs;
-    }
-
-    public static List<String> e2eTestCprs() {
-        return testCprs;
-    }
+    private static final List<String> rawResponseCprs = List.of("0201909309", "0410009234", "1004219992");
 
     public DdvResponseStorage(@NonNull DdvClientIdws ddvClient) {
         this.ddvClient = ddvClient;
