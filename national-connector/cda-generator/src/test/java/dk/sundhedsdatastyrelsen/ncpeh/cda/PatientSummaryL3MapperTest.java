@@ -68,7 +68,7 @@ class PatientSummaryL3MapperTest {
     static PatientSummaryL3 getModelWithEmptyMedicineCard() {
         try {
             var cpr = "1004219992";
-            var response = FmkResponseStorage.getTestMedicineCards(cpr);
+            var fmkResponse = FmkResponseStorage.getTestMedicineCards(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -98,7 +98,7 @@ class PatientSummaryL3MapperTest {
                 "test-document-id",
                 preferredHp,
                 patient,
-                response,
+                fmkResponse,
                 null
             );
 
@@ -115,6 +115,7 @@ class PatientSummaryL3MapperTest {
         Assertions.assertNotNull(model.getPatient());
         Assertions.assertNotNull(model.getMedicationSummary());
         Assertions.assertNotNull(model.getMedicationSummary().getItems());
+        Assertions.assertNotNull(model.getImmunizations().getItems());
         assertThat(model.getMedicationSummary().getItems(), is(not(empty())));
     }
 
