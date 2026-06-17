@@ -37,6 +37,8 @@ class AuthenticationIT {
 
         assertThat(idwsToken.audience(), is("https://fmk"));
         assertThat(idwsToken.assertion(), notNullValue());
+        assertThat(idwsToken.subjectId(), is("John House"));
+        assertThat(idwsToken.countryOfTreatment(), is("DK"));
     }
 
     @Test
@@ -46,6 +48,8 @@ class AuthenticationIT {
 
         assertThat(idwsToken.audience(), is("https://fmk"));
         assertThat(idwsToken.assertion(), notNullValue());
+        assertThat(idwsToken.subjectId(), is("Helvi Inkinen"));
+        assertThat(idwsToken.countryOfTreatment(), is("FI"));
     }
 
     @Test
