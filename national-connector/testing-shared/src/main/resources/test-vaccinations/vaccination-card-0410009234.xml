@@ -76,7 +76,7 @@
         <DosageOptionIdentifier>32115515737</DosageOptionIdentifier>
         <EffectuatedDateTime>2024-06-05T22:00:00Z</EffectuatedDateTime>
         <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
-        <ActiveStatus>true</ActiveStatus>
+        <ActiveStatus>false</ActiveStatus>
         <IsPrevious>false</IsPrevious>
     </Vaccination>
     <Vaccination>
