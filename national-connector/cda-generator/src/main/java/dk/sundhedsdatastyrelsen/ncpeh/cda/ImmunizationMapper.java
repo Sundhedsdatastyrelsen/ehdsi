@@ -5,12 +5,15 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.vaccinationsregister.schemas._2013._12._01.AuthorisedHealthcareProfessionalType;
 import dk.vaccinationsregister.schemas._2013._12._01.CreatedType;
 import dk.vaccinationsregister.schemas._2013._12._01.DrugStrengthType;
+import dk.vaccinationsregister.schemas._2013._12._01.ModificatorPersonType;
 import dk.vaccinationsregister.schemas._2013._12._01.ModificatorType;
 import dk.vaccinationsregister.schemas._2013._12._01.OrganisationType;
+import dk.vaccinationsregister.schemas._2013._12._01.PartlyDefinedEffectuatorType;
 import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccineType;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class ImmunizationMapper {
@@ -91,11 +94,36 @@ public class ImmunizationMapper {
             .orElse(null);
     }
 
+    public static String getCountryCode(VaccinationType vaccination) {
+        return Optional.ofNullable(vaccination.getCreated())
+            .map(CreatedType::getModificator)
+            .map(ModificatorType::getPartlyDefinedEffectuator)
+            .map(PartlyDefinedEffectuatorType::getEffectuatedInCountryCode)
+            .orElse(null);
+    }
+
     public static String getCreatedAuthorName(VaccinationType vaccination) {
         return Optional.ofNullable(vaccination.getCreated())
             .map(CreatedType::getModificator)
             .map(ModificatorType::getAuthorisedHealthcareProfessional)
             .map(AuthorisedHealthcareProfessionalType::getName)
+            .orElse(null);
+    }
+
+    public static String getCreatedAuthorName(VaccinationType vaccination) {
+        return getCreatedModificator(vaccination)
+            .flatMap(mod -> firstNonNull(
+                Optional.ofNullable(mod.getAuthorisedHealthcareProfessional())
+                    .map(AuthorisedHealthcareProfessionalType::getName),
+
+                Optional.ofNullable(mod.getOther())
+                    .map(ModificatorPersonType::getName),
+
+                Optional.ofNullable(mod.getOrganisation())
+                    .map(OrganisationType::getName),
+
+                Optional.ofNullable(mod.getSystemName())
+            ))
             .orElse(null);
     }
 
@@ -113,5 +141,19 @@ public class ImmunizationMapper {
             .map(ModificatorType::getOrganisation)
             .map(OrganisationType::getName)
             .orElse(null);
+    }
+
+    private static Optional<ModificatorType> getCreatedModificator(VaccinationType vaccination) {
+        return Optional.ofNullable(vaccination)
+            .map(VaccinationType::getCreated)
+            .map(CreatedType::getModificator);
+    }
+
+    @SafeVarargs
+    private static <T> Optional<T> firstNonNull(Optional<T>... values) {
+        return Arrays.stream(values)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst();
     }
 }
