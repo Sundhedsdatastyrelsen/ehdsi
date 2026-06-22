@@ -7,7 +7,6 @@ import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registra
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.SourceForEntryType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpId;
-import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
 import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
@@ -201,12 +200,12 @@ public class MinLogService implements AutoCloseable {
     public void logEventOnPatient(
         String cpr,
         String eventText,
-        EuropeanHcpId hcpIdwsToken
+        EuropeanHcpId hcpId
     ) {
         logEventOnPatient(
             cpr,
             eventText,
-            "%s - %s".formatted(hcpIdwsToken.countryOfTreatment(), hcpIdwsToken.subjectId())
+            "%s - %s".formatted(hcpId.countryOfTreatment(), hcpId.subjectId())
         );
     }
 
