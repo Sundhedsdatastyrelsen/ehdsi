@@ -14,7 +14,7 @@ public record EuropeanHcpIdwsToken(
     String audience,
     Instant created,
     Instant expires
-) {
+) implements EuropeanHcpId {
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SAML);
 
     /// Get the "XSPA Subject" attribute value from the HCP token – i.e., the full name of the HCP
