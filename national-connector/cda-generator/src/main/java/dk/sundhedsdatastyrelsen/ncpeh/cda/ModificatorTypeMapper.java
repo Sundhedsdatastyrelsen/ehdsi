@@ -3,6 +3,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ModificatorInfo;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ModificatorKind;
 import dk.vaccinationsregister.schemas._2013._12._01.ModificatorType;
+import dk.vaccinationsregister.schemas._2013._12._01.OrganisationType;
+
+import java.util.Optional;
 
 public class ModificatorTypeMapper {
 
@@ -24,7 +27,20 @@ public class ModificatorTypeMapper {
 
 
     private static ModificatorInfo mapHealthcareProfessional(ModificatorType mod){
-        return null;
+        var hp = mod.getAuthorisedHealthcareProfessional();
+        return new ModificatorInfo(
+            hp.getAuthorisationIdentifier(),
+            hp.getName(),
+            Optional.ofNullable(mod.getOrganisation())
+                .map(o -> o.getIdentifier().getValue())
+                .orElse(null),
+            Optional.ofNullable(mod.getOrganisation())
+                .map(OrganisationType::getName)
+                .orElse(null),
+            null,
+            ModificatorKind.HEALTHCARE_PROFESSIONAL
+
+        );
     }
 
     private static ModificatorInfo mapPartlyDefinedEffectuator(ModificatorType mod){
