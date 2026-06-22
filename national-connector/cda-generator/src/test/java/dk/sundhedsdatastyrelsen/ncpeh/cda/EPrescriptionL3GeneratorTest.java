@@ -3,7 +3,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e6.PrescriptionType;
 import dk.nsi._2024._01._05.stamdataauthorization.AuthorizationType;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
-import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +13,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
