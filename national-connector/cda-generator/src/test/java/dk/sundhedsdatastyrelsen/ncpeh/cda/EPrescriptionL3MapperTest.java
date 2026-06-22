@@ -11,9 +11,9 @@ import static org.hamcrest.Matchers.*;
 class EPrescriptionL3MapperTest {
     static EPrescriptionL3 getModel() {
         try {
-            var response = FmkResponseStorage.storedPrescriptions(FmkResponseStorage.rawResponseCprs().get(2));
-            var medicationResponse = FmkResponseStorage.storedDrugMedications(FmkResponseStorage.rawResponseCprs()
-                .get(2));
+            var cpr = "0201909309";
+            var response = FmkResponseStorage.getTestPrescriptions(cpr);
+            var medicationResponse = FmkResponseStorage.getTestDrugMedications(cpr);
 
             return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01"));
         } catch (Exception e) {
@@ -41,12 +41,12 @@ class EPrescriptionL3MapperTest {
 
     @Test
     void nullSubpackagesIsHandled() throws Exception {
-        var cpr = FmkResponseStorage.rawResponseCprs().get(2);
+        var cpr = "0201909309";
         var model = EPrescriptionL3Mapper.model(
             new EPrescriptionL3Input(
-                FmkResponseStorage.storedPrescriptions(cpr),
+                FmkResponseStorage.getTestPrescriptions(cpr),
                 0,
-                FmkResponseStorage.storedDrugMedications(cpr),
+                FmkResponseStorage.getTestDrugMedications(cpr),
                 "FIN",
                 null,
                 "Manufacturer",

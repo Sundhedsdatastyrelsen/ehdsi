@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.*;
 
 class EPrescriptionL3GeneratorTest {
     @Test
-    void generateTest() throws TemplateException, IOException {
+    void generateTest() {
         var model = EPrescriptionL3MapperTest.getModel();
         var cda = EPrescriptionL3Generator.generate(model);
         Assertions.assertNotNull(cda);
@@ -32,8 +32,8 @@ class EPrescriptionL3GeneratorTest {
     @Test
     void testNullProductPackageCodeValue() throws Exception {
         var cpr = "0201909309"; //Test person with packagecode correctly filled in
-        var prescription = FmkResponseStorage.storedPrescriptions(cpr);
-        var medication = FmkResponseStorage.storedDrugMedications(cpr);
+        var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
+        var medication = FmkResponseStorage.getTestDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", 1, "Manufacturer", "2026-01");
         var epL3 = EPrescriptionL3Mapper.model(input);
@@ -62,7 +62,7 @@ class EPrescriptionL3GeneratorTest {
     @MethodSource("e2eTestCprs")
     void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
-        var medication = FmkResponseStorage.getTestMedications(cpr);
+        var medication = FmkResponseStorage.getTestDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var prescriptions = prescription.getPrescription();
         for (int prescriptionindex = 0; prescriptionindex < prescriptions.size(); prescriptionindex++) {
