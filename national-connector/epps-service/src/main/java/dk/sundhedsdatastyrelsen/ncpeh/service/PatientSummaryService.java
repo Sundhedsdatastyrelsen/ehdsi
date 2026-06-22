@@ -116,8 +116,7 @@ public class PatientSummaryService {
     ) {
         var cpr = PatientIdMapper.toCpr(patientId);
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
-        var minLogHcpId = "%s - %s".formatted(fmkToken.countryOfTreatment(), fmkToken.subjectId());
-        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, minLogHcpId);
+        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, fmkToken);
 
         var medicationCardRequest = GetMedicineCardRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()
