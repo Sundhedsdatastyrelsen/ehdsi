@@ -154,7 +154,7 @@ public class FmkResponseStorage {
         return readStoredPrescriptions(name, resourceDir);
     }
 
-    public static GetDrugMedicationResponseType getTestMedications(String cpr) throws JAXBException {
+    public static GetDrugMedicationResponseType getTestDrugMedications(String cpr) throws JAXBException {
         return storedDrugMedications(cpr, testDataDir);
     }
 

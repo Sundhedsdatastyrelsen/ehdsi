@@ -26,7 +26,7 @@ public class EPrescriptionL1GeneratorTest {
     @ParameterizedTest
     @ValueSource(strings = {"0201909309"})
     public void testCdaValidity(String cpr) throws Exception {
-        var prescription = FmkResponseStorage.storedPrescriptions(cpr);
+        var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
         var xmlString = EPrescriptionL1Generator.generate(new EPrescriptionL3Input(
             prescription, 0, null, "FIN", 1, "Manufacturer", "2026-01"));
