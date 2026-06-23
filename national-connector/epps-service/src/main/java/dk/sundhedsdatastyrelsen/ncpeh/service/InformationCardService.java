@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpId;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
@@ -99,7 +100,15 @@ public class InformationCardService {
         }
     }
 
-    public Document getInformationCard(String uniqueDocumentId, String patientId, String europeanHealthProfessionalId) {
+    /**
+     * Call Fælles Stamkort (FSK) to get an information card.
+     * @param uniqueDocumentId id for the information card
+     * @param patientId (for logging) patient id
+     * @param hcpId (for logging) IDWS token with information about the healthcare professional.
+     *                   Not used for placing calls, so audience is irrelevant.
+     * @return the information card in XML form
+     */
+    public Document getInformationCard(String uniqueDocumentId, String patientId, EuropeanHcpId hcpId) {
         try {
             var documentId = splitUniqueIdToRepositoryIdAndDocumentId(uniqueDocumentId);
             final var request = RetrieveDocumentSetRequestType.builder()
@@ -110,7 +119,7 @@ public class InformationCardService {
 
             //Log that we looked up the data on the fælles stamkort, due to using the organisational endpoint
             var cpr = PatientIdMapper.toCpr(patientId);
-            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", europeanHealthProfessionalId);
+            minLogService.logEventOnPatient(cpr, "Fælles Stamkort opslag", hcpId);
 
             //The endpoints does not (in the near future) support IDWS, so we have to use the organisatorial endpoint.
             var fskResponse = fskClient.getDocument(request, systemCaller);

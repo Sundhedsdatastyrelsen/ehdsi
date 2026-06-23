@@ -6,6 +6,7 @@ import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registra
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.SourceForEntryType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
+import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpId;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
 import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
 import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
@@ -191,6 +192,21 @@ public class MinLogService implements AutoCloseable {
             return failedJobList;
         }
         return Collections.emptyList(); //If nothing failed, we return an empty list of failed LogEvents
+    }
+
+    /// Register MinLog event.
+    /// Extracts healthcare professional identification from an IDWS token.
+    /// The event will be added to a queue and handled in a separate thread.
+    public void logEventOnPatient(
+        String cpr,
+        String eventText,
+        EuropeanHcpId hcpId
+    ) {
+        logEventOnPatient(
+            cpr,
+            eventText,
+            "%s - %s".formatted(hcpId.countryOfTreatment(), hcpId.subjectId())
+        );
     }
 
     /// Register MinLog event.  The event will be added to a queue and handled in a separate thread.

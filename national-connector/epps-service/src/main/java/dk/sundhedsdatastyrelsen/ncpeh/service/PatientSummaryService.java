@@ -86,16 +86,14 @@ public class PatientSummaryService {
         return new DocumentAssociationForPatientSummaryDocumentMetadataDto(l3, l1);
     }
 
-    // TODO Left in the caller, because I think we will need it later.
     @WithSpan
     public List<EpsosDocumentDto> getPatientSummary(
         String patientId,
         String rootedDocumentId,
         EuropeanHcpIdwsToken fmkToken,
-        EuropeanHcpIdwsToken ddvToken,
-        String europeanHealthProfessionalId
+        EuropeanHcpIdwsToken ddvToken
     ) {
-        var input = assembleInput(patientId, europeanHealthProfessionalId, rootedDocumentId, fmkToken, ddvToken);
+        var input = assembleInput(patientId, rootedDocumentId, fmkToken, ddvToken);
         try {
             var documentLevel = DocumentIdMapper.parseDocumentLevel(rootedDocumentId);
             var cda = switch (documentLevel) {
@@ -112,14 +110,13 @@ public class PatientSummaryService {
     @WithSpan
     private PatientSummaryInput assembleInput(
         String patientId,
-        String europeanHealthProfessionalId,
         String docId,
         EuropeanHcpIdwsToken fmkToken,
         EuropeanHcpIdwsToken ddvToken
     ) {
         var cpr = PatientIdMapper.toCpr(patientId);
         var availableInformationCards = informationCardService.findInformationCardDetails(patientId);
-        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, europeanHealthProfessionalId);
+        var informationCard = informationCardService.getInformationCard(availableInformationCards.getFirst(), patientId, fmkToken);
 
         var medicationCardRequest = GetMedicineCardRequestType.builder()
             .withPersonIdentifier().withSource("CPR").withValue(cpr).end()

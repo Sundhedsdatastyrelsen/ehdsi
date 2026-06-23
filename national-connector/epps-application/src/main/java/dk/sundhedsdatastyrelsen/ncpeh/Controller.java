@@ -136,9 +136,7 @@ public class Controller {
                 params.getPatientId(),
                 params.getDocumentId(),
                 this.getIdwsToken(params.getSoapHeader(), Audience.FMK),
-                this.getIdwsToken(params.getSoapHeader(), Audience.DDV),
-                // TODO pick out the right identity from the soap header.
-                "MT^94e9cd39-f9c2-434c-9069-ee8bd81b11c1");
+                this.getIdwsToken(params.getSoapHeader(), Audience.DDV));
         }
 
         throw new ServerErrorException("Unknown repository id " + repoId, null);
