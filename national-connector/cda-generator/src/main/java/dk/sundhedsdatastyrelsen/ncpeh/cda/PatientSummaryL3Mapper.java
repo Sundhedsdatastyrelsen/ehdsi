@@ -215,9 +215,9 @@ public class PatientSummaryL3Mapper {
             .vaccinationPlanItemDescription(planned != null ? planned.getVaccinationPlanItemDescription() : null)
             .healthProfessionalIdentifier(ImmunizationMapper.getCreatedAuthorisationId(vaccination))
             .performerName(ImmunizationMapper.getCreatedAuthorName(vaccination))
+            .countryCode(ImmunizationMapper.getCountryCode(vaccination))
             .administeringCentreIdentifier(ImmunizationMapper.getCreatedOrganisationId(vaccination))
             .performerOrganizationName(ImmunizationMapper.getCreatedOrganisationName(vaccination))
-
             .confirmedByPrescriptionServer(vaccination.isConfirmedByPrescriptionServer())
             .activeStatus(vaccination.isActiveStatus())
             .build();
