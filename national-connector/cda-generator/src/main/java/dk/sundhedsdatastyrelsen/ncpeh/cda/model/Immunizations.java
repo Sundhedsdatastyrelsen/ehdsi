@@ -86,6 +86,7 @@ public class Immunizations {
         String performerName;
         String administeringCentreIdentifier;
         String performerOrganizationName;
+        String countryCode;
 
         /**
          * Local DDV status/metadata.

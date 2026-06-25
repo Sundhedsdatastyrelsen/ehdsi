@@ -561,17 +561,14 @@
         <#if (imm.name)?has_content>
                                         <name>${imm.name}</name>
         </#if>
-
         <#if (imm.strength)?has_content>
                                         <pharm:desc>${imm.strength}</pharm:desc>
         </#if>
-
         <#if imm.formCode??>
                                         <pharm:formCode <@common.cdaCodeAttrs imm.formCode />/>
         <#else>
                                         <pharm:formCode nullFlavor="UNK"/>
         </#if>
-
         <#if (imm.batchNumber)?has_content>
                                         <lotNumberText>${imm.batchNumber}</lotNumberText>
         </#if>
@@ -591,6 +588,11 @@
                                     <representedOrganization>
                                         <name>${imm.performerOrganizationName}</name>
                                     </representedOrganization>
+            </#if>
+            <#if (imm.countryCode)?has_content>
+                                    <addr>
+                                        <name>${imm.countryCode}</name>
+                                    </addr>
             </#if>
                                 </assignedEntity>
                             </performer>

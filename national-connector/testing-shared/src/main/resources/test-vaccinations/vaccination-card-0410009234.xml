@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <GetVaccinationCardResponse xmlns="http://vaccinationsregister.dk/schemas/2013/12/01" xmlns:ns2="http://www.sdsd.dk/dgws/2010/08" xmlns:ns3="http://www.sdsd.dk/dgws/2012/06">
     <Vaccination>
-        <VaccinationIdentifier>32116052971</VaccinationIdentifier>
-        <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
+        <VaccinationIdentifier>32115851486</VaccinationIdentifier>
+        <VaccinationVersionIdentifier>2</VaccinationVersionIdentifier>
         <Modified>
             <Modificator>
                 <AuthorisedHealthcareProfessional>
@@ -15,7 +15,7 @@
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </Modificator>
-            <ModifiedDateTime>2026-06-12T08:34:41Z</ModifiedDateTime>
+            <ModifiedDateTime>2026-06-24T10:35:51Z</ModifiedDateTime>
         </Modified>
         <Created>
             <Modificator>
@@ -29,7 +29,7 @@
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </Modificator>
-            <CreatedDateTime>2026-06-12T08:34:41Z</CreatedDateTime>
+            <CreatedDateTime>2026-06-24T10:35:24Z</CreatedDateTime>
         </Created>
         <Reviewed>
             <Modificator>
@@ -43,13 +43,13 @@
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </Modificator>
-            <CreatedDateTime>2026-06-12T08:34:41Z</CreatedDateTime>
+            <CreatedDateTime>2026-06-24T10:35:24Z</CreatedDateTime>
         </Reviewed>
         <Vaccine>
-            <VaccineIdentifier>32115515736</VaccineIdentifier>
+            <VaccineIdentifier>32115580980</VaccineIdentifier>
             <VaccineName>Pfizer BioNTech Covid-19 vacc</VaccineName>
             <Disease>
-                <DiseaseIdentifier>32115515735</DiseaseIdentifier>
+                <DiseaseIdentifier>32115580979</DiseaseIdentifier>
                 <DiseaseName>Covid-19</DiseaseName>
                 <DiseaseNameDK>Covid-19 sygdom</DiseaseNameDK>
                 <ATC>
@@ -65,7 +65,7 @@
         <VaccinationCredibility>Oprettet af læge / medhjælp</VaccinationCredibility>
         <SSIDrug>
             <ATC/>
-            <DrugIdentifier>32115514735</DrugIdentifier>
+            <DrugIdentifier>32115580977</DrugIdentifier>
             <DrugName>Pfizer BioNTech COVID-19 Vacc</DrugName>
             <DrugForm>
                 <DrugFormText>injektionsvæske, suspension</DrugFormText>
@@ -73,42 +73,32 @@
             <DrugStrength/>
         </SSIDrug>
         <BatchNumber>513452435</BatchNumber>
-        <DosageOptionIdentifier>32115515737</DosageOptionIdentifier>
+        <DosageOptionIdentifier>32115580985</DosageOptionIdentifier>
         <EffectuatedDateTime>2024-06-05T22:00:00Z</EffectuatedDateTime>
         <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
-        <ActiveStatus>false</ActiveStatus>
+        <ActiveStatus>true</ActiveStatus>
         <IsPrevious>false</IsPrevious>
     </Vaccination>
     <Vaccination>
-        <VaccinationIdentifier>32116054015</VaccinationIdentifier>
+        <VaccinationIdentifier>32115851487</VaccinationIdentifier>
         <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
         <Modified>
             <Modificator>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
-                    <Name>Charles Test Babbage</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Udenfor organisation</Name>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">990027</Identifier>
-                </Organisation>
+                <PartlyDefinedEffectuator>
+                    <EffectuatedByName> Test Ipsum Teras</EffectuatedByName>
+                    <EffectuatedInCountryCode>SI</EffectuatedInCountryCode>
+                </PartlyDefinedEffectuator>
             </Modificator>
-            <ModifiedDateTime>2026-06-17T07:23:41Z</ModifiedDateTime>
+            <ModifiedDateTime>2026-06-24T10:37:23Z</ModifiedDateTime>
         </Modified>
         <Created>
             <Modificator>
-                <AuthorisedHealthcareProfessional>
-                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
-                    <Name>Charles Test Babbage</Name>
-                </AuthorisedHealthcareProfessional>
-                <Organisation>
-                    <Name>Udenfor organisation</Name>
-                    <Type>Yder</Type>
-                    <Identifier source="Yder">990027</Identifier>
-                </Organisation>
+                <PartlyDefinedEffectuator>
+                    <EffectuatedByName> Test Ipsum Teras</EffectuatedByName>
+                    <EffectuatedInCountryCode>SI</EffectuatedInCountryCode>
+                </PartlyDefinedEffectuator>
             </Modificator>
-            <CreatedDateTime>2026-06-17T07:23:41Z</CreatedDateTime>
+            <CreatedDateTime>2026-06-24T10:37:23Z</CreatedDateTime>
         </Created>
         <Reviewed>
             <Modificator>
@@ -122,8 +112,198 @@
                     <Identifier source="Yder">990027</Identifier>
                 </Organisation>
             </Modificator>
-            <CreatedDateTime>2026-06-17T07:23:41Z</CreatedDateTime>
+            <CreatedDateTime>2026-06-24T10:37:23Z</CreatedDateTime>
         </Reviewed>
+        <Reported>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <ReportedDateTime>2026-06-24T10:37:23Z</ReportedDateTime>
+        </Reported>
+        <Vaccine>
+            <VaccineIdentifier>32115459168</VaccineIdentifier>
+            <VaccineName>ViATIM</VaccineName>
+            <Disease>
+                <DiseaseIdentifier>17</DiseaseIdentifier>
+                <DiseaseName>Hepatitis A</DiseaseName>
+                <DiseaseNameDK>Leverbetændelse type A</DiseaseNameDK>
+                <ATC>
+                    <Code>J07BC02</Code>
+                    <Text>Hepatitis a, inaktiveret, hel virus</Text>
+                </ATC>
+            </Disease>
+            <Disease>
+                <DiseaseIdentifier>12</DiseaseIdentifier>
+                <DiseaseName>Typhoid</DiseaseName>
+                <DiseaseNameDK>Tyfus</DiseaseNameDK>
+                <ATC>
+                    <Code>J07AP</Code>
+                    <Text>Tyfus vacciner</Text>
+                </ATC>
+            </Disease>
+            <ATC>
+                <Code>J07CA10</Code>
+                <Text>Tyfus - hepatitis a</Text>
+            </ATC>
+        </Vaccine>
+        <VaccinationCredibility>Oprettet af læge eller oprettet af borger og godkendt af læge</VaccinationCredibility>
+        <SSIDrug>
+            <ATC/>
+            <DrugIdentifier>32115459167</DrugIdentifier>
+            <DrugName>Viatim</DrugName>
+            <DrugForm>
+                <DrugFormText>opløsning og suspension til injektion</DrugFormText>
+            </DrugForm>
+            <DrugStrength>
+                <DrugStrengthText></DrugStrengthText>
+            </DrugStrength>
+        </SSIDrug>
+        <BatchNumber>1234asd231</BatchNumber>
+        <EffectuatedDateTime>2026-05-14T22:00:00Z</EffectuatedDateTime>
+        <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
+        <ActiveStatus>true</ActiveStatus>
+        <IsPrevious>true</IsPrevious>
+    </Vaccination>
+    <Vaccination>
+        <VaccinationIdentifier>32115851488</VaccinationIdentifier>
+        <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
+        <Modified>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <ModifiedDateTime>2026-06-24T10:37:57Z</ModifiedDateTime>
+        </Modified>
+        <Created>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-24T10:37:57Z</CreatedDateTime>
+        </Created>
+        <Reviewed>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-24T10:37:57Z</CreatedDateTime>
+        </Reviewed>
+        <Vaccine>
+            <VaccineIdentifier>1617170660</VaccineIdentifier>
+            <VaccineName>Gul feber</VaccineName>
+            <Disease>
+                <DiseaseIdentifier>25</DiseaseIdentifier>
+                <DiseaseName>Yellow fever</DiseaseName>
+                <DiseaseNameDK>Gul feber</DiseaseNameDK>
+                <ATC>
+                    <Code>J07BL</Code>
+                    <Text>Gul feber vacciner</Text>
+                </ATC>
+            </Disease>
+            <ATC>
+                <Code>J07BL01</Code>
+                <Text>Gul feber, levende attenueret</Text>
+            </ATC>
+            <VaccineKeywordsText>Amaril&#13;
+Arilvax</VaccineKeywordsText>
+        </Vaccine>
+        <VaccinationCredibility>Oprettet af læge / medhjælp</VaccinationCredibility>
+        <SSIDrug>
+            <ATC/>
+            <DrugIdentifier>32115313010</DrugIdentifier>
+            <DrugName>Stamaril</DrugName>
+            <DrugForm>
+                <DrugFormText>pulver og solvens til injektionsvæske, suspension</DrugFormText>
+            </DrugForm>
+            <DrugStrength/>
+        </SSIDrug>
+        <BatchNumber> 123123</BatchNumber>
+        <DosageOptionIdentifier>190808</DosageOptionIdentifier>
+        <EffectuatedDateTime>2026-06-03T22:00:00Z</EffectuatedDateTime>
+        <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
+        <ActiveStatus>true</ActiveStatus>
+        <IsPrevious>false</IsPrevious>
+    </Vaccination>
+    <Vaccination>
+        <VaccinationIdentifier>32115851654</VaccinationIdentifier>
+        <VaccinationVersionIdentifier>1</VaccinationVersionIdentifier>
+        <Modified>
+            <Modificator>
+                <PartlyDefinedEffectuator>
+                    <EffectuatedByName>Teras humanus letra</EffectuatedByName>
+                    <EffectuatedByOrganisationName>TestOrgan</EffectuatedByOrganisationName>
+                    <EffectuatedInCountryCode>DK</EffectuatedInCountryCode>
+                </PartlyDefinedEffectuator>
+            </Modificator>
+            <ModifiedDateTime>2026-06-24T10:39:13Z</ModifiedDateTime>
+        </Modified>
+        <Created>
+            <Modificator>
+                <PartlyDefinedEffectuator>
+                    <EffectuatedByName>Teras humanus letra</EffectuatedByName>
+                    <EffectuatedByOrganisationName>TestOrgan</EffectuatedByOrganisationName>
+                    <EffectuatedInCountryCode>DK</EffectuatedInCountryCode>
+                </PartlyDefinedEffectuator>
+            </Modificator>
+            <CreatedDateTime>2026-06-24T10:39:13Z</CreatedDateTime>
+        </Created>
+        <Reviewed>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <CreatedDateTime>2026-06-24T10:39:13Z</CreatedDateTime>
+        </Reviewed>
+        <Reported>
+            <Modificator>
+                <AuthorisedHealthcareProfessional>
+                    <AuthorisationIdentifier>6QF17</AuthorisationIdentifier>
+                    <Name>Charles Test Babbage</Name>
+                </AuthorisedHealthcareProfessional>
+                <Organisation>
+                    <Name>Udenfor organisation</Name>
+                    <Type>Yder</Type>
+                    <Identifier source="Yder">990027</Identifier>
+                </Organisation>
+            </Modificator>
+            <ReportedDateTime>2026-06-24T10:39:13Z</ReportedDateTime>
+        </Reported>
         <Vaccine>
             <VaccineIdentifier>1617175465</VaccineIdentifier>
             <VaccineName>Rabies</VaccineName>
@@ -141,20 +321,20 @@
                 <Text>Rabies, inaktiveret, hele virus</Text>
             </ATC>
             <VaccineKeywordsText>Imovax Rage
-                Lyssavac N
-                Rabdomune
-                Rabipur
-                Rabivac
-                Rasilvax
-                RDCV
-                SMBV
-                Vaccin Rabique Pasteur
-                Verorab</VaccineKeywordsText>
+Lyssavac N
+Rabdomune
+Rabipur
+Rabivac
+Rasilvax
+RDCV
+SMBV
+Vaccin Rabique Pasteur
+Verorab</VaccineKeywordsText>
         </Vaccine>
-        <VaccinationCredibility>Oprettet af læge / medhjælp</VaccinationCredibility>
+        <VaccinationCredibility>Oprettet af læge eller oprettet af borger og godkendt af læge</VaccinationCredibility>
         <SSIDrug>
             <ATC/>
-            <DrugIdentifier>191316</DrugIdentifier>
+            <DrugIdentifier>32115313000</DrugIdentifier>
             <DrugName>Rabies-imovax</DrugName>
             <DrugForm>
                 <DrugFormText>pulver og solvens til injektionsvæske, opløsning</DrugFormText>
@@ -163,10 +343,10 @@
                 <DrugStrengthText>&gt;2,5 IE</DrugStrengthText>
             </DrugStrength>
         </SSIDrug>
-        <BatchNumber>testtest1234</BatchNumber>
+        <BatchNumber>b1g4fe3t</BatchNumber>
         <EffectuatedDateTime>2026-06-14T22:00:00Z</EffectuatedDateTime>
         <ConfirmedByPrescriptionServer>false</ConfirmedByPrescriptionServer>
         <ActiveStatus>true</ActiveStatus>
-        <IsPrevious>false</IsPrevious>
+        <IsPrevious>true</IsPrevious>
     </Vaccination>
 </GetVaccinationCardResponse>
