@@ -246,7 +246,7 @@ class PatientSummaryL3GeneratorTest {
             xpathEngine.evaluate(
                 "count(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']/hl7:entry)",
                 generatedCda),
-            is("2"));
+            is("4"));
 
         assertThat(
             "immunization section title is correct",
@@ -267,7 +267,7 @@ class PatientSummaryL3GeneratorTest {
             xpathEngine.evaluate(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:manufacturedMaterial/hl7:name)[2]",
                 generatedCda),
-            is("Rabies-imovax"));
+            is("Viatim"));
 
         assertThat(
             "immunization effective time is present in first",
@@ -281,7 +281,7 @@ class PatientSummaryL3GeneratorTest {
             xpathEngine.evaluate(
                 "(/hl7:ClinicalDocument//hl7:section[hl7:title='Immunizations']//hl7:substanceAdministration/hl7:effectiveTime/@value)[2]",
                 generatedCda),
-            is("20260614"));
+            is("20260514"));
 
         assertThat(
             "immunization manufactured material code exists in first",
