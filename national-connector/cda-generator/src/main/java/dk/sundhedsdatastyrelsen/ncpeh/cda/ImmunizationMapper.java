@@ -2,7 +2,6 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ModificatorInfo;
 import dk.vaccinationsregister.schemas._2013._12._01.CreatedType;
 import dk.vaccinationsregister.schemas._2013._12._01.DrugStrengthType;
 import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
@@ -83,36 +82,36 @@ public class ImmunizationMapper {
 
     public static String getCreatedAuthorisationId(VaccinationType vaccination) {
         return Optional.ofNullable(getCreatedModificatorInfo(vaccination))
-            .map(ModificatorInfo::getAuthorisationId)
+            .map(ModificatorTypeMapper.ModificatorInfo::getAuthorisationId)
             .orElse(null);
     }
 
     public static String getCountryCode(VaccinationType vaccination) {
         return Optional.ofNullable(getCreatedModificatorInfo(vaccination))
-            .map(ModificatorInfo::getCountryCode)
+            .map(ModificatorTypeMapper.ModificatorInfo::getCountryCode)
             .orElse(null);
     }
 
 
     public static String getCreatedAuthorName(VaccinationType vaccination) {
         return Optional.ofNullable(getCreatedModificatorInfo(vaccination))
-            .map(ModificatorInfo::getAuthorName)
+            .map(ModificatorTypeMapper.ModificatorInfo::getAuthorName)
             .orElse(null);
     }
 
     public static String getCreatedOrganisationId(VaccinationType vaccination) {
         return Optional.ofNullable(getCreatedModificatorInfo(vaccination))
-            .map(ModificatorInfo::getOrganisationId)
+            .map(ModificatorTypeMapper.ModificatorInfo::getOrganisationId)
             .orElse(null);
     }
 
     public static String getCreatedOrganisationName(VaccinationType vaccination) {
         return Optional.ofNullable(getCreatedModificatorInfo(vaccination))
-            .map(ModificatorInfo::getOrganisationName)
+            .map(ModificatorTypeMapper.ModificatorInfo::getOrganisationName)
             .orElse(null);
     }
 
-    private static ModificatorInfo getCreatedModificatorInfo(VaccinationType vaccination) {
+    private static ModificatorTypeMapper.ModificatorInfo getCreatedModificatorInfo(VaccinationType vaccination) {
         return Optional.ofNullable(vaccination)
             .map(VaccinationType::getCreated)
             .map(CreatedType::getModificator)

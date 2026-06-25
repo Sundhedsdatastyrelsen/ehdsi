@@ -2,12 +2,31 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.vaccinationsregister.schemas._2013._12._01.ModificatorType;
 import dk.vaccinationsregister.schemas._2013._12._01.OrganisationType;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ModificatorInfo;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ModificatorKind;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.Optional;
 
 public class ModificatorTypeMapper {
+
+    public enum ModificatorKind {
+        HEALTHCARE_PROFESSIONAL,
+        PARTLY_DEFINED_EFFECTUATOR,
+        ORGANISATION,
+        OTHER,
+        UNKNOWN
+    }
+
+    @Value
+    @Builder
+    public static class ModificatorInfo {
+        String authorisationId;
+        String authorName;
+        String organisationId;
+        String organisationName;
+        String countryCode;
+        ModificatorKind kind;
+    }
 
     public static ModificatorInfo map(ModificatorType mod) {
         if (mod == null) {
