@@ -5,12 +5,10 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ModificatorInfo;
 import dk.vaccinationsregister.schemas._2013._12._01.CreatedType;
 import dk.vaccinationsregister.schemas._2013._12._01.DrugStrengthType;
-import dk.vaccinationsregister.schemas._2013._12._01.ModificatorType;
 import dk.vaccinationsregister.schemas._2013._12._01.SSIDrugType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccineType;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class ImmunizationMapper {
@@ -114,14 +112,10 @@ public class ImmunizationMapper {
             .orElse(null);
     }
 
-    private static Optional<ModificatorType> getCreatedModificator(VaccinationType vaccination) {
+    private static ModificatorInfo getCreatedModificatorInfo(VaccinationType vaccination) {
         return Optional.ofNullable(vaccination)
             .map(VaccinationType::getCreated)
-            .map(CreatedType::getModificator);
-    }
-
-    private static ModificatorInfo getCreatedModificatorInfo(VaccinationType vaccination) {
-        return getCreatedModificator(vaccination)
+            .map(CreatedType::getModificator)
             .map(ModificatorTypeMapper::map)
             .orElse(null);
     }
