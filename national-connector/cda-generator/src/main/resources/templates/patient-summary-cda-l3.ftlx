@@ -587,12 +587,14 @@
             <#if (imm.performerOrganizationName)?has_content>
                                     <representedOrganization>
                                         <name>${imm.performerOrganizationName}</name>
+                <#if (imm.countryCode)?has_content>
+                                        <addr>
+                                            <country>${imm.countryCode}</country>
+                                        </addr>
+                <#else>
+                                        <addr nullFlavor="NI"/>
+                </#if>
                                     </representedOrganization>
-            </#if>
-            <#if (imm.countryCode)?has_content>
-                                    <addr>
-                                        <name>${imm.countryCode}</name>
-                                    </addr>
             </#if>
                                 </assignedEntity>
                             </performer>
