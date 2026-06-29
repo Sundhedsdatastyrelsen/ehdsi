@@ -591,8 +591,8 @@
                                         <addr>
                                             <name>${imm.countryCode}</name>
                                         </addr>
+                                    </#if>
                                     </representedOrganization>
-        </#if>
                                 </assignedEntity>
                             </performer>
         </#if>
