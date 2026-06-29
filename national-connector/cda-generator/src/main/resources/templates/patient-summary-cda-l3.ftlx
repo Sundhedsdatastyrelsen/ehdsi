@@ -579,12 +579,12 @@
                             <performer>
                                 <assignedEntity>
                                     <id nullFlavor="NA"/>
-        <#if (imm.performerName)?has_content>
+            <#if (imm.performerName)?has_content>
                                     <assignedPerson>
                                         <name>${imm.performerName}</name>
                                     </assignedPerson>
-        </#if>
-        <#if (imm.performerOrganizationName)?has_content>
+            </#if>
+            <#if (imm.performerOrganizationName)?has_content>
                                     <representedOrganization>
                                         <name>${imm.performerOrganizationName}</name>
                                      <#if (imm.countryCode)?has_content>
@@ -595,6 +595,7 @@
                                     </representedOrganization>
                                 </assignedEntity>
                             </performer>
+            </#if>
         </#if>
                             <participant typeCode="IND">
                                 <participantRole classCode="AGNT">
