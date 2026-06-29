@@ -587,15 +587,17 @@
             <#if (imm.performerOrganizationName)?has_content>
                                     <representedOrganization>
                                         <name>${imm.performerOrganizationName}</name>
-                                     <#if (imm.countryCode)?has_content>
+                <#if (imm.countryCode)?has_content>
                                         <addr>
-                                            <name>${imm.countryCode}</name>
+                                            <country>${imm.countryCode}</country>
                                         </addr>
-                                    </#if>
+                <#else>
+                                        <addr nullFlavor="NI"/>
+                </#if>
                                     </representedOrganization>
+            </#if>
                                 </assignedEntity>
                             </performer>
-            </#if>
         </#if>
                             <participant typeCode="IND">
                                 <participantRole classCode="AGNT">
