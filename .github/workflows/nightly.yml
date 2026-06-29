@@ -16,11 +16,11 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 5 # for commit history
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: 21
           distribution: temurin
@@ -70,7 +70,7 @@ jobs:
         run: docker logout ghcr.io
 
       - name: Upload test files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ep-and-ed-files
           path: target/test-files/
@@ -89,7 +89,7 @@ jobs:
           E2E_TRAINING_HOST: ${{ secrets.E2E_TRAINING_HOST }}
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v6
         if: success() || failure() # always run even if the previous step fails
         with:
           report_paths: 'national-connector/integration-tests/target/failsafe-reports/TEST-*.xml'
@@ -107,7 +107,7 @@ jobs:
 
       - name: Post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: slackapi/slack-github-action@v3
         if: failure() # only post on slack if tests fail
         # See: https://github.com/slackapi/slack-github-action?tab=readme-ov-file#technique-2-slack-app
         with:
