@@ -30,6 +30,22 @@ class DdvIT {
     }
 
     @Test
+    void getVaccinationTestWrongRole() throws Exception {
+        var token = Sosi.getToken(Sosi.TokenArgs.builder()
+            .audience(Sosi.Audience.DDV)
+            .healthProfessionalRole("2262")
+            .patientCpr(Fmk.cprKarl)
+            .build());
+        try {
+            var vaccinations = vaccinationService.getVaccinationsForCpr(Fmk.cprKarl, token);
+            assertThat(vaccinations, is(not(empty())));
+        } catch (XmlException xmlException) {
+            System.out.println(xmlException.getFullText() != null ? xmlException.getFullText() : "No full text in exception");
+            throw xmlException;
+        }
+    }
+
+    @Test
     void getEmptyVaccinationTest() throws Exception {
         var token = Sosi.getToken(Sosi.TokenArgs.builder()
             .audience(Sosi.Audience.DDV)
