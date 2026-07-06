@@ -9,6 +9,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.time.Instant;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -36,7 +37,16 @@ class MinLogIT {
         try (var ds = ds();
              var service = minLogService(ds)) {
             var q = JobQueue.open(ds, "minlog", null, null);
-            service.logEventOnPatient(MinLog.CPR_JENS_JENSEN_READ_ONLY, "integrationstest", "DE^ad93e02e-6732-4a06-ad73-6c491b20f4f9");
+            var logEvent = new MinLogService.LogEvent(
+                MinLog.CPR_JENS_JENSEN_READ_ONLY,
+                "integrationtest",
+                "Name of Doctor",
+                "DE:Name of Doctor",
+                "id-of-organization",
+                "Name of Organization",
+                Instant.now()
+            );
+            service.logEventOnPatient(logEvent);
             assertThat(q.size(), is(1L));
             assertDoesNotThrow(service::sendBatch);
             assertThat(q.size(), is(0L));

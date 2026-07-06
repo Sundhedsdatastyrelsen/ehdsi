@@ -26,6 +26,21 @@ public class Fsk {
         public String countryOfTreatment() {
             return "DE";
         }
+
+        @Override
+        public String organizationId() {
+            return "urn:oid:9999.9999.9999";
+        }
+
+        @Override
+        public String organizationName() {
+            return null;
+        }
+
+        @Override
+        public String pointOfCare() {
+            return "Apotheke Gruber";
+        }
     };
 
     private static FskClient fskClient;

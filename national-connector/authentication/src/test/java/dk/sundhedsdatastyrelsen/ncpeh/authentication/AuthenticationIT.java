@@ -39,6 +39,9 @@ class AuthenticationIT {
         assertThat(idwsToken.assertion(), notNullValue());
         assertThat(idwsToken.subjectId(), is("John House"));
         assertThat(idwsToken.countryOfTreatment(), is("DK"));
+        assertThat(idwsToken.pointOfCare(), is("eHDSI EU Testing MedCare Center"));
+        assertThat(idwsToken.organizationId(), is("urn:hl7ii:1.2.3.4:ABCD"));
+        assertThat(idwsToken.organizationName(), is("eHealth OpenNCP EU Portal"));
     }
 
     @Test
@@ -50,6 +53,9 @@ class AuthenticationIT {
         assertThat(idwsToken.assertion(), notNullValue());
         assertThat(idwsToken.subjectId(), is("Helvi Inkinen"));
         assertThat(idwsToken.countryOfTreatment(), is("FI"));
+        assertThat(idwsToken.pointOfCare(), is("Kela pd3 as.tst"));
+        assertThat(idwsToken.organizationId(), is("urn:oid:1.2.246.556.13001.48"));
+        assertThat(idwsToken.organizationName(), nullValue());
     }
 
     @Test

@@ -5,6 +5,16 @@ package dk.sundhedsdatastyrelsen.ncpeh.authentication;
 public interface EuropeanHcpId {
     /// The "XSPA Subject" attribute value from the HCP token – i.e., the full name of the HCP
     String subjectId();
+
     ///  Country of treatment, i.e., the country in which the healthcare professional operates
     String countryOfTreatment();
+
+    /// "XSPA Organization Id"
+    String organizationId();
+
+    /// "XSPA Organization"
+    String organizationName();
+
+    /// Point of care / "XSPA Locality"
+    String pointOfCare();
 }
