@@ -9,7 +9,6 @@ import dk.dkma.medicinecard.xml_schema._2015._06._01.DosageStructuresForRequestT
 import dk.dkma.medicinecard.xml_schema._2015._06._01.ModificatorType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.OrganisationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.PersonIdentifierType;
-import dk.dkma.medicinecard.xml_schema._2015._06._01.PredefinedOrganisationTypeType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationRequestType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreateDrugMedicationType;
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.CreatePrescriptionRequestType;
@@ -150,10 +149,10 @@ public class FmkPrescriptionCreator {
     The following methods are used to populate the "creation of new prescriptions" models.
      */
     private static OrganisationType prescripingOrganisation() {
-        // The SKS number is checked by FMK. The name and telephone number are mandatory, but probably not validated.
+        // The SOR number is checked by FMK. The name and telephone number are mandatory but not validated.
         return OrganisationType.builder()
-            .withIdentifier().withSource("SKS").withValue("133016N").end()
-            .withType(PredefinedOrganisationTypeType.SYGEHUS.value())
+            .withIdentifier().withSource("SOR").withValue("437701000016004").end()
+            .withType("klinisk enhed") // validated against SOR, see https://sorbrowser.sundhedsdatastyrelsen.dk/?FreetextSearch=%22437701000016004%22
             .withName("Amager og Hvidovre Hospital,\nFamilieambulatorium, Rigshospitalet")
             .withTelephoneNumber("+4587654321")
             .build();
