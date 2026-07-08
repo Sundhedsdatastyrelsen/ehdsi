@@ -111,10 +111,13 @@ jobs:
         if: failure() # only post on slack if tests fail
         # See: https://github.com/slackapi/slack-github-action?tab=readme-ov-file#technique-2-slack-app
         with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           # channel-id: 'C07Q2AG46HL' # #github-actions-bot-test
-          channel-id: 'C079YA9DB61' # #github-notifications
+          # channel-id: 'C079YA9DB61' # #github-notifications
           payload: |
             {
+              "channel": "C079YA9DB61",
               "attachments": [
                 {
                   "fallback": "Test Results Report - ${{ github.repository }}",
@@ -139,5 +142,3 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
