@@ -2,9 +2,9 @@ package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.DestinationForEntryForRegistrationType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.LogDataEntryForRegistrationType;
+import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.OrganisationIdSourcePredefinedType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.PersonIdSourceType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.RegistrationRequestType;
-import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.SourceForEntryType;
 import dk.sundhedsdatastyrelsen.minlog.xml_schema._2025._03._12.minlog2_registration.UserPersonIdSourceType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpId;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.NspDgwsIdentity;
@@ -12,7 +12,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.client.MinLogClient;
 import dk.sundhedsdatastyrelsen.ncpeh.jobqueue.JobQueue;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.ObservableLongUpDownCounter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -130,11 +132,22 @@ public class MinLogService implements AutoCloseable {
     ///   you add new nullable fields, or
     /// - you make sure the queue is empty before applying the update.
     public record LogEvent(
-        String citizenCpr,
-        String eventText,
-        String hcpId,
-        Instant timestamp
+        @NonNull String citizenCpr,
+        @NonNull String eventText,
+        @NonNull String hcpName,
+        @NonNull String hcpId,
+        @NonNull String organisationId,
+        @NonNull String organisationName,
+        @NonNull Instant timestamp
     ) {}
+
+    private static String truncate(@NonNull String value, int maxLength, String parameterName) {
+        var result = StringUtils.truncate(value, maxLength);
+        if (!value.equals(result)) {
+            log.warn("MinLog parameter truncated: \"{}\". Length was {}, maximum length is {}.", parameterName, value.length(), maxLength);
+        }
+        return result;
+    }
 
     /// A method to send logevents to MinLog. Since this is the last step for the events that succeed, we return the failed statements
     ///
@@ -145,28 +158,28 @@ public class MinLogService implements AutoCloseable {
         var requestBuilder = RegistrationRequestType.builder();
         for (var job : logEventJobs) {
             var payload = job.payload();
-            var source = SourceForEntryType.builder()
-                .withSystemName("DK-NCPeH")
-                .withSource()
-                .withSystemName("DK-NCPeH")
-                .build();
             var destination = DestinationForEntryForRegistrationType.builder()
-                .withSystemName("NCPeH") // TODO Replace with actual country we sent it to?
-                .withActivity(payload.eventText())
+                .withSystemName("DK-NCPeH")
+                .withActivity(truncate(payload.eventText(), 75, "Activity")) // "Streng, max længde på 75 tegn"
                 .withDateTime(Utils.xmlGregorianCalendar(payload.timestamp()))
                 .withPersonIdentifier()
                 .withSource(PersonIdSourceType.CPR)
                 .withValue(payload.citizenCpr())
                 .end()
-                .withUserPersonName("TODO") // TODO include name which must be max 50 chars long (bytes? unicode code points?)
+                .withUserPersonName(truncate(payload.hcpName(), 50, "UserPersonName")) // "Streng med max længde 50 tegn"
                 .withUserPersonIdentifier()
                 .withSource(UserPersonIdSourceType.EUROPEAN_HEALTHCARE_PROFESSIONAL)
-                .withValue(payload.hcpId()) // TODO react to id's exceeding the 200 char limit
+                .withValue(truncate(payload.hcpId, 200, "UserPersonIdentifier")) // "Streng af længde 200"
                 .end()
                 .withSequenceNumber(job.id().toString())
+                .withOrganisationId()
+                .withSource(OrganisationIdSourcePredefinedType.EUROPEAN_HEALTHCARE_ORGANISATION)
+                .withValue(truncate(payload.organisationId(), 200, "OrganisationId")) // "Streng på max 200 tegn"
+                .end()
+                .withOrganisationName(truncate(payload.organisationName(), 200, "OrganisationName")) // "Streng med max længde 200"
                 .build();
+
             requestBuilder.addLogDataEntry(LogDataEntryForRegistrationType.builder()
-                .withSource(source)
                 .withDestination(destination)
                 .build());
         }
@@ -202,27 +215,30 @@ public class MinLogService implements AutoCloseable {
         String eventText,
         EuropeanHcpId hcpId
     ) {
-        logEventOnPatient(
-            cpr,
-            eventText,
-            "%s - %s".formatted(hcpId.countryOfTreatment(), hcpId.subjectId())
-        );
+        logEventOnPatient(createLogEvent(cpr, eventText, hcpId));
     }
 
-    /// Register MinLog event.  The event will be added to a queue and handled in a separate thread.
-    public void logEventOnPatient(
-        String cpr,
-        String eventText,
-        String europeanHealthProfessionalId
-    ) {
-        var logEvent = new LogEvent(
+    /// Register MinLog event.
+    /// The event will be added to a queue and handled in a separate thread.
+    public void logEventOnPatient(LogEvent logEvent) {
+        jobQueue.enqueue(logEvent);
+        log.debug("Enqueued MinLog event: {}", logEvent.eventText());
+    }
+
+    private LogEvent createLogEvent(String cpr, String eventText, EuropeanHcpId hcpId) {
+        return new LogEvent(
             cpr,
             eventText,
-            europeanHealthProfessionalId,
+            hcpId.subjectId(),
+            // There is currently no documentation of this format on nspop, but it is enforced in the MinLog2 code:
+            // https://git.nspop.dk/projects/COM/repos/minlog/browse/kafka-proxy/src/main/java/dk/nsp/minlog2/kafkaproxy/validation/LogEntryValidator.java#131
+            "%s:%s".formatted(hcpId.countryOfTreatment(), hcpId.subjectId()),
+            hcpId.organizationId(),
+            // Organization name is only non-null if different from "point of care".
+            hcpId.organizationName() == null
+                ? hcpId.pointOfCare()
+                : "%s/%s".formatted(hcpId.organizationName(), hcpId.pointOfCare()),
             Instant.now());
-
-        jobQueue.enqueue(logEvent);
-        log.debug("Enqueued MinLog event: {}", eventText);
     }
 
     /// Stops the scheduler which stop the MinLog registration.
