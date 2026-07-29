@@ -138,6 +138,10 @@ services:
       - db_password
       - cts_username
       - cts_password
+    environment:
+      <<: *opentelemetry-config
+      OTEL_SERVICE_NAME: tsam-synchronizer
+
 
   tomcat_node_a:
     build:
