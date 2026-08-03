@@ -4,7 +4,6 @@
 
 <#-- Medication Summary: https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.2.3-2020-09-07T095657.html -->
 <#macro render medicationSummary >
-
     <section>
         <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.3" />
         <templateId root="2.16.840.1.113883.10.20.1.8" />
