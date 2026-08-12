@@ -14,6 +14,7 @@ public class ModificatorTypeMapper {
         PARTLY_DEFINED_EFFECTUATOR,
         ORGANISATION,
         OTHER,
+       // SYSTEM, // This has been removed since it is only an empty flag that is inserted on top of an existing modificator e.g organization. Also there is no place in the CDA to specify that it is a healthcareimport or system
         UNKNOWN
     }
 
@@ -26,6 +27,9 @@ public class ModificatorTypeMapper {
         String organisationName;
         String countryCode;
         ModificatorKind kind;
+        Boolean healthCareImporterFlag;
+        Boolean systemUpdateFlag;
+        String systemName;
     }
 
     public static ModificatorInfo map(ModificatorType mod) {
@@ -44,7 +48,7 @@ public class ModificatorTypeMapper {
 
     private static ModificatorInfo mapHealthcareProfessional(ModificatorType mod) {
         var hp = mod.getAuthorisedHealthcareProfessional();
-
+        
         return ModificatorInfo.builder()
             .authorisationId(hp.getAuthorisationIdentifier())
             .authorName(hp.getName())
@@ -56,6 +60,9 @@ public class ModificatorTypeMapper {
                 .orElse(null))
             .countryCode("DK") //This is always country of origin which in our case is "DK"
             .kind(ModificatorKind.HEALTHCARE_PROFESSIONAL)
+            .healthCareImporterFlag(mod.getHealthInsuranceImport() != null)
+            .systemUpdateFlag(mod.getSystemUpdate() != null)
+            .systemName(mod.getSystemName())
             .build();
 
     }
@@ -68,23 +75,30 @@ public class ModificatorTypeMapper {
             .organisationName(effectuator.getEffectuatedByOrganisationName())
             .countryCode(effectuator.getEffectuatedInCountryCode() != null ? effectuator.getEffectuatedInCountryCode() : "DK") //Required in the input, but we stay on the safe side therefore this null check
             .kind(ModificatorKind.PARTLY_DEFINED_EFFECTUATOR)
+            .healthCareImporterFlag(mod.getHealthInsuranceImport() != null)
+            .systemUpdateFlag(mod.getSystemUpdate() != null)
+            .systemName(mod.getSystemName())
             .build();
     }
 
     private static ModificatorInfo mapOrganisation(ModificatorType mod) {
         var org = mod.getOrganisation();
 
-        //TODO: Expand this with correct information.
         return ModificatorInfo.builder()
             .organisationId(org.getIdentifier().getValue())
             .organisationName(org.getName())
             .countryCode("DK") //This is always country of origin which in our case is "DK"
             .kind(ModificatorKind.ORGANISATION)
+            .healthCareImporterFlag(mod.getHealthInsuranceImport() != null)
+            .systemUpdateFlag(mod.getSystemUpdate() != null)
+            .systemName(mod.getSystemName())
             .build();
     }
 
     private static ModificatorInfo mapOther(ModificatorType mod) {
         var other = mod.getOther(); //This is if a person adds/reports the vaccination themselves
+
+        // Somehow log that we encountered this
         //TODO: get a example on how this is mapped.
         return null;
     }
