@@ -1,0 +1,18 @@
+Load generated on: Darwin 25.5.0 arm64 / Apple M1 Max, 10 cores
+k6:                k6 v2.2.0 (commit/devel, go1.26.5, darwin/arm64)
+Target:            https://localhost:9443
+System under test: tomcat_node_a_mock (container openncp-server-mock) in Docker Desktop
+                   on the same machine (10 CPUs, 31 GiB to the VM), image built
+                   2026-08-10 from OpenNCP 9.1.0 with openncp-core-server-mock.
+                   Baseline: canned documents, no FMK, no NSP, no national connector.
+                   -Xmx1G, as in docker-compose.performance.yml.
+Notes:             Single-VU reference point for the load run in ../load-2026-08-17:
+                   the same four requests with nothing else in flight. All 55 checks
+                   passed, so this also records that the whole XCPD -> query ->
+                   retrieve L3 -> retrieve L1 chain works against the mock.
+
+                   tomcat_node_a was also running, idle, sharing the MySQL schema.
+
+                   This set replaces one measured with k6 v0.55 on the same host and
+                   the same target image; the k6 upgrade is the only deliberate change.
+                   Iteration avg moved 2082 -> 2123 ms, i.e. within run-to-run noise.

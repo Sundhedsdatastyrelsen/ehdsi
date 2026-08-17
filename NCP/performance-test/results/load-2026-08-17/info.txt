@@ -1,0 +1,26 @@
+Load generated on: Darwin 25.5.0 arm64 / Apple M1 Max, 10 cores
+k6:                k6 v2.2.0 (commit/devel, go1.26.5, darwin/arm64)
+Target:            https://localhost:9443
+System under test: tomcat_node_a_mock (container openncp-server-mock) in Docker Desktop
+                   on the same machine (10 CPUs, 31 GiB to the VM), image built
+                   2026-08-10 from OpenNCP 9.1.0 with openncp-core-server-mock.
+                   Baseline: canned documents, no FMK, no NSP, no national connector.
+                   -Xmx1G, as in docker-compose.performance.yml.
+Notes:             Load generator and target share the same laptop, so the numbers
+                   include the generator's own cost -- treat them as a ceiling on
+                   OpenNCP's throughput, not a measurement of it.
+
+                   tomcat_node_a (the real node) was also running during this run. It
+                   was idle, but it shares the same MySQL schema, so a little of the
+                   audit-write contention described in the README is in these figures.
+                   A stricter baseline would stop it first.
+
+                   No dropped iterations at 1 iteration/s: the mock sustained the
+                   arrival rate with 3 of 10 VUs busy, so this run measures latency at
+                   a rate the server keeps up with, not its saturation point.
+
+                   This set replaces one measured with k6 v0.55 on the same host and
+                   the same target image; the k6 upgrade is the only deliberate change.
+                   Iteration avg moved 2367 -> 2305 ms and p95 2676 -> 2534 ms, i.e.
+                   within run-to-run noise, and throughput was identical (67
+                   iterations, 0.87/s).

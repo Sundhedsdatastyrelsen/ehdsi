@@ -2,22 +2,28 @@ import http from "k6/http";
 import { check } from "k6";
 import { credentials, patientId, xcaQueryRequest, xcaRetrieveRequest, xcpdRequest } from "./requests.js";
 import { documentHead, patientFound, prescriptionDocuments, registryStatus, retrievedDocumentId } from "./responses.js";
+import { summaryReport } from "./report.js";
 
 const BASE_URL = __ENV.BASE_URL || "https://localhost:8443";
 const XCPD_URL = `${BASE_URL}/openncp-ws-server/services/XCPD_Service/`;
 const XCA_URL = `${BASE_URL}/openncp-ws-server/services/XCA_Service/`;
 
-const P95_LIMITS_MS = {
-  xcpd: 5000,
-  "xca-query": 10000,
-  "xca-retrieve-l3": 15000,
-  "xca-retrieve-l1": 15000,
+// The four requests of one iteration, in order. The `name` tag ties each one to its
+// own http_req_duration submetric; p95 is the generous placeholder limit for it (not
+// an SLA). The labels are what the committed reports in results/ are headed with.
+const STEPS = {
+  xcpd: { label: "XCPD patient discovery", p95: 5000 },
+  "xca-query": { label: "XCA Query (list prescriptions)", p95: 10000 },
+  "xca-retrieve-l3": { label: "XCA Retrieve L3 (structured CDA)", p95: 15000 },
+  "xca-retrieve-l1": { label: "XCA Retrieve L1 (PDF)", p95: 15000 },
 };
 
 const thresholds = Object.fromEntries([
   ["checks", ["rate==1"]],
-  ...Object.entries(P95_LIMITS_MS).map(([step, ms]) => [`http_req_duration{name:${step}}`, [`p(95)<${ms}`]]),
+  ...Object.entries(STEPS).map(([step, { p95 }]) => [`http_req_duration{name:${step}}`, [`p(95)<${p95}`]]),
 ]);
+
+const SCENARIO = __ENV.SCENARIO || "smoke";
 
 const scenarios = {
   smoke: { executor: "per-vu-iterations", vus: 1, iterations: 5, maxDuration: "10m" },
@@ -37,7 +43,7 @@ const scenarios = {
 };
 
 export const options = {
-  scenarios: { [__ENV.SCENARIO || "smoke"]: scenarios[__ENV.SCENARIO || "smoke"] },
+  scenarios: { [SCENARIO]: scenarios[SCENARIO] },
   thresholds,
   // The NCP serves a self-signed certificate and demands a client certificate.
   insecureSkipTLSVerify: true,
@@ -117,5 +123,17 @@ export default async function () {
 }
 
 export function setup() {
-  console.log(`Running ${__ENV.SCENARIO || "smoke"} against ${BASE_URL} for patient ${patientId}`);
+  console.log(`Running ${SCENARIO} against ${BASE_URL} for patient ${patientId}`);
+}
+
+// Writes results/<scenario>-<date>/{summary.md,summary.json} when run.sh set
+// RESULTS_DIR, and always keeps k6's own summary on stdout.
+export function handleSummary(data) {
+  return summaryReport(data, {
+    scenario: SCENARIO,
+    config: scenarios[SCENARIO],
+    steps: STEPS,
+    baseUrl: BASE_URL,
+    patient: patientId,
+  });
 }

@@ -18,7 +18,9 @@ part of what is measured.
 
 ## Prerequisites
 
-- `k6` (`brew install k6`) — developed against v0.55
+- `k6` (`brew install k6`) — v1.0 or later, developed against v2.2. The signing code uses
+  the global `crypto` object, which replaced the `k6/experimental/webcrypto` module in
+  v1.0, so it will not run on v0.x.
 - `node` and `npm` — for building the bundle
 - Docker, with the NCP running (`docker compose -f ../docker-compose.yml up`)
 - **A patient with at least one open ePrescription.** The flow reaches all the way into
@@ -45,6 +47,26 @@ The **smoke test** proves the chain works: every step is checked for functional
 success, not just HTTP 200, and the `checks: rate==1` threshold makes it fail loudly.
 
 The **load test** ramps to a constant arrival rate and holds it.
+
+## Results
+
+Every run writes `results/<scenario>-<date>/`:
+
+| File           | Contents                                                         |
+|----------------|------------------------------------------------------------------|
+| `summary.md`   | The readable report: per-step latency, throughput, thresholds    |
+| `summary.json` | k6's full end-of-test metrics, for anything the table leaves out |
+| `info.txt`     | Where the load was generated and what the target was running     |
+
+Results worth keeping can be committed, so a later run can be compared against them by
+diffing two `summary.md` files.
+
+`info.txt` is generated on the first run of the day with the host and k6 version
+filled in and `System under test:` / `Notes:` left as `...`. **Fill those in before
+committing a result** — they are the only part a machine cannot know, and without them
+the numbers are not comparable: a laptop against Docker Desktop is a different system
+than a workstation against the training server, however similar the figures look. Re-running
+on the same day overwrites `summary.md` and `summary.json` but never `info.txt`.
 
 ## Baseline: the mock server
 
@@ -80,15 +102,15 @@ BASE_URL=https://localhost:9443 PATIENT_ID=1-1234-W9 ./run.sh smoke
 
 All via environment variables:
 
-| Variable     | Default                  | Meaning                                   |
-| ------------ | ------------------------ | ----------------------------------------- |
-| `BASE_URL`   | `https://localhost:8443` | NCP server to test                        |
-| `PATIENT_ID` | `0410009234`             | Patient CPR, substituted into the templates |
-| `RATE`       | `1`                      | Iterations per time unit (load)           |
+| Variable     | Default                  | Meaning                                                             |
+|--------------|--------------------------|---------------------------------------------------------------------|
+| `BASE_URL`   | `https://localhost:8443` | NCP server to test                                                  |
+| `PATIENT_ID` | `0410009234`             | Patient CPR, substituted into the templates                         |
+| `RATE`       | `1`                      | Iterations per time unit (load)                                     |
 | `TIME_UNIT`  | `1s`                     | Time unit for `RATE`, e.g. `2s` for one iteration every two seconds |
-| `DURATION`   | `1m`                     | Time at the target rate (load)            |
-| `RAMP_UP`    | `15s`                    | Time spent ramping to the target rate     |
-| `MAX_VUS`    | `10`                     | VU ceiling (load)                         |
+| `DURATION`   | `1m`                     | Time at the target rate (load)                                      |
+| `RAMP_UP`    | `15s`                    | Time spent ramping to the target rate                               |
+| `MAX_VUS`    | `10`                     | VU ceiling (load)                                                   |
 
 ```sh
 RATE=3 DURATION=2m MAX_VUS=30 ./run.sh load
@@ -96,15 +118,17 @@ RATE=1 TIME_UNIT=4s ./run.sh load
 PATIENT_ID=0201909309 ./run.sh smoke
 ```
 
-The default rate of one iteration per second already saturates the NCP running locally
-in Docker: a measured run dropped iterations because all VUs stayed busy, and iteration
-duration rose from ~4 s at one VU to ~20 s. Expect to dial `RATE`/`TIME_UNIT` down, not
-up, when testing a laptop.
+The default rate of one iteration per second already saturates the **real** NCP running
+locally in Docker: a measured run dropped iterations because all VUs stayed busy, and
+iteration duration rose from ~4 s at one VU to ~20 s. Expect to dial `RATE`/`TIME_UNIT`
+down, not up, when testing a laptop. The mock server takes the same rate comfortably
+(see `results/load-2026-08-17/`), which is most of the point of having it.
 
 Per-step latency is visible in the summary through the `name` tag on each request
 (`xcpd`, `xca-query`, `xca-retrieve-l3`, `xca-retrieve-l1`) and the per-tag
 `http_req_duration` thresholds. Those thresholds are generous placeholders, not SLAs;
-they live in `P95_LIMITS_MS` at the top of `src/main.js`.
+they live in `STEPS` at the top of `src/main.js`, which also supplies the step labels
+used in `summary.md`.
 
 ## Layout
 
@@ -114,7 +138,9 @@ they live in `P95_LIMITS_MS` at the top of `src/main.js`.
 | `src/requests.js`                 | Templates → SOAP envelopes with freshly signed assertions |
 | `src/signing.js`                  | XML-DSig via xml-crypto, backed by k6's crypto            |
 | `src/responses.js`                | Regex/base64 extraction from the SOAP responses           |
+| `src/report.js`                   | `handleSummary` → the Markdown and JSON in `results/`     |
 | `src/shims/`                      | Minimal stand-ins for the Node globals xml-crypto expects |
+| `results/`                        | Committed benchmark runs                                  |
 | `templates/`                      | Request and assertion templates                           |
 | `testcert.cer`, `testcert.p8.pem` | Client certificate and key                                |
 | `build.mjs`                       | esbuild bundle configuration                              |
