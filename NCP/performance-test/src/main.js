@@ -1,7 +1,7 @@
 import http from "k6/http";
 import { check } from "k6";
 import { credentials, patientId, xcaQueryRequest, xcaRetrieveRequest, xcpdRequest } from "./requests.js";
-import { documentHead, patientFound, prescriptionDocuments, registryStatus } from "./responses.js";
+import { documentHead, patientFound, prescriptionDocuments, registryStatus, retrievedDocumentId } from "./responses.js";
 
 const BASE_URL = __ENV.BASE_URL || "https://localhost:8443";
 const XCPD_URL = `${BASE_URL}/openncp-ws-server/services/XCPD_Service/`;
@@ -26,7 +26,7 @@ const scenarios = {
     startRate: 0,
     // RATE must be a whole number, so rates below one iteration per second are
     // expressed by stretching the time unit, e.g. RATE=1 TIME_UNIT=2s.
-    timeUnit: __ENV.TIME_UNIT || "2s",
+    timeUnit: __ENV.TIME_UNIT || "1s",
     preAllocatedVUs: Number(__ENV.MAX_VUS || 10),
     maxVUs: Number(__ENV.MAX_VUS || 10),
     stages: [
@@ -55,7 +55,7 @@ function post(url, body, soapAction, name) {
 function retrieved(response, documentId) {
   return (
     /ResponseStatusType:(Partial)?Success/.test(registryStatus(response.body)) &&
-    response.body.includes(`<ns4:DocumentUniqueId>${documentId}</ns4:DocumentUniqueId>`)
+    retrievedDocumentId(response.body) === documentId
   );
 }
 

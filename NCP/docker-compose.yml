@@ -188,48 +188,6 @@ services:
       <<: *common-labels
       monitoring.blackbox.url: http://openncp-server:8090/openncp-ws-server/
 
-  # Vanilla OpenNCP server, without our national connector, on its own ports. It serves
-  # OpenNCP's own reference data, so it never reaches FMK or the NSP: it is the baseline
-  # that shows how much of a request's cost is OpenNCP itself. Not started by `up`:
-  #   docker compose --profile performance up --build --detach tomcat_node_a_mock
-  #   BASE_URL=https://localhost:9443 ./performance-test/run.sh smoke
-  tomcat_node_a_mock:
-    profiles: ["performance"]
-    build:
-      target: node-a-mock
-    container_name: "openncp-server-mock"
-    depends_on: [alloy-edge, tomcat-init]
-    env_file:
-      - ./ncp_a/ncpa.database.env
-      - ./ncp_a/ncpa.env
-    ports:
-      - "${NCP_A_MOCK_SERVER_CONNECTOR_PORT_EXTERNAL:-8092}:${NCP_A_SERVER_CONNECTOR_PORT}"
-      - "${NCP_A_MOCK_SERVER_CONNECTOR_SECURE_PORT_EXTERNAL:-9443}:${NCP_A_SERVER_CONNECTOR_SECURE_PORT}"
-    volumes:
-      - ./keystore:/opt/openncp-configuration/keystore:ro
-      - ./evidence/obligations:/opt/openncp-configuration/obligations
-      - ./evidence/validation:/opt/openncp-configuration/validation
-      - ./common/logback.xml:/opt/logging/logback.xml:ro
-      - ./heapdumps/tomcat_node_a_mock:/heapdumps
-      - ./openncp-configuration/pn-oid.xml:/opt/openncp-configuration/pn-oid.xml:ro
-    environment:
-      <<: *opentelemetry-config
-      OTEL_SERVICE_NAME: openncp-server-mock
-      JAVA_OPTS: "
-        -javaagent:/opt/opentelemetry-javaagent.jar
-        -Dlogging.config=/opt/logging/logback.xml
-        -DopenATNA.properties.path=file:/opt/atna-resources/openatna.properties
-        -Dfile.encoding=UTF-8
-        -Xms512m -Xmx1G -XX:MaxMetaspaceSize=256m
-        -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
-    networks:
-      - ncp
-    secrets:
-      - tls_keystore_password
-      - tls_truststore_password
-      - db_username
-      - db_password
-
   tomcat_node_b:
     build:
       target: node-b

@@ -47,6 +47,13 @@ export function prescriptionDocuments(body) {
   return null;
 }
 
+// The id of the document a retrieve response carries. We ask for one document at a
+// time, so the first match is the one we asked for.
+export function retrievedDocumentId(body) {
+  const match = /<(?:\w+:)?DocumentUniqueId>([^<]*)</.exec(body);
+  return match ? match[1].trim() : "";
+}
+
 export function documentHead(body) {
   const opening = /<(?:\w+:)?Document>/.exec(body);
   if (!opening) return "";
