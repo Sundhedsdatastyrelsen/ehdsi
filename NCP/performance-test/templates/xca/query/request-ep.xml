@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Header xmlns:addressing="http://www.w3.org/2005/08/addressing">
+    <addressing:Action env:mustUnderstand="1">urn:ihe:iti:2007:CrossGatewayQuery</addressing:Action>
+    <addressing:MessageID>{{message-id}}</addressing:MessageID>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      {{hcp-assertion|safe}}
+      {{trc-assertion|safe}}
+    </wsse:Security>
+  </env:Header>
+  <env:Body>
+    <ns3:AdhocQueryRequest xmlns="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
+                           xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+                           xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+                           xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:ns5="urn:ihe:iti:xds-b:2007">
+      <ns3:ResponseOption returnComposedObjects="true" returnType="LeafClass" />
+      <AdhocQuery id="urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d">
+        <Slot name="$XDSDocumentEntryPatientId">
+          <ValueList>
+            <Value>'0410009234^^^&amp;1.2.208.176.1.2&amp;ISO'</Value>
+          </ValueList>
+        </Slot>
+        <Slot name="$XDSDocumentEntryStatus">
+          <ValueList>
+            <Value>('urn:oasis:names:tc:ebxml-regrep:StatusType:Approved')</Value>
+          </ValueList>
+        </Slot>
+        <Slot name="$XDSDocumentEntryClassCode">
+          <ValueList>
+            <Value>('57833-6^^2.16.840.1.113883.6.1')</Value>
+          </ValueList>
+        </Slot>
+      </AdhocQuery>
+    </ns3:AdhocQueryRequest>
+  </env:Body>
+</env:Envelope>

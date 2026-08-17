@@ -1,22 +1,24 @@
 import { uuidv4 } from "https://jslib.k6.io/k6-utils/1.4.0/index.js";
 import { signAssertion } from "./signing.js";
 
-// The test-tool is the reference implementation whose requests the server is known
-// to accept; its templates are read directly so there is only one copy of them.
-const TEST_TOOL = "../../test-tool";
+import certificatePem from "../testcert.cer";
+import privateKeyPem from "../testcert.p8.pem";
+import xcpdHcp from "../templates/xcpd/hcp.xml";
+import xcpdRequestTemplate from "../templates/xcpd/request.xml";
+import xcaHcp from "../templates/xca/hcp.xml";
+import xcaTrc from "../templates/xca/trc.xml";
+import xcaQuery from "../templates/xca/query/request-ep.xml";
+import xcaRetrieve from "../templates/xca/retrieve/request-ep.xml";
 
-export const credentials = {
-  certificatePem: open(`${TEST_TOOL}/testcert.cer`),
-  privateKeyPem: open(`${TEST_TOOL}/testcert.p8.pem`),
-};
+export const credentials = { certificatePem, privateKeyPem };
 
 const templates = {
-  xcpdHcp: open(`${TEST_TOOL}/templates/xcpd/hcp.xml`),
-  xcpdRequest: open(`${TEST_TOOL}/templates/xcpd/request.xml`),
-  xcaHcp: open(`${TEST_TOOL}/templates/xca/hcp.xml`),
-  xcaTrc: open(`${TEST_TOOL}/templates/xca/trc.xml`),
-  xcaQuery: open(`${TEST_TOOL}/templates/xca/query/request-ep.xml`),
-  xcaRetrieve: open(`${TEST_TOOL}/templates/xca/retrieve/request-ep.xml`),
+  xcpdHcp,
+  xcpdRequest: xcpdRequestTemplate,
+  xcaHcp,
+  xcaTrc,
+  xcaQuery,
+  xcaRetrieve,
 };
 
 const TEMPLATE_PATIENT_ID = "0410009234";
@@ -24,8 +26,8 @@ const TEMPLATE_PATIENT_ID = "0410009234";
 export const patientId = __ENV.PATIENT_ID || TEMPLATE_PATIENT_ID;
 
 // The templates bake the patient CPR into the XCPD query, the TRC assertion and the
-// XCA query. Substituting it keeps the test-tool templates as the single source of
-// truth while allowing runs against another patient.
+// XCA query. Substituting it keeps the templates unmodified copies while allowing
+// runs against another patient.
 function forPatient(template) {
   return template.split(TEMPLATE_PATIENT_ID).join(patientId);
 }

@@ -1,8 +1,7 @@
 # k6 performance tests for ePrescription
 
 These tests act as a country B service: an OpenNCP client in the country of treatment
-calling our `openncp-server`, the same way the scripts in [`../test-tool`](../test-tool)
-do manually.
+calling our `openncp-server`.
 
 One iteration is one clinician looking up a patient's prescriptions:
 
@@ -13,9 +12,9 @@ One iteration is one clinician looking up a patient's prescriptions:
 
 The L3 and L1 document ids for steps 3 and 4 are taken from the query response.
 
-The SAML HCP and TRC assertions are rendered from the test-tool's templates and signed
-inside k6, freshly per iteration, so that the server's signature validation is part of
-what is measured.
+The SAML HCP and TRC assertions are rendered from the templates in `templates/` and
+signed inside k6, freshly per iteration, so that the server's signature validation is
+part of what is measured.
 
 ## Prerequisites
 
@@ -101,23 +100,28 @@ they live in `P95_LIMITS_MS` at the top of `src/main.js`.
 
 ## Layout
 
-| File                  | Contents                                                          |
-| --------------------- | ----------------------------------------------------------------- |
-| `src/main.js`         | Scenario, options, thresholds, checks                             |
-| `src/requests.js`     | Templates → SOAP envelopes with freshly signed assertions          |
-| `src/signing.js`      | XML-DSig via xml-crypto, backed by k6's crypto                     |
-| `src/responses.js`    | Regex/base64 extraction from the SOAP responses                    |
-| `src/shims/`          | Minimal stand-ins for the Node globals xml-crypto expects          |
-| `build.mjs`           | esbuild bundle configuration                                       |
+| File                              | Contents                                                  |
+|-----------------------------------|-----------------------------------------------------------|
+| `src/main.js`                     | Scenario, options, thresholds, checks                     |
+| `src/requests.js`                 | Templates → SOAP envelopes with freshly signed assertions |
+| `src/signing.js`                  | XML-DSig via xml-crypto, backed by k6's crypto            |
+| `src/responses.js`                | Regex/base64 extraction from the SOAP responses           |
+| `src/shims/`                      | Minimal stand-ins for the Node globals xml-crypto expects |
+| `templates/`                      | Request and assertion templates                           |
+| `testcert.cer`, `testcert.p8.pem` | Client certificate and key                                |
+| `build.mjs`                       | esbuild bundle configuration                              |
+
+## Templates and credentials
+
+`templates/` contain the XML request templates.
+
+The certificate is self-signed and must be trusted by the server under test —
+`keystore/dev-truststore.jks` should contain it.
+
+esbuild inlines all of these into `dist/main.js` as strings (the `text` loader in
+`build.mjs`), so the bundle has no runtime file dependencies at all.
 
 ## Notes
-
-**XCPD response codes.** This OpenNCP build reports `queryResponseCode="AE"` even on
-the success path: `XcpdServiceServerSideImpl` calls
-`fillOutputMessage(outputMessage, null, null, null, "OK")`, which binds to the overload
-whose fifth parameter is `location`, so `"OK"` never reaches the `code` parameter and it
-defaults to `"AE"`. The XCPD check therefore asserts on the acknowledgement and the
-returned demographics instead.
 
 **Retrieve responses.** Documents come back inline as base64 rather than as MTOM/XOP
 parts. Only the head of the base64 is decoded — enough to distinguish a structured L3

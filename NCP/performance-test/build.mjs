@@ -10,6 +10,7 @@ await esbuild.build({
   // k6's own modules are resolved by k6 at runtime, not by the bundler.
   external: ["k6", "k6/*", "https://*"],
   inject: ["src/shims/buffer.js"],
+  loader: { ".xml": "text", ".cer": "text", ".pem": "text" },
   alias: {
     crypto: "./src/shims/node-crypto.js",
     util: "./src/shims/node-util.js",
