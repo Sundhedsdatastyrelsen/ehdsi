@@ -4,15 +4,15 @@
     <addressing:Action env:mustUnderstand="1">urn:ihe:iti:2007:CrossGatewayRetrieve</addressing:Action>
     <addressing:MessageID>{{message-id}}</addressing:MessageID>
     <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-      {{hcp-assertion|safe}}
-      {{trc-assertion|safe}}
+      {{hcp-assertion}}
+      {{trc-assertion}}
     </wsse:Security>
   </env:Header>
   <env:Body>
     <xdsb:RetrieveDocumentSetRequest xmlns:xdsb="urn:ihe:iti:xds-b:2007">
       <xdsb:DocumentRequest>
-        <xdsb:RepositoryUniqueId>1.2.208.176.7.2.3</xdsb:RepositoryUniqueId>
-        <xdsb:DocumentUniqueId>1.2.208.176.7.2.3^523024526696021L3</xdsb:DocumentUniqueId>
+        <xdsb:RepositoryUniqueId>{{repository-id}}</xdsb:RepositoryUniqueId>
+        <xdsb:DocumentUniqueId>{{document-id}}</xdsb:DocumentUniqueId>
       </xdsb:DocumentRequest>
     </xdsb:RetrieveDocumentSetRequest>
   </env:Body>

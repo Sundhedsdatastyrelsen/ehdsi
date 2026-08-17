@@ -105,7 +105,7 @@ All via environment variables:
 | Variable     | Default                  | Meaning                                                             |
 |--------------|--------------------------|---------------------------------------------------------------------|
 | `BASE_URL`   | `https://localhost:8443` | NCP server to test                                                  |
-| `PATIENT_ID` | `0410009234`             | Patient CPR, substituted into the templates                         |
+| `PATIENT_ID` | `0410009234`             | Patient CPR, filled into the templates' `{{patient-id}}`            |
 | `RATE`       | `1`                      | Iterations per time unit (load)                                     |
 | `TIME_UNIT`  | `1s`                     | Time unit for `RATE`, e.g. `2s` for one iteration every two seconds |
 | `DURATION`   | `1m`                     | Time at the target rate (load)                                      |
@@ -147,8 +147,7 @@ used in `summary.md`.
 
 ## Templates and credentials
 
-`templates/` contain the XML request templates.
-
+`templates/` contain the XML request and assertion templates.
 The certificate is self-signed and must be trusted by the server under test —
 `keystore/dev-truststore.jks` should contain it.
 

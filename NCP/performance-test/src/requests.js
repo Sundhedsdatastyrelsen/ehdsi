@@ -21,21 +21,18 @@ const templates = {
   xcaRetrieve,
 };
 
-const TEMPLATE_PATIENT_ID = "0410009234";
+const DEFAULT_PATIENT_ID = "0410009234";
 
-export const patientId = __ENV.PATIENT_ID || TEMPLATE_PATIENT_ID;
+export const patientId = __ENV.PATIENT_ID || DEFAULT_PATIENT_ID;
 
-// The templates bake the patient CPR into the XCPD query, the TRC assertion and the
-// XCA query. Substituting it keeps the templates unmodified copies while allowing
-// runs against another patient.
-function forPatient(template) {
-  return template.split(TEMPLATE_PATIENT_ID).join(patientId);
-}
-
-// The templates are Selmer templates, but the only feature they use is
-// {{placeholder}} substitution; |safe merely suppresses Selmer's HTML escaping.
+// Everything that varies between runs or between iterations is a {{placeholder}} in the
+// templates, and this is the only thing that fills them in. Unknown keys throw rather
+// than substituting "undefined", which the server would reject far from the cause.
 function render(template, values) {
-  return template.replace(/\{\{([\w-]+)(?:\|safe)?\}\}/g, (_, key) => values[key]);
+  return template.replace(/\{\{([\w-]+)\}\}/g, (_, key) => {
+    if (!(key in values)) throw new Error(`No value for template placeholder {{${key}}}`);
+    return values[key];
+  });
 }
 
 // An XML declaration is legal only at the start of a document, so it has to go
@@ -55,7 +52,7 @@ function validityWindow() {
 }
 
 function assertion(template, values) {
-  return withoutXmlDeclaration(render(forPatient(template), { ...validityWindow(), ...values }));
+  return withoutXmlDeclaration(render(template, { ...validityWindow(), "patient-id": patientId, ...values }));
 }
 
 async function hcpAssertion(template) {
@@ -74,25 +71,26 @@ async function xcaAssertions() {
 
 export async function xcpdRequest() {
   const hcp = await hcpAssertion(templates.xcpdHcp);
-  return render(forPatient(templates.xcpdRequest), {
+  return render(templates.xcpdRequest, {
     "message-id": `uuid:${uuidv4()}`,
+    "patient-id": patientId,
     "hcp-assertion": hcp.xml,
   });
 }
 
 export async function xcaQueryRequest() {
-  return render(forPatient(templates.xcaQuery), {
+  return render(templates.xcaQuery, {
     "message-id": `uuid:${uuidv4()}`,
+    "patient-id": patientId,
     ...(await xcaAssertions()),
   });
 }
 
 export async function xcaRetrieveRequest({ repositoryId, documentId }) {
-  const envelope = render(templates.xcaRetrieve, {
+  return render(templates.xcaRetrieve, {
     "message-id": `uuid:${uuidv4()}`,
+    "repository-id": repositoryId,
+    "document-id": documentId,
     ...(await xcaAssertions()),
   });
-  return envelope
-    .replace(/(<xdsb:RepositoryUniqueId>)[^<]*/, `$1${repositoryId}`)
-    .replace(/(<xdsb:DocumentUniqueId>)[^<]*/, `$1${documentId}`);
 }
