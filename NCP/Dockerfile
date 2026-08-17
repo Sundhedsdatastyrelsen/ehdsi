@@ -79,12 +79,8 @@ COPY ./openncp-tsam-exporter/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["java", "-jar", "openncp-tsamexporter.jar"]
 
-# Node A
-FROM tomcat-base AS node-a
-
-COPY --from=builder \
-    /usr/src/app/openncp-server/target/openncp-server-*.war \
-    webapps/openncp-ws-server.war
+# Node A. Everything except the WAR itself, shared by node-a and node-a-mock below.
+FROM tomcat-base AS node-a-base
 
 COPY --from=builder \
     /usr/src/app/ehealth/openncp-docker/target/classes/lib \
@@ -97,14 +93,41 @@ COPY --from=builder \
 COPY ./ncp_a/config/server.xml conf/
 COPY ./ncp_a/entrypoint.sh bin/
 
-RUN chown -R tomcat:tomcat .
-
 # Take the logging down a notch by default
 ENV LOGGING_LEVEL_ROOT=INFO
 
-USER tomcat
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["catalina.sh", "run"]
+
+FROM node-a-base AS node-a
+COPY --from=builder \
+    /usr/src/app/openncp-server/target/openncp-server-*.war \
+    webapps/openncp-ws-server.war
+RUN chown -R tomcat:tomcat .
+USER tomcat
+
+FROM builder AS mock-builder
+COPY ncp_a_mock/pom.xml openncp-server-mock/pom.xml
+RUN --mount=type=cache,target=/root/.m2 \
+    cd openncp-server-mock && \
+    mvn -s /usr/src/app/maven-settings.xml package
+
+# Node A running OpenNCP's reference national connector instead of ours: it
+# answers from canned documents and never reaches FMK or the NSP. Useful as a
+# baseline for performance tests.
+FROM node-a-base AS node-a-mock
+COPY --from=mock-builder \
+    /usr/src/app/openncp-server-mock/target/openncp-server-mock-*.war \
+    webapps/openncp-ws-server.war
+# The mock looks its patients up as integration/<assigning authority>/<id>.properties, and
+# only ships them under its own OID. Repeating one under the Danish OID lets the country B
+# requests reach it unchanged, with just PATIENT_ID swapped for one the mock has documents
+# for. The documents themselves are canned inside the connector jar.
+COPY --from=builder \
+    /usr/src/app/ehealth/openncp-docker/openncp-configuration/integration/1.3.6.1.4.1.48336/1-1234-W9.properties \
+    /opt/openncp-configuration/integration/1.2.208.176.1.2/1-1234-W9.properties
+RUN chown -R tomcat:tomcat .
+USER tomcat
 
 # Node B
 FROM tomcat-base AS node-b

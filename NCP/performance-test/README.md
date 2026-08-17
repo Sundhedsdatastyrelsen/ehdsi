@@ -47,6 +47,28 @@ success, not just HTTP 200, and the `checks: rate==1` threshold makes it fail lo
 
 The **load test** ramps to a constant arrival rate and holds it.
 
+## Baseline: the mock server
+
+`tomcat_node_a_mock` is the same OpenNCP release built against OpenNCP's own
+reference national connector (`openncp-core-server-mock`) instead of ours.  It
+answers from canned documents inside that connector and never reaches FMK or the
+NSP, so comparing a run against it with a run against the real node separates
+OpenNCP's own cost from the cost of our national backend.
+
+```sh
+docker compose --profile performance up --build --detach tomcat_node_a_mock
+BASE_URL=https://localhost:9443 PATIENT_ID=1-1234-W9 ./run.sh smoke
+```
+
+- **`PATIENT_ID` must be one the mock knows**, e.g. `1-1234-W9` or `1-5678-W9`. It looks
+  patients up as `integration/<assigning authority>/<id>.properties` under
+  `/opt/openncp-configuration`, and the image repeats one of those files under the Danish
+  OID so the request templates work unchanged. The prescriptions come from `epstore` in
+  the connector jar, and the mock matches them to the patient by id prefix.
+- **Document ids follow a different convention.** The mock publishes the same document as
+  `<oid>.1` (XML/L3) and `<oid>.2` (PDF/L1), where DK uses `<repositoryId>^<id>L3`/`L1`.
+  `prescriptionDocuments()` in `src/responses.js` handles both.
+
 ## Configuration
 
 All via environment variables:

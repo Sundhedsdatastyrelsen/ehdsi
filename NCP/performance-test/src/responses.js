@@ -31,11 +31,20 @@ export function prescriptionDocuments(body) {
   // DK document ids are <repositoryId>^<prescriptionId><level>: the same prescription
   // is published both as L3 (structured CDA) and as L1 (PDF).
   const l3 = ids.find((id) => id.endsWith("L3"));
-  if (!l3) return null;
-  const l1 = `${l3.slice(0, -1)}1`;
-  if (!ids.includes(l1)) return null;
+  if (l3) {
+    const l1 = `${l3.slice(0, -1)}1`;
+    if (!ids.includes(l1)) return null;
+    return { repositoryId: l3.split("^")[0], l3, l1 };
+  }
 
-  return { repositoryId: l3.split("^")[0], l3, l1 };
+  // The mock server (see README) publishes the same document as <oid>.1 for the XML and
+  // <oid>.2 for the PDF, with no repository id in front.
+  const mockL3 = ids.find((id) => id.endsWith(".1") && ids.includes(`${id.slice(0, -1)}2`));
+  if (mockL3) {
+    return { repositoryId: mockL3.split("^")[0], l3: mockL3, l1: `${mockL3.slice(0, -1)}2` };
+  }
+
+  return null;
 }
 
 export function documentHead(body) {
