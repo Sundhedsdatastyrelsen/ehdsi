@@ -76,18 +76,14 @@ answers from canned documents inside that connector and never reaches FMK or the
 NSP, so comparing a run against it with a run against the real node separates
 OpenNCP's own cost from the cost of our national backend.
 
-It is defined in `../docker-compose.performance.yml`, an overlay on the main compose
+It is defined in `../docker-compose.performance-test.yml`, an overlay on the main compose
 file, so it is only built and started when that file is passed explicitly:
 
 ```sh
-cd .. && docker compose -f docker-compose.yml -f docker-compose.performance.yml \
+cd .. && docker compose -f docker-compose.yml -f docker-compose.performance-test.yml \
     up --build --detach tomcat_node_a_mock && cd -
 BASE_URL=https://localhost:9443 PATIENT_ID=1-1234-W9 ./run.sh smoke
 ```
-
-- **It shares the real node's database.** Both use `ncp_a/ncpa.database.env`, so the two
-  servers write audits to the same schema. Stop `tomcat_node_a` before measuring the
-  baseline, or the contention lands in the numbers.
 
 - **`PATIENT_ID` must be one the mock knows**, e.g. `1-1234-W9` or `1-5678-W9`. It looks
   patients up as `integration/<assigning authority>/<id>.properties` under

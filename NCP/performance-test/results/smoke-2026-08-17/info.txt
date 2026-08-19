@@ -5,7 +5,7 @@ System under test: tomcat_node_a_mock (container openncp-server-mock) in Docker 
                    on the same machine (10 CPUs, 31 GiB to the VM), image built
                    2026-08-10 from OpenNCP 9.1.0 with openncp-core-server-mock.
                    Baseline: canned documents, no FMK, no NSP, no national connector.
-                   -Xmx1G, as in docker-compose.performance.yml.
+                   -Xmx1G, as in docker-compose.performance-test.yml.
 Notes:             Single-VU reference point for the load run in ../load-2026-08-17:
                    the same four requests with nothing else in flight. All 55 checks
                    passed, so this also records that the whole XCPD -> query ->

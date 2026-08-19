@@ -1,6 +1,6 @@
 # Overlay for the performance-test baseline. Merge it onto the main file:
 #
-#   docker compose -f docker-compose.yml -f docker-compose.performance.yml \
+#   docker compose -f docker-compose.yml -f docker-compose.performance-test.yml \
 #       up --build --detach tomcat_node_a_mock
 #   BASE_URL=https://localhost:9443 PATIENT_ID=1-1234-W9 ./performance-test/run.sh smoke
 #

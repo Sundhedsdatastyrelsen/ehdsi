@@ -21,7 +21,7 @@ const templates = {
   xcaRetrieve,
 };
 
-const DEFAULT_PATIENT_ID = "0410009234";
+const DEFAULT_PATIENT_ID = "0410009234"; // Sofie Bach
 
 export const patientId = __ENV.PATIENT_ID || DEFAULT_PATIENT_ID;
 
