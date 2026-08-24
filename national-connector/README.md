@@ -21,32 +21,20 @@ The National-connector directory consists of the following modules:
 
 ```
 /National-connector
-├── authentication/     # [Authentication logic (IDWS, DGWS, Certificates, etc)]
-├── base-utils/         # [XML components (Namespace, utils, XPathWrapper, etc)]
-├── base-utils-test/    # [Test of XML components]
-├── cda-generator/      # [Core components for CDA generation, hereunder business logic and models]
-├── epps-api/           # [Holds the schemas and generated data structures for data objects for the different sources]
-├── epps-application/   # [Beans and controllers]
-├── epps-service/       # [Our outgoing services e.g PatientSummary and incoming from e.g DDV or FMK]
-├── integration-tests/  # [Tests toward outside services, e.g FMK, DVV, etc]
-├── job-queue/          # [TODO: Add description]
-├── local-lms-db/       # [TODO: Add description]
-├── nsp-client/         # [Clients toward NSP]
-├── opt-out/            # [FSEU opt-out service]
-├── testing-shared/     # [Shared testing modules, e.g retrieval of test data which gets stored locally, to pretend tests breaking if updates happen]
-└── testing-tools/      # [Tests for EPrescription]
+├── cda-generator/      # [Core functionality for generating CDA documents. Contains the business logic, models and supporting components used to transform source data into the CDA structures required for exchange.]
+├── epps-api/           # [API-related data structures and schemas used when integrating with external data sources. Contains schemas as well as generated classes/models representing data received from or sent to the different APIs]
+├── epps-application/   # [Main entry point when getting familiar with the application. Contains application configuration, beans and controllers, and is a useful place to start when tracing how requests enter the application.]
+├── epps-service/       # [Service integrations and the logic connecting the application to external systems. Contains outgoing eHealth services such as Patient Summary as well as integrations used to retrieve data from Danish services such as DDV and FMK.]
+└── testing-shared/     # [Shared testing modules, e.g retrieval of test data which gets stored locally, to pretend tests breaking if updates happen]
 ```
 
-
-
 ## Tests
-How is tests run?
-
+* Some tests require Key vault secrets to run.
+  
 /src
 ├── main/        # [...]
 └── test/      # [Run tests in the files or via maven]
 
-Some tests require Key vault secrets to run
 
 ## Developer guidelines
 
