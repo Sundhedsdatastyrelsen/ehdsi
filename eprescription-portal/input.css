@@ -1,0 +1,5 @@
+/* Import tailwind but don't read every file */
+@import "tailwindcss" source(none);
+
+/* Instead, read only the template files */
+@source "./src/main/resources/templates";

@@ -1,0 +1,9 @@
+# Force LF on shell scripts so the gradle/maven wrappers work in containers
+# even when checked out from Windows (where Git may otherwise apply CRLF).
+*.sh        text eol=lf
+gradlew     text eol=lf
+mvnw        text eol=lf
+
+# Windows batch wrappers stay CRLF.
+*.bat       text eol=crlf
+*.cmd       text eol=crlf

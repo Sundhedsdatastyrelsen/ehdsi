@@ -1,0 +1,49 @@
+name: ep-portal-dev
+
+# Dev compose: exposes every service port directly on localhost instead of going
+# through Traefik. Uses dev auth providers on both web apps so MitID/OIDC are not
+# required. Vault creds still come from .env (database.hmacKey is resolved at
+# config-load time regardless of which auth mode is active).
+#
+# Run with:
+#   docker compose -f docker-compose.dev.yml up --build
+
+services:
+  ep-portal:
+    container_name: ep-portal-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./data:/home/app/data
+      - ./config:/home/app/config:ro
+    ports:
+      - "8555:8555"   # Web UI
+    environment:
+      TZ: "Europe/Copenhagen"
+      AUTH: "dev"
+    # The production healthcheck pings /saml/metadata which only exists when SAML
+    # auth is active. Disable it in dev so the container doesn't flap.
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+    depends_on:
+      - ep-portal-init
+
+  # ep-portal runs as user 10001, and docker compose creates the volume as root.
+  # As such, we need to chown the volume in order for the service to start correctly.
+  # Recurse (-R) so an already-present opt-out.sqlite (owned by another uid from a
+  # prior deploy or a host-side copy) also becomes writable — otherwise reads work
+  # but writes fail with SQLITE_READONLY the first time a mutation is persisted.
+  ep-portal-init:
+    image: busybox
+    user: root
+    entrypoint:
+      - "chown"
+      - "-R"
+      - "10001:10001"
+      - "/home/app/data"
+    volumes:
+      - ./data:/home/app/data
