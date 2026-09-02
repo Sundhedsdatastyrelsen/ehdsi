@@ -1,0 +1,68 @@
+# Builds and publishes the cert-exporter image (see cert-exporter/README.md).
+# Follows the same pattern as build-epps-image.yml.
+name: Cert Exporter Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'cert-exporter/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  REPO_NAME: ${{ github.repository }}
+
+jobs:
+  build-cert-exporter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v4
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: Generate docker-bake.hcl
+      run: |
+        cat > cert-exporter/docker-bake.hcl <<EOL
+        group "default" {
+          targets = ["cert-exporter"]
+        }
+
+        target "cert-exporter" {
+          dockerfile = "Dockerfile"
+          platforms = ["linux/amd64"]
+          cache-from = [
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/cert-exporter:cache"
+          ]
+          cache-to = [
+            "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/cert-exporter:cache"
+          ]
+          tags = [
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/cert-exporter:latest",
+            "ghcr.io/sundhedsdatastyrelsen/ehdsi/cert-exporter:build-${{ github.run_number }}"
+          ]
+          output = [
+            "type=image,push=true"
+          ]
+        }
+        EOL
+
+    # https://stackoverflow.com/a/75544124
+    - name: Build and push images
+      run: |
+        cd cert-exporter
+        docker buildx bake --file docker-bake.hcl --push
