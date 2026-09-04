@@ -78,6 +78,35 @@ running with - and `docker restart` is not enough. Some variant of
 `cd NCP && docker compose up -d tomcat_node_a:VERSION` should do it, and similar
 for the national connector.
 
+## Updating NC<->Opt-Out mTLS in development
+
+The dev environment runs this repository and the FSEU repository directly, so
+the mTLS pair lives in committed keystores on both sides:
+
+- `national-connector/config/dev-opt-out-keystore.p12` (NC client certificate)
+  and `dev-opt-out-truststore.p12` (trusts the FSEU server certificate)
+- `<FSEU>/config/dev-server-keystore.p12` (FSEU server certificate) and
+  `dev-server-truststore.p12` (trusts the NC client certificate and the curl
+  client `<FSEU>/dev-client.crt`)
+
+[`regenerate-dev-certificates.sh`](../regenerate-dev-certificates.sh) rebuilds
+all four from scratch with the `changeit` password the dev configs expect:
+
+```
+./regenerate-dev-certificates.sh /path/to/FSEU
+```
+
+The server certificate's CN must equal the hostname the national connector
+dials (`opt-out.host` in `national-connector/config/application.yml`), because
+the Java client verifies the CN and ignores SANs. The default is `localhost`;
+set `SERVER_CN` if the dev host dials something else. See the script header for
+the other overrides.
+
+Commit the changed keystores in both repositories, pull on the dev host, and
+recreate the `fseu` and national connector containers with the images they
+already run (`docker compose up -d`, not `docker restart`). The cert-exporter
+picks up the new expiry dates within a minute.
+
 ## Monitoring and alerting
 
 The certificates can be monitored in Grafana via the cert-exporter dashboard.
