@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://maven.apache.org/POM/4.0.0
+          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>eu.europa.ec.sante</groupId>
+        <artifactId>openncp</artifactId>
+        <version>9.1.0</version>
+    </parent>
+
+    <groupId>dk.sds</groupId>
+    <artifactId>openncp-server-mock</artifactId>
+    <version>9.1.0</version>
+    <packaging>war</packaging>
+
+    <name>OpenNCP Mock Application</name>
+
+    <!--
+    The same OpenNCP server as ../ncp_a, but with OpenNCP's own reference national
+    connector instead of ours. It answers from canned documents and never reaches FMK or
+    the NSP, which makes it the baseline for the performance tests: the difference between
+    the two servers is what the Danish backend costs us.
+
+    Upstream ships this connector as the "national-connector-mock" profile on
+    openncp-core-server. We cannot use that profile, because it applies while building the
+    application server itself, and we need the application server left alone so ../ncp_a
+    can overlay it. Depending on the module directly has the same effect: its beans live
+    under eu.europa.ec.sante.openncp, which is what ServerWebServiceApplication component
+    scans, so being on the classpath is all it takes.
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>eu.europa.ec.sante</groupId>
+            <artifactId>openncp-application-server</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.sante</groupId>
+            <artifactId>openncp-core-server-mock</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven WAR Plugin to overlay the openncp-application-server WAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>eu.europa.ec.sante</groupId>
+                            <artifactId>openncp-application-server</artifactId>
+                            <type>war</type>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,355 @@
+{
+  "root_group": {
+    "groups": [],
+    "checks": [
+        {
+          "passes": 5,
+          "fails": 0,
+          "name": "xcpd: 200",
+          "path": "::xcpd: 200",
+          "id": "1d3a7746ec0c936d70ed6c7a9cfc5e6e"
+        },
+        {
+          "path": "::xcpd: patient found",
+          "id": "061c7b2285b8f9042b47fc33810bc9bc",
+          "passes": 5,
+          "fails": 0,
+          "name": "xcpd: patient found"
+        },
+        {
+          "name": "xca-query: 200",
+          "path": "::xca-query: 200",
+          "id": "392e818912ed57399e84ea5c483d832b",
+          "passes": 5,
+          "fails": 0
+        },
+        {
+          "path": "::xca-query: success",
+          "id": "b9aff20aee360e157b5ae42650d5bf09",
+          "passes": 5,
+          "fails": 0,
+          "name": "xca-query: success"
+        },
+        {
+          "id": "06f0844d7e841533e8d84b2dfda16fc1",
+          "passes": 5,
+          "fails": 0,
+          "name": "xca-query: L3 and L1 document ids",
+          "path": "::xca-query: L3 and L1 document ids"
+        },
+        {
+          "path": "::xca-retrieve-l3: 200",
+          "id": "dac74f57bccbefe2e7aa0dc426f240cb",
+          "passes": 5,
+          "fails": 0,
+          "name": "xca-retrieve-l3: 200"
+        },
+        {
+          "passes": 5,
+          "fails": 0,
+          "name": "xca-retrieve-l3: document returned",
+          "path": "::xca-retrieve-l3: document returned",
+          "id": "fa7c2b60b7acb5f1f415e252125d4067"
+        },
+        {
+          "name": "xca-retrieve-l3: structured CDA",
+          "path": "::xca-retrieve-l3: structured CDA",
+          "id": "314e3e515086c39e0777cb37cb21368f",
+          "passes": 5,
+          "fails": 0
+        },
+        {
+          "name": "xca-retrieve-l1: 200",
+          "path": "::xca-retrieve-l1: 200",
+          "id": "eef836e509173be73ca3173510a39f09",
+          "passes": 5,
+          "fails": 0
+        },
+        {
+          "id": "4a797f095aab706c24cb48651c69f25a",
+          "passes": 5,
+          "fails": 0,
+          "name": "xca-retrieve-l1: document returned",
+          "path": "::xca-retrieve-l1: document returned"
+        },
+        {
+          "name": "xca-retrieve-l1: PDF",
+          "path": "::xca-retrieve-l1: PDF",
+          "id": "209e292c84145208cbabb4968bd64b5c",
+          "passes": 5,
+          "fails": 0
+        }
+      ],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "options": {
+    "summaryTimeUnit": "",
+    "noColor": false,
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)"
+    ]
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 10620.206
+  },
+  "metrics": {
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 1,
+        "max": 1
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0.11760000000000001,
+        "p(95)": 0.13649999999999993,
+        "avg": 0.10170000000000001,
+        "min": 0.077,
+        "med": 0.0935,
+        "max": 0.222
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "values": {
+        "p(95)": 666.4210999999998,
+        "avg": 492.5941000000001,
+        "min": 350.617,
+        "med": 465.1155,
+        "max": 906.279,
+        "p(90)": 651.0133
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "checks": {
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 55,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate==1": {
+          "ok": true
+        }
+      },
+      "type": "rate"
+    },
+    "http_req_blocked": {
+      "contains": "time",
+      "values": {
+        "avg": 0.6219499999999999,
+        "min": 0.003,
+        "med": 0.004,
+        "max": 12.361,
+        "p(90)": 0.0061,
+        "p(95)": 0.6246999999999896
+      },
+      "type": "trend"
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 651.0133,
+        "p(95)": 666.4210999999998,
+        "avg": 492.5941000000001,
+        "min": 350.617,
+        "med": 465.1155,
+        "max": 906.279
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 1.0289999999999997,
+        "avg": 0.38999999999999996,
+        "min": 0.054,
+        "med": 0.2685,
+        "max": 1.276,
+        "p(90)": 1.0132999999999999
+      }
+    },
+    "http_req_duration{name:xca-retrieve-l1}": {
+      "contains": "time",
+      "values": {
+        "avg": 492.86499999999995,
+        "min": 475.906,
+        "med": 493.354,
+        "max": 501.26,
+        "p(90)": 501.0584,
+        "p(95)": 501.1592
+      },
+      "thresholds": {
+        "p(95)<15000": {
+          "ok": true
+        }
+      },
+      "type": "trend"
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(95)": 0.5030499999999916,
+        "avg": 0.50305,
+        "min": 0,
+        "med": 0,
+        "max": 10.061
+      }
+    },
+    "http_req_duration{name:xca-query}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 418.2844,
+        "min": 397.603,
+        "med": 408.539,
+        "max": 454.325,
+        "p(90)": 445.4386,
+        "p(95)": 449.8818
+      },
+      "thresholds": {
+        "p(95)<10000": {
+          "ok": true
+        }
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 235549,
+        "rate": 22179.32495848009
+      }
+    },
+    "iteration_duration": {
+      "contains": "time",
+      "values": {
+        "avg": 2123.3622668,
+        "min": 2015.924125,
+        "med": 2064.921375,
+        "max": 2296.067333,
+        "p(90)": 2257.5326166,
+        "p(95)": 2276.7999747999997
+      },
+      "type": "trend"
+    },
+    "iterations": {
+      "contains": "default",
+      "values": {
+        "count": 5,
+        "rate": 0.4708006605521588
+      },
+      "type": "counter"
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0.06839999999999885,
+        "avg": 0.0684,
+        "min": 0,
+        "med": 0,
+        "max": 1.368,
+        "p(90)": 0
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 550691,
+        "rate": 51853.13731202578
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 666.0765999999998,
+        "avg": 492.10239999999993,
+        "min": 350.443,
+        "med": 464.213,
+        "max": 905.925,
+        "p(90)": 650.4938
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 20
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 1,
+        "max": 1
+      }
+    },
+    "http_req_duration{name:xca-retrieve-l3}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 805.2862,
+        "p(95)": 855.7826,
+        "avg": 689.8524,
+        "min": 612.759,
+        "med": 650.704,
+        "max": 906.279
+      },
+      "thresholds": {
+        "p(95)<15000": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_duration{name:xcpd}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 350.617,
+        "med": 355.361,
+        "max": 425.756,
+        "p(90)": 400.6484,
+        "p(95)": 413.20219999999995,
+        "avg": 369.3746
+      },
+      "thresholds": {
+        "p(95)<5000": {
+          "ok": true
+        }
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 20,
+        "rate": 1.8832026422086352
+      }
+    }
+  }
+}
