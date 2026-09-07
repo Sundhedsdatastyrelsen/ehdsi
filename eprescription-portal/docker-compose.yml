@@ -1,0 +1,52 @@
+name: eP-Portal
+
+services:
+  ep-portal:
+    container_name: ep-portal
+    # Host deploys `docker compose pull` this image; the build: block below is for
+    # local development.
+    image: ghcr.io/sundhedsdatastyrelsen/ehdsi/ep-portal:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./data:/home/app/data
+      - ./config:/home/app/config:ro
+    ports:
+      - "8555:8555" # Web UI
+      # - "8080:8080" # For testing
+      # - "28540:28540" # Remote debugging
+    environment:
+      TZ: "Europe/Copenhagen"
+      JAVA_OPTS: "-javaagent:opentelemetry-javaagent.jar"
+      OTEL_SERVICE_NAME: ep-portal
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://host.docker.internal:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+
+      OTEL_RESOURCE_ATTRIBUTES: "deployment.environment.name=${GRAFANA_ENVIRONMENT:-Training}"
+      OTEL_TRACES_SAMPLER: "always_on"
+    extra_hosts:
+      # https://docs.docker.com/reference/cli/dockerd/#configure-host-gateway-ip
+      - "host.docker.internal:host-gateway" # to allow connections to alloy-hub
+    restart: unless-stopped
+    depends_on:
+      - ep-portal-init
+
+  # ep-portal runs as user 10001, and docker compose creates the volume as root.
+  # As such, we need to chown the volume in order for the service to start correctly.
+  # Recurse (-R) so an already-present opt-out.sqlite (owned by another uid from a
+  # prior deploy or a host-side copy) also becomes writable — otherwise reads work
+  # but writes fail with SQLITE_READONLY the first time a mutation is persisted.
+  ep-portal-init:
+    image: busybox
+    user: root
+    entrypoint:
+      - "chown"
+      - "-R"
+      - "10001:10001"
+      - "/home/app/data"
+    volumes:
+      - ./data:/home/app/data
+

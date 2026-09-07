@@ -1,0 +1,14 @@
+.git
+.gitignore
+.gradle
+.idea
+build/
+!build/libs/*.jar
+*.iml
+*.iws
+*.ipr
+*.log
+.DS_Store
+Dockerfile
+docker-compose.yml
+README.md

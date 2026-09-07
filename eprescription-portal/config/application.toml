@@ -1,0 +1,9 @@
+[webapp]
+port = 8080
+
+[vault]
+# Optional: Configure truststore for Vault SSL connections
+# Note: Since Vault is accessed during config loading, truststore must be configured
+# via environment variables (VAULT_TRUSTSTORE_PATH, VAULT_TRUSTSTORE_PASSWORD) or
+# system properties (vault.truststore.path, vault.truststore.password).
+# If not specified, the default JVM truststore will be used.
