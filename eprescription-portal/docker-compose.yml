@@ -1,4 +1,4 @@
-name: eP-Portal
+name: ep-portal
 
 services:
   ep-portal:
