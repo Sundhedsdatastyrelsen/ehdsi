@@ -8,9 +8,9 @@ group = "dk.sundhedsdatastyrelsen"
 version = "0.0.1"
 
 kotlin {
-    // Match the JDK used by the Docker build/runtime (eclipse-temurin-21). Pinning the toolchain keeps
+    // Match the JDK used by the Docker build/runtime (eclipse-temurin-25). Pinning the toolchain keeps
     // compileJava and compileKotlin on the same JVM target regardless of the local JDK.
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 
 repositories {
