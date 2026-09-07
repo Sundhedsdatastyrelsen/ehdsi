@@ -1,0 +1,69 @@
+# Name is used as reference in other workflows. Check when changing.
+name: Build ep-portal image
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'eprescription-portal/**'
+      - '.github/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  REPO_NAME: ${{ github.repository }}
+  AZURE_REGISTRY: eppsregistry.azurecr.io
+
+jobs:
+  build-ep-portal:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Generate docker-bake.hcl
+        working-directory: eprescription-portal
+        run: |
+          cat > docker-bake.hcl <<EOL
+          group "default" {
+            targets = ["ep-portal"]
+          }
+
+          target "ep-portal" {
+            dockerfile = "Dockerfile"
+            context = "."
+            platforms = ["linux/amd64"]
+            cache-from = [
+              "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/ep-portal:cache"
+            ]
+            cache-to = [
+              "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/ep-portal:cache"
+            ]
+            tags = [
+              "ghcr.io/sundhedsdatastyrelsen/ep-portal/ep-portal:latest",
+              "ghcr.io/sundhedsdatastyrelsen/ep-portal/ep-portal:build-${{ github.run_number }}"
+            ]
+            output = [
+              "type=image,push=true"
+            ]
+          }
+          EOL
+
+      - name: Build and push images
+        working-directory: eprescription-portal
+        run: docker buildx bake --file docker-bake.hcl --push
