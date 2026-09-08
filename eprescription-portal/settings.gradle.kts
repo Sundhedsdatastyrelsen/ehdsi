@@ -1,1 +1,1 @@
-rootProject.name = "eP-Portal"
+rootProject.name = "ep-portal"

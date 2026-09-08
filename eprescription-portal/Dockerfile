@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 # Pre-download Gradle by executing the wrapper script
 COPY gradlew /build/gradlew
 COPY gradle/wrapper/ /build/gradle/wrapper/
@@ -14,7 +14,7 @@ COPY src src
 # Test and build
 RUN ./gradlew --no-daemon build installDist -x test
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 # Install curl for health check
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/ \
     && useradd -m -u 10001 app
