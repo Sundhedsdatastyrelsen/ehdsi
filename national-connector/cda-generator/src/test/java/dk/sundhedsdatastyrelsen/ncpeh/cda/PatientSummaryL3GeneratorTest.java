@@ -45,7 +45,7 @@ class PatientSummaryL3GeneratorTest {
         var patient = patient("DK");
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
 
-        var input = new PatientSummaryInput(documentId, preferredHP, patient, medicationSummary, null);
+        var input = new PatientSummaryL3Input(documentId, preferredHP, patient, medicationSummary, null);
         var psL3 = PatientSummaryL3Mapper.model(input);
         var cda = PatientSummaryL3Generator.generate(psL3);
 
@@ -129,7 +129,7 @@ class PatientSummaryL3GeneratorTest {
         var patient = patient("DK");
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
 
-        var input = new PatientSummaryInput(documentId, preferredHP, patient, medicationSummary, null);
+        var input = new PatientSummaryL3Input(documentId, preferredHP, patient, medicationSummary, null);
         var psL3 = PatientSummaryL3Mapper.model(input);
         var cda = PatientSummaryL3Generator.generate(psL3);
 
@@ -196,7 +196,7 @@ class PatientSummaryL3GeneratorTest {
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
         var immunization = DdvResponseStorage.getTestVaccination(cpr);
 
-        var input = new PatientSummaryInput(documentId, preferredHP, patient, medicationSummary, immunization);
+        var input = new PatientSummaryL3Input(documentId, preferredHP, patient, medicationSummary, immunization);
         var psL3 = PatientSummaryL3Mapper.model(input);
         var cda = PatientSummaryL3Generator.generate(psL3);
 
@@ -311,7 +311,7 @@ class PatientSummaryL3GeneratorTest {
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
         var immunization = DdvResponseStorage.getTestVaccination(cpr);
 
-        var input = new PatientSummaryInput(documentId, preferredHP, patient, medicationSummary, immunization);
+        var input = new PatientSummaryL3Input(documentId, preferredHP, patient, medicationSummary, immunization);
         var psL3 = PatientSummaryL3Mapper.model(input);
         var cda = PatientSummaryL3Generator.generate(psL3);
 
@@ -384,7 +384,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
-        var input = new PatientSummaryInput(documentId, null, patient, medicationSummary, null);
+        var input = new PatientSummaryL3Input(documentId, null, patient, medicationSummary, null);
         var psL3 = PatientSummaryL3Mapper.model(input);
         var cda = PatientSummaryL3Generator.generate(psL3);
 
@@ -415,7 +415,7 @@ class PatientSummaryL3GeneratorTest {
             .build();
 
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
-        var input = new PatientSummaryInput("testtest", preferredHp, patient, medicationSummary, null);
+        var input = new PatientSummaryL3Input("testtest", preferredHp, patient, medicationSummary, null);
         var psL3 = PatientSummaryL3Mapper.model(input);
         var cda = PatientSummaryL3Generator.generate(psL3);
 

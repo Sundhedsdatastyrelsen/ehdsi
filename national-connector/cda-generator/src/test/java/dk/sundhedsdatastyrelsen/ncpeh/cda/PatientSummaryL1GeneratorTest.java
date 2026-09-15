@@ -9,6 +9,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL1;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.DdvResponseStorage;
+import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
+import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.xmlunit.builder.Input;
@@ -19,7 +22,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -30,63 +32,31 @@ import static org.hamcrest.Matchers.*;
 
 class PatientSummaryL1GeneratorTest {
     private static final String BASE_ID = "test-document-id";
-
-    private static PatientSummaryL3 buildL3Model(PreferredHealthProfessional preferredHp) {
-        var patient = Patient.builder()
-            .id(new CdaId(Oid.DK_CPR, "1234567890"))
-            .name(Name.fromFullName("Hans Christian Andersen"))
-            .address(new Address(List.of("Overgaden Oven Vandet 10", "1."), "København K", "1415", "DK"))
-            .genderCode(CdaCode.builder()
-                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
-                .codeSystemVersion("913-20091020")
-                .code("M")
-                .displayName("Male")
-                .build())
-            .birthTime(LocalDate.of(1982, 11, 3))
-            .build();
-        return PatientSummaryL3.builder()
-            .documentId(new CdaId(
-                Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
-                DocumentIdMapper.level1DocumentId(BASE_ID)))
-            .effectiveTime(OffsetDateTime.now())
-            .title("Patient Summary L1 Test")
-            .patient(patient)
-            .preferredHp(preferredHp)
-            .build();
-    }
-
-    private static PatientSummaryL1 buildL1Model(PreferredHealthProfessional preferredHp) {
-        var l3Model = buildL3Model(preferredHp);
-        var pdf = PatientSummaryPdfGenerator.generate(l3Model);
-        var relatedL3DocumentId = new CdaId(
-            Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
-            DocumentIdMapper.level3DocumentId(BASE_ID));
-        return PatientSummaryL1.builder()
-            .modelData(l3Model)
-            .base64EncodedDocument(Base64.getEncoder().encodeToString(pdf))
-            .relatedL3DocumentId(relatedL3DocumentId)
-            .build();
-    }
+    private static final String CPR = "0410009234";
 
     @Test
-    void generateTest() {
+    void generateTest() throws JAXBException {
         var model = buildL1Model(null);
         var cda = PatientSummaryL1Generator.generate(model);
+
         Assertions.assertNotNull(cda);
     }
 
     @Test
     void generatedXmlIsWellFormed() throws Exception {
-        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+        var model = buildL1Model(null);
+        var cda = PatientSummaryL1Generator.generate(model);
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
+
         Assertions.assertDoesNotThrow(() ->
             documentBuilder.parse(new ByteArrayInputStream(cda.getBytes(StandardCharsets.UTF_8)))
         );
     }
 
     @Test
-    void documentIdHasL1Suffix() {
-        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+    void documentIdHasL1Suffix() throws JAXBException {
+        var model = buildL1Model(null);
+        var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
         Map<String, String> namespaces = new HashMap<>();
@@ -106,8 +76,9 @@ class PatientSummaryL1GeneratorTest {
     }
 
     @Test
-    void relatedDocumentIdHasL3Suffix() {
-        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+    void relatedDocumentIdHasL3Suffix() throws JAXBException {
+        var model = buildL1Model(null);
+        var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
         Map<String, String> namespaces = new HashMap<>();
@@ -118,13 +89,16 @@ class PatientSummaryL1GeneratorTest {
 
         assertThat(
             "related document id extension has L3 suffix",
-            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:relatedDocument/hl7:parentDocument/hl7:id/@extension", generatedCda),
+            xpathEngine.evaluate(
+                "/hl7:ClinicalDocument/hl7:relatedDocument/hl7:parentDocument/hl7:id/@extension",
+                generatedCda),
             endsWith("L3"));
     }
 
     @Test
-    void nonXmlBodyContainsPdfContent() {
-        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+    void nonXmlBodyContainsPdfContent() throws JAXBException {
+        var model = buildL1Model(null);
+        var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
         Map<String, String> namespaces = new HashMap<>();
@@ -135,17 +109,22 @@ class PatientSummaryL1GeneratorTest {
 
         assertThat(
             "nonXMLBody has pdf mediaType",
-            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:component/hl7:nonXMLBody/hl7:text/@mediaType", generatedCda),
+            xpathEngine.evaluate(
+                "/hl7:ClinicalDocument/hl7:component/hl7:nonXMLBody/hl7:text/@mediaType",
+                generatedCda),
             is("application/pdf"));
         assertThat(
             "nonXMLBody text content is non-empty",
-            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:component/hl7:nonXMLBody/hl7:text", generatedCda),
+            xpathEngine.evaluate(
+                "/hl7:ClinicalDocument/hl7:component/hl7:nonXMLBody/hl7:text",
+                generatedCda),
             not(emptyString()));
     }
 
     @Test
-    void patientDataIsPresent() {
-        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+    void patientDataIsPresent() throws JAXBException {
+        var model = buildL1Model(null);
+        var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
         Map<String, String> namespaces = new HashMap<>();
@@ -156,16 +135,21 @@ class PatientSummaryL1GeneratorTest {
 
         assertThat(
             "patient birth time matches",
-            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value", generatedCda),
+            xpathEngine.evaluate(
+                "/hl7:ClinicalDocument/hl7:recordTarget//hl7:birthTime/@value",
+                generatedCda),
             is("19821103"));
         assertThat(
             "patient family name is correct",
-            xpathEngine.evaluate("/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:family", generatedCda),
+            xpathEngine.evaluate(
+                "/hl7:ClinicalDocument/hl7:recordTarget//hl7:patient/hl7:name/hl7:family",
+                generatedCda),
             is("Andersen"));
     }
 
     @Test
-    void generateFromInputTest() {
+    void generateFromInputTest() throws JAXBException {
+        var cpr = "0410009234";
         var rootedDocumentId = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^"
             + DocumentIdMapper.level1DocumentId(BASE_ID);
         var patient = Patient.builder()
@@ -178,26 +162,94 @@ class PatientSummaryL1GeneratorTest {
             .birthTime(LocalDate.of(1982, 11, 3))
             .build();
 
-        var input = new PatientSummaryInput(rootedDocumentId, null, patient, null, null);
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
+        var immunization = DdvResponseStorage.getTestVaccination(cpr);
+        var input = new PatientSummaryL3Input(rootedDocumentId, null, patient, medicationSummary, immunization);
         var cda = PatientSummaryL1Generator.generate(input);
+
         Assertions.assertNotNull(cda);
     }
 
     @Test
-    void noPreferredHpTest() {
-        var cda = PatientSummaryL1Generator.generate(buildL1Model(null));
+    void noPreferredHpTest() throws JAXBException {
+        var model = buildL1Model(null);
+        var cda = PatientSummaryL1Generator.generate(model);
+
         Assertions.assertTrue(cda.contains("nonXMLBody"));
     }
 
     @Test
-    void withPreferredHpTest() {
-        var preferredHp = PreferredHealthProfessional.builder()
-            .name(Name.fromFullName("Tycho Brahe"))
-            .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
-            .address(new Address(List.of("Rundetårn", "Købmagergade 52A"), "København K", "1150", "DK"))
-            .build();
-        var model = buildL1Model(preferredHp);
+    void withPreferredHpTest() throws JAXBException {
+        var model = buildL1Model(preferredHp("DK"));
         var cda = PatientSummaryL1Generator.generate(model);
+
         Assertions.assertNotNull(cda);
+    }
+
+    private static PatientSummaryL1 buildL1Model(
+        PreferredHealthProfessional preferredHp
+    ) throws JAXBException {
+        var l3Model = buildL3Model(preferredHp);
+
+        var pdfModel = PatientSummaryPdfMapper.map(l3Model);
+        var pdf = PatientSummaryPdfGenerator.generate(pdfModel);
+        var relatedL3DocumentId = new CdaId(
+            Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
+            DocumentIdMapper.level3DocumentId(BASE_ID));
+
+        return PatientSummaryL1.builder()
+            .modelData(l3Model)
+            .base64EncodedDocument(Base64.getEncoder().encodeToString(pdf))
+            .relatedL3DocumentId(relatedL3DocumentId)
+            .build();
+    }
+
+    private static PatientSummaryL3 buildL3Model(
+        PreferredHealthProfessional preferredHp
+    ) throws JAXBException {
+        var patient = patient("DK");
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(CPR);
+        var input = new PatientSummaryL3Input(
+            BASE_ID,
+            preferredHp,
+            patient,
+            medicationSummary,
+            null);
+
+        return PatientSummaryL3Mapper.model(input);
+    }
+
+    private static Patient patient(String country) {
+        return Patient.builder()
+            .id(new CdaId(Oid.DK_CPR, CPR))
+            .name(Name.fromFullName("Hans Christian Andersen"))
+            .address(new Address(
+                List.of("Overgaden Oven Vandet 10", "1."),
+                "København K",
+                "1415",
+                country))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                .codeSystemVersion("913-20091020")
+                .code("M")
+                .displayName("Male")
+                .build())
+            .birthTime(LocalDate.of(1982, 11, 3))
+            .build();
+    }
+
+    private static PreferredHealthProfessional preferredHp(String country) {
+        return PreferredHealthProfessional.builder()
+            .name(Name.fromFullName("Tycho Brahe"))
+            .telecoms(List.of(Telecom.builder()
+                .use(Telecom.Use.WORK_PLACE)
+                .value("tel:+4511111111")
+                .build()))
+            .address(new Address(
+                List.of("Rundetårn", "Købmagergade 52A", "Kælderen"),
+                "København K",
+                "1150",
+                country))
+            .build();
     }
 }

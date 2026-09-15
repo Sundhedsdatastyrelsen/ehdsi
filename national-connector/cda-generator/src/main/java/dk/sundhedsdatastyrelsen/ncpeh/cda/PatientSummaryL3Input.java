@@ -5,7 +5,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
 
-public record PatientSummaryInput(
+public record PatientSummaryL3Input(
     String documentId,
     PreferredHealthProfessional preferredHealthProfessional,
     Patient patient,
