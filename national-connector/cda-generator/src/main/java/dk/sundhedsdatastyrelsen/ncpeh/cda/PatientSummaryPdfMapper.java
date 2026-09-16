@@ -52,7 +52,7 @@ public class PatientSummaryPdfMapper {
         ));
     }
 
-    private static final int DEFAULT_WRAP_LENGTH  = 75;
+    private static final int DEFAULT_WRAP_LENGTH = 75;
 
     // Overload
     private static PdfField field(List<String> lines) {
