@@ -1,25 +1,24 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
-import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionMetadataParser
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
+import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
 import io.javalin.Javalin
-import io.javalin.http.BadRequestResponse
-import io.javalin.http.Context
-import io.javalin.http.ForbiddenResponse
-import io.javalin.http.HttpStatus
-import io.javalin.http.UnauthorizedResponse
+import io.javalin.http.*
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
 import io.javalin.rendering.template.JavalinFreemarker
 import org.eclipse.jetty.http.HttpCookie
 import java.io.File
 import java.net.URI
+import java.time.format.DateTimeFormatter
+import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 
 private val DEV_MODE = (System.getProperty("epportal.devMode") == "true").also {
     if (it) {
@@ -71,6 +70,8 @@ private fun rejectCrossOriginRequests(ctx: Context) {
 }
 
 object WebApp {
+    val dkDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
     fun createApp(
         auth: AuthProvider = authProvider(),
         searchMasks: SearchMaskRepository,
@@ -134,6 +135,50 @@ object WebApp {
                 )
 
                 ctx.render("form.ftlh", dataModel)
+            }
+
+            config.routes.get("/prescriptions") { ctx ->
+                val principal = auth.current(ctx)
+                if (principal == null) {
+                    ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
+                    return@get
+                }
+                // Load prescriptions from the stored response, so we have something to look at.
+                val prescriptions =
+                    PrescriptionMetadataParser.parse(
+                        XmlUtils.parse(
+                            Thread.currentThread().contextClassLoader.getResourceAsStream(
+                                "list-prescriptions.xml"
+                            )!!
+                        )
+                    )
+                val dataModel = mapOf(
+                    // Mock patient id, we don't know how it will look yet.
+                    "patientId" to "FR-1234567890",
+                    "prescriptions" to prescriptions.map {
+                        mapOf(
+                            "effectiveTime" to it.l3?.effectiveTime?.format(dkDateFormatter),
+                            "authorName" to it.l3?.authorName,
+                            "title" to it.l3?.title,
+                            "description" to it.l3?.description,
+                            // Dunno where these are supposed to come from yet
+                            //"productCode" to it.l3?.productCode,
+                            //"productName" to it.l3?.productName,
+                            "atcCode" to it.l3?.atcCode,
+                            "atcName" to it.l3?.atcName,
+                            "doseFormCode" to it.l3?.doseFormCode,
+                            "doseFormName" to it.l3?.doseFormName,
+                            "strength" to it.l3?.strength,
+                            // Dunno where these are supposed to come from yet
+                            //"dispensable" to it.l3?.dispensable,
+                            //"substitutionAllowed" to it.l3?.substitutionAllowed,
+                            "l3DocumentId" to it.l3?.documentUniqueId,
+                            "l1DocumentId" to it.l1?.documentUniqueId
+                        )
+                    },
+                )
+
+                ctx.render("list-prescriptions.ftlh", dataModel)
             }
 
             config.routes.post("/form/update") { ctx ->

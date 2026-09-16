@@ -44,5 +44,7 @@ data class XmlNamespace(val prefix: String?, val uri: String?) {
             XmlNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")
         val XSD: XmlNamespace = XmlNamespace("xsd", "http://www.w3.org/2001/XMLSchema")
         val XSI: XmlNamespace = XmlNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+
+        val RIM: XmlNamespace = XmlNamespace("rim", "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0");
     }
 }
