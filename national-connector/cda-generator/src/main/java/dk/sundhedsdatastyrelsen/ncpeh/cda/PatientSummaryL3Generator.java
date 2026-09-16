@@ -25,12 +25,12 @@ public class PatientSummaryL3Generator {
 
     /// @throws MapperException if something goes wrong
     @WithSpan
-    public static String generate(PatientSummaryInput input) {
+    public static String generate(PatientSummaryL3Input input) {
         var model = inputToModel(input);
         return generate(model);
     }
 
-    static PatientSummaryL3 inputToModel(PatientSummaryInput input) {
+    static PatientSummaryL3 inputToModel(PatientSummaryL3Input input) {
         return PatientSummaryL3Mapper.model(input);
     }
 }
