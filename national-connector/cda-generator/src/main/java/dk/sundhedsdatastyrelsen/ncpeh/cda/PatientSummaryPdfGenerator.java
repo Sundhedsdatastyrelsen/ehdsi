@@ -70,32 +70,20 @@ public class PatientSummaryPdfGenerator {
 
         private PDPage page;
         private float currentY;
-        private boolean firstPage;
 
         private PdfWriter(PDDocument document) {
             this.document = document;
-            this.firstPage = true;
             newPage();
         }
 
         private void writeField(@NonNull PdfField field) {
-            /*
-             * On the first page we respect the Y coordinate from the mapper,
-             * but never move upwards and overwrite content already written.
-             *
-             * On later pages content simply continues from START_Y.
-             */
-            if (firstPage) {
-                currentY = Math.min(currentY, field.y());
-            }
-
             var lines = field.lines().stream()
                 .flatMap(line -> wrapLine(line, field.wrapLength())).toList();
 
             for (var line : lines) {
                 ensureSpace(BODY_LINE_HEIGHT);
 
-                writeLine(field.x(), currentY, line, FONT, BODY_FONT_SIZE);
+                writeLine(currentY, line, FONT, BODY_FONT_SIZE);
 
                 currentY -= BODY_LINE_HEIGHT;
             }
@@ -115,7 +103,6 @@ public class PatientSummaryPdfGenerator {
         private void ensureSpace(float requiredHeight) {
             if (currentY - requiredHeight < MARGIN_BOTTOM) {
                 newPage();
-                firstPage = false;
             }
         }
 
@@ -126,12 +113,12 @@ public class PatientSummaryPdfGenerator {
             currentY = START_Y;
         }
 
-        private void writeLine(float x, float y, String line, PDFont font, int fontSize) {
+        private void writeLine(float y, String line, PDFont font, int fontSize) {
             try (var stream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true)) {
                 stream.beginText();
                 stream.setNonStrokingColor(Color.BLACK);
                 stream.setFont(font, fontSize);
-                stream.newLineAtOffset(x, y);
+                stream.newLineAtOffset(PatientSummaryPdfGenerator.MARGIN_LEFT, y);
                 stream.showText(line);
                 stream.endText();
             } catch (IOException e) {

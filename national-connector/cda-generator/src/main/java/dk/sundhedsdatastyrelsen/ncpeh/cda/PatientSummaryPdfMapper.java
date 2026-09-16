@@ -2,26 +2,19 @@ package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionL3;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.EPrescriptionPdf;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Immunizations;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageLayer;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PackageUnit;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryPdf;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PdfField;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,14 +30,37 @@ public class PatientSummaryPdfMapper {
      */
     public static PatientSummaryPdf map(PatientSummaryL3 dataModel) {
         return new PatientSummaryPdf(List.of(
-            new PdfField(50, 790, titleLines(dataModel), 75 ),
-            new PdfField(50, 750, documentLines(dataModel),75),
-            new PdfField(50, 690, patientLines(dataModel.getPatient()), 75),
-            new PdfField(50, 590, medicationLines(dataModel.getMedicationSummary()), 75),
-            new PdfField(50, 400, immunizationLines(dataModel.getImmunizations()), 75)
-            //new PdfField(50, 710, authorLines((dataModel.getAuthor())), 40),
-            //new PdfField(390, 650, List.of(String.format("ID: %s", dataModel.getPrescriptionId().getExtension())), 40),
+            field(titleLines(dataModel)),
+            field(documentLines(dataModel)),
+            field(patientLines(dataModel.getPatient())),
+            field(medicationLines(dataModel.getMedicationSummary())),
+            field(allergyLines()),
+            field(immunizationLines(dataModel.getImmunizations())),
+            field(surgeryLines()),
+            field(pastIllnessLines()),
+            field(activeProblemLines()),
+            field(medicalDeviceLines()),
+            field(healthMaintenanceCarePlanLines()),
+            field(functionalStatusLines()),
+            field(socialHistoryLines()),
+            field(pregnancyHistoryLines()),
+            field(vitalSignsLines()),
+            field(codedResultsLines()),
+            field(advanceDirectivesLines())
+            //field(authorLines((dataModel.getAuthor())),40),
+            //field(List.of(String.format("ID: %s", dataModel.getPrescriptionId().getExtension())),40)
         ));
+    }
+
+    private static final int DEFAULT_WRAP_LENGTH  = 75;
+
+    // Overload
+    private static PdfField field(List<String> lines) {
+        return field(lines, DEFAULT_WRAP_LENGTH);
+    }
+
+    private static PdfField field(List<String> lines, int wrapLength) {
+        return new PdfField(0, 0, lines, wrapLength);
     }
 
     private static List<String> titleLines(PatientSummaryL3 dataModel) {
@@ -52,7 +68,9 @@ public class PatientSummaryPdfMapper {
     }
 
     private static List<String> documentLines(PatientSummaryL3 dataModel) {
-        return List.of("Generated: " + formatDate(dataModel.getEffectiveTimeOffsetDateTime()), "Document ID: " + dataModel.getDocumentId().getExtension()
+        return List.of(
+            "Generated: " + formatDate(dataModel.getEffectiveTimeOffsetDateTime()), "Document ID: " + dataModel.getDocumentId()
+                .getExtension()
         );
     }
 
@@ -139,7 +157,6 @@ public class PatientSummaryPdfMapper {
         }
     }
 
-
     private static List<String> medicationLines(MedicationSummary medicationSummary) {
         var medicationLines = new ArrayList<String>();
 
@@ -147,7 +164,7 @@ public class PatientSummaryPdfMapper {
         medicationLines.add("----------------------------------------");
 
         if (medicationSummary == null || medicationSummary.getItems().isEmpty()) {
-            medicationLines.add("No information about medications.");
+            medicationLines.add("No information available.");
             return medicationLines;
         }
 
@@ -166,10 +183,17 @@ public class PatientSummaryPdfMapper {
                 medicationLines.add("End: " + formatCdaDate(medication.getMedicationEndTime()));
             }
 
-            addToListIfNotNullOrEmpty(medicationLines, prefixed("Form: ", medication.getProduct() != null ? medication.getProduct().getFormCode().getDisplayName() : null)
+            addToListIfNotNullOrEmpty(
+                medicationLines, prefixed(
+                    "Form: ", medication.getProduct() != null ? medication.getProduct()
+                        .getFormCode()
+                        .getDisplayName() : null)
             );
 
-            addToListIfNotNullOrEmpty(medicationLines, prefixed("Route: ", medication.getRouteOfAdministration() != null ? medication.getRouteOfAdministration().getDisplayName() : null)
+            addToListIfNotNullOrEmpty(
+                medicationLines, prefixed(
+                    "Route: ", medication.getRouteOfAdministration() != null ? medication.getRouteOfAdministration()
+                        .getDisplayName() : null)
             );
 
             addToListIfNotNullOrEmpty(medicationLines, prefixed("Active ingredient(s): ", activeIngredients(medication))
@@ -178,7 +202,10 @@ public class PatientSummaryPdfMapper {
             addToListIfNotNullOrEmpty(medicationLines, prefixed("Indication: ", medication.getIndicationText())
             );
 
-            addToListIfNotNullOrEmpty(medicationLines, prefixed("Dosage: ", medication.getDosage().getUnstructuredText())
+            addToListIfNotNullOrEmpty(
+                medicationLines, prefixed(
+                    "Dosage: ", medication.getDosage()
+                        .getUnstructuredText())
             );
 
             addToListIfNotNullOrEmpty(medicationLines, prefixed("Instructions: ", medication.getPatientMedicationInstructions())
@@ -217,7 +244,7 @@ public class PatientSummaryPdfMapper {
         lines.add("----------------------------------------");
 
         if (immunizations == null || immunizations.getItems().isEmpty()) {
-            lines.add("No information about immunizations.");
+            lines.add("No information available.");
             return lines;
         }
 
@@ -232,12 +259,17 @@ public class PatientSummaryPdfMapper {
 
             addToListIfNotNullOrEmpty(lines, prefixed("Target disease: ", targetDisease(immunization)));
 
-            addToListIfNotNullOrEmpty(lines, prefixed("Form: ", immunization.getFormCode() != null ? immunization.getFormCode().getDisplayName() : null));
+            addToListIfNotNullOrEmpty(
+                lines, prefixed(
+                    "Form: ", immunization.getFormCode() != null ? immunization.getFormCode()
+                        .getDisplayName() : null));
 
-            addToListIfNotNullOrEmpty( lines, prefixed("ATC: ", immunization.getAtcCode() != null ? immunization.getAtcCode().getDisplayName() : null));
+            addToListIfNotNullOrEmpty(
+                lines, prefixed(
+                    "ATC: ", immunization.getAtcCode() != null ? immunization.getAtcCode()
+                        .getDisplayName() : null));
 
-            if (immunization.getDoseNumber() != null)
-            {
+            if (immunization.getDoseNumber() != null) {
                 lines.add("Dose number: " + immunization.getDoseNumber());
             }
 
@@ -265,9 +297,103 @@ public class PatientSummaryPdfMapper {
         return lines;
     }
 
+    private static List<String> allergyLines() {
+        return List.of(
+            "ALLERGIES",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
 
-    private static String immunizationHeading(int number, Immunizations.ImmunizationItem immunization)
-    {
+    private static List<String> surgeryLines() {
+        return List.of(
+            "LIST OF SURGERIES",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> pastIllnessLines() {
+        return List.of(
+            "HISTORY OF PAST ILLNESSES",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> activeProblemLines() {
+        return List.of(
+            "ACTIVE PROBLEMS",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> medicalDeviceLines() {
+        return List.of(
+            "MEDICAL DEVICES",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> healthMaintenanceCarePlanLines() {
+        return List.of(
+            "HEALTH MAINTENANCE CARE PLAN",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> functionalStatusLines() {
+        return List.of(
+            "FUNCTIONAL STATUS",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> socialHistoryLines() {
+        return List.of(
+            "SOCIAL HISTORY",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> pregnancyHistoryLines() {
+        return List.of(
+            "PREGNANCY HISTORY",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> vitalSignsLines() {
+        return List.of(
+            "VITAL SIGNS",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> codedResultsLines() {
+        return List.of(
+            "CODED RESULTS",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static List<String> advanceDirectivesLines() {
+        return List.of(
+            "ADVANCE DIRECTIVES",
+            "----------------------------------------",
+            "No information available."
+        );
+    }
+
+    private static String immunizationHeading(int number, Immunizations.ImmunizationItem immunization) {
         var name = immunization.getName();
 
         if (name == null || name.isBlank()) {
@@ -276,8 +402,7 @@ public class PatientSummaryPdfMapper {
 
         var result = number + ". " + name;
 
-        if (immunization.getStrength() != null && !immunization.getStrength().isBlank())
-        {
+        if (immunization.getStrength() != null && !immunization.getStrength().isBlank()) {
             result += " " + immunization.getStrength();
         }
 
@@ -296,7 +421,8 @@ public class PatientSummaryPdfMapper {
         return null;
     }
 
-    private static String activeIngredients(MedicationSummary.MedicationItem medication
+    private static String activeIngredients(
+        MedicationSummary.MedicationItem medication
     ) {
         if (!medication.getActiveIngredients().isEmpty()) {
 

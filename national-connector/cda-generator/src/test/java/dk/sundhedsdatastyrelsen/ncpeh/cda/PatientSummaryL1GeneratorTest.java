@@ -171,6 +171,29 @@ class PatientSummaryL1GeneratorTest {
     }
 
     @Test
+    void emptyMedicationSummaryAndImmunizationsTest() throws JAXBException {
+        var cpr = "1004219992";
+        var rootedDocumentId = Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID.value + "^"
+            + DocumentIdMapper.level1DocumentId(BASE_ID);
+        var patient = Patient.builder()
+            .id(new CdaId(Oid.DK_CPR, "1234567890"))
+            .name(Name.fromFullName("Hans Christian Andersen"))
+            .genderCode(CdaCode.builder()
+                .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                .code("M")
+                .build())
+            .birthTime(LocalDate.of(1982, 11, 3))
+            .build();
+
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
+        var immunization = DdvResponseStorage.getTestVaccination(cpr);
+        var input = new PatientSummaryL3Input(rootedDocumentId, null, patient, medicationSummary, immunization);
+        var cda = PatientSummaryL1Generator.generate(input);
+
+        Assertions.assertNotNull(cda);
+    }
+
+    @Test
     void noPreferredHpTest() throws JAXBException {
         var model = buildL1Model(null);
         var cda = PatientSummaryL1Generator.generate(model);
