@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.ActiveIngredient;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Author;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Immunizations;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
@@ -10,8 +9,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryPdf;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PdfField;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +28,6 @@ public class PatientSummaryPdfMapper {
     public static PatientSummaryPdf map(PatientSummaryL3 dataModel) {
         return new PatientSummaryPdf(List.of(
             field(titleLines(dataModel)),
-            field(documentLines(dataModel)),
             field(patientLines(dataModel.getPatient())),
             field(medicationLines(dataModel.getMedicationSummary())),
             field(allergyLines()),
@@ -53,6 +49,7 @@ public class PatientSummaryPdfMapper {
     }
 
     private static final int DEFAULT_WRAP_LENGTH = 75;
+    private static final String lineSpacer = "----------------------------------------";
 
     // Overload
     private static PdfField field(List<String> lines) {
@@ -64,25 +61,14 @@ public class PatientSummaryPdfMapper {
     }
 
     private static List<String> titleLines(PatientSummaryL3 dataModel) {
-        return List.of(dataModel.getTitle());
-    }
-
-    private static List<String> documentLines(PatientSummaryL3 dataModel) {
-        return List.of(
-            "Generated: " + formatDate(dataModel.getEffectiveTimeOffsetDateTime()), "Document ID: " + dataModel.getDocumentId()
-                .getExtension()
-        );
-    }
-
-    private static String formatDate(OffsetDateTime dateTime) {
-        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return List.of("Patient Summary " + dataModel.getPatient().getName().getFullName());
     }
 
     private static List<String> patientLines(Patient patient) {
         var lines = new ArrayList<String>();
 
         lines.add("PATIENT");
-        lines.add("----------------------------------------");
+        lines.add(lineSpacer);
 
         var cpr = patient.getId().getExtension();
         if (cpr != null && cpr.length() >= 10) {
@@ -118,28 +104,6 @@ public class PatientSummaryPdfMapper {
         return lines;
     }
 
-    private static List<String> authorLines(Author author) {
-        var authorLines = new ArrayList<String>();
-        addToListIfNotNullOrEmpty(authorLines, author.getName().getFullName());
-        addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getName());
-        if (author.getOrganization().getAddress() != null) {
-            for (String addressLine : author.getOrganization().getAddress().getStreetAddressLines()) {
-                addToListIfNotNullOrEmpty(authorLines, addressLine);
-            }
-            addToListIfNotNullOrEmpty(
-                authorLines, constructPostalCityLine(
-                    author.getOrganization().getAddress().getPostalCode(),
-                    author.getOrganization().getAddress().getCity()));
-            addToListIfNotNullOrEmpty(authorLines, author.getOrganization().getAddress().getCountryCode());
-        }
-        return authorLines;
-    }
-
-    private static List<String> dateLines(OffsetDateTime dateTime) {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return List.of(fmt.format(dateTime));
-    }
-
     private static String constructPostalCityLine(String postalCode, String cityName) {
         var finalLine = "";
         if (postalCode != null && !postalCode.isEmpty()) {
@@ -161,10 +125,10 @@ public class PatientSummaryPdfMapper {
         var medicationLines = new ArrayList<String>();
 
         medicationLines.add("MEDICATION SUMMARY");
-        medicationLines.add("----------------------------------------");
+        medicationLines.add(lineSpacer);
 
         if (medicationSummary == null || medicationSummary.getItems().isEmpty()) {
-            medicationLines.add("No information available.");
+            medicationLines.add("The patient has never received medication according to our data");
             return medicationLines;
         }
 
@@ -211,9 +175,7 @@ public class PatientSummaryPdfMapper {
             addToListIfNotNullOrEmpty(medicationLines, prefixed("Instructions: ", medication.getPatientMedicationInstructions())
             );
 
-            if (i < items.size() - 1) {
-                medicationLines.add("");
-            }
+            medicationLines.add("");
         }
 
         medicationLines.add("Data source: FMK 1.4.6");
@@ -241,7 +203,7 @@ public class PatientSummaryPdfMapper {
         var lines = new ArrayList<String>();
 
         lines.add("IMMUNIZATIONS");
-        lines.add("----------------------------------------");
+        lines.add(lineSpacer);
 
         if (immunizations == null || immunizations.getItems().isEmpty()) {
             lines.add("No information available.");
@@ -289,10 +251,10 @@ public class PatientSummaryPdfMapper {
                 addToListIfNotNullOrEmpty(lines, prefixed("Comment: ", comment));
             }
 
-            if (i < items.size() - 1) {
-                lines.add("");
-            }
+            lines.add("");
         }
+
+        lines.add("Data source: DDV 1.4.6");
 
         return lines;
     }
@@ -300,7 +262,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> allergyLines() {
         return List.of(
             "ALLERGIES",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -308,7 +270,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> surgeryLines() {
         return List.of(
             "LIST OF SURGERIES",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -316,7 +278,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> pastIllnessLines() {
         return List.of(
             "HISTORY OF PAST ILLNESSES",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -324,7 +286,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> activeProblemLines() {
         return List.of(
             "ACTIVE PROBLEMS",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -332,7 +294,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> medicalDeviceLines() {
         return List.of(
             "MEDICAL DEVICES",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -340,7 +302,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> healthMaintenanceCarePlanLines() {
         return List.of(
             "HEALTH MAINTENANCE CARE PLAN",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -348,7 +310,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> functionalStatusLines() {
         return List.of(
             "FUNCTIONAL STATUS",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -356,7 +318,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> socialHistoryLines() {
         return List.of(
             "SOCIAL HISTORY",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -364,7 +326,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> pregnancyHistoryLines() {
         return List.of(
             "PREGNANCY HISTORY",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -372,7 +334,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> vitalSignsLines() {
         return List.of(
             "VITAL SIGNS",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -380,7 +342,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> codedResultsLines() {
         return List.of(
             "CODED RESULTS",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -388,7 +350,7 @@ public class PatientSummaryPdfMapper {
     private static List<String> advanceDirectivesLines() {
         return List.of(
             "ADVANCE DIRECTIVES",
-            "----------------------------------------",
+            lineSpacer,
             "No information available."
         );
     }
@@ -421,9 +383,7 @@ public class PatientSummaryPdfMapper {
         return null;
     }
 
-    private static String activeIngredients(
-        MedicationSummary.MedicationItem medication
-    ) {
+    private static String activeIngredients(MedicationSummary.MedicationItem medication) {
         if (!medication.getActiveIngredients().isEmpty()) {
 
             return medication.getActiveIngredients().stream()

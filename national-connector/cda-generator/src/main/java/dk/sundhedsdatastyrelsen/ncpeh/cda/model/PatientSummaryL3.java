@@ -28,10 +28,6 @@ public class PatientSummaryL3 {
         return Utils.cdaZonedDateTime(effectiveTime);
     }
 
-    public OffsetDateTime getEffectiveTimeOffsetDateTime() {
-        return effectiveTime;
-    }
-
     @NonNull Patient patient;
 
     /// Egen læge

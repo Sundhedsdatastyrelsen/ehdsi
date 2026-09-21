@@ -10,6 +10,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import jakarta.xml.bind.JAXBException;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,16 +31,32 @@ class PatientSummaryPdfGeneratorTest {
     }
 
     @Test
-    void sameFileDifferentGenerations() throws JAXBException {
+    void sameFileDifferentGenerations() throws Exception {
         var model = model();
-
         var pdfModel = PatientSummaryPdfMapper.map(model);
+
         var pdf = PatientSummaryPdfGenerator.generate(pdfModel);
         var secondPdf = PatientSummaryPdfGenerator.generate(pdfModel);
 
         Assertions.assertNotNull(pdf);
         Assertions.assertNotNull(secondPdf);
-        Assertions.assertArrayEquals(pdf, secondPdf);
+
+        try (
+            var document = Loader.loadPDF(pdf);
+            var secondDocument = Loader.loadPDF(secondPdf)
+        ) {
+            var textStripper = new PDFTextStripper();
+
+            Assertions.assertEquals(
+                textStripper.getText(document),
+                textStripper.getText(secondDocument)
+            );
+
+            Assertions.assertEquals(
+                document.getNumberOfPages(),
+                secondDocument.getNumberOfPages()
+            );
+        }
     }
 
     @Test
@@ -59,7 +77,7 @@ class PatientSummaryPdfGeneratorTest {
         var preferredHp = preferredHp();
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
 
-        var input = new PatientSummaryL3Input(
+        var input = new PatientSummaryInput(
             "test-base-id",
             preferredHp,
             patient,

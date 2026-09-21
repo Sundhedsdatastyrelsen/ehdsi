@@ -18,11 +18,9 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 public class PatientSummaryPdfGenerator {
-    private static final PDFont FONT =
-        new PDType1Font(Standard14Fonts.FontName.COURIER);
+    private static final PDFont FONT = new PDType1Font(Standard14Fonts.FontName.COURIER);
 
-    private static final PDFont FONT_BOLD =
-        new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
+    private static final PDFont FONT_BOLD = new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
 
     private static final int TITLE_FONT_SIZE = 16;
     private static final int BODY_FONT_SIZE = 11;

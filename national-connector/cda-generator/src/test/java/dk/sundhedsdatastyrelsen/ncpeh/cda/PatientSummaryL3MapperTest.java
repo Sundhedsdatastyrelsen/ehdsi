@@ -51,7 +51,7 @@ class PatientSummaryL3MapperTest {
                 .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
                 .build();
 
-            var input = new PatientSummaryL3Input(
+            var input = new PatientSummaryInput(
                 "test-document-id",
                 preferredHp,
                 patient,
@@ -94,7 +94,7 @@ class PatientSummaryL3MapperTest {
                 .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
                 .build();
 
-            var input = new PatientSummaryL3Input(
+            var input = new PatientSummaryInput(
                 "test-document-id",
                 preferredHp,
                 patient,

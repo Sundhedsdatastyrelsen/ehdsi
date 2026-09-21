@@ -11,14 +11,16 @@ public final class PatientSummaryL1Mapper {
     }
 
     /// @throws MapperException if something goes wrong
-    public static PatientSummaryL1 model(PatientSummaryL3Input input) {
+    public static PatientSummaryL1 model(PatientSummaryInput input) {
         return model(PatientSummaryL3Mapper.model(input));
     }
 
     /// @throws MapperException if something goes wrong
     public static PatientSummaryL1 model(PatientSummaryL3 l3Model) {
-        var relatedL3DocumentId = deriveL3DocumentId(l3Model.getDocumentId());
-        var pdfModel = PatientSummaryPdfMapper.map(l3Model);
+        var modelWithL1Id = l3Model.withDocumentId(removeDocumentIdSuffix(l3Model.getDocumentId()));
+        var relatedL3DocumentId = removeDocumentIdSuffix(l3Model.getDocumentId());
+
+        var pdfModel = PatientSummaryPdfMapper.map(modelWithL1Id);
         var pdf = PatientSummaryPdfGenerator.generate(pdfModel);
         var base64Pdf = Base64.getEncoder().encodeToString(pdf);
         return PatientSummaryL1.builder()
@@ -26,6 +28,14 @@ public final class PatientSummaryL1Mapper {
             .base64EncodedDocument(base64Pdf)
             .relatedL3DocumentId(relatedL3DocumentId)
             .build();
+    }
+
+    private static CdaId removeDocumentIdSuffix(CdaId DocumentId) {
+        var extension = DocumentId.getExtension();
+        var baseId = extension != null && extension.endsWith("L3")
+            ? extension.substring(0, extension.length() - 2)
+            : extension;
+        return new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID, baseId);
     }
 
     private static CdaId deriveL3DocumentId(CdaId l1DocumentId) {

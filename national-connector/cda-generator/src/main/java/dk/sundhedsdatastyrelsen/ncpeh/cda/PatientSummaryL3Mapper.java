@@ -44,7 +44,7 @@ public class PatientSummaryL3Mapper {
      *
      * @throws MapperException if something goes wrong
      */
-    public static PatientSummaryL3 model(PatientSummaryL3Input input) {
+    public static PatientSummaryL3 model(PatientSummaryInput input) {
         if (input == null) {
             throw new MapperException("Input is null");
         }

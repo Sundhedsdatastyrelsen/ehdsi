@@ -7,7 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Input;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.PatientSummaryL3Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.client.DdvClientIdws;
@@ -108,7 +108,7 @@ public class PatientSummaryService {
     }
 
     @WithSpan
-    private PatientSummaryL3Input assembleInput(
+    private PatientSummaryInput assembleInput(
         String patientId,
         String docId,
         EuropeanHcpIdwsToken fmkToken,
@@ -131,7 +131,7 @@ public class PatientSummaryService {
         try {
             var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, fmkToken);
             var ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, ddvToken);
-            return new PatientSummaryL3Input(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
+            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
         } catch (JAXBException e) {
             throw new PublicException(500, "Could not retrieve prescriptions.", e);
         }
