@@ -128,7 +128,7 @@ public class PatientSummaryPdfMapper {
         medicationLines.add(lineSpacer);
 
         if (medicationSummary == null || medicationSummary.getItems().isEmpty()) {
-            medicationLines.add("The patient has never received medication according to our data");
+            medicationLines.add("The patient has no current or recent medications according to our data");
             return medicationLines;
         }
 
