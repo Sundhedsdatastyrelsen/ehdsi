@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.DocumentLevel;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -40,5 +41,26 @@ public class DocumentIdMapper {
         }
         log.error("Document id {} could not be mapped", documentId);
         throw new MapperException("Document id could not parse to type of Document");
+    }
+
+    public static CdaId removeDocumentIdSuffix(CdaId DocumentId) {
+        var extension = DocumentId.getExtension();
+        var baseId = extension != null && (extension.endsWith("L3") || extension.endsWith("L1"))
+            ? extension.substring(0, extension.length() - 2)
+            : extension;
+        return new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID, baseId);
+    }
+
+    public static CdaId deriveL3DocumentId(CdaId l1DocumentId) {
+        var extension = l1DocumentId.getExtension();
+        var baseId = extension != null && extension.endsWith("L1")
+            ? extension.substring(0, extension.length() - 2)
+            : extension;
+        return new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID, DocumentIdMapper.level3DocumentId(baseId));
+    }
+
+    public static CdaId addL1DocumentId(CdaId l1DocumentId) {
+        var extension = l1DocumentId.getExtension();
+        return new CdaId(Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID, DocumentIdMapper.level1DocumentId(extension));
     }
 }

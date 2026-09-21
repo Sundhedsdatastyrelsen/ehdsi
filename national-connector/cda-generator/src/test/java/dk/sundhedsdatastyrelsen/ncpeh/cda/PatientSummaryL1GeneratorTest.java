@@ -211,18 +211,7 @@ class PatientSummaryL1GeneratorTest {
         PreferredHealthProfessional preferredHp
     ) throws JAXBException {
         var l3Model = buildL3Model(preferredHp);
-
-        var pdfModel = PatientSummaryPdfMapper.map(l3Model);
-        var pdf = PatientSummaryPdfGenerator.generate(pdfModel);
-        var relatedL3DocumentId = new CdaId(
-            Oid.DK_PATIENT_SUMMARY_REPOSITORY_ID,
-            DocumentIdMapper.level3DocumentId(BASE_ID));
-
-        return PatientSummaryL1.builder()
-            .modelData(l3Model)
-            .base64EncodedDocument(Base64.getEncoder().encodeToString(pdf))
-            .relatedL3DocumentId(relatedL3DocumentId)
-            .build();
+        return PatientSummaryL1Mapper.model(l3Model);
     }
 
     private static PatientSummaryL3 buildL3Model(
