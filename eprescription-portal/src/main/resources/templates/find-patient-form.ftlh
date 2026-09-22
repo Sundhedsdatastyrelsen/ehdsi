@@ -9,6 +9,7 @@
       </#if>
       <input
         type="text"
+        class="text-input"
         id="id.${field.index}"
         name="id.${field.index}"
         value="${field.value}"

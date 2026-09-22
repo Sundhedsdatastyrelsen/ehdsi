@@ -30,6 +30,7 @@
       >
         <label for="country">Patientens hjemland</label>
         <select
+          class="select-input"
           id="country"
           name="country"
           hx-get="/find-patient/form"
