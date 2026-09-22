@@ -49,9 +49,6 @@ dependencies {
     implementation(libs.jdbi3.core)
     implementation(libs.flyway.core)
 
-    // Support remote JVM debugging (maybe?)
-    implementation(libs.kotlin.stdlib)
-
     // Avoid CVEs:
     implementation(libs.bouncycastle.bcprov.jdk18on)
 
