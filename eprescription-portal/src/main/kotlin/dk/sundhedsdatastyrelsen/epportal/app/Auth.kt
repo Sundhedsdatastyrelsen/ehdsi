@@ -52,11 +52,15 @@ class LocalAuth(
             ctx.sessionAttribute(sessionKey, Principal(cpr, name))
             ctx.redirect("/form")
         }
-        routes.before("/form*") { ctx ->
-            if (ctx.sessionAttribute<Principal>(sessionKey) == null) {
-                ctx.header(headerName)?.let { cpr ->
-                    ctx.sessionAttribute(sessionKey, Principal(cpr, "Dev Header User"))
-                }
+        routes.before("/form*", ::devHeaderAuthHook)
+        routes.before("/find-patient*", ::devHeaderAuthHook)
+    }
+
+    /** Lets a request authenticate via the [headerName] header instead of `/dev-login`, e.g. from curl. */
+    private fun devHeaderAuthHook(ctx: Context) {
+        if (ctx.sessionAttribute<Principal>(sessionKey) == null) {
+            ctx.header(headerName)?.let { cpr ->
+                ctx.sessionAttribute(sessionKey, Principal(cpr, "Dev Header User"))
             }
         }
     }

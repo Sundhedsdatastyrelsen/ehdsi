@@ -1,6 +1,10 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
+import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
+import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
+import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
@@ -41,7 +45,11 @@ private fun createTemplateEngine(): Configuration {
 private fun authProvider(): AuthProvider = LocalAuth()
 
 object WebApp {
-    fun createApp(auth: AuthProvider = authProvider()): Javalin {
+    fun createApp(
+        auth: AuthProvider = authProvider(),
+        searchMasks: SearchMaskRepository,
+        patientSearch: PatientSearchClient,
+    ): Javalin {
         val app = Javalin.create { config ->
             config.startup.showJavalinBanner = false
             config.fileRenderer(JavalinFreemarker(createTemplateEngine()))
@@ -68,6 +76,7 @@ object WebApp {
             config.requestLogger.http(requestLogger(log))
 
             auth.registerRoutes(config.routes)
+            FindPatient.registerRoutes(config.routes, auth, searchMasks, patientSearch)
 
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
@@ -110,9 +119,10 @@ object WebApp {
 
     data class Config(val port: Int)
 
-    fun startServer(config: Config) {
-        val app = createApp()
-        app.start(config.port)
+    fun startServer(config: AppConfig) {
+        val searchMasks = SearchMaskRepository.load(config.findPatient)
+        val app = createApp(searchMasks = searchMasks, patientSearch = DummyPatientSearchClient())
+        app.start(config.webApp.port)
     }
 
     val log = logger()

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/static/style.css" rel="stylesheet" />
     <title>ePrescription Portal</title>
+    <!-- htmx 4.0.0, vendored (not loaded from a CDN); see src/main/resources/public/static/htmx.min.js -->
+    <script src="/static/htmx.min.js"></script>
   </head>
   <body
     class="text-foreground bg-background flex flex-col min-h-dvh"
@@ -21,26 +23,29 @@
       </nav>
     </header>
     <main class="mt-10 px-4 md:px-8">
-      <h1 class="text-center text-4xl">ePrescription portal</h1>
+      <h1 class="text-center text-4xl">Find patient</h1>
 
       <section
           class="bg-white shadow-sdk mt-10 max-w-4xl mx-auto border-b-8 border-b-red p-4 flex flex-col gap-2"
       >
-          <p>Logget ind som: <span>${userCpr!?string}</span>.</p>
-          <a href="/find-patient" class="red-button">Find patient</a>
-    </section>
-      <#if error??>
-        <div class="bg-white shadow-sdk mt-10 max-w-4xl mx-auto border-b-8 border-b-yellow p-4">
-          <#switch error>
-            <#case "form-update-failed">
-              <p>Der skete en fejl.</p>
-              <#break>
-            <#default>
-              <p>Der er sket en fejl.</p>
-          </#switch>
-        </div>
-      </#if>
+        <label for="country">Patientens hjemland</label>
+        <select
+          id="country"
+          name="country"
+          hx-get="/find-patient/form"
+          hx-include="this"
+          hx-target="#search-area"
+          hx-swap="innerHTML"
+          hx-trigger="change"
+        >
+          <option value="">Vælg land&hellip;</option>
+          <#list countries as country>
+            <option value="${country.code}">${country.name}</option>
+          </#list>
+        </select>
 
+        <div id="search-area"></div>
+      </section>
     </main>
   </body>
 </html>

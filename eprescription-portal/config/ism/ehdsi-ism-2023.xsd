@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ec.europa.eu/sante/ehncp/ism"
+           elementFormDefault="qualified" targetNamespace="http://ec.europa.eu/sante/ehncp/ism">
+
+    <!-- Root Element defining the International Search Mask - Identity Traits -->
+    <xs:element name="searchFields">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="country" type="country"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Identification of the eHNCP providing its cross border traits (ISO Country Code of NCP_A) -->
+    <xs:complexType name="country">
+        <xs:sequence>
+            <xs:element name="patientSearch" type="personSearch"/>
+            <xs:element name="documentSearch" type="documentSearch" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="nextOfKinSearch" type="personSearch" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="countryCode" use="required"/>
+        <xs:attribute name="label" type="labelList" use="required"/>
+        <xs:attribute name="friendlyName" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- eHDSI Search Mask for clinical document access -->
+    <xs:complexType name="documentSearch">
+        <xs:sequence>
+            <xs:element name="prescriptionId" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute name="domain" type="xs:string" use="required"/>
+                    <xs:attribute name="label" fixed="label.ism.ePrescriptionId" use="required"/>
+                    <xs:attribute name="format" type="xs:string" use="required"/>
+                    <xs:attribute name="contextualDescription" type="xs:string" use="required"/>
+                    <xs:attribute name="originalContextualDescription" type="xs:string"/>
+                    <xs:attribute name="mandatory" type="xs:boolean" default="false"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="dispensationPINCode" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute name="domain" type="xs:string" use="required"/>
+                    <xs:attribute name="label" fixed="label.ism.dispensationPINCode" use="required"/>
+                    <xs:attribute name="format" type="xs:string" use="required"/>
+                    <xs:attribute name="contextualDescription" type="xs:string" use="required"/>
+                    <xs:attribute name="originalContextualDescription" type="xs:string"/>
+                    <xs:attribute name="mandatory" type="xs:boolean" default="false"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="media" type="mediaDetails" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="friendlyName" type="xs:string"/>
+        <xs:attribute name="scope" type="scope"/>
+    </xs:complexType>
+
+    <!-- eHDSI Search Mask for patient identification -->
+    <xs:complexType name="personSearch">
+        <xs:sequence>
+            <xs:element name="identifier" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:choice>
+                            <xs:sequence>
+                                <xs:element name="id" type="id" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                            <xs:sequence>
+                                <xs:element name="ids" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="id" type="id" maxOccurs="unbounded"/>
+                                        </xs:sequence>
+                                        <xs:attribute name="display" type="xs:string" use="required"/>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:choice>
+                    </xs:sequence>
+                    <xs:attribute name="type" type="identifierType" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="textField" type="textField" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="birthDate" type="birthDate" minOccurs="0"/>
+            <xs:element name="gender" type="administrativeGender" minOccurs="0"/>
+            <xs:element name="media" type="mediaDetails" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="friendlyName" type="xs:string" default="ALL"/>
+        <xs:attribute name="scope" type="scope" default="ALL"/>
+    </xs:complexType>
+
+    <!-- Patient element - LivingSubjectId -->
+    <xs:complexType name="id">
+        <xs:attribute name="domain" type="xs:string" use="required"/>
+        <xs:attribute name="label" type="labelIdentifier" use="required"/>
+        <xs:attribute name="format" type="xs:string" use="required"/>
+        <xs:attribute name="contextualDescription" type="xs:string" use="required"/>
+        <xs:attribute name="originalContextualDescription" type="xs:string"/>
+        <xs:attribute name="mandatory" type="xs:boolean" default="false"/>
+    </xs:complexType>
+
+    <!-- Patient element - LivingSubjectBirthTime -->
+    <xs:complexType name="birthDate">
+        <xs:simpleContent>
+            <xs:extension base="xs:date">
+                <xs:attribute name="label" fixed="label.ism.birthDate" use="required"/>
+                <xs:attribute name="contextualDescription" type="xs:string" use="required"/>
+                <xs:attribute name="originalContextualDescription" type="xs:string"/>
+                <xs:attribute name="mandatory" type="xs:boolean" default="false"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+
+    <!-- Patient element - LivingSubjectGender -->
+    <xs:complexType name="administrativeGender">
+        <xs:attribute name="label" fixed="label.ism.gender" use="required"/>
+        <xs:attribute name="format" type="xs:string" use="required"/>
+        <xs:attribute name="contextualDescription" type="xs:string" use="required"/>
+        <xs:attribute name="originalContextualDescription" type="xs:string"/>
+        <xs:attribute name="mandatory" type="xs:boolean" default="false"/>
+    </xs:complexType>
+
+    <!-- Patient element generic Identity Traits - LivingSubjectName, PatientAddress -->
+    <xs:complexType name="textField">
+        <xs:attribute name="label" type="labelGenericTrait" use="required"/>
+        <xs:attribute name="format" type="xs:string" use="required"/>
+        <xs:attribute name="contextualDescription" type="xs:string" use="required"/>
+        <xs:attribute name="originalContextualDescription" type="xs:string"/>
+        <xs:attribute name="mandatory" type="xs:boolean" default="false"/>
+    </xs:complexType>
+
+    <!-- Search Mask user interface enrichment -->
+    <xs:complexType name="mediaDetails">
+        <xs:sequence>
+            <xs:element name="mediaContent" type="xs:base64Binary"/>
+        </xs:sequence>
+        <xs:attribute name="label" fixed="label.ism.media" use="required"/>
+        <xs:attribute name="mediaName" type="xs:string"/>
+        <xs:attribute name="fileExtension" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:simpleType name="countryCode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BE"/>
+            <xs:enumeration value="BG"/>
+            <xs:enumeration value="CZ"/>
+            <xs:enumeration value="DK"/>
+            <xs:enumeration value="DE"/>
+            <xs:enumeration value="EE"/>
+            <xs:enumeration value="IE"/>
+            <xs:enumeration value="GR"/>
+            <xs:enumeration value="ES"/>
+            <xs:enumeration value="FR"/>
+            <xs:enumeration value="HR"/>
+            <xs:enumeration value="IS"/>
+            <xs:enumeration value="IT"/>
+            <xs:enumeration value="CY"/>
+            <xs:enumeration value="LV"/>
+            <xs:enumeration value="LT"/>
+            <xs:enumeration value="LU"/>
+            <xs:enumeration value="HU"/>
+            <xs:enumeration value="MT"/>
+            <xs:enumeration value="NL"/>
+            <xs:enumeration value="NO"/>
+            <xs:enumeration value="AT"/>
+            <xs:enumeration value="PL"/>
+            <xs:enumeration value="PT"/>
+            <xs:enumeration value="RO"/>
+            <xs:enumeration value="SI"/>
+            <xs:enumeration value="SK"/>
+            <xs:enumeration value="FI"/>
+            <xs:enumeration value="SE"/>
+            <xs:enumeration value="EU"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="labelIdentifier">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="label.ism.healthCardNumber"/>
+            <xs:enumeration value="label.ism.nationalIdentityCardNumber"/>
+            <xs:enumeration value="label.ism.nationalPersonIdentifier"/>
+            <xs:enumeration value="label.ism.nationalSocialSecurityNumber"/>
+            <xs:enumeration value="label.ism.passportNumber"/>
+            <xs:enumeration value="label.ism.regionalPatientIdentifier"/>
+            <xs:enumeration value="label.ism.regionIdentifier"/>
+            <xs:enumeration value="label.ism.accessCode"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="labelGenericTrait">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="label.ism.addressStreet"/>
+            <xs:enumeration value="label.ism.addressPostalCode"/>
+            <xs:enumeration value="label.ism.addressCity"/>
+            <xs:enumeration value="label.ism.addressCountry"/>
+            <xs:enumeration value="label.ism.familyName"/>
+            <xs:enumeration value="label.ism.firstName"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="labelList">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="label.ism.addressStreet"/>
+            <xs:enumeration value="label.ism.addressPostalCode"/>
+            <xs:enumeration value="label.ism.addressCity"/>
+            <xs:enumeration value="label.ism.addressCountry"/>
+            <xs:enumeration value="label.ism.birthDate"/>
+            <xs:enumeration value="label.ism.dispensationPINCode"/>
+            <xs:enumeration value="label.ism.ePrescriptionId"/>
+            <xs:enumeration value="label.ism.familyName"/>
+            <xs:enumeration value="label.ism.firstName"/>
+            <xs:enumeration value="label.ism.healthCardNumber"/>
+            <xs:enumeration value="label.ism.media"/>
+            <xs:enumeration value="label.ism.nationalIdentityCardNumber"/>
+            <xs:enumeration value="label.ism.nationalPersonIdentifier"/>
+            <xs:enumeration value="label.ism.nationalSocialSecurityNumber"/>
+            <xs:enumeration value="label.ism.passportNumber"/>
+            <xs:enumeration value="label.ism.regionalPatientIdentifier"/>
+            <xs:enumeration value="label.ism.regionIdentifier"/>
+            <xs:enumeration value="label.ism.gender"/>
+            <xs:enumeration value="label.ism.accessCode"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="scope">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALL"/>
+            <xs:enumeration value="PS"/>
+            <xs:enumeration value="EP"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="identifierType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CHOICE"/>
+            <xs:enumeration value="NORMAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

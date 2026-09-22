@@ -1,6 +1,8 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
+import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
+import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import io.javalin.Javalin
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
 import okhttp3.FormBody
@@ -32,7 +34,7 @@ class WebAppIntegrationTest {
             .withoutConnectionReuse()
             .build()
 
-        app = WebApp.createApp(LocalAuth())
+        app = WebApp.createApp(LocalAuth(), testMasks(), DummyPatientSearchClient())
         val port = TestUtils.randomFreePort()
         app.start(port)
         baseUrl = "http://localhost:$port"
@@ -141,7 +143,7 @@ class WebAppIntegrationTest {
     @Disabled
     fun `form errors redirect back to form with error flag set`() {
         // Use a local app to overwrite the db.
-        val app = WebApp.createApp(LocalAuth())
+        val app = WebApp.createApp(LocalAuth(), testMasks(), DummyPatientSearchClient())
         try {
             val port = TestUtils.randomFreePort()
             app.start(port)
@@ -218,3 +220,6 @@ class WebAppIntegrationTest {
         assertTrue(setCookies.contains("sds-epportal-id="))
     }
 }
+
+private fun testMasks(): SearchMaskRepository =
+    SearchMaskRepository.load(FindPatient.Config(listOf("DK", "FI"), "config/ism"))
