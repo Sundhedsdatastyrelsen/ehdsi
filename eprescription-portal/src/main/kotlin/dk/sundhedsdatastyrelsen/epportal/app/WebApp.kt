@@ -10,14 +10,26 @@ import io.javalin.http.HttpStatus
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
 import io.javalin.rendering.template.JavalinFreemarker
-import java.time.format.DateTimeFormatter
+import java.io.File
+
+private val DEV_MODE = (System.getProperty("epportal.devMode") == "true").also {
+    if (it) {
+        logger().warn("Running in development mode with hot-reloading enabled.")
+    }
+}
 
 /**
  * Initialize FreeMarker template engine
  */
 private fun createTemplateEngine(): Configuration {
     val configuration = Configuration(Configuration.VERSION_2_3_32).apply {
-        setClassLoaderForTemplateLoading(this::class.java.classLoader, "/templates")
+        if (DEV_MODE) {
+            // Enable hot-reloading of templates
+            setDirectoryForTemplateLoading(File("src/main/resources/templates"))
+            templateUpdateDelayMilliseconds = 0
+        } else {
+            setClassLoaderForTemplateLoading(this::class.java.classLoader, "/templates")
+        }
         defaultEncoding = "UTF-8"
         templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
         logTemplateExceptions = false
@@ -28,8 +40,6 @@ private fun createTemplateEngine(): Configuration {
 
 private fun authProvider(): AuthProvider = LocalAuth()
 
-val dkDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-
 object WebApp {
     fun createApp(auth: AuthProvider = authProvider()): Javalin {
         val app = Javalin.create { config ->
@@ -37,8 +47,14 @@ object WebApp {
             config.fileRenderer(JavalinFreemarker(createTemplateEngine()))
             config.staticFiles.add { staticFiles ->
                 staticFiles.hostedPath = "/"
-                staticFiles.directory = "/public"
-                staticFiles.location = Location.CLASSPATH
+                if (DEV_MODE) {
+                    // Enable hot-reloading of static files
+                    staticFiles.directory = "src/main/resources/public"
+                    staticFiles.location = Location.EXTERNAL
+                } else {
+                    staticFiles.directory = "/public"
+                    staticFiles.location = Location.CLASSPATH
+                }
             }
             config.jsonMapper(JavalinJackson())
 
@@ -85,10 +101,6 @@ object WebApp {
 
             config.routes.get("/logout") { ctx ->
                 auth.logout(ctx)  // SAML does session + persistent logout; both clear tracking cookie
-                ctx.redirect("/")
-            }
-
-            config.routes.error(404) { ctx ->
                 ctx.redirect("/")
             }
         }

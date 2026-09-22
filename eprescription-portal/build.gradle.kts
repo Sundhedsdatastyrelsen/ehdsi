@@ -67,6 +67,12 @@ application {
 }
 
 tasks {
+    named<JavaExec>("run") {
+        // We use "dev mode" to enable hot-reloading of templates and resources
+        // when running the server with ./gradlew run.
+        systemProperty("epportal.devMode", "true")
+    }
+
     test {
         // This fixes an issue where the integration tests fail when building via docker compose build
         jvmArgs("-Djava.net.preferIPv4Stack=true")
