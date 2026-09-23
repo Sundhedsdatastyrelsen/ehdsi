@@ -1,11 +1,12 @@
 package dk.sundhedsdatastyrelsen.epportal.ism
 
 import dk.sundhedsdatastyrelsen.epportal.logger
+import dk.sundhedsdatastyrelsen.epportal.utils.XPathWrapper
+import dk.sundhedsdatastyrelsen.epportal.utils.XmlNamespace
+import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import org.w3c.dom.Element
 import java.io.InputStream
-import javax.xml.parsers.DocumentBuilderFactory
 
-private const val ISM_NS = "http://ec.europa.eu/sante/ehncp/ism"
 private const val LABEL_PREFIX = "label.ism."
 
 /**
@@ -33,30 +34,16 @@ private const val LABEL_PREFIX = "label.ism."
 object IsmParser {
     private val log = logger()
 
+    private val xpath = XPathWrapper(XmlNamespace.ISM)
+
     fun parse(input: InputStream): SearchMask {
-        val factory = DocumentBuilderFactory.newInstance().apply {
-            isNamespaceAware = true
-            // Harden against XXE / entity-expansion attacks.
-            setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-            setFeature("http://xml.org/sax/features/external-general-entities", false)
-            setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-            isXIncludeAware = false
-            isExpandEntityReferences = false
-        }
-        val document = factory.newDocumentBuilder().parse(input)
+        val document = XmlUtils.parse(input)
 
-        val searchFields = document.getElementsByTagNameNS(ISM_NS, "searchFields").item(0) as? Element
-            ?: throw IllegalArgumentException("ISM document has no searchFields element")
-
-        val country = searchFields.getElementsByTagNameNS(ISM_NS, "country").item(0) as? Element
-            ?: throw IllegalArgumentException("ISM document has no country element")
-
-        val countryCode = country.getAttribute("code")
-
-        val idFields = country.getElementsByTagNameNS(ISM_NS, "patientSearch")
-            .toElementList()
-            .flatMap { it.childElements() }
-            .flatMap { child -> parsePatientSearchChild(child, countryCode) }
+        val country = xpath.evalElement("//ism:searchFields/ism:country", document)
+            ?: throw IllegalArgumentException("No country found in ISM document")
+        val countryCode = xpath.evalString("@code", country)
+        val idFields = xpath.evalElements("ism:patientSearch/*", country)
+            .flatMap { parsePatientSearchChild(it, countryCode) }
 
         return SearchMask(countryCode, idFields)
     }
@@ -75,8 +62,7 @@ object IsmParser {
 
     private fun parseIdentifier(identifier: Element, countryCode: String): List<IdField> {
         val type = identifier.getAttribute("type")
-        val children = identifier.childElements()
-        val hasIds = children.any { it.localName == "ids" }
+        val hasIds = xpath.evalElements("ism:ids", identifier).isNotEmpty()
 
         if (type == "CHOICE" || hasIds) {
             log.warn(
@@ -88,8 +74,7 @@ object IsmParser {
             return emptyList()
         }
 
-        return children
-            .filter { it.localName == "id" }
+        return xpath.evalElements("ism:id", identifier)
             .map { id ->
                 val format = id.getAttribute("format")
                 IdField(
@@ -101,10 +86,4 @@ object IsmParser {
                 )
             }
     }
-
-    private fun org.w3c.dom.NodeList.toElementList(): List<Element> =
-        (0 until length).mapNotNull { item(it) as? Element }
-
-    private fun Element.childElements(): List<Element> =
-        (0 until childNodes.length).mapNotNull { childNodes.item(it) as? Element }
 }
