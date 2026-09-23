@@ -21,8 +21,7 @@ object FindPatient {
      * ([SearchMaskRepository] decides which countries and fields are available) loads that country's id fields
      * as an htmx fragment, and any change to a field revalidates the whole form.
      *
-     * The form itself is submitted normally. A valid search is stored in the session and the browser is
-     * redirected to the results page, so the patient ids never appear in a URL (GDPR).
+     * The search is posted with htmx and its results are swapped in below the form (see form.ftlh for why).
      */
     fun registerRoutes(
         routes: JavalinDefaultRoutingApi,
@@ -35,13 +34,7 @@ object FindPatient {
         routes.get("/find-patient/fields", handlers::fields)
         routes.post("/find-patient/validate", handlers::validateFields)
         routes.post("/find-patient/search", handlers::search)
-        routes.get("/find-patient/results", handlers::results)
     }
-
-    /** A validated search, kept in the session between the form post and the results page. */
-    private data class PendingSearch(val country: String, val ids: List<PatientId>)
-
-    private const val SEARCH_SESSION_KEY = "findPatient.search"
 
     private class Handlers(
         private val auth: AuthProvider,
@@ -69,7 +62,7 @@ object FindPatient {
             ctx.render("find-patient/fields.ftlh", formModel(country, mask))
         }
 
-        /** htmx fragment: the validation errors of the whole form, for htmx to swap into the error slots. */
+        /** htmx fragment: the id fields of the whole form with their validation errors, morphed back in place. */
         fun validateFields(ctx: Context) {
             auth.require(ctx)
             val country = ctx.formParam("country")?.trim().orEmpty()
@@ -77,10 +70,10 @@ object FindPatient {
 
             val values = ctx.idValues(mask)
             val input = validate(mask, values)
-            ctx.render("find-patient/errors.ftlh", formModel(country, mask, values, input.errors, input.formError))
+            ctx.render("find-patient/fields.ftlh", formModel(country, mask, values, input.errors, input.formError))
         }
 
-        /** Form post: re-renders the page with errors, or stores the search and redirects to the results. */
+        /** htmx: the results of a valid search, and the id fields with any validation errors (see search.ftlh). */
         fun search(ctx: Context) {
             auth.require(ctx)
             val country = ctx.formParam("country")?.trim().orEmpty()
@@ -88,37 +81,23 @@ object FindPatient {
 
             val values = ctx.idValues(mask)
             val input = validate(mask, values)
+            val form = formModel(country, mask, values, input.errors, input.formError)
             if (!input.isValid) {
                 ctx.status(HttpStatus.UNPROCESSABLE_CONTENT)
-                ctx.render("find-patient/index.ftlh", formModel(country, mask, values, input.errors, input.formError))
+                ctx.render("find-patient/search.ftlh", form)
                 return
             }
 
-            ctx.sessionAttribute(SEARCH_SESSION_KEY, PendingSearch(country, input.ids))
-            ctx.redirect("/find-patient/results", HttpStatus.SEE_OTHER)
-        }
-
-        /** Full page with the results of the search stored in the session by [search]. */
-        fun results(ctx: Context) {
-            if (auth.current(ctx) == null) {
-                ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
-                return
-            }
-            val search = ctx.sessionAttribute<PendingSearch>(SEARCH_SESSION_KEY)
-            if (search == null) {
-                ctx.redirect("/find-patient", HttpStatus.SEE_OTHER)
-                return
-            }
-            // Patient data must not linger in browser or proxy caches
+            // Patient data should not linger in browser or proxy caches
             ctx.header("Cache-Control", "no-store")
-            val model = try {
-                val patients = client.queryPatient(search.country, search.ids)
+            val results = try {
+                val patients = client.queryPatient(country, input.ids)
                 mapOf("patients" to patients.map(::toPatientView))
             } catch (e: Exception) {
-                log.error("Patient search failed for country {}", search.country, e)
-                mapOf("error" to "Søgningen fejlede.")
+                log.error("Patient search failed for country {}", country, e)
+                mapOf("searchError" to "Søgningen fejlede.")
             }
-            ctx.render("find-patient/results.ftlh", model)
+            ctx.render("find-patient/search.ftlh", form + results)
         }
 
         private fun formModel(

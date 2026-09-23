@@ -93,7 +93,7 @@ class FindPatientIntegrationTest {
     }
 
     @Test
-    fun `searching DK with a valid id redirects to the results without the id in the url`() {
+    fun `searching DK with a valid id returns the patient and the fields`() {
         val cookieHeader = loginCookieHeader()
         val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
         val req = Request.Builder()
@@ -102,42 +102,13 @@ class FindPatientIntegrationTest {
             .header("Cookie", cookieHeader)
             .build()
         val resp = client.newCall(req).execute()
-        assertEquals(303, resp.code)
-        assertEquals("/find-patient/results", resp.headers["Location"])
-    }
-
-    @Test
-    fun `the results page shows the patient from the search in the session`() {
-        val cookieHeader = loginCookieHeader()
-        val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
-        client.newCall(
-            Request.Builder().url("$baseUrl/find-patient/search").post(form).header("Cookie", cookieHeader).build(),
-        ).execute().close()
-
-        val req = Request.Builder().url("$baseUrl/find-patient/results").get().header("Cookie", cookieHeader).build()
-        val resp = client.newCall(req).execute()
         assertEquals(200, resp.code)
         assertEquals("no-store", resp.headers["Cache-Control"])
         val body = resp.body.string()
         assertContains(body, "Testersen")
-        assertContains(body, "010101-1234")
-        assertContains(body, "1.2.208.176.1.2")
-    }
-
-    @Test
-    fun `the results page without a search redirects to the form`() {
-        val cookieHeader = loginCookieHeader()
-        val req = Request.Builder().url("$baseUrl/find-patient/results").get().header("Cookie", cookieHeader).build()
-        val resp = client.newCall(req).execute()
-        assertEquals(303, resp.code)
-        assertEquals("/find-patient", resp.headers["Location"])
-    }
-
-    @Test
-    fun `unauthenticated results page redirects to home with an error`() {
-        val resp = client.newCall(Request.Builder().url("$baseUrl/find-patient/results").get().build()).execute()
-        assertEquals(303, resp.code)
-        assertEquals("/?error=not-authorized", resp.headers["Location"])
+        assertContains(body, "010101-1234 (1.2.208.176.1.2)")
+        assertContains(body, "hx-swap-oob=\"innerMorph\"")
+        assertFalse(body.contains("text-red"))
     }
 
     private fun validate(cookieHeader: String, vararg params: Pair<String, String>): String {
@@ -185,7 +156,7 @@ class FindPatientIntegrationTest {
         assertEquals(422, resp.code)
         val body = resp.body.string()
         assertContains(body, "Ugyldigt format")
-        assertContains(body, "<option value=\"DK\" selected>")
+        assertFalse(body.contains("Testersen"))
     }
 
     @Test

@@ -1,13 +1,22 @@
+<#-- The search is posted with htmx and its results swapped in below the form, rather than as a normal
+     form post, so that reloading the page neither asks to resubmit the form nor sends a new XCPD query.
+     method="post" is only a fallback that keeps the patient ids out of the URL if htmx isn't loaded. -->
 <form
   method="post"
   action="/find-patient/search"
+  hx-post="/find-patient/search"
+  hx-target="#search-results"
+  hx-disable="find button[type=submit]"
   class="bg-white shadow-sdk mt-10 max-w-4xl mx-auto border-b-8 border-b-red p-4 flex flex-col gap-2"
 >
   <label for="country">Patientens hjemland</label>
+  <#-- autocomplete="off" stops the browser from restoring the selection on reload, which would leave a
+       country selected with no id fields loaded for it -->
   <select
     class="select-input"
     id="country"
     name="country"
+    autocomplete="off" <#-- stops the browser from restoring the selection on reload -->
     hx-get="/find-patient/fields"
     hx-include="this"
     hx-target="#search-fields"
@@ -18,15 +27,15 @@
     </#list>
   </select>
 
-  <#-- Every change inside the fields revalidates the whole form; the response only swaps the error
-       slots (out of band), so the fields themselves are left alone. -->
+  <#-- Every change inside the fields revalidates the whole form. It is morphed rather than
+       replaced so the fields keep their DOM state. -->
   <div
     id="search-fields"
     class="flex flex-col gap-2"
     hx-post="/find-patient/validate"
     hx-trigger="change"
     hx-include="closest form"
-    hx-swap="none"
+    hx-swap="innerMorph"
   >
     <#include "fields.ftlh">
   </div>

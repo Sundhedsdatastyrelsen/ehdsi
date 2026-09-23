@@ -8,6 +8,8 @@ class DummyPatientSearchClient : PatientSearchClient {
 
     override fun queryPatient(countryCode: String, ids: List<PatientId>): List<PatientDemographics> {
         log.info("Using DummyPatientSearchClient: returning fabricated patient data for country {}", countryCode)
+        // Stand-in for the latency of a real cross-border query, which takes seconds
+        Thread.sleep(1000)
         return listOf(
             PatientDemographics(
                 givenName = "Test",

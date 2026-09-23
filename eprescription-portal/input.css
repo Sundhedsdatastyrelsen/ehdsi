@@ -57,7 +57,8 @@
 
 @layer components {
   .red-button {
-    @apply bg-red text-white hover:bg-red-700 active:bg-red-800 px-3.5 py-1 cursor-pointer;
+    @apply bg-red text-white not-disabled:hover:bg-red-700 not-disabled:active:bg-red-800 px-3.5 py-1 cursor-pointer;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
   .gray-button {

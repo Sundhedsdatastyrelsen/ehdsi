@@ -17,6 +17,7 @@
     --font-weight-light: 300;
     --tracking-tight: -0.025em;
     --leading-tight: 1.25;
+    --animate-spin: spin 1s linear infinite;
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
     --color-white: #fff;
@@ -179,14 +180,26 @@
   }
 }
 @layer utilities {
+  .absolute {
+    position: absolute;
+  }
   .relative {
     position: relative;
+  }
+  .top-1\/2 {
+    top: calc(1/2 * 100%);
+  }
+  .right-3 {
+    right: calc(var(--spacing) * 3);
   }
   .z-10 {
     z-index: 10;
   }
   .mx-auto {
     margin-inline: auto;
+  }
+  .-mt-2 {
+    margin-top: calc(var(--spacing) * -2);
   }
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
@@ -196,6 +209,10 @@
   }
   .hidden {
     display: none;
+  }
+  .size-4 {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
   .h-16 {
     height: calc(var(--spacing) * 16);
@@ -221,6 +238,9 @@
   .flex-1 {
     flex: 1;
   }
+  .animate-spin {
+    animation: var(--animate-spin);
+  }
   .flex-col {
     flex-direction: column;
   }
@@ -245,9 +265,25 @@
   .self-center {
     align-self: center;
   }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .border-2 {
+    border-style: var(--tw-border-style);
+    border-width: 2px;
+  }
   .border-b-8 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 8px;
+  }
+  .border-white\/40 {
+    border-color: color-mix(in srgb, #fff 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-white) 40%, transparent);
+    }
+  }
+  .border-t-white {
+    border-top-color: var(--color-white);
   }
   .border-b-red {
     border-bottom-color: var(--color-red);
@@ -342,13 +378,23 @@
     padding-inline: calc(var(--spacing) * 3.5);
     padding-block: calc(var(--spacing) * 1);
     color: var(--color-white);
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-red-700);
+    &:not(*:disabled) {
+      &:hover {
+        @media (hover: hover) {
+          background-color: var(--color-red-700);
+        }
       }
     }
-    &:active {
-      background-color: var(--color-red-800);
+    &:not(*:disabled) {
+      &:active {
+        background-color: var(--color-red-800);
+      }
+    }
+    &:disabled {
+      cursor: not-allowed;
+    }
+    &:disabled {
+      opacity: 60%;
     }
   }
   .gray-button {
@@ -500,6 +546,11 @@
   syntax: "*";
   inherits: false;
   initial-value: solid;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
