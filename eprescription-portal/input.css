@@ -74,9 +74,29 @@
     @apply bg-white border border-gray-900 px-3 py-1.5 w-full hover:border-foreground focus:outline-2 focus:outline-offset-0 focus:outline-red focus:border-red;
   }
 
+  /* An htmx indicator (hx-indicator) that takes up no space while idle, and only appears once a request
+     has taken 200 ms, so that fast requests don't flash it */
+  .delayed-indicator {
+    @apply hidden;
+  }
+
+  .delayed-indicator.htmx-request {
+    @apply flex;
+    animation: delayed-show 0s 200ms both;
+  }
+
   .select-input {
     @apply appearance-none cursor-pointer pr-10 bg-no-repeat bg-size-[1rem] bg-position-[right_0.75rem_center];
     /* Chevron-down, stroke in --color-foreground */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%231b1b26' stroke-width='2'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+  }
+}
+
+@keyframes delayed-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
