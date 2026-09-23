@@ -66,10 +66,10 @@ class FindPatientIntegrationTest {
     }
 
     @Test
-    fun `find-patient form fragment for DK contains its field`() {
+    fun `find-patient fields fragment for DK contains its field`() {
         val cookieHeader = loginCookieHeader()
         val req = Request.Builder()
-            .url("$baseUrl/find-patient/form?country=DK")
+            .url("$baseUrl/find-patient/fields?country=DK")
             .get()
             .header("Cookie", cookieHeader)
             .build()
@@ -81,10 +81,10 @@ class FindPatientIntegrationTest {
     }
 
     @Test
-    fun `find-patient form fragment for unknown country is a 400`() {
+    fun `find-patient fields fragment for unknown country is a 400`() {
         val cookieHeader = loginCookieHeader()
         val req = Request.Builder()
-            .url("$baseUrl/find-patient/form?country=SE")
+            .url("$baseUrl/find-patient/fields?country=SE")
             .get()
             .header("Cookie", cookieHeader)
             .build()
@@ -93,7 +93,7 @@ class FindPatientIntegrationTest {
     }
 
     @Test
-    fun `searching DK with a valid id returns the dummy patient`() {
+    fun `searching DK with a valid id redirects to the results without the id in the url`() {
         val cookieHeader = loginCookieHeader()
         val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
         val req = Request.Builder()
@@ -102,11 +102,74 @@ class FindPatientIntegrationTest {
             .header("Cookie", cookieHeader)
             .build()
         val resp = client.newCall(req).execute()
+        assertEquals(303, resp.code)
+        assertEquals("/find-patient/results", resp.headers["Location"])
+    }
+
+    @Test
+    fun `the results page shows the patient from the search in the session`() {
+        val cookieHeader = loginCookieHeader()
+        val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
+        client.newCall(
+            Request.Builder().url("$baseUrl/find-patient/search").post(form).header("Cookie", cookieHeader).build(),
+        ).execute().close()
+
+        val req = Request.Builder().url("$baseUrl/find-patient/results").get().header("Cookie", cookieHeader).build()
+        val resp = client.newCall(req).execute()
         assertEquals(200, resp.code)
+        assertEquals("no-store", resp.headers["Cache-Control"])
         val body = resp.body.string()
         assertContains(body, "Testersen")
         assertContains(body, "010101-1234")
         assertContains(body, "1.2.208.176.1.2")
+    }
+
+    @Test
+    fun `the results page without a search redirects to the form`() {
+        val cookieHeader = loginCookieHeader()
+        val req = Request.Builder().url("$baseUrl/find-patient/results").get().header("Cookie", cookieHeader).build()
+        val resp = client.newCall(req).execute()
+        assertEquals(303, resp.code)
+        assertEquals("/find-patient", resp.headers["Location"])
+    }
+
+    @Test
+    fun `unauthenticated results page redirects to home with an error`() {
+        val resp = client.newCall(Request.Builder().url("$baseUrl/find-patient/results").get().build()).execute()
+        assertEquals(303, resp.code)
+        assertEquals("/?error=not-authorized", resp.headers["Location"])
+    }
+
+    private fun validate(cookieHeader: String, vararg params: Pair<String, String>): String {
+        val form = FormBody.Builder().apply { params.forEach { (k, v) -> add(k, v) } }.build()
+        val req = Request.Builder()
+            .url("$baseUrl/find-patient/validate")
+            .post(form)
+            .header("Cookie", cookieHeader)
+            .build()
+        val resp = client.newCall(req).execute()
+        assertEquals(200, resp.code)
+        return resp.body.string()
+    }
+
+    @Test
+    fun `validating the form returns the errors in their slots`() {
+        val body = validate(loginCookieHeader(), "country" to "DK", "id.0" to "abc")
+        assertContains(body, "id=\"id-0-error\"")
+        assertContains(body, "Ugyldigt format")
+    }
+
+    @Test
+    fun `validating a valid form returns empty error slots`() {
+        val body = validate(loginCookieHeader(), "country" to "DK", "id.0" to "010101-1234")
+        assertContains(body, "id=\"id-0-error\"")
+        assertFalse(body.contains("text-red"))
+    }
+
+    @Test
+    fun `validating an empty form returns the form-level error`() {
+        val body = validate(loginCookieHeader(), "country" to "FI", "id.0" to "")
+        assertContains(body, "Udfyld mindst ét felt")
     }
 
     @Test
@@ -119,8 +182,10 @@ class FindPatientIntegrationTest {
             .header("Cookie", cookieHeader)
             .build()
         val resp = client.newCall(req).execute()
-        assertEquals(200, resp.code)
-        assertContains(resp.body.string(), "Ugyldigt format")
+        assertEquals(422, resp.code)
+        val body = resp.body.string()
+        assertContains(body, "Ugyldigt format")
+        assertContains(body, "<option value=\"DK\" selected>")
     }
 
     @Test
@@ -133,7 +198,7 @@ class FindPatientIntegrationTest {
             .header("Cookie", cookieHeader)
             .build()
         val resp = client.newCall(req).execute()
-        assertEquals(200, resp.code)
+        assertEquals(422, resp.code)
         assertContains(resp.body.string(), "Udfyld mindst ét felt")
     }
 
