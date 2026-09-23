@@ -49,9 +49,6 @@ dependencies {
     implementation(libs.jdbi3.core)
     implementation(libs.flyway.core)
 
-    // Support remote JVM debugging (maybe?)
-    implementation(libs.kotlin.stdlib)
-
     // Avoid CVEs:
     implementation(libs.bouncycastle.bcprov.jdk18on)
 
@@ -70,6 +67,12 @@ application {
 }
 
 tasks {
+    named<JavaExec>("run") {
+        // We use "dev mode" to enable hot-reloading of templates and resources
+        // when running the server with ./gradlew run.
+        systemProperty("epportal.devMode", "true")
+    }
+
     test {
         // This fixes an issue where the integration tests fail when building via docker compose build
         jvmArgs("-Djava.net.preferIPv4Stack=true")

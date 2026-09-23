@@ -23,6 +23,11 @@
     <main class="mt-10 px-4 md:px-8">
       <h1 class="text-center text-4xl">ePrescription portal</h1>
 
+      <section
+          class="bg-white shadow-sdk mt-10 max-w-4xl mx-auto border-b-8 border-b-red p-4 flex flex-col gap-2"
+      >
+          <p>Logget ind som: <span>${userCpr!?string}</span>.</p>
+    </section>
       <#if error??>
         <div class="bg-white shadow-sdk mt-10 max-w-4xl mx-auto border-b-8 border-b-yellow p-4">
           <#switch error>
