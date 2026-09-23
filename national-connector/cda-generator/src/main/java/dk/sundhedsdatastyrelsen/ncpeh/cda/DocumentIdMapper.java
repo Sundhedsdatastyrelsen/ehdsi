@@ -43,8 +43,8 @@ public class DocumentIdMapper {
         throw new MapperException("Document id could not parse to type of Document");
     }
 
-    public static CdaId removeDocumentIdSuffix(CdaId DocumentId) {
-        var extension = DocumentId.getExtension();
+    public static CdaId removeDocumentIdSuffix(CdaId documentId) {
+        var extension = documentId.getExtension();
         var baseId = extension != null && (extension.endsWith("L3") || extension.endsWith("L1"))
             ? extension.substring(0, extension.length() - 2)
             : extension;

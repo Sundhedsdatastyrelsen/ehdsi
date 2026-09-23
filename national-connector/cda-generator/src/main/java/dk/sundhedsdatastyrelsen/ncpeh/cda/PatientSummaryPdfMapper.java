@@ -49,7 +49,8 @@ public class PatientSummaryPdfMapper {
     }
 
     private static final int DEFAULT_WRAP_LENGTH = 75;
-    private static final String lineSpacer = "----------------------------------------";
+    private static final String LINE_SPACER = "----------------------------------------";
+    private static final String NO_INFORMATION_TEXT = "No information available.";
 
     // Overload
     private static PdfField field(List<String> lines) {
@@ -68,7 +69,7 @@ public class PatientSummaryPdfMapper {
         var lines = new ArrayList<String>();
 
         lines.add("PATIENT");
-        lines.add(lineSpacer);
+        lines.add(LINE_SPACER);
 
         var cpr = patient.getId().getExtension();
         if (cpr != null && cpr.length() >= 10) {
@@ -125,7 +126,7 @@ public class PatientSummaryPdfMapper {
         var medicationLines = new ArrayList<String>();
 
         medicationLines.add("MEDICATION SUMMARY");
-        medicationLines.add(lineSpacer);
+        medicationLines.add(LINE_SPACER);
 
         if (medicationSummary == null || medicationSummary.getItems().isEmpty()) {
             medicationLines.add("The patient has no current or recent medications according to our data");
@@ -203,10 +204,10 @@ public class PatientSummaryPdfMapper {
         var lines = new ArrayList<String>();
 
         lines.add("IMMUNIZATIONS");
-        lines.add(lineSpacer);
+        lines.add(LINE_SPACER);
 
         if (immunizations == null || immunizations.getItems().isEmpty()) {
-            lines.add("No information available.");
+            lines.add(NO_INFORMATION_TEXT);
             return lines;
         }
 
@@ -262,96 +263,96 @@ public class PatientSummaryPdfMapper {
     private static List<String> allergyLines() {
         return List.of(
             "ALLERGIES",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> surgeryLines() {
         return List.of(
             "LIST OF SURGERIES",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> pastIllnessLines() {
         return List.of(
             "HISTORY OF PAST ILLNESSES",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> activeProblemLines() {
         return List.of(
             "ACTIVE PROBLEMS",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> medicalDeviceLines() {
         return List.of(
             "MEDICAL DEVICES",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> healthMaintenanceCarePlanLines() {
         return List.of(
             "HEALTH MAINTENANCE CARE PLAN",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> functionalStatusLines() {
         return List.of(
             "FUNCTIONAL STATUS",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> socialHistoryLines() {
         return List.of(
             "SOCIAL HISTORY",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> pregnancyHistoryLines() {
         return List.of(
             "PREGNANCY HISTORY",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> vitalSignsLines() {
         return List.of(
             "VITAL SIGNS",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> codedResultsLines() {
         return List.of(
             "CODED RESULTS",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 
     private static List<String> advanceDirectivesLines() {
         return List.of(
             "ADVANCE DIRECTIVES",
-            lineSpacer,
-            "No information available."
+            LINE_SPACER,
+            NO_INFORMATION_TEXT
         );
     }
 

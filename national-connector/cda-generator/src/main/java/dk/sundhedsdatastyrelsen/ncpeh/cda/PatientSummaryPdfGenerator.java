@@ -19,18 +19,19 @@ import java.util.stream.Stream;
 
 public class PatientSummaryPdfGenerator {
     private static final PDFont FONT = new PDType1Font(Standard14Fonts.FontName.COURIER);
+    // This will/should be used when expanding on the layout of the dpf
+    // private static final PDFont FONT_BOLD = new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
 
-    private static final PDFont FONT_BOLD = new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
-
-    private static final int TITLE_FONT_SIZE = 16;
+    // This will/should be used when expanding on the layout of the dpf
+    // private static final int TITLE_FONT_SIZE = 16;
     private static final int BODY_FONT_SIZE = 11;
 
     private static final float MARGIN_LEFT = 50f;
     private static final float MARGIN_BOTTOM = 50f;
     private static final float START_Y = 790f;
 
-    private static final float TITLE_LINE_HEIGHT =
-        TITLE_FONT_SIZE * 1.5f;
+    // This will/should be used when expanding on the layout of the dpf
+    // private static final float TITLE_LINE_HEIGHT = TITLE_FONT_SIZE * 1.5f;
 
     private static final float BODY_LINE_HEIGHT =
         BODY_FONT_SIZE * 1.5f;
