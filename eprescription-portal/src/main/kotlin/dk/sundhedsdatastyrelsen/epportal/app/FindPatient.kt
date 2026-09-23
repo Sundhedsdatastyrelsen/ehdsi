@@ -8,6 +8,7 @@ import dk.sundhedsdatastyrelsen.epportal.logger
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientDemographics
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientId
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
+import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
 import io.javalin.http.HttpStatus
 import io.javalin.router.JavalinDefaultRoutingApi
@@ -19,7 +20,7 @@ object FindPatient {
     /**
      * Registers the "find patient" flow: a page with the search form, where picking the patient's country
      * ([SearchMaskRepository] decides which countries and fields are available) loads that country's id fields
-     * as an htmx fragment, and any change to a field revalidates the whole form.
+     * as an htmx fragment, and a change to a field validates that field.
      *
      * The search is posted with htmx and its results are swapped in below the form (see form.ftlh for why).
      */
@@ -30,9 +31,11 @@ object FindPatient {
         client: PatientSearchClient,
     ) {
         val handlers = Handlers(auth, masks, client)
+        // Responses contain patient data (e.g., id) and should not be cached
+        routes.before("/find-patient*") { ctx -> ctx.header("Cache-Control", "no-store") }
         routes.get("/find-patient", handlers::page)
         routes.get("/find-patient/fields", handlers::fields)
-        routes.post("/find-patient/validate", handlers::validateFields)
+        routes.post("/find-patient/validate", handlers::validateField)
         routes.post("/find-patient/search", handlers::search)
     }
 
@@ -50,27 +53,26 @@ object FindPatient {
             ctx.render("find-patient/index.ftlh", formModel(country = "", mask = null))
         }
 
-        /** htmx fragment: the empty id fields for the selected country (nothing if no country is selected). */
+        /** htmx fragment: the empty id fields for the selected country, clearing any earlier results (see country.ftlh). */
         fun fields(ctx: Context) {
             auth.require(ctx)
             val country = ctx.queryParam("country")?.trim().orEmpty()
-            if (country.isEmpty()) {
-                ctx.html("")
-                return
-            }
-            val mask = masks.get(country) ?: return ctx.unknownCountry()
-            ctx.render("find-patient/fields.ftlh", formModel(country, mask))
+            val mask = if (country.isEmpty()) null else masks.get(country) ?: return ctx.unknownCountry()
+            ctx.render("find-patient/country.ftlh", formModel(country, mask))
         }
 
-        /** htmx fragment: the id fields of the whole form with their validation errors, morphed back in place. */
-        fun validateFields(ctx: Context) {
+        /** htmx fragment: the validation error of a single id field, see field-error.ftlh. */
+        fun validateField(ctx: Context) {
             auth.require(ctx)
             val country = ctx.formParam("country")?.trim().orEmpty()
             val mask = masks.get(country) ?: return ctx.unknownCountry()
+            val index = ctx.formParam("field")?.toIntOrNull()?.takeIf { it in mask.idFields.indices }
+                ?: throw BadRequestResponse("Unknown field")
 
-            val values = ctx.idValues(mask)
-            val input = validate(mask, values)
-            ctx.render("find-patient/fields.ftlh", formModel(country, mask, values, input.errors, input.formError))
+            val value = ctx.formParam("id.$index")?.trim().orEmpty()
+            val error = fieldError(mask.idFields[index], value)
+            val model = mapOf("error" to error, "clearFormError" to (error == null && value.isNotBlank()))
+            ctx.render("find-patient/field-error.ftlh", model)
         }
 
         /** htmx: the results of a valid search, and the id fields with any validation errors (see search.ftlh). */
@@ -88,8 +90,6 @@ object FindPatient {
                 return
             }
 
-            // Patient data should not linger in browser or proxy caches
-            ctx.header("Cache-Control", "no-store")
             val results = try {
                 val patients = client.queryPatient(country, input.ids)
                 mapOf("patients" to patients.map(::toPatientView))

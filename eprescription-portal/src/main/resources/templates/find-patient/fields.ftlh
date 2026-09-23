@@ -19,6 +19,10 @@
         data-lpignore="true" <#-- lastpass -->
         data-bwignore="true" <#-- bitwarden -->
         <#if field.mandatory>required</#if>
+        <#-- A change triggers a validation -->
+        hx-post="/find-patient/validate"
+        hx-vals='{"field": "${field.index}"}'
+        hx-target="#id-${field.index}-error"
       />
       <div id="id-${field.index}-error"><#if field.error??><p class="text-red">${field.error}</p></#if></div>
     </div>

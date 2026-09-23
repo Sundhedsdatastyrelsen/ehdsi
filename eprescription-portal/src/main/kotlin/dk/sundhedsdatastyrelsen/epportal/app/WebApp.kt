@@ -11,6 +11,7 @@ import freemarker.template.TemplateExceptionHandler
 import io.javalin.Javalin
 import io.javalin.http.BadRequestResponse
 import io.javalin.http.HttpStatus
+import io.javalin.http.UnauthorizedResponse
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
 import io.javalin.rendering.template.JavalinFreemarker
@@ -74,6 +75,15 @@ object WebApp {
             }
 
             config.requestLogger.http(requestLogger(log))
+
+            // htmx swaps error responses into the page too, so a fragment request from an expired session would
+            // replace part of the page with the 401 body. HX-Redirect makes htmx navigate to the login page instead.
+            config.routes.exception(UnauthorizedResponse::class.java) { e, ctx ->
+                if (ctx.header("HX-Request") == "true") {
+                    ctx.header("HX-Redirect", "/?error=not-authorized")
+                }
+                ctx.status(e.status).result(e.message.orEmpty())
+            }
 
             auth.registerRoutes(config.routes)
             FindPatient.registerRoutes(config.routes, auth, searchMasks, patientSearch)

@@ -27,16 +27,7 @@
     </#list>
   </select>
 
-  <#-- Every change inside the fields revalidates the whole form. It is morphed rather than
-       replaced so the fields keep their DOM state. -->
-  <div
-    id="search-fields"
-    class="flex flex-col gap-2"
-    hx-post="/find-patient/validate"
-    hx-trigger="change"
-    hx-include="closest form"
-    hx-swap="innerMorph"
-  >
+  <div id="search-fields" class="flex flex-col gap-2">
     <#include "fields.ftlh">
   </div>
 </form>

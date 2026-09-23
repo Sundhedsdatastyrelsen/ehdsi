@@ -8,6 +8,7 @@ import io.javalin.Javalin
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -55,6 +56,28 @@ class FindPatientIntegrationTest {
     }
 
     @Test
+    fun `unauthenticated htmx request is told to redirect to home with an error`() {
+        val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
+        val req = Request.Builder()
+            .url("$baseUrl/find-patient/search")
+            .post(form)
+            .header("HX-Request", "true")
+            .build()
+        val resp = client.newCall(req).execute()
+        assertEquals(401, resp.code)
+        assertEquals("/?error=not-authorized", resp.headers["HX-Redirect"])
+    }
+
+    @Test
+    fun `unauthenticated non-htmx request is a plain 401`() {
+        val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
+        val req = Request.Builder().url("$baseUrl/find-patient/search").post(form).build()
+        val resp = client.newCall(req).execute()
+        assertEquals(401, resp.code)
+        assertEquals(null, resp.headers["HX-Redirect"])
+    }
+
+    @Test
     fun `find-patient page lists the configured countries`() {
         val cookieHeader = loginCookieHeader()
         val req = Request.Builder().url("$baseUrl/find-patient").get().header("Cookie", cookieHeader).build()
@@ -78,6 +101,22 @@ class FindPatientIntegrationTest {
         val body = resp.body.string()
         assertContains(body, "Nationalt ID-kortnummer")
         assertContains(body, "name=\"id.0\"")
+        assertContains(body, "<div id=\"search-results\" hx-swap-oob=\"innerHTML\"></div>")
+    }
+
+    @Test
+    fun `find-patient fields fragment without a country has no fields but clears the results`() {
+        val cookieHeader = loginCookieHeader()
+        val req = Request.Builder()
+            .url("$baseUrl/find-patient/fields?country=")
+            .get()
+            .header("Cookie", cookieHeader)
+            .build()
+        val resp = client.newCall(req).execute()
+        assertEquals(200, resp.code)
+        val body = resp.body.string()
+        assertFalse(body.contains("name=\"id.0\""))
+        assertContains(body, "<div id=\"search-results\" hx-swap-oob=\"innerHTML\"></div>")
     }
 
     @Test
@@ -111,36 +150,55 @@ class FindPatientIntegrationTest {
         assertFalse(body.contains("text-red"))
     }
 
-    private fun validate(cookieHeader: String, vararg params: Pair<String, String>): String {
+    private fun validate(cookieHeader: String, vararg params: Pair<String, String>): Response {
         val form = FormBody.Builder().apply { params.forEach { (k, v) -> add(k, v) } }.build()
         val req = Request.Builder()
             .url("$baseUrl/find-patient/validate")
             .post(form)
             .header("Cookie", cookieHeader)
             .build()
-        val resp = client.newCall(req).execute()
+        return client.newCall(req).execute()
+    }
+
+    private fun validateOk(cookieHeader: String, vararg params: Pair<String, String>): String {
+        val resp = validate(cookieHeader, *params)
         assertEquals(200, resp.code)
+        assertEquals("no-store", resp.headers["Cache-Control"])
         return resp.body.string()
     }
 
     @Test
-    fun `validating the form returns the errors in their slots`() {
-        val body = validate(loginCookieHeader(), "country" to "DK", "id.0" to "abc")
-        assertContains(body, "id=\"id-0-error\"")
+    fun `validating a field with an invalid value returns its format error`() {
+        val body = validateOk(loginCookieHeader(), "country" to "DK", "field" to "0", "id.0" to "abc")
         assertContains(body, "Ugyldigt format")
+        assertFalse(body.contains("form-error"))
     }
 
     @Test
-    fun `validating a valid form returns empty error slots`() {
-        val body = validate(loginCookieHeader(), "country" to "DK", "id.0" to "010101-1234")
-        assertContains(body, "id=\"id-0-error\"")
+    fun `validating a valid field returns no error and clears the form-level error`() {
+        val body = validateOk(loginCookieHeader(), "country" to "DK", "field" to "0", "id.0" to "010101-1234")
         assertFalse(body.contains("text-red"))
+        assertContains(body, "<div id=\"form-error\" hx-swap-oob=\"innerHTML\"></div>")
     }
 
     @Test
-    fun `validating an empty form returns the form-level error`() {
-        val body = validate(loginCookieHeader(), "country" to "FI", "id.0" to "")
-        assertContains(body, "Udfyld mindst ét felt")
+    fun `validating a blank optional field returns no errors`() {
+        val body = validateOk(loginCookieHeader(), "country" to "FI", "field" to "0", "id.0" to "")
+        assertFalse(body.contains("text-red"))
+        assertFalse(body.contains("form-error"))
+    }
+
+    @Test
+    fun `validating a blank mandatory field returns its required error`() {
+        val body = validateOk(loginCookieHeader(), "country" to "DK", "field" to "0", "id.0" to "")
+        assertContains(body, "Feltet skal udfyldes")
+    }
+
+    @Test
+    fun `validating an unknown field index is a 400`() {
+        // DK has a single field
+        val resp = validate(loginCookieHeader(), "country" to "DK", "field" to "1", "id.0" to "abc")
+        assertEquals(400, resp.code)
     }
 
     @Test
@@ -154,6 +212,7 @@ class FindPatientIntegrationTest {
             .build()
         val resp = client.newCall(req).execute()
         assertEquals(422, resp.code)
+        assertEquals("no-store", resp.headers["Cache-Control"])
         val body = resp.body.string()
         assertContains(body, "Ugyldigt format")
         assertFalse(body.contains("Testersen"))
