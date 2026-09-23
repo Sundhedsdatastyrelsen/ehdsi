@@ -6,7 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/static/style.css" rel="stylesheet" />
-    <title>ePrescription Portal</title>
+    <title>${title}</title>
     <script src="/static/htmx-4.0.0.min.js"></script>
   </head>
   <body

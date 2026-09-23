@@ -22,7 +22,7 @@ object FindPatient {
      * ([SearchMaskRepository] decides which countries and fields are available) loads that country's id fields
      * as an htmx fragment, and a change to a field validates that field.
      *
-     * The search is posted with htmx and its results are swapped in below the form (see form.ftlh for why).
+     * The search is posted with htmx and its results are swapped in below the form (see index.ftlh for why).
      */
     fun registerRoutes(
         routes: JavalinDefaultRoutingApi,
