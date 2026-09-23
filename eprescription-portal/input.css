@@ -3,3 +3,79 @@
 
 /* Instead, read only the template files */
 @source "./src/main/resources/templates";
+
+@theme {
+  /* Remove all the tailwind colors */
+  --color-*: initial;
+  /* Add the sundhed.dk colors */
+  --color-white: #fff;
+  --color-black: #000;
+  --color-red: #b20c1c;
+  --color-red-700: #820914;
+  --color-red-800: #790813;
+  --color-yellow: #f0c337;
+  --color-gray: #ececec;
+  --color-gray-700: #e5e5e5;
+  --color-gray-800: #c1c1c1;
+  /* Form control borders; needs >= 3:1 contrast against white (WCAG 1.4.11) */
+  --color-gray-900: #767676;
+  --color-foreground: #1b1b26;
+  --color-background: #f7f7f7;
+
+  /* Add sundhed.dk fonts */
+  --font-sans: "Titillium Web", sans-serif;
+
+  /* Add their specific border */
+  --shadow-sdk: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sdk-footer: 0 1px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+@font-face {
+  font-family: "Titillium Web";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/static/titillium-web-v14-latin-regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Titillium Web";
+  font-style: normal;
+  font-weight: 300;
+  src: url("/static/titillium-web-v14-latin-300.woff2") format("woff2");
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-light leading-tight tracking-tight;
+  }
+}
+
+@layer components {
+  .red-button {
+    @apply bg-red text-white hover:bg-red-700 active:bg-red-800 px-3.5 py-1 cursor-pointer;
+  }
+
+  .gray-button {
+    @apply bg-gray text-black hover:bg-gray-700 active:bg-gray-800 px-3.5 py-1 cursor-pointer;
+  }
+
+  .red-link {
+    @apply text-red visited:text-red-700 hover:underline;
+  }
+
+  .text-input,
+  .select-input {
+    @apply bg-white border border-gray-900 px-3 py-1.5 w-full hover:border-foreground focus:outline-2 focus:outline-offset-0 focus:outline-red focus:border-red;
+  }
+
+  .select-input {
+    @apply appearance-none cursor-pointer pr-10 bg-no-repeat bg-size-[1rem] bg-position-[right_0.75rem_center];
+    /* Chevron-down, stroke in --color-foreground */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%231b1b26' stroke-width='2'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+  }
+}
