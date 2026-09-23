@@ -78,6 +78,45 @@ class FindPatientIntegrationTest {
     }
 
     @Test
+    fun `session cookie is SameSite Lax`() {
+        val resp = client.newCall(Request.Builder().url("$baseUrl/dev-login").get().build()).execute()
+        assertContains(resp.headers("Set-Cookie").joinToString(), "SameSite=Lax")
+    }
+
+    private fun searchWithHeaders(vararg headers: Pair<String, String>): Int {
+        val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
+        val req = Request.Builder()
+            .url("$baseUrl/find-patient/search")
+            .post(form)
+            .header("Cookie", loginCookieHeader())
+            .apply { headers.forEach { (k, v) -> header(k, v) } }
+            .build()
+        return client.newCall(req).execute().code
+    }
+
+    @Test
+    fun `cross-site post is rejected`() {
+        assertEquals(403, searchWithHeaders("Sec-Fetch-Site" to "cross-site"))
+        assertEquals(403, searchWithHeaders("Sec-Fetch-Site" to "same-site"))
+    }
+
+    @Test
+    fun `same-origin post is accepted`() {
+        assertEquals(200, searchWithHeaders("Sec-Fetch-Site" to "same-origin", "Origin" to baseUrl))
+    }
+
+    @Test
+    fun `post from a foreign origin is rejected when Sec-Fetch-Site is missing`() {
+        assertEquals(403, searchWithHeaders("Origin" to "https://evil.example"))
+        assertEquals(403, searchWithHeaders("Origin" to "null"))
+    }
+
+    @Test
+    fun `post from our own origin is accepted when Sec-Fetch-Site is missing`() {
+        assertEquals(200, searchWithHeaders("Origin" to baseUrl))
+    }
+
+    @Test
     fun `find-patient page lists the configured countries`() {
         val cookieHeader = loginCookieHeader()
         val req = Request.Builder().url("$baseUrl/find-patient").get().header("Cookie", cookieHeader).build()
