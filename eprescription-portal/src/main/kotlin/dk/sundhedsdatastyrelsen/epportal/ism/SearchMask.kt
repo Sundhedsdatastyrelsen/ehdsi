@@ -12,7 +12,7 @@ data class SearchMask(
 /**
  * One `identifier/id` field from a NORMAL identifier in the ISM.
  *
- * @param format `null` when the ISM's `format` attribute is blank (as FI's is). Otherwise a regex the
+ * @param format `null` when the ISM's `format` attribute is blank (as FI's is). Otherwise, a regex the
  *   entered value must fully match.
  */
 data class IdField(

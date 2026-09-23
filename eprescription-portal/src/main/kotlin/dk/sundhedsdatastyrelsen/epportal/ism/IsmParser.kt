@@ -13,8 +13,22 @@ private const val LABEL_PREFIX = "label.ism."
  *
  * Only the subset of the format that DK and FI actually use is supported: `identifier type="NORMAL"`
  * with `<id>` children. Everything else (CHOICE identifiers, grouped `ids`, `textField`, `birthDate`,
- * `gender`, `media`) is logged as a warning and skipped rather than causing a parse failure, since a
- * country's ISM may legitimately contain search fields we don't support yet.
+ * `gender`, `media`) is logged as a warning and skipped rather than causing a parse failure.
+ *
+ * IMPORTANT NOTE: The id fields may contain regular expressions that are used for validation. It is important that we
+ * inspect these regular expressions to ensure they are safe and do not contain any unsafe patterns.
+ * A regular expression may lead to denial-of-service, e.g. (a|b)*(a|c)* which can take quadratic time in the size of
+ * the input, or (a+)+ which given certain input string take exponential time.
+ * We do not attempt to perform automatic static analysis of the regexes to detect DoS vulnerabilities.  Instead, we
+ * rely on manual inspection of the regexes. See [1] for techniques for static analysis of regular expressions.
+ *
+ * Therefore, we cannot introduce automatic fetching of the ISM documents, we need a process where the regular
+ * expressions are manually inspected and validated.
+ *
+ * - [1] Wüstholz, Valentin, et al. "Static detection of DoS vulnerabilities in programs that use regular expressions."
+ * International Conference on Tools and Algorithms for the Construction and Analysis of Systems. Berlin, Heidelberg:
+ * Springer Berlin Heidelberg, 2017.
+ * http://www.cs.cmu.edu/~mheule/publications/evil-regexes.pdf
  */
 object IsmParser {
     private val log = logger()
