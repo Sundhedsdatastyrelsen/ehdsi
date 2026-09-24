@@ -36,13 +36,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- To avoid a problem similar to this: https://stackoverflow.com/questions/55406438
-             we pin the spring-ws-core to a newer version than ehdsi/ehealth -->
-            <dependency>
-                <groupId>org.springframework.ws</groupId>
-                <artifactId>spring-ws-core</artifactId>
-                <version>3.1.8</version>
-            </dependency>
             <!-- We encountered an error in the classpath on a specific server, which seems to evaluate to a different
             version of the commons-lang package. Even when running the same docker image on other servers, we didn't
             get the same error. We never found the problem, but we solved it by forcing the version of commons-lang. -->
