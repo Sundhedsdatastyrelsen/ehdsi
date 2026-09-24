@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
+import dk.sundhedsdatastyrelsen.epportal.openncp.OpenNcpPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
@@ -160,7 +161,14 @@ object WebApp {
 
     fun startServer(config: AppConfig) {
         val searchMasks = SearchMaskRepository.load(config.findPatient)
-        val app = createApp(searchMasks = searchMasks, patientSearch = DummyPatientSearchClient())
+        val patientSearch = if (config.openncp != null) {
+            log.info("Patient search via OpenNCP client connector at {}", config.openncp.endpoint)
+            OpenNcpPatientSearchClient.create(config.openncp)
+        } else {
+            log.warn("OpenNCP is not configured; patient search returns fabricated data")
+            DummyPatientSearchClient()
+        }
+        val app = createApp(searchMasks = searchMasks, patientSearch = patientSearch)
         app.start(config.webApp.port)
     }
 

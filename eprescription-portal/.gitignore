@@ -58,3 +58,6 @@ target/
 ### Agent docs
 AdminUIFeature.md
 CODEBASE.md
+
+# Local config overrides (see Config.load)
+config/local.toml

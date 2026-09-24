@@ -1,8 +1,8 @@
 package dk.sundhedsdatastyrelsen.epportal.patient
 
 /**
- * Looks up a patient in a foreign NCP. In this iteration this wraps the OpenNCP `queryPatient` SOAP
- * call (or, currently, [DummyPatientSearchClient]) rather than being called directly.
+ * Looks up a patient in a foreign NCP: [dk.sundhedsdatastyrelsen.epportal.openncp.OpenNcpPatientSearchClient] calls
+ * `queryPatient` on the OpenNCP client connector, and [DummyPatientSearchClient] returns fabricated data.
  */
 fun interface PatientSearchClient {
     fun queryPatient(countryCode: String, ids: List<PatientId>): List<PatientDemographics>

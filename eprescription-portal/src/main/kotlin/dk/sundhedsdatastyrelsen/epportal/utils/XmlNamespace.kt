@@ -30,6 +30,10 @@ data class XmlNamespace(val prefix: String?, val uri: String?) {
             XmlNamespace("medcom-legacy", "http://www.medcom.dk/dgws/2006/04/dgws-1.0.xsd")
         val SAML: XmlNamespace = XmlNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion")
         val SOAP: XmlNamespace = XmlNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/")
+        val SOAP12: XmlNamespace = XmlNamespace("soap12", "http://www.w3.org/2003/05/soap-envelope")
+
+        /** OpenNCP client connector (ClientService) */
+        val OPENNCP_CLIENT: XmlNamespace = XmlNamespace("ncpc", "http://api.client.core.openncp.sante.ec.europa.eu")
         val SOSI: XmlNamespace = XmlNamespace("sosi", "http://www.sosi.dk/sosi/2006/04/sosi-1.0.xsd")
         val WSA: XmlNamespace = XmlNamespace("wsa", "http://www.w3.org/2005/08/addressing")
         val WSP: XmlNamespace = XmlNamespace("wsp", "http://schemas.xmlsoap.org/ws/2004/09/policy")

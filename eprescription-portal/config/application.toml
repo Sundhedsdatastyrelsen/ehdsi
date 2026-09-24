@@ -5,6 +5,27 @@ port = 8080
 countries = ["DK", "FI"]
 ismDirectory = "config/ism"
 
+# Patient search through the OpenNCP client connector. Without this section, patient search returns fabricated data.
+# The values below fit the local NCP docker-compose stack in ../NCP; put them in config/local.toml (gitignored).
+# The connector requires https (its WS-Policy rejects plain http), but a client certificate is not needed. Its dev
+# certificate is issued to ncp-training.ehdsi.sundhedsdata.dk, hence tlsHostname.
+#[openncp]
+#endpoint = "https://localhost:6443/openncp-client-connector/services/ClientService"
+#tlsHostname = "ncp-training.ehdsi.sundhedsdata.dk"
+#truststore = { path = "../NCP/keystore/dev-truststore.jks", password = "changeit" }
+#
+#[openncp.signing]
+#alias = "tomcat"
+#keystore = { path = "../NCP/keystore/dev-seal.jks", password = "password" }
+#
+## TODO: Hard-coded HCP identity for the first iteration. It should come from the logged-in user.
+#[openncp.hcp]
+#nameId = "testpharmacist"
+#subjectId = "Test Farmaceut"
+#organization = "Testapoteket"
+#organizationId = "urn:oid:1.2.208.176.1.1"
+#locality = "København"
+
 [vault]
 # Optional: Configure truststore for Vault SSL connections
 # Note: Since Vault is accessed during config loading, truststore must be configured
