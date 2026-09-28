@@ -22,26 +22,12 @@
   --color-foreground: #1b1b26;
   --color-background: #f7f7f7;
 
-  /* Add sundhed.dk fonts */
-  --font-sans: "Titillium Web", sans-serif;
+  /* Web safe font stack */
+  --font-sans: Arial, Helvetica, sans-serif;
 
   /* Add their specific border */
   --shadow-sdk: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-sdk-footer: 0 1px 2px 2px rgba(0, 0, 0, 0.3);
-}
-
-@font-face {
-  font-family: "Titillium Web";
-  font-style: normal;
-  font-weight: 400;
-  src: url("/static/titillium-web-v14-latin-regular.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Titillium Web";
-  font-style: normal;
-  font-weight: 300;
-  src: url("/static/titillium-web-v14-latin-300.woff2") format("woff2");
 }
 
 @layer base {
