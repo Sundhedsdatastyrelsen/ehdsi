@@ -5,7 +5,7 @@ import dk.sundhedsdatastyrelsen.epportal.app.WebApp
 fun main() {
     val config = Config.load()
     log.info("Starting application with config: {}", config)
-    WebApp.startServer(config.webApp)
+    WebApp.startServer(config)
 }
 
 val log = logger()

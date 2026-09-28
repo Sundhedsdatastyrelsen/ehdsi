@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><SignedServiceMetadata xmlns="http://docs.oasis-open.org/bdxr/ns/SMP/2016/05"><ServiceMetadata xmlns:ns2="http://www.w3.org/2000/09/xmldsig#"><ServiceInformation><ParticipantIdentifier scheme="ehealth-participantid-qns">urn:ehealth:dk:ncp-idp</ParticipantIdentifier><DocumentIdentifier scheme="ehealth-resid-qns">urn:ehealth:ISM::InternationalSearchMask##ehealth-107</DocumentIdentifier><ProcessList><Process><ProcessIdentifier scheme="ehealth-procid-qns">urn:ehealth:ncp:dk:ism</ProcessIdentifier><ServiceEndpointList><Endpoint transportProfile="urn:ehealth:transport:none"><EndpointURI/><ServiceActivationDate>2025-04-07T14:21:00Z</ServiceActivationDate><ServiceExpirationDate>2032-04-30T14:21:00Z</ServiceExpirationDate><Certificate/><ServiceDescription>International Search Mask</ServiceDescription><TechnicalContactUrl>https://sundhedsdata.dk</TechnicalContactUrl><TechnicalInformationUrl>https://sundhedsdata.dk</TechnicalInformationUrl><Extension><ism:searchFields xmlns:ism="http://ec.europa.eu/sante/ehncp/ism" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ec.europa.eu/sante/ehncp/ism ehdsi-ism-2020.xsd">
+   <ism:country code="DK" label="label.ism.addressCountry">
+      <ism:patientSearch friendlyName="Patient Identity Trait" scope="ALL">
+         <ism:identifier type="NORMAL">
+            <ism:id contextualDescription="nationalIdentityCardNumber" domain="1.2.208.176.1.2" format="^\d{6}-?\d{4}$" label="label.ism.nationalIdentityCardNumber" mandatory="true"/>
+         </ism:identifier>
+      </ism:patientSearch>
+   </ism:country>
+</ism:searchFields></Extension></Endpoint></ServiceEndpointList></Process></ProcessList><Extension><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>RVEBE42xLlOD78011H+dUFsJDa7BxaKRfNdfpls8Auo=</DigestValue></Reference></SignedInfo><SignatureValue>Zeffi5GwaRL848aFs76snxq+4bRfxARxJ/dIooqapVFIvanti1Me+FdzPQUppSmH8SQvGUfQR/gD&#13;
+PwrMXCiylhB1UWnV+ZpcB4SmNilUctGP5w6oj/qgMWXFsCbvk68xjy8ulMvfodRGDgQ+ZZT/vy8I&#13;
+MU4rjnqTZX/iIiUjFcc2fDW+FTf8zaCCgmIKJTOTy8O57GwVjGICgXZasUDG7+3MJS2+tbMGEloq&#13;
+//04bSUEdoD26xONPDgEDoXEgtJbVeubYmnmbrO86HYInjz25dkNULE9SgjN8vfqpscG0MQ82dPW&#13;
+yfcigvCwiV46qCunLHGtQUC4vz3R19ihfS+THtN3cLYnBn2BJMwpwZiknswrOVB1Vc0G6jdtvpR8&#13;
+OzcBV2/SuhMMmwlgwX/BX+3BtuFUPTI9uJuGvIMEQE11l6gI8mcpN7n3cZ3zYESZ8WlW9MytbXYe&#13;
+kwoN/KJLlbX304oSCIZLKq1zpu/b+3L0dSQYLGdbS6GP/DWNN8mNsStXRFAOkkd7lQvfacYetGd7&#13;
+nF7PTRaNOl7rMs6jzhDJcUGh1K5vwQM6zvoVTC8BbA/IsdinCTrYE5lX/XAsat4rhWjV1j0eZ2Is&#13;
+z2WcSKkg9eOKTuGL9TthqhZEwMBj+QHBT0InjvVEKdNbEZ68ofdye749iC0OgrL/mnv0m+wpoP8=</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=GRP:EHEALTH_NCP_BOOTCAMP_DK,O=The Danish Health Data Authority,C=DK</X509SubjectName><X509Certificate>MIIEKTCCAxGgAwIBAgICAMUwDQYJKoZIhvcNAQENBQAwUTELMAkGA1UEBhMCQkUxHDAaBgNVBAoM&#13;
+E0V1cm9wZWFuIENvbW1pc3Npb24xETAPBgNVBAMMCEVIRFNJIENBMREwDwYDVQQLDAhERyBTYW50&#13;
+ZTAeFw0yNDEwMDcxMzM2NTNaFw0zNDEwMDcxMzM2NTNaMF4xCzAJBgNVBAYTAkRLMSkwJwYDVQQK&#13;
+DCBUaGUgRGFuaXNoIEhlYWx0aCBEYXRhIEF1dGhvcml0eTEkMCIGA1UEAwwbR1JQOkVIRUFMVEhf&#13;
+TkNQX0JPT1RDQU1QX0RLMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtpXCcVejHR1A&#13;
+GvKA06LaxGWwyXRQw4U3W118l5RU+BNdOgD7nvC0ujvi05ESdnL7SKrGeVosh1qyyIBGbNCdZTYq&#13;
+GsYLkIkiRb0cP/YRCCfW/NuEcW22sdezVgPGbv1vgIEaINkDkXHM4s5yZEi55JyBuNGG19ghNfwx&#13;
+nhgqge54GdLhOPct5K+m06AgGuRTEU4mR/uBRdM4sue0WfOVkw4bF9JTeNoU5YI0qp1q8nSsuJAw&#13;
+sOGaNPd7Q0garSeT8WXl/q8Z5RijdnUcPnznvMbri+JhryVH9n33S6ejFQ06mQHswn1006ZJkoGX&#13;
+Vtv7VCmVtzUZtO34p1w8HiVnRpQ/K907uJEMkY5kOxrzpuMv0hf7veKGMSDwyW1hgd9UHV/fk4rt&#13;
+KY5LfNueFWjpXNcvW1YpRZHSCa7T0a3HvrnIC2HaZszt8ALX5RtTmqH7nyAhHHUX2eY6bGseuM1+&#13;
+x+55n215DuK7rV6kMVd4taOQcbmeTmtwQp6Kc4oUXpYDUTpUu+xlzV9thDTqnl6cnwXuGHb1b9s6&#13;
+TvXv2ouiQ4RV91u+XY1+YLdEKHtAKVfekaWQU//vdeRqORfEpj4PbzoIQsEgW01/xLMzgw2BsMti&#13;
+HE9+yk+v/ljzFxGDdgmryCu6ODX4Hol5jSXwtGHa5KDl9zZTwtSSZp2axxURinECAwEAATANBgkq&#13;
+hkiG9w0BAQ0FAAOCAQEAEPj3ChZY4indo6n6dUxqcZWmXizDYWHW1KCbac4SXMfpv4lOfUK/lbuu&#13;
+DxGZEIdYDf1A4kelBfky9sS5k1zsPnn8O6wHboLKbFiXZzOElfa0uSjY+IO3Fe73xvnW762xickZ&#13;
+8g5EdMhm+wUy5PWbUFMYruyiOAVScTCP90Kp9DCDYBuHUd6KzNF5V458QrKLb7uNruK0hoXrExHM&#13;
+jbAeM5hIFfDz477Y84Suh6XSNA1istQ8Stfw1H8hSIiFrRbPf+57IfLWQ/SYM/ghY4ZGIiEn1dXB&#13;
+pSeyjlAeU3sr4rxCm1zCDd8DniYcITTXrwND/3V/5FmtSUX4V4Oh7MXinA==</X509Certificate></X509Data></KeyInfo></Signature></Extension></ServiceInformation></ServiceMetadata><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>KCjCcEW6Tpgam47T9eJCUThb/GWdyYYTipI33YcMKgs=</DigestValue></Reference></SignedInfo><SignatureValue>Cgx0lUNi4mHg5+ZB/fjGfReAmKBHjgDfv2kjflu5FYPFsvLAu7G40lIFyK7wu12mdimZEmexjp82&#13;
+GWcxWKX4DRwPQoZreLegI/5uFUacPntnO8uSDtwDhDo1/xgLuDeNUuEOXA/CU7jyxUZIo0C44n4e&#13;
+fQOBpgI9vHOcQHkhyKvKvUE2OixuFI5ll0hN/TQPvOmfEZwnBxPAPM+QPUkrb5x6tpOVX4x5NP7q&#13;
+gJ3EOrkdtQp0sXoPLE3vT+q3t1B4uWS2vnUcgidr0Mk9eOF+qMQsc62eEi4A0EwfRYLginE1isUl&#13;
+k/+DGcKa/zZR/fSDQNYJH7ZzziNhINRjWsMhnQ==</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=GRP:EHEALTH_SMP_TRA_BE_EC,OU=SMP_TRA-GTC_OID-1.3.130.0.2018.996911,O=European Commission,L=Brussels,ST=Brussels-Capital Region,C=BE</X509SubjectName><X509Certificate>MIIGUTCCBDmgAwIBAgIMQCQNM4R586LjzOLLMA0GCSqGSIb3DQEBCwUAMGMxCzAJBgNVBAYTAkJF&#13;
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTkwNwYDVQQDEzBHbG9iYWxTaWduIEdDQyBSNDUg&#13;
+Q2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIDIwMjQwHhcNMjUwNDI4MDczNjIyWhcNMjgwNDI4MDcz&#13;
+NjIyWjCBtDELMAkGA1UEBhMCQkUxIDAeBgNVBAgTF0JydXNzZWxzLUNhcGl0YWwgUmVnaW9uMREw&#13;
+DwYDVQQHEwhCcnVzc2VsczEcMBoGA1UEChMTRXVyb3BlYW4gQ29tbWlzc2lvbjEuMCwGA1UECwwl&#13;
+U01QX1RSQS1HVENfT0lELTEuMy4xMzAuMC4yMDE4Ljk5NjkxMTEiMCAGA1UEAwwZR1JQOkVIRUFM&#13;
+VEhfU01QX1RSQV9CRV9FQzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKetXn2QX83E&#13;
+Vrkuqbm2WZ0U8KaylKrDHcTlITsXLLBv+Q/RInjpTYTHldnVPm3GbeXXB9s4EFuspNuDeRreeFTa&#13;
+dXeLRtFsmTaKcZQF+pZJXmtdYIWqJVizG1V8U8y1sDP2sCTA+nHdegFYME/jbCV17cPfe/nUVLE4&#13;
+MgPCr9G1T+S6cynnI7qM9J3BwHth35cbhEFCTRTpb7P9mZWd47JXgrCIlBcphqOxWtKxIGKIed/e&#13;
+O12WQRkjqw3fZEGi6/mhvKnuMkCV9BTWOBtUDmp59b+j6hbVbK1xijX2JthsP/YpCFmMSZyMDm4d&#13;
+s1nF1X8EKUbMNuTenoVaTLy8hOsCAwEAAaOCAbEwggGtMA4GA1UdDwEB/wQEAwIHgDAMBgNVHRMB&#13;
+Af8EAjAAMIGfBggrBgEFBQcBAQSBkjCBjzBMBggrBgEFBQcwAoZAaHR0cDovL3NlY3VyZS5nbG9i&#13;
+YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNDVjbGllbnRhdXRoY2EyMDI0LmNydDA/BggrBgEFBQcw&#13;
+AYYzaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNDVjbGllbnRhdXRoY2EyMDI0ME0G&#13;
+A1UdIARGMEQwQgYKKwYBBAGgMgoCAjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxz&#13;
+aWduLmNvbS9yZXBvc2l0b3J5LzBHBgNVHR8EQDA+MDygOqA4hjZodHRwOi8vY3JsLmdsb2JhbHNp&#13;
+Z24uY29tL2dzZ2NjcjQ1Y2xpZW50YXV0aGNhMjAyNC5jcmwwEwYDVR0lBAwwCgYIKwYBBQUHAwIw&#13;
+HwYDVR0jBBgwFoAUMFRAH6OjcJRYvsAYFYldQFsLajQwHQYDVR0OBBYEFAvdfEpj6QS9DAGjA/gM&#13;
+qnfMDYyiMA0GCSqGSIb3DQEBCwUAA4ICAQBfD4q9C9vqxDe/Wnl59kDbOAl1lemogk6ocZViMoIb&#13;
+qUj1d7OHaK2mQmzVCEidKT7WguNEPxDBuhajKXYNpkdtjKDIQqR1xWn5cZ17Ts9KsjGxqwNtO7HA&#13;
+i5obU4EkBb+RJNgySefVRR3LaYU5MBnDDxM1UI2MFy7yS+0ny7jiydNJaSuFRlzct0CqrHezkFPQ&#13;
+kHlv3hlvfia5hUWBllvJ4b4MGJ+NVS1Ef+pzMHV5A/UNL+mZN8yOHz7r7ji+EaaLCLn9Irgtz7hM&#13;
+pmYvl0oV3ANXhACaaXXzCAbim7HpYxd5dokrcJx5TBshANizMQ7G8pV8moXuq7yEoSSrRM5qjfZS&#13;
+cbi8JFz2Dd1U83plPg8x4CB0Vs+5eD+4/RE7RrJPGVxdrF0++3ntH10HjE+uRvymuG3dr0VR3w3+&#13;
+lh8OZn9d5606iAwp2pq0Z7Wpv7H3MMi6+XWHxQSvY/BEuzixYkfuuB7RCZttUJ4GfUqP/uUSOMOC&#13;
+R7NwxZ4Pu2wwEzkexi/L1x9h+fDVO1mPpysLj5ViRDyb5NoNwx+ZOF5SGQ3S/5y314KCjOgxA+wy&#13;
+wwi+tYhr6BZyN1r54M0WOiAZ+/wjmrbuO6SH1KIZ6v+BB8hrx1Itt0mWB+LMtzQIAjKkAcg5dGEE&#13;
+2F3h9mXYxblAXfHFDr6j45YzUDPH4jWNGQ==</X509Certificate></X509Data></KeyInfo></Signature></SignedServiceMetadata>

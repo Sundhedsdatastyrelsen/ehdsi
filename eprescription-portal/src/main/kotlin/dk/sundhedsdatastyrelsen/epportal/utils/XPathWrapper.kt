@@ -81,6 +81,17 @@ class XPathWrapper(namespaces: Map<String, String>) {
             .let { nodeList -> (0..<nodeList.length).map { nodeList.item(it) } }
 
     /**
+     * Locates and returns an XPath NodeSet, cast as Elements, as a List
+     *
+     * @param expression The XPath expression describing the location of the nodes
+     * @param item       The XML object that needs to be traversed
+     * @return A NodeSet mapped to an unmodifiable list
+     * @throws ClassCastException if the expression selects a node that is not an Element
+     */
+    fun evalElements(expression: String, item: Any): List<Element> =
+        evalNodes(expression, item).map { it as Element }
+
+    /**
      * Locates and returns the text content values of an XPath Nodeset as a list of strings.
      * The text content is acquired using XPath Node objects getTextContent method.
      * The text content is trimmed.

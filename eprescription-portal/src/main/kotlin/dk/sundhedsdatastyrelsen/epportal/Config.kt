@@ -2,12 +2,14 @@ package dk.sundhedsdatastyrelsen.epportal
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addPathSource
+import dk.sundhedsdatastyrelsen.epportal.app.FindPatient
 import dk.sundhedsdatastyrelsen.epportal.app.WebApp
 import dk.sundhedsdatastyrelsen.epportal.config.VaultSecretPreprocessor
 import java.nio.file.Path
 
 data class Config(
     val webApp: WebApp.Config,
+    val findPatient: FindPatient.Config,
 ) {
     companion object {
         fun load(filePath: Path = Path.of("config", "application.toml")): Config =

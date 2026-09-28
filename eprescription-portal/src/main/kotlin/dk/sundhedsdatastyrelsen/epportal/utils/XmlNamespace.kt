@@ -6,6 +6,9 @@ data class XmlNamespace(val prefix: String?, val uri: String?) {
         // and to avoid scattering the information around the codebase.
         val HL7: XmlNamespace = XmlNamespace("hl7", "urn:hl7-org:v3")
 
+        /** International Search Mask */
+        val ISM = XmlNamespace("ism", "http://ec.europa.eu/sante/ehncp/ism")
+
         /** FSK */
         val SDTC: XmlNamespace = XmlNamespace("sdtc", "urn:hl7-org:sdtc")
 

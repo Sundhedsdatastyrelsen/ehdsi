@@ -1,6 +1,10 @@
 [webapp]
 port = 8080
 
+[findPatient]
+countries = ["DK", "FI"]
+ismDirectory = "config/ism"
+
 [vault]
 # Optional: Configure truststore for Vault SSL connections
 # Note: Since Vault is accessed during config loading, truststore must be configured
