@@ -2,9 +2,9 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
-import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionMetadataParser
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionMetadataParser
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import freemarker.template.Configuration
@@ -18,6 +18,8 @@ import org.eclipse.jetty.http.HttpCookie
 import java.io.File
 import java.net.URI
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
 import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 
 private val DEV_MODE = (System.getProperty("epportal.devMode") == "true").also {
@@ -70,7 +72,8 @@ private fun rejectCrossOriginRequests(ctx: Context) {
 }
 
 object WebApp {
-    val dkDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+    val prettyDateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+        .withLocale(Locale.of("da", "DK"))
 
     fun createApp(
         auth: AuthProvider = authProvider(),
@@ -157,7 +160,7 @@ object WebApp {
                     "patientId" to "FR-1234567890",
                     "prescriptions" to prescriptions.map {
                         mapOf(
-                            "effectiveTime" to it.l3?.effectiveTime?.format(dkDateFormatter),
+                            "effectiveTime" to it.l3?.effectiveTime?.format(prettyDateFormatter),
                             "authorName" to it.l3?.authorName,
                             "title" to it.l3?.title,
                             "description" to it.l3?.description,

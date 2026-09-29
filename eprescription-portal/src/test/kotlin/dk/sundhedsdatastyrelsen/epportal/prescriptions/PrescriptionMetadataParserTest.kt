@@ -1,7 +1,6 @@
-package dk.sundhedsdatastyrelsen.epportal.ncp.xds
+package dk.sundhedsdatastyrelsen.epportal.prescriptions
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
-import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionMetadataParser
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime

@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.epportal.prescriptions
 
 import dk.sundhedsdatastyrelsen.epportal.logger
-import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionMetadataParser.EVENT_CODE_CLASSIFICATION_XPATH
 import dk.sundhedsdatastyrelsen.epportal.utils.XPathWrapper
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlNamespace
 import org.w3c.dom.Document
@@ -12,8 +11,8 @@ import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoField
 
 /**
- * Parses prescription metadata received from country A. The format is XDS ITI-18 or ITI-38
- * RegistryStoredQuery AdhocQueryResponse.
+ * Parses prescription metadata received from country A. The format is XDS ITI-38
+ * CrossGatewayQuery AdhocQueryResponse.
  *
  * Each prescription is represented by two `ExtrinsicObject` document entries, these are linked
  * with an ebXML `Association`.
@@ -43,15 +42,13 @@ object PrescriptionMetadataParser {
     private const val FORMAT_CODE_CODED_EPRESCRIPTION = "urn:epsos:ep:pre:2010"
     private const val FORMAT_CODE_PDF_RENDITION = "urn:ihe:iti:xds-sd:pdf:2008"
 
-    private const val EVENT_CODE_CLASSIFICATION_XPATH =
-        "rim:Classification[@classificationScheme='$CLASSIFICATION_SCHEME_EVENT_CODE_LIST' and " +
-            $$"rim:Slot[@name='codingScheme']/rim:ValueList/rim:Value='%1$s']%2$s"
+    private fun codingSchemeXpath(codingScheme: String, xpathTail: String): String {
+        val basePath =
+            "rim:Classification[@classificationScheme='$CLASSIFICATION_SCHEME_EVENT_CODE_LIST' and " +
+                $$"rim:Slot[@name='codingScheme']/rim:ValueList/rim:Value='%1$s']%2$s"
 
-    /**
-     *  Helper that wraps the format string [EVENT_CODE_CLASSIFICATION_XPATH].
-     */
-    private fun codingSchemeXpath(codingScheme: String, xpathTail: String): String =
-        String.format(EVENT_CODE_CLASSIFICATION_XPATH, codingScheme, xpathTail)
+        return String.format(basePath, codingScheme, xpathTail)
+    }
 
     private val xpath = XPathWrapper(XmlNamespace.RIM)
 

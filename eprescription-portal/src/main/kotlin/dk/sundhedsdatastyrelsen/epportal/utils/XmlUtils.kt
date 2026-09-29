@@ -77,12 +77,13 @@ object XmlUtils {
     }
 
     private fun writeDocument(doc: Document, result: Result, shouldIndent: Boolean) {
-        val transformer = TransformerFactory.newDefaultInstance().newTransformer()
-        transformer.setOutputProperty(OutputKeys.INDENT, if (shouldIndent) "yes" else "no")
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml")
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
-        transformer.transform(DOMSource(doc), result)
+        TransformerFactory.newDefaultInstance().newTransformer().run {
+            setOutputProperty(OutputKeys.INDENT, if (shouldIndent) "yes" else "no")
+            setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
+            setOutputProperty(OutputKeys.METHOD, "xml")
+            setOutputProperty(OutputKeys.ENCODING, "UTF-8")
+            transform(DOMSource(doc), result)
+        }
     }
 
     private fun writeDocument(doc: Document, writer: Writer, shouldIndent: Boolean) {
