@@ -219,6 +219,31 @@ class WebAppIntegrationTest {
         val setCookies = resp.headers("Set-Cookie").joinToString("\n")
         assertTrue(setCookies.contains("sds-epportal-id="))
     }
+
+    @Test
+    fun `prescriptions page redirects to home with an error message if not logged in`() {
+        val resp = client.newCall(Request.Builder().url("$baseUrl/prescriptions").get().build()).execute()
+        assertEquals(303, resp.code)
+        assertEquals("/?error=not-authorized", resp.headers["Location"])
+    }
+
+    @Test
+    fun `prescriptions page renders the example prescription list when logged in`() {
+        var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=1212121234").get().build()).execute()
+        val cookies = resp.headers("Set-Cookie")
+        val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
+
+        val req = Request.Builder()
+            .url("$baseUrl/prescriptions")
+            .get()
+            .header("Cookie", cookieHeader)
+            .build()
+        resp = client.newCall(req).execute()
+        assertEquals(200, resp.code)
+        val body = resp.body.string().orEmpty()
+        assertContains(body, "Diazepam")
+        assertContains(body, "N02BE01")
+    }
 }
 
 private fun testMasks(): SearchMaskRepository =

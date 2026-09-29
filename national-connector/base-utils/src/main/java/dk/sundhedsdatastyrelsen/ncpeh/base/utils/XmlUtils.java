@@ -241,5 +241,4 @@ public class XmlUtils {
     public static void setAttribute(Element elm, XmlNamespace ns, String localName, String value) {
         elm.setAttributeNS(ns.uri(), ns.prefix() + ":" + localName, value);
     }
-
 }

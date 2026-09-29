@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hand-built minimal fixture: a paired L3 (coded XML) / L1 (PDF) prescription, linked with an
+  XFRM Association, where neither rendition carries an ATC classification. This is a real,
+  observed case (2 of 17 prescriptions in the captured list-prescriptions.xml example have no
+  ATC classification at all), used to verify the parser treats ATC as optional rather than
+  assuming it (or any other single classification) is always present.
+-->
+<ns4:AdhocQueryResponse xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
+    xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+    xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+    xmlns:ns5="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:ns6="urn:ihe:iti:xds-b:2007"
+    status="urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success">
+    <ns2:RegistryObjectList>
+        <ns2:ExtrinsicObject home="urn:oid:1.2.208"
+            id="urn:uuid:00000000-0000-0000-0000-000000000101"
+            lid="urn:uuid:00000000-0000-0000-0000-000000000101" mimeType="text/xml"
+            objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+            status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved">
+            <ns2:Slot name="creationTime">
+                <ns2:ValueList>
+                    <ns2:Value>20260201101500</ns2:Value>
+                </ns2:ValueList>
+            </ns2:Slot>
+            <ns2:Slot name="repositoryUniqueId">
+                <ns2:ValueList>
+                    <ns2:Value>1.2.208</ns2:Value>
+                </ns2:ValueList>
+            </ns2:Slot>
+            <ns2:Name>
+                <ns2:LocalizedString value="eHDSI - ePrescription" />
+            </ns2:Name>
+            <ns2:Description>
+                <ns2:LocalizedString value="no-ATC test prescription" />
+            </ns2:Description>
+            <ns2:Classification classificationScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4"
+                classifiedObject="urn:uuid:00000000-0000-0000-0000-000000000101"
+                id="urn:uuid:00000000-0000-0000-0000-000000000111" nodeRepresentation="TABFILM">
+                <ns2:Slot name="codingScheme">
+                    <ns2:ValueList>
+                        <ns2:Value>0.4.0.127.0.16.1.1.2.1</ns2:Value>
+                    </ns2:ValueList>
+                </ns2:Slot>
+                <ns2:Name>
+                    <ns2:LocalizedString value="filmovertrukne tabletter" />
+                </ns2:Name>
+            </ns2:Classification>
+            <ns2:Classification classificationScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4"
+                classifiedObject="urn:uuid:00000000-0000-0000-0000-000000000101"
+                id="urn:uuid:00000000-0000-0000-0000-000000000112" nodeRepresentation="20 mg">
+                <ns2:Slot name="codingScheme">
+                    <ns2:ValueList>
+                        <ns2:Value>eHDSI_Strength_CodeSystem</ns2:Value>
+                    </ns2:ValueList>
+                </ns2:Slot>
+                <ns2:Name>
+                    <ns2:LocalizedString value="Strength of medication" />
+                </ns2:Name>
+            </ns2:Classification>
+            <ns2:Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+                classifiedObject="urn:uuid:00000000-0000-0000-0000-000000000101"
+                id="urn:uuid:00000000-0000-0000-0000-000000000113"
+                nodeRepresentation="urn:epsos:ep:pre:2010">
+                <ns2:Slot name="codingScheme">
+                    <ns2:ValueList>
+                        <ns2:Value>eHDSI formatCodes</ns2:Value>
+                    </ns2:ValueList>
+                </ns2:Slot>
+                <ns2:Name>
+                    <ns2:LocalizedString value="epSOS coded ePrescription" />
+                </ns2:Name>
+            </ns2:Classification>
+            <ns2:Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+                classifiedObject="urn:uuid:00000000-0000-0000-0000-000000000101"
+                id="urn:uuid:00000000-0000-0000-0000-000000000114" nodeRepresentation="">
+                <ns2:Slot name="authorPerson">
+                    <ns2:ValueList>
+                        <ns2:Value>Test Author</ns2:Value>
+                    </ns2:ValueList>
+                </ns2:Slot>
+            </ns2:Classification>
+            <ns2:ExternalIdentifier id="urn:uuid:00000000-0000-0000-0000-000000000121"
+                identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+                objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+                registryObject="urn:uuid:00000000-0000-0000-0000-000000000101"
+                value="888888888888888L3">
+                <ns2:Name>
+                    <ns2:LocalizedString value="XDSDocumentEntry.uniqueId" />
+                </ns2:Name>
+            </ns2:ExternalIdentifier>
+        </ns2:ExtrinsicObject>
+        <ns2:ExtrinsicObject home="urn:oid:1.2.208"
+            id="urn:uuid:00000000-0000-0000-0000-000000000102"
+            lid="urn:uuid:00000000-0000-0000-0000-000000000102" mimeType="text/xml"
+            objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+            status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved">
+            <ns2:Slot name="creationTime">
+                <ns2:ValueList>
+                    <ns2:Value>20260201101500</ns2:Value>
+                </ns2:ValueList>
+            </ns2:Slot>
+            <ns2:Slot name="repositoryUniqueId">
+                <ns2:ValueList>
+                    <ns2:Value>1.2.208</ns2:Value>
+                </ns2:ValueList>
+            </ns2:Slot>
+            <ns2:Name>
+                <ns2:LocalizedString value="eHDSI - ePrescription" />
+            </ns2:Name>
+            <ns2:Description>
+                <ns2:LocalizedString value="no-ATC test prescription" />
+            </ns2:Description>
+            <ns2:Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+                classifiedObject="urn:uuid:00000000-0000-0000-0000-000000000102"
+                id="urn:uuid:00000000-0000-0000-0000-000000000123"
+                nodeRepresentation="urn:ihe:iti:xds-sd:pdf:2008">
+                <ns2:Slot name="codingScheme">
+                    <ns2:ValueList>
+                        <ns2:Value>IHE PCC</ns2:Value>
+                    </ns2:ValueList>
+                </ns2:Slot>
+                <ns2:Name>
+                    <ns2:LocalizedString value="PDF/A coded document" />
+                </ns2:Name>
+            </ns2:Classification>
+            <ns2:ExternalIdentifier id="urn:uuid:00000000-0000-0000-0000-000000000124"
+                identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+                objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+                registryObject="urn:uuid:00000000-0000-0000-0000-000000000102"
+                value="888888888888888L1">
+                <ns2:Name>
+                    <ns2:LocalizedString value="XDSDocumentEntry.uniqueId" />
+                </ns2:Name>
+            </ns2:ExternalIdentifier>
+        </ns2:ExtrinsicObject>
+        <ns2:Association associationType="urn:ihe:iti:2007:AssociationType:XFRM"
+            id="urn:uuid:00000000-0000-0000-0000-000000000199"
+            sourceObject="urn:uuid:00000000-0000-0000-0000-000000000102"
+            targetObject="urn:uuid:00000000-0000-0000-0000-000000000101" />
+    </ns2:RegistryObjectList>
+</ns4:AdhocQueryResponse>

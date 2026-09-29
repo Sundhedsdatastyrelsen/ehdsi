@@ -135,6 +135,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                     DocumentFactory.createEPDocumentXML(
                         md.getLevel3().getId(),
                         md.getLevel3().getPatientId(),
+                        // We send dates in the hl7 UTC format: https://profiles.ihe.net/ITI/TF/Volume3/ch-4.2.html#4.2.3.1.7
                         Utils.offsetDateTimeToDate(md.getLevel3().getEffectiveTime()),
                         md.getLevel3().getRepositoryId(),
                         md.getLevel3().getTitle(),
@@ -160,6 +161,7 @@ public class DocumentSearch implements NationalConnectorInterface, DocumentSearc
                     DocumentFactory.createEPDocumentPDF(
                         md.getLevel1().getId(),
                         md.getLevel1().getPatientId(),
+                        // We send dates in the hl7 UTC format: https://profiles.ihe.net/ITI/TF/Volume3/ch-4.2.html#4.2.3.1.7
                         Utils.offsetDateTimeToDate(md.getLevel1().getEffectiveTime()),
                         md.getLevel1().getRepositoryId(),
                         md.getLevel1().getTitle(),
