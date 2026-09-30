@@ -1,0 +1,1 @@
+{"Id": "c1", "Name": "/grafana", "Image": "img-grafana", "Config": {"Image": "grafana/grafana:12.0.2"}}

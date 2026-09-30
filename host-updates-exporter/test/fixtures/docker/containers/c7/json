@@ -1,0 +1,1 @@
+{"Id": "c7", "Name": "/national-connector", "Image": "img-nc", "Config": {"Image": "eppsregistry.azurecr.io/sundhedsdatastyrelsen/ehdsi/national-connector:build-334"}}

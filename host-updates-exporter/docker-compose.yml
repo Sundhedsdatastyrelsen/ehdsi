@@ -1,0 +1,25 @@
+# Local development: builds the image and runs it against this machine.
+# The ops repos run the published image with the same mounts; see README.md.
+services:
+  host-updates-exporter:
+    build: .
+    container_name: host-updates-exporter
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      # apt: the host's sources, keys, pinning, proxy and credentials at their
+      # own paths (sources name keyrings by absolute path), its installed
+      # packages, and its machine-id (decides phased updates).
+      - /etc/apt:/etc/apt:ro
+      - /usr/share/keyrings:/usr/share/keyrings:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dpkg:/host/var/lib/dpkg:ro
+      # reboot-required flag and the Docker socket
+      - /run:/host/run:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /etc/hostname:/host/etc/hostname:ro
+      - host-updates-state:/var/lib/host-updates
+
+volumes:
+  host-updates-state:
