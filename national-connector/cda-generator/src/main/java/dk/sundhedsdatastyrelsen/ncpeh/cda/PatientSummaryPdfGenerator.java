@@ -4,6 +4,9 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryPdf;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PdfField;
 import lombok.NonNull;
 import org.apache.commons.text.WordUtils;
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSString;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -47,6 +50,9 @@ public class PatientSummaryPdfGenerator {
                 writer.writeField(field);
             }
 
+            // Remove metadata
+            makeDeterministic(pdfDocument);
+
             return saveBytes(pdfDocument);
         } catch (IOException e) {
             throw new IllegalStateException("Could not generate Patient Summary PDF", e);
@@ -62,6 +68,31 @@ public class PatientSummaryPdfGenerator {
         } catch (IOException e) {
             throw new IllegalStateException("Could not save Patient Summary PDF", e);
         }
+    }
+
+
+    /**
+     * Removes variable PDF metadata to ensure that identical input produces
+     * byte-for-byte identical PDF output across multiple generations.
+     * PDFBox may otherwise add timestamps and document IDs that differ between
+     * generated documents even when their visible content is identical.
+     */
+    private static void makeDeterministic(PDDocument pdfDocument) {
+        pdfDocument.getDocumentInformation()
+            .getCOSObject()
+            .removeItem(COSName.CREATION_DATE);
+
+        pdfDocument.getDocumentCatalog().setMetadata(null);
+
+        var fixedId = new COSString(new byte[16]);
+        var idArray = new COSArray();
+
+        idArray.add(fixedId);
+        idArray.add(fixedId);
+
+        pdfDocument.getDocument()
+            .getTrailer()
+            .setItem(COSName.ID, idArray);
     }
 
     private static final class PdfWriter {
