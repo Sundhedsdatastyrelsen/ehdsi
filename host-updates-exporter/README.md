@@ -38,6 +38,24 @@ endoflife.date and api.github.com.
 docker compose up --build   # runs against this machine on localhost:9090
 ```
 
+To see the metrics in Grafana, run it with the local monitoring stack in
+[`../monitoring`](../monitoring). The override adds an Alloy that scrapes the
+exporter into that stack's Mimir, standing in for a host's alloy-edge:
+
+```bash
+docker compose -f ../monitoring/docker-compose.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.local-monitoring.yml up -d --build
+
+# Import the dashboard (or Dashboards → New → Import in the UI)
+curl -X POST localhost:3000/api/dashboards/db -H 'Content-Type: application/json' \
+    -d "{\"dashboard\": $(cat dashboards/host-updates.json), \"overwrite\": true}"
+```
+
+Then open <http://localhost:3000/d/host-updates>. The first results appear
+within a minute of starting. [`dashboards/host-updates.json`](dashboards/host-updates.json)
+is a copy of the one monitoring-ops provisions; export changes made in the UI
+back to both.
+
 The tests run as part of the image build ([`tests/`](tests/)); a failing test
 fails the build.
 [`build-host-updates-exporter-image.yml`](../.github/workflows/build-host-updates-exporter-image.yml)

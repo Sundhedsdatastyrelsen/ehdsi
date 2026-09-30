@@ -1,0 +1,1856 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Pending OS/package updates and software end of life per host, from the host-updates-exporter container on each host",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "preload": false,
+  "refresh": "5m",
+  "schemaVersion": 41,
+  "tags": [
+    "hosts",
+    "updates"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Mimir",
+          "value": "mimir"
+        },
+        "label": "Metrics data source",
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "label_values(host_updates_last_run_timestamp_seconds, hostname)",
+        "includeAll": true,
+        "multi": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "allValue": ".*",
+        "label": "Host",
+        "name": "hostname",
+        "options": [],
+        "refresh": 2,
+        "sort": 1,
+        "type": "query",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(host_updates_last_run_timestamp_seconds, hostname)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        }
+      },
+      {
+        "type": "custom",
+        "name": "owner",
+        "label": "Owner",
+        "query": "hosting,ours",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "hosting",
+            "value": "hosting"
+          },
+          {
+            "selected": false,
+            "text": "ours",
+            "value": "ours"
+          }
+        ]
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Host updates",
+  "uid": "host-updates",
+  "version": 1,
+  "panels": [
+    {
+      "type": "row",
+      "title": "Overview",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "panels": [],
+      "id": 1
+    },
+    {
+      "type": "stat",
+      "title": "Hosts with security updates pending > 14 days",
+      "description": "Same threshold as the 'Security updates pending' alert.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count((time() - min by (hostname) (host_updates_package_pending_since_timestamp_seconds{security=\"true\",hostname=~\"$hostname\"})) > 14*86400) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 2
+    },
+    {
+      "type": "stat",
+      "title": "Hosts needing a reboot",
+      "description": "The host has /var/run/reboot-required, typically after a kernel or libc update.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(host_updates_reboot_required{hostname=~\"$hostname\"} == 1) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 3
+    },
+    {
+      "type": "stat",
+      "title": "Our packages pending",
+      "description": "Packages from the apt origins we own (Docker), upgraded by us with update-packages.sh in the host's ops repo.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(host_updates_pending_packages{owner=\"ours\",hostname=~\"$hostname\"}) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 4
+    },
+    {
+      "type": "stat",
+      "title": "Hosts with stale update metrics",
+      "description": "host-updates-exporter has not checked for more than a day, so the numbers here are out of date.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count((time() - host_updates_last_run_timestamp_seconds{hostname=~\"$hostname\"}) > 86400) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 5
+    },
+    {
+      "type": "table",
+      "title": "Hosts",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "One row per host. Hosting-owned packages are patched by the hosting provider; ours are upgraded with update-packages.sh.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "max by (hostname, deployment_environment_name, pretty_name, kernel) (host_updates_os_info{hostname=~\"$hostname\"})",
+          "refId": "os",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (hostname, deployment_environment_name) (host_updates_pending_packages{owner=\"hosting\",security=\"true\",hostname=~\"$hostname\"})",
+          "refId": "hosting_security",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (hostname, deployment_environment_name) (host_updates_pending_packages{owner=\"hosting\",hostname=~\"$hostname\"})",
+          "refId": "hosting_total",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (hostname, deployment_environment_name) (host_updates_pending_packages{owner=\"ours\",hostname=~\"$hostname\"})",
+          "refId": "ours",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(time() - min by (hostname, deployment_environment_name) (host_updates_package_pending_since_timestamp_seconds{security=\"true\",hostname=~\"$hostname\"})) / 86400",
+          "refId": "oldest_security",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "max by (hostname, deployment_environment_name) (host_updates_reboot_required{hostname=~\"$hostname\"})",
+          "refId": "reboot",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "max by (hostname, deployment_environment_name) (host_updates_boot_timestamp_seconds{hostname=~\"$hostname\"}) * 1000",
+          "refId": "boot",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "max by (hostname, deployment_environment_name) (host_updates_dpkg_changed_timestamp_seconds{hostname=~\"$hostname\"}) * 1000",
+          "refId": "dpkg",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "time() - max by (hostname, deployment_environment_name) (host_updates_last_run_timestamp_seconds{hostname=~\"$hostname\"})",
+          "refId": "age",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "time",
+                "targetField": "Value #boot"
+              },
+              {
+                "destinationType": "time",
+                "targetField": "Value #dpkg"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #os": true
+            },
+            "indexByName": {
+              "deployment_environment_name": 0,
+              "hostname": 1,
+              "pretty_name": 2,
+              "kernel": 3,
+              "Value #hosting_security": 4,
+              "Value #hosting_total": 5,
+              "Value #oldest_security": 6,
+              "Value #ours": 7,
+              "Value #reboot": 8,
+              "Value #boot": 9,
+              "Value #dpkg": 10,
+              "Value #age": 11
+            },
+            "renameByName": {
+              "deployment_environment_name": "Environment",
+              "hostname": "Host",
+              "pretty_name": "OS",
+              "kernel": "Running kernel",
+              "Value #hosting_security": "Hosting: security",
+              "Value #hosting_total": "Hosting: all",
+              "Value #oldest_security": "Oldest security update",
+              "Value #ours": "Ours",
+              "Value #reboot": "Reboot required",
+              "Value #boot": "Last boot",
+              "Value #dpkg": "Last package change",
+              "Value #age": "Checked"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Hosting: security"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Oldest security update"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "d"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 7
+                    },
+                    {
+                      "color": "red",
+                      "value": 14
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ours"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Reboot required"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "no",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "1": {
+                        "text": "yes",
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last boot"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last package change"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Checked"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 86400
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": "",
+          "countRows": false
+        },
+        "sortBy": [
+          {
+            "displayName": "Host",
+            "desc": false
+          }
+        ]
+      },
+      "id": 6
+    },
+    {
+      "type": "row",
+      "title": "Pending packages",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "panels": [],
+      "id": 7
+    },
+    {
+      "type": "table",
+      "title": "Pending packages",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Every package with an update pending. 'Pending for' counts from when host-updates-exporter first saw it pending (so starts at 0 when the exporter is first deployed).",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "host_updates_package_pending_since_timestamp_seconds{owner=~\"$owner\",hostname=~\"$hostname\"} * 1000",
+          "refId": "since",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(time() - host_updates_package_pending_since_timestamp_seconds{owner=~\"$owner\",hostname=~\"$hostname\"}) / 86400",
+          "refId": "days",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "time",
+                "targetField": "Value #since"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #since": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {
+              "deployment_environment_name": 0,
+              "hostname": 1,
+              "owner": 2,
+              "security": 3,
+              "package": 4,
+              "current_version": 5,
+              "candidate_version": 6,
+              "origin": 7,
+              "Value #days": 8
+            },
+            "renameByName": {
+              "deployment_environment_name": "Environment",
+              "hostname": "Host",
+              "owner": "Owner",
+              "security": "Security",
+              "package": "Package",
+              "current_version": "Installed",
+              "candidate_version": "Available",
+              "origin": "Origin",
+              "Value #days": "Pending for"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pending for"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "d"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 7
+                    },
+                    {
+                      "color": "red",
+                      "value": 14
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Security"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "true": {
+                        "text": "yes",
+                        "color": "orange",
+                        "index": 0
+                      },
+                      "false": {
+                        "text": "no",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": "",
+          "countRows": false
+        },
+        "sortBy": [
+          {
+            "displayName": "Pending for",
+            "desc": true
+          }
+        ]
+      },
+      "id": 8
+    },
+    {
+      "type": "table",
+      "title": "Packages asking for a reboot",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "host_updates_reboot_required_package{hostname=~\"$hostname\"}",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "deployment_environment_name": "Environment",
+              "hostname": "Host",
+              "package": "Package"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": "",
+          "countRows": false
+        }
+      },
+      "id": 9
+    },
+    {
+      "type": "row",
+      "title": "End of life",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "panels": [],
+      "id": 10
+    },
+    {
+      "type": "stat",
+      "title": "Software past end of life",
+      "description": "Images of running containers, the OS and Docker Engine whose release cycle is past end of life per endoflife.date. Same as the 'Software end of life' alert.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 36
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(host_updates_software_eol_timestamp_seconds{hostname=~\"$hostname\"} < time()) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 11
+    },
+    {
+      "type": "stat",
+      "title": "End of life within 60 days",
+      "description": "Same threshold as the 'Software end of life soon' alert.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 36
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count((host_updates_software_eol_timestamp_seconds{hostname=~\"$hostname\"} - time()) > 0 < 60*86400) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 12
+    },
+    {
+      "type": "stat",
+      "title": "Newer patch in the same cycle",
+      "description": "Running a version older than the newest release of its cycle; a pull of the same tag (floating tags) or a tag bump fixes it.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 36
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(host_updates_software_info{update=\"patch\",hostname=~\"$hostname\"}) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 13
+    },
+    {
+      "type": "stat",
+      "title": "Not tracked or unresolved",
+      "description": "Software with no end-of-life source (status untracked: add it to ENDOFLIFE_PRODUCTS or GITHUB_REPOSITORIES in host-updates-exporter/exporter/config.py in the ehdsi repo), an unknown version, or a failed lookup.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 36
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(host_updates_software_info{status!=\"ok\",hostname=~\"$hostname\"}) OR on() vector(0)",
+          "refId": "A",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "blue",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 14
+    },
+    {
+      "type": "table",
+      "title": "Software",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Images of running containers (except our own builds), the OS and Docker Engine, per host. End-of-life dates and latest versions from endoflife.date, or the latest GitHub release where endoflife.date has no entry. 'Version from' tells where the running version was read: tag, the image's version label or <NAME>_VERSION env var, or the host.",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "host_updates_software_info{hostname=~\"$hostname\"}",
+          "refId": "info",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(host_updates_software_eol_timestamp_seconds{hostname=~\"$hostname\"} - time()) / 86400",
+          "refId": "eol",
+          "legendFormat": "__auto",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "exemplar": false
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #info": true,
+              "instance": true,
+              "job": true,
+              "image": true,
+              "product": true
+            },
+            "indexByName": {
+              "deployment_environment_name": 0,
+              "hostname": 1,
+              "kind": 2,
+              "name": 3,
+              "containers": 4,
+              "version": 5,
+              "version_source": 6,
+              "cycle": 7,
+              "Value #eol": 8,
+              "latest_in_cycle": 9,
+              "latest": 10,
+              "update": 11,
+              "status": 12
+            },
+            "renameByName": {
+              "deployment_environment_name": "Environment",
+              "hostname": "Host",
+              "kind": "Kind",
+              "name": "Name",
+              "containers": "Containers",
+              "version": "Version",
+              "version_source": "Version from",
+              "cycle": "Cycle",
+              "Value #eol": "End of life in",
+              "latest_in_cycle": "Latest in cycle",
+              "latest": "Latest",
+              "update": "Update",
+              "status": "Status"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "End of life in"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "d"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 0
+                    },
+                    {
+                      "color": "orange",
+                      "value": 60
+                    },
+                    {
+                      "color": "green",
+                      "value": 180
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Update"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "patch": {
+                        "text": "patch in cycle",
+                        "color": "orange",
+                        "index": 0
+                      },
+                      "newer": {
+                        "text": "newer cycle",
+                        "color": "blue",
+                        "index": 1
+                      },
+                      "none": {
+                        "text": "current",
+                        "color": "green",
+                        "index": 2
+                      },
+                      "unknown": {
+                        "text": "unknown",
+                        "index": 3
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "ok": {
+                        "color": "green",
+                        "index": 0
+                      },
+                      "untracked": {
+                        "color": "blue",
+                        "index": 1
+                      },
+                      "version_unknown": {
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "lookup_failed": {
+                        "color": "red",
+                        "index": 3
+                      },
+                      "cycle_not_found": {
+                        "color": "orange",
+                        "index": 4
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": "",
+          "countRows": false
+        },
+        "sortBy": [
+          {
+            "displayName": "End of life in",
+            "desc": false
+          }
+        ]
+      },
+      "id": 15
+    },
+    {
+      "type": "row",
+      "title": "History",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "panels": [],
+      "id": 16
+    },
+    {
+      "type": "timeseries",
+      "title": "Pending packages over time",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Drops show when a host was patched.",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (hostname, owner) (host_updates_pending_packages{owner=~\"$owner\",hostname=~\"$hostname\"})",
+          "refId": "A",
+          "legendFormat": "{{hostname}} ({{owner}})",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 17
+    }
+  ]
+}
