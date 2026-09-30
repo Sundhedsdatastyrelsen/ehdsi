@@ -10,8 +10,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import jakarta.xml.bind.JAXBException;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,23 +38,7 @@ class PatientSummaryPdfGeneratorTest {
 
         Assertions.assertNotNull(pdf);
         Assertions.assertNotNull(secondPdf);
-
-        try (
-            var document = Loader.loadPDF(pdf);
-            var secondDocument = Loader.loadPDF(secondPdf)
-        ) {
-            var textStripper = new PDFTextStripper();
-
-            Assertions.assertEquals(
-                textStripper.getText(document),
-                textStripper.getText(secondDocument)
-            );
-
-            Assertions.assertEquals(
-                document.getNumberOfPages(),
-                secondDocument.getNumberOfPages()
-            );
-        }
+        Assertions.assertArrayEquals(pdf, secondPdf);
     }
 
     @Test
