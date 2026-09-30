@@ -1,1 +1,0 @@
-{"Id": "img-alloy", "Config": {"Env": ["PATH=/usr/bin"], "Labels": {"org.opencontainers.image.version": "24.04"}}}

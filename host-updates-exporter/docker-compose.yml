@@ -1,5 +1,5 @@
 # Local development: builds the image and runs it against this machine.
-# The ops repos run the published image with the same mounts; see README.md.
+# The ops repos run the published image with these same mounts.
 services:
   host-updates-exporter:
     build: .

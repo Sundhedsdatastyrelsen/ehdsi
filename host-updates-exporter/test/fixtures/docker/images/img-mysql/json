@@ -1,1 +1,0 @@
-{"Id": "img-mysql", "Config": {"Env": ["PATH=/usr/bin", "MYSQL_VERSION=9.7.2-1.el9"], "Labels": null}}

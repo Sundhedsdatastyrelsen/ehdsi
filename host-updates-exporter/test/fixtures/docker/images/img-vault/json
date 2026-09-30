@@ -1,1 +1,0 @@
-{"Id": "img-vault", "Config": {"Env": ["PATH=/usr/bin"], "Labels": {"version": "2.1.1"}}}

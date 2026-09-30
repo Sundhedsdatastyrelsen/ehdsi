@@ -1,1 +1,0 @@
-{"result":{"releases":[{"name":"29","releaseDate":"2026-01-01","isEol":false,"eolFrom":null,"latest":{"name":"29.8.1"}},{"name":"28","releaseDate":"2025-02-01","isEol":true,"eolFrom":"2026-05-13","latest":{"name":"28.5.2"}}]}}

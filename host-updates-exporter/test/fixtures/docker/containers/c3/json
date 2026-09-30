@@ -1,1 +1,0 @@
-{"Id": "c3", "Name": "/openncp_db", "Image": "img-mysql", "Config": {"Image": "mysql:9"}}

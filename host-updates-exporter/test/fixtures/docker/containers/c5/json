@@ -1,1 +1,0 @@
-{"Id": "c5", "Name": "/vault", "Image": "img-vault", "Config": {"Image": "hashicorp/vault"}}
