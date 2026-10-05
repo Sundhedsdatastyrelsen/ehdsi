@@ -1,9 +1,16 @@
 package dk.sundhedsdatastyrelsen.epportal.config
 
-import com.sksamuel.hoplite.*
+import com.sksamuel.hoplite.CommonMetadata
+import com.sksamuel.hoplite.ConfigFailure
+import com.sksamuel.hoplite.ConfigResult
+import com.sksamuel.hoplite.DecoderContext
+import com.sksamuel.hoplite.Node
+import com.sksamuel.hoplite.PrimitiveNode
+import com.sksamuel.hoplite.StringNode
 import com.sksamuel.hoplite.fp.invalid
 import com.sksamuel.hoplite.fp.valid
 import com.sksamuel.hoplite.preprocessor.TraversingPrimitivePreprocessor
+import com.sksamuel.hoplite.withMeta
 import dk.sundhedsdatastyrelsen.epportal.logger
 import java.io.FileInputStream
 import java.nio.file.Paths
@@ -80,7 +87,7 @@ class VaultSecretPreprocessor : TraversingPrimitivePreprocessor() {
             return secretsCache.getValue(path)
         }
 
-        if(vaultClient == null) {
+        if (vaultClient == null) {
             return emptyMap()
         }
 

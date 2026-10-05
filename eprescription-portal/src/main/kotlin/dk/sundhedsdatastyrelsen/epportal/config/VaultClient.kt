@@ -13,13 +13,13 @@ class VaultClient(val url: String, val username: String, val password: String, v
     private val objectMapper = jacksonObjectMapper().also {
         it.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
-    
+
     private fun createHttpClient(): HttpClient {
         val builder = HttpClient.newBuilder()
         sslContext?.let { builder.sslContext(it) }
         return builder.build()
     }
-    
+
     private val authToken: String by lazy {
         val client = createHttpClient()
         val req = java.net.http.HttpRequest

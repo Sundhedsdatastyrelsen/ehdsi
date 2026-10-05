@@ -10,7 +10,11 @@ import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
 import io.javalin.Javalin
-import io.javalin.http.*
+import io.javalin.http.BadRequestResponse
+import io.javalin.http.Context
+import io.javalin.http.ForbiddenResponse
+import io.javalin.http.HttpStatus
+import io.javalin.http.UnauthorizedResponse
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
 import io.javalin.rendering.template.JavalinFreemarker
@@ -19,7 +23,7 @@ import java.io.File
 import java.net.URI
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.*
+import java.util.Locale
 import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 
 private val DEV_MODE = (System.getProperty("epportal.devMode") == "true").also {
