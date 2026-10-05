@@ -3,7 +3,10 @@ package dk.sundhedsdatastyrelsen.epportal.utils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.io.StringWriter
+import java.io.Writer
 import java.nio.charset.StandardCharsets
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -31,7 +34,7 @@ object XmlUtils {
      */
     fun parse(xml: InputStream): Document {
         xml.use {
-          return DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder().parse(xml)
+            return DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder().parse(xml)
         }
     }
 

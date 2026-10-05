@@ -3,8 +3,8 @@ package dk.sundhedsdatastyrelsen.epportal.app
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
-import io.javalin.Javalin
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
+import io.javalin.Javalin
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
