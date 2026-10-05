@@ -1,11 +1,10 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
-import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.testMasks
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
 import io.javalin.Javalin
-import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.jupiter.api.AfterEach
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.test.assertContains
 import kotlin.test.assertFalse
+import kotlin.time.Clock
 
 class WebAppIntegrationTest {
 
@@ -35,7 +35,13 @@ class WebAppIntegrationTest {
             .build()
 
         val port = TestUtils.randomFreePort()
-        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient())
+        app = WebApp.createApp(
+            WebApp.Config(port),
+            LocalAuth("0101019999"),
+            testMasks(),
+            DummyPatientSearchClient(),
+            Clock.System
+        )
         app.start(port)
         baseUrl = "http://localhost:$port"
     }
@@ -46,16 +52,14 @@ class WebAppIntegrationTest {
     }
 
     @Test
-    @Disabled
     fun `frontpage is served`() {
         val resp = client.newCall(Request.Builder().url("$baseUrl/").get().build()).execute()
         assertEquals(200, resp.code)
         val body = resp.body.string()
-        assertContains(body, "Frabedelse af deling af data i EU")
+        assertContains(body, "ePrescription portal")
     }
 
     @Test
-    @Disabled
     fun `form redirects to home with an error message if not logged in`() {
         var resp = client.newCall(Request.Builder().url("$baseUrl/form").get().build()).execute()
         assertEquals(303, resp.code)
@@ -68,7 +72,6 @@ class WebAppIntegrationTest {
     }
 
     @Test
-    @Disabled
     fun `form renders with principal`() {
         // Dev login creates session and redirects to /form
         var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=1212121234").get().build()).execute()
@@ -89,95 +92,14 @@ class WebAppIntegrationTest {
 
     @Test
     @Disabled
-    fun `form update toggles flags and redirects`() {
-        // Login
-        var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0909090009").get().build()).execute()
-        val cookies = resp.headers("Set-Cookie")
-        val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
-
-        // Set patientSummary=true, ePrescription=false
-        val form1 = FormBody.Builder().add("patientSummary", "true").add("ePrescription", "false").build()
-        val req1 = Request.Builder()
-            .url("$baseUrl/form/update")
-            .post(form1)
-            .header("Cookie", cookieHeader)
-            .build()
-        resp = client.newCall(req1).execute()
-        assertEquals(302, resp.code)
-
-        // Follow to /form
-        val req2 = Request.Builder().url("$baseUrl/form").get().header("Cookie", cookieHeader).build()
-        resp = client.newCall(req2).execute()
-        var body = resp.body.string()
-        assertContains(body, "<input type=\"hidden\" name=\"patientSummary\" value=\"false\"")
-        assertContains(body, "Du oprettede en frabedelse d.")
-        assertFalse(body.contains("<input type=\"hidden\" name=\"ePrescription\" value=\"false\""))
-        assertContains(body, "Du har ikke oprettet en frabedelse.")
-
-        // Now set both true
-        val form2 = FormBody.Builder().add("patientSummary", "true").add("ePrescription", "true").build()
-        val req3 = Request.Builder().url("$baseUrl/form/update").post(form2).header("Cookie", cookieHeader).build()
-        resp = client.newCall(req3).execute()
-        assertEquals(302, resp.code)
-
-        val req4 = Request.Builder().url("$baseUrl/form").get().header("Cookie", cookieHeader).build()
-        resp = client.newCall(req4).execute()
-        body = resp.body.string()
-        assertContains(body, "<input type=\"hidden\" name=\"patientSummary\" value=\"false\"")
-        assertContains(body, "<input type=\"hidden\" name=\"ePrescription\" value=\"false\"")
-
-        // Finally set both false (remove row)
-        val form3 = FormBody.Builder().add("patientSummary", "false").add("ePrescription", "false").build()
-        val req5 = Request.Builder().url("$baseUrl/form/update").post(form3).header("Cookie", cookieHeader).build()
-        resp = client.newCall(req5).execute()
-        assertEquals(302, resp.code)
-
-        val req6 = Request.Builder().url("$baseUrl/form").get().header("Cookie", cookieHeader).build()
-        resp = client.newCall(req6).execute()
-        body = resp.body.string()
-        assertFalse(body.contains("<input type=\"hidden\" name=\"patientSummary\" value=\"false\""))
-        assertFalse(body.contains("<input type=\"hidden\" name=\"ePrescription\" value=\"false\""))
-    }
-
-    @Test
-    @Disabled
-    fun `form errors redirect back to form with error flag set`() {
-        // Use a local app to overwrite the db.
-        val port = TestUtils.randomFreePort()
-        val app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient())
-        try {
-            app.start(port)
-            val baseUrl = "http://localhost:$port"
-            // Login
-            var resp =
-                client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0909090009").get().build()).execute()
-            val cookies = resp.headers("Set-Cookie")
-            val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
-
-            // Set patientSummary=true
-            val form1 = FormBody.Builder().add("patientSummary", "true").build()
-            val req1 = Request.Builder()
-                .url("$baseUrl/form/update")
-                .post(form1)
-                .header("Cookie", cookieHeader)
-                .build()
-            resp = client.newCall(req1).execute()
-            assertEquals(302, resp.code)
-            assertEquals("/form?error=form-update-failed", resp.headers["Location"])
-        } finally {
-            app.stop();
-        }
-    }
-
-    @Test
-    @Disabled
     fun `form errors are shown to the user`() {
         // Login
         var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0909090009").get().build()).execute()
         val cookies = resp.headers("Set-Cookie")
         val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
 
-        val req2 = Request.Builder().url("$baseUrl/form?error=form-update-failed").get().header("Cookie", cookieHeader).build()
+        val req2 =
+            Request.Builder().url("$baseUrl/form?error=form-update-failed").get().header("Cookie", cookieHeader).build()
         resp = client.newCall(req2).execute()
         var body = resp.body.string()
         assertContains(body, "Der skete en fejl")
@@ -187,7 +109,9 @@ class WebAppIntegrationTest {
     @Disabled
     fun `form escapes characters`() {
         // login. %3C is <
-        var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0101010001&name=John%3Cscript").get().build()).execute()
+        var resp =
+            client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0101010001&name=John%3Cscript").get().build())
+                .execute()
         val cookies = resp.headers("Set-Cookie")
 
         // get form
@@ -200,14 +124,13 @@ class WebAppIntegrationTest {
 
         // check result
         assertEquals(200, resp.code)
-        val body = resp.body?.string().orEmpty()
+        val body = resp.body.string()
         assertContains(body, "John&lt;script")
         assertFalse(body.contains("John<script"))
     }
 
     @Test
-    @Disabled
-    fun `logout clears tracking cookie and redirects`() {
+    fun `logout invalidates session and redirects`() {
         // Login first
         var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0101010001").get().build()).execute()
         val cookies = resp.headers("Set-Cookie")
@@ -216,35 +139,11 @@ class WebAppIntegrationTest {
         resp = client.newCall(Request.Builder().url("$baseUrl/logout").get().header("Cookie", cookieHeader).build())
             .execute()
         assertEquals(302, resp.code)
-        val setCookies = resp.headers("Set-Cookie").joinToString("\n")
-        assertTrue(setCookies.contains("sds-epportal-id="))
-    }
 
-    @Test
-    fun `prescriptions page redirects to home with an error message if not logged in`() {
-        val resp = client.newCall(Request.Builder().url("$baseUrl/prescriptions").get().build()).execute()
+        // Test that session is invalidated.
+        resp =
+            client.newCall(Request.Builder().url("$baseUrl/find-patient").get().header("Cookie", cookieHeader).build())
+                .execute()
         assertEquals(303, resp.code)
-        assertEquals("/?error=not-authorized", resp.headers["Location"])
-    }
-
-    @Test
-    fun `prescriptions page renders the example prescription list when logged in`() {
-        var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=1212121234").get().build()).execute()
-        val cookies = resp.headers("Set-Cookie")
-        val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
-
-        val req = Request.Builder()
-            .url("$baseUrl/prescriptions")
-            .get()
-            .header("Cookie", cookieHeader)
-            .build()
-        resp = client.newCall(req).execute()
-        assertEquals(200, resp.code)
-        val body = resp.body.string().orEmpty()
-        assertContains(body, "Diazepam")
-        assertContains(body, "N02BE01")
     }
 }
-
-private fun testMasks(): SearchMaskRepository =
-    SearchMaskRepository.load(FindPatient.Config(listOf("DK", "FI"), "config/ism"))
