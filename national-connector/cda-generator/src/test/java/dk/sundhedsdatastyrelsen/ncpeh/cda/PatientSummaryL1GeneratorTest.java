@@ -5,8 +5,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaCode;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.CdaId;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL1;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.DdvResponseStorage;
@@ -35,7 +33,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void generateTest() throws JAXBException {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
 
         Assertions.assertNotNull(cda);
@@ -43,7 +41,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void generatedXmlIsWellFormed() throws Exception {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
         var documentBuilder = DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder();
 
@@ -54,7 +52,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void documentIdHasL1Suffix() throws JAXBException {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
@@ -76,7 +74,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void relatedDocumentIdHasL3Suffix() throws JAXBException {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
@@ -96,7 +94,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void nonXmlBodyContainsPdfContent() throws JAXBException {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
@@ -122,7 +120,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void patientDataIsPresent() throws JAXBException {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
 
         XPathEngine xpathEngine = new JAXPXPathEngine();
@@ -192,7 +190,7 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void noPreferredHpTest() throws JAXBException {
-        var model = buildL1Model(null);
+        var model = buildInputModel(null);
         var cda = PatientSummaryL1Generator.generate(model);
 
         Assertions.assertTrue(cda.contains("nonXMLBody"));
@@ -200,33 +198,25 @@ class PatientSummaryL1GeneratorTest {
 
     @Test
     void withPreferredHpTest() throws JAXBException {
-        var model = buildL1Model(preferredHp("DK"));
+        var model = buildInputModel(preferredHp("DK"));
         var cda = PatientSummaryL1Generator.generate(model);
 
         Assertions.assertNotNull(cda);
     }
 
-    private static PatientSummaryL1 buildL1Model(
-        PreferredHealthProfessional preferredHp
-    ) throws JAXBException {
-        var l3Model = buildL3Model(preferredHp);
-        return PatientSummaryL1Mapper.model(l3Model);
-    }
 
-    private static PatientSummaryL3 buildL3Model(
+    private static PatientSummaryInput buildInputModel(
         PreferredHealthProfessional preferredHp
     ) throws JAXBException {
         var patient = patient("DK");
         var medicationSummary = FmkResponseStorage.getTestMedicineCards(CPR);
         var immunization = DdvResponseStorage.getTestVaccination(CPR);
-        var input = new PatientSummaryInput(
+        return new PatientSummaryInput(
             BASE_ID,
             preferredHp,
             patient,
             medicationSummary,
             immunization);
-
-        return PatientSummaryL3Mapper.model(input);
     }
 
     private static Patient patient(String country) {
