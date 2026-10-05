@@ -13,6 +13,8 @@ import io.javalin.http.Context
 import io.javalin.http.HttpStatus
 import io.javalin.router.JavalinDefaultRoutingApi
 import java.time.format.DateTimeFormatter
+import java.util.UUID
+import kotlin.time.Clock
 
 object FindPatient {
     data class Config(val countries: List<String>, val ismDirectory: String)
@@ -29,8 +31,9 @@ object FindPatient {
         auth: AuthProvider,
         masks: SearchMaskRepository,
         client: PatientSearchClient,
+        clock: Clock
     ) {
-        val handlers = Handlers(auth, masks, client)
+        val handlers = Handlers(auth, masks, client, clock)
         // Responses contain patient data (e.g., id) and should not be cached
         routes.before("/find-patient*") { ctx -> ctx.header("Cache-Control", "no-store") }
         routes.get("/find-patient", handlers::page)
@@ -43,6 +46,7 @@ object FindPatient {
         private val auth: AuthProvider,
         private val masks: SearchMaskRepository,
         private val client: PatientSearchClient,
+        private val clock: Clock
     ) {
         /** Full page with the search form, no country selected yet. */
         fun page(ctx: Context) {
@@ -77,7 +81,7 @@ object FindPatient {
 
         /** htmx: the results of a valid search, and the id fields with any validation errors (see search.ftlh). */
         fun search(ctx: Context) {
-            auth.require(ctx)
+            val principal = auth.require(ctx)
             val country = ctx.formParam("country")?.trim().orEmpty()
             val mask = masks.get(country) ?: return ctx.unknownCountry()
 
@@ -92,7 +96,12 @@ object FindPatient {
 
             val results = try {
                 val patients = client.queryPatient(country, input.ids)
-                mapOf("patients" to patients.map(::toPatientView))
+                mapOf("patients" to patients.map {
+                    toPatientView(
+                        it,
+                        OpaquePatientIds.issue(ctx, principal, it, clock)
+                    )
+                })
             } catch (e: Exception) {
                 log.error("Patient search failed for country {}", country, e)
                 mapOf("searchError" to "Søgningen fejlede.")
@@ -177,11 +186,12 @@ private fun fieldViews(mask: SearchMask, values: Map<Int, String>, errors: Map<I
         )
     }
 
-private fun toPatientView(patient: PatientDemographics): Map<String, Any?> {
+private fun toPatientView(patient: PatientDemographics, opaqueId: UUID): Map<String, Any?> {
     val name = listOfNotNull(patient.givenName, patient.familyName)
         .joinToString(" ")
         .ifBlank { null }
     return mapOf(
+        "opaqueId" to opaqueId,
         "name" to name,
         "birthDate" to patient.birthDate?.format(birthDateFormatter),
         "gender" to patient.gender?.let { Labels.gender(it) },

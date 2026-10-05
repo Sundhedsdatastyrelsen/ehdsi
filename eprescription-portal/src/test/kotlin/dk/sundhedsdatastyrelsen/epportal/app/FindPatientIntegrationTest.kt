@@ -1,8 +1,11 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
+import assertk.assertThat
+import assertk.assertions.isNotNull
+import assertk.assertions.isTrue
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
-import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.testMasks
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
 import io.javalin.Javalin
 import okhttp3.FormBody
@@ -13,8 +16,10 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.UUID
 import kotlin.test.assertContains
 import kotlin.test.assertFalse
+import kotlin.time.Clock
 
 class FindPatientIntegrationTest {
 
@@ -30,9 +35,14 @@ class FindPatientIntegrationTest {
             .withoutConnectionReuse()
             .build()
 
-        val masks = SearchMaskRepository.load(FindPatient.Config(listOf("DK", "FI"), "config/ism"))
         val port = TestUtils.randomFreePort()
-        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), masks, DummyPatientSearchClient())
+        app = WebApp.createApp(
+            WebApp.Config(port),
+            LocalAuth("0101019999"),
+            testMasks(),
+            DummyPatientSearchClient(),
+            Clock.System
+        )
         app.start(port)
         baseUrl = "http://localhost:$port"
     }
@@ -186,6 +196,9 @@ class FindPatientIntegrationTest {
         assertContains(body, "Testersen")
         assertContains(body, "010101-1234 (1.2.208.176.1.2)")
         assertContains(body, "hx-swap-oob=\"innerMorph\"")
+        val opaqueId = Regex("href=\"/prescriptions\\?opaque-id=([^\"]+)\"").find(body)?.groupValues?.get(1)
+        assertThat(opaqueId).isNotNull()
+        assertThat(runCatching { UUID.fromString(opaqueId) }.isSuccess).isTrue()
         assertFalse(body.contains("text-red"))
     }
 
