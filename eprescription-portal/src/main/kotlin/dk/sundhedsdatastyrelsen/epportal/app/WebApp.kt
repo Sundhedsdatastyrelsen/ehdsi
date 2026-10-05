@@ -10,6 +10,7 @@ import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
 import io.javalin.Javalin
+import io.javalin.event.LifecycleEventListener
 import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
@@ -17,6 +18,7 @@ import io.javalin.http.HttpStatus
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
+import io.javalin.plugin.bundled.RouteOverviewUtil.metaInfo
 import io.javalin.rendering.template.JavalinFreemarker
 import org.eclipse.jetty.http.HttpCookie
 import java.io.File
@@ -24,6 +26,10 @@ import java.net.URI
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.days
 import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 
 private val DEV_MODE = (System.getProperty("epportal.devMode") == "true").also {
@@ -109,6 +115,8 @@ object WebApp {
                 auth.install(handler) // SAML adds its filters/servlet; LocalAuth no-op
             }
 
+            AppData.setup(config)
+
             config.requestLogger.http(requestLogger(log))
 
             config.routes.before(::rejectCrossOriginRequests)
@@ -150,6 +158,21 @@ object WebApp {
                     ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
                     return@get
                 }
+
+                // Get the patient ID query parameter
+                val opaquePatientId: UUID? = ctx.queryParam("opaque-id")?.let { UUID.fromString(it) }
+                if (opaquePatientId == null) {
+                    ctx.status(400).result("Invalid opaque patient id.")
+                    return@get
+                }
+
+                // Load the patient demographics
+                val patientDemographics = AppData.getPatientData(ctx, opaquePatientId)
+                if (patientDemographics == null) {
+                    ctx.status(404).result("Could not locate patient session, please search again.")
+                    return@get
+                }
+
                 // Load prescriptions from the stored response, so we have something to look at.
                 val prescriptions =
                     PrescriptionMetadataParser.parse(
@@ -213,6 +236,7 @@ object WebApp {
     fun startServer(config: AppConfig) {
         val searchMasks = SearchMaskRepository.load(config.findPatient)
         val app = createApp(searchMasks = searchMasks, patientSearch = DummyPatientSearchClient())
+
         app.start(config.webApp.port)
     }
 

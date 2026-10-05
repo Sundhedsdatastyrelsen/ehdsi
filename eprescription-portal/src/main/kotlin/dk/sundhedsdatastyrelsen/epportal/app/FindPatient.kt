@@ -13,6 +13,7 @@ import io.javalin.http.Context
 import io.javalin.http.HttpStatus
 import io.javalin.router.JavalinDefaultRoutingApi
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 object FindPatient {
     data class Config(val countries: List<String>, val ismDirectory: String)
@@ -92,7 +93,7 @@ object FindPatient {
 
             val results = try {
                 val patients = client.queryPatient(country, input.ids)
-                mapOf("patients" to patients.map(::toPatientView))
+                mapOf("patients" to patients.map{toPatientView(it, AppData.setOpaquePatientId(ctx, it))})
             } catch (e: Exception) {
                 log.error("Patient search failed for country {}", country, e)
                 mapOf("searchError" to "Søgningen fejlede.")
@@ -177,11 +178,12 @@ private fun fieldViews(mask: SearchMask, values: Map<Int, String>, errors: Map<I
         )
     }
 
-private fun toPatientView(patient: PatientDemographics): Map<String, Any?> {
+private fun toPatientView(patient: PatientDemographics, opaqueId: UUID): Map<String, Any?> {
     val name = listOfNotNull(patient.givenName, patient.familyName)
         .joinToString(" ")
         .ifBlank { null }
     return mapOf(
+        "opaqueId" to opaqueId,
         "name" to name,
         "birthDate" to patient.birthDate?.format(birthDateFormatter),
         "gender" to patient.gender?.let { Labels.gender(it) },
