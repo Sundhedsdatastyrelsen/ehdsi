@@ -34,8 +34,8 @@ class WebAppIntegrationTest {
             .withoutConnectionReuse()
             .build()
 
-        app = WebApp.createApp(LocalAuth(), testMasks(), DummyPatientSearchClient())
         val port = TestUtils.randomFreePort()
+        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient())
         app.start(port)
         baseUrl = "http://localhost:$port"
     }
@@ -143,9 +143,9 @@ class WebAppIntegrationTest {
     @Disabled
     fun `form errors redirect back to form with error flag set`() {
         // Use a local app to overwrite the db.
-        val app = WebApp.createApp(LocalAuth(), testMasks(), DummyPatientSearchClient())
+        val port = TestUtils.randomFreePort()
+        val app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient())
         try {
-            val port = TestUtils.randomFreePort()
             app.start(port)
             val baseUrl = "http://localhost:$port"
             // Login

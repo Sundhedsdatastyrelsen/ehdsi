@@ -1,8 +1,7 @@
 name: ep-portal-dev
 
 # Dev compose: exposes every service port directly on localhost instead of going
-# through Traefik. Uses dev auth providers on both web apps so MitID/OIDC are not
-# required. Vault creds still come from .env (database.hmacKey is resolved at
+# through Traefik. Vault creds still come from .env (database.hmacKey is resolved at
 # config-load time regardless of which auth mode is active).
 #
 # Run with:
@@ -23,7 +22,6 @@ services:
       - "8555:8555"   # Web UI
     environment:
       TZ: "Europe/Copenhagen"
-      AUTH: "dev"
     # The production healthcheck pings /saml/metadata which only exists when SAML
     # auth is active. Disable it in dev so the container doesn't flap.
     healthcheck:

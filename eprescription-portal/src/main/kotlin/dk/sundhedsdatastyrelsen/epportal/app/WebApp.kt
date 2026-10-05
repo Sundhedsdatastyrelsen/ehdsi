@@ -26,18 +26,12 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 
-private val DEV_MODE = (System.getProperty("epportal.devMode") == "true").also {
-    if (it) {
-        logger().warn("Running in development mode with hot-reloading enabled.")
-    }
-}
-
 /**
  * Initialize FreeMarker template engine
  */
-private fun createTemplateEngine(): Configuration {
+private fun createTemplateEngine(hotReloading: Boolean): Configuration {
     val configuration = Configuration(Configuration.VERSION_2_3_32).apply {
-        if (DEV_MODE) {
+        if (hotReloading) {
             // Enable hot-reloading of templates
             setDirectoryForTemplateLoading(File("src/main/resources/templates"))
             templateUpdateDelayMilliseconds = 0
@@ -51,8 +45,6 @@ private fun createTemplateEngine(): Configuration {
 
     return configuration
 }
-
-private fun authProvider(): AuthProvider = LocalAuth()
 
 private val safeMethods = setOf("GET", "HEAD", "OPTIONS")
 
@@ -80,16 +72,21 @@ object WebApp {
         .withLocale(Locale.of("da", "DK"))
 
     fun createApp(
-        auth: AuthProvider = authProvider(),
+        webAppConfig: Config,
+        auth: AuthProvider,
         searchMasks: SearchMaskRepository,
         patientSearch: PatientSearchClient,
     ): Javalin {
+        val hotReloading = webAppConfig.hotReloading
+        if (hotReloading) {
+            log.warn("Hot-reloading of templates and static files from src/main/resources is enabled.")
+        }
         val app = Javalin.create { config ->
             config.startup.showJavalinBanner = false
-            config.fileRenderer(JavalinFreemarker(createTemplateEngine()))
+            config.fileRenderer(JavalinFreemarker(createTemplateEngine(hotReloading)))
             config.staticFiles.add { staticFiles ->
                 staticFiles.hostedPath = "/"
-                if (DEV_MODE) {
+                if (hotReloading) {
                     // Enable hot-reloading of static files
                     staticFiles.directory = "src/main/resources/public"
                     staticFiles.location = Location.EXTERNAL
@@ -208,11 +205,20 @@ object WebApp {
         return app
     }
 
-    data class Config(val port: Int)
+    data class Config(
+        val port: Int,
+        /** Hot-reloads templates and static files from src/main/resources. Only works when run from the project dir. */
+        val hotReloading: Boolean = false,
+    )
 
     fun startServer(config: AppConfig) {
         val searchMasks = SearchMaskRepository.load(config.findPatient)
-        val app = createApp(searchMasks = searchMasks, patientSearch = DummyPatientSearchClient())
+        val app = createApp(
+            config.webApp,
+            config.auth.provider(),
+            searchMasks = searchMasks,
+            patientSearch = DummyPatientSearchClient(),
+        )
         app.start(config.webApp.port)
     }
 

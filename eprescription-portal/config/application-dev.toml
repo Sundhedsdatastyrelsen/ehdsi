@@ -1,0 +1,6 @@
+# Overlay for ./gradlew run (see build.gradle.kts). Its values take precedence over application.toml.
+
+[webapp]
+# Hot-reloads templates and static files from src/main/resources. This only works when running locally from the
+# project directory, e.g. with ./gradlew run: a deployed app has no src/ directory to reload from.
+hotReloading = true
