@@ -68,9 +68,9 @@ application {
 
 tasks {
     named<JavaExec>("run") {
-        // We use "dev mode" to enable hot-reloading of templates and resources
-        // when running the server with ./gradlew run.
-        systemProperty("epportal.devMode", "true")
+        // Loads config/application-dev.toml on top of config/application.toml, which e.g. enables hot-reloading of templates and
+        // resources.
+        args("--profile=dev")
     }
 
     test {

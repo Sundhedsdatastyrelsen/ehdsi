@@ -31,8 +31,8 @@ class FindPatientIntegrationTest {
             .build()
 
         val masks = SearchMaskRepository.load(FindPatient.Config(listOf("DK", "FI"), "config/ism"))
-        app = WebApp.createApp(LocalAuth(), masks, DummyPatientSearchClient())
         val port = TestUtils.randomFreePort()
+        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), masks, DummyPatientSearchClient())
         app.start(port)
         baseUrl = "http://localhost:$port"
     }

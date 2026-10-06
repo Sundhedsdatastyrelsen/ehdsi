@@ -33,11 +33,31 @@ interface AuthProvider {
     }
 }
 
+enum class AuthMode { DEV }
+
+data class AuthConfig(
+    val mode: AuthMode,
+    val dev: DevAuthConfig? = null,
+) {
+    init {
+        require(mode != AuthMode.DEV || dev != null) { "auth.dev is required when auth.mode is dev" }
+    }
+
+    fun provider(): AuthProvider = when (mode) {
+        AuthMode.DEV -> LocalAuth(dev!!.defaultCpr)
+    }
+}
+
+data class DevAuthConfig(
+    /** The CPR `/dev-login` logs in as when no `cpr` query parameter is given. */
+    val defaultCpr: String,
+)
+
 /**
  * Auth provider for local development use.
  */
 class LocalAuth(
-    private val defaultCpr: String = System.getenv("DEV_CPR") ?: "0101019999",
+    private val defaultCpr: String,
     private val headerName: String = "X-Dev-CPR",
     private val defaultName: String = "Dev User",
 ) : AuthProvider {

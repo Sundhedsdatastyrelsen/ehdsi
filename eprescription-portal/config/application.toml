@@ -1,11 +1,20 @@
+# Base config, used as is by deployments. Overlays such as application-dev.toml take precedence over it (see Config.kt).
+# Env vars can be referenced as "${NAME}" or "${NAME:-default}".
+
 [webapp]
 port = 8080
+
+# NOTE: Dev auth is a temporary default until NemLogin is done.
+[auth]
+mode = "DEV"
+dev = { defaultCpr = "0101019999" }
 
 [findPatient]
 countries = ["DK", "FI"]
 ismDirectory = "config/ism"
 
-[vault]
+# [vault]
+# Vault: config values of the form "vault:/<path>:<key>" are looked up in Vault (see VaultSecretPreprocessor).
 # Optional: Configure truststore for Vault SSL connections
 # Note: Since Vault is accessed during config loading, truststore must be configured
 # via environment variables (VAULT_TRUSTSTORE_PATH, VAULT_TRUSTSTORE_PASSWORD) or
