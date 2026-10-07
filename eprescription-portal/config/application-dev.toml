@@ -4,3 +4,16 @@
 # Hot-reloads templates and static files from src/main/resources. This only works when running locally from the
 # project directory, e.g. with ./gradlew run: a deployed app has no src/ directory to reload from.
 hotReloading = true
+
+# Patient search through the OpenNCP client connector in the local NCP docker-compose stack in ../NCP. Without the NCP
+# stack running, patient search fails.
+# The connector requires https (its WS-Policy rejects plain http), but a client certificate is not needed. Its dev
+# certificate is issued to ncp-training.ehdsi.sundhedsdata.dk, not localhost, hence the disabled hostname verification.
+[openncp]
+endpoint = "https://localhost:6443/openncp-client-connector/services/ClientService"
+dangerouslyDisableTlsHostnameVerification = true
+truststore = { path = "../NCP/keystore/dev-truststore.jks", password = "changeit" }
+
+[openncp.signing]
+alias = "tomcat"
+keystore = { path = "../NCP/keystore/dev-seal.jks", password = "password" }
