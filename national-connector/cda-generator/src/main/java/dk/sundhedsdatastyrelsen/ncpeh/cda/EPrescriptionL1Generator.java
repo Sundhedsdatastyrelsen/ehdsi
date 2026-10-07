@@ -30,12 +30,12 @@ public class EPrescriptionL1Generator {
             var template = FreemarkerConfiguration.config().getTemplate("eprescription-cda-l1.ftlx");
             var writer = new StringWriter();
 
-            var EPrescriptionL1 = EPrescriptionL1Generator.EPrescriptionL1.builder()
+            var ePrescriptionL1 = EPrescriptionL1Generator.EPrescriptionL1.builder()
                 .l3(modelWithL1Id)
                 .base64EncodedDocument(pdf)
                 .build();
 
-            template.process(EPrescriptionL1, writer);
+            template.process(ePrescriptionL1, writer);
             return writer.toString();
         } catch (IOException | TemplateException e) {
             throw new MapperException("Could not generate L1 patient summary", e);
