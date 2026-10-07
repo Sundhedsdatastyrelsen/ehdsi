@@ -15,7 +15,7 @@ class EPrescriptionL3MapperTest {
             var response = FmkResponseStorage.getTestPrescriptions(cpr);
             var medicationResponse = FmkResponseStorage.getTestDrugMedications(cpr);
 
-            return EPrescriptionL3Mapper.model(new EPrescriptionL3Input(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01"));
+            return EPrescriptionL3Mapper.model(new EPrescriptionInput(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +43,7 @@ class EPrescriptionL3MapperTest {
     void nullSubpackagesIsHandled() throws Exception {
         var cpr = "0201909309";
         var model = EPrescriptionL3Mapper.model(
-            new EPrescriptionL3Input(
+            new EPrescriptionInput(
                 FmkResponseStorage.getTestPrescriptions(cpr),
                 0,
                 FmkResponseStorage.getTestDrugMedications(cpr),
