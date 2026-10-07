@@ -7,7 +7,7 @@ import lombok.NonNull;
 
 import java.util.List;
 
-public record EPrescriptionL3Input(
+public record EPrescriptionInput(
     GetPrescriptionResponseType fmkPrescriptionResponse,
     int prescriptionIndex,
     GetDrugMedicationResponseType fmkDrugMedicationResponse,
@@ -17,7 +17,7 @@ public record EPrescriptionL3Input(
     String manufacturerOrganizationName,
     String atcCodeSystemVersion
 ) {
-    public EPrescriptionL3Input(
+    public EPrescriptionInput(
         GetPrescriptionResponseType fmkPrescriptionResponse,
         int prescriptionIndex,
         GetDrugMedicationResponseType fmkDrugMedicationResponse,
