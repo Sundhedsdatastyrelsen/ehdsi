@@ -5,6 +5,8 @@ import java.io.File
 import java.net.URI
 import java.security.KeyStore
 import java.time.Duration
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
 /**
  * Configuration of the integration with the OpenNCP client connector (the `openncp-client` service in NCP/).
@@ -19,11 +21,6 @@ object OpenNcp {
         val timeout: Duration = Duration.ofSeconds(60),
         /** Only needed for https endpoints whose certificate isn't trusted by the default JVM truststore. */
         val truststore: StoreConfig? = null,
-        /**
-         * Accept the server certificate regardless of which host it is issued to, e.g. when connecting to localhost
-         * or a docker service name. The chain is still validated. Never enable this in production.
-         */
-        val dangerouslyDisableTlsHostnameVerification: Boolean = false,
         /** The key that signs the HCP assertion. Its certificate must be trusted by the client connector. */
         val signing: SigningConfig,
         val hcp: HcpConfig = HcpConfig(),
@@ -73,4 +70,11 @@ object OpenNcp {
     /** Loads a PKCS12 or JKS keystore. */
     fun loadKeyStore(config: StoreConfig): KeyStore =
         KeyStore.getInstance(File(config.path), config.password.value.toCharArray())
+
+    /** A TLS context that trusts only the certificates in [truststore]. */
+    fun sslContext(truststore: StoreConfig): SSLContext {
+        val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+        tmf.init(loadKeyStore(truststore))
+        return SSLContext.getInstance("TLSv1.3").apply { init(null, tmf.trustManagers, null) }
+    }
 }

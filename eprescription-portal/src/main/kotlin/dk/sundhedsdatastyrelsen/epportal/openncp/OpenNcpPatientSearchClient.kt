@@ -69,23 +69,9 @@ class OpenNcpPatientSearchClient(
         private val xpath = XPathWrapper(SOAP12, NCPC)
 
         fun create(config: OpenNcp.Config): OpenNcpPatientSearchClient {
-            if (config.dangerouslyDisableTlsHostnameVerification) {
-                logger().warn("TLS hostname verification is disabled for {}. Never do this in production.", config.endpoint)
-            }
             val httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
-                .apply {
-                    // check whether we need to deviate from default TLS settings - either because
-                    // of a custom truststore or because TLS hostname verification is disabl    ed
-                    if (config.truststore != null || config.dangerouslyDisableTlsHostnameVerification) {
-                        sslContext(
-                            OpenNcpTls.sslContext(
-                                config.truststore?.let(OpenNcp::loadKeyStore),
-                                config.dangerouslyDisableTlsHostnameVerification,
-                            ),
-                        )
-                    }
-                }
+                .apply { config.truststore?.let { sslContext(OpenNcp.sslContext(it)) } }
                 .build()
             return OpenNcpPatientSearchClient(
                 config.endpoint,
