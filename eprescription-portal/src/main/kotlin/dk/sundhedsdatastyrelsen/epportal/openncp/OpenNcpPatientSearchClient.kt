@@ -63,7 +63,7 @@ class OpenNcpPatientSearchClient(
         private val SOAP12 = XmlNamespace.SOAP12
         private val NCPC = XmlNamespace.OPENNCP_CLIENT
 
-        /** Elements inside the operation wrapper are unqualified, as JAX-WS generates them. */
+        /** For elements that need to be unqualified in the generated XML, i.e., have no "ns:" prefix in their name */
         private val UNQUALIFIED = XmlNamespace(null, null)
 
         private val xpath = XPathWrapper(SOAP12, NCPC)
@@ -73,8 +73,10 @@ class OpenNcpPatientSearchClient(
                 logger().warn("TLS hostname verification is disabled for {}. Never do this in production.", config.endpoint)
             }
             val httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
+                .connectTimeout(Duration.ofSeconds(30))
                 .apply {
+                    // check whether we need to deviate from default TLS settings - either because
+                    // of a custom truststore or because TLS hostname verification is disabl    ed
                     if (config.truststore != null || config.dangerouslyDisableTlsHostnameVerification) {
                         sslContext(
                             OpenNcpTls.sslContext(

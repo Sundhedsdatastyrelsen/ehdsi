@@ -74,5 +74,3 @@ object OpenNcp {
     fun loadKeyStore(config: StoreConfig): KeyStore =
         KeyStore.getInstance(File(config.path), config.password.value.toCharArray())
 }
-
-class OpenNcpException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
