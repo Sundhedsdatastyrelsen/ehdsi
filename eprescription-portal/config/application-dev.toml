@@ -8,10 +8,9 @@ hotReloading = true
 # Patient search through the OpenNCP client connector in the local NCP docker-compose stack in ../NCP. Without the NCP
 # stack running, patient search fails.
 # The connector requires https (its WS-Policy rejects plain http), but a client certificate is not needed. Its dev
-# certificate is issued to ncp-training.ehdsi.sundhedsdata.dk, not localhost, hence the disabled hostname verification.
+# certificate (NCP/keystore/dev-client-connector-tls.jks) is issued to openncp-client and localhost.
 [openncp]
 endpoint = "https://localhost:6443/openncp-client-connector/services/ClientService"
-dangerouslyDisableTlsHostnameVerification = true
 truststore = { path = "../NCP/keystore/dev-truststore.jks", password = "changeit" }
 
 [openncp.signing]
