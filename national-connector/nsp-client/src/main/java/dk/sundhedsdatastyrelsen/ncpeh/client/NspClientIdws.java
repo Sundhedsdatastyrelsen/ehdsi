@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
+import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.apache.wss4j.dom.engine.WSSConfig;
@@ -78,10 +79,17 @@ public class NspClientIdws {
                 fullText = extractSoapFromMime(fullText);
             }
 
-            var responseDoc = XmlUtils.parse(fullText);
-
+            // Check the status before parsing, the body might not be valid xml.
             if (res.statusCode() >= 400) {
-                throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
+                throw new NspClientException(describeFailure(res.statusCode(), fullText));
+            }
+
+            Document responseDoc;
+            try {
+                responseDoc = XmlUtils.parse(fullText);
+            } catch (XmlException e) {
+                throw new NspClientException(
+                    String.format("Could not parse response with HTTP status %d: %s", res.statusCode(), fullText), e);
             }
             return (Element) xpath.evalElement("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
         } catch (IOException e) {
@@ -90,6 +98,19 @@ public class NspClientIdws {
             Thread.currentThread().interrupt();
             throw new NspClientException("Nsp call failed, thread interrupted.", e);
         }
+    }
+
+    /// Describe a failed response, using the SOAP fault string if the body has one.
+    private static String describeFailure(int statusCode, String body) {
+        try {
+            var faultString = xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", XmlUtils.parse(body));
+            if (faultString != null && !faultString.isBlank()) {
+                return String.format("Request failed with HTTP status %d and message: %s", statusCode, faultString);
+            }
+        } catch (Exception e) {
+            // Not a SOAP response. Fall through and report the raw body.
+        }
+        return String.format("Request failed with HTTP status %d: %s", statusCode, body);
     }
 
     /// Wrap the body in an envelope and sign it.
