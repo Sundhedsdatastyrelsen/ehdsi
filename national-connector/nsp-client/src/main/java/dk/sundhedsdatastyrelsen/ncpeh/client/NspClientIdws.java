@@ -65,7 +65,7 @@ public class NspClientIdws {
         // Send it to the endpoint.
         try (var httpClient = HttpClient.newBuilder().build()) {
             var request = HttpRequest.newBuilder(uri)
-                .header("Content-Type", "application/soap+xml; charset=utf-8")
+                .header("Content-Type", "text/xml; charset=utf-8")
                 .header("SOAPAction", soapAction)
                 .POST(HttpRequest.BodyPublishers.ofString(reqBody))
                 .build();
