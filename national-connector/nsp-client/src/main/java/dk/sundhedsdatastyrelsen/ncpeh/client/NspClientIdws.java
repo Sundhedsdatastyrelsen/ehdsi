@@ -2,12 +2,10 @@ package dk.sundhedsdatastyrelsen.ncpeh.client;
 
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XPathWrapper;
-import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.transform.STRTransform;
-import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,7 +36,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class NspClientIdws {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientIdws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
 
     static {
@@ -84,13 +81,7 @@ public class NspClientIdws {
                 throw new NspClientException(describeFailure(res.statusCode(), fullText));
             }
 
-            Document responseDoc;
-            try {
-                responseDoc = XmlUtils.parse(fullText);
-            } catch (XmlException e) {
-                throw new NspClientException(
-                    String.format("Could not parse response with HTTP status %d: %s", res.statusCode(), fullText), e);
-            }
+            var responseDoc = XmlUtils.parse(fullText);
             return (Element) xpath.evalElement("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
         } catch (IOException e) {
             throw new NspClientException("Error when calling NSP service with action " + soapAction, e);
