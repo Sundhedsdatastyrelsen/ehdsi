@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
 import io.javalin.Javalin
 import okhttp3.FormBody
@@ -35,7 +36,7 @@ class WebAppIntegrationTest {
             .build()
 
         val port = TestUtils.randomFreePort()
-        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient())
+        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient(), DummyPrescriptionDocumentClient(), TestUtils.cdaDisplay)
         app.start(port)
         baseUrl = "http://localhost:$port"
     }
@@ -144,7 +145,7 @@ class WebAppIntegrationTest {
     fun `form errors redirect back to form with error flag set`() {
         // Use a local app to overwrite the db.
         val port = TestUtils.randomFreePort()
-        val app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient())
+        val app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient(), DummyPrescriptionDocumentClient(), TestUtils.cdaDisplay)
         try {
             app.start(port)
             val baseUrl = "http://localhost:$port"

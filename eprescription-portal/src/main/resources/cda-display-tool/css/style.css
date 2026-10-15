@@ -1,0 +1,439 @@
+<root><![CDATA[
+
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0;
+    padding: 1rem;
+    height: 100%;
+    /*text-rendering: optimizeLegibility;*/
+}
+
+div {}
+table {
+    width: 100%;
+}
+tr {}
+td {
+    font-size:12px;
+    padding:5px;
+    vertical-align: top;
+    text-align: left;
+}
+th {
+    color:#4A4A4A;
+    font-size:13px;
+    padding:6px;
+    vertical-align: top;
+    text-align: left;
+    border-bottom: 1px solid #009fd1;
+}
+
+ul {
+    padding-left: 1rem;
+}​
+.h1center {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    background-color: #085a9f;
+    color: #FFF;
+    margin-bottom: 1rem;
+    padding: 0.5rem ;
+    border-radius: 4px
+}
+.header_table{
+    border-bottom:0 solid #666;
+}
+.header_table th {
+    color:#009fd1;
+    font-size: 12px;
+    border-bottom: 1px solid #009fd1
+}
+.header_table td {
+    font-size: 12px;
+}
+.sectionTitle{
+    color:#3871A9;
+    font-weight: bold;
+    font-size:16px;
+}
+.narr_table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table_caption {
+    border-bottom:0 solid #666;
+    width: 100%;
+}
+
+.table_caption th {
+    background-color:#9FBFDF;
+    color:#4A4A4A;
+    font-size:13px;
+    padding:6px;
+    border-bottom: 2px solid #4A4A4A;
+    -moz-border-radius: 0;
+    -webkit-border-top-right-radius: 6px;
+    -webkit-border-top-left-radius: 6px;
+    -webkit-border-bottom-right-radius: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-radius: 6px 6px 0px 0px;
+    text-align:left;
+    vertical-align:middle;
+}
+
+.nullFlavor {
+    display: inline;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: yellow;
+    font-weight: bold;
+    padding:5px;
+}
+.wrap-collapsible {
+    margin-bottom: 1.2rem 0px;
+    width: 100%;
+}
+
+input[type='checkbox'] {
+    display: none;
+}
+
+/*****************************/
+/* Default collapsible panel */
+/*****************************/
+.lbl-toggle {
+    display: block;
+
+    color: #009fd1;
+    font-weight: bold;
+    font-size: 13px;
+    text-align: left;
+
+    padding: 0.5rem;
+
+    border: 2px solid #009fd1;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    background: #FFF;
+
+    cursor: pointer;
+
+    border-radius: 3px;
+    transition: all 0.25s ease-out;
+}
+
+
+.lbl-toggle::before {
+    content: ' ';
+    display: inline-block;
+
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid currentColor;
+    vertical-align: middle;
+    margin-right: .7rem;
+    transform: translateY(-2px);
+
+    transition: transform .2s ease-out;
+}
+
+.toggle:checked + .lbl-toggle::before {
+    transform: rotate(90deg) translateX(-3px);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .lbl-toggle + .collapsible-content {
+    max-height: none;
+    overflow: visible;
+}
+
+.toggle:checked + .lbl-toggle {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.collapsible-content .content-inner {
+    background: white;
+    border-bottom: 2px solid #009fd1;
+    border-left: 2px solid #009fd1;
+    border-right: 2px solid #009fd1;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    padding: .5rem 1rem;
+}
+/*******************************************************/
+/* Collapsible panel for:                              */
+/*    - section titles in PS                           */
+/*    - substances in eP                               */
+/*******************************************************/
+.lbl-toggle-title {
+    display: block;
+
+    font-weight: bold;
+    color: #FFF;
+    font-size: 15px;
+    text-align: left;
+
+    padding: 0.5rem;
+
+    border: 2px solid #085a9f;
+    background: #085a9f;
+
+    cursor: pointer;
+
+    border-radius: 3px;
+    transition: all 0.25s ease-out;
+}
+
+.lbl-toggle-title:hover {
+    color: #009fd1;
+}
+
+.lbl-toggle-title::before {
+    content: ' ';
+    display: inline-block;
+
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid currentColor;
+    vertical-align: middle;
+    margin-right: .7rem;
+    transform: translateY(-2px);
+
+    transition: transform .2s ease-out;
+}
+
+.toggle:checked + .lbl-toggle-title::before {
+    transform: rotate(90deg) translateX(-3px);
+}
+
+.collapsible-content-title {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .lbl-toggle-title + .collapsible-content-title {
+    max-height: none;
+    overflow: visible;
+}
+
+.toggle:checked + .lbl-toggle-title {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.collapsible-content-title .content-inner-title {
+    background: white;
+    border-bottom: 2px solid #085a9f;
+    border-left: 2px solid #085a9f;
+    border-right: 2px solid #085a9f;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    padding: .5rem 1rem;
+}
+
+/***************************************/
+/* collapsible panel for main blocks */
+/***************************************/
+.lbl-toggle-main {
+    display: block;
+
+    font-weight: bold;
+    color: #085a9f;
+    font-size: 15px;
+    text-align: left;
+
+    padding: 0.5rem;
+
+    border: 2px solid #085a9f;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+
+    background: #FFF;
+
+    cursor: pointer;
+
+    border-radius: 3px;
+    transition: all 0.25s ease-out;
+}
+
+.lbl-toggle-main:hover {
+    color: #009fd1;
+}
+
+.lbl-toggle-main::before {
+    content: ' ';
+    display: inline-block;
+
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid currentColor;
+    vertical-align: middle;
+    margin-right: .7rem;
+    transform: translateY(-2px);
+
+    transition: transform .2s ease-out;
+}
+
+.toggle:checked + .lbl-toggle-main::before {
+    transform: rotate(90deg) translateX(-3px);
+}
+
+.collapsible-content-main {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .lbl-toggle-main + .collapsible-content-main {
+    max-height: none;
+}
+
+.toggle:checked + .lbl-toggle-main {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.collapsible-content-main .content-inner-main {
+    border-bottom: 2px solid #085a9f;
+    border-left: 2px solid #085a9f;
+    border-right: 2px solid #085a9f;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    padding: .5rem 1rem;
+}
+
+/************/
+/* Tooltips */
+/************/
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 160%;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #555 transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip-right {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-right .tooltiptext {
+    visibility: hidden;
+    width: 350px;
+    background-color: white;
+    color: #3871A9;
+    text-align: left;
+    border-radius: 6px;
+    border-style: solid;
+    border-color: #3871A9;
+    border-width: 1px;
+    padding: 7px 7px;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 105%;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-right .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #3871A9 transparent transparent ;
+}
+
+.tooltip-right:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.narrative {
+    color: #085a9f;
+}
+
+.label {
+    color: white;
+    padding: 4px;
+}
+
+.otherContacts-personalRelationship {
+    background-color: #009fd1;
+}
+
+.otherContacts-roleClass {
+    background-color: #085a9f;
+}
+
+/* Portal: FontAwesome is not loaded (the CSP blocks it), so draw the one icon the display tool uses as text */
+.fa-exclamation-circle::before {
+    content: "\24D8";
+    font-style: normal;
+    font-weight: bold;
+}
+
+/* Portal: the display tool always renders the dispensation form, and allowDispense only hides its submit button.
+   The portal doesn't dispense, so hide the form's fieldset. The selector spells out the path from the fieldset, since
+   the fieldset around the whole prescription item contains the form too. */
+fieldset:has(> table.ep_table > tbody > tr > td > input[name^="substituted_"]) {
+    display: none;
+}
+
+/* Portal: hidden tooltips are only invisible, so they still take up space, and the ones next to the right edge make the
+   page scroll horizontally. Take them out of the layout until they are shown. */
+.tooltip .tooltiptext,
+.tooltip-right .tooltiptext {
+    display: none;
+}
+
+.tooltip:hover .tooltiptext,
+.tooltip-right:hover .tooltiptext {
+    display: block;
+}
+
+]]></root>

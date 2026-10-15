@@ -32,8 +32,7 @@
             </td>
             <td>
               <!-- Placeholder links -->
-              <a href="/prescriptions/document/${prescription.l3DocumentId}">Se recept (kodet)</a>
-              <a href="/prescriptions/document/${prescription.l1DocumentId}">Se recept (PDF)</a>
+              <a href="/prescriptions/${prescription.l3DocumentId?url}">Se recept</a>
             </td>
           </tr>
         </#list>
