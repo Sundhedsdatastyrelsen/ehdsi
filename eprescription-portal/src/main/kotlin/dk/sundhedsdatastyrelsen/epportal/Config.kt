@@ -5,6 +5,7 @@ import com.sksamuel.hoplite.addPathSource
 import dk.sundhedsdatastyrelsen.epportal.app.AuthConfig
 import dk.sundhedsdatastyrelsen.epportal.app.FindPatient
 import dk.sundhedsdatastyrelsen.epportal.app.WebApp
+import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
 import dk.sundhedsdatastyrelsen.epportal.config.VaultSecretPreprocessor
 import java.nio.file.Path
 
@@ -22,6 +23,7 @@ data class Config(
     val webApp: WebApp.Config,
     val auth: AuthConfig,
     val findPatient: FindPatient.Config,
+    val cdaDisplay: CdaDisplayTransformer.Config,
 ) {
     companion object {
         /**

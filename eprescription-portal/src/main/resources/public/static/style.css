@@ -3,11 +3,12 @@
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
-    --font-sans: "Titillium Web", sans-serif;
+    --font-sans: Arial, Helvetica, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --spacing: 0.25rem;
     --container-4xl: 56rem;
+    --container-6xl: 72rem;
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
     --text-lg: 1.125rem;
@@ -201,8 +202,14 @@
   .-mt-2 {
     margin-top: calc(var(--spacing) * -2);
   }
+  .mt-4 {
+    margin-top: calc(var(--spacing) * 4);
+  }
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
+  }
+  .box-content {
+    box-sizing: content-box;
   }
   .flex {
     display: flex;
@@ -233,14 +240,23 @@
   .w-28 {
     width: calc(var(--spacing) * 28);
   }
+  .w-full {
+    width: 100%;
+  }
   .max-w-4xl {
     max-width: var(--container-4xl);
+  }
+  .max-w-6xl {
+    max-width: var(--container-6xl);
   }
   .max-w-prose {
     max-width: 65ch;
   }
   .flex-1 {
     flex: 1;
+  }
+  .shrink {
+    flex-shrink: 1;
   }
   .animate-spin {
     animation: var(--animate-spin);
@@ -271,6 +287,10 @@
   }
   .rounded-full {
     border-radius: calc(infinity * 1px);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
   }
   .border-2 {
     border-style: var(--tw-border-style);
@@ -322,6 +342,9 @@
   .text-center {
     text-align: center;
   }
+  .text-left {
+    text-align: left;
+  }
   .text-4xl {
     font-size: var(--text-4xl);
     line-height: var(--tw-leading, var(--text-4xl--line-height));
@@ -339,6 +362,9 @@
   }
   .text-red {
     color: var(--color-red);
+  }
+  .underline {
+    text-decoration-line: underline;
   }
   .shadow-sdk {
     --tw-shadow: 0 1px 2px 0 var(--tw-shadow-color, rgba(0, 0, 0, 0.3));
@@ -364,18 +390,6 @@
       overflow: hidden;
     }
   }
-}
-@font-face {
-  font-family: "Titillium Web";
-  font-style: normal;
-  font-weight: 400;
-  src: url("/static/titillium-web-v14-latin-regular.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Titillium Web";
-  font-style: normal;
-  font-weight: 300;
-  src: url("/static/titillium-web-v14-latin-300.woff2") format("woff2");
 }
 @layer base {
   h1, h2, h3, h4, h5, h6 {

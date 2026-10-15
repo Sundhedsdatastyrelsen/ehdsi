@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.epportal
 
+import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import java.io.InputStream
@@ -13,6 +14,9 @@ object TestUtils {
     fun resource(name: String): URL? = Thread.currentThread().contextClassLoader.getResource(name)
 
     fun resourceAsStream(name: String): InputStream? = Thread.currentThread().contextClassLoader.getResourceAsStream(name)
+
+    /** Shared, since compiling the display tool's stylesheets takes a while. */
+    val cdaDisplay by lazy { CdaDisplayTransformer(CdaDisplayTransformer.Config("en-GB")) }
 }
 
 /**

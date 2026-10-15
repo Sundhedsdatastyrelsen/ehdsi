@@ -3,6 +3,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
 import io.javalin.Javalin
 import okhttp3.FormBody
@@ -32,7 +33,7 @@ class FindPatientIntegrationTest {
 
         val masks = SearchMaskRepository.load(FindPatient.Config(listOf("DK", "FI"), "config/ism"))
         val port = TestUtils.randomFreePort()
-        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), masks, DummyPatientSearchClient())
+        app = WebApp.createApp(WebApp.Config(port), LocalAuth("0101019999"), masks, DummyPatientSearchClient(), DummyPrescriptionDocumentClient(), TestUtils.cdaDisplay)
         app.start(port)
         baseUrl = "http://localhost:$port"
     }
