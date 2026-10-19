@@ -7,7 +7,7 @@
   <p>Ingen patienter fundet.</p>
 <#elseif patients??>
   <#list patients as patient>
-    <a href="/prescriptions">
+    <a href="/prescriptions?opaque-id=${patient.opaqueId}">
       <div class="bg-white shadow-sdk border-b-8 border-b-red p-4 flex flex-col gap-1">
         <#if patient.name??>
           <h2 class="text-lg">${patient.name}</h2>
