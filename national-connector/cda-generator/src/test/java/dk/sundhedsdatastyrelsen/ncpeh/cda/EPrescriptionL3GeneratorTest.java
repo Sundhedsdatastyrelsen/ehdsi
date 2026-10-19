@@ -33,7 +33,7 @@ class EPrescriptionL3GeneratorTest {
         var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
         var medication = FmkResponseStorage.getTestDrugMedications(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var input = new EPrescriptionL3Input(prescription, 0, medication, "FIN", 1, "Manufacturer", "2026-01");
+        var input = new EPrescriptionInput(prescription, 0, medication, "FIN", 1, "Manufacturer", "2026-01");
         var epL3 = EPrescriptionL3Mapper.model(input);
 
         //Generate prescription without null in packageCode
@@ -67,7 +67,7 @@ class EPrescriptionL3GeneratorTest {
             var p = prescriptions.get(prescriptionindex);
 
             var drugInfo = getDrugInfo(p);
-            var input = new EPrescriptionL3Input(
+            var input = new EPrescriptionInput(
                 prescription,
                 prescriptionindex,
                 medication,

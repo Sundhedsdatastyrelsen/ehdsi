@@ -16,10 +16,14 @@ import java.nio.charset.StandardCharsets;
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws Exception {
-        var l3model = EPrescriptionL3MapperTest.getModel();
-        var model = EPrescriptionL1Mapper.model(l3model);
+        var cpr = "0201909309";
+        var response = FmkResponseStorage.getTestPrescriptions(cpr);
+        var medicationResponse = FmkResponseStorage.getTestDrugMedications(cpr);
+
+
+        var model = new EPrescriptionInput(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01");
         var cda = EPrescriptionL1Generator.generate(model);
-//        System.out.println(cda);
+        //  System.out.println(cda); //Uncomment for debug print
         Assertions.assertNotNull(cda);
     }
 
@@ -28,7 +32,7 @@ public class EPrescriptionL1GeneratorTest {
     public void testCdaValidity(String cpr) throws Exception {
         var prescription = FmkResponseStorage.getTestPrescriptions(cpr);
         Assertions.assertFalse(prescription.getPrescription().isEmpty());
-        var xmlString = EPrescriptionL1Generator.generate(new EPrescriptionL3Input(
+        var xmlString = EPrescriptionL1Generator.generate(new EPrescriptionInput(
             prescription, 0, null, "FIN", 1, "Manufacturer", "2026-01"));
 
         // 1. Test if well-formed XML (can be parsed)
