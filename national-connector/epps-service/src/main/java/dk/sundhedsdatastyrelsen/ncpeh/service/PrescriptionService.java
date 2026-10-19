@@ -24,7 +24,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.DocumentIdMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL1Generator;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Mapper;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Oid;
@@ -184,7 +184,7 @@ public class PrescriptionService {
     }
 
     @WithSpan
-    private Stream<EPrescriptionL3Input> assembleEPrescriptionInput(
+    private Stream<EPrescriptionInput> assembleEPrescriptionInput(
         String patientId,
         PrescriptionFilter filter,
         EuropeanHcpIdwsToken token,
@@ -220,7 +220,7 @@ public class PrescriptionService {
                     id -> getAuthorizationByIdentifierCode(id, systemIdentity)
                         .getAutorisation());
 
-                return new EPrescriptionL3Input(
+                return new EPrescriptionInput(
                     fmkResponse,
                     pair.getLeft(),
                     drugMedications,
