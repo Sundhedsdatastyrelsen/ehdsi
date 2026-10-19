@@ -1,7 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda;
 
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
-import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +21,7 @@ public class EPrescriptionL1GeneratorTest {
         var medicationResponse = FmkResponseStorage.getTestDrugMedications(cpr);
 
 
-        var model = new EPrescriptionInput(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01");;
+        var model = new EPrescriptionInput(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01");
         var cda = EPrescriptionL1Generator.generate(model);
         //  System.out.println(cda); //Uncomment for debug print
         Assertions.assertNotNull(cda);
