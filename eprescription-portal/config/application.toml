@@ -13,6 +13,9 @@ dev = { defaultCpr = "0101019999" }
 countries = ["DK", "FI"]
 ismDirectory = "config/ism"
 
+# [openncp]
+# OpenNCP connection info.  When missing, dummy data is used.
+
 # [vault]
 # Vault: config values of the form "vault:/<path>:<key>" are looked up in Vault (see VaultSecretPreprocessor).
 # Optional: Configure truststore for Vault SSL connections
