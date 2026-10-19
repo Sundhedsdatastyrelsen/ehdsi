@@ -6,7 +6,6 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.transform.STRTransform;
-import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,7 +36,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class NspClientIdws {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(NspClientIdws.class);
     private static final XPathWrapper xpath = new XPathWrapper(XmlNamespace.SOAP);
 
     static {
@@ -65,7 +63,7 @@ public class NspClientIdws {
         // Send it to the endpoint.
         try (var httpClient = HttpClient.newBuilder().build()) {
             var request = HttpRequest.newBuilder(uri)
-                .header("Content-Type", "application/soap+xml; charset=utf-8")
+                .header("Content-Type", "text/xml; charset=utf-8")
                 .header("SOAPAction", soapAction)
                 .POST(HttpRequest.BodyPublishers.ofString(reqBody))
                 .build();
@@ -78,11 +76,12 @@ public class NspClientIdws {
                 fullText = extractSoapFromMime(fullText);
             }
 
-            var responseDoc = XmlUtils.parse(fullText);
-
+            // Check the status before parsing, the body might not be valid xml.
             if (res.statusCode() >= 400) {
-                throw new NspClientException(String.format("Request failed with message: %s", xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", responseDoc)));
+                throw new NspClientException(describeFailure(res.statusCode(), fullText));
             }
+
+            var responseDoc = XmlUtils.parse(fullText);
             return (Element) xpath.evalElement("/soap:Envelope/soap:Body", responseDoc).getFirstChild();
         } catch (IOException e) {
             throw new NspClientException("Error when calling NSP service with action " + soapAction, e);
@@ -90,6 +89,19 @@ public class NspClientIdws {
             Thread.currentThread().interrupt();
             throw new NspClientException("Nsp call failed, thread interrupted.", e);
         }
+    }
+
+    /// Describe a failed response, using the SOAP fault string if the body has one.
+    private static String describeFailure(int statusCode, String body) {
+        try {
+            var faultString = xpath.evalString("/soap:Envelope/soap:Body/soap:Fault/faultstring", XmlUtils.parse(body));
+            if (faultString != null && !faultString.isBlank()) {
+                return String.format("Request failed with HTTP status %d and message: %s", statusCode, faultString);
+            }
+        } catch (Exception e) {
+            // Not a SOAP response. Fall through and report the raw body.
+        }
+        return String.format("Request failed with HTTP status %d: %s", statusCode, body);
     }
 
     /// Wrap the body in an envelope and sign it.
