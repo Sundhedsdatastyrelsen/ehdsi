@@ -38,7 +38,7 @@ public class EPrescriptionL1Generator {
             template.process(ePrescriptionL1, writer);
             return writer.toString();
         } catch (IOException | TemplateException e) {
-            throw new MapperException("Could not generate L1 patient summary", e);
+            throw new MapperException("Could not generate L1 ePrescription", e);
         }
     }
 

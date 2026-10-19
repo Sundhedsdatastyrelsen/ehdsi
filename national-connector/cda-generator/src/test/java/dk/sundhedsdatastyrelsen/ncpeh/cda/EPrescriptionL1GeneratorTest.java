@@ -17,18 +17,15 @@ import java.nio.charset.StandardCharsets;
 public class EPrescriptionL1GeneratorTest {
     @Test
     void generateTest() throws Exception {
-        var model = buildInputModel();
-        var cda = EPrescriptionL1Generator.generate(model);
-        //  System.out.println(cda); //Uncomment for debug print
-        Assertions.assertNotNull(cda);
-    }
-
-    private static EPrescriptionInput buildInputModel() throws JAXBException {
         var cpr = "0201909309";
         var response = FmkResponseStorage.getTestPrescriptions(cpr);
         var medicationResponse = FmkResponseStorage.getTestDrugMedications(cpr);
 
-        return new EPrescriptionInput(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01");
+
+        var model = new EPrescriptionInput(response, 0, medicationResponse, "FIN", 1, "Manufacturer", "2025-01");;
+        var cda = EPrescriptionL1Generator.generate(model);
+        //  System.out.println(cda); //Uncomment for debug print
+        Assertions.assertNotNull(cda);
     }
 
     @ParameterizedTest
