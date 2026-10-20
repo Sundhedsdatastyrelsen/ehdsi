@@ -36,7 +36,7 @@ they are tens of MB of XML; `ValueSets` reads them from it, and parses each one 
 The value sets come from the central terminology service (CTS). The NCP syncs them into its database every night
 (`tsam-synchronizer`), and the `tsam-exporter` job in the NCP's `docker-compose.yml` exports them as the files the
 display tool reads. The portal has its own copy, so it doesn't share anything with the NCP at runtime. Update it when
-the CTS publishes a new release of the value sets:
+the CTS publishes a new release of the value sets, and when new translations are available:
 
 1. On an NCP host whose terminology is synced, export the value sets to the `tsam-exporter-data` volume:
    ```

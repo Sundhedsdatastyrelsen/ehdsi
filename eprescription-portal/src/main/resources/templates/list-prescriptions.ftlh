@@ -31,7 +31,6 @@
               <#if prescription.dispensable!false>Ja<#else>Nej</#if>
             </td>
             <td>
-              <!-- Placeholder links -->
               <a href="/prescriptions/${prescription.l3DocumentId?url}?opaque-id=${opaqueId?url}">Se recept</a>
             </td>
           </tr>
