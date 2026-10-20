@@ -1,7 +1,10 @@
 <#import "layout.ftlh" as layout>
 <@layout.page title="ePrescription Portal - Recept">
   <div class="mt-10 max-w-6xl mx-auto">
-    <a href="/prescriptions?opaque-id=${opaqueId?url}" class="underline">Tilbage til recepter</a>
+    <#-- The opaque id is only needed for the link back to the patient's prescriptions -->
+    <#if opaqueId??>
+      <a href="/prescriptions?opaque-id=${opaqueId?url}" class="underline">Tilbage til recepter</a>
+    </#if>
 
     <#-- The prescription is rendered by the CDA display tool, which is sandboxed: without allow-scripts nothing in the
          document can run, and allow-same-origin lets the script below read its height and listen to its events.

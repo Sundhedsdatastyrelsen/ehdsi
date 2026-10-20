@@ -12,9 +12,9 @@ import okhttp3.Request
 import okhttp3.Response
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 import kotlin.time.Clock
@@ -78,16 +78,14 @@ class ShowPrescriptionIntegrationTest {
 
         assertEquals(200, resp.code)
         val body = resp.body.string()
-        assertContains(body, """src="/prescriptions/513671704568702L3/display?opaque-id=$opaqueId"""")
+        assertContains(body, """src="/prescriptions/513671704568702L3/display"""")
         assertContains(body, """href="/prescriptions?opaque-id=$opaqueId"""")
         assertContains(body, """sandbox="allow-same-origin"""")
     }
 
     @Test
     fun `the display renders the prescription with a restrictive CSP`() {
-        val cookie = loginCookieHeader()
-        val opaqueId = searchForOpaqueId(cookie)
-        val resp = get("/prescriptions/513671704568702L3/display?opaque-id=$opaqueId", cookie)
+        val resp = get("/prescriptions/513671704568702L3/display", loginCookieHeader())
 
         assertEquals(200, resp.code)
         val csp = assertNotNull(resp.header("Content-Security-Policy"))
@@ -98,18 +96,17 @@ class ShowPrescriptionIntegrationTest {
 
     @Test
     fun `an unknown prescription is not found`() {
-        val cookie = loginCookieHeader()
-        val opaqueId = searchForOpaqueId(cookie)
-        assertEquals(404, get("/prescriptions/unknown/display?opaque-id=$opaqueId", cookie).code)
+        assertEquals(404, get("/prescriptions/unknown/display", loginCookieHeader()).code)
     }
 
     @Test
-    fun `the pages require a valid opaque patient id`() {
-        val cookie = loginCookieHeader()
-        assertEquals(400, get("/prescriptions/513671704568702L3", cookie).code)
-        assertEquals(400, get("/prescriptions/513671704568702L3/display", cookie).code)
-        assertEquals(404, get("/prescriptions/513671704568702L3?opaque-id=${UUID.randomUUID()}", cookie).code)
-        assertEquals(404, get("/prescriptions/513671704568702L3/display?opaque-id=${UUID.randomUUID()}", cookie).code)
+    fun `without an opaque patient id the prescription page has no link back to the list`() {
+        val resp = get("/prescriptions/513671704568702L3", loginCookieHeader())
+
+        assertEquals(200, resp.code)
+        val body = resp.body.string()
+        assertContains(body, """src="/prescriptions/513671704568702L3/display"""")
+        assertFalse(body.contains("Tilbage til recepter"))
     }
 
     @Test

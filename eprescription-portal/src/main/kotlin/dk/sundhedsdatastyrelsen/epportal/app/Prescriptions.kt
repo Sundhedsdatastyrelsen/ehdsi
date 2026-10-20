@@ -115,8 +115,8 @@ object Prescriptions {
             auth.require(ctx)
             val cda = documents.retrieveDocument(ctx.pathParam("documentId"))
                 ?: throw NotFoundResponse("Prescription not found")
-            // Content security policy: it may only use its own inline styles and images, so it can't run scripts or
-            // load anything, and only the portal may frame it.
+            // Content security policy: tell the browser not to allow any network requests from the rendered html, and
+            // only to display the html on the same origin as the rest of the portal.
             ctx.header(
                 "Content-Security-Policy",
                 "default-src 'none'; style-src 'unsafe-inline'; img-src data:; frame-ancestors 'self'; form-action 'none'"
