@@ -11,21 +11,23 @@
 
     <!--
         Upstream's epCda only shows the coded content, while the Patient Summary shows each section's narrative in an
-        "Original narrative" panel. This adds such a panel for the ePrescription, collapsed, below the coded content.
+        "Original narrative" panel. This adds such a panel for the ePrescription, collapsed, below the Prescriber panel.
 
-        A template that overrides a named template can't call it, so the first four lines are a copy of upstream's
-        epCda (ep/ep.xsl). CdaDisplayTransformerTest checks that they still match.
+        A template that overrides a named template can't call it, so this is a copy of upstream's epCda (ep/ep.xsl)
+        with the originalNarrative call added. CdaDisplayTransformerTest checks that the rest still matches.
     -->
     <xsl:template name="epCda">
         <xsl:apply-templates select="/n1:ClinicalDocument/n1:recordTarget/n1:patientRole"/>
         <xsl:apply-templates select="/n1:ClinicalDocument/n1:author"/>
+        <xsl:call-template name="originalNarrative"/>
         <xsl:call-template name="epInformation"/>
         <xsl:apply-templates select="/n1:ClinicalDocument/n1:component/n1:structuredBody/n1:component/n1:section[n1:templateId/@root='1.3.6.1.4.1.12559.11.10.1.3.1.2.1']/n1:entry"/>
         <!-- End of the copy of upstream's epCda -->
+    </xsl:template>
 
+    <xsl:template name="originalNarrative">
         <xsl:variable name="sections" select="/n1:ClinicalDocument/n1:component/n1:structuredBody/n1:component/n1:section[n1:text]"/>
         <xsl:if test="$sections">
-            <br/>
             <!-- The same markup as the Patient and Prescriber panels -->
             <div class="wrap-collapsible">
                 <input id="collapsible-original-narrative" class="toggle" type="checkbox"/>
@@ -38,6 +40,8 @@
                         <xsl:apply-templates select="$sections/n1:text"/>
                     </div>
                 </div>
+                <br/>
+                <br/>
             </div>
         </xsl:if>
     </xsl:template>

@@ -21,8 +21,8 @@ imports `cda.xsl` and overrides its templates. The CSS may be changed directly, 
 
 ### `portal.xsl`
 
-- The ePrescription's narrative (the sections' `<text>`) is shown in a collapsed "Original narrative" panel below the
-  coded content.
+- The ePrescription's narrative (the sections' `<text>`) is shown in a collapsed "Original narrative" panel between the
+  Prescriber panel and the coded content.
 
   Upstream only shows the narrative for the Patient Summary, where each section has such a panel. For the
   ePrescription it renders the coded content, and only uses the narrative for text that coded elements reference, such
@@ -32,7 +32,7 @@ imports `cda.xsl` and overrides its templates. The CSS may be changed directly, 
 
   The panel uses the Patient Summary's narrative template and label, and the same markup as the Patient and Prescriber
   panels. The override of `epCda` has to repeat upstream's `epCda` (a template that overrides a named template can't
-  call it), and `CdaDisplayTransformerTest` checks that the copy still matches upstream.
+  call it), and `CdaDisplayTransformerTest` checks that the copy, minus the call to the panel, still matches upstream.
 
   The `shownarrative` parameter in `common/cdaCommon.xsl` looks like it would do this, but no stylesheet uses it.
 

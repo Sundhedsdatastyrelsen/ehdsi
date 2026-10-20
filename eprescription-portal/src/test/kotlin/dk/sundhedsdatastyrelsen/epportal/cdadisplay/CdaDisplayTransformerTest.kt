@@ -10,6 +10,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class CdaDisplayTransformerTest {
     private fun example(id: String): String = TestUtils.resource("ep-l3-examples/$id.xml")!!.readText()
@@ -38,6 +39,10 @@ class CdaDisplayTransformerTest {
         assertContains(html, "Original narrative")
         // Only in the narrative block
         assertContains(html, "Data source: FMK 1.4.6")
+        // Between the Prescriber panel and the coded content
+        val narrative = html.indexOf("collapsible-original-narrative")
+        assertTrue(html.indexOf("collapsible-prescriber-header") < narrative)
+        assertTrue(narrative < html.indexOf("td_creation_date"))
     }
 
     /** portal.xsl overrides epCda with a copy of upstream's, plus the narrative. This catches an upstream change. */
@@ -50,6 +55,7 @@ class CdaDisplayTransformerTest {
             .find(read("ep/ep.xsl"))!!.groupValues[1]
         val copy = Regex("""<xsl:template name="epCda">(.*?)<!-- End of the copy""", RegexOption.DOT_MATCHES_ALL)
             .find(read("portal.xsl"))!!.groupValues[1]
+            .replace("""<xsl:call-template name="originalNarrative"/>""", "")
 
         assertEquals(normalize(upstream), normalize(copy))
     }
