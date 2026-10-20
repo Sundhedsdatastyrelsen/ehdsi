@@ -15,6 +15,7 @@ mockito = "5.23.0"
 mockito-kotlin = "6.3.0"
 nimbus-oauth2-oidc-sdk = "11.37"
 okhttp = "5.3.2"
+saxon = "13.0"
 slf4j = "2.0.17"
 sqlite = "3.53.0.0"
 
@@ -38,6 +39,7 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 nimbus-oauth2-oidc-sdk = { module = "com.nimbusds:oauth2-oidc-sdk", version.ref = "nimbus-oauth2-oidc-sdk" }
+saxon-he = { module = "net.sf.saxon:Saxon-HE", version.ref = "saxon" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }

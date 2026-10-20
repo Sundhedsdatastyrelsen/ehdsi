@@ -39,6 +39,9 @@ dependencies {
     // build; see the note at the top of OidcAdminAuth.kt).
     implementation(libs.nimbus.oauth2.oidc.sdk)
 
+    // CDA display tool (XSLT 2.0)
+    implementation(libs.saxon.he)
+
     // Logging
     implementation(libs.slf4j.api)
     implementation(libs.jcl.over.slf4j)

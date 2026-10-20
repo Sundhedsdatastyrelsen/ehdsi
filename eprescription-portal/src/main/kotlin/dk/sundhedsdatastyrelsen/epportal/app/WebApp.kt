@@ -1,10 +1,13 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
+import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
 import dk.sundhedsdatastyrelsen.epportal.openncp.OpenNcpPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
@@ -35,6 +38,8 @@ private fun createTemplateEngine(hotReloading: Boolean): Configuration {
             setClassLoaderForTemplateLoading(this::class.java.classLoader, "/templates")
         }
         defaultEncoding = "UTF-8"
+        // For ?url, which escapes path segments in links
+        urlEscapingCharset = "UTF-8"
         templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
         logTemplateExceptions = false
     }
@@ -69,7 +74,9 @@ object WebApp {
         auth: AuthProvider,
         searchMasks: SearchMaskRepository,
         patientSearch: PatientSearchClient,
-        clock: Clock
+        prescriptionDocuments: PrescriptionDocumentClient,
+        cdaDisplay: CdaDisplayTransformer,
+        clock: Clock,
     ): Javalin {
         val hotReloading = webAppConfig.hotReloading
         if (hotReloading) {
@@ -117,7 +124,7 @@ object WebApp {
 
             auth.registerRoutes(config.routes)
             FindPatient.registerRoutes(config.routes, auth, searchMasks, patientSearch, clock)
-            Prescriptions.registerRoutes(config.routes, auth)
+            Prescriptions.registerRoutes(config.routes, auth, prescriptionDocuments, cdaDisplay)
 
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
@@ -167,6 +174,8 @@ object WebApp {
             config.auth.provider(),
             searchMasks = searchMasks,
             patientSearch = patientSearch,
+            prescriptionDocuments = DummyPrescriptionDocumentClient(),
+            cdaDisplay = CdaDisplayTransformer(config.cdaDisplay),
             clock = Clock.System,
         )
         app.start(config.webApp.port)
