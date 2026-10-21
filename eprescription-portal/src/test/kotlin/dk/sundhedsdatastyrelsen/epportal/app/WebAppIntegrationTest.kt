@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.testMasks
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
 import io.javalin.Javalin
@@ -40,6 +41,8 @@ class WebAppIntegrationTest {
             LocalAuth("0101019999"),
             testMasks(),
             DummyPatientSearchClient(),
+            DummyPrescriptionDocumentClient(),
+            TestUtils.cdaDisplay,
             Clock.System
         )
         app.start(port)

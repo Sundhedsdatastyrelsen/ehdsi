@@ -1,0 +1,178 @@
+<root><![CDATA[
+
+/******************************************************************/
+/* Ingredients table - Table containing the different ingredients */
+/******************************************************************/
+.ingredients_table {
+            border-style: solid;
+            border-width: 1px;
+            border-color: #009fd1;
+        }
+.ingredients_table th {
+    border: 1px;
+}
+.ingredients_table td {
+}
+
+/***************/
+/* eP table    */
+/***************/
+.ep_table {
+}
+
+.ep_table tr:nth-child(odd) {
+    background: #e3eff7
+}
+.ep_table tr:nth-child(even)  {
+    background: #FFF;
+}
+
+html, body {
+    background: #fff;
+    min-width: 700px;
+}
+
+/* ---- Timeline ---- */
+ol {
+    position: relative;
+    display: block;
+    margin: 10px;
+    margin-top: 50px;
+    height: 1px;
+    background: #085a9f;
+}
+ol::before,
+ol::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    display: block;
+    width: 0;
+    height: 0;
+    border-radius: 3px;
+    border: 3px solid #085a9f;
+}
+ol::before {
+    top: -2px;
+    left:-3px;
+}
+ol::after {
+    right: -10px;
+    border: 5px solid transparent;
+    border-right: 0;
+    border-left: 10px solid #085a9f;
+}
+
+/* ---- Timeline elements ---- */
+/* li {
+    position: relative;
+    display: inline-block;
+    float: left;
+    width: 150px;
+    font: 12px arial;
+    height: 50px;
+}
+li .date {
+    position: absolute;
+    top: -35px;
+    left: 30%;
+    color: #000000;
+}
+li .point {
+    top: -2px;
+    left: 43%;
+    display: block;
+    width: 4px;
+    height: 4px;
+    border: 2px solid #085a9f;
+    border-radius: 10px;
+    background: #fff;
+    position: absolute;
+}
+li .description {
+    position: absolute;
+    top: 0px;
+    left: 30%;
+    color: #000000;
+    font: bold 12px arial;
+}*/
+
+/***********************/
+/* Fieldset            */
+/***********************/
+
+fieldset {
+    font-family: Arial, Helvetica, sans-serif;
+    border: 2px solid #085a9f;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+}
+
+fieldset legend {
+    background: #085a9f;
+    color: #fff;
+    padding: 5px 10px ;
+    font-size: 14px;
+    border-radius: 5px;
+    margin-left: 20px;
+}
+
+/******************************/
+/* Code System and ATC blocks */
+/******************************/
+.codeSystem {
+    background-color:#666;
+    margin-top:20px;
+    padding-left:10px;
+    padding-right:10px;
+    border-radius:10px 10px 10px 10px;
+}
+
+.button {
+    -moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    box-shadow:inset 0px 1px 0px 0px #54a3f7;
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #0061a7));
+    background:-moz-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-webkit-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-o-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:-ms-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+    background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#0061a7',GradientType=0);
+    background-color:#007dc1;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    border:1px solid #124d77;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:13px;
+    padding:6px 24px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #154682;
+}
+.button:hover {
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0061a7), color-stop(1, #007dc1));
+    background:-moz-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:-webkit-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:-o-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:-ms-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+    background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0061a7', endColorstr='#007dc1',GradientType=0);
+    background-color:#0061a7;
+}
+.button:active {
+    position:relative;
+    top:1px;
+}
+
+.additionalInfo {
+    float: left;
+    font-style: italic;
+    color: #009fd1;
+}
+
+]]></root>
