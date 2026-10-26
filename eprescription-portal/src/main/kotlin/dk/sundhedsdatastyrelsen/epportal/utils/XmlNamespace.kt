@@ -4,6 +4,10 @@ data class XmlNamespace(val prefix: String?, val uri: String?) {
     companion object {
         // This is a list of namespaces used in the project. Its purpose is convenience, to encourage consistency,
         // and to avoid scattering the information around the codebase.
+
+        /** For elements that need to be unqualified in the generated XML, i.e., have no "ns:" prefix in their name */
+        val UNQUALIFIED = XmlNamespace(null, null)
+
         val HL7: XmlNamespace = XmlNamespace("hl7", "urn:hl7-org:v3")
 
         /** International Search Mask */
@@ -46,7 +50,5 @@ data class XmlNamespace(val prefix: String?, val uri: String?) {
             XmlNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd")
         val XSD: XmlNamespace = XmlNamespace("xsd", "http://www.w3.org/2001/XMLSchema")
         val XSI: XmlNamespace = XmlNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
-
-        val RIM: XmlNamespace = XmlNamespace("rim", "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0");
     }
 }

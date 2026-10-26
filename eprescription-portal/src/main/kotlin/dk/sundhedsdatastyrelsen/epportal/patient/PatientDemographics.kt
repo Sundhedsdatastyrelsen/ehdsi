@@ -6,6 +6,8 @@ import java.time.OffsetDateTime
  * Mirrors the `return` element of the OpenNCP `queryPatient` SOAP response.
  */
 data class PatientDemographics(
+    // Country A, not address country
+    val countryCode: String,
     val givenName: String?,
     val familyName: String?,
     val birthDate: OffsetDateTime?,

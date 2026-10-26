@@ -3,21 +3,11 @@ package dk.sundhedsdatastyrelsen.epportal.openncp
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlNamespace
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import org.w3c.dom.Element
-import java.security.PrivateKey
-import java.security.cert.X509Certificate
 import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.xml.XMLConstants
-import javax.xml.crypto.dsig.CanonicalizationMethod
-import javax.xml.crypto.dsig.DigestMethod
-import javax.xml.crypto.dsig.SignatureMethod
-import javax.xml.crypto.dsig.Transform
-import javax.xml.crypto.dsig.XMLSignatureFactory
-import javax.xml.crypto.dsig.dom.DOMSignContext
-import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec
-import javax.xml.crypto.dsig.spec.TransformParameterSpec
 
 /**
  * Creates signed eHDSI HCP identity assertions, which the OpenNCP client connector requires on every call.
@@ -27,8 +17,8 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec
  */
 class HcpAssertionFactory(
     private val hcp: OpenNcp.HcpConfig,
-    private val signingKey: PrivateKey,
-    private val signingCert: X509Certificate,
+    private val issuer: String,
+    private val signingKey: OpenNcp.SigningKey,
     private val clock: Clock = Clock.systemUTC(),
 ) {
     fun create(): Element {
@@ -43,7 +33,7 @@ class HcpAssertionFactory(
             setAttribute("IssueInstant", now.toString())
             setAttribute("Version", "2.0")
         }
-        val issuer = XmlUtils.appendChild(assertion, SAML, "Issuer", hcp.issuer)
+        val issuer = XmlUtils.appendChild(assertion, SAML, "Issuer", issuer)
         issuer.setAttribute("NameQualifier", "urn:ehdsi:assertions:hcp")
         val subject = XmlUtils.appendChild(assertion, SAML, "Subject")
         XmlUtils.appendChild(subject, SAML, "NameID", hcp.nameId)
@@ -106,31 +96,8 @@ class HcpAssertionFactory(
         )
 
         // The SAML schema requires the signature directly after Issuer.
-        sign(assertion, insertBefore = subject)
+        XmlUtils.sign(assertion, signingKey.key, signingKey.cert, insertBefore = subject)
         return assertion
-    }
-
-    private fun sign(assertion: Element, insertBefore: Element) {
-        val fac = XMLSignatureFactory.getInstance("DOM")
-        val c14n = fac.newTransform(CanonicalizationMethod.EXCLUSIVE, null as TransformParameterSpec?)
-        val reference = fac.newReference(
-            "#" + assertion.getAttribute("ID"),
-            fac.newDigestMethod(DigestMethod.SHA256, null),
-            listOf(fac.newTransform(Transform.ENVELOPED, null as TransformParameterSpec?), c14n),
-            null,
-            null,
-        )
-        val signedInfo = fac.newSignedInfo(
-            fac.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, null as C14NMethodParameterSpec?),
-            fac.newSignatureMethod(SignatureMethod.RSA_SHA256, null),
-            listOf(reference),
-        )
-        val kif = fac.keyInfoFactory
-        val keyInfo = kif.newKeyInfo(listOf(kif.newX509Data(listOf(signingCert))))
-        val ctx = DOMSignContext(signingKey, assertion, insertBefore).apply {
-            defaultNamespacePrefix = XmlNamespace.DS.prefix
-        }
-        fac.newXMLSignature(signedInfo, keyInfo).sign(ctx)
     }
 
     companion object {
@@ -138,15 +105,5 @@ class HcpAssertionFactory(
 
         /** HL7 v3 as the default namespace, as in the eHDSI examples. */
         private val HL7 = XmlNamespace(null, XmlNamespace.HL7.uri)
-
-        fun fromConfig(config: OpenNcp.Config): HcpAssertionFactory {
-            val signing = config.signing
-            val keyStore = OpenNcp.loadKeyStore(signing.keystore)
-            val keyPassword = (signing.keyPassword ?: signing.keystore.password).value.toCharArray()
-            val key = keyStore.getKey(signing.alias, keyPassword) as? PrivateKey
-                ?: throw IllegalStateException("No private key with alias '${signing.alias}' in ${signing.keystore.path}")
-            val cert = keyStore.getCertificate(signing.alias) as X509Certificate
-            return HcpAssertionFactory(config.hcp, key, cert)
-        }
     }
 }

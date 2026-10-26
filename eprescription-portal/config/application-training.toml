@@ -4,6 +4,7 @@
 [openncp]
 endpoint = "https://ncp-training.ehdsi.sundhedsdata.dk:6443/openncp-client-connector/services/ClientService"
 truststore = { path = "ncp-keystore/dev-truststore.jks", password = "changeit" }
+issuer = "urn:idp:DK:countryB"
 
 [openncp.signing]
 alias = "tomcat"

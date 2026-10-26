@@ -14,12 +14,12 @@ import java.net.URI
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-/** Runs [OpenNcpPatientSearchClient] over HTTP against a stub standing in for the client connector's ClientService. */
-class OpenNcpPatientSearchClientIntegrationTest {
+/** Runs [OpenNcpClient] over HTTP against a stub standing in for the client connector's ClientService. */
+class OpenNcpClientIntegrationTest {
     private data class Captured(val contentType: String?, val body: ByteArray)
 
     private lateinit var stub: Javalin
-    private lateinit var client: OpenNcpPatientSearchClient
+    private lateinit var client: OpenNcpClient
     private val requests = mutableListOf<Captured>()
     private var responseStatus = 200
     /** Null means a plain-text body, as from a proxy. */
@@ -42,7 +42,7 @@ class OpenNcpPatientSearchClientIntegrationTest {
         }
         val port = TestUtils.randomFreePort()
         stub.start(port)
-        client = OpenNcpPatientSearchClient.create(
+        client = OpenNcpClient.create(
             testOpenNcpConfig(URI("http://localhost:$port/services/ClientService")),
         )
     }
@@ -54,15 +54,56 @@ class OpenNcpPatientSearchClientIntegrationTest {
 
     @Test
     fun `sends a SOAP 1_2 queryPatient request and returns the patients found`() {
-        val patients = client.queryPatient("FI", listOf(PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A")))
+        val ids = listOf(PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"), PatientId("1.2.3", "x<&>y"))
+        val patients = client.queryPatient("FI", ids)
 
         assertEquals(listOf("Maija", "Matti"), patients.map { it.givenName })
+        assertEquals(listOf("FI", "FI"), patients.map { it.countryCode })
         val request = requests.single()
         assertEquals("""application/soap+xml; charset=UTF-8; action="urn:ehdsi:queryPatient"""", request.contentType)
         val doc = XmlUtils.parse(request.body.inputStream())
         val xpath = XPathWrapper(XmlNamespace.SOAP12, XmlNamespace.WSSE, XmlNamespace.SAML, XmlNamespace.OPENNCP_CLIENT)
         assertNotNull(xpath.evalElement("/soap12:Envelope/soap12:Header/wsse:Security/saml:Assertion", doc))
-        assertEquals("FI", xpath.evalString("/soap12:Envelope/soap12:Body/ncpc:queryPatient/arg0/countryCode", doc))
+        val arg0 = xpath.evalElement("/soap12:Envelope/soap12:Body/ncpc:queryPatient/arg0", doc)!!
+        assertEquals("FI", xpath.evalString("countryCode", arg0))
+        assertEquals(ids.map { it.root }, xpath.evalStrings("patientDemographics/patientId/root", arg0))
+        assertEquals(ids.map { it.extension }, xpath.evalStrings("patientDemographics/patientId/extension", arg0))
+    }
+
+    @Test
+    fun `listDocuments sends an HCP assertion and a TRC assertion referring to it`() {
+        responseFixture = "query-documents-response.xml"
+        val prescriptions = client.listDocuments("FI", PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"))
+
+        assertEquals(3, prescriptions.size)
+        assertEquals(
+            """application/soap+xml; charset=UTF-8; action="urn:ehdsi:queryDocuments"""",
+            requests.single().contentType,
+        )
+
+        val doc = XmlUtils.parse(requests.single().body.inputStream())
+        val xpath = XPathWrapper(XmlNamespace.SOAP12, XmlNamespace.WSSE, XmlNamespace.SAML)
+        val security = xpath.evalElement("/soap12:Envelope/soap12:Header/wsse:Security", doc)!!
+        val hcpId = xpath.evalString("saml:Assertion[saml:Issuer/@NameQualifier='urn:ehdsi:assertions:hcp']/@ID", security)
+        val trc = xpath.evalElement("saml:Assertion[saml:Issuer/@NameQualifier='urn:ehdsi:assertions:trc']", security)!!
+        assertEquals(hcpId, xpath.evalString("saml:Advice/saml:AssertionIDRef", trc))
+        assertEquals(
+            "120375-123A^^^&1.2.246.556.12001.4.1000.990.1&ISO",
+            xpath.evalString("saml:AttributeStatement/saml:Attribute/saml:AttributeValue", trc),
+        )
+    }
+
+    @Test
+    fun `queryPatient request body is valid against ClientService_xsd`() {
+        client.queryPatient("FI", listOf(PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A")))
+        validateClientServiceBody(XmlUtils.parse(requests.single().body.inputStream()))
+    }
+
+    @Test
+    fun `queryDocuments request body is valid against ClientService_xsd`() {
+        responseFixture = "query-documents-response.xml"
+        client.listDocuments("FI", PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"))
+        validateClientServiceBody(XmlUtils.parse(requests.single().body.inputStream()))
     }
 
     @Test
@@ -79,6 +120,13 @@ class OpenNcpPatientSearchClientIntegrationTest {
     fun `a SOAP fault is raised as an exception`() {
         responseStatus = 500
         responseFixture = "soap-fault.xml"
+        assertThrows<OpenNcpException> { client.queryPatient("FI", emptyList()) }
+    }
+
+    @Test
+    fun `an HTTP error with a SOAP body that is not a fault is raised as an exception`() {
+        responseStatus = 503
+        responseFixture = "query-patient-empty.xml"
         assertThrows<OpenNcpException> { client.queryPatient("FI", emptyList()) }
     }
 

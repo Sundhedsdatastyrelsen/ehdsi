@@ -1,0 +1,134 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Header>
+        <Action xmlns="http://www.w3.org/2005/08/addressing">urn:ehdsi:queryDocumentsResponse</Action>
+        <MessageID xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:13fc702a-124f-45b0-bfc7-237ed4c97d9a
+        </MessageID>
+        <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+        <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:23ae57c6-1c4c-4588-aa53-048952be42bb
+        </RelatesTo>
+    </soap:Header>
+    <soap:Body>
+        <ns2:queryDocumentsResponse xmlns:ns2="http://api.client.core.openncp.sante.ec.europa.eu">
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2026-11-02T10:19:29Z</creationDate>
+                <description>Cipramil (Citalopram)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^531314369290021L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Helle Bonde</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2026-11-02T10:19:29Z</creationDate>
+                    <description>Cipramil (Citalopram)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^531314369290021L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Helle Bonde</person>
+                    </authors>
+                    <atcCode>N06AB04</atcCode>
+                    <atcText>Citalopram</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>20 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N06AB04</atcCode>
+                <atcText>Citalopram</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>20 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2026-11-02T10:19:29Z</creationDate>
+                <description>Cipramil (Citalopram)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^531314369290021L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Helle Bonde</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2026-11-02T10:19:29Z</creationDate>
+                    <description>Cipramil (Citalopram)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^531314369290021L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Helle Bonde</person>
+                    </authors>
+                    <atcCode>N06AB04</atcCode>
+                    <atcText>Citalopram</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>20 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N06AB04</atcCode>
+                <atcText>Citalopram</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>20 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+        </ns2:queryDocumentsResponse>
+    </soap:Body>
+</soap:Envelope>

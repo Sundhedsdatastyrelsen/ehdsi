@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://api.client.core.openncp.sante.ec.europa.eu" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" name="ClientService" targetNamespace="http://api.client.core.openncp.sante.ec.europa.eu">
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://api.client.core.openncp.sante.ec.europa.eu" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+
+            <xsd:import namespace="http://api.client.core.openncp.sante.ec.europa.eu" schemaLocation="https://localhost:6443/openncp-client-connector/services/ClientService?xsd=ClientService.xsd"/>
+
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="submitDocument">
+        <wsdl:part element="tns:submitDocument" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="queryDocumentsResponse">
+        <wsdl:part element="tns:queryDocumentsResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sayHelloResponse">
+        <wsdl:part element="tns:sayHelloResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="queryDocuments">
+        <wsdl:part element="tns:queryDocuments" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="queryPatientResponse">
+        <wsdl:part element="tns:queryPatientResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="retrieveDocumentResponse">
+        <wsdl:part element="tns:retrieveDocumentResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="submitDocumentResponse">
+        <wsdl:part element="tns:submitDocumentResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="sayHello">
+        <wsdl:part element="tns:sayHello" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="queryPatient">
+        <wsdl:part element="tns:queryPatient" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="retrieveDocument">
+        <wsdl:part element="tns:retrieveDocument" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="ClientServicePortType">
+        <wsdl:operation name="sayHello">
+            <wsdl:input message="tns:sayHello" wsam:Action="urn:ehdsi:sayHello">
+            </wsdl:input>
+            <wsdl:output message="tns:sayHelloResponse" wsam:Action="urn:ehdsi:sayHelloResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="queryPatient">
+            <wsdl:input message="tns:queryPatient" wsam:Action="urn:ehdsi:queryPatient">
+            </wsdl:input>
+            <wsdl:output message="tns:queryPatientResponse" wsam:Action="urn:ehdsi:queryPatientResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="queryDocuments">
+            <wsdl:input message="tns:queryDocuments" wsam:Action="urn:ehdsi:queryDocuments">
+            </wsdl:input>
+            <wsdl:output message="tns:queryDocumentsResponse" wsam:Action="urn:ehdsi:queryDocumentsResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retrieveDocument">
+            <wsdl:input message="tns:retrieveDocument" wsam:Action="urn:ehdsi:retrieveDocument">
+            </wsdl:input>
+            <wsdl:output message="tns:retrieveDocumentResponse" wsam:Action="urn:ehdsi:retrieveDocumentResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="submitDocument">
+            <wsdl:input message="tns:submitDocument" wsam:Action="urn:ehdsi:submitDocument">
+            </wsdl:input>
+            <wsdl:output message="tns:submitDocumentResponse" wsam:Action="urn:ehdsi:submitDocumentResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ClientServicePortBinding" type="tns:ClientServicePortType">
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="sayHello">
+            <soap12:operation soapAction="urn:ehdsi:sayHello"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="queryPatient">
+            <wsp:PolicyReference URI="#HttpsWithSAML2AssertionPolicy"/>
+            <soap12:operation soapAction="urn:ehdsi:queryPatient"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="queryDocuments">
+            <wsp:PolicyReference URI="#HttpsWithSAML2AssertionPolicy"/>
+            <soap12:operation soapAction="urn:ehdsi:queryDocuments"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retrieveDocument">
+            <wsp:PolicyReference URI="#HttpsWithSAML2AssertionPolicy"/>
+            <soap12:operation soapAction="urn:ehdsi:retrieveDocument"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="submitDocument">
+            <wsp:PolicyReference URI="#HttpsWithSAML2AssertionPolicy"/>
+            <soap12:operation soapAction="urn:ehdsi:submitDocument"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ClientService">
+        <wsdl:port binding="tns:ClientServicePortBinding" name="ClientServicePort">
+            <soap12:address location="https://localhost:6443/openncp-client-connector/services/ClientService"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsp:Policy wsu:Id="HttpsWithSAML2AssertionPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SupportingTokens>
+                    <wsp:Policy>
+                        <sp:SamlToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssSamlV20Token11/>
+                            </wsp:Policy>
+                        </sp:SamlToken>
+                    </wsp:Policy>
+                </sp:SupportingTokens>
+                <sp:TransportToken>
+                    <wsp:Policy>
+                        <sp:HttpsToken RequireClientCertificate="true"/>
+                    </wsp:Policy>
+                </sp:TransportToken>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+</wsdl:definitions>

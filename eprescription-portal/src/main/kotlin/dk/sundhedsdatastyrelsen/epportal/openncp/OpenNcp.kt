@@ -4,6 +4,8 @@ import com.sksamuel.hoplite.Secret
 import java.io.File
 import java.net.URI
 import java.security.KeyStore
+import java.security.PrivateKey
+import java.security.cert.X509Certificate
 import java.time.Duration
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
@@ -24,6 +26,14 @@ object OpenNcp {
         /** The key that signs the HCP assertion. Its certificate must be trusted by the client connector. */
         val signing: SigningConfig,
         val hcp: HcpConfig = HcpConfig(),
+        /**
+         * The issuer to write in TRC and HCP assertions. From eHDSI_SAML_Profile_v10.0.0.pdf
+         * (https://webgate.ec.europa.eu/fpfis/wikis/x/AeTzN):
+         *
+         * > address URI that identifies the endpoint of the issuing service (i.e. Uri of NCP-B)
+         */
+        val issuer: String,
+        val trcAssertionDuration: Duration = Duration.ofHours(1),
     )
 
     data class StoreConfig(
@@ -44,7 +54,6 @@ object OpenNcp {
      * TODO: First iteration only. The identity is hard-coded in config instead of coming from the logged-in user.
      */
     data class HcpConfig(
-        val issuer: String = "urn:idp:DK:countryB",
         val nameId: String = "testpharmacist",
         /** XSPA subject-id: the HCP's name. */
         val subjectId: String = "Test Farmaceut",
@@ -70,6 +79,17 @@ object OpenNcp {
     /** Loads a PKCS12 or JKS keystore. */
     fun loadKeyStore(config: StoreConfig): KeyStore =
         KeyStore.getInstance(File(config.path), config.password.value.toCharArray())
+
+    data class SigningKey(val key: PrivateKey, val cert: X509Certificate)
+
+    fun loadSigningKey(config: SigningConfig): SigningKey {
+        val keyStore = loadKeyStore(config.keystore)
+        val keyPassword = (config.keyPassword ?: config.keystore.password).value.toCharArray()
+        val key = keyStore.getKey(config.alias, keyPassword) as? PrivateKey
+            ?: throw IllegalStateException("No private key with alias '${config.alias}' in ${config.keystore.path}")
+        val cert = keyStore.getCertificate(config.alias) as X509Certificate
+        return SigningKey(key, cert)
+    }
 
     /** A TLS context that trusts only the certificates in [truststore]. */
     fun sslContext(truststore: StoreConfig): SSLContext {

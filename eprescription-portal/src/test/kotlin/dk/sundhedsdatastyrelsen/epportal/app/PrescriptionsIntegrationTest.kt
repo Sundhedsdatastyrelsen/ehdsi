@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionListClient
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.testMasks
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
@@ -37,7 +38,7 @@ class PrescriptionsIntegrationTest {
             WebApp.Config(port),
             LocalAuth("0101019999"),
             testMasks(),
-            DummyPatientSearchClient(),
+            DummyPatientSearchClient(), DummyPrescriptionListClient(),
             DummyPrescriptionDocumentClient(),
             TestUtils.cdaDisplay,
             Clock.System
@@ -97,6 +98,7 @@ class PrescriptionsIntegrationTest {
         val body = resp.body.string()
         assertContains(body, "Diazepam")
         assertContains(body, "N02BE01")
+        assertContains(body, "Ja, generisk")
     }
 
     @Test
