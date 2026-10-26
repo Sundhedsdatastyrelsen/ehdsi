@@ -128,7 +128,13 @@ public class PatientSummaryPdfMapper {
         medicationLines.add("MEDICATION SUMMARY");
         medicationLines.add(LINE_SPACER);
 
-        if (medicationSummary == null || medicationSummary.getItems().isEmpty()) {
+        // TODO: Change text
+        if (medicationSummary == null) {
+            medicationLines.add("The patient has no current or recent medications according to our data");
+            return medicationLines;
+        }
+
+        if (medicationSummary.getItems().isEmpty()) {
             medicationLines.add("The patient has no current or recent medications according to our data");
             return medicationLines;
         }
@@ -184,8 +190,7 @@ public class PatientSummaryPdfMapper {
         return medicationLines;
     }
 
-    private static String medicationHeading(int number, MedicationSummary.MedicationItem medication
-    ) {
+    private static String medicationHeading(int number, MedicationSummary.MedicationItem medication) {
         if (medication.getProduct() == null) {
             return number + ". Unknown medication";
         }
@@ -206,7 +211,13 @@ public class PatientSummaryPdfMapper {
         lines.add("IMMUNIZATIONS");
         lines.add(LINE_SPACER);
 
-        if (immunizations == null || immunizations.getItems().isEmpty()) {
+        //TODO: Change text
+        if (immunizations == null ) {
+            lines.add("Immunization data is temporarily unavailable due to a retrieval failure from Source (DDV).");
+            return lines;
+        }
+
+        if (immunizations.getItems().isEmpty()) {
             lines.add(NO_INFORMATION_TEXT);
             return lines;
         }

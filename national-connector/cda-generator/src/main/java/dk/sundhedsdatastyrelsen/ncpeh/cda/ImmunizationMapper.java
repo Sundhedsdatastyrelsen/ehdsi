@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public class ImmunizationMapper {
 
+    private ImmunizationMapper() {}
+
     public static CdaId immunizationId(VaccinationType vaccine) {
         var id = vaccine.getVaccinationIdentifier();
 

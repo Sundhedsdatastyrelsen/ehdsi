@@ -35,9 +35,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class PatientSummaryL3Mapper {
-    private PatientSummaryL3Mapper() {
-
-    }
+    private PatientSummaryL3Mapper() {}
 
     /**
      * Map a patientSummary response from FMK to a CDA data model.
@@ -76,6 +74,7 @@ public class PatientSummaryL3Mapper {
     }
 
     private static List<DrugMedicationType> medications(GetMedicineCardResponseType response) {
+        // This is our "failover" if the services are down
         if (response == null) {
             return List.of();
         }
@@ -88,6 +87,7 @@ public class PatientSummaryL3Mapper {
     }
 
     private static List<VaccinationType> vaccinations(GetVaccinationCardResponseType response) {
+        // This is our "failover" if the services are down
         if (response == null) {
             return List.of();
         }
