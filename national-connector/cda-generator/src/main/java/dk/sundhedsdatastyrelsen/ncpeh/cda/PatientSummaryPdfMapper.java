@@ -29,9 +29,15 @@ public class PatientSummaryPdfMapper {
         return new PatientSummaryPdf(List.of(
             field(titleLines(dataModel)),
             field(patientLines(dataModel.getPatient())),
-            field(medicationLines(dataModel.getMedicationSummary())),
+            field(dataModel.getMedicationSummary().match(
+                failure -> retrievalFailureLines("MEDICATION SUMMARY", "FMK"),
+                PatientSummaryPdfMapper::medicationLines
+            )),
             field(allergyLines()),
-            field(immunizationLines(dataModel.getImmunizations())),
+            field(dataModel.getImmunizations().match(
+                failure -> retrievalFailureLines("IMMUNIZATIONS", "DDV"),
+                PatientSummaryPdfMapper::immunizationLines
+            )),
             field(surgeryLines()),
             field(pastIllnessLines()),
             field(activeProblemLines()),
@@ -128,12 +134,6 @@ public class PatientSummaryPdfMapper {
         medicationLines.add("MEDICATION SUMMARY");
         medicationLines.add(LINE_SPACER);
 
-        // TODO: Change text
-        if (medicationSummary == null) {
-            medicationLines.add("The patient has no current or recent medications according to our data");
-            return medicationLines;
-        }
-
         if (medicationSummary.getItems().isEmpty()) {
             medicationLines.add("The patient has no current or recent medications according to our data");
             return medicationLines;
@@ -211,12 +211,6 @@ public class PatientSummaryPdfMapper {
         lines.add("IMMUNIZATIONS");
         lines.add(LINE_SPACER);
 
-        //TODO: Change text
-        if (immunizations == null ) {
-            lines.add("Immunization data is temporarily unavailable due to a retrieval failure from Source (DDV).");
-            return lines;
-        }
-
         if (immunizations.getItems().isEmpty()) {
             lines.add(NO_INFORMATION_TEXT);
             return lines;
@@ -271,6 +265,22 @@ public class PatientSummaryPdfMapper {
         return lines;
     }
 
+    private static String immunizationHeading(int number, Immunizations.ImmunizationItem immunization) {
+        var name = immunization.getName();
+
+        if (name == null || name.isBlank()) {
+            name = "Unknown immunization";
+        }
+
+        var result = number + ". " + name;
+
+        if (immunization.getStrength() != null && !immunization.getStrength().isBlank()) {
+            result += " " + immunization.getStrength();
+        }
+
+        return result;
+    }
+    
     private static List<String> allergyLines() {
         return List.of(
             "ALLERGIES",
@@ -367,20 +377,12 @@ public class PatientSummaryPdfMapper {
         );
     }
 
-    private static String immunizationHeading(int number, Immunizations.ImmunizationItem immunization) {
-        var name = immunization.getName();
-
-        if (name == null || name.isBlank()) {
-            name = "Unknown immunization";
-        }
-
-        var result = number + ". " + name;
-
-        if (immunization.getStrength() != null && !immunization.getStrength().isBlank()) {
-            result += " " + immunization.getStrength();
-        }
-
-        return result;
+    private static List<String> retrievalFailureLines(String heading, String source) {
+        return List.of(
+            heading,
+            LINE_SPACER,
+            "Data is temporarily unavailable due to a retrieval failure from " + source + "."
+        );
     }
 
     private static String targetDisease(Immunizations.ImmunizationItem immunization) {

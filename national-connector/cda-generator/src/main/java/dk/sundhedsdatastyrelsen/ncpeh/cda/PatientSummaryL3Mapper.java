@@ -19,6 +19,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.MedicationSummary.MedicationItem
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Product;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.RetrievalFailure;
 import dk.vaccinationsregister.schemas._2013._12._01.EffectuatedPlannedItemType;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
 import dk.vaccinationsregister.schemas._2013._12._01.VaccinationType;
@@ -57,10 +58,18 @@ public class PatientSummaryL3Mapper {
         var preferredHP = input.preferredHealthProfessional();
         var documentId = input.documentId();
 
+        Either<RetrievalFailure, MedicationSummary> medicationResult =
+            input.fmkMedicineCardResponse() == null
+                ? Either.ofLeft(RetrievalFailure.UNAVAILABLE)
+                : Either.ofRight(medicationSummary(medications(input.fmkMedicineCardResponse()))
+            );
 
-        //#1 this returns a empty list if null -> just be null
-        var medications = medications(input.fmkMedicineCardResponse());
-        var vaccinations = vaccinations(input.ddvVaccinationCardResponse());
+        Either<RetrievalFailure, Immunizations> immunizationResult =
+            input.ddvVaccinationCardResponse() == null
+                ? Either.ofLeft(RetrievalFailure.UNAVAILABLE)
+                : Either.ofRight(immunizations(vaccinations(input.ddvVaccinationCardResponse()))
+            );
+
 
         var patientSummaryBuilder = PatientSummaryL3.builder()
             .documentId(new CdaId(
@@ -70,18 +79,13 @@ public class PatientSummaryL3Mapper {
             .effectiveTime(OffsetDateTime.now())
             .patient(patient)
             .preferredHp(preferredHP)
-            .medicationSummary(medicationSummary(medications)) //#2 This expects an list,
-            .immunizations(immunizations(vaccinations));
+            .medicationSummary(medicationResult)
+            .immunizations(immunizationResult);
 
         return patientSummaryBuilder.build();
     }
 
     private static List<DrugMedicationType> medications(GetMedicineCardResponseType response) {
-        // This is our "failover" if the services are down
-        if (response == null) {
-            return null;
-        }
-
         return response.getMedicineCard().stream()
             .filter(Objects::nonNull)
             .flatMap(card -> card.getDrugMedication().stream())
@@ -90,11 +94,6 @@ public class PatientSummaryL3Mapper {
     }
 
     private static List<VaccinationType> vaccinations(GetVaccinationCardResponseType response) {
-        // This is our "failover" if the services are down
-        if (response == null) {
-            return null;
-        }
-
         // Sort by vaccination identifier, then by vaccination plan identifier,
         // and finally by vaccination plan item index. For easier reading in the CDA
         return response.getVaccination().stream()
