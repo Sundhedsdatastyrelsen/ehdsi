@@ -65,10 +65,11 @@ class PatientSummaryL3MapperTest {
         }
     }
 
-    static PatientSummaryL3 getModelWithEmptyMedicineCard() {
+    static PatientSummaryL3 getModelWithEmptyMedicineCardAndVaccinationCard() {
         try {
             var cpr = "1004219992";
             var fmkResponse = FmkResponseStorage.getTestMedicineCards(cpr);
+            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -99,6 +100,138 @@ class PatientSummaryL3MapperTest {
                 preferredHp,
                 patient,
                 fmkResponse,
+                ddvresponse
+            );
+
+            return PatientSummaryL3Mapper.model(input);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    static PatientSummaryL3 getModelWithFailedFMKService() {
+        try {
+            var cpr = "1004219992";
+            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
+
+            var patient = Patient.builder()
+                .id(new CdaId(Oid.DK_CPR, cpr))
+                .name(new Name("Bach", List.of("Sofie")))
+                .genderCode(CdaCode.builder()
+                    .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                    .codeSystemVersion("913-20091020")
+                    .code("F")
+                    .displayName("Female")
+                    .build())
+                .birthTime(LocalDate.of(2000, 10, 4))
+                .address(new Address(
+                    List.of("Morbærvej 200"),
+                    "København K",
+                    "1362",
+                    "DK"
+                ))
+                .build();
+
+            var preferredHp = PreferredHealthProfessional.builder()
+                .name(Name.fromFullName("Tycho Brahe"))
+                .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
+                .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
+                .build();
+
+            var input = new PatientSummaryInput(
+                "test-document-id",
+                preferredHp,
+                patient,
+                null,
+                ddvresponse
+            );
+
+            return PatientSummaryL3Mapper.model(input);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static PatientSummaryL3 getModelWithFailedDDVService() {
+        try {
+            var cpr = "1004219992";
+            var fmkResponse = FmkResponseStorage.getTestMedicineCards(cpr);
+            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
+
+            var patient = Patient.builder()
+                .id(new CdaId(Oid.DK_CPR, cpr))
+                .name(new Name("Bach", List.of("Sofie")))
+                .genderCode(CdaCode.builder()
+                    .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                    .codeSystemVersion("913-20091020")
+                    .code("F")
+                    .displayName("Female")
+                    .build())
+                .birthTime(LocalDate.of(2000, 10, 4))
+                .address(new Address(
+                    List.of("Morbærvej 200"),
+                    "København K",
+                    "1362",
+                    "DK"
+                ))
+                .build();
+
+            var preferredHp = PreferredHealthProfessional.builder()
+                .name(Name.fromFullName("Tycho Brahe"))
+                .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
+                .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
+                .build();
+
+            var input = new PatientSummaryInput(
+                "test-document-id",
+                preferredHp,
+                patient,
+                null,
+                ddvresponse
+            );
+
+            return PatientSummaryL3Mapper.model(input);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static PatientSummaryL3 getModelWithFailedAllServices() {
+        try {
+            var cpr = "1004219992";
+            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
+
+            var patient = Patient.builder()
+                .id(new CdaId(Oid.DK_CPR, cpr))
+                .name(new Name("Bach", List.of("Sofie")))
+                .genderCode(CdaCode.builder()
+                    .codeSystem(Oid.ADMINISTRATIVE_GENDER)
+                    .codeSystemVersion("913-20091020")
+                    .code("F")
+                    .displayName("Female")
+                    .build())
+                .birthTime(LocalDate.of(2000, 10, 4))
+                .address(new Address(
+                    List.of("Morbærvej 200"),
+                    "København K",
+                    "1362",
+                    "DK"
+                ))
+                .build();
+
+            var preferredHp = PreferredHealthProfessional.builder()
+                .name(Name.fromFullName("Tycho Brahe"))
+                .telecoms(List.of(Telecom.builder().use(Telecom.Use.WORK_PLACE).value("tel:+4511111111").build()))
+                .address(new Address(List.of("Rundetårn", "Købmagergade 52A", "Kælderen"), "København K", "1150", "DK"))
+                .build();
+
+            var input = new PatientSummaryInput(
+                "test-document-id",
+                preferredHp,
+                patient,
+                null,
                 null
             );
 
@@ -107,6 +240,7 @@ class PatientSummaryL3MapperTest {
             throw new RuntimeException(e);
         }
     }
+
 
     @Test
     void model() {
@@ -120,10 +254,36 @@ class PatientSummaryL3MapperTest {
     }
 
     @Test
-    void modelEmptyMedicationCard() {
-        var model = getModelWithEmptyMedicineCard();
+    void modelEmptyMedicationCardAndVaccinationCard() {
+        var model = getModelWithEmptyMedicineCardAndVaccinationCard();
 
         assertThat(model.getMedicationSummary().getItems(), is(empty()));
+        assertThat(model.getImmunizations().getItems(), is(empty()));
+    }
+
+
+    @Test
+    void modelFailedFMKServce() {
+        var model = getModelWithFailedFMKService();
+
+        assertThat(model.getMedicationSummary().getItems(), is(empty()));
+        assertThat(model.getImmunizations().getItems(), is(empty()));
+    }
+
+    @Test
+    void modelFailedDDVService() {
+        var model = getModelWithFailedDDVService();
+
+        assertThat(model.getMedicationSummary().getItems(), is(empty()));
+        assertThat(model.getImmunizations().getItems(), is(empty()));
+    }
+
+    @Test
+    void modelFailedAllServices() {
+        var model = getModelWithFailedAllServices();
+
+        assertThat(model.getMedicationSummary().getItems(), is(empty()));
+        assertThat(model.getImmunizations().getItems(), is(empty()));
     }
 
 }

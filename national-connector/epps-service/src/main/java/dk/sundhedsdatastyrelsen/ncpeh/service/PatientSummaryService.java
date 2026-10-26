@@ -146,6 +146,6 @@ public class PatientSummaryService {
             //throw new PublicException(500, "Could not retrieve prescriptions.", e);
         }
 
-            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
+        return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
     }
 }

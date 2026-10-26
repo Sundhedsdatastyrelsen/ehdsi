@@ -206,7 +206,7 @@
 
             <#-- Immunizations -->
             <component>
-                <@immunizationSection.render immunizations=immunizations />
+                <@immunizationSection.render immunizations=(immunizations)! retrievalFailed=!(immunizations??)/>
             </component>
 
             <#-- List of Surgeries -->

@@ -56,6 +56,9 @@ public class PatientSummaryL3Mapper {
         var patient = input.patient();
         var preferredHP = input.preferredHealthProfessional();
         var documentId = input.documentId();
+
+
+        //#1 this returns a empty list if null -> just be null
         var medications = medications(input.fmkMedicineCardResponse());
         var vaccinations = vaccinations(input.ddvVaccinationCardResponse());
 
@@ -67,7 +70,7 @@ public class PatientSummaryL3Mapper {
             .effectiveTime(OffsetDateTime.now())
             .patient(patient)
             .preferredHp(preferredHP)
-            .medicationSummary(medicationSummary(medications))
+            .medicationSummary(medicationSummary(medications)) //#2 This expects an list,
             .immunizations(immunizations(vaccinations));
 
         return patientSummaryBuilder.build();
@@ -76,7 +79,7 @@ public class PatientSummaryL3Mapper {
     private static List<DrugMedicationType> medications(GetMedicineCardResponseType response) {
         // This is our "failover" if the services are down
         if (response == null) {
-            return List.of();
+            return null;
         }
 
         return response.getMedicineCard().stream()
@@ -89,7 +92,7 @@ public class PatientSummaryL3Mapper {
     private static List<VaccinationType> vaccinations(GetVaccinationCardResponseType response) {
         // This is our "failover" if the services are down
         if (response == null) {
-            return List.of();
+            return null;
         }
 
         // Sort by vaccination identifier, then by vaccination plan identifier,
@@ -118,6 +121,11 @@ public class PatientSummaryL3Mapper {
     }
 
     private static MedicationSummary medicationSummary(List<DrugMedicationType> medications) {
+        if (medications == null)
+        {
+            return null;
+        }
+
         return MedicationSummary.builder()
             .items(medications.stream()
                 .map(PatientSummaryL3Mapper::medicationItem)
@@ -126,6 +134,10 @@ public class PatientSummaryL3Mapper {
     }
 
     private static Immunizations immunizations(List<VaccinationType> vaccinations) {
+        if (vaccinations == null) {
+            return null;
+        }
+
         return Immunizations.builder()
             .items(vaccinations.stream()
                 .map(PatientSummaryL3Mapper::immunizationItem)
