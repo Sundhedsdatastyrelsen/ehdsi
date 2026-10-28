@@ -231,9 +231,6 @@
   .h-full {
     height: 100%;
   }
-  .min-h-16 {
-    min-height: calc(var(--spacing) * 16);
-  }
   .min-h-dvh {
     min-height: 100dvh;
   }
@@ -249,17 +246,14 @@
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
-  .max-w-prose {
-    max-width: 65ch;
-  }
-  .flex-1 {
-    flex: 1;
-  }
   .shrink {
     flex-shrink: 1;
   }
   .animate-spin {
     animation: var(--animate-spin);
+  }
+  .resize {
+    resize: both;
   }
   .flex-col {
     flex-direction: column;
@@ -383,11 +377,6 @@
   .md\:px-8 {
     @media (width >= 48rem) {
       padding-inline: calc(var(--spacing) * 8);
-    }
-  }
-  .\[\&\:has\(dialog\[open\]\)\]\:overflow-hidden {
-    &:has(dialog[open]) {
-      overflow: hidden;
     }
   }
 }
