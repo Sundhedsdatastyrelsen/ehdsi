@@ -1,10 +1,10 @@
 <#import "layout.ftlh" as layout>
-<@layout.page title="ePrescription Portal - Prescriptions">
-  <div class="mt-10 max-w-4xl mx-auto bg-white p-4">
+<@layout.page title="Recepter">
+  <div class="mt-10 mx-auto bg-white p-4">
     <p class="font-bold">Patient-id: ${patientId}</p>
 
     <div class="overflow-x-auto">
-      <div class="mt-4 table text-left border-collapse w-max">
+      <div class="mt-4 table text-left border-collapse w-max min-w-full">
         <div class="table-header-group">
           <div class="table-row [&>*]:table-cell [&>*]:p-1 [&>*]:font-bold">
             <p>Lægemiddelnavn</p>
@@ -25,8 +25,8 @@
             >
               <p>${prescription.productName!"Unknown"}</p>
               <p>${prescription.atcCode}</p>
-              <p class="max-w-64">${prescription.atcName}</p>
-              <p class="max-w-64">${prescription.doseFormName}</p>
+              <p>${prescription.atcName}</p>
+              <p>${prescription.doseFormName}</p>
               <p>${prescription.strength}</p>
               <p>${prescription.effectiveTime}</p>
               <p>${prescription.authorName}</p>

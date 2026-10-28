@@ -6,7 +6,7 @@
 <#elseif patients?? && patients?size == 0>
   <p>Ingen patienter fundet.</p>
 <#elseif patients??>
-  <div class="table bg-white section-border p-4 border-collapse w-max">
+  <div class="table bg-white section-border p-4 border-collapse w-max min-w-full">
     <div class="table-header-group">
       <div class="table-row [&>*]:table-cell [&>*]:p-2 [&>*]:font-bold">
         <div>Navn</div>
@@ -29,8 +29,10 @@
           <p>${patient.gender}</p>
           <div>
             <#if patient.addressStreet??><p>${patient.addressStreet}</p></#if>
-            <#if patient.addressPostalCode??><p>${patient.addressPostalCode}</p></#if>
-            <#if patient.addressCity??><p>${patient.addressCity}</p></#if>
+            <p>
+              <#if patient.addressPostalCode??>${patient.addressPostalCode} </#if>
+              <#if patient.addressCity??>${patient.addressCity}</#if>
+            </p>
             <#if patient.addressCountry??><p>${patient.addressCountry}</p></#if>
           </div>
           <p>${patient.phone}</p>

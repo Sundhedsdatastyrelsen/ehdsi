@@ -44,7 +44,7 @@
       <span class="size-6 animate-spin rounded-full border-2 border-blue-300 border-t-blue-500"></span>
     </div>
   </form>
-  <div id="search-results" class="mt-10 max-w-4xl mx-auto flex flex-col gap-4 overflow-x-auto"></div>
+  <div id="search-results" class="mt-10 mx-auto flex flex-col gap-4 overflow-x-auto"></div>
   <#-- Shown while a search is running -->
   <div id="search-results-spinner" class="delayed-indicator justify-center py-4" aria-hidden="true">
     <span class="size-6 animate-spin rounded-full border-2 border-blue-300 border-t-blue-500"></span>

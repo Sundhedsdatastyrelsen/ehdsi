@@ -1,6 +1,6 @@
 <#import "layout.ftlh" as layout>
-<@layout.page title="ePrescription Portal - Recept">
-  <div class="mt-10 max-w-6xl mx-auto">
+<@layout.page title="Recept">
+  <div class="mt-10 mx-auto">
     <#-- The opaque id is only needed for the link back to the patient's prescriptions -->
     <#if opaqueId??>
       <a href="/prescriptions?opaque-id=${opaqueId?url}" class="underline">Tilbage til recepter</a>
