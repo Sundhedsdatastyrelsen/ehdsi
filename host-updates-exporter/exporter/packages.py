@@ -59,6 +59,7 @@ def pending_packages(refresh=True):
     """Returns (pending packages, whether the refresh succeeded). The list is
     None when no package lists were ever fetched: with nothing to compare
     against, apt would report "all up to date"."""
+    config.load()
     apt_pkg.config.set("Dir::State::status", str(config.HOST_ROOT / "var/lib/dpkg/status"))
     apt_pkg.config.set("Dir::State::Lists", str(APT_LISTS_DIR))
     for hook in HOST_APT_HOOKS:

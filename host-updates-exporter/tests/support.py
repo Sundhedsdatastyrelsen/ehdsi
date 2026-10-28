@@ -17,6 +17,8 @@ for directory in ("etc", "var/lib/dpkg"):
 
 os.environ["HOST_ROOT"] = str(HOST_ROOT)
 os.environ["STATE_DIR"] = str(STATE_DIR)
+CONFIG_FILE = root / "config.toml"
+os.environ["CONFIG_FILE"] = str(CONFIG_FILE)
 
 
 

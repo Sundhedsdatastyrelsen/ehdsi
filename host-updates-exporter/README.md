@@ -19,10 +19,14 @@ next to the stacks on every host (deployed by the ops repos) and serves
   [endoflife.date](https://endoflife.date), or the latest GitHub release where
   endoflife.date has no entry.
 
-Which apt repositories are ours, and which image maps to which
-endoflife.date product or GitHub repository, is in
-[`config.py`](exporter/config.py). A new third-party image in one of the
-stacks shows up with `lookup="untracked"` until it is added there.
+Which apt repositories are ours, which images we build, and which image maps
+to which endoflife.date product or GitHub repository, has defaults in
+[`config.py`](exporter/config.py). Each ops repo adds to them in its own
+`host-updates-exporter/config.toml`, mounted at `/etc/host-updates`; see
+`load` in `config.py` for the format. A third-party image no table covers
+shows up with `lookup="untracked"` until it is added to one. The file is read
+before every check, so changes need no restart; a broken file is logged and
+ignored.
 
 ## How it sees the host
 

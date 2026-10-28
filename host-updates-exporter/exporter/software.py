@@ -238,6 +238,7 @@ def metrics(hostname, software, now):
 
 def check():
     """Runs the check and returns its metrics."""
+    config.load()
     software = host_software() + running_images()
     for s in software:
         if s.lookup == "found":
