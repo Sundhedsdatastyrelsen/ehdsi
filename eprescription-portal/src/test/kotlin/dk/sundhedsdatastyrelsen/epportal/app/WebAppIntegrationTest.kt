@@ -58,6 +58,12 @@ class WebAppIntegrationTest {
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "ePrescription Portal")
+        assertContains(body, "href=\"/login\"")
+        assertContains(body, "Log på")
+        assertFalse(body.contains("href=\"/find-patient\""))
+        assertFalse(body.contains("Find patient"))
+        assertFalse(body.contains("href=\"/logout\""))
+        assertFalse(body.contains("Log af"))
     }
 
     @Test
@@ -89,6 +95,23 @@ class WebAppIntegrationTest {
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "121212-1234")
+        assertContains(body, "href=\"/find-patient\"")
+        assertContains(body, "Find patient")
+        assertContains(body, "href=\"/logout\"")
+        assertContains(body, "Log af")
+        assertFalse(body.contains("href=\"/login\""))
+    }
+
+    @Test
+    fun `login redirects to home if already logged in`() {
+        var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=1212121234").get().build()).execute()
+        val cookies = resp.headers("Set-Cookie")
+        val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
+
+        resp = client.newCall(Request.Builder().url("$baseUrl/login").get().header("Cookie", cookieHeader).build())
+            .execute()
+        assertEquals(303, resp.code)
+        assertEquals("/", resp.headers["Location"])
     }
 
     @Test
@@ -103,6 +126,12 @@ class WebAppIntegrationTest {
         resp = client.newCall(req2).execute()
         var body = resp.body.string()
         assertContains(body, "Der er sket en fejl")
+
+        val req3 =
+            Request.Builder().url("$baseUrl/?error=not-authorized").get().header("Cookie", cookieHeader).build()
+        resp = client.newCall(req3).execute()
+        body = resp.body.string()
+        assertContains(body, "Du skal logge på.")
     }
 
     @Test
@@ -138,6 +167,7 @@ class WebAppIntegrationTest {
         resp = client.newCall(Request.Builder().url("$baseUrl/logout").get().header("Cookie", cookieHeader).build())
             .execute()
         assertEquals(302, resp.code)
+        assertEquals("/", resp.headers["Location"])
 
         // Test that session is invalidated.
         resp =
