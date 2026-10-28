@@ -1,5 +1,6 @@
-"""Settings, and the built-in tables of which images and apt repositories are
-whose. A host's config.toml adds to the tables (see load)."""
+"""Settings, and the built-in tables: which apt repositories and images are
+ours, and where each third-party image is looked up. A host's config.toml
+adds to the tables (see load)."""
 
 import logging
 import os
@@ -8,11 +9,11 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-# Where the few host files read directly (dpkg status and file lists,
-# os-release, hostname) are mounted read-only, at their host paths below it;
-# see docker-compose.yml. The host's /etc/apt, /usr/share/keyrings and
-# /etc/machine-id are mounted at their own paths instead, because apt sources
-# name their keyrings by absolute path.
+# The host files read directly (dpkg status and file lists, os-release,
+# hostname) are mounted read-only under this directory, e.g. the host's
+# /etc/hostname at /host/etc/hostname; see docker-compose.yml.
+# The host's apt configuration is mounted at its own paths instead, because
+# apt sources name their keyrings by absolute path.
 HOST_ROOT = Path(os.environ.get("HOST_ROOT", "/host"))
 
 # A volume: survives upgrades of this image.
@@ -25,8 +26,8 @@ PORT = int(os.environ.get("PORT", "9090"))
 PACKAGES_CHECK_HOURS = float(os.environ.get("PACKAGES_CHECK_HOURS", "6"))
 SOFTWARE_CHECK_HOURS = float(os.environ.get("SOFTWARE_CHECK_HOURS", "24"))
 
-# A proxy that only lets through reading containers, images and the version
-# (docker-proxy/haproxy.cfg): the exporter never gets the Docker socket itself.
+# The proxy in docker-proxy/haproxy.cfg: the exporter never gets the Docker
+# socket itself.
 DOCKER_API = os.environ.get("DOCKER_API", "host-updates-docker-proxy:2375")
 ENDOFLIFE_API = "https://endoflife.date/api/v1/products"
 GITHUB_API = "https://api.github.com/repos"
@@ -66,11 +67,9 @@ DEFAULTS = (OWN_APT_ORIGINS, ENDOFLIFE_PRODUCTS, GITHUB_REPOSITORIES, OWN_IMAGE_
 
 
 def load():
-    """Adds the config file, if there is one, to the defaults above; its
-    format is in config.example.toml. Runs before every check, so a changed
-    file applies from the next one. A broken file is logged and ignored: the
-    tables stay as the last valid file left them, so a typo doesn't quietly
-    drop the host's own images and apt repositories.
+    """Adds the config file, if there is one, to the defaults above (see the
+    README). A broken file leaves the tables as the last valid one did, so a
+    typo doesn't quietly drop the host's own images and apt repositories.
 
     Replaces the module's tables rather than changing them, so read them as
     config.ENDOFLIFE_PRODUCTS etc., never import them by name."""

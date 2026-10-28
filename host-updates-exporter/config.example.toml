@@ -1,12 +1,6 @@
-# Sample config for host-updates-exporter. Each ops repo keeps its own copy as
-# host-updates-exporter/config.toml next to its docker-compose.yml, which
-# mounts that directory at /etc/host-updates.
-#
-# Everything here is added to the built-in tables in exporter/config.py; an
-# entry for an image already there overrides it. The file is read before every
-# check, so a change applies from the next one without a restart. A broken
-# file is ignored as a whole and logged as an error; the last valid one keeps
-# applying.
+# Sample config for host-updates-exporter; README.md says where it goes and
+# when it is read. Everything here is added to the built-in tables in
+# exporter/config.py; an entry for an image already there overrides it.
 #
 # Every setting is optional. Top-level settings must come before the tables.
 

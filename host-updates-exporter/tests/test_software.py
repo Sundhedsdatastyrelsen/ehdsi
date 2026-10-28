@@ -32,16 +32,16 @@ class RunningVersionTest(unittest.TestCase):
         self.assertEqual(software.running_version("grafana/grafana", "12.0.2", {}), ("12.0.2", "tag"))
 
     def test_env_var_refines_a_floating_tag(self):
-        config = {"Env": ["PATH=/usr/bin", "MYSQL_VERSION=9.7.2-1.el9"]}
-        self.assertEqual(software.running_version("mysql", "9", config), ("9.7.2", "env"))
+        image_config = {"Env": ["PATH=/usr/bin", "MYSQL_VERSION=9.7.2-1.el9"]}
+        self.assertEqual(software.running_version("mysql", "9", image_config), ("9.7.2", "env"))
 
     def test_label_for_latest(self):
         self.assertEqual(software.running_version("hashicorp/vault", "latest", {"Labels": {"version": "2.1.1"}}),
                          ("2.1.1", "label"))
 
     def test_label_contradicting_the_tag_is_ignored(self):
-        config = {"Labels": {"org.opencontainers.image.version": "24.04"}}
-        self.assertEqual(software.running_version("grafana/alloy", "v1.12.2", config), ("1.12.2", "tag"))
+        image_config = {"Labels": {"org.opencontainers.image.version": "24.04"}}
+        self.assertEqual(software.running_version("grafana/alloy", "v1.12.2", image_config), ("1.12.2", "tag"))
 
     def test_unknown(self):
         self.assertEqual(software.running_version("busybox", "latest", {}), ("", "none"))
@@ -80,18 +80,31 @@ class UpdateAvailableTest(unittest.TestCase):
 
     def test_none_when_running_the_latest(self):
         self.assertEqual(self.update("2.1.1", "2.1.1", "2.1.1"), "none")
+        self.assertEqual(self.update("26.04", "26.04.1", "26.04.1", kind="os"), "none")
 
     def test_unknown_for_a_floating_tag(self):
         self.assertEqual(self.update("3.5", "3.5.12", "3.7.8"), "unknown")
 
 
 class RunningImagesTest(unittest.TestCase):
-    CONTAINERS = {
-        "c1": ("/grafana", "grafana/grafana:12.0.2", "img-grafana"),
-        "c2": ("/grafana-2", "grafana/grafana:12.0.2", "img-grafana"),
-        "c3": ("/alloy", "grafana/alloy:v1.12.2", "img-alloy"),
-        "c4": ("/init", "busybox", "img-busybox"),
-        "c5": ("/our-app", "registry.example/our-app:build-334", "img-ours"),
+    # (name, Image, ImageID) as /containers/json lists them. Image is the
+    # image's id when its tag has since been pulled anew.
+    CONTAINERS = [
+        ("/grafana", "grafana/grafana:12.0.2", "sha256:01"),
+        ("/grafana-2", "grafana/grafana:12.0.2", "sha256:01"),
+        ("/alloy", "grafana/alloy:v1.12.2", "sha256:02"),
+        ("/init", "busybox", "sha256:03"),
+        ("/our-app", "registry.example/our-app:build-334", "sha256:04"),
+        ("/mysql", "sha256:05", "sha256:05"),
+        ("/vault", "sha256:06", "sha256:06"),
+        ("/our-old-app", "sha256:07", "sha256:07"),
+    ]
+    # Inspect output of the images whose tag has moved on.
+    IMAGES = {
+        "sha256:05": {"RepoDigests": ["mysql@sha256:05"],
+                      "Config": {"Env": ["MYSQL_VERSION=9.7.2-1.el9"], "Labels": {"version": "1.0"}}},
+        "sha256:06": {"RepoDigests": ["hashicorp/vault@sha256:06"], "Config": {"Labels": {"version": "2.1.1"}}},
+        "sha256:07": {"RepoDigests": ["registry.example/our-app@sha256:07"], "Config": {}},
     }
     TABLES = {
         "ENDOFLIFE_PRODUCTS": {"grafana/grafana": "grafana"},
@@ -101,11 +114,8 @@ class RunningImagesTest(unittest.TestCase):
 
     def docker_get(self, path):
         if path == "/containers/json":
-            return [{"Id": cid} for cid in self.CONTAINERS]
-        if path.startswith("/containers/"):
-            name, ref, image = self.CONTAINERS[path.split("/")[2]]
-            return {"Name": name, "Config": {"Image": ref}, "Image": image}
-        return {"Config": {}}
+            return [{"Names": [name], "Image": ref, "ImageID": image} for name, ref, image in self.CONTAINERS]
+        return self.IMAGES.get(path.split("/")[2], {"Config": {}})
 
     def running_images(self):
         with mock.patch.object(software, "docker_get", self.docker_get), mock.patch.multiple(config, **self.TABLES):
@@ -113,8 +123,14 @@ class RunningImagesTest(unittest.TestCase):
 
     def test_groups_containers_and_skips_own_images(self):
         images = self.running_images()
-        self.assertEqual(sorted(images), ["busybox", "grafana/alloy", "grafana/grafana"])
+        self.assertEqual(sorted(images), ["busybox", "grafana/alloy", "grafana/grafana", "hashicorp/vault", "mysql"])
         self.assertEqual(images["grafana/grafana"].containers, ["grafana", "grafana-2"])
+
+    def test_moved_tag_trusts_only_the_env_var(self):
+        images = self.running_images()
+        self.assertEqual((images["mysql"].version, images["mysql"].version_source), ("9.7.2", "env"))
+        # Without the tag, nothing to check the label against.
+        self.assertEqual((images["hashicorp/vault"].version, images["hashicorp/vault"].version_source), ("", "none"))
 
     def test_where_each_image_is_looked_up(self):
         images = self.running_images()

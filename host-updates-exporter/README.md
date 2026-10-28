@@ -20,14 +20,22 @@ next to the stacks on every host (deployed by the ops repos) and serves
   [endoflife.date](https://endoflife.date), or the latest GitHub release where
   endoflife.date has no entry.
 
-Which apt repositories are ours, which images we build, and which image maps
-to which endoflife.date product or GitHub repository, has defaults in
-[`config.py`](exporter/config.py). Each ops repo adds to them in its own
-`host-updates-exporter/config.toml`, mounted at `/etc/host-updates`;
-[`config.example.toml`](config.example.toml) describes the format. A
-third-party image no table covers shows up with `lookup="untracked"` until it
-is added to one. The file is read before every check, so changes need no
-restart; a broken file is logged and ignored, and the last valid one keeps
+## Configuration
+
+[`config.py`](exporter/config.py) has the defaults for:
+
+- which apt repositories are ours to upgrade,
+- which images we build ourselves (not reported),
+- which endoflife.date product or GitHub repository each third-party image is
+  looked up in.
+
+Each ops repo adds to them in its own `host-updates-exporter/config.toml`,
+mounted at `/etc/host-updates`; [`config.example.toml`](config.example.toml)
+describes the format. A third-party image no table covers shows up with
+`lookup="untracked"` until it is added to one.
+
+The file is read before every check, so a change applies without a restart. A
+broken file is logged and ignored as a whole, and the last valid one keeps
 applying.
 
 ## How it sees the host
@@ -39,18 +47,27 @@ state volume. It needs outbound HTTPS to the host's apt mirrors,
 endoflife.date and api.github.com.
 
 It runs as an unprivileged user with no capabilities on a read-only root
-filesystem, and can write only to the state volume and `/tmp`. It never gets
-the Docker socket: `host-updates-docker-proxy`, the official HAProxy image
-with [`docker-proxy/haproxy.cfg`](docker-proxy/haproxy.cfg), lets through
-listing containers, inspecting a container or an image, and the Docker
-version, and refuses everything else. It is on an internal network
-with only the exporter. Every ops repo runs the two services with the
-settings of [`docker-compose.yml`](docker-compose.yml) and a copy of the
-HAProxy configuration; change them here and in the ops repos together.
-
-As apt runs as that user, it can't read credentials in the host's
+filesystem, and can write only to the state volume and `/tmp`. As apt runs
+as that user too, it can't read credentials in the host's
 `/etc/apt/auth.conf.d` that only root may read (Ubuntu Pro, for one): those
 sources then fail to refresh and `host_updates_refresh_success` is 0.
+
+It never gets the Docker socket. It reaches Docker through
+`host-updates-docker-proxy`: the official HAProxy image with
+[`docker-proxy/haproxy.cfg`](docker-proxy/haproxy.cfg), on an internal network
+with only the exporter. The proxy allows only listing the containers,
+inspecting an image and reading the Docker version. Inspecting a container is
+refused, because it shows the container's environment, secrets included.
+
+So the exporter reads each container's image from the container list. Once
+an image's tag has been pulled anew, that list shows the image's id instead
+of the tag. The exporter then gets the repository from the image's digest,
+and trusts only a `<NAME>_VERSION` env var for the version.
+
+Every ops repo runs the two services with the settings of
+[`docker-compose.yml`](docker-compose.yml) and a copy of
+[`haproxy.cfg`](docker-proxy/haproxy.cfg); change them here and in the ops
+repos together.
 
 ## Development
 

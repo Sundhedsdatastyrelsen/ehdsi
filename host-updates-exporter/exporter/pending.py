@@ -16,5 +16,5 @@ args = parser.parse_args()
 
 pending, _ = packages.pending_packages()
 if pending is None:
-    sys.exit("No package lists could be fetched; see the container's log.")
+    sys.exit("No package lists could be fetched; see the warnings above.")
 print(" ".join(p.name for p in pending if args.owner in (None, p.owner)))

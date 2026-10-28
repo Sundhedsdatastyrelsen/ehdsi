@@ -12,7 +12,7 @@ from datetime import date, datetime, timezone
 
 import config
 import host
-from host import gauge, single_gauge
+from gauges import gauge, single_gauge
 
 log = logging.getLogger(__name__)
 
@@ -69,7 +69,10 @@ def running_version(repository, tag, image_config):
     Floating tags (mysql:9, hashicorp/vault) don't say which release was
     pulled, but many images record it in a <NAME>_VERSION env var or a version
     label. Those are only trusted when they agree with the tag: grafana/alloy's
-    version label is the version of its Ubuntu base image."""
+    version label is the version of its Ubuntu base image.
+
+    tag is None when it isn't known (see image_software). Then only the env
+    var is trusted, as there is nothing to check a label against."""
     tag_version = leading_version(tag)
 
     env_name = repository.rsplit("/", 1)[-1].upper().replace("-", "_") + "_VERSION"
@@ -77,7 +80,10 @@ def running_version(repository, tag, image_config):
     labels = image_config.get("Labels") or {}
     label = labels.get("org.opencontainers.image.version") or labels.get("version")
 
-    for source, candidate in (("env", env.get(env_name)), ("label", label)):
+    candidates = [("env", env.get(env_name))]
+    if tag is not None:
+        candidates.append(("label", label))
+    for source, candidate in candidates:
         version = leading_version(candidate)
         if version and refines(version, tag_version):
             return version, source
@@ -91,10 +97,12 @@ def update_available(software):
     unknown: e.g. a floating tag (loki:3.5) whose exact release we can't tell."""
     if not software.version or not software.latest:
         return "unknown"
-    # Ubuntu point releases are just package updates, which packages.py reports.
-    latest_in_cycle = "" if software.kind == "os" else software.latest_in_cycle
-    if latest_in_cycle and software.version != latest_in_cycle:
-        return "unknown" if refines(latest_in_cycle, software.version) else "patch"
+    if software.kind == "os":
+        # Ubuntu point releases are just package updates, which packages.py
+        # reports: 24.04 is up to date when 24.04.3 is the latest.
+        return "none" if refines(software.latest, software.version) else "newer"
+    if software.latest_in_cycle and software.version != software.latest_in_cycle:
+        return "unknown" if refines(software.latest_in_cycle, software.version) else "patch"
     if software.version != software.latest:
         return "unknown" if refines(software.latest, software.version) else "newer"
     return "none"
@@ -178,24 +186,40 @@ def docker_get(path):
 
 
 def running_images():
+    """The images of the running containers, except our own. Read from the
+    container list alone: inspecting a container would show its environment,
+    secrets included, so the proxy refuses it."""
     by_ref = {}
-    for listed in docker_get("/containers/json"):
-        container = docker_get(f"/containers/{listed['Id']}/json")
-        # Config.Image is the reference the container was created from; the
-        # list's Image turns into an image id once that tag is pulled anew.
-        ref = container["Config"]["Image"]
-        if ref.startswith(config.OWN_IMAGE_PREFIXES):
-            continue
+    for container in docker_get("/containers/json"):
+        # The reference the container was created from, e.g. mysql:9, or the
+        # image's id once that tag has been pulled anew.
+        ref = container["Image"]
         if ref not in by_ref:
-            repository, tag = split_image_ref(ref)
-            image_config = docker_get(f"/images/{container['Image']}/json").get("Config") or {}
-            version, source = running_version(repository, tag, image_config)
-            product = config.ENDOFLIFE_PRODUCTS.get(repository, "")
-            github = "" if product else config.GITHUB_REPOSITORIES.get(repository, "")
-            by_ref[ref] = Software("image", repository, version, source, image=ref, product=product, github=github,
-                                   lookup="found" if product or github else "untracked")
-        by_ref[ref].containers.append(container["Name"].lstrip("/"))
-    return list(by_ref.values())
+            by_ref[ref] = image_software(ref, docker_get(f"/images/{container['ImageID']}/json"))
+        if by_ref[ref]:
+            by_ref[ref].containers.append(container["Names"][0].lstrip("/"))
+    return [image for image in by_ref.values() if image]
+
+
+def image_software(ref, image):
+    """The Software running as ref, given its image's inspect output; None for
+    one of our own images."""
+    tag_known = not ref.startswith("sha256:")
+    if not tag_known:
+        # The tag has moved on to a newer image. This one still knows its
+        # repository, from the digest it was pulled by, but not the tag.
+        digests = image.get("RepoDigests") or []
+        if not digests:  # built on the host, never pulled
+            return Software("image", ref, "", "none", image=ref, lookup="untracked")
+        ref = digests[0]
+    if ref.startswith(config.OWN_IMAGE_PREFIXES):
+        return None
+    repository, tag = split_image_ref(ref)
+    version, source = running_version(repository, tag if tag_known else None, image.get("Config") or {})
+    product = config.ENDOFLIFE_PRODUCTS.get(repository, "")
+    github = "" if product else config.GITHUB_REPOSITORIES.get(repository, "")
+    return Software("image", repository, version, source, image=ref, product=product, github=github,
+                    lookup="found" if product or github else "untracked")
 
 
 def host_software():

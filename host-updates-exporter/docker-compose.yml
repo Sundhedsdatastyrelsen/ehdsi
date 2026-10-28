@@ -1,5 +1,5 @@
-# Local development: builds the image and runs it against this machine.
-# The ops repos run the published image with these same settings.
+# Local development: builds the image and runs it against this machine. The
+# ops repos copy these settings; see README.md.
 services:
   host-updates-exporter:
     build: .
@@ -32,9 +32,7 @@ services:
       - host-updates
       - host-updates-docker
 
-  # The exporter's only way to Docker: lets through only what
-  # docker-proxy/haproxy.cfg allows. On a network of its own with the
-  # exporter, without internet access.
+  # The exporter's only way to Docker; see docker-proxy/haproxy.cfg.
   host-updates-docker-proxy:
     image: haproxy:3.2.25-alpine
     container_name: host-updates-docker-proxy
@@ -60,6 +58,6 @@ volumes:
 
 networks:
   host-updates:
-  # Only the exporter and its Docker proxy.
+  # Only the exporter and its Docker proxy, without internet access.
   host-updates-docker:
     internal: true

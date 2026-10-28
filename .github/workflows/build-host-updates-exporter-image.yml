@@ -7,6 +7,10 @@ on:
     branches: [ "main" ]
     paths:
       - 'host-updates-exporter/**'
+  # The tests only, without publishing.
+  pull_request:
+    paths:
+      - 'host-updates-exporter/**'
   # Weekly, for the Ubuntu base image's and packages' security updates. The
   # hosts' own updates need no new image: they are read from the host.
   schedule:
@@ -18,7 +22,20 @@ env:
   REPO_NAME: ${{ github.repository }}
 
 jobs:
+  test-host-updates-exporter:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: Run the tests
+      run: docker build --target test host-updates-exporter
+
   build-host-updates-exporter:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read

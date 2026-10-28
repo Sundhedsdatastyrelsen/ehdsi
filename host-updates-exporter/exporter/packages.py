@@ -15,7 +15,7 @@ import apt
 import apt_pkg
 import config
 import host
-from host import gauge, single_gauge
+from gauges import gauge, single_gauge
 
 log = logging.getLogger(__name__)
 
