@@ -6,6 +6,8 @@ and the host's installed packages, but keeps its own package lists."""
 import json
 import logging
 import os
+import pwd
+import re
 import time
 from dataclasses import dataclass
 
@@ -61,6 +63,9 @@ def pending_packages(refresh=True):
     apt_pkg.config.set("Dir::State::Lists", str(APT_LISTS_DIR))
     for hook in HOST_APT_HOOKS:
         apt_pkg.config.clear(hook)
+    # Downloads run as whoever runs the exporter; switching to the _apt
+    # sandbox user would need capabilities the container doesn't have.
+    apt_pkg.config.set("APT::Sandbox::User", pwd.getpwuid(os.getuid()).pw_name)
     (APT_LISTS_DIR / "partial").mkdir(parents=True, exist_ok=True)
 
     cache = apt.Cache(memonly=True)
@@ -97,14 +102,41 @@ def update_pending_since(previous, pending, now):
     return {package.name: previous.get(package.name, now) for package in pending}
 
 
+KERNEL_PACKAGE = re.compile(r"linux-image-(?:unsigned-)?(\d.*)")
+
+
+def running_kernel():
+    # The container runs on the host's kernel.
+    return os.uname().release
+
+
+def installed_kernels():
+    """(kernel release, package) of each kernel installed on the host."""
+    kernels = []
+    with apt_pkg.TagFile(str(config.HOST_ROOT / "var/lib/dpkg/status")) as status:
+        for section in status:
+            match = KERNEL_PACKAGE.fullmatch(section.get("Package", ""))
+            if match and section.get("Status") == "install ok installed":
+                kernels.append((match.group(1), section["Package"]))
+    return kernels
+
+
+def installed_at(package):
+    files_list = config.HOST_ROOT / f"var/lib/dpkg/info/{package}.list"
+    return (files_list if files_list.exists() else config.HOST_ROOT / "var/lib/dpkg/status").stat().st_mtime
+
+
 def reboot_required():
-    """Returns (since when, the packages asking for it), or None."""
-    flag = config.HOST_ROOT / "run/reboot-required"
-    if not flag.exists():
+    """Returns (since when, the packages asking for it), or None. A reboot is
+    required when a newer kernel is installed than the one running. Unlike
+    the host's /run/reboot-required, which the container can't see, this
+    misses the rarer reboots asked for by libc6, dbus and the like."""
+    running = running_kernel()
+    newer = sorted(package for release, package in installed_kernels()
+                   if apt_pkg.version_compare(release, running) > 0)
+    if not newer:
         return None
-    packages_file = config.HOST_ROOT / "run/reboot-required.pkgs"
-    packages = sorted(set(packages_file.read_text().split())) if packages_file.exists() else []
-    return flag.stat().st_mtime, packages
+    return min(installed_at(package) for package in newer), newer
 
 
 def os_pretty_name():
@@ -151,14 +183,14 @@ def pending_metrics(hostname, pending, pending_since):
 
 
 def reboot_metrics(hostname, reboot):
-    required = gauge("host_updates_reboot_required", "1 if /var/run/reboot-required exists.")
+    required = gauge("host_updates_reboot_required", "1 if a newer kernel is installed than the one running.")
     required.add_metric([hostname], 1 if reboot else 0)
     if not reboot:
         return [required]
     since, packages = reboot
-    required_since = gauge("host_updates_reboot_required_since_timestamp_seconds", "When a reboot first became required.")
+    required_since = gauge("host_updates_reboot_required_since_timestamp_seconds", "When the first of those kernels was installed.")
     required_since.add_metric([hostname], since)
-    asking = gauge("host_updates_reboot_required_package", "Packages that asked for the pending reboot.", ["package"])
+    asking = gauge("host_updates_reboot_required_package", "Newer kernels installed than the one running, which take effect on reboot.", ["package"])
     for package in packages:
         asking.add_metric([hostname, package], 1)
     return [required, required_since, asking]

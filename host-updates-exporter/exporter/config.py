@@ -16,7 +16,9 @@ PORT = int(os.environ.get("PORT", "9090"))
 PACKAGES_CHECK_HOURS = float(os.environ.get("PACKAGES_CHECK_HOURS", "6"))
 SOFTWARE_CHECK_HOURS = float(os.environ.get("SOFTWARE_CHECK_HOURS", "24"))
 
-DOCKER_SOCKET = HOST_ROOT / "run/docker.sock"
+# A proxy that only lets through reading containers, images and the version
+# (docker-proxy/haproxy.cfg): the exporter never gets the Docker socket itself.
+DOCKER_API = os.environ.get("DOCKER_API", "host-updates-docker-proxy:2375")
 ENDOFLIFE_API = "https://endoflife.date/api/v1/products"
 GITHUB_API = "https://api.github.com/repos"
 
@@ -35,6 +37,7 @@ ENDOFLIFE_PRODUCTS = {
     "mysql": "mysql",
     "memcached": "memcached",
     "hashicorp/vault": "hashicorp-vault",
+    "haproxy": "haproxy",
 }
 
 # Images endoflife.date doesn't cover: the GitHub repository whose latest

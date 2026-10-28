@@ -9,7 +9,7 @@ root = Path(tempfile.mkdtemp())
 HOST_ROOT = root / "host"
 STATE_DIR = root / "state"
 
-for directory in ("etc", "run", "var/lib/dpkg"):
+for directory in ("etc", "var/lib/dpkg"):
     (HOST_ROOT / directory).mkdir(parents=True)
 (HOST_ROOT / "etc/hostname").write_text("testhost\n")
 (HOST_ROOT / "etc/os-release").write_text('PRETTY_NAME="Ubuntu 24.04.3 LTS"\nVERSION_ID="24.04"\n')

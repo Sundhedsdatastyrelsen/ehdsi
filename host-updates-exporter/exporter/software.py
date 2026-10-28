@@ -5,7 +5,6 @@ import http.client
 import json
 import logging
 import re
-import socket
 import time
 import urllib.request
 from dataclasses import dataclass, field
@@ -164,17 +163,8 @@ def look_up(software):
 
 # ── The host ──
 
-class DockerSocketConnection(http.client.HTTPConnection):
-    def __init__(self):
-        super().__init__("localhost")
-
-    def connect(self):
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.sock.connect(str(config.DOCKER_SOCKET))
-
-
 def docker_get(path):
-    connection = DockerSocketConnection()
+    connection = http.client.HTTPConnection(config.DOCKER_API, timeout=30)
     connection.request("GET", path)
     response = connection.getresponse()
     if response.status != 200:

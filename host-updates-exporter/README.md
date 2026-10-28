@@ -8,8 +8,8 @@ next to the stacks on every host (deployed by the ops repos) and serves
 - **Pending packages** ([`packages.py`](exporter/packages.py), every 6 hours):
   which packages apt would upgrade on the host, who patches each — `hosting`
   (the Ubuntu archive) or `ours` (Docker) — whether it is a security update,
-  and since when it has been pending. Also whether a reboot is required, the
-  OS and running kernel. Nothing is installed: the ops repos'
+  and since when it has been pending. Also whether a reboot is required (a
+  newer kernel is installed than the one running), the OS and running kernel. Nothing is installed: the ops repos'
   `update-packages.sh` upgrades our packages on the host, asking this
   container what is pending ([`pending.py`](exporter/pending.py)).
 - **End of life** ([`software.py`](exporter/software.py), daily): for the
@@ -31,6 +31,20 @@ Only through read-only bind mounts, listed in
 configuration and installed packages but keeps its own package lists, in the
 state volume. It needs outbound HTTPS to the host's apt mirrors,
 endoflife.date and api.github.com.
+
+It runs as an unprivileged user with no capabilities on a read-only root
+filesystem, and can write only to the state volume and `/tmp`. It never gets
+the Docker socket: `host-updates-docker-proxy`, the official HAProxy image
+with [`docker-proxy/haproxy.cfg`](docker-proxy/haproxy.cfg), lets through
+listing containers, reading their and their images' configuration, and the
+Docker version, and refuses everything else. It is on an internal network
+with only the exporter. Every ops repo runs the two services with the
+settings of [`docker-compose.yml`](docker-compose.yml) and a copy of the
+HAProxy configuration; change them here and in the ops repos together.
+
+As apt runs as that user, it can't read credentials in the host's
+`/etc/apt/auth.conf.d` that only root may read (Ubuntu Pro, for one): those
+sources then fail to refresh and `host_updates_refresh_success` is 0.
 
 ## Development
 
@@ -60,4 +74,6 @@ The tests run as part of the image build ([`tests/`](tests/)); a failing test
 fails the build.
 [`build-host-updates-exporter-image.yml`](../.github/workflows/build-host-updates-exporter-image.yml)
 publishes `ghcr.io/sundhedsdatastyrelsen/ehdsi/host-updates-exporter:build-N`
-on changes to this directory.
+on changes to this directory, and weekly with the newest Ubuntu packages. A
+host's own updates need no new image; a new Ubuntu release on the hosts
+needs the base image in the [`Dockerfile`](Dockerfile) moved along.

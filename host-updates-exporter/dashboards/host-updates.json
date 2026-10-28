@@ -196,7 +196,7 @@
     {
       "type": "stat",
       "title": "Hosts needing a reboot",
-      "description": "The host has /var/run/reboot-required, typically after a kernel or libc update.",
+      "description": "A newer kernel is installed on the host than the one running.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -1127,7 +1127,7 @@
     },
     {
       "type": "table",
-      "title": "Packages asking for a reboot",
+      "title": "Kernels waiting for a reboot",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"

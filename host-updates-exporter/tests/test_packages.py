@@ -41,11 +41,20 @@ class PendingSinceTest(unittest.TestCase):
 class CheckTest(unittest.TestCase):
     def setUp(self):
         packages.PENDING_SINCE_FILE.unlink(missing_ok=True)
-        for name in ("reboot-required", "reboot-required.pkgs"):
-            (support.HOST_ROOT / "run" / name).unlink(missing_ok=True)
+        self.installed_kernels("6.8.0-87-generic")
+
+    def installed_kernels(self, *releases):
+        status = "".join(
+            f"Package: linux-image-{release}\nStatus: install ok installed\nVersion: {release}\n\n"
+            for release in releases)
+        # Neither a kernel nor installed: ignored.
+        status += "Package: linux-image-generic\nStatus: install ok installed\n\n"
+        status += "Package: linux-image-6.8.0-99-generic\nStatus: deinstall ok config-files\n\n"
+        (support.HOST_ROOT / "var/lib/dpkg/status").write_text(status)
 
     def check(self, pending, refresh_ok=True):
-        with mock.patch.object(packages, "pending_packages", return_value=(pending, refresh_ok)):
+        with mock.patch.object(packages, "pending_packages", return_value=(pending, refresh_ok)), \
+                mock.patch.object(packages, "running_kernel", return_value="6.8.0-87-generic"):
             return packages.check()
 
     def test_counts_by_owner_and_security(self):
@@ -74,12 +83,11 @@ class CheckTest(unittest.TestCase):
 
     def test_reboot_required(self):
         self.assertEqual(samples(self.check([]), "host_updates_reboot_required"), [({"hostname": "testhost"}, 0)])
-        (support.HOST_ROOT / "run/reboot-required").touch()
-        (support.HOST_ROOT / "run/reboot-required.pkgs").write_text("linux-base\nlibc6\nlinux-base\n")
+        self.installed_kernels("6.8.0-79-generic", "6.8.0-87-generic", "6.8.0-90-generic", "6.11.0-1-generic")
         metrics = self.check([])
         self.assertEqual(samples(metrics, "host_updates_reboot_required"), [({"hostname": "testhost"}, 1)])
         self.assertEqual([labels["package"] for labels, _ in samples(metrics, "host_updates_reboot_required_package")],
-                         ["libc6", "linux-base"])
+                         ["linux-image-6.11.0-1-generic", "linux-image-6.8.0-90-generic"])
 
     def test_os(self):
         [(labels, _)] = samples(self.check([]), "host_updates_os_info")

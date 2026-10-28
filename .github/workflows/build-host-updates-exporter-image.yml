@@ -7,6 +7,10 @@ on:
     branches: [ "main" ]
     paths:
       - 'host-updates-exporter/**'
+  # Weekly, for the Ubuntu base image's and packages' security updates. The
+  # hosts' own updates need no new image: they are read from the host.
+  schedule:
+    - cron: '0 4 * * 1'
   workflow_dispatch:
 
 env:
@@ -65,4 +69,6 @@ jobs:
     - name: Build and push images
       run: |
         cd host-updates-exporter
-        docker buildx bake --file docker-bake.hcl --push
+        # The weekly build starts from the newest base image and packages,
+        # not cached layers.
+        docker buildx bake --file docker-bake.hcl --push ${{ github.event_name == 'schedule' && '--pull --no-cache' || '' }}

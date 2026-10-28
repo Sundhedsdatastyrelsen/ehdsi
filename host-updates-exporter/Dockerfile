@@ -18,7 +18,11 @@ FROM base
 # A failing test fails the build.
 COPY --from=test /tests-passed /tests-passed
 
-# Root, because refreshing the package lists and reading the Docker socket
-# need it. The host is only mounted read-only.
+# Not root: refreshing the package lists only writes to the state volume, and
+# Docker is reached through host-updates-docker-proxy. The volume takes this
+# directory's owner when it is created.
+RUN useradd --system --user-group --no-create-home host-updates \
+    && mkdir -p /var/lib/host-updates && chown host-updates: /var/lib/host-updates
+USER host-updates
 EXPOSE 9090
 CMD ["python3", "/app/exporter/main.py"]
