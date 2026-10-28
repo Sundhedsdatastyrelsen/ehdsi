@@ -109,6 +109,11 @@ def update_pending_since(previous, pending, now):
 KERNEL_PACKAGE = re.compile(r"linux-image-(?:unsigned-)?(\d.*)")
 
 
+def kernel_flavour(release):
+    """"6.8.0-90-generic" -> "generic", "6.8.0-1030-azure" -> "azure"."""
+    return release.split("-", 2)[-1]
+
+
 def running_kernel():
     # The container runs on the host's kernel.
     return os.uname().release
@@ -134,12 +139,15 @@ def installed_at(package):
 
 def reboot_required():
     """Returns (since when, the packages asking for it), or None. A reboot is
-    required when a newer kernel is installed than the one running. The
-    host's /run/reboot-required isn't visible in the container, so the rarer
-    reboots asked for by libc6, dbus and the like are missed."""
+    required when a newer kernel of the running flavour is installed than the
+    one running. Other flavours (e.g. a generic kernel on an azure host) are
+    ignored: the host doesn't boot them. The host's /run/reboot-required isn't
+    visible in the container, so the rarer reboots asked for by libc6, dbus
+    and the like are missed."""
     running = running_kernel()
     newer = sorted(package for release, package in installed_kernels()
-                   if apt_pkg.version_compare(release, running) > 0)
+                   if kernel_flavour(release) == kernel_flavour(running)
+                   and apt_pkg.version_compare(release, running) > 0)
     if not newer:
         return None
     return min(installed_at(package) for package in newer), newer
@@ -218,7 +226,8 @@ def check():
         previous = json.loads(PENDING_SINCE_FILE.read_text()) if PENDING_SINCE_FILE.exists() else {}
         pending_since = update_pending_since(previous, pending, now)
         PENDING_SINCE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        # Replaced, not rewritten: a half-written file would fail every later run.
+        # Written to a temporary file that then replaces the old one, so a crash
+        # mid-write can't leave a half-written file that breaks every later run.
         temporary = PENDING_SINCE_FILE.with_suffix(".tmp")
         temporary.write_text(json.dumps(pending_since))
         os.replace(temporary, PENDING_SINCE_FILE)

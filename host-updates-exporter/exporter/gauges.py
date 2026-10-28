@@ -1,5 +1,5 @@
-"""Builds the gauges every metric here is: each one's first label is the
-host's name."""
+"""Helpers for building gauges. Every metric this exporter serves is a gauge
+whose first label is `hostname`."""
 
 from prometheus_client.core import GaugeMetricFamily
 
@@ -9,7 +9,7 @@ def gauge(name, documentation, labels=()):
 
 
 def single_gauge(name, documentation, hostname, value):
-    """A gauge with just the host's one value."""
+    """A gauge with a single sample, labelled only with the hostname."""
     metric = gauge(name, documentation)
     metric.add_metric([hostname], value)
     return metric

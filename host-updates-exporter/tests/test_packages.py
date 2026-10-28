@@ -100,6 +100,10 @@ class CheckTest(unittest.TestCase):
         self.assertEqual([labels["package"] for labels, _ in samples(metrics, "host_updates_reboot_required_package")],
                          ["linux-image-6.11.0-1-generic", "linux-image-6.8.0-90-generic"])
 
+    def test_other_kernel_flavours_dont_require_a_reboot(self):
+        self.write_dpkg_status_with_kernels("6.8.0-87-generic", "6.8.0-1030-azure")
+        self.assertEqual(samples(self.check([]), "host_updates_reboot_required"), [({"hostname": "testhost"}, 0)])
+
     def test_interrupted_state_write_keeps_the_previous_state(self):
         self.check([LIBC])
         before = packages.PENDING_SINCE_FILE.read_text()

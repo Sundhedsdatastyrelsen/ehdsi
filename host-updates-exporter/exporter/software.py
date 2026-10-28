@@ -18,6 +18,11 @@ log = logging.getLogger(__name__)
 
 RESPONSE_CACHE_DIR = config.STATE_DIR / "eol-cache"
 
+# The fields of an endoflife.date release cycle that apply_endoflife reads.
+# Every one is checked for, so a renamed field is reported instead of
+# quietly reading as "no end-of-life date" or "no LTS".
+ENDOFLIFE_RELEASE_FIELDS = {"name", "releaseDate", "latest", "eolFrom", "isEol", "isLts"}
+
 
 @dataclass
 class Software:
@@ -34,8 +39,9 @@ class Software:
     latest_in_cycle: str = ""
     latest: str = ""
     # Whether we could find out about it: found, untracked (no source configured),
-    # version_unknown, failed (source unreachable) or cycle_not_found. Starts as
-    # found; look_up changes it when it can't.
+    # version_unknown, failed (source unreachable), unexpected_response (the
+    # source changed its format) or cycle_not_found. Starts as found; look_up
+    # changes it when it can't.
     lookup: str = "found"
 
 
@@ -93,8 +99,10 @@ def running_version(repository, tag, image_config):
 
 
 def update_available(software):
-    """patch: a newer release in the same cycle. newer: only a newer cycle.
-    unknown: e.g. a floating tag (loki:3.5) whose exact release we can't tell."""
+    """How the running version compares with the latest releases: "patch" if
+    its cycle has a newer release, "newer" if only a newer cycle does, "none"
+    if it is up to date, and "unknown" if we can't tell, e.g. for a floating
+    tag (loki:3.5) whose exact release we don't know."""
     if not software.version or not software.latest:
         return "unknown"
     if software.kind == "os":
@@ -128,6 +136,10 @@ def apply_endoflife(software, releases):
     elif cycle.get("isEol"):
         software.end_of_life = date(1970, 1, 1)  # end of life, date unknown
     software.latest_in_cycle = (cycle.get("latest") or {}).get("name", "")
+    # Running an LTS cycle, only a newer LTS counts: we don't move an LTS
+    # host or image to an interim release (Ubuntu 25.10, MySQL 26.7).
+    if cycle.get("isLts"):
+        releases = [release for release in releases if release.get("isLts")]
     newest_cycle = max(releases, key=lambda release: release.get("releaseDate") or "")
     software.latest = (newest_cycle.get("latest") or {}).get("name", "")
 
@@ -151,15 +163,30 @@ def fetch_json(url, cache_name):
         return json.loads(cached.read_bytes())
 
 
+def endoflife_releases(data):
+    """The release cycles in an endoflife.date response, or None if it doesn't
+    have the format apply_endoflife expects."""
+    releases = data.get("result", {}).get("releases") if isinstance(data, dict) else None
+    if not isinstance(releases, list):
+        return None
+    if not all(isinstance(release, dict) and ENDOFLIFE_RELEASE_FIELDS <= release.keys() for release in releases):
+        return None
+    return releases
+
+
 def look_up(software):
     if not software.version:
         software.lookup = "version_unknown"
     elif software.product:
         data = fetch_json(f"{config.ENDOFLIFE_API}/{software.product}", f"{software.product}.json")
+        releases = endoflife_releases(data)
         if data is None:
             software.lookup = "failed"
+        elif releases is None:
+            log.warning("endoflife.date's response for %s isn't in the expected format", software.product)
+            software.lookup = "unexpected_response"
         else:
-            apply_endoflife(software, data["result"]["releases"])
+            apply_endoflife(software, releases)
     else:
         data = fetch_json(f"{config.GITHUB_API}/{software.github}/releases/latest",
                           f"github-{software.github.replace('/', '_')}.json")
@@ -235,8 +262,8 @@ def metrics(hostname, software, now):
     info = gauge(
         "host_updates_software_info",
         "Software on the host (images of running containers, OS, Docker Engine) with its release cycle and latest "
-        "versions. update: patch (newer release in the same cycle), newer (newer cycle only), none, unknown. "
-        "lookup: found, untracked, version_unknown, failed, cycle_not_found.",
+        "versions (on an LTS cycle, the latest LTS). update: patch (newer release in the same cycle), newer (newer cycle only), none, unknown. "
+        "lookup: found, untracked, version_unknown, failed, unexpected_response, cycle_not_found.",
         ["kind", "name", "version", "image", "containers", "version_source", "product", "cycle", "latest_in_cycle",
          "latest", "update", "lookup"])
     end_of_life = gauge(

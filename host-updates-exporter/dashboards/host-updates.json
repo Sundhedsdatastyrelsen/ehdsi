@@ -1744,6 +1744,10 @@
                       "cycle_not_found": {
                         "color": "orange",
                         "index": 4
+                      },
+                      "unexpected_response": {
+                        "color": "red",
+                        "index": 5
                       }
                     }
                   }

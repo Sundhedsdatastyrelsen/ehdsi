@@ -10,8 +10,13 @@ from software import Software
 from support import samples
 
 GRAFANA_RELEASES = [
-    {"name": "12.1", "releaseDate": "2025-07-22", "isEol": False, "eolFrom": "2099-01-01", "latest": {"name": "12.1.10"}},
-    {"name": "12.0", "releaseDate": "2025-05-05", "isEol": True, "eolFrom": "2026-02-05", "latest": {"name": "12.0.10"}},
+    {"name": "12.1", "releaseDate": "2025-07-22", "isLts": False, "isEol": False, "eolFrom": "2099-01-01", "latest": {"name": "12.1.10"}},
+    {"name": "12.0", "releaseDate": "2025-05-05", "isLts": False, "isEol": True, "eolFrom": "2026-02-05", "latest": {"name": "12.0.10"}},
+]
+UBUNTU_RELEASES = [
+    {"name": "25.10", "releaseDate": "2025-10-09", "isLts": False, "eolFrom": "2026-07-09", "latest": {"name": "25.10"}},
+    {"name": "24.04", "releaseDate": "2024-04-25", "isLts": True, "eolFrom": "2029-05-31", "latest": {"name": "24.04.3"}},
+    {"name": "22.04", "releaseDate": "2022-04-21", "isLts": True, "eolFrom": "2027-06-01", "latest": {"name": "22.04.5"}},
 ]
 CADDY_RELEASES = [
     {"name": "2", "releaseDate": "2020-05-04", "isEol": False, "eolFrom": None, "latest": {"name": "2.11.4"}},
@@ -58,6 +63,14 @@ class EndOfLifeTest(unittest.TestCase):
         software.apply_endoflife(grafana, GRAFANA_RELEASES)
         self.assertEqual((grafana.cycle, grafana.end_of_life, grafana.latest_in_cycle, grafana.latest),
                          ("12.0", date(2026, 2, 5), "12.0.10", "12.1.10"))
+
+    def test_lts_cycle_compares_with_the_newest_lts_only(self):
+        lts = Software("os", "ubuntu", "22.04", "host", product="ubuntu")
+        software.apply_endoflife(lts, UBUNTU_RELEASES)
+        self.assertEqual(lts.latest, "24.04.3")
+        interim = Software("os", "ubuntu", "25.10", "host", product="ubuntu")
+        software.apply_endoflife(interim, UBUNTU_RELEASES)
+        self.assertEqual(interim.latest, "25.10")
 
     def test_no_end_of_life_date_yet(self):
         caddy = Software("image", "caddy", "2.11.4", "env", product="caddy")
@@ -146,6 +159,24 @@ class LookUpTest(unittest.TestCase):
         with mock.patch.object(software, "fetch_json", return_value={"tag_name": "v1.20.1"}):
             software.look_up(alloy)
         self.assertEqual((alloy.latest, alloy.lookup), ("1.20.1", "found"))
+
+    def test_endoflife_release(self):
+        grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
+        with mock.patch.object(software, "fetch_json", return_value={"result": {"releases": GRAFANA_RELEASES}}):
+            software.look_up(grafana)
+        self.assertEqual((grafana.cycle, grafana.latest, grafana.lookup), ("12.0", "12.1.10", "found"))
+
+    def test_endoflife_format_changed(self):
+        # eolFrom renamed to eolDate
+        renamed_field = [{key.replace("eolFrom", "eolDate"): value for key, value in release.items()}
+                         for release in GRAFANA_RELEASES]
+        for response in ({"releases": GRAFANA_RELEASES}, {"result": {"releases": renamed_field}}):
+            with self.subTest(response=response):
+                grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
+                with mock.patch.object(software, "fetch_json", return_value=response), \
+                        self.assertLogs(software.log, "WARNING"):
+                    software.look_up(grafana)
+                self.assertEqual(grafana.lookup, "unexpected_response")
 
     def test_unreachable(self):
         grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")

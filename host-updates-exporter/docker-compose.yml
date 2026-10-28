@@ -6,7 +6,7 @@ services:
     container_name: host-updates-exporter
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     volumes:
       # apt: the host's sources, keys, pinning, proxy and credentials at their
       # own paths (sources name keyrings by absolute path), its installed

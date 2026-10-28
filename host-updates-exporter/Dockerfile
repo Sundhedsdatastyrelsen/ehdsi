@@ -1,5 +1,5 @@
-# The hosts' Ubuntu release, so apt reads their sources and dpkg status the
-# way their own apt does.
+# The same Ubuntu release as the hosts, so apt here reads their sources and
+# dpkg status the way the hosts' own apt does.
 FROM ubuntu:24.04 AS base
 
 RUN apt-get update \

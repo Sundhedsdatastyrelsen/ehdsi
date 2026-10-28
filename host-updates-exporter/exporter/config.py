@@ -16,19 +16,20 @@ log = logging.getLogger(__name__)
 # apt sources name their keyrings by absolute path.
 HOST_ROOT = Path(os.environ.get("HOST_ROOT", "/host"))
 
-# A volume: survives upgrades of this image.
+# On a volume, so it survives upgrading this image.
 STATE_DIR = Path(os.environ.get("STATE_DIR", "/var/lib/host-updates"))
 
-# Mounted from the ops repo, as a directory so a replaced file is seen.
+# Mounted from the ops repo. The directory is mounted rather than the file, so
+# the exporter sees a new version when the file is replaced.
 CONFIG_FILE = Path(os.environ.get("CONFIG_FILE", "/etc/host-updates/config.toml"))
 
-PORT = int(os.environ.get("PORT", "9090"))
-PACKAGES_CHECK_HOURS = float(os.environ.get("PACKAGES_CHECK_HOURS", "6"))
-SOFTWARE_CHECK_HOURS = float(os.environ.get("SOFTWARE_CHECK_HOURS", "24"))
+PORT = 9090
+PACKAGES_CHECK_HOURS = 6
+SOFTWARE_CHECK_HOURS = 24
 
 # The proxy in docker-proxy/haproxy.cfg: the exporter never gets the Docker
 # socket itself.
-DOCKER_API = os.environ.get("DOCKER_API", "host-updates-docker-proxy:2375")
+DOCKER_API = "host-updates-docker-proxy:2375"
 ENDOFLIFE_API = "https://endoflife.date/api/v1/products"
 GITHUB_API = "https://api.github.com/repos"
 
