@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.app.WebApp.log
 import io.javalin.http.Context
+import io.javalin.http.HttpStatus
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.router.JavalinDefaultRoutingApi
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler
@@ -66,13 +67,27 @@ class LocalAuth(
     override fun registerRoutes(routes: JavalinDefaultRoutingApi) {
         log.warn("Beware! Local development authorization enabled.")
 
+        routes.get("/login") {ctx ->
+            val principal = current(ctx)
+            if (principal == null) {
+                ctx.redirect("/?error=login-not-enabled", HttpStatus.SEE_OTHER)
+                return@get
+            }
+            ctx.redirect("/")
+        }
+
+        routes.get("/logout") { ctx ->
+            logout(ctx)  // SAML does session + persistent logout; both clear tracking cookie
+            ctx.redirect("/")
+        }
+
         routes.get("/dev-login") { ctx ->
             val cpr = ctx.queryParam("cpr") ?: defaultCpr
             val name = ctx.queryParam("name") ?: defaultName
             ctx.sessionAttribute(sessionKey, Principal(cpr, name))
-            ctx.redirect("/form")
+            ctx.redirect("/")
         }
-        routes.before("/form*", ::devHeaderAuthHook)
+        routes.before("/login*", ::devHeaderAuthHook)
         routes.before("/find-patient*", ::devHeaderAuthHook)
     }
 

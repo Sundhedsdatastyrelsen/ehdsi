@@ -14,7 +14,6 @@ import freemarker.template.TemplateExceptionHandler
 import io.javalin.Javalin
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
-import io.javalin.http.HttpStatus
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
@@ -128,26 +127,11 @@ object WebApp {
 
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
-                ctx.render("frontpage.ftlh", mapOf("error" to ctx.queryParam("error")))
-            }
-
-            config.routes.get("/form") { ctx ->
                 val principal = auth.current(ctx)
-                if (principal == null) {
-                    ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
-                    return@get
-                }
-                val dataModel = mapOf(
-                    // Add the dash to the CPR.
-                    "userCpr" to principal.cpr.replaceRange(6, 6, "-"),
+                ctx.render(
+                    "frontpage.ftlh",
+                    mapOf("error" to ctx.queryParam("error"), "principal" to principal)
                 )
-
-                ctx.render("form.ftlh", dataModel)
-            }
-
-            config.routes.get("/logout") { ctx ->
-                auth.logout(ctx)  // SAML does session + persistent logout; both clear tracking cookie
-                ctx.redirect("/")
             }
         }
 

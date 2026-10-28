@@ -59,58 +59,56 @@ class WebAppIntegrationTest {
         val resp = client.newCall(Request.Builder().url("$baseUrl/").get().build()).execute()
         assertEquals(200, resp.code)
         val body = resp.body.string()
-        assertContains(body, "ePrescription portal")
+        assertContains(body, "ePrescription Portal")
     }
 
     @Test
-    fun `form redirects to home with an error message if not logged in`() {
-        var resp = client.newCall(Request.Builder().url("$baseUrl/form").get().build()).execute()
+    fun `login redirects to home with an error message if not logged in`() {
+        var resp = client.newCall(Request.Builder().url("$baseUrl/login").get().build()).execute()
         assertEquals(303, resp.code)
         val redirectTo = resp.headers["Location"];
-        assertEquals("/?error=not-authorized", redirectTo)
+        assertEquals("/?error=login-not-enabled", redirectTo)
 
         resp = client.newCall(Request.Builder().url(baseUrl + redirectTo!!).get().build()).execute()
         val body = resp.body.string()
-        assertContains(body, "Du skal logge på");
+        assertContains(body, "Det er ikke muligt at logge på");
     }
 
     @Test
-    fun `form renders with principal`() {
-        // Dev login creates session and redirects to /form
+    fun `frontpage renders with principal`() {
+        // Dev login creates session and redirects to /
         var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=1212121234").get().build()).execute()
         assertEquals(302, resp.code)
         val cookies = resp.headers("Set-Cookie")
 
-        // Now call /form with session cookie
+        // Now call / with session cookie
         val req = Request.Builder()
-            .url("$baseUrl/form")
+            .url("$baseUrl/")
             .get()
             .header("Cookie", cookies.joinToString("; ") { it.substringBefore(';') })
             .build()
         resp = client.newCall(req).execute()
         assertEquals(200, resp.code)
-        val body = resp.body.string().orEmpty()
-        assertTrue(body.contains("121212-1234"))
+        val body = resp.body.string()
+        assertContains(body, "121212-1234")
     }
 
     @Test
-    @Disabled
-    fun `form errors are shown to the user`() {
+    fun `login errors are shown to the user`() {
         // Login
         var resp = client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0909090009").get().build()).execute()
         val cookies = resp.headers("Set-Cookie")
         val cookieHeader = cookies.joinToString("; ") { it.substringBefore(';') }
 
         val req2 =
-            Request.Builder().url("$baseUrl/form?error=form-update-failed").get().header("Cookie", cookieHeader).build()
+            Request.Builder().url("$baseUrl/?error=login-failed").get().header("Cookie", cookieHeader).build()
         resp = client.newCall(req2).execute()
         var body = resp.body.string()
-        assertContains(body, "Der skete en fejl")
+        assertContains(body, "Der er sket en fejl")
     }
 
     @Test
-    @Disabled
-    fun `form escapes characters`() {
+    fun `principal display escapes characters`() {
         // login. %3C is <
         var resp =
             client.newCall(Request.Builder().url("$baseUrl/dev-login?cpr=0101010001&name=John%3Cscript").get().build())
@@ -119,7 +117,7 @@ class WebAppIntegrationTest {
 
         // get form
         val req = Request.Builder()
-            .url("$baseUrl/form")
+            .url("$baseUrl/")
             .get()
             .header("Cookie", cookies.joinToString("; ") { it.substringBefore(';') })
             .build()

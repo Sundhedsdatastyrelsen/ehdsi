@@ -20,7 +20,11 @@
           class="hidden md:flex justify-center items-center w-28 border-b-8 border-b-red bg-background text-lg z-10"
           >ePrescription Portal</a
         >
+        <#if principal??>
         <a href="/logout" title="Log af" class="red-button self-center">Log af</a>
+        <#else>
+        <a href="/login" title="Log på" class="red-button self-venter">Log på</a>
+        </#if>
       </nav>
     </header>
     <main class="mt-10 px-4 md:px-8">
