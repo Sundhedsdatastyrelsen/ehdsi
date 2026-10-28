@@ -1,4 +1,4 @@
-<#-- Page chrome for logged-in pages: <@layout.page title="…">content</@layout.page> -->
+<#-- Page chrome for all pages: <@layout.page title="…">content</@layout.page> -->
 <#macro page title>
 <!DOCTYPE html>
 <html lang="da">
@@ -23,7 +23,7 @@
         <#if principal??>
         <a href="/logout" title="Log af" class="red-button self-center">Log af</a>
         <#else>
-        <a href="/login" title="Log på" class="red-button self-venter">Log på</a>
+        <a href="/login" title="Log på" class="red-button self-center">Log på</a>
         </#if>
       </nav>
     </header>

@@ -15,10 +15,8 @@ interface AuthProvider {
         // default no-op
     }
 
-    /** Optional: add dev login routes etc. */
-    fun registerRoutes(routes: JavalinDefaultRoutingApi) {
-        // default no-op
-    }
+    /** Add /login, /logout and more routes */
+    fun registerRoutes(routes: JavalinDefaultRoutingApi)
 
     /** Resolve current principal from request/session */
     fun current(ctx: Context): Principal?
@@ -73,7 +71,7 @@ class LocalAuth(
                 ctx.redirect("/?error=login-not-enabled", HttpStatus.SEE_OTHER)
                 return@get
             }
-            ctx.redirect("/")
+            ctx.redirect("/", HttpStatus.SEE_OTHER)
         }
 
         routes.get("/logout") { ctx ->
@@ -87,8 +85,7 @@ class LocalAuth(
             ctx.sessionAttribute(sessionKey, Principal(cpr, name))
             ctx.redirect("/")
         }
-        routes.before("/login*", ::devHeaderAuthHook)
-        routes.before("/find-patient*", ::devHeaderAuthHook)
+        routes.before(::devHeaderAuthHook)
     }
 
     /** Lets a request authenticate via the [headerName] header instead of `/dev-login`, e.g. from curl. */

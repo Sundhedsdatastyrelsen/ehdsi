@@ -1,5 +1,5 @@
 <#import "layout.ftlh" as layout>
-<@layout.page title="ePrescription Portal - Prescriptions">
+<@layout.page title="ePrescription Portal">
   <#if error??>
     <div class="bg-white mt-10 max-w-4xl mx-auto border-b-8 border-b-yellow p-4">
       <#switch error>
