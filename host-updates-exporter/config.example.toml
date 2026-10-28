@@ -1,0 +1,36 @@
+# Sample config for host-updates-exporter. Each ops repo keeps its own copy as
+# host-updates-exporter/config.toml next to its docker-compose.yml, which
+# mounts that directory at /etc/host-updates.
+#
+# Everything here is added to the built-in tables in exporter/config.py; an
+# entry for an image already there overrides it. The file is read before every
+# check, so a change applies from the next one without a restart. A broken
+# file is ignored as a whole and logged as an error.
+#
+# Every setting is optional. Top-level settings must come before the tables.
+
+# Images we build ourselves, by prefix. They aren't reported: the pipelines
+# bump their tags.
+own_image_prefixes = [
+    # "registry.example.com/our-team/",
+]
+
+# apt repositories, by the Label of their Release file, whose packages are
+# ours to upgrade with update-packages.sh. Docker CE's already are. See the
+# labels with: apt-cache policy | grep -o 'l=[^,]*' | sort -u
+own_apt_origins = [
+    # "Our Repository",
+]
+
+# Image repository = product on https://endoflife.date, which gives release
+# cycles, end-of-life dates and the latest versions. Look the product up at
+# https://endoflife.date/api/v1/products/<product>.
+[endoflife_products]
+# "redis" = "redis"
+# "postgres" = "postgresql"
+
+# For images endoflife.date doesn't cover: image repository = GitHub repository
+# whose latest release is reported (no end-of-life date).
+# An image in both tables is looked up on endoflife.date.
+[github_repositories]
+# "some-org/some-tool" = "some-org/some-tool"

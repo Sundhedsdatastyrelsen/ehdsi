@@ -13,9 +13,9 @@ from dataclasses import dataclass
 
 import apt
 import apt_pkg
-from prometheus_client.core import GaugeMetricFamily
-
 import config
+import host
+from host import gauge
 
 log = logging.getLogger(__name__)
 
@@ -55,10 +55,11 @@ def classify(name, installed_version, candidate_version, origins):
     )
 
 
-def pending_packages(refresh=True):
-    """Returns (pending packages, whether the refresh succeeded). The list is
-    None when no package lists were ever fetched: with nothing to compare
-    against, apt would report "all up to date"."""
+def pending_packages():
+    """Refreshes the package lists, then returns (pending packages, whether the
+    refresh succeeded). The list is None when no package lists were ever
+    fetched: with nothing to compare against, apt would report "all up to
+    date"."""
     config.load()
     apt_pkg.config.set("Dir::State::status", str(config.HOST_ROOT / "var/lib/dpkg/status"))
     apt_pkg.config.set("Dir::State::Lists", str(APT_LISTS_DIR))
@@ -71,13 +72,12 @@ def pending_packages(refresh=True):
 
     cache = apt.Cache(memonly=True)
     refresh_ok = True
-    if refresh:
-        try:
-            cache.update(raise_on_error=True)
-        except apt.cache.FetchFailedException as error:
-            log.warning("Refreshing the package lists failed, using the ones we have: %s", error)
-            refresh_ok = False
-        cache.open()
+    try:
+        cache.update(raise_on_error=True)
+    except apt.cache.FetchFailedException as error:
+        log.warning("Refreshing the package lists failed, using the ones we have: %s", error)
+        refresh_ok = False
+    cache.open()
 
     if not list(APT_LISTS_DIR.glob("*_Packages*")):
         return None, False
@@ -123,15 +123,17 @@ def installed_kernels():
 
 
 def installed_at(package):
+    """When dpkg last wrote the package's file list, i.e. roughly when it was
+    installed; dpkg's status file if there is no list."""
     files_list = config.HOST_ROOT / f"var/lib/dpkg/info/{package}.list"
     return (files_list if files_list.exists() else config.HOST_ROOT / "var/lib/dpkg/status").stat().st_mtime
 
 
 def reboot_required():
     """Returns (since when, the packages asking for it), or None. A reboot is
-    required when a newer kernel is installed than the one running. Unlike
-    the host's /run/reboot-required, which the container can't see, this
-    misses the rarer reboots asked for by libc6, dbus and the like."""
+    required when a newer kernel is installed than the one running. The
+    host's /run/reboot-required isn't visible in the container, so the rarer
+    reboots asked for by libc6, dbus and the like are missed."""
     running = running_kernel()
     newer = sorted(package for release, package in installed_kernels()
                    if apt_pkg.version_compare(release, running) > 0)
@@ -140,26 +142,11 @@ def reboot_required():
     return min(installed_at(package) for package in newer), newer
 
 
-def os_pretty_name():
-    for line in (config.HOST_ROOT / "etc/os-release").read_text().splitlines():
-        if line.startswith("PRETTY_NAME="):
-            return line.split("=", 1)[1].strip('"')
-    return "unknown"
-
-
 def boot_time():
     # /proc is the host's kernel's, even inside the container.
     for line in open("/proc/stat"):
         if line.startswith("btime "):
             return int(line.split()[1])
-
-
-def host_name():
-    return (config.HOST_ROOT / "etc/hostname").read_text().strip()
-
-
-def gauge(name, documentation, labels=()):
-    return GaugeMetricFamily(name, documentation, labels=["hostname", *labels])
 
 
 def pending_metrics(hostname, pending, pending_since):
@@ -199,7 +186,7 @@ def reboot_metrics(hostname, reboot):
 
 def host_metrics(hostname, refresh_ok, now):
     os_info = gauge("host_updates_os_info", "Operating system of the host.", ["pretty_name", "kernel"])
-    os_info.add_metric([hostname, os_pretty_name(), os.uname().release], 1)
+    os_info.add_metric([hostname, host.os_release().get("PRETTY_NAME", "unknown"), os.uname().release], 1)
     booted = gauge("host_updates_boot_timestamp_seconds", "When the host last booted.")
     booted.add_metric([hostname], boot_time())
     dpkg_changed = gauge(
@@ -208,7 +195,7 @@ def host_metrics(hostname, refresh_ok, now):
     dpkg_changed.add_metric([hostname], (config.HOST_ROOT / "var/lib/dpkg/status").stat().st_mtime)
     refreshed = gauge("host_updates_refresh_success", "1 if the last package list refresh fetched every source.")
     refreshed.add_metric([hostname], 1 if refresh_ok else 0)
-    last_run = gauge("host_updates_last_run_timestamp_seconds", "When the package check last ran.")
+    last_run = gauge("host_updates_packages_last_run_timestamp_seconds", "When the package check last ran.")
     last_run.add_metric([hostname], now)
     return [os_info, booted, dpkg_changed, refreshed, last_run]
 
@@ -216,7 +203,7 @@ def host_metrics(hostname, refresh_ok, now):
 def check():
     """Runs the check and returns its metrics."""
     now = time.time()
-    hostname = host_name()
+    hostname = host.name()
     pending, refresh_ok = pending_packages()
     reboot = reboot_required()
 

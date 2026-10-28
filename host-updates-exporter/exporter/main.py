@@ -1,7 +1,7 @@
 """Serves the metrics on /metrics and reruns the checks on their schedules.
 
-Between runs the last results are served; each check's *_last_run metric
-tells Grafana how old they are. A failing check is logged and retried at its
+Between runs the last results are served; host_updates_packages_last_run_* and
+host_updates_software_last_run_* tell Grafana how old they are. A failing check is logged and retried at its
 next scheduled run."""
 
 import logging

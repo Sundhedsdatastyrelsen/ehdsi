@@ -41,13 +41,13 @@ class PendingSinceTest(unittest.TestCase):
 class CheckTest(unittest.TestCase):
     def setUp(self):
         packages.PENDING_SINCE_FILE.unlink(missing_ok=True)
-        self.installed_kernels("6.8.0-87-generic")
+        self.write_dpkg_status_with_kernels("6.8.0-87-generic")
 
-    def installed_kernels(self, *releases):
+    def write_dpkg_status_with_kernels(self, *releases):
         status = "".join(
             f"Package: linux-image-{release}\nStatus: install ok installed\nVersion: {release}\n\n"
             for release in releases)
-        # Neither a kernel nor installed: ignored.
+        # Ignored: a metapackage (no kernel release in its name) and a removed kernel.
         status += "Package: linux-image-generic\nStatus: install ok installed\n\n"
         status += "Package: linux-image-6.8.0-99-generic\nStatus: deinstall ok config-files\n\n"
         (support.HOST_ROOT / "var/lib/dpkg/status").write_text(status)
@@ -73,17 +73,17 @@ class CheckTest(unittest.TestCase):
                                   "candidate_version": "5:29.0.2-1~ubuntu.24.04~noble",
                                   "origin": "Docker CE", "owner": "ours", "security": "false"})
 
-    def test_no_package_lists_reports_no_counts_and_keeps_history(self):
+    def test_no_package_lists_reports_no_counts_and_keeps_pending_since(self):
         self.check([LIBC])
-        history = packages.PENDING_SINCE_FILE.read_text()
+        pending_since_before = packages.PENDING_SINCE_FILE.read_text()
         metrics = self.check(None, refresh_ok=False)
         self.assertEqual(samples(metrics, "host_updates_pending_packages"), [])
         self.assertEqual(samples(metrics, "host_updates_refresh_success"), [({"hostname": "testhost"}, 0)])
-        self.assertEqual(packages.PENDING_SINCE_FILE.read_text(), history)
+        self.assertEqual(packages.PENDING_SINCE_FILE.read_text(), pending_since_before)
 
     def test_reboot_required(self):
         self.assertEqual(samples(self.check([]), "host_updates_reboot_required"), [({"hostname": "testhost"}, 0)])
-        self.installed_kernels("6.8.0-79-generic", "6.8.0-87-generic", "6.8.0-90-generic", "6.11.0-1-generic")
+        self.write_dpkg_status_with_kernels("6.8.0-79-generic", "6.8.0-87-generic", "6.8.0-90-generic", "6.11.0-1-generic")
         metrics = self.check([])
         self.assertEqual(samples(metrics, "host_updates_reboot_required"), [({"hostname": "testhost"}, 1)])
         self.assertEqual([labels["package"] for labels, _ in samples(metrics, "host_updates_reboot_required_package")],

@@ -9,7 +9,8 @@ next to the stacks on every host (deployed by the ops repos) and serves
   which packages apt would upgrade on the host, who patches each — `hosting`
   (the Ubuntu archive) or `ours` (Docker) — whether it is a security update,
   and since when it has been pending. Also whether a reboot is required (a
-  newer kernel is installed than the one running), the OS and running kernel. Nothing is installed: the ops repos'
+  newer kernel is installed than the one running), and the OS and running
+  kernel. The exporter itself never installs anything: the ops repos'
   `update-packages.sh` upgrades our packages on the host, asking this
   container what is pending ([`pending.py`](exporter/pending.py)).
 - **End of life** ([`software.py`](exporter/software.py), daily): for the
@@ -22,11 +23,11 @@ next to the stacks on every host (deployed by the ops repos) and serves
 Which apt repositories are ours, which images we build, and which image maps
 to which endoflife.date product or GitHub repository, has defaults in
 [`config.py`](exporter/config.py). Each ops repo adds to them in its own
-`host-updates-exporter/config.toml`, mounted at `/etc/host-updates`; see
-`load` in `config.py` for the format. A third-party image no table covers
-shows up with `lookup="untracked"` until it is added to one. The file is read
-before every check, so changes need no restart; a broken file is logged and
-ignored.
+`host-updates-exporter/config.toml`, mounted at `/etc/host-updates`;
+[`config.example.toml`](config.example.toml) describes the format. A
+third-party image no table covers shows up with `lookup="untracked"` until it
+is added to one. The file is read before every check, so changes need no
+restart; a broken file is logged and ignored.
 
 ## How it sees the host
 
@@ -40,8 +41,8 @@ It runs as an unprivileged user with no capabilities on a read-only root
 filesystem, and can write only to the state volume and `/tmp`. It never gets
 the Docker socket: `host-updates-docker-proxy`, the official HAProxy image
 with [`docker-proxy/haproxy.cfg`](docker-proxy/haproxy.cfg), lets through
-listing containers, reading their and their images' configuration, and the
-Docker version, and refuses everything else. It is on an internal network
+listing containers, inspecting a container or an image, and the Docker
+version, and refuses everything else. It is on an internal network
 with only the exporter. Every ops repo runs the two services with the
 settings of [`docker-compose.yml`](docker-compose.yml) and a copy of the
 HAProxy configuration; change them here and in the ops repos together.

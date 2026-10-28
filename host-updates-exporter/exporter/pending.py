@@ -1,7 +1,8 @@
 """Prints the names of the host's packages with an update pending.
 
-Used by update-packages.sh in the ops repos, which runs on the host and
-upgrades the ones we own:
+Refreshes the package lists first, so it takes a moment. Used by
+update-packages.sh in the ops repos, which runs on the host and upgrades the
+ones we own:
     docker exec host-updates-exporter python3 /app/exporter/pending.py --owner ours"""
 
 import argparse

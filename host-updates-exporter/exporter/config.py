@@ -1,6 +1,5 @@
-"""Settings. The same on every host; the host itself is reached through the
-bind mounts in docker-compose.yml. The tables below are defaults: a host's
-config file adds to them (see load)."""
+"""Settings, and the built-in tables of which images and apt repositories are
+whose. A host's config.toml adds to the tables (see load)."""
 
 import logging
 import os
@@ -9,9 +8,11 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-# The host's root filesystem, mounted read-only. The host's /etc/apt,
-# /usr/share/keyrings and /etc/machine-id are mounted at their own paths
-# instead, because apt sources name their keyrings by absolute path.
+# Where the few host files read directly (dpkg status and file lists,
+# os-release, hostname) are mounted read-only, at their host paths below it;
+# see docker-compose.yml. The host's /etc/apt, /usr/share/keyrings and
+# /etc/machine-id are mounted at their own paths instead, because apt sources
+# name their keyrings by absolute path.
 HOST_ROOT = Path(os.environ.get("HOST_ROOT", "/host"))
 
 # A volume: survives upgrades of this image.
@@ -65,17 +66,13 @@ DEFAULTS = (OWN_APT_ORIGINS, ENDOFLIFE_PRODUCTS, GITHUB_REPOSITORIES, OWN_IMAGE_
 
 
 def load():
-    """Adds the config file, if there is one, to the defaults above. Runs
-    before every check, so a changed file applies from the next one. A broken
-    file is logged and ignored: the defaults keep working.
+    """Adds the config file, if there is one, to the defaults above; its
+    format is in config.example.toml. Runs before every check, so a changed
+    file applies from the next one. A broken file is logged and ignored: the
+    defaults keep working.
 
-        own_apt_origins = ["..."]       # apt repository labels
-        own_image_prefixes = ["..."]
-        [endoflife_products]
-        "image/repository" = "product"
-        [github_repositories]
-        "image/repository" = "owner/repository"
-    """
+    Replaces the module's tables rather than changing them, so read them as
+    config.ENDOFLIFE_PRODUCTS etc., never import them by name."""
     global OWN_APT_ORIGINS, ENDOFLIFE_PRODUCTS, GITHUB_REPOSITORIES, OWN_IMAGE_PREFIXES
     origins, products, repositories, prefixes = DEFAULTS
     if CONFIG_FILE.exists():

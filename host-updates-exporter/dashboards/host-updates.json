@@ -48,7 +48,7 @@
           "type": "prometheus",
           "uid": "${datasource}"
         },
-        "definition": "label_values(host_updates_last_run_timestamp_seconds, hostname)",
+        "definition": "label_values(host_updates_packages_last_run_timestamp_seconds, hostname)",
         "includeAll": true,
         "multi": true,
         "current": {
@@ -64,7 +64,7 @@
         "type": "query",
         "query": {
           "qryType": 1,
-          "query": "label_values(host_updates_last_run_timestamp_seconds, hostname)",
+          "query": "label_values(host_updates_packages_last_run_timestamp_seconds, hostname)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         }
       },
@@ -336,7 +336,7 @@
     {
       "type": "stat",
       "title": "Hosts with stale update metrics",
-      "description": "host-updates-exporter has not checked for more than a day, so the numbers here are out of date.",
+      "description": "host-updates-exporter has not run its package check for more than a day, or its end-of-life check for more than two days, so the numbers here are out of date.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -354,7 +354,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "count((time() - host_updates_last_run_timestamp_seconds{hostname=~\"$hostname\"}) > 86400) OR on() vector(0)",
+          "expr": "count((time() - host_updates_packages_last_run_timestamp_seconds{hostname=~\"$hostname\"}) > 86400 or on(hostname) (time() - host_updates_software_last_run_timestamp_seconds{hostname=~\"$hostname\"}) > 172800) OR on() vector(0)",
           "refId": "A",
           "legendFormat": "__auto",
           "format": "table",
@@ -536,7 +536,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "time() - max by (hostname, deployment_environment_name) (host_updates_last_run_timestamp_seconds{hostname=~\"$hostname\"})",
+          "expr": "time() - max by (hostname, deployment_environment_name) (host_updates_packages_last_run_timestamp_seconds{hostname=~\"$hostname\"})",
           "refId": "age",
           "legendFormat": "__auto",
           "format": "table",
@@ -1435,7 +1435,7 @@
     {
       "type": "stat",
       "title": "Not tracked or unresolved",
-      "description": "Software we can't report end of life for: no source configured (untracked: add it to ENDOFLIFE_PRODUCTS or GITHUB_REPOSITORIES in host-updates-exporter/exporter/config.py in the ehdsi repo), an unknown running version, or a failed lookup.",
+      "description": "Software we can't report end of life for: no source configured (untracked: add the image to [endoflife_products] or [github_repositories] in host-updates-exporter/config.toml in the host's ops repo; the format is in host-updates-exporter/config.example.toml in the ehdsi repo), an unknown running version, or a failed lookup.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"

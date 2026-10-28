@@ -69,12 +69,19 @@ class UpdateAvailableTest(unittest.TestCase):
         return software.update_available(
             Software(kind, "x", version, "tag", latest_in_cycle=latest_in_cycle, latest=latest))
 
-    def test_cases(self):
+    def test_patch_when_the_cycle_has_a_newer_release(self):
         self.assertEqual(self.update("12.0.2", "12.0.10", "13.2.3"), "patch")
+
+    def test_newer_when_only_a_newer_cycle_has(self):
         self.assertEqual(self.update("1.12.2", "", "1.20.1"), "newer")  # GitHub: no cycles
-        self.assertEqual(self.update("2.1.1", "2.1.1", "2.1.1"), "none")
-        self.assertEqual(self.update("3.5", "3.5.12", "3.7.8"), "unknown")  # floating tag
+        # An OS isn't patched by release: 24.04 is on 24.04.5 already.
         self.assertEqual(self.update("24.04", "24.04.5", "26.04.1", kind="os"), "newer")
+
+    def test_none_when_running_the_latest(self):
+        self.assertEqual(self.update("2.1.1", "2.1.1", "2.1.1"), "none")
+
+    def test_unknown_for_a_floating_tag(self):
+        self.assertEqual(self.update("3.5", "3.5.12", "3.7.8"), "unknown")
 
 
 class RunningImagesTest(unittest.TestCase):

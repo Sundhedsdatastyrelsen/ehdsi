@@ -10,10 +10,9 @@ import urllib.request
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 
-from prometheus_client.core import GaugeMetricFamily
-
 import config
-from packages import host_name
+import host
+from host import gauge
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ class Software:
     kind: str  # "image", "os" or "runtime"
     name: str
     version: str  # empty when unknown
-    version_source: str  # where the version was read: tag, env, label or host
+    version_source: str  # where the version was read: tag, env, label, host, or none
     image: str = ""
     containers: list = field(default_factory=list)
     product: str = ""
@@ -34,7 +33,8 @@ class Software:
     latest_in_cycle: str = ""
     latest: str = ""
     # Whether we could find out about it: found, untracked (no source configured),
-    # version_unknown, failed (source unreachable) or cycle_not_found.
+    # version_unknown, failed (source unreachable) or cycle_not_found. Starts as
+    # found; look_up changes it when it can't.
     lookup: str = "found"
 
 
@@ -194,9 +194,7 @@ def running_images():
 
 
 def host_software():
-    os_release = dict(
-        line.split("=", 1) for line in (config.HOST_ROOT / "etc/os-release").read_text().splitlines() if "=" in line)
-    ubuntu = leading_version(os_release.get("VERSION_ID", "").strip('"'))
+    ubuntu = leading_version(host.os_release().get("VERSION_ID", ""))
     docker = leading_version(docker_get("/version").get("Version", ""))
     return [
         Software("os", "ubuntu", ubuntu, "host", product="ubuntu"),
@@ -205,21 +203,19 @@ def host_software():
 
 
 def metrics(hostname, software, now):
-    info = GaugeMetricFamily(
+    info = gauge(
         "host_updates_software_info",
         "Software on the host (images of running containers, OS, Docker Engine) with its release cycle and latest "
         "versions. update: patch (newer release in the same cycle), newer (newer cycle only), none, unknown. "
         "lookup: found, untracked, version_unknown, failed, cycle_not_found.",
-        labels=["hostname", "kind", "name", "version", "image", "containers", "version_source", "product", "cycle",
-                "latest_in_cycle", "latest", "update", "lookup"])
-    end_of_life = GaugeMetricFamily(
+        ["kind", "name", "version", "image", "containers", "version_source", "product", "cycle", "latest_in_cycle",
+         "latest", "update", "lookup"])
+    end_of_life = gauge(
         "host_updates_software_eol_timestamp_seconds",
         "When the release cycle of the running version reaches end of life, per endoflife.date "
         "(0: end of life, date unknown).",
-        labels=["hostname", "kind", "name", "version", "cycle"])
-    last_run = GaugeMetricFamily(
-        "host_updates_software_last_run_timestamp_seconds", "When the end-of-life check last ran.",
-        labels=["hostname"])
+        ["kind", "name", "version", "cycle"])
+    last_run = gauge("host_updates_software_last_run_timestamp_seconds", "When the end-of-life check last ran.")
 
     end_of_life_reported = set()
     for s in software:
@@ -241,7 +237,7 @@ def check():
     config.load()
     software = host_software() + running_images()
     for s in software:
-        if s.lookup == "found":
+        if s.lookup != "untracked":
             look_up(s)
     log.info("Checked %d pieces of software", len(software))
-    return metrics(host_name(), software, time.time())
+    return metrics(host.name(), software, time.time())
