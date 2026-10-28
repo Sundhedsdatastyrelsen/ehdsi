@@ -69,7 +69,8 @@ def load():
     """Adds the config file, if there is one, to the defaults above; its
     format is in config.example.toml. Runs before every check, so a changed
     file applies from the next one. A broken file is logged and ignored: the
-    defaults keep working.
+    tables stay as the last valid file left them, so a typo doesn't quietly
+    drop the host's own images and apt repositories.
 
     Replaces the module's tables rather than changing them, so read them as
     config.ENDOFLIFE_PRODUCTS etc., never import them by name."""
@@ -79,7 +80,8 @@ def load():
         try:
             added = parse(CONFIG_FILE.read_text())
         except (OSError, ValueError) as error:  # ValueError includes TOMLDecodeError
-            log.error("Ignoring %s: %s", CONFIG_FILE, error)
+            log.error("Ignoring %s, keeping the last valid one: %s", CONFIG_FILE, error)
+            return
         else:
             origins = origins | set(added.get("own_apt_origins", []))
             products = products | added.get("endoflife_products", {})

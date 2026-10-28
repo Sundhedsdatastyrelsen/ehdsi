@@ -75,7 +75,9 @@ def pending_packages():
     refresh_ok = True
     try:
         cache.update(raise_on_error=True)
-    except apt.cache.FetchFailedException as error:
+    # LockFailedException: another refresh is running, e.g. pending.py's
+    # beside the scheduled check.
+    except (apt.cache.FetchFailedException, apt.cache.LockFailedException) as error:
         log.warning("Refreshing the package lists failed, using the ones we have: %s", error)
         refresh_ok = False
     cache.open()
@@ -145,9 +147,10 @@ def reboot_required():
 
 def boot_time():
     # /proc is the host's kernel's, even inside the container.
-    for line in open("/proc/stat"):
-        if line.startswith("btime "):
-            return int(line.split()[1])
+    with open("/proc/stat") as stat:
+        for line in stat:
+            if line.startswith("btime "):
+                return int(line.split()[1])
 
 
 def pending_metrics(hostname, pending, pending_since):
@@ -215,7 +218,10 @@ def check():
         previous = json.loads(PENDING_SINCE_FILE.read_text()) if PENDING_SINCE_FILE.exists() else {}
         pending_since = update_pending_since(previous, pending, now)
         PENDING_SINCE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        PENDING_SINCE_FILE.write_text(json.dumps(pending_since))
+        # Replaced, not rewritten: a half-written file would fail every later run.
+        temporary = PENDING_SINCE_FILE.with_suffix(".tmp")
+        temporary.write_text(json.dumps(pending_since))
+        os.replace(temporary, PENDING_SINCE_FILE)
         metrics += pending_metrics(hostname, pending, pending_since)
         log.info("Pending: %d hosting, %d ours; reboot required: %s",
                  sum(p.owner == "hosting" for p in pending), sum(p.owner == "ours" for p in pending), bool(reboot))

@@ -5,7 +5,8 @@
 # Everything here is added to the built-in tables in exporter/config.py; an
 # entry for an image already there overrides it. The file is read before every
 # check, so a change applies from the next one without a restart. A broken
-# file is ignored as a whole and logged as an error.
+# file is ignored as a whole and logged as an error; the last valid one keeps
+# applying.
 #
 # Every setting is optional. Top-level settings must come before the tables.
 

@@ -144,6 +144,17 @@ class LookUpTest(unittest.TestCase):
             (software.RESPONSE_CACHE_DIR / "test.json").write_text('{"cached": true}')
             self.assertEqual(software.fetch_json("https://example.invalid/x", "test.json"), {"cached": True})
 
+    def test_response_that_isnt_json_isnt_cached(self):
+        # e.g. a proxy's error page
+        cached = software.RESPONSE_CACHE_DIR / "not-json.json"
+        with mock.patch("urllib.request.urlopen") as urlopen:
+            urlopen.return_value.__enter__.return_value.read.return_value = b"<html>Proxy error</html>"
+            self.assertIsNone(software.fetch_json("https://example.invalid/x", "not-json.json"))
+            software.RESPONSE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            cached.write_text('{"cached": true}')
+            self.assertEqual(software.fetch_json("https://example.invalid/x", "not-json.json"), {"cached": True})
+        self.assertEqual(cached.read_text(), '{"cached": true}')
+
 
 class MetricsTest(unittest.TestCase):
     def test_end_of_life_once_per_version(self):

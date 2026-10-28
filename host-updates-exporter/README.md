@@ -27,7 +27,8 @@ to which endoflife.date product or GitHub repository, has defaults in
 [`config.example.toml`](config.example.toml) describes the format. A
 third-party image no table covers shows up with `lookup="untracked"` until it
 is added to one. The file is read before every check, so changes need no
-restart; a broken file is logged and ignored.
+restart; a broken file is logged and ignored, and the last valid one keeps
+applying.
 
 ## How it sees the host
 

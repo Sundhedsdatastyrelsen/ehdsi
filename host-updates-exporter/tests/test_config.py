@@ -52,17 +52,20 @@ own_image_prefixes = ["registry.example/"]
         self.load("")
         self.assertNotIn("redis", config.ENDOFLIFE_PRODUCTS)
 
-    def test_broken_toml_keeps_the_defaults(self):
-        self.load_broken('[endoflife_products\n"redis" = "redis"\n')
-        self.assertNotIn("redis", config.ENDOFLIFE_PRODUCTS)
+    def test_broken_toml_keeps_the_last_valid_file(self):
+        self.load('[endoflife_products]\n"redis" = "redis"\n')
+        self.load_broken('[endoflife_products\n"memcached" = "memcached"\n')
+        self.assertEqual(config.ENDOFLIFE_PRODUCTS, {"default/image": "default-product", "redis": "redis"})
 
     def test_unknown_setting_ignores_the_whole_file(self):
+        self.load("")
         self.load_broken('endoflife_product = "typo"\n[github_repositories]\n"some/tool" = "some-org/tool"\n')
         self.assertNotIn("some/tool", config.GITHUB_REPOSITORIES)
 
-    def test_wrong_type_keeps_the_defaults(self):
-        self.load_broken('own_apt_origins = "Our Repo"\n')
-        self.assertEqual(config.OWN_APT_ORIGINS, {"Default Origin"})
+    def test_wrong_type_keeps_the_last_valid_file(self):
+        self.load('own_apt_origins = ["Our Repo"]\n')
+        self.load_broken('own_apt_origins = "Other Repo"\n')
+        self.assertEqual(config.OWN_APT_ORIGINS, {"Default Origin", "Our Repo"})
 
 
 if __name__ == "__main__":

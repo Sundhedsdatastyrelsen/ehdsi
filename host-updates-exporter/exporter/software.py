@@ -131,15 +131,16 @@ def fetch_json(url, cache_name):
     try:
         with urllib.request.urlopen(url, timeout=30) as response:
             body = response.read()
+        data = json.loads(body)
         RESPONSE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
         cached.write_bytes(body)
-    except OSError as error:
+        return data
+    except (OSError, ValueError) as error:  # ValueError: not JSON, e.g. a proxy's error page
         if not cached.exists():
-            log.warning("%s unreachable and nothing cached: %s", url, error)
+            log.warning("%s unusable and nothing cached: %s", url, error)
             return None
-        log.warning("%s unreachable, using the cached response: %s", url, error)
-        body = cached.read_bytes()
-    return json.loads(body)
+        log.warning("%s unusable, using the cached response: %s", url, error)
+        return json.loads(cached.read_bytes())
 
 
 def look_up(software):
@@ -166,11 +167,14 @@ def look_up(software):
 
 def docker_get(path):
     connection = http.client.HTTPConnection(config.DOCKER_API, timeout=30)
-    connection.request("GET", path)
-    response = connection.getresponse()
-    if response.status != 200:
-        raise RuntimeError(f"Docker API {path}: HTTP {response.status}")
-    return json.load(response)
+    try:
+        connection.request("GET", path)
+        response = connection.getresponse()
+        if response.status != 200:
+            raise RuntimeError(f"Docker API {path}: HTTP {response.status}")
+        return json.load(response)
+    finally:
+        connection.close()
 
 
 def running_images():

@@ -1,8 +1,10 @@
 import support  # first: points config at a temporary host root
 
 import unittest
+from pathlib import Path
 from unittest import mock
 
+import apt
 import config
 import packages
 from packages import PendingPackage, classify
@@ -33,6 +35,18 @@ class PendingSinceTest(unittest.TestCase):
         previous = {"libc6": 1000, "openssl": 2000}
         self.assertEqual(packages.update_pending_since(previous, [LIBC, DOCKER], now=5000),
                          {"libc6": 1000, "docker-ce": 5000})
+
+
+class PendingPackagesTest(unittest.TestCase):
+    def test_refresh_already_running_uses_the_lists_we_have(self):
+        # e.g. pending.py's refresh beside the scheduled check
+        packages.APT_LISTS_DIR.mkdir(parents=True, exist_ok=True)
+        (packages.APT_LISTS_DIR / "archive.ubuntu.com_ubuntu_dists_noble_main_binary-amd64_Packages").touch()
+        cache = mock.Mock()
+        cache.update.side_effect = apt.cache.LockFailedException("Failed to lock")
+        cache.get_changes.return_value = []
+        with mock.patch.object(apt, "Cache", return_value=cache), self.assertLogs(packages.log, "WARNING"):
+            self.assertEqual(packages.pending_packages(), ([], False))
 
 
 class CheckTest(unittest.TestCase):
@@ -85,6 +99,20 @@ class CheckTest(unittest.TestCase):
         self.assertEqual(samples(metrics, "host_updates_reboot_required"), [({"hostname": "testhost"}, 1)])
         self.assertEqual([labels["package"] for labels, _ in samples(metrics, "host_updates_reboot_required_package")],
                          ["linux-image-6.11.0-1-generic", "linux-image-6.8.0-90-generic"])
+
+    def test_interrupted_state_write_keeps_the_previous_state(self):
+        self.check([LIBC])
+        before = packages.PENDING_SINCE_FILE.read_text()
+
+        def killed_halfway(path, text):
+            with path.open("w") as file:
+                file.write(text[:5])
+            raise OSError("killed")
+
+        with mock.patch.object(Path, "write_text", killed_halfway), self.assertRaises(OSError):
+            self.check([LIBC, DOCKER])
+        self.assertEqual(packages.PENDING_SINCE_FILE.read_text(), before)
+        self.check([LIBC])  # and the next run still works
 
 
 if __name__ == "__main__":
