@@ -50,20 +50,19 @@ object FindPatient {
     ) {
         /** Full page with the search form, no country selected yet. */
         fun page(ctx: Context) {
-            val principal = auth.current(ctx)
-            if (principal == null) {
+            if (auth.current(ctx) == null) {
                 ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
                 return
             }
-            ctx.render("find-patient/index.ftlh", formModel(principal, country = "", mask = null))
+            ctx.render("find-patient/index.ftlh", formModel(country = "", mask = null))
         }
 
         /** htmx fragment: the empty id fields for the selected country, clearing any earlier results (see country.ftlh). */
         fun fields(ctx: Context) {
-            val principal = auth.require(ctx)
+            auth.require(ctx)
             val country = ctx.queryParam("country")?.trim().orEmpty()
             val mask = if (country.isEmpty()) null else masks.get(country) ?: return ctx.unknownCountry()
-            ctx.render("find-patient/country.ftlh", formModel(principal, country, mask))
+            ctx.render("find-patient/country.ftlh", formModel(country, mask))
         }
 
         /** htmx fragment: the validation error of a single id field, see field-error.ftlh. */
@@ -88,7 +87,7 @@ object FindPatient {
 
             val values = ctx.idValues(mask)
             val input = validate(mask, values)
-            val form = formModel(principal, country, mask, values, input.errors, input.formError)
+            val form = formModel(country, mask, values, input.errors, input.formError)
             if (!input.isValid) {
                 ctx.status(HttpStatus.UNPROCESSABLE_CONTENT)
                 ctx.render("find-patient/search.ftlh", form)
@@ -111,7 +110,6 @@ object FindPatient {
         }
 
         private fun formModel(
-            principal: Principal?,
             country: String,
             mask: SearchMask?,
             values: Map<Int, String> = emptyMap(),
@@ -124,7 +122,6 @@ object FindPatient {
                 "country" to country,
                 "fields" to mask?.let { fieldViews(it, values, errors) }.orEmpty(),
                 "formError" to formError,
-                "principal" to principal
             )
         }
     }

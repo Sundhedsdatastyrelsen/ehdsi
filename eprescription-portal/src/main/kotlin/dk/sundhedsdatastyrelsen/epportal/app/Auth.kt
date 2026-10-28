@@ -66,8 +66,7 @@ class LocalAuth(
         log.warn("Beware! Local development authorization enabled.")
 
         routes.get("/login") {ctx ->
-            val principal = current(ctx)
-            if (principal == null) {
+            if (current(ctx) == null) {
                 ctx.redirect("/?error=login-not-enabled", HttpStatus.SEE_OTHER)
                 return@get
             }

@@ -83,7 +83,15 @@ object WebApp {
         }
         val app = Javalin.create { config ->
             config.startup.showJavalinBanner = false
-            config.fileRenderer(JavalinFreemarker(createTemplateEngine(hotReloading)))
+            val renderer = JavalinFreemarker(createTemplateEngine(hotReloading))
+            // Add the principal to every model, since the pages render differently when you're logged in.
+            config.fileRenderer { filePath, model, ctx ->
+                renderer.render(
+                    filePath,
+                    mapOf("principal" to auth.current(ctx)) + model,
+                    ctx
+                )
+            }
             config.staticFiles.add { staticFiles ->
                 staticFiles.hostedPath = "/"
                 if (hotReloading) {
@@ -127,10 +135,9 @@ object WebApp {
 
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
-                val principal = auth.current(ctx)
                 ctx.render(
                     "frontpage.ftlh",
-                    mapOf("error" to ctx.queryParam("error"), "principal" to principal)
+                    mapOf("error" to ctx.queryParam("error"))
                 )
             }
         }
