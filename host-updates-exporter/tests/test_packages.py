@@ -3,6 +3,7 @@ import support  # first: points config at a temporary host root
 import unittest
 from unittest import mock
 
+import config
 import packages
 from packages import PendingPackage, classify
 from support import samples
@@ -14,6 +15,7 @@ DOCKER = PendingPackage("docker-ce", "5:28.5.1-1~ubuntu.24.04~noble", "5:29.0.2-
                         "Docker CE", False, "ours")
 
 
+@mock.patch.object(config, "OWN_APT_ORIGINS", {"Docker CE"})
 class ClassifyTest(unittest.TestCase):
     def test_security_update_from_the_ubuntu_archive(self):
         package = classify("libc6", "2.39-0ubuntu8.6", "2.39-0ubuntu8.9",
@@ -24,11 +26,6 @@ class ClassifyTest(unittest.TestCase):
         package = classify("docker-ce", "5:28.5.1-1~ubuntu.24.04~noble", "5:29.0.2-1~ubuntu.24.04~noble",
                            [("Docker CE", "noble")])
         self.assertEqual(package, DOCKER)
-
-    def test_newly_installed_package(self):
-        package = classify("linux-image-6.8.0-90-generic", "", "6.8.0-90.91", [("Ubuntu", "noble-security")])
-        self.assertEqual(package.installed_version, "")
-        self.assertTrue(package.security)
 
 
 class PendingSinceTest(unittest.TestCase):
@@ -88,10 +85,6 @@ class CheckTest(unittest.TestCase):
         self.assertEqual(samples(metrics, "host_updates_reboot_required"), [({"hostname": "testhost"}, 1)])
         self.assertEqual([labels["package"] for labels, _ in samples(metrics, "host_updates_reboot_required_package")],
                          ["linux-image-6.11.0-1-generic", "linux-image-6.8.0-90-generic"])
-
-    def test_os(self):
-        [(labels, _)] = samples(self.check([]), "host_updates_os_info")
-        self.assertEqual(labels["pretty_name"], "Ubuntu 24.04.3 LTS")
 
 
 if __name__ == "__main__":

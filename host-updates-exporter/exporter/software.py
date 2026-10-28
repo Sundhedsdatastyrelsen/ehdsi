@@ -12,7 +12,7 @@ from datetime import date, datetime, timezone
 
 import config
 import host
-from host import gauge
+from host import gauge, single_gauge
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +27,8 @@ class Software:
     version_source: str  # where the version was read: tag, env, label, host, or none
     image: str = ""
     containers: list = field(default_factory=list)
-    product: str = ""
+    product: str = ""  # on endoflife.date
+    github: str = ""  # owner/repository whose latest release is reported, if there's no product
     cycle: str = ""
     end_of_life: date | None = None
     latest_in_cycle: str = ""
@@ -151,8 +152,8 @@ def look_up(software):
         else:
             apply_endoflife(software, data["result"]["releases"])
     else:
-        github = config.GITHUB_REPOSITORIES[software.name]
-        data = fetch_json(f"{config.GITHUB_API}/{github}/releases/latest", f"github-{github.replace('/', '_')}.json")
+        data = fetch_json(f"{config.GITHUB_API}/{software.github}/releases/latest",
+                          f"github-{software.github.replace('/', '_')}.json")
         # Tags like "v1.20.1" or "mimir-3.0.2"
         match = re.search(r"\d+(\.\d+)+", (data or {}).get("tag_name", ""))
         if match:
@@ -185,10 +186,10 @@ def running_images():
             repository, tag = split_image_ref(ref)
             image_config = docker_get(f"/images/{container['Image']}/json").get("Config") or {}
             version, source = running_version(repository, tag, image_config)
-            by_ref[ref] = Software("image", repository, version, source, image=ref,
-                                   product=config.ENDOFLIFE_PRODUCTS.get(repository, ""))
-            if repository not in config.ENDOFLIFE_PRODUCTS and repository not in config.GITHUB_REPOSITORIES:
-                by_ref[ref].lookup = "untracked"
+            product = config.ENDOFLIFE_PRODUCTS.get(repository, "")
+            github = "" if product else config.GITHUB_REPOSITORIES.get(repository, "")
+            by_ref[ref] = Software("image", repository, version, source, image=ref, product=product, github=github,
+                                   lookup="found" if product or github else "untracked")
         by_ref[ref].containers.append(container["Name"].lstrip("/"))
     return list(by_ref.values())
 
@@ -215,11 +216,9 @@ def metrics(hostname, software, now):
         "When the release cycle of the running version reaches end of life, per endoflife.date "
         "(0: end of life, date unknown).",
         ["kind", "name", "version", "cycle"])
-    last_run = gauge("host_updates_software_last_run_timestamp_seconds", "When the end-of-life check last ran.")
-
     end_of_life_reported = set()
     for s in software:
-        product = s.product or (f"github:{config.GITHUB_REPOSITORIES[s.name]}" if s.name in config.GITHUB_REPOSITORIES else "")
+        product = s.product or (f"github:{s.github}" if s.github else "")
         info.add_metric([hostname, s.kind, s.name, s.version, s.image, ",".join(s.containers), s.version_source,
                          product, s.cycle, s.latest_in_cycle, s.latest, update_available(s), s.lookup], 1)
         # The same image can run under two references (mysql:9, mysql:9.7).
@@ -228,7 +227,8 @@ def metrics(hostname, software, now):
             end_of_life_reported.add(key)
             timestamp = datetime.combine(s.end_of_life, datetime.min.time(), timezone.utc).timestamp()
             end_of_life.add_metric([hostname, *key], timestamp)
-    last_run.add_metric([hostname], now)
+    last_run = single_gauge("host_updates_software_last_run_timestamp_seconds", "When the end-of-life check last ran.",
+                            hostname, now)
     return [info, end_of_life, last_run]
 
 

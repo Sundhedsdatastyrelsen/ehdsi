@@ -15,10 +15,11 @@ import apt
 import apt_pkg
 import config
 import host
-from host import gauge
+from host import gauge, single_gauge
 
 log = logging.getLogger(__name__)
 
+DPKG_STATUS = config.HOST_ROOT / "var/lib/dpkg/status"
 APT_LISTS_DIR = config.STATE_DIR / "apt-lists"
 PENDING_SINCE_FILE = config.STATE_DIR / "pending-since.json"
 
@@ -61,7 +62,7 @@ def pending_packages():
     fetched: with nothing to compare against, apt would report "all up to
     date"."""
     config.load()
-    apt_pkg.config.set("Dir::State::status", str(config.HOST_ROOT / "var/lib/dpkg/status"))
+    apt_pkg.config.set("Dir::State::status", str(DPKG_STATUS))
     apt_pkg.config.set("Dir::State::Lists", str(APT_LISTS_DIR))
     for hook in HOST_APT_HOOKS:
         apt_pkg.config.clear(hook)
@@ -114,7 +115,7 @@ def running_kernel():
 def installed_kernels():
     """(kernel release, package) of each kernel installed on the host."""
     kernels = []
-    with apt_pkg.TagFile(str(config.HOST_ROOT / "var/lib/dpkg/status")) as status:
+    with apt_pkg.TagFile(str(DPKG_STATUS)) as status:
         for section in status:
             match = KERNEL_PACKAGE.fullmatch(section.get("Package", ""))
             if match and section.get("Status") == "install ok installed":
@@ -126,7 +127,7 @@ def installed_at(package):
     """When dpkg last wrote the package's file list, i.e. roughly when it was
     installed; dpkg's status file if there is no list."""
     files_list = config.HOST_ROOT / f"var/lib/dpkg/info/{package}.list"
-    return (files_list if files_list.exists() else config.HOST_ROOT / "var/lib/dpkg/status").stat().st_mtime
+    return (files_list if files_list.exists() else DPKG_STATUS).stat().st_mtime
 
 
 def reboot_required():
@@ -171,13 +172,13 @@ def pending_metrics(hostname, pending, pending_since):
 
 
 def reboot_metrics(hostname, reboot):
-    required = gauge("host_updates_reboot_required", "1 if a newer kernel is installed than the one running.")
-    required.add_metric([hostname], 1 if reboot else 0)
+    required = single_gauge("host_updates_reboot_required", "1 if a newer kernel is installed than the one running.",
+                            hostname, 1 if reboot else 0)
     if not reboot:
         return [required]
     since, packages = reboot
-    required_since = gauge("host_updates_reboot_required_since_timestamp_seconds", "When the first of those kernels was installed.")
-    required_since.add_metric([hostname], since)
+    required_since = single_gauge("host_updates_reboot_required_since_timestamp_seconds",
+                                  "When the first of those kernels was installed.", hostname, since)
     asking = gauge("host_updates_reboot_required_package", "Newer kernels installed than the one running, which take effect on reboot.", ["package"])
     for package in packages:
         asking.add_metric([hostname, package], 1)
@@ -186,18 +187,18 @@ def reboot_metrics(hostname, reboot):
 
 def host_metrics(hostname, refresh_ok, now):
     os_info = gauge("host_updates_os_info", "Operating system of the host.", ["pretty_name", "kernel"])
-    os_info.add_metric([hostname, host.os_release().get("PRETTY_NAME", "unknown"), os.uname().release], 1)
-    booted = gauge("host_updates_boot_timestamp_seconds", "When the host last booted.")
-    booted.add_metric([hostname], boot_time())
-    dpkg_changed = gauge(
-        "host_updates_dpkg_changed_timestamp_seconds",
-        "When packages were last installed, upgraded or removed (by anyone).")
-    dpkg_changed.add_metric([hostname], (config.HOST_ROOT / "var/lib/dpkg/status").stat().st_mtime)
-    refreshed = gauge("host_updates_refresh_success", "1 if the last package list refresh fetched every source.")
-    refreshed.add_metric([hostname], 1 if refresh_ok else 0)
-    last_run = gauge("host_updates_packages_last_run_timestamp_seconds", "When the package check last ran.")
-    last_run.add_metric([hostname], now)
-    return [os_info, booted, dpkg_changed, refreshed, last_run]
+    os_info.add_metric([hostname, host.os_release().get("PRETTY_NAME", "unknown"), running_kernel()], 1)
+    return [
+        os_info,
+        single_gauge("host_updates_boot_timestamp_seconds", "When the host last booted.", hostname, boot_time()),
+        single_gauge("host_updates_dpkg_changed_timestamp_seconds",
+                     "When packages were last installed, upgraded or removed (by anyone).",
+                     hostname, DPKG_STATUS.stat().st_mtime),
+        single_gauge("host_updates_refresh_success", "1 if the last package list refresh fetched every source.",
+                     hostname, 1 if refresh_ok else 0),
+        single_gauge("host_updates_packages_last_run_timestamp_seconds", "When the package check last ran.",
+                     hostname, now),
+    ]
 
 
 def check():

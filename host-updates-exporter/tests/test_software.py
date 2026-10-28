@@ -4,6 +4,7 @@ import unittest
 from datetime import date, datetime, timezone
 from unittest import mock
 
+import config
 import software
 from software import Software
 from support import samples
@@ -88,8 +89,14 @@ class RunningImagesTest(unittest.TestCase):
     CONTAINERS = {
         "c1": ("/grafana", "grafana/grafana:12.0.2", "img-grafana"),
         "c2": ("/grafana-2", "grafana/grafana:12.0.2", "img-grafana"),
-        "c3": ("/init", "busybox", "img-busybox"),
-        "c4": ("/national-connector", "eppsregistry.azurecr.io/sundhedsdatastyrelsen/ehdsi/national-connector:build-334", "img-nc"),
+        "c3": ("/alloy", "grafana/alloy:v1.12.2", "img-alloy"),
+        "c4": ("/init", "busybox", "img-busybox"),
+        "c5": ("/our-app", "registry.example/our-app:build-334", "img-ours"),
+    }
+    TABLES = {
+        "ENDOFLIFE_PRODUCTS": {"grafana/grafana": "grafana"},
+        "GITHUB_REPOSITORIES": {"grafana/alloy": "grafana/alloy", "grafana/grafana": "grafana/grafana"},
+        "OWN_IMAGE_PREFIXES": ("registry.example/",),
     }
 
     def docker_get(self, path):
@@ -100,17 +107,26 @@ class RunningImagesTest(unittest.TestCase):
             return {"Name": name, "Config": {"Image": ref}, "Image": image}
         return {"Config": {}}
 
-    def test_groups_containers_skips_own_images_and_marks_untracked(self):
-        with mock.patch.object(software, "docker_get", self.docker_get):
-            images = {image.name: image for image in software.running_images()}
-        self.assertEqual(sorted(images), ["busybox", "grafana/grafana"])
+    def running_images(self):
+        with mock.patch.object(software, "docker_get", self.docker_get), mock.patch.multiple(config, **self.TABLES):
+            return {image.name: image for image in software.running_images()}
+
+    def test_groups_containers_and_skips_own_images(self):
+        images = self.running_images()
+        self.assertEqual(sorted(images), ["busybox", "grafana/alloy", "grafana/grafana"])
         self.assertEqual(images["grafana/grafana"].containers, ["grafana", "grafana-2"])
+
+    def test_where_each_image_is_looked_up(self):
+        images = self.running_images()
+        # In both tables: endoflife.date, which has end-of-life dates.
+        self.assertEqual((images["grafana/grafana"].product, images["grafana/grafana"].github), ("grafana", ""))
+        self.assertEqual((images["grafana/alloy"].product, images["grafana/alloy"].github), ("", "grafana/alloy"))
         self.assertEqual(images["busybox"].lookup, "untracked")
 
 
 class LookUpTest(unittest.TestCase):
     def test_github_release(self):
-        alloy = Software("image", "grafana/alloy", "1.12.2", "tag")
+        alloy = Software("image", "grafana/alloy", "1.12.2", "tag", github="grafana/alloy")
         with mock.patch.object(software, "fetch_json", return_value={"tag_name": "v1.20.1"}):
             software.look_up(alloy)
         self.assertEqual((alloy.latest, alloy.lookup), ("1.20.1", "found"))
