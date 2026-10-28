@@ -98,7 +98,7 @@ class RunningImagesTest(unittest.TestCase):
             images = {image.name: image for image in software.running_images()}
         self.assertEqual(sorted(images), ["busybox", "grafana/grafana"])
         self.assertEqual(images["grafana/grafana"].containers, ["grafana", "grafana-2"])
-        self.assertEqual(images["busybox"].status, "untracked")
+        self.assertEqual(images["busybox"].lookup, "untracked")
 
 
 class LookUpTest(unittest.TestCase):
@@ -106,13 +106,13 @@ class LookUpTest(unittest.TestCase):
         alloy = Software("image", "grafana/alloy", "1.12.2", "tag")
         with mock.patch.object(software, "fetch_json", return_value={"tag_name": "v1.20.1"}):
             software.look_up(alloy)
-        self.assertEqual((alloy.latest, alloy.status), ("1.20.1", "ok"))
+        self.assertEqual((alloy.latest, alloy.lookup), ("1.20.1", "found"))
 
     def test_unreachable(self):
         grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
         with mock.patch.object(software, "fetch_json", return_value=None):
             software.look_up(grafana)
-        self.assertEqual(grafana.status, "lookup_failed")
+        self.assertEqual(grafana.lookup, "failed")
 
     def test_falls_back_to_the_last_response(self):
         with mock.patch("urllib.request.urlopen", side_effect=OSError("offline")):

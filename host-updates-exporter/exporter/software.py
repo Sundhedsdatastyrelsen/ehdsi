@@ -34,7 +34,9 @@ class Software:
     end_of_life: date | None = None
     latest_in_cycle: str = ""
     latest: str = ""
-    status: str = "ok"  # ok, untracked, version_unknown, lookup_failed or cycle_not_found
+    # Whether we could find out about it: found, untracked (no source configured),
+    # version_unknown, failed (source unreachable) or cycle_not_found.
+    lookup: str = "found"
 
 
 # ── Versions ──
@@ -110,7 +112,7 @@ def find_cycle(releases, version):
 def apply_endoflife(software, releases):
     cycle = find_cycle(releases, software.version)
     if cycle is None:
-        software.status = "cycle_not_found"
+        software.lookup = "cycle_not_found"
         return
     software.cycle = cycle["name"]
     if cycle.get("eolFrom"):
@@ -142,11 +144,11 @@ def fetch_json(url, cache_name):
 
 def look_up(software):
     if not software.version:
-        software.status = "version_unknown"
+        software.lookup = "version_unknown"
     elif software.product:
         data = fetch_json(f"{config.ENDOFLIFE_API}/{software.product}", f"{software.product}.json")
         if data is None:
-            software.status = "lookup_failed"
+            software.lookup = "failed"
         else:
             apply_endoflife(software, data["result"]["releases"])
     else:
@@ -157,7 +159,7 @@ def look_up(software):
         if match:
             software.latest = match.group(0)
         else:
-            software.status = "lookup_failed"
+            software.lookup = "failed"
 
 
 # ── The host ──
@@ -196,7 +198,7 @@ def running_images():
             by_ref[ref] = Software("image", repository, version, source, image=ref,
                                    product=config.ENDOFLIFE_PRODUCTS.get(repository, ""))
             if repository not in config.ENDOFLIFE_PRODUCTS and repository not in config.GITHUB_REPOSITORIES:
-                by_ref[ref].status = "untracked"
+                by_ref[ref].lookup = "untracked"
         by_ref[ref].containers.append(container["Name"].lstrip("/"))
     return list(by_ref.values())
 
@@ -217,9 +219,9 @@ def metrics(hostname, software, now):
         "host_updates_software_info",
         "Software on the host (images of running containers, OS, Docker Engine) with its release cycle and latest "
         "versions. update: patch (newer release in the same cycle), newer (newer cycle only), none, unknown. "
-        "status: ok, untracked, version_unknown, lookup_failed, cycle_not_found.",
+        "lookup: found, untracked, version_unknown, failed, cycle_not_found.",
         labels=["hostname", "kind", "name", "version", "image", "containers", "version_source", "product", "cycle",
-                "latest_in_cycle", "latest", "update", "status"])
+                "latest_in_cycle", "latest", "update", "lookup"])
     end_of_life = GaugeMetricFamily(
         "host_updates_software_eol_timestamp_seconds",
         "When the release cycle of the running version reaches end of life, per endoflife.date "
@@ -233,7 +235,7 @@ def metrics(hostname, software, now):
     for s in software:
         product = s.product or (f"github:{config.GITHUB_REPOSITORIES[s.name]}" if s.name in config.GITHUB_REPOSITORIES else "")
         info.add_metric([hostname, s.kind, s.name, s.version, s.image, ",".join(s.containers), s.version_source,
-                         product, s.cycle, s.latest_in_cycle, s.latest, update_available(s), s.status], 1)
+                         product, s.cycle, s.latest_in_cycle, s.latest, update_available(s), s.lookup], 1)
         # The same image can run under two references (mysql:9, mysql:9.7).
         key = (s.kind, s.name, s.version, s.cycle)
         if s.end_of_life and key not in end_of_life_reported:
@@ -248,7 +250,7 @@ def check():
     """Runs the check and returns its metrics."""
     software = host_software() + running_images()
     for s in software:
-        if s.status == "ok":
+        if s.lookup == "found":
             look_up(s)
     log.info("Checked %d pieces of software", len(software))
     return metrics(host_name(), software, time.time())

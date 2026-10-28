@@ -1435,7 +1435,7 @@
     {
       "type": "stat",
       "title": "Not tracked or unresolved",
-      "description": "Software with no end-of-life source (status untracked: add it to ENDOFLIFE_PRODUCTS or GITHUB_REPOSITORIES in host-updates-exporter/exporter/config.py in the ehdsi repo), an unknown version, or a failed lookup.",
+      "description": "Software we can't report end of life for: no source configured (untracked: add it to ENDOFLIFE_PRODUCTS or GITHUB_REPOSITORIES in host-updates-exporter/exporter/config.py in the ehdsi repo), an unknown running version, or a failed lookup.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -1453,7 +1453,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "count(host_updates_software_info{status!=\"ok\",hostname=~\"$hostname\"}) OR on() vector(0)",
+          "expr": "count(host_updates_software_info{lookup!=\"found\",hostname=~\"$hostname\"}) OR on() vector(0)",
           "refId": "A",
           "legendFormat": "__auto",
           "format": "table",
@@ -1509,7 +1509,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Images of running containers (except our own builds), the OS and Docker Engine, per host. End-of-life dates and latest versions from endoflife.date, or the latest GitHub release where endoflife.date has no entry. 'Version from' tells where the running version was read: tag, the image's version label or <NAME>_VERSION env var, or the host.",
+      "description": "Images of running containers (except our own builds), the OS and Docker Engine, per host. End-of-life dates and latest versions from endoflife.date, or the latest GitHub release where endoflife.date has no entry. 'Version from' tells where the running version was read: tag, the image's version label or <NAME>_VERSION env var, or the host. 'Lookup' says whether we could find the running version and its release data; whether that version is end of life is in 'End of life in'.",
       "gridPos": {
         "h": 14,
         "w": 24,
@@ -1575,7 +1575,7 @@
               "latest_in_cycle": 9,
               "latest": 10,
               "update": 11,
-              "status": 12
+              "lookup": 12
             },
             "renameByName": {
               "deployment_environment_name": "Environment",
@@ -1590,7 +1590,7 @@
               "latest_in_cycle": "Latest in cycle",
               "latest": "Latest",
               "update": "Update",
-              "status": "Status"
+              "lookup": "Lookup"
             }
           }
         }
@@ -1716,7 +1716,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Status"
+              "options": "Lookup"
             },
             "properties": [
               {
@@ -1725,7 +1725,7 @@
                   {
                     "type": "value",
                     "options": {
-                      "ok": {
+                      "found": {
                         "color": "green",
                         "index": 0
                       },
@@ -1737,7 +1737,7 @@
                         "color": "orange",
                         "index": 2
                       },
-                      "lookup_failed": {
+                      "failed": {
                         "color": "red",
                         "index": 3
                       },

@@ -22,7 +22,7 @@ next to the stacks on every host (deployed by the ops repos) and serves
 Which apt repositories are ours, and which image maps to which
 endoflife.date product or GitHub repository, is in
 [`config.py`](exporter/config.py). A new third-party image in one of the
-stacks shows up with `status="untracked"` until it is added there.
+stacks shows up with `lookup="untracked"` until it is added there.
 
 ## How it sees the host
 
