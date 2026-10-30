@@ -8,7 +8,7 @@
 <#elseif patients??>
   <div class="table bg-white section-border p-4 border-collapse w-max min-w-full">
     <div class="table-header-group">
-      <div class="table-row [&>*]:table-cell [&>*]:p-2 [&>*]:font-bold">
+      <div class="table-row *:table-cell *:p-2 *:font-bold">
         <div>Navn</div>
         <div>Fødselsdato</div>
         <div>Køn</div>
@@ -22,7 +22,7 @@
       <#list patients as patient>
         <a
           href="/prescriptions?opaque-id=${patient.opaqueId}"
-          class="table-row hover:bg-blue-200 [&>*]:table-cell [&>*]:p-1 [&>*]:px-2 [&>*]:max-w-64 [&>*]:[word-break:break-word]"
+          class="table-row hover:bg-blue-200 *:table-cell *:p-1 *:px-2 *:max-w-64 *:[word-break:break-word]"
         >
           <p>${patient.name}</p>
           <p>${patient.birthDate}</p>
