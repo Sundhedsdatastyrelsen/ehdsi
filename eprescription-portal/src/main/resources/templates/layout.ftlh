@@ -1,4 +1,4 @@
-<#-- Page chrome for logged-in pages: <@layout.page title="…">content</@layout.page> -->
+<#-- Page chrome for all pages: <@layout.page title="…">content</@layout.page> -->
 <#macro page title>
 <!DOCTYPE html>
 <html lang="da">
@@ -12,19 +12,23 @@
   <body
     class="text-foreground bg-background flex flex-col min-h-dvh"
   >
-    <header class="bg-white h-16 md:h-20 shadow-sdk px-4 md:px-8">
-      <nav class="max-w-4xl mx-auto flex h-full relative justify-between">
+    <header class="bg-white h-16 md:h-20 px-4 md:px-8 section-border">
+      <nav class="flex max-w-4xl mx-auto h-full relative">
         <a
           href="/"
           title="Hjem"
-          class="hidden md:flex justify-center items-center w-28 border-b-8 border-b-red bg-background text-lg z-10"
+          class="flex-grow self-center text-lg text-center"
           >ePrescription Portal</a
         >
-        <a href="/logout" title="Log af" class="red-button self-center">Log af</a>
+        <#if principal??>
+        <a href="/logout" title="Log af" class="absolute top-0 bottom-0 right-0 blue-button self-center">Log af</a>
+        <#else>
+        <a href="/login" title="Log på" class="absolute top-0 bottom-0 right-0 blue-button self-center">Log på</a>
+        </#if>
       </nav>
     </header>
     <main class="mt-10 px-4 md:px-8">
-      <h1 class="text-center text-4xl">${title}</h1>
+      <h1 class="text-center text-2xl">${title}</h1>
 
       <#nested>
     </main>

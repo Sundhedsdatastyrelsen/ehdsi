@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.app.WebApp.log
 import io.javalin.http.Context
+import io.javalin.http.HttpStatus
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.router.JavalinDefaultRoutingApi
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler
@@ -14,10 +15,8 @@ interface AuthProvider {
         // default no-op
     }
 
-    /** Optional: add dev login routes etc. */
-    fun registerRoutes(routes: JavalinDefaultRoutingApi) {
-        // default no-op
-    }
+    /** Add /login, /logout and more routes */
+    fun registerRoutes(routes: JavalinDefaultRoutingApi)
 
     /** Resolve current principal from request/session */
     fun current(ctx: Context): Principal?
@@ -66,14 +65,26 @@ class LocalAuth(
     override fun registerRoutes(routes: JavalinDefaultRoutingApi) {
         log.warn("Beware! Local development authorization enabled.")
 
+        routes.get("/login") {ctx ->
+            if (current(ctx) == null) {
+                ctx.redirect("/?error=login-not-enabled", HttpStatus.SEE_OTHER)
+                return@get
+            }
+            ctx.redirect("/", HttpStatus.SEE_OTHER)
+        }
+
+        routes.get("/logout") { ctx ->
+            logout(ctx)  // SAML does session + persistent logout; both clear tracking cookie
+            ctx.redirect("/")
+        }
+
         routes.get("/dev-login") { ctx ->
             val cpr = ctx.queryParam("cpr") ?: defaultCpr
             val name = ctx.queryParam("name") ?: defaultName
             ctx.sessionAttribute(sessionKey, Principal(cpr, name))
-            ctx.redirect("/form")
+            ctx.redirect("/")
         }
-        routes.before("/form*", ::devHeaderAuthHook)
-        routes.before("/find-patient*", ::devHeaderAuthHook)
+        routes.before(::devHeaderAuthHook)
     }
 
     /** Lets a request authenticate via the [headerName] header instead of `/dev-login`, e.g. from curl. */

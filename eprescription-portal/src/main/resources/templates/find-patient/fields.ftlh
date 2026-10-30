@@ -24,18 +24,20 @@
         hx-vals='{"field": "${field.index}"}'
         hx-target="#id-${field.index}-error"
       />
-      <div id="id-${field.index}-error"><#if field.error??><p class="text-red">${field.error}</p></#if></div>
+      <div id="id-${field.index}-error"><#if field.error??><p class="text-red-500">${field.error}</p></#if></div>
     </div>
   </#list>
 
-  <div id="form-error"><#if formError??><p class="text-red">${formError}</p></#if></div>
+  <div id="form-error"><#if formError??><p class="text-red-500">${formError}</p></#if></div>
 
-  <#-- The spinner is an htmx indicator: it shows while the form has a request in flight -->
-  <button type="submit" class="red-button relative">
-    Søg
-    <span
-      class="htmx-indicator absolute right-3 top-1/2 -mt-2 size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
-      aria-hidden="true"
-    ></span>
-  </button>
+  <div class="text-right">
+    <#-- The spinner is an htmx indicator: it shows while the form has a request in flight -->
+    <button type="submit" class="blue-button relative">
+      Søg
+      <span
+        class="htmx-indicator absolute right-3 top-1/2 -mt-2 size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+        aria-hidden="true"
+      ></span>
+    </button>
+  </div>
 </#if>
