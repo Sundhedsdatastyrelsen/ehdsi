@@ -39,14 +39,26 @@ class CdaDisplayTransformer(private val config: Config) {
         val output = StringWriter()
         executable.load().apply {
             setSource(SAXSource(newSecureXmlReader(), InputSource(StringReader(cdaXml))))
-            // The stylesheets load value sets with document() from this directory, which is resolved to valueSets
+            // Value sets. Upstream, the stylesheets read value sets from a directory on disk: given the parameter
+            // epsosLangDir, they call document(concat($epsosLangDir, '/', <file name>)), e.g.
+            // document('urn:x-epportal:value-sets/1.3.6.1.4.1.12559.11.10.1.3.1.42.46.xml'). We have no such
+            // directory, so we pass a made-up prefix as epsosLangDir, and the resolver below catches every
+            // document() call that starts with it and answers it from valueSets, which reads the zip on the classpath
+            // and caches the parsed documents across transformations. Saxon still loads any other request itself,
+            // because the resolver returns null for it.
             setParameter(QName("epsosLangDir"), XdmAtomicValue(VALUE_SET_DIR))
             resourceResolver = ResourceResolver { request ->
-                if (request.uri.startsWith("$VALUE_SET_DIR/")) {
-                    valueSets.get(request.uri.removePrefix("$VALUE_SET_DIR/"))?.underlyingNode
-                        ?: throw XPathException("Unknown value set ${request.uri}")
+                // relativeUri is the href exactly as the stylesheet wrote it. request.uri is that href resolved
+                // against the stylesheet's location. That works when the stylesheets are plain files, but in the fat
+                // jar their location is a jar: URL, the resolution fails, and Saxon falls back to
+                // "jar:file:…!/cda-display-tool/…/mvc.xsl/../urn:x-epportal:value-sets/…", which no longer
+                // starts with the prefix. So we match on the href instead.
+                val href = request.relativeUri ?: request.uri
+                if (href.startsWith("$VALUE_SET_DIR/")) {
+                    valueSets.get(href.removePrefix("$VALUE_SET_DIR/"))?.underlyingNode
+                        ?: throw XPathException("Unknown value set $href")
                 } else {
-                    null // The stylesheets' own files, such as the CSS, resolved relative to the stylesheets
+                    null // Anything else, e.g. the CSS: Saxon loads it itself, relative to the stylesheet
                 }
             }
             setParameter(QName("userLang"), XdmAtomicValue(config.language))
