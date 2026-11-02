@@ -55,8 +55,8 @@ jobs:
               "type=registry,ref=ghcr.io/sundhedsdatastyrelsen/ehdsi/ep-portal:cache"
             ]
             tags = [
-              "ghcr.io/sundhedsdatastyrelsen/ep-portal/ep-portal:latest",
-              "ghcr.io/sundhedsdatastyrelsen/ep-portal/ep-portal:build-${{ github.run_number }}"
+              "ghcr.io/sundhedsdatastyrelsen/ehdsi/ep-portal:latest",
+              "ghcr.io/sundhedsdatastyrelsen/ehdsi/ep-portal:build-${{ github.run_number }}"
             ]
             output = [
               "type=image,push=true"

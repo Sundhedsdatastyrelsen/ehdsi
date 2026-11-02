@@ -9,15 +9,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: ["./bin/ep-portal", "--profile=training"]
     env_file:
-      - .env
+      - path: .env
+        required: false
     volumes:
       - ./data:/home/app/data
       - ./config:/home/app/config:ro
+      - ../NCP/keystore:/home/app/ncp-keystore:ro
     ports:
-      - "8555:8555" # Web UI
-      # - "8080:8080" # For testing
-      # - "28540:28540" # Remote debugging
+      - "8080:8080" # Web UI
     environment:
       TZ: "Europe/Copenhagen"
       JAVA_OPTS: "-javaagent:opentelemetry-javaagent.jar"
@@ -30,6 +31,7 @@ services:
     extra_hosts:
       # https://docs.docker.com/reference/cli/dockerd/#configure-host-gateway-ip
       - "host.docker.internal:host-gateway" # to allow connections to alloy-hub
+      - "ncp-training.ehdsi.sundhedsdata.dk:host-gateway"
     restart: unless-stopped
     depends_on:
       - ep-portal-init
@@ -49,4 +51,3 @@ services:
       - "/home/app/data"
     volumes:
       - ./data:/home/app/data
-
