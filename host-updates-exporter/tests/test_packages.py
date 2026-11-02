@@ -1,0 +1,123 @@
+import support  # first: points config at a temporary host root
+
+import unittest
+from pathlib import Path
+from unittest import mock
+
+import apt
+import config
+import packages
+from packages import PendingPackage, classify
+from support import samples
+
+
+LIBC = PendingPackage("libc6", "2.39-0ubuntu8.6", "2.39-0ubuntu8.9", "Ubuntu", True, "hosting")
+TZDATA = PendingPackage("tzdata", "2025b-0ubuntu0.24.04", "2025b-0ubuntu0.24.04.1", "Ubuntu", False, "hosting")
+DOCKER = PendingPackage("docker-ce", "5:28.5.1-1~ubuntu.24.04~noble", "5:29.0.2-1~ubuntu.24.04~noble",
+                        "Docker CE", False, "ours")
+
+
+@mock.patch.object(config, "OWN_APT_ORIGINS", {"Docker CE"})
+class ClassifyTest(unittest.TestCase):
+    def test_security_update_from_the_ubuntu_archive(self):
+        package = classify("libc6", "2.39-0ubuntu8.6", "2.39-0ubuntu8.9",
+                           [("Ubuntu", "noble-updates"), ("Ubuntu", "noble-security")])
+        self.assertEqual(package, LIBC)
+
+    def test_our_repository(self):
+        package = classify("docker-ce", "5:28.5.1-1~ubuntu.24.04~noble", "5:29.0.2-1~ubuntu.24.04~noble",
+                           [("Docker CE", "noble")])
+        self.assertEqual(package, DOCKER)
+
+
+class PendingSinceTest(unittest.TestCase):
+    def test_keeps_first_seen_and_drops_upgraded_packages(self):
+        previous = {"libc6": 1000, "openssl": 2000}
+        self.assertEqual(packages.update_pending_since(previous, [LIBC, DOCKER], now=5000),
+                         {"libc6": 1000, "docker-ce": 5000})
+
+
+class PendingPackagesTest(unittest.TestCase):
+    def test_refresh_already_running_uses_the_lists_we_have(self):
+        # e.g. pending.py's refresh beside the scheduled check
+        packages.APT_LISTS_DIR.mkdir(parents=True, exist_ok=True)
+        (packages.APT_LISTS_DIR / "archive.ubuntu.com_ubuntu_dists_noble_main_binary-amd64_Packages").touch()
+        cache = mock.Mock()
+        cache.update.side_effect = apt.cache.LockFailedException("Failed to lock")
+        cache.get_changes.return_value = []
+        with mock.patch.object(apt, "Cache", return_value=cache), self.assertLogs(packages.log, "WARNING"):
+            self.assertEqual(packages.pending_packages(), ([], False))
+
+
+class CheckTest(unittest.TestCase):
+    def setUp(self):
+        packages.PENDING_SINCE_FILE.unlink(missing_ok=True)
+        self.write_dpkg_status_with_kernels("6.8.0-87-generic")
+
+    def write_dpkg_status_with_kernels(self, *releases):
+        status = "".join(
+            f"Package: linux-image-{release}\nStatus: install ok installed\nVersion: {release}\n\n"
+            for release in releases)
+        # Ignored: a metapackage (no kernel release in its name) and a removed kernel.
+        status += "Package: linux-image-generic\nStatus: install ok installed\n\n"
+        status += "Package: linux-image-6.8.0-99-generic\nStatus: deinstall ok config-files\n\n"
+        (support.HOST_ROOT / "var/lib/dpkg/status").write_text(status)
+
+    def check(self, pending, refresh_ok=True):
+        with mock.patch.object(packages, "pending_packages", return_value=(pending, refresh_ok)), \
+                mock.patch.object(packages, "running_kernel", return_value="6.8.0-87-generic"):
+            return packages.check()
+
+    def test_counts_by_owner_and_security(self):
+        counts = {(labels["owner"], labels["security"]): value
+                  for labels, value in samples(self.check([LIBC, TZDATA, DOCKER]), "host_updates_pending_packages")}
+        self.assertEqual(counts, {("hosting", "true"): 1, ("hosting", "false"): 1,
+                                  ("ours", "true"): 0, ("ours", "false"): 1})
+
+    def test_one_series_per_package(self):
+        metrics = self.check([LIBC, DOCKER])
+        [(docker, _)] = [(labels, value) for labels, value
+                         in samples(metrics, "host_updates_package_pending_since_timestamp_seconds")
+                         if labels["package"] == "docker-ce"]
+        self.assertEqual(docker, {"hostname": "testhost", "package": "docker-ce",
+                                  "current_version": "5:28.5.1-1~ubuntu.24.04~noble",
+                                  "candidate_version": "5:29.0.2-1~ubuntu.24.04~noble",
+                                  "origin": "Docker CE", "owner": "ours", "security": "false"})
+
+    def test_no_package_lists_reports_no_counts_and_keeps_pending_since(self):
+        self.check([LIBC])
+        pending_since_before = packages.PENDING_SINCE_FILE.read_text()
+        metrics = self.check(None, refresh_ok=False)
+        self.assertEqual(samples(metrics, "host_updates_pending_packages"), [])
+        self.assertEqual(samples(metrics, "host_updates_refresh_success"), [({"hostname": "testhost"}, 0)])
+        self.assertEqual(packages.PENDING_SINCE_FILE.read_text(), pending_since_before)
+
+    def test_reboot_required(self):
+        self.assertEqual(samples(self.check([]), "host_updates_reboot_required"), [({"hostname": "testhost"}, 0)])
+        self.write_dpkg_status_with_kernels("6.8.0-79-generic", "6.8.0-87-generic", "6.8.0-90-generic", "6.11.0-1-generic")
+        metrics = self.check([])
+        self.assertEqual(samples(metrics, "host_updates_reboot_required"), [({"hostname": "testhost"}, 1)])
+        self.assertEqual([labels["package"] for labels, _ in samples(metrics, "host_updates_reboot_required_package")],
+                         ["linux-image-6.11.0-1-generic", "linux-image-6.8.0-90-generic"])
+
+    def test_other_kernel_flavours_dont_require_a_reboot(self):
+        self.write_dpkg_status_with_kernels("6.8.0-87-generic", "6.8.0-1030-azure")
+        self.assertEqual(samples(self.check([]), "host_updates_reboot_required"), [({"hostname": "testhost"}, 0)])
+
+    def test_interrupted_state_write_keeps_the_previous_state(self):
+        self.check([LIBC])
+        before = packages.PENDING_SINCE_FILE.read_text()
+
+        def killed_halfway(path, text):
+            with path.open("w") as file:
+                file.write(text[:5])
+            raise OSError("killed")
+
+        with mock.patch.object(Path, "write_text", killed_halfway), self.assertRaises(OSError):
+            self.check([LIBC, DOCKER])
+        self.assertEqual(packages.PENDING_SINCE_FILE.read_text(), before)
+        self.check([LIBC])  # and the next run still works
+
+
+if __name__ == "__main__":
+    unittest.main()
