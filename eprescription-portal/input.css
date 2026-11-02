@@ -1,33 +1,15 @@
 /* Import tailwind but don't read every file */
 @import "tailwindcss" source(none);
 
-/* Instead, read only the template files */
-@source "./src/main/resources/templates";
+/* Instead, read only the template files and the input css file */
+@source "./src/main/resources/templates/**/*";
+@source "./input.css";
 
 @theme {
-  /* Remove all the tailwind colors */
-  --color-*: initial;
-  /* Add the sundhed.dk colors */
-  --color-white: #fff;
-  --color-black: #000;
-  --color-red: #b20c1c;
-  --color-red-700: #820914;
-  --color-red-800: #790813;
-  --color-yellow: #f0c337;
-  --color-gray: #ececec;
-  --color-gray-700: #e5e5e5;
-  --color-gray-800: #c1c1c1;
-  /* Form control borders; needs >= 3:1 contrast against white (WCAG 1.4.11) */
-  --color-gray-900: #767676;
-  --color-foreground: #1b1b26;
-  --color-background: #f7f7f7;
-
   /* Web safe font stack */
   --font-sans: Arial, Helvetica, sans-serif;
-
-  /* Add their specific border */
-  --shadow-sdk: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-sdk-footer: 0 1px 2px 2px rgba(0, 0, 0, 0.3);
+  --color-foreground: #1b1b26;
+  --color-background: #f7f7f7;
 }
 
 @layer base {
@@ -42,22 +24,15 @@
 }
 
 @layer components {
-  .red-button {
-    @apply bg-red text-white not-disabled:hover:bg-red-700 not-disabled:active:bg-red-800 px-3.5 py-1 cursor-pointer;
+  .blue-button {
+    @apply bg-blue-700 text-white not-disabled:hover:bg-blue-800 not-disabled:active:bg-blue-900 px-3.5 py-1 cursor-pointer;
     @apply disabled:opacity-60 disabled:cursor-not-allowed;
-  }
-
-  .gray-button {
-    @apply bg-gray text-black hover:bg-gray-700 active:bg-gray-800 px-3.5 py-1 cursor-pointer;
-  }
-
-  .red-link {
-    @apply text-red visited:text-red-700 hover:underline;
   }
 
   .text-input,
   .select-input {
-    @apply bg-white border border-gray-900 px-3 py-1.5 w-full hover:border-foreground focus:outline-2 focus:outline-offset-0 focus:outline-red focus:border-red;
+    @apply bg-white border border-gray-900 px-3 py-1.5 w-full hover:border-black focus:outline-2;
+    @apply focus:outline-offset-0 focus:outline-blue-500 focus:border-blue-500;
   }
 
   /* An htmx indicator (hx-indicator) that takes up no space while idle, and only appears once a request
@@ -76,6 +51,10 @@
     /* Chevron-down, stroke in --color-foreground */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%231b1b26' stroke-width='2'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
   }
+}
+
+@utility section-border {
+  @apply border-b-2 border-b-gray-500;
 }
 
 @keyframes delayed-show {

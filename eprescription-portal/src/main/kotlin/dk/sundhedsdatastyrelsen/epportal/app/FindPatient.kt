@@ -132,7 +132,7 @@ private val birthDateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
 
 /** A tiny static HTML error fragment for htmx to swap in. Message may not contain user input. */
-private fun errorFragment(message: String): String = """<p class="text-red">$message</p>"""
+private fun errorFragment(message: String): String = """<p class="text-red-500">$message</p>"""
 
 /** The submitted, trimmed id values, keyed by field index. Every field of [mask] gets an entry. */
 private fun Context.idValues(mask: SearchMask): Map<Int, String> =
