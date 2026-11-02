@@ -24,9 +24,9 @@
           href="/prescriptions?opaque-id=${patient.opaqueId}"
           class="table-row hover:bg-blue-200 *:table-cell *:p-1 *:px-2 *:max-w-64 *:[word-break:break-word]"
         >
-          <p>${patient.name}</p>
-          <p>${patient.birthDate}</p>
-          <p>${patient.gender}</p>
+          <p>${patient.name!""}</p>
+          <p>${patient.birthDate!""}</p>
+          <p>${patient.gender!""}</p>
           <div>
             <#if patient.addressStreet??><p>${patient.addressStreet}</p></#if>
             <p>
@@ -35,11 +35,11 @@
             </p>
             <#if patient.addressCountry??><p>${patient.addressCountry}</p></#if>
           </div>
-          <p>${patient.phone}</p>
-          <p>${patient.email}</p>
+          <p>${patient.phone!""}</p>
+          <p>${patient.email!""}</p>
           <div>
             <#list patient.ids as id>
-              <p>${id}</p>
+              <p>${id!""}</p>
             </#list>
           </div>
          </a>
