@@ -85,8 +85,8 @@ class TrcAssertionFactory(
             setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns", XmlNamespace.Companion.HL7.uri)
         }
         purposeOfUse.setAttribute("code", purposeOfUseValue)
-        purposeOfUse.setAttribute("codeSystem", "2.16.840.1.113883.3.18.7.1")
-        purposeOfUse.setAttribute("codeSystemName", "nhin-purpose")
+        purposeOfUse.setAttribute("codeSystem", OpenNcp.PURPOSE_OF_USE_CODE_SYSTEM)
+        purposeOfUse.setAttribute("codeSystemName", OpenNcp.PURPOSE_OF_USE_CODE_SYSTEM_NAME)
         purposeOfUse.setAttribute("displayName", purposeOfUseDisplayName)
 
         // The SAML schema requires the signature directly after Issuer.

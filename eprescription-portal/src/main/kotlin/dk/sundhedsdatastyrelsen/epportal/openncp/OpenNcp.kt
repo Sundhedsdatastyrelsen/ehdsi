@@ -97,4 +97,8 @@ object OpenNcp {
         tmf.init(loadKeyStore(truststore))
         return SSLContext.getInstance("TLSv1.3").apply { init(null, tmf.trustManagers, null) }
     }
+
+    /** Purpose of use is used both in TRC and HCP assertions */
+    const val PURPOSE_OF_USE_CODE_SYSTEM = "3bc18518-d305-46c2-a8d6-94bd59856e9e"
+    const val PURPOSE_OF_USE_CODE_SYSTEM_NAME = "eHDSI PurposeOfUse"
 }

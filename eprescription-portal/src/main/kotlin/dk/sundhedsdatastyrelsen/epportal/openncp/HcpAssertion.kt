@@ -85,8 +85,8 @@ class HcpAssertionFactory(
         textAttribute("urn:ehdsi:names:subject:healthcare-facility-type", "XSPA Healthcare Facility", hcp.facilityType)
         hl7Attribute("urn:oasis:names:tc:xspa:1.0:subject:purposeofuse", "XSPA Purpose of Use", "PurposeOfUse").apply {
             setAttribute("code", hcp.purposeOfUse)
-            setAttribute("codeSystem", "3bc18518-d305-46c2-a8d6-94bd59856e9e")
-            setAttribute("codeSystemName", "eHDSI PurposeOfUse")
+            setAttribute("codeSystem", OpenNcp.PURPOSE_OF_USE_CODE_SYSTEM)
+            setAttribute("codeSystemName", OpenNcp.PURPOSE_OF_USE_CODE_SYSTEM_NAME)
             setAttribute("displayName", hcp.purposeOfUse.lowercase().replaceFirstChar { it.uppercase() })
         }
         textAttribute("urn:oasis:names:tc:xspa:1.0:environment:locality", "XSPA Locality", hcp.locality)

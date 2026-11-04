@@ -94,6 +94,27 @@ class OpenNcpClientIntegrationTest {
     }
 
     @Test
+    fun `HCP and TRC assertions use the eHDSI purpose of use code system`() {
+        responseFixture = "query-documents-response.xml"
+        client.listDocuments("FI", PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"))
+
+        val doc = XmlUtils.parse(requests.single().body.inputStream())
+        val xpath = XPathWrapper(XmlNamespace.SOAP12, XmlNamespace.WSSE, XmlNamespace.SAML, XmlNamespace.HL7)
+        val purposesOfUse = xpath.evalElements(
+            "/soap12:Envelope/soap12:Header/wsse:Security/saml:Assertion/saml:AttributeStatement" +
+                "/saml:Attribute[@Name='urn:oasis:names:tc:xspa:1.0:subject:purposeofuse']" +
+                "/saml:AttributeValue/hl7:PurposeOfUse",
+            doc,
+        )
+        assertEquals(2, purposesOfUse.size)
+        purposesOfUse.forEach {
+            assertEquals("TREATMENT", it.getAttribute("code"))
+            // From the eHDSI SAML profile.
+            assertEquals("3bc18518-d305-46c2-a8d6-94bd59856e9e", it.getAttribute("codeSystem"))
+        }
+    }
+
+    @Test
     fun `queryPatient request body is valid against ClientService_xsd`() {
         client.queryPatient("FI", listOf(PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A")))
         validateClientServiceBody(XmlUtils.parse(requests.single().body.inputStream()))
