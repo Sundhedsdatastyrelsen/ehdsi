@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Name;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Patient;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PatientSummaryL3;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.PreferredHealthProfessional;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.model.RetrievalFailure;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.model.Telecom;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.DdvResponseStorage;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
@@ -114,7 +115,7 @@ class PatientSummaryL3MapperTest {
     static PatientSummaryL3 getModelWithFailedFMKService() {
         try {
             var cpr = "1004219992";
-            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
+            var ddvResponse = DdvResponseStorage.getTestVaccination(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -145,7 +146,7 @@ class PatientSummaryL3MapperTest {
                 preferredHp,
                 patient,
                 null,
-                ddvresponse
+                ddvResponse
             );
 
             return PatientSummaryL3Mapper.model(input);
@@ -158,7 +159,6 @@ class PatientSummaryL3MapperTest {
         try {
             var cpr = "1004219992";
             var fmkResponse = FmkResponseStorage.getTestMedicineCards(cpr);
-            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -188,8 +188,8 @@ class PatientSummaryL3MapperTest {
                 "test-document-id",
                 preferredHp,
                 patient,
-                null,
-                ddvresponse
+                fmkResponse,
+                null
             );
 
             return PatientSummaryL3Mapper.model(input);
@@ -201,7 +201,6 @@ class PatientSummaryL3MapperTest {
     static PatientSummaryL3 getModelWithFailedAllServices() {
         try {
             var cpr = "1004219992";
-            var ddvresponse = DdvResponseStorage.getTestVaccination(cpr);
 
             var patient = Patient.builder()
                 .id(new CdaId(Oid.DK_CPR, cpr))
@@ -248,17 +247,17 @@ class PatientSummaryL3MapperTest {
         Assertions.assertNotNull(model);
         Assertions.assertNotNull(model.getPatient());
         Assertions.assertNotNull(model.getMedicationSummary());
-        Assertions.assertNotNull(model.getMedicationSummary().getItems());
-        Assertions.assertNotNull(model.getImmunizations().getItems());
-        assertThat(model.getMedicationSummary().getItems(), is(not(empty())));
+        Assertions.assertNotNull(model.getMedicationSummary().getRight().getItems());
+        Assertions.assertNotNull(model.getImmunizations().getRight().getItems());
+        assertThat(model.getMedicationSummary().getRight().getItems(), is(not(empty())));
     }
 
     @Test
     void modelEmptyMedicationCardAndVaccinationCard() {
         var model = getModelWithEmptyMedicineCardAndVaccinationCard();
 
-        assertThat(model.getMedicationSummary().getItems(), is(empty()));
-        assertThat(model.getImmunizations().getItems(), is(empty()));
+        assertThat(model.getMedicationSummary().getRight().getItems(), is(empty()));
+        assertThat(model.getImmunizations().getRight().getItems(), is(empty()));
     }
 
 
@@ -266,24 +265,33 @@ class PatientSummaryL3MapperTest {
     void modelFailedFMKServce() {
         var model = getModelWithFailedFMKService();
 
-        assertThat(model.getMedicationSummary().getItems(), is(empty()));
-        assertThat(model.getImmunizations().getItems(), is(empty()));
+        assertThat(model.getMedicationSummary().isLeft(),is(true));
+        assertThat(model.getMedicationSummary().getLeft(), is(RetrievalFailure.UNAVAILABLE));
+
+        assertThat(model.getImmunizations().isRight(), is(true));
+        assertThat(model.getImmunizations().getRight().getItems(), is(empty()));
     }
 
     @Test
     void modelFailedDDVService() {
         var model = getModelWithFailedDDVService();
 
-        assertThat(model.getMedicationSummary().getItems(), is(empty()));
-        assertThat(model.getImmunizations().getItems(), is(empty()));
+        assertThat(model.getMedicationSummary().isRight(), is(true));
+        assertThat(model.getMedicationSummary().getRight().getItems(), is(empty()));
+
+        assertThat(model.getImmunizations().isLeft(), is(true));
+        assertThat(model.getImmunizations().getLeft(), is(RetrievalFailure.UNAVAILABLE));
     }
 
     @Test
     void modelFailedAllServices() {
         var model = getModelWithFailedAllServices();
 
-        assertThat(model.getMedicationSummary().getItems(), is(empty()));
-        assertThat(model.getImmunizations().getItems(), is(empty()));
+        assertThat(model.getMedicationSummary().isLeft(), is(true));
+        assertThat(model.getMedicationSummary().getLeft(), is(RetrievalFailure.UNAVAILABLE));
+
+        assertThat(model.getImmunizations().isLeft(), is(true));
+        assertThat(model.getImmunizations().getLeft(), is(RetrievalFailure.UNAVAILABLE));
     }
 
 }

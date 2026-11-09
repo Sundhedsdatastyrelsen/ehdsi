@@ -448,6 +448,84 @@ class PatientSummaryL3GeneratorTest {
             is(emptyIterable()));
     }
 
+    @Test
+    void testFmkRetrievalFailure() throws JAXBException {
+        var cpr = "0410009234";
+        var immunization = DdvResponseStorage.getTestVaccination(cpr);
+
+        var input = new PatientSummaryInput("testtest", preferredHp("DK"), patient("DK"), null, immunization);
+
+        var cda = PatientSummaryL3Generator.generate(PatientSummaryL3Mapper.model(input));
+
+        assertSectionRetrievalFailed(cda, "10160-0", "FMK");
+        assertSectionRetrievalSucceeded(cda, "11369-6");
+    }
+
+    @Test
+    void testDdvRetrievalFailure() throws JAXBException {
+        var cpr = "0410009234";
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
+
+        var input = new PatientSummaryInput(
+            "testtest",
+            preferredHp("DK"),
+            patient("DK"),
+            medicationSummary,
+            null // DDV retrieval failed
+        );
+
+        var cda = PatientSummaryL3Generator.generate(
+            PatientSummaryL3Mapper.model(input)
+        );
+
+        assertSectionRetrievalFailed(cda, "11369-6", "DDV");
+        assertSectionRetrievalSucceeded(cda, "10160-0");
+    }
+
+    @Test
+    void testBothRetrievalsFail() {
+        var input = new PatientSummaryInput("testtest", preferredHp("DK"), patient("DK"), null, null);
+
+        var cda = PatientSummaryL3Generator.generate(PatientSummaryL3Mapper.model(input));
+
+        assertSectionRetrievalFailed(cda, "10160-0", "FMK");
+        assertSectionRetrievalFailed(cda, "11369-6", "DDV");
+    }
+
+    private static void assertSectionRetrievalFailed(String cda, String sectionCode, String source) {
+        var xpathEngine = new JAXPXPathEngine();
+        xpathEngine.setNamespaceContext(Map.of("hl7", "urn:hl7-org:v3"));
+
+        var document = Input.fromString(cda).build();
+        var sectionPath = "/hl7:ClinicalDocument//hl7:section[hl7:code/@code='" + sectionCode + "']";
+
+        assertThat(source + " section must not have nullFlavor", xpathEngine.evaluate(sectionPath + "/@nullFlavor", document), is(""));
+
+        assertThat(source + " retrieval failure message is present", xpathEngine.evaluate("contains(string(" + sectionPath + "/hl7:text), 'retrieval failure from " + source + "')", document), is("true"));
+
+        if ("FMK".equals(source)) {
+            assertThat(
+                "FMK section contains no-medication-info entry",
+                xpathEngine.evaluate(
+                    "count(" + sectionPath
+                        + "/hl7:entry/hl7:substanceAdministration"
+                        + "/hl7:code[@code='no-medication-info'"
+                        + " and @codeSystem='2.16.840.1.113883.5.1150.1'])",
+                    document),
+                is("1"));
+        }
+    }
+
+    private static void assertSectionRetrievalSucceeded(String cda, String sectionCode) {
+        var xpathEngine = new JAXPXPathEngine();
+        xpathEngine.setNamespaceContext(Map.of("hl7", "urn:hl7-org:v3"));
+
+        var document = Input.fromString(cda).build();
+        var sectionPath = "/hl7:ClinicalDocument//hl7:section[hl7:code/@code='" + sectionCode + "']";
+
+        assertThat("successful section must not have NAV", xpathEngine.evaluate(sectionPath + "/@nullFlavor", document), is(""));
+    }
+
     private static Patient patient(String country) {
         return Patient.builder()
             .id(new CdaId(Oid.DK_CPR, "1234567890"))
