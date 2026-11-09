@@ -12,6 +12,10 @@ import javax.net.ssl.TrustManagerFactory
 
 /**
  * Configuration of the integration with the OpenNCP client connector (the `openncp-client` service in NCP/).
+ *
+ * Bibliography:
+ *
+ * - [1] eHDSI SAML Profile v10: https://webgate.ec.europa.eu/fpfis/wikis/x/AeTzN
  */
 object OpenNcp {
     data class Config(
@@ -27,8 +31,7 @@ object OpenNcp {
         val signing: SigningConfig,
         val hcp: HcpConfig = HcpConfig(),
         /**
-         * The issuer to write in TRC and HCP assertions. From eHDSI_SAML_Profile_v10.0.0.pdf
-         * (https://webgate.ec.europa.eu/fpfis/wikis/x/AeTzN):
+         * The issuer to write in TRC and HCP assertions. From the eHDSI SAML profile [1]:
          *
          * > address URI that identifies the endpoint of the issuing service (i.e. Uri of NCP-B)
          */
@@ -98,7 +101,7 @@ object OpenNcp {
         return SSLContext.getInstance("TLSv1.3").apply { init(null, tmf.trustManagers, null) }
     }
 
-    /** Purpose of use is used both in TRC and HCP assertions */
+    /** Purpose of use is used both in TRC and HCP assertions It comes from the eHDSI SAML profile [1]. */
     const val PURPOSE_OF_USE_CODE_SYSTEM = "3bc18518-d305-46c2-a8d6-94bd59856e9e"
     const val PURPOSE_OF_USE_CODE_SYSTEM_NAME = "eHDSI PurposeOfUse"
 }

@@ -8,6 +8,7 @@ import io.javalin.http.Context
 import io.javalin.http.HttpStatus
 import io.javalin.http.NotFoundResponse
 import io.javalin.router.JavalinDefaultRoutingApi
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -40,7 +41,10 @@ object Prescriptions {
         private val documents: PrescriptionDocumentClient,
         private val cdaDisplay: CdaDisplayTransformer,
     ) {
-        private val prettyDateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+        private val utcDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+
+        private val prettyDateFormatter: DateTimeFormatter = DateTimeFormatter
+            .ofLocalizedDate(FormatStyle.MEDIUM)
             .withLocale(Locale.of("da", "DK"))
 
         fun list(ctx: Context) {
@@ -67,10 +71,10 @@ object Prescriptions {
                 "opaqueId" to opaquePatientId.toString(),
                 "prescriptions" to prescriptions.map {
                     mapOf(
-                        "effectiveTime" to it.l3.effectiveTime?.format(prettyDateFormatter),
+                        "effectiveTimeUtc" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))?.format(utcDateTimeFormatter),
+                        "prettyDate" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))?.format(prettyDateFormatter),
                         "authorName" to it.l3.authorName,
                         "title" to it.l3.title,
-                        "description" to it.l3.description,
                         // Dunno where this is supposed to come from yet, or if it's even relevant.
                         // I took it from the metadata we send in national-connector.
                         //"productCode" to it.l3?.productCode,

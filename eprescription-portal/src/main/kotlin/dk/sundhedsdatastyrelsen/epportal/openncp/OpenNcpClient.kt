@@ -82,9 +82,8 @@ class OpenNcpClient(
         }
         val status = response.statusCode()
         log.info("{} status={} durationMs={}", action, status, responseDuration.inWholeMilliseconds)
-        val body = response.body().readAllBytes().toString(Charsets.UTF_8)
         val document = try {
-            XmlUtils.parse(body)
+            XmlUtils.parse(response.body())
         } catch (e: SAXException) {
             throw OpenNcpException("$action: unparseable response with HTTP status $status", e)
         }

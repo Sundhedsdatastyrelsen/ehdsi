@@ -17,7 +17,7 @@ private val clientServiceSchema = SchemaFactory.newDefaultInstance().apply {
     setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
 }.newSchema(TestUtils.resource("client-wsdl/ClientService.xsd")!!)
 
-/** Validates the payload in the SOAP body of [envelope] against ClientService.xsd. Throws if it is invalid. */
+/** Validates the payload in the SOAP body of [envelope] against ClientService.xsd. */
 fun validateClientServiceBody(envelope: Document) {
     val payload = XPathWrapper(XmlNamespace.SOAP12).evalElement("/soap12:Envelope/soap12:Body/*", envelope)!!
     clientServiceSchema.newValidator().validate(DOMSource(payload))
