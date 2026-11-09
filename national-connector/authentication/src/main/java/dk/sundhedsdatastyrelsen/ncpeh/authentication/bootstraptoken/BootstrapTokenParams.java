@@ -7,6 +7,7 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlNamespace;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import lombok.Builder;
 import lombok.NonNull;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public record BootstrapTokenParams(
         XmlNamespace.DS,
         XmlNamespace.SAML);
 
+    private static final String PURPOSE_OF_USE = "urn:oasis:names:tc:xspa:1.0:subject:purposeofuse";
+
     public sealed interface SamlAttribute {
         /// Attribute element copied from e.g. HCP assertion
         record Raw(Node node) implements SamlAttribute {}
@@ -40,8 +43,17 @@ public record BootstrapTokenParams(
     /// @throws XmlException            if attributes are missing or wrong
     public static BootstrapTokenParams fromOpenNcpAssertions(OpenNcpAssertions openNcpAssertions, String audience, String issuer) {
         try {
-            Stream<SamlAttribute> attributesFromHcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
+            // eHDSI SAML profile: purpose of use in the TRC assertion overrides the HCP's.
+            var trcPurposeOfUse = xpath.evalElement(
+                "saml:AttributeStatement/saml:Attribute[@Name='" + PURPOSE_OF_USE + "']",
+                openNcpAssertions.trcAssertion());
+
+            Stream<SamlAttribute> attributesFromOpenNcp = xpath.evalNodes("saml:AttributeStatement/*", openNcpAssertions.hcpAssertion())
                 .stream()
+                // override purpose of use if TRC has one
+                .map(e ->
+                    trcPurposeOfUse != null && e instanceof Element e1 && PURPOSE_OF_USE.equals(e1.getAttribute("Name"))
+                        ? trcPurposeOfUse : e)
                 // Workaround for SOSI STS bugs/eHDSI IDWS XUA Token Profile bugs:
                 //  - The STS requires that all element values have xsi:type="CE".  That is not a requirement in eHDSI,
                 //    so we add it manually.
@@ -92,7 +104,7 @@ public record BootstrapTokenParams(
                     List.of(openNcpAssertions.countryOfTreatment())
                 )
             );
-            var attributes = Stream.concat(attributesFromHcp, ncpBstSpecificAttributes).toList();
+            var attributes = Stream.concat(attributesFromOpenNcp, ncpBstSpecificAttributes).toList();
             return BootstrapTokenParams.builder()
                 .audience(audience)
                 .issuer(issuer)

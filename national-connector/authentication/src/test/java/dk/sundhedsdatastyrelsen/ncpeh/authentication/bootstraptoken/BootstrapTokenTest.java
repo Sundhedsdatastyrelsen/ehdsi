@@ -11,6 +11,7 @@ import org.w3c.dom.Node;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -144,6 +145,41 @@ public class BootstrapTokenTest {
                 <PurposeOfUse xmlns="urn:hl7-org:v3" code="TREATMENT" codeSystem="urn:oasis:names:tc:xspa:1.0" codeSystemName="eHDSI XSPA PurposeOfUse" displayName="TREATMENT" xsi:type="CE"/>"""));
 
         // System.out.println(XmlUtils.writeDocumentToStringPretty(bstRequest.soapBody()));
+    }
+
+    @Test
+    void trcPurposeOfUseOverridesHcpPurposeOfUse() throws Exception {
+        var header = withTrcPart(soapHeader(), trc -> trc.replace("code=\"TREATMENT\"", "code=\"EMERGENCY\""));
+        var xml = bootstrapTokenRequestXml(header);
+
+        assertThat(xml, containsString("<PurposeOfUse xmlns=\"urn:hl7-org:v3\" code=\"EMERGENCY\""));
+        assertThat("Only one purpose of use is sent", xml.split("<PurposeOfUse ", -1).length - 1, is(1));
+    }
+
+    @Test
+    void hcpPurposeOfUseIsUsedWhenTrcHasNone() throws Exception {
+        var header = withTrcPart(
+            soapHeader(),
+            trc -> trc.replaceAll("<saml2:Attribute FriendlyName=\"XSPA Purpose Of Use\".*?</saml2:Attribute>", ""));
+        assertThat(header, containsString("urn:ehdsi:assertions:trc"));
+        var xml = bootstrapTokenRequestXml(header);
+
+        assertThat(xml, containsString("<PurposeOfUse xmlns=\"urn:hl7-org:v3\" code=\"TREATMENT\""));
+        assertThat("Only one purpose of use is sent", xml.split("<PurposeOfUse ", -1).length - 1, is(1));
+    }
+
+    /// Applies [change] to the part of [soapHeader] from the TRC assertion's issuer onwards.
+    private static String withTrcPart(String soapHeader, UnaryOperator<String> change) {
+        var trcStart = soapHeader.indexOf("NameQualifier=\"urn:ehdsi:assertions:trc\"");
+        assertThat(trcStart, greaterThan(0));
+        return soapHeader.substring(0, trcStart) + change.apply(soapHeader.substring(trcStart));
+    }
+
+    private static String bootstrapTokenRequestXml(String soapHeader) throws Exception {
+        var cert = testCert();
+        var openNcpAssertions = OpenNcpAssertions.fromSoapHeader(soapHeader);
+        var bstParams = BootstrapTokenParams.fromOpenNcpAssertions(openNcpAssertions, "https://fmk", "https://ehdsi-idp.testkald.nspop.dk");
+        return XmlUtils.writeDocumentToString(BootstrapTokenExchangeRequest.of(bstParams, cert, cert).soapBody());
     }
 
     @Test
