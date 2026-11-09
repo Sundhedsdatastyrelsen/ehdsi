@@ -1,0 +1,20 @@
+# Ships the exporter's metrics to the local monitoring stack in ../monitoring,
+# which must be running first. Use together with docker-compose.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.local-monitoring.yml up --build
+services:
+  host-updates-exporter:
+    networks:
+      - monitoring
+
+  alloy:
+    image: grafana/alloy:v1.12.2
+    command: ["run", "/etc/alloy/config.alloy"]
+    volumes:
+      - ./local-monitoring/config.alloy:/etc/alloy/config.alloy:ro
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    name: monitoring
+    external: true
