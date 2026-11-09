@@ -8,7 +8,17 @@ import java.io.InputStream
 import java.io.StringWriter
 import java.io.Writer
 import java.nio.charset.StandardCharsets
+import java.security.PrivateKey
+import java.security.cert.X509Certificate
 import javax.xml.XMLConstants
+import javax.xml.crypto.dsig.CanonicalizationMethod
+import javax.xml.crypto.dsig.DigestMethod
+import javax.xml.crypto.dsig.SignatureMethod
+import javax.xml.crypto.dsig.Transform
+import javax.xml.crypto.dsig.XMLSignatureFactory
+import javax.xml.crypto.dsig.dom.DOMSignContext
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec
+import javax.xml.crypto.dsig.spec.TransformParameterSpec
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -218,5 +228,30 @@ object XmlUtils {
      */
     fun setAttribute(elm: Element, ns: XmlNamespace, localName: String, value: String) {
         elm.setAttributeNS(ns.uri, ns.prefix + ":" + localName, value)
+    }
+
+    /**
+     * Create a signature for [element] and insert it before [insertBefore]. */
+    fun sign(element: Element, key: PrivateKey, cert: X509Certificate, insertBefore: Node) {
+        val fac = XMLSignatureFactory.getInstance("DOM")
+        val c14n = fac.newTransform(CanonicalizationMethod.EXCLUSIVE, null as TransformParameterSpec?)
+        val reference = fac.newReference(
+            "#" + element.getAttribute("ID"),
+            fac.newDigestMethod(DigestMethod.SHA256, null),
+            listOf(fac.newTransform(Transform.ENVELOPED, null as TransformParameterSpec?), c14n),
+            null,
+            null,
+        )
+        val signedInfo = fac.newSignedInfo(
+            fac.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, null as C14NMethodParameterSpec?),
+            fac.newSignatureMethod(SignatureMethod.RSA_SHA256, null),
+            listOf(reference),
+        )
+        val kif = fac.keyInfoFactory
+        val keyInfo = kif.newKeyInfo(listOf(kif.newX509Data(listOf(cert))))
+        val ctx = DOMSignContext(key, element, insertBefore).apply {
+            defaultNamespacePrefix = XmlNamespace.DS.prefix
+        }
+        fac.newXMLSignature(signedInfo, keyInfo).sign(ctx)
     }
 }

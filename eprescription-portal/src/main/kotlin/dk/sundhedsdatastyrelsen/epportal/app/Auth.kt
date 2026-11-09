@@ -74,7 +74,7 @@ class LocalAuth(
         }
 
         routes.get("/logout") { ctx ->
-            logout(ctx)  // SAML does session + persistent logout; both clear tracking cookie
+            logout(ctx)
             ctx.redirect("/")
         }
 
