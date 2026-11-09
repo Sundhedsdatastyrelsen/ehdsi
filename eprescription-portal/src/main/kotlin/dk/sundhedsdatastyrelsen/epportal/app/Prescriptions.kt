@@ -1,9 +1,10 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
+import dk.sundhedsdatastyrelsen.epportal.log
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionListClient
-import io.javalin.http.BadRequestResponse
+import dk.sundhedsdatastyrelsen.epportal.utils.PublicException
 import io.javalin.http.Context
 import io.javalin.http.HttpStatus
 import io.javalin.http.NotFoundResponse
@@ -43,9 +44,8 @@ object Prescriptions {
     ) {
         private val utcDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
-        private val prettyDateFormatter: DateTimeFormatter = DateTimeFormatter
-            .ofLocalizedDate(FormatStyle.MEDIUM)
-            .withLocale(Locale.of("da", "DK"))
+        private val prettyDateFormatter: DateTimeFormatter =
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.of("da", "DK"))
 
         fun list(ctx: Context) {
             val principal = auth.current(ctx)
@@ -56,12 +56,12 @@ object Prescriptions {
 
             try {
                 // Get the patient ID query parameter
-                val opaquePatientId = ctx.queryParam("opaque-id")
-                    ?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-                    ?: throw BadRequestResponse("Invalid opaque patient id.")
+                val opaquePatientId =
+                    ctx.queryParam("opaque-id")?.let { runCatching { UUID.fromString(it) }.getOrNull() }
+                        ?: throw PublicException("Invalid opaque patient id.")
 
                 val patientDemographics = OpaquePatientIds.resolve(ctx, principal, opaquePatientId)
-                    ?: throw NotFoundResponse("Could not locate patient session, please search again.")
+                    ?: throw PublicException("Could not locate patient session, please search again.")
 
                 // TODO what if there are more ids?
                 val patientId = patientDemographics.patientIds.first()
@@ -72,7 +72,8 @@ object Prescriptions {
                     "opaqueId" to opaquePatientId.toString(),
                     "prescriptions" to prescriptions.map {
                         mapOf(
-                            "effectiveTimeUtc" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))?.format(utcDateTimeFormatter),
+                            "effectiveTimeUtc" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))
+                                ?.format(utcDateTimeFormatter),
                             "prettyDate" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))?.format(prettyDateFormatter),
                             "authorName" to it.l3.authorName,
                             "title" to it.l3.title,
@@ -96,7 +97,12 @@ object Prescriptions {
 
                 ctx.render("list-prescriptions.ftlh", dataModel)
             } catch (e: Exception) {
-                ctx.render("error-page.ftlh", mapOf("error" to e.message))
+                if (e is PublicException) {
+                    log.warn("Public error while listing prescriptions", e)
+                } else {
+                    log.error("Unexpected error while listing prescriptions", e)
+                }
+                ctx.render("error-page.ftlh", mapOf("error" to if (e is PublicException) e.message else null))
             }
 
         }
