@@ -27,6 +27,6 @@ ADD --chown=app:app https://github.com/open-telemetry/opentelemetry-java-instrum
 COPY --from=builder /build/build/install/ep-portal .
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:8080/saml/metadata | grep -q "<?xml" || exit 1
+    CMD curl -fsS -o /dev/null http://localhost:8080/ || exit 1
 ENV JAVA_OPTS=""
 CMD ["./bin/ep-portal"]

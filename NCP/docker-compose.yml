@@ -178,7 +178,11 @@ services:
         -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/heapdumps"
       # LOGGING_LEVEL_ROOT: DEBUG
     networks:
-      - ncp
+      ncp:
+        aliases:
+          # Hi-jacking calls to ncp-training so that DK B -> DK A connections works locally.
+          # Comment this out if you want the B service to reach our training environment instead.
+          - ncp-training.ehdsi.sundhedsdata.dk
     secrets:
       - tls_keystore_password
       - tls_truststore_password

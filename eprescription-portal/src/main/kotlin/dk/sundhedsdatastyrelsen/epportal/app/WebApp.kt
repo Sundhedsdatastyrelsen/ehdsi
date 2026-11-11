@@ -1,19 +1,19 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
+import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
+import dk.sundhedsdatastyrelsen.epportal.openncp.OpenNcpPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
-import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionMetadataParser
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
-import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
 import io.javalin.Javalin
-import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
-import io.javalin.http.HttpStatus
 import io.javalin.http.UnauthorizedResponse
 import io.javalin.http.staticfiles.Location
 import io.javalin.json.JavalinJackson
@@ -21,9 +21,7 @@ import io.javalin.rendering.template.JavalinFreemarker
 import org.eclipse.jetty.http.HttpCookie
 import java.io.File
 import java.net.URI
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
+import kotlin.time.Clock
 import dk.sundhedsdatastyrelsen.epportal.Config as AppConfig
 
 /**
@@ -39,6 +37,8 @@ private fun createTemplateEngine(hotReloading: Boolean): Configuration {
             setClassLoaderForTemplateLoading(this::class.java.classLoader, "/templates")
         }
         defaultEncoding = "UTF-8"
+        // For ?url, which escapes path segments in links
+        urlEscapingCharset = "UTF-8"
         templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
         logTemplateExceptions = false
     }
@@ -68,14 +68,14 @@ private fun rejectCrossOriginRequests(ctx: Context) {
 }
 
 object WebApp {
-    val prettyDateFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-        .withLocale(Locale.of("da", "DK"))
-
     fun createApp(
         webAppConfig: Config,
         auth: AuthProvider,
         searchMasks: SearchMaskRepository,
         patientSearch: PatientSearchClient,
+        prescriptionDocuments: PrescriptionDocumentClient,
+        cdaDisplay: CdaDisplayTransformer,
+        clock: Clock,
     ): Javalin {
         val hotReloading = webAppConfig.hotReloading
         if (hotReloading) {
@@ -83,7 +83,15 @@ object WebApp {
         }
         val app = Javalin.create { config ->
             config.startup.showJavalinBanner = false
-            config.fileRenderer(JavalinFreemarker(createTemplateEngine(hotReloading)))
+            val renderer = JavalinFreemarker(createTemplateEngine(hotReloading))
+            // Add the principal to every model, since the pages render differently when you're logged in.
+            config.fileRenderer { filePath, model, ctx ->
+                renderer.render(
+                    filePath,
+                    mapOf("principal" to auth.current(ctx)) + model,
+                    ctx
+                )
+            }
             config.staticFiles.add { staticFiles ->
                 staticFiles.hostedPath = "/"
                 if (hotReloading) {
@@ -106,6 +114,8 @@ object WebApp {
                 auth.install(handler) // SAML adds its filters/servlet; LocalAuth no-op
             }
 
+            OpaquePatientIds.setup(config)
+
             config.requestLogger.http(requestLogger(log))
 
             config.routes.before(::rejectCrossOriginRequests)
@@ -120,85 +130,15 @@ object WebApp {
             }
 
             auth.registerRoutes(config.routes)
-            FindPatient.registerRoutes(config.routes, auth, searchMasks, patientSearch)
+            FindPatient.registerRoutes(config.routes, auth, searchMasks, patientSearch, clock)
+            Prescriptions.registerRoutes(config.routes, auth, prescriptionDocuments, cdaDisplay)
 
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
-                ctx.render("frontpage.ftlh", mapOf("error" to ctx.queryParam("error")))
-            }
-
-            config.routes.get("/form") { ctx ->
-                val principal = auth.current(ctx)
-                if (principal == null) {
-                    ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
-                    return@get
-                }
-                val dataModel = mapOf(
-                    // Add the dash to the CPR.
-                    "userCpr" to principal.cpr.replaceRange(6, 6, "-"),
+                ctx.render(
+                    "frontpage.ftlh",
+                    mapOf("error" to ctx.queryParam("error"))
                 )
-
-                ctx.render("form.ftlh", dataModel)
-            }
-
-            config.routes.get("/prescriptions") { ctx ->
-                val principal = auth.current(ctx)
-                if (principal == null) {
-                    ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
-                    return@get
-                }
-                // Load prescriptions from the stored response, so we have something to look at.
-                val prescriptions =
-                    PrescriptionMetadataParser.parse(
-                        XmlUtils.parse(
-                            Thread.currentThread().contextClassLoader.getResourceAsStream(
-                                "list-prescriptions.xml"
-                            )!!
-                        )
-                    )
-                val dataModel = mapOf(
-                    // Mock patient id, we don't know how it will look yet.
-                    "patientId" to "FR-1234567890",
-                    "prescriptions" to prescriptions.map {
-                        mapOf(
-                            "effectiveTime" to it.l3?.effectiveTime?.format(prettyDateFormatter),
-                            "authorName" to it.l3?.authorName,
-                            "title" to it.l3?.title,
-                            "description" to it.l3?.description,
-                            // Dunno where these are supposed to come from yet
-                            //"productCode" to it.l3?.productCode,
-                            //"productName" to it.l3?.productName,
-                            "atcCode" to it.l3?.atcCode,
-                            "atcName" to it.l3?.atcName,
-                            "doseFormCode" to it.l3?.doseFormCode,
-                            "doseFormName" to it.l3?.doseFormName,
-                            "strength" to it.l3?.strength,
-                            // Dunno where these are supposed to come from yet
-                            //"dispensable" to it.l3?.dispensable,
-                            //"substitutionAllowed" to it.l3?.substitutionAllowed,
-                            "l3DocumentId" to it.l3?.documentUniqueId,
-                            "l1DocumentId" to it.l1?.documentUniqueId
-                        )
-                    },
-                )
-
-                ctx.render("list-prescriptions.ftlh", dataModel)
-            }
-
-            config.routes.post("/form/update") { ctx ->
-                val principal = auth.require(ctx)
-                try {
-                    ctx.redirect("/form")
-                } catch (e: Exception) {
-                    if (e is BadRequestResponse) throw e
-                    log.error("An error occurred when user tried to opt in or out", e);
-                    ctx.redirect("/form?error=form-update-failed")
-                }
-            }
-
-            config.routes.get("/logout") { ctx ->
-                auth.logout(ctx)  // SAML does session + persistent logout; both clear tracking cookie
-                ctx.redirect("/")
             }
         }
 
@@ -213,11 +153,21 @@ object WebApp {
 
     fun startServer(config: AppConfig) {
         val searchMasks = SearchMaskRepository.load(config.findPatient)
+        val patientSearch = if (config.openncp != null) {
+            log.info("Patient search via OpenNCP client connector at {}", config.openncp.endpoint)
+            OpenNcpPatientSearchClient.create(config.openncp)
+        } else {
+            log.warn("OpenNCP is not configured; patient search returns dummy data")
+            DummyPatientSearchClient()
+        }
         val app = createApp(
             config.webApp,
             config.auth.provider(),
             searchMasks = searchMasks,
-            patientSearch = DummyPatientSearchClient(),
+            patientSearch = patientSearch,
+            prescriptionDocuments = DummyPrescriptionDocumentClient(),
+            cdaDisplay = CdaDisplayTransformer(config.cdaDisplay),
+            clock = Clock.System,
         )
         app.start(config.webApp.port)
     }

@@ -86,6 +86,8 @@ class ConfigTest {
             [findPatient]
             countries = ["DK"]
             ismDirectory = "$ismDirectory"
+            [cdaDisplay]
+            language = "en-GB"
             """.trimIndent()
         )
     }

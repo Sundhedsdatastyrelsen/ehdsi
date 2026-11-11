@@ -1,0 +1,10 @@
+# Overlay for the training deployment (docker-compose.yml). Its values take precedence over application.toml.
+# Paths are relative to the container's working directory, /home/app. ncp-keystore/ is ../NCP/keystore on the host.
+
+[openncp]
+endpoint = "https://ncp-training.ehdsi.sundhedsdata.dk:6443/openncp-client-connector/services/ClientService"
+truststore = { path = "ncp-keystore/dev-truststore.jks", password = "changeit" }
+
+[openncp.signing]
+alias = "tomcat"
+keystore = { path = "ncp-keystore/dev-seal.jks", password = "password" }

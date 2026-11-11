@@ -1,0 +1,226 @@
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:pharm="urn:hl7-org:pharm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.1.1"/>
+    <id extension="513671704568702L3" root="1.2.208.176.7.2.3"/>
+    <code code="57833-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.59" displayName="Prescription for medication"/>
+    <title>eHDSI ePrescription Karl Hungary Knudsen - 513671704568702</title>
+    <effectiveTime value="20260413110613+0000"/>
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality" codeSystemVersion="2018-08-12" displayName="normal"/>
+    <languageCode code="da-DK"/>
+    <recordTarget contextControlCode="OP" typeCode="RCT">
+        <patientRole classCode="PAT">
+            <id extension="2611574943" root="1.2.208.176.1.2"/>
+<addr>
+    <streetAddressLine>Kærhusevej 375</streetAddressLine>
+    <city>Klippinge</city>    <postalCode>4672</postalCode>    </addr>
+            <telecom nullFlavor="NI"/>
+            <patient classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <given>Karl</given>
+                    <given>Hungary</given>
+                    <family>Knudsen</family>
+                </name>
+                <administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="AdministrativeGender" codeSystemVersion="913-20091020" displayName="Male"/>
+                <birthTime value="19571126"/>
+            </patient>
+        </patientRole>
+    </recordTarget>
+    <author>
+        <functionCode code="221" codeSystem="2.16.840.1.113883.2.9.6.2.7" codeSystemName="ISCO" codeSystemVersion="2008" displayName="Medical doctors"/>
+        <time value="20260408064207+0000"/>
+        <assignedAuthor classCode="ASSIGNED">
+            <id extension="6QF17" root="1.2.208.176.1.3"/>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson classCode="PSN" determinerCode="INSTANCE">
+                <name>
+                    <family>Babbage</family>
+                    <given>Charles</given>
+                </name>
+            </assignedPerson>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id extension="990027" root="1.2.208.176.1.4"/>
+                <name>Udenfor organisation</name>
+                <telecom use="WP" value="tel:33113311"/>
+<addr nullFlavor="NI"/>
+            </representedOrganization>
+        </assignedAuthor>
+    </author>
+
+    <custodian typeCode="CST">
+        <assignedCustodian classCode="ASSIGNED">
+            <representedCustodianOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+    <legalAuthenticator contextControlCode="OP" typeCode="LA">
+        <time value="20260413110613+0000"/>
+        <signatureCode code="S"/>
+        <assignedEntity classCode="ASSIGNED">
+            <id root="1.2.208.176"/>
+            <addr nullFlavor="NI"/>
+            <telecom nullFlavor="NI"/>
+            <assignedPerson nullFlavor="NI"/>
+            <representedOrganization classCode="ORG" determinerCode="INSTANCE">
+                <id root="1.2.208.176"/>
+                <name>Sundhedsdatastyrelsen</name>
+                <telecom use="WP" value="tel:+4572216800"/>
+                <addr>
+                    <streetAddressLine>Ørestads Boulevard 5</streetAddressLine>
+                    <city>København S</city>
+                    <postalCode>2300</postalCode>
+                    <country>DK</country>
+                </addr>
+            </representedOrganization>
+        </assignedEntity>
+    </legalAuthenticator>
+    <relatedDocument typeCode="XFRM">
+        <parentDocument classCode="DOCCLIN" moodCode="EVN">
+            <id extension="513671704568702" root="1.2.208.176.7.2.2"/>
+        </parentDocument>
+    </relatedDocument>
+    <component>
+        <structuredBody>
+            <component>
+                <section>
+                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.2.1"/>
+                    <id extension="513671704568702" root="1.2.208.176.7.2.2"/>
+                    <code code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" codeSystemVersion="2.80" displayName="Prescription list"><translation code="57828-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Prescriptions"/></code>
+                    <title>Prescriptions</title>
+                    <text>
+                        <content ID="entry-text">
+                            <content ID="product-name">Etindros 21</content><br/>
+                            <content ID="indication-text">P-piller</content><br/>
+                            <content ID="patient-medication-instructions">1 tablet morgen daglig i 3 uger, herefter en uges pause</content><br/>
+                            3+0,02 mg; DROSPIRENON; Ethinylestradiol<br/>
+                            <br/>
+                            1 tablet morgen daglig i 3 uger, herefter en uges pause
+
+Dosering fra d. 8. apr. 2026 til d. 6. juni 2026 - gentages hver 28. dag:
+Dag 1: 1 tablet morgen
+Dag 2: 1 tablet morgen
+Dag 3: 1 tablet morgen
+Dag 4: 1 tablet morgen
+Dag 5: 1 tablet morgen
+Dag 6: 1 tablet morgen
+Dag 7: 1 tablet morgen
+Dag 8: 1 tablet morgen
+Dag 9: 1 tablet morgen
+Dag 10: 1 tablet morgen
+Dag 11: 1 tablet morgen
+Dag 12: 1 tablet morgen
+Dag 13: 1 tablet morgen
+Dag 14: 1 tablet morgen
+Dag 15: 1 tablet morgen
+Dag 16: 1 tablet morgen
+Dag 17: 1 tablet morgen
+Dag 18: 1 tablet morgen
+Dag 19: 1 tablet morgen
+Dag 20: 1 tablet morgen
+Dag 21: 1 tablet morgen
+                        </content>
+                        <paragraph>
+                            Data source: FMK 1.4.6
+                        </paragraph>
+                    </text>
+                    <entry typeCode="COMP">
+                        <substanceAdministration classCode="SBADM" moodCode="INT">
+                            <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.2"/>
+                            <templateId root="2.16.840.1.113883.10.20.1.24"/>
+                            <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.7.1"/>
+                            <id extension="513671704568702" root="1.2.208.176.7.2.2"/>
+                            <text><reference value="#entry-text"/></text>
+                            <statusCode code="active"/>
+                            <effectiveTime xsi:type="IVL_TS">
+    <low value="20260408"/>
+    <high value="20260606"/>
+                            </effectiveTime>
+                            <effectiveTime nullFlavor="UNK" operator="A"/>
+                            <routeCode code="20053000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2026-01-06" displayName="Oral use"><translation code="OR" codeSystem="1.2.208.176.3.11" codeSystemName="LMS11" displayName="Oral anvendelse"/></routeCode>
+                            <doseQuantity nullFlavor="UNK"/>
+                            <consumable typeCode="CSM">
+                                <manufacturedProduct classCode="MANU">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.29"/>
+                                    <manufacturedMaterial classCode="MMAT" determinerCode="KIND">
+                                        <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.30"/>
+                                        <code code="28105050912" codeSystem="1.2.208.176.3.1" codeSystemName="Lægemiddelstyrelsens DrugID"/>
+                                        <name>Etindros 21</name>
+                                        <pharm:desc>3+0,02 mg</pharm:desc>
+                                        <pharm:formCode code="10221000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2026-01-06" displayName="Film-coated tablet"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="TABFILM" codeSystem="1.2.208.176.3.22" codeSystemName="LMS22" displayName="filmovertrukne tabletter"/></pharm:formCode>
+                                        <pharm:asContent classCode="CONT">
+                                            <pharm:quantity unit="1" value="63">
+                                                <translation>
+                                                    <originalText>stk.</originalText>
+                                                </translation>
+                                            </pharm:quantity>
+                                            <pharm:containerPackagedProduct classCode="CONT" determinerCode="KIND">
+                                                <pharm:code code="92937" codeSystem="1.2.208.176.3.2" codeSystemName="Varenumre på lægemiddelpakninger"/>
+                                                <pharm:name>Etindros 21, filmovertrukne tabletter, 3+0,02 mg, 63 stk. (3 x 21) (blister)</pharm:name>
+                                                <pharm:formCode code="30007000" codeSystem="0.4.0.127.0.16.1.1.2.1" codeSystemName="EDQM" codeSystemVersion="2026-01-06" displayName="Blister"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="BLI" codeSystem="1.2.208.176.3.14" codeSystemName="LMS14"/></pharm:formCode>
+                                            </pharm:containerPackagedProduct>
+                                        </pharm:asContent>
+                                        <pharm:asSpecializedKind classCode="GRIC">
+                                            <pharm:generalizedMaterialKind classCode="MMAT" determinerCode="KIND">
+                                                <pharm:code code="G03AA12" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" codeSystemVersion="2026-01" displayName="drospirenone and ethinylestradiol"><pharm:translation xmlns:pharm="urn:hl7-org:v3" code="G03AA12" codeSystem="2.16.840.1.113883.6.73" codeSystemName="Anatomical Therapeutic Chemical" displayName="Drospirenon og ethinylestradiol"/></pharm:code>
+                                            </pharm:generalizedMaterialKind>
+                                        </pharm:asSpecializedKind>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator nullFlavor="NI" xsi:type="PQ"/>
+                                                <denominator nullFlavor="NI" xsi:type="PQ"/>
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <!-- Coded by the portal, so tests exercise the substance value set. The generated document has nullFlavor="UNK". -->
+                                                <pharm:code code="100000092375" codeSystem="2.16.840.1.113883.3.6905.2" codeSystemName="EMA SMS Substances list"/>
+                                                <pharm:name>DROSPIRENON</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                        <pharm:ingredient classCode="ACTI">
+                                            <pharm:quantity>
+                                                <numerator nullFlavor="NI" xsi:type="PQ"/>
+                                                <denominator nullFlavor="NI" xsi:type="PQ"/>
+                                            </pharm:quantity>
+                                            <pharm:ingredientSubstance classCode="MMAT" determinerCode="KIND">
+                                                <!-- Coded by the portal, so tests exercise the substance value set. The generated document has nullFlavor="UNK". -->
+                                                <pharm:code code="100000091721" codeSystem="2.16.840.1.113883.3.6905.2" codeSystemName="EMA SMS Substances list"/>
+                                                <pharm:name>Ethinylestradiol</pharm:name>
+                                            </pharm:ingredientSubstance>
+                                        </pharm:ingredient>
+                                    </manufacturedMaterial>
+                                    <manufacturerOrganization classCode="ORG" determinerCode="INSTANCE">
+                                      <name>Exeltis</name>
+                                    </manufacturerOrganization>
+                                </manufacturedProduct>
+                            </consumable>
+                            <entryRelationship typeCode="COMP">
+                                <supply classCode="SPLY" moodCode="RQO">
+                                    <independentInd value="false"/>
+                                    <quantity unit="1" value="1"/>
+                                </supply>
+                            </entryRelationship>
+                            <entryRelationship inversionInd="true" typeCode="SUBJ">
+                                <act classCode="ACT" moodCode="INT">
+                                    <templateId root="1.3.6.1.4.1.12559.11.10.1.3.1.3.12"/>
+                                    <templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.3"/>
+                                    <templateId root="2.16.840.1.113883.10.20.1.49"/>
+                                    <code code="PINSTRUCT" codeSystem="1.3.6.1.4.1.19376.1.5.3.2" codeSystemName="IHEActCode"/>
+                                    <text><reference value="#patient-medication-instructions"/></text>
+                                    <statusCode code="completed"/>
+                                </act>
+                            </entryRelationship>
+                        </substanceAdministration>
+                    </entry>
+                </section>
+            </component>
+        </structuredBody>
+    </component>
+</ClinicalDocument>

@@ -24,7 +24,7 @@ public class EPrescriptionL3Generator {
 
     /// @throws MapperException if something goes wrong
     @WithSpan
-    public static String generate(EPrescriptionL3Input input) {
+    public static String generate(EPrescriptionInput input) {
         var model = EPrescriptionL3Mapper.model(input);
         return generate(model);
     }

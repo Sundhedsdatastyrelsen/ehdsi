@@ -1,0 +1,180 @@
+<root><![CDATA[
+
+.container {
+    height:100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    column-gap: 10px;
+    row-gap: 10px;
+}
+
+.extended_header_block {
+    height:100%;
+}
+
+.narrative_wrapper {
+}
+
+.narrative_wrapper table {
+    width: 100%;
+    display: inline-block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* Translation table - table containing the coded translations */
+.translation_table{
+    width: 100%;
+    table-layout: fixed;
+}
+.translation_table th {
+    background: #E6F2FF;
+    color:#4A4A4A;
+    font-size:12px;
+    padding:6px;
+    vertical-align: top;
+    text-align: left;
+    border-bottom: 1px solid #009fd1;
+}
+
+.translation_table th.subtitle {
+    background: #009fd1;
+    color:#FFFFFF;
+    font-size:12px;
+    font-weight:bold;
+    padding:6px;
+    vertical-align: top;
+    text-align: left;
+    border-bottom: 1px solid #009fd1;
+}
+
+.translation_table td {
+    font-size:12px;
+    vertical-align: top;
+    text-align: left;
+}
+
+.translation_table tr:nth-child(even) {
+    background: #FFFFFF;
+}
+
+.translation_table tr:nth-child(odd) {
+    background: #E6F2FF;
+}
+
+/* Medication summary table - table containing the coded translations */
+.medication_summary_table{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.medication_summary_table th {
+    color:#4A4A4A;
+    font-size:12px;
+    padding:6px;
+    vertical-align: top;
+    text-align: left;
+    border-bottom: 1px solid #009fd1;
+    border-left: 2px solid #FFFFFF;
+    border-right: 2px solid #FFFFFF;
+}
+.medication_summary_table td {
+    font-size:12px;
+    vertical-align: top;
+    text-align: left;
+}
+.medication_summary_table tbody:nth-child(odd) {
+    background: #FFFFFF;
+}
+.medication_summary_table tbody:nth-child(even) {
+    background: #E6F2FF;
+}
+
+.extended_header_table{
+    border: 1px solid #009fd1;
+    width: 100%;
+    height: 100%;
+    table-layout: fixed;
+    border-radius: 3px;
+}
+.extended_header_table th {
+    background-color:#E6F2FF;
+    color:#4A4A4A;
+    font-size:12px;
+    padding:6px;
+    vertical-align: top;
+    height: 20%;
+    text-align: left;
+    border-bottom: 1px solid #009fd1;
+}
+.extended_header_table td {
+    font-size:12px;
+    vertical-align: top;
+    text-align: left;
+}
+
+.contact_information_table{
+    border-radius: 3px;
+    width: 100%;
+    height: 100%;
+}
+.contact_information_table th {
+    background-color:#009fd1;
+    color:white;
+    font-size:11px;
+    vertical-align: top;
+    text-align: left;
+}
+.contact_information_table td {
+    background-color:white;
+    color:#009fd1;
+    font-size:11px;
+    vertical-align: top;
+    text-align: left;
+}
+.medicinalproduct {
+    width: 14%;
+}
+.activeingredient {
+    width: 12%;
+}
+.strength {
+    width: 10%;
+}
+.productclassification {
+    width: 10%;
+}
+.medicinalproductpackagedescription {
+    width: 10%;
+}
+.medicinalproductpackageidentifier {
+    width: 10%;
+}
+.packagetype {
+    width: 10%;
+}
+.packagesize {
+    width: 10%;
+}
+.doseform {
+    width: 10%;
+}
+.unitsperintake {
+    width: 10%;
+}
+.frequencyofintakes {
+    width: 10%;
+}
+.routeofadministration {
+    width: 10%;
+}
+.duration {
+    width: 14%;
+}
+
+.medicationreason {
+    width: 10%;
+}
+
+]]></root>

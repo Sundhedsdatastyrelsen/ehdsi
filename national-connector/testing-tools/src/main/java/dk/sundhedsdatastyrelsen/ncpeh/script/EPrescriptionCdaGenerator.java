@@ -1,7 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.script;
 
 import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Generator;
-import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionL3Input;
+import dk.sundhedsdatastyrelsen.ncpeh.cda.EPrescriptionInput;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.MapperException;
 import dk.sundhedsdatastyrelsen.ncpeh.testing.shared.FmkResponseStorage;
 import jakarta.xml.bind.JAXBException;
@@ -58,7 +58,7 @@ public class EPrescriptionCdaGenerator {
         var medicationResponse = FmkResponseStorage.readStoredMedication(medicationResponseFile.toFile());
         System.out.printf("Reading FMK medication from %s%n", medicationResponseFile.toAbsolutePath());
         var xmlString = EPrescriptionL3Generator.generate(
-            new EPrescriptionL3Input(
+            new EPrescriptionInput(
                 prescriptionResponse,
                 prescriptionIndex,
                 medicationResponse,

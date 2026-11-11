@@ -19,13 +19,9 @@ services:
       - ./data:/home/app/data
       - ./config:/home/app/config:ro
     ports:
-      - "8555:8555"   # Web UI
+      - "8080:8080"   # Web UI
     environment:
       TZ: "Europe/Copenhagen"
-    # The production healthcheck pings /saml/metadata which only exists when SAML
-    # auth is active. Disable it in dev so the container doesn't flap.
-    healthcheck:
-      disable: true
     restart: unless-stopped
     depends_on:
       - ep-portal-init

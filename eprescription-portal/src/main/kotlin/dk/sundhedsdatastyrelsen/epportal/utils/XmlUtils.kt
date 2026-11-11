@@ -8,6 +8,8 @@ import java.io.InputStream
 import java.io.StringWriter
 import java.io.Writer
 import java.nio.charset.StandardCharsets
+import javax.xml.XMLConstants
+import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Result
@@ -16,6 +18,13 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 object XmlUtils {
+    private fun documentBuilder(): DocumentBuilder =
+        DocumentBuilderFactory.newDefaultNSInstance().apply {
+            // We never need DTDs, and refusing them rules out XXE.
+            setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+            setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
+        }.newDocumentBuilder()
+
     /**
      * Parses XML string into a Document.
      *
@@ -34,7 +43,7 @@ object XmlUtils {
      */
     fun parse(xml: InputStream): Document {
         xml.use {
-            return DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder().parse(xml)
+            return documentBuilder().parse(xml)
         }
     }
 
@@ -42,7 +51,7 @@ object XmlUtils {
      * Create a new, empty Document object.
      */
     fun newDocument(): Document {
-        return DocumentBuilderFactory.newDefaultNSInstance().newDocumentBuilder().newDocument()
+        return documentBuilder().newDocument()
     }
 
     /**

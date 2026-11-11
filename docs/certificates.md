@@ -22,6 +22,11 @@ the "to" just needs the certificate.
 - "NC->OpenNCP TLS". For OpenNCP to be able to call the national connector. This
   certificate is self-signed and added to the OpenNCP truststore manually, see
   below.
+- "OpenNCP client connector TLS". The https port (6443) of `openncp-client`,
+  which is called only by national clients such as the ePrescription portal,
+  never by other countries. It therefore doesn't use the EU TLS certificate, but
+  a self-signed one issued to the hostnames the clients connect to. Clients
+  trust it through the OpenNCP truststore. See below.
 - "NC<->Opt-Out mTLS". This is two certificates. We use mutual TLS between the
   National Connector and the Opt Out service, as they are on separate hosts,
   because the Opt Out service needs to be publicly accessible. These
@@ -77,6 +82,36 @@ docker containers. Make sure you restart with the same image as they're already
 running with - and `docker restart` is not enough. Some variant of
 `cd NCP && docker compose up -d tomcat_node_a:VERSION` should do it, and similar
 for the national connector.
+
+## Updating OpenNCP client connector TLS
+
+The keystore is selected by `CLIENT_CONNECTOR_TLS_KEYSTORE_PATH` in `NCP/.env`.
+When it is unset, the client connector falls back to the EU TLS keystore
+(`TLS_KEYSTORE_PATH`), as before this certificate was introduced.
+
+Go to the root of the repository and run the following to generate a new
+certificate for development, valid for almost 10 years. Add a DNS name for each
+hostname a client uses to reach the connector:
+
+```
+openssl req -new -subj "/C=DK/O=Sundhedsdatastyrelsen/CN=openncp-client" \
+  -addext "subjectAltName = DNS:openncp-client,DNS:localhost" \
+  -newkey rsa:2048 -noenc -x509 -days 3650 -keyout cc.key -out cc.crt \
+&& openssl pkcs12 -export -in cc.crt -inkey cc.key -name tomcat -passout pass:password -out cc.p12 \
+&& rm -f ./NCP/keystore/dev-client-connector-tls.jks \
+&& keytool -importkeystore -srckeystore cc.p12 -srcstoretype PKCS12 -srcstorepass password \
+  -destkeystore ./NCP/keystore/dev-client-connector-tls.jks -deststoretype JKS -deststorepass password \
+&& keytool -keystore ./NCP/keystore/dev-truststore.jks -storepass changeit -delete -alias openncp-client \
+&& keytool -keystore ./NCP/keystore/dev-truststore.jks -storepass changeit -import -file cc.crt -alias openncp-client -noprompt \
+&& rm cc.key cc.crt cc.p12
+```
+
+The keystore uses the alias (`TLS_KEY_ALIAS`) and password
+(`tls_keystore_password`) of the EU TLS keystore, so that only the path differs.
+
+For a deployment, generate a keystore the same way with the deployment's
+hostnames, set `CLIENT_CONNECTOR_TLS_KEYSTORE_PATH` in its `NCP/.env`, add the
+certificate to its truststore, and recreate the `tomcat_node_b` container.
 
 ## Updating NC<->Opt-Out mTLS in development
 

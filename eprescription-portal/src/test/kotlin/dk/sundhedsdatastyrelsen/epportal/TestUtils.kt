@@ -1,5 +1,8 @@
 package dk.sundhedsdatastyrelsen.epportal
 
+import dk.sundhedsdatastyrelsen.epportal.app.FindPatient
+import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
+import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import java.io.InputStream
@@ -12,7 +15,11 @@ object TestUtils {
 
     fun resource(name: String): URL? = Thread.currentThread().contextClassLoader.getResource(name)
 
-    fun resourceAsStream(name: String): InputStream? = Thread.currentThread().contextClassLoader.getResourceAsStream(name)
+    fun resourceAsStream(name: String): InputStream? =
+        Thread.currentThread().contextClassLoader.getResourceAsStream(name)
+
+    /** Shared, since compiling the display tool's stylesheets takes a while. */
+    val cdaDisplay by lazy { CdaDisplayTransformer(CdaDisplayTransformer.Config("en-GB")) }
 }
 
 /**
@@ -20,3 +27,6 @@ object TestUtils {
  */
 fun OkHttpClient.Builder.withoutConnectionReuse(): OkHttpClient.Builder =
     connectionPool(ConnectionPool(0, 1, TimeUnit.NANOSECONDS))
+
+fun testMasks(): SearchMaskRepository =
+    SearchMaskRepository.load(FindPatient.Config(listOf("DK", "FI"), "config/ism"))

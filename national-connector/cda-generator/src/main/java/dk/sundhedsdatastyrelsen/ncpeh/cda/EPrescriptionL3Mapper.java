@@ -57,7 +57,7 @@ public class EPrescriptionL3Mapper {
      *
      * @throws MapperException if something goes wrong
      */
-    public static EPrescriptionL3 model(EPrescriptionL3Input input) {
+    public static EPrescriptionL3 model(EPrescriptionInput input) {
         var response = input.fmkPrescriptionResponse();
         var prescriptionIndex = input.prescriptionIndex();
         var drugMedicationResponse = input.fmkDrugMedicationResponse();

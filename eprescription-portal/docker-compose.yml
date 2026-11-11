@@ -9,15 +9,27 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: ["./bin/ep-portal", "--profile=training"]
     env_file:
-      - .env
+      - path: .env
+        required: false
     volumes:
       - ./data:/home/app/data
       - ./config:/home/app/config:ro
-    ports:
-      - "8555:8555" # Web UI
-      # - "8080:8080" # For testing
-      # - "28540:28540" # Remote debugging
+      - ../NCP/keystore:/home/app/ncp-keystore:ro
+    # Traefik (in the FSEU stack) runs with host networking, so it reaches this container on its own default network.
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.ep-portal.loadbalancer.server.port=8080"
+      - "traefik.http.routers.ep-portal.rule=Host(`ncp-training.ehdsi.sundhedsdata.dk`)"
+      - "traefik.http.routers.ep-portal.entrypoints=web"
+      - "traefik.http.routers.ep-portal.service=ep-portal"
+      - "traefik.http.routers.ep-portal.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.ep-portal-secure.rule=Host(`ncp-training.ehdsi.sundhedsdata.dk`)"
+      - "traefik.http.routers.ep-portal-secure.entrypoints=websecure"
+      - "traefik.http.routers.ep-portal-secure.service=ep-portal"
+      - "traefik.http.routers.ep-portal-secure.tls=true"
+      - "traefik.http.routers.ep-portal-secure.tls.certresolver=httpchallenge"
     environment:
       TZ: "Europe/Copenhagen"
       JAVA_OPTS: "-javaagent:opentelemetry-javaagent.jar"
@@ -30,6 +42,7 @@ services:
     extra_hosts:
       # https://docs.docker.com/reference/cli/dockerd/#configure-host-gateway-ip
       - "host.docker.internal:host-gateway" # to allow connections to alloy-hub
+      - "ncp-training.ehdsi.sundhedsdata.dk:host-gateway"
     restart: unless-stopped
     depends_on:
       - ep-portal-init
@@ -49,4 +62,3 @@ services:
       - "/home/app/data"
     volumes:
       - ./data:/home/app/data
-
