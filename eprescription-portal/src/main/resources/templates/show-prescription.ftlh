@@ -11,7 +11,7 @@
          box-content keeps the border out of the height the script sets. -->
     <iframe
       id="prescription"
-      src="/prescriptions/${documentId?url}/display"
+      src="/prescriptions/${documentId?url}/display?opaque-id=${opaqueId?url}&home-community-id=${homeCommunityId?url}&repository-unique-id=${repositoryUniqueId?url}"
       title="Recept"
       sandbox="allow-same-origin"
       class="mt-4 w-full border box-content"

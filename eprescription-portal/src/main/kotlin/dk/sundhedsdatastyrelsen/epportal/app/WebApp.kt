@@ -90,9 +90,7 @@ object WebApp {
             // Add the principal to every model, since the pages render differently when you're logged in.
             config.fileRenderer { filePath, model, ctx ->
                 renderer.render(
-                    filePath,
-                    mapOf("principal" to auth.current(ctx)) + model,
-                    ctx
+                    filePath, mapOf("principal" to auth.current(ctx)) + model, ctx
                 )
             }
             config.staticFiles.add { staticFiles ->
@@ -139,8 +137,7 @@ object WebApp {
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
                 ctx.render(
-                    "frontpage.ftlh",
-                    mapOf("error" to ctx.queryParam("error"))
+                    "frontpage.ftlh", mapOf("error" to ctx.queryParam("error"))
                 )
             }
         }
@@ -169,7 +166,7 @@ object WebApp {
             searchMasks = searchMasks,
             patientSearch = ncp ?: DummyPatientSearchClient(),
             prescriptionList = ncp ?: DummyPrescriptionListClient(),
-            prescriptionDocuments = DummyPrescriptionDocumentClient(),
+            prescriptionDocuments = ncp ?: DummyPrescriptionDocumentClient(),
             cdaDisplay = CdaDisplayTransformer(config.cdaDisplay),
             clock = Clock.System,
         )

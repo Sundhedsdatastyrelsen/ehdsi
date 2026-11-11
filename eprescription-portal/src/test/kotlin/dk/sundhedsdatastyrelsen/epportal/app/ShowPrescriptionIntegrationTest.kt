@@ -13,7 +13,6 @@ import okhttp3.Request
 import okhttp3.Response
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
@@ -25,22 +24,26 @@ class ShowPrescriptionIntegrationTest {
     private lateinit var baseUrl: String
     private lateinit var app: Javalin
 
-    private val documents = PrescriptionDocumentClient { id ->
-        if (id == "513671704568702L3") TestUtils.resource("ep-l3-examples/$id.xml")!!.readText() else null
+    private val documents = PrescriptionDocumentClient { params ->
+        if (params.documentId == "513671704568702L3") TestUtils.resource("ep-l3-examples/${params.documentId}.xml")!!
+            .readText() else null
     }
 
     @BeforeEach
     fun setup() {
-        client = OkHttpClient.Builder()
-            .followRedirects(false)
-            .followSslRedirects(false)
-            .withoutConnectionReuse()
-            .build()
+        client =
+            OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).withoutConnectionReuse().build()
 
         val port = TestUtils.randomFreePort()
         app = WebApp.createApp(
-            WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient(), DummyPrescriptionListClient(), documents,
-            TestUtils.cdaDisplay, Clock.System,
+            WebApp.Config(port),
+            LocalAuth("0101019999"),
+            testMasks(),
+            DummyPatientSearchClient(),
+            DummyPrescriptionListClient(),
+            documents,
+            TestUtils.cdaDisplay,
+            Clock.System,
         )
         app.start(port)
         baseUrl = "http://localhost:$port"
@@ -66,27 +69,46 @@ class ShowPrescriptionIntegrationTest {
         return Regex("/prescriptions\\?opaque-id=([0-9a-f-]+)").find(resp.body.string())!!.groupValues[1]
     }
 
-    private fun get(path: String, cookie: String? = null): Response =
-        client.newCall(
-            Request.Builder().url("$baseUrl$path").get().apply { if (cookie != null) header("Cookie", cookie) }.build()
-        ).execute()
+    private fun get(path: String, cookie: String? = null): Response = client.newCall(
+        Request.Builder().url("$baseUrl$path").get().apply { if (cookie != null) header("Cookie", cookie) }.build()
+    ).execute()
+
+    private fun makeShowUrl(
+        prescriptionId: String, opaqueId: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
+    ): String =
+        "/prescriptions/$prescriptionId?opaque-id=$opaqueId&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
+
+    private fun makeDisplayUrl(
+        prescriptionId: String, opaqueId: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
+    ): String =
+        "/prescriptions/$prescriptionId/display?opaque-id=$opaqueId&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
 
     @Test
     fun `the prescription page frames the sandboxed display`() {
+        val prescriptionId = "513671704568702L3"
         val cookie = loginCookieHeader()
         val opaqueId = searchForOpaqueId(cookie)
-        val resp = get("/prescriptions/513671704568702L3?opaque-id=$opaqueId", cookie)
+        val resp = get(
+            makeShowUrl(prescriptionId, opaqueId), cookie
+        )
 
         assertEquals(200, resp.code)
         val body = resp.body.string()
-        assertContains(body, """src="/prescriptions/513671704568702L3/display"""")
+        assertContains(
+            body, """src="${makeDisplayUrl(prescriptionId, opaqueId)}""""
+        )
         assertContains(body, """href="/prescriptions?opaque-id=$opaqueId"""")
         assertContains(body, """sandbox="allow-same-origin"""")
     }
 
     @Test
     fun `the display renders the prescription with a restrictive CSP`() {
-        val resp = get("/prescriptions/513671704568702L3/display", loginCookieHeader())
+        val prescriptionId = "513671704568702L3"
+        val cookie = loginCookieHeader()
+        val opaqueId = searchForOpaqueId(cookie)
+        val resp = get(
+            makeDisplayUrl(prescriptionId, opaqueId), cookie
+        )
 
         assertEquals(200, resp.code)
         val csp = assertNotNull(resp.header("Content-Security-Policy"))
@@ -97,17 +119,18 @@ class ShowPrescriptionIntegrationTest {
 
     @Test
     fun `an unknown prescription is not found`() {
-        assertEquals(404, get("/prescriptions/unknown/display", loginCookieHeader()).code)
+        val cookie = loginCookieHeader()
+        val opaqueId = searchForOpaqueId(cookie)
+        assertEquals(404, get(makeDisplayUrl("unknown", opaqueId), cookie).code)
     }
 
     @Test
-    fun `without an opaque patient id the prescription page has no link back to the list`() {
+    fun `without an opaque patient id the page shows an error`() {
         val resp = get("/prescriptions/513671704568702L3", loginCookieHeader())
 
         assertEquals(200, resp.code)
         val body = resp.body.string()
-        assertContains(body, """src="/prescriptions/513671704568702L3/display"""")
-        assertFalse(body.contains("Tilbage til recepter"))
+        assertContains(body, "Der er sket en fejl")
     }
 
     @Test
