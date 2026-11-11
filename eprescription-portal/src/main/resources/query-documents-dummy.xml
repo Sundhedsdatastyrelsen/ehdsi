@@ -1,0 +1,2052 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Dummy queryDocuments response from the OpenNCP client connector (ClientService.xsd, epsosDocument).
+Modeled on the real response in src/test/resources/openncp/query-documents-response-2.xml, with
+prescription data derived from what the DK NCP returned in the spring 2026 test. Each prescription
+appears as two `return`s: the L1 with the L3 in `associatedDocuments`, and the L3 with the L1 in
+`associatedDocuments`. Includes a prescription without ATC code (481836152208101).
+-->
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+    <soap:Header>
+        <Action xmlns="http://www.w3.org/2005/08/addressing">urn:ehdsi:queryDocumentsResponse</Action>
+        <MessageID xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:5b0e7c1a-3d2f-4e8a-9c61-7f4a2b9d0e13</MessageID>
+        <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+        <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">urn:uuid:0c9d8e7f-6a5b-4c3d-8e2f-1a0b9c8d7e6f</RelatesTo>
+    </soap:Header>
+    <soap:Body>
+        <ns2:queryDocumentsResponse xmlns:ns2="http://api.client.core.openncp.sante.ec.europa.eu">
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Anafranil (Clomipramin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481817151716102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Anafranil (Clomipramin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481817151716102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N06AA04</atcCode>
+                    <atcText>Clomipramin</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>10 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N06AA04</atcCode>
+                <atcText>Clomipramin</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>10 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Anafranil (Clomipramin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481817151716102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Anafranil (Clomipramin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481817151716102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N06AA04</atcCode>
+                    <atcText>Clomipramin</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>10 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N06AA04</atcCode>
+                <atcText>Clomipramin</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>10 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Forsteo (Teriparatid)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481821984554101L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Forsteo (Teriparatid)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481821984554101L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>H05AA02</atcCode>
+                    <atcText>Teriparatid</atcText>
+                    <doseFormCode>INJVSKO</doseFormCode>
+                    <doseFormText>injektionsvæske, opløsning</doseFormText>
+                    <strength>20 mikrog/80 mikrol.</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <atcCode>H05AA02</atcCode>
+                <atcText>Teriparatid</atcText>
+                <doseFormCode>INJVSKO</doseFormCode>
+                <doseFormText>injektionsvæske, opløsning</doseFormText>
+                <strength>20 mikrog/80 mikrol.</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Forsteo (Teriparatid)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481821984554101L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Forsteo (Teriparatid)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481821984554101L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>H05AA02</atcCode>
+                    <atcText>Teriparatid</atcText>
+                    <doseFormCode>INJVSKO</doseFormCode>
+                    <doseFormText>injektionsvæske, opløsning</doseFormText>
+                    <strength>20 mikrog/80 mikrol.</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <atcCode>H05AA02</atcCode>
+                <atcText>Teriparatid</atcText>
+                <doseFormCode>INJVSKO</doseFormCode>
+                <doseFormText>injektionsvæske, opløsning</doseFormText>
+                <strength>20 mikrog/80 mikrol.</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Lantus (Insulin glargin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822034340102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Lantus (Insulin glargin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822034340102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>A10AE04</atcCode>
+                    <atcText>Insulin glargin</atcText>
+                    <doseFormCode>INJVOP</doseFormCode>
+                    <doseFormText>injektionsvæske, opløsning i fyldt pen</doseFormText>
+                    <strength>100 E/ml</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>A10AE04</atcCode>
+                <atcText>Insulin glargin</atcText>
+                <doseFormCode>INJVOP</doseFormCode>
+                <doseFormText>injektionsvæske, opløsning i fyldt pen</doseFormText>
+                <strength>100 E/ml</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Lantus (Insulin glargin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822034340102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Lantus (Insulin glargin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822034340102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>A10AE04</atcCode>
+                    <atcText>Insulin glargin</atcText>
+                    <doseFormCode>INJVOP</doseFormCode>
+                    <doseFormText>injektionsvæske, opløsning i fyldt pen</doseFormText>
+                    <strength>100 E/ml</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>A10AE04</atcCode>
+                <atcText>Insulin glargin</atcText>
+                <doseFormCode>INJVOP</doseFormCode>
+                <doseFormText>injektionsvæske, opløsning i fyldt pen</doseFormText>
+                <strength>100 E/ml</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Yasmin (Drospirenon og ethinylestradiol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822111522102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Yasmin (Drospirenon og ethinylestradiol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822111522102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>G03AA12</atcCode>
+                    <atcText>Drospirenon og ethinylestradiol</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>0,03+3 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>G03AA12</atcCode>
+                <atcText>Drospirenon og ethinylestradiol</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>0,03+3 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Yasmin (Drospirenon og ethinylestradiol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822111522102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Yasmin (Drospirenon og ethinylestradiol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822111522102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>G03AA12</atcCode>
+                    <atcText>Drospirenon og ethinylestradiol</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>0,03+3 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>G03AA12</atcCode>
+                <atcText>Drospirenon og ethinylestradiol</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>0,03+3 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Stalevo (Levodopa, carbidopa og entacapon)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822169940101L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Stalevo (Levodopa, carbidopa og entacapon)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822169940101L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N04BA03</atcCode>
+                    <atcText>Levodopa, decarboxylase-hæmmer og comt-hæmmer</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>200 mg+50 mg+200 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N04BA03</atcCode>
+                <atcText>Levodopa, decarboxylase-hæmmer og comt-hæmmer</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>200 mg+50 mg+200 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Stalevo (Levodopa, carbidopa og entacapon)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822169940101L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Stalevo (Levodopa, carbidopa og entacapon)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822169940101L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N04BA03</atcCode>
+                    <atcText>Levodopa, decarboxylase-hæmmer og comt-hæmmer</atcText>
+                    <doseFormCode>TABFILM</doseFormCode>
+                    <doseFormText>filmovertrukne tabletter</doseFormText>
+                    <strength>200 mg+50 mg+200 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N04BA03</atcCode>
+                <atcText>Levodopa, decarboxylase-hæmmer og comt-hæmmer</atcText>
+                <doseFormCode>TABFILM</doseFormCode>
+                <doseFormText>filmovertrukne tabletter</doseFormText>
+                <strength>200 mg+50 mg+200 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Calcichew-D3 Forte (Calciumcarbonat og colecalciferol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822239643102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Calcichew-D3 Forte (Calciumcarbonat og colecalciferol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822239643102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>A12AX</atcCode>
+                    <atcText>Calcium, kombinationer med d-vitamin og/eller andre stoffer</atcText>
+                    <doseFormCode>TYGTAB</doseFormCode>
+                    <doseFormText>tyggetabletter</doseFormText>
+                    <strength>500 mg+10 mikrogram</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>A12AX</atcCode>
+                <atcText>Calcium, kombinationer med d-vitamin og/eller andre stoffer</atcText>
+                <doseFormCode>TYGTAB</doseFormCode>
+                <doseFormText>tyggetabletter</doseFormText>
+                <strength>500 mg+10 mikrogram</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Calcichew-D3 Forte (Calciumcarbonat og colecalciferol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822239643102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Calcichew-D3 Forte (Calciumcarbonat og colecalciferol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822239643102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>A12AX</atcCode>
+                    <atcText>Calcium, kombinationer med d-vitamin og/eller andre stoffer</atcText>
+                    <doseFormCode>TYGTAB</doseFormCode>
+                    <doseFormText>tyggetabletter</doseFormText>
+                    <strength>500 mg+10 mikrogram</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>A12AX</atcCode>
+                <atcText>Calcium, kombinationer med d-vitamin og/eller andre stoffer</atcText>
+                <doseFormCode>TYGTAB</doseFormCode>
+                <doseFormText>tyggetabletter</doseFormText>
+                <strength>500 mg+10 mikrogram</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Panodil (Paracetamol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822330156101L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Panodil (Paracetamol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822330156101L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N02BE01</atcCode>
+                    <atcText>Paracetamol</atcText>
+                    <doseFormCode>TAB</doseFormCode>
+                    <doseFormText>tabletter</doseFormText>
+                    <strength>500 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N02BE01</atcCode>
+                <atcText>Paracetamol</atcText>
+                <doseFormCode>TAB</doseFormCode>
+                <doseFormText>tabletter</doseFormText>
+                <strength>500 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Panodil (Paracetamol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822330156101L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Panodil (Paracetamol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822330156101L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N02BE01</atcCode>
+                    <atcText>Paracetamol</atcText>
+                    <doseFormCode>TAB</doseFormCode>
+                    <doseFormText>tabletter</doseFormText>
+                    <strength>500 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N02BE01</atcCode>
+                <atcText>Paracetamol</atcText>
+                <doseFormCode>TAB</doseFormCode>
+                <doseFormText>tabletter</doseFormText>
+                <strength>500 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Stesolid (Diazepam)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822394907102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Stesolid (Diazepam)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822394907102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N05BA01</atcCode>
+                    <atcText>Diazepam</atcText>
+                    <doseFormCode>TAB</doseFormCode>
+                    <doseFormText>tabletter</doseFormText>
+                    <strength>5 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N05BA01</atcCode>
+                <atcText>Diazepam</atcText>
+                <doseFormCode>TAB</doseFormCode>
+                <doseFormText>tabletter</doseFormText>
+                <strength>5 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Stesolid (Diazepam)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822394907102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Stesolid (Diazepam)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822394907102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N05BA01</atcCode>
+                    <atcText>Diazepam</atcText>
+                    <doseFormCode>TAB</doseFormCode>
+                    <doseFormText>tabletter</doseFormText>
+                    <strength>5 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>N05BA01</atcCode>
+                <atcText>Diazepam</atcText>
+                <doseFormCode>TAB</doseFormCode>
+                <doseFormText>tabletter</doseFormText>
+                <strength>5 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Contalgin (Morphin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822480712102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Contalgin (Morphin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822480712102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N02AA01</atcCode>
+                    <atcText>Morphin</atcText>
+                    <doseFormCode>DEPTAB</doseFormCode>
+                    <doseFormText>depottabletter</doseFormText>
+                    <strength>100 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <atcCode>N02AA01</atcCode>
+                <atcText>Morphin</atcText>
+                <doseFormCode>DEPTAB</doseFormCode>
+                <doseFormText>depottabletter</doseFormText>
+                <strength>100 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Contalgin (Morphin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822480712102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Contalgin (Morphin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822480712102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>N02AA01</atcCode>
+                    <atcText>Morphin</atcText>
+                    <doseFormCode>DEPTAB</doseFormCode>
+                    <doseFormText>depottabletter</doseFormText>
+                    <strength>100 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <atcCode>N02AA01</atcCode>
+                <atcText>Morphin</atcText>
+                <doseFormCode>DEPTAB</doseFormCode>
+                <doseFormText>depottabletter</doseFormText>
+                <strength>100 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Klexane (Enoxaparin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822643463102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Klexane (Enoxaparin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822643463102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>B01AB05</atcCode>
+                    <atcText>Enoxaparin</atcText>
+                    <doseFormCode>INJVOIS</doseFormCode>
+                    <doseFormText>injektionsvæske, opløsning i fyldt injektionssprøjte</doseFormText>
+                    <strength>40 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>B01AB05</atcCode>
+                <atcText>Enoxaparin</atcText>
+                <doseFormCode>INJVOIS</doseFormCode>
+                <doseFormText>injektionsvæske, opløsning i fyldt injektionssprøjte</doseFormText>
+                <strength>40 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Klexane (Enoxaparin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822643463102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Klexane (Enoxaparin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822643463102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>B01AB05</atcCode>
+                    <atcText>Enoxaparin</atcText>
+                    <doseFormCode>INJVOIS</doseFormCode>
+                    <doseFormText>injektionsvæske, opløsning i fyldt injektionssprøjte</doseFormText>
+                    <strength>40 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>B01AB05</atcCode>
+                <atcText>Enoxaparin</atcText>
+                <doseFormCode>INJVOIS</doseFormCode>
+                <doseFormText>injektionsvæske, opløsning i fyldt injektionssprøjte</doseFormText>
+                <strength>40 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Imacillin (Amoxicillin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822802248002L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Imacillin (Amoxicillin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822802248002L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>J01CA04</atcCode>
+                    <atcText>Amoxicillin</atcText>
+                    <doseFormCode>ORAPULS</doseFormCode>
+                    <doseFormText>pulver til oral suspension</doseFormText>
+                    <strength>50 mg/ml</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>J01CA04</atcCode>
+                <atcText>Amoxicillin</atcText>
+                <doseFormCode>ORAPULS</doseFormCode>
+                <doseFormText>pulver til oral suspension</doseFormText>
+                <strength>50 mg/ml</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Imacillin (Amoxicillin)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822802248002L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Imacillin (Amoxicillin)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822802248002L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>J01CA04</atcCode>
+                    <atcText>Amoxicillin</atcText>
+                    <doseFormCode>ORAPULS</doseFormCode>
+                    <doseFormText>pulver til oral suspension</doseFormText>
+                    <strength>50 mg/ml</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>J01CA04</atcCode>
+                <atcText>Amoxicillin</atcText>
+                <doseFormCode>ORAPULS</doseFormCode>
+                <doseFormText>pulver til oral suspension</doseFormText>
+                <strength>50 mg/ml</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Corodil Comp (Enalapril og hydrochlorthiazid)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822895071102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Corodil Comp (Enalapril og hydrochlorthiazid)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822895071102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>C09BA02</atcCode>
+                    <atcText>Enalapril og diuretika</atcText>
+                    <doseFormCode>TAB</doseFormCode>
+                    <doseFormText>tabletter</doseFormText>
+                    <strength>20+12,5 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>C09BA02</atcCode>
+                <atcText>Enalapril og diuretika</atcText>
+                <doseFormCode>TAB</doseFormCode>
+                <doseFormText>tabletter</doseFormText>
+                <strength>20+12,5 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Corodil Comp (Enalapril og hydrochlorthiazid)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822895071102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Corodil Comp (Enalapril og hydrochlorthiazid)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822895071102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>C09BA02</atcCode>
+                    <atcText>Enalapril og diuretika</atcText>
+                    <doseFormCode>TAB</doseFormCode>
+                    <doseFormText>tabletter</doseFormText>
+                    <strength>20+12,5 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>C09BA02</atcCode>
+                <atcText>Enalapril og diuretika</atcText>
+                <doseFormCode>TAB</doseFormCode>
+                <doseFormText>tabletter</doseFormText>
+                <strength>20+12,5 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Ventoline (Salbutamol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822976035102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Ventoline (Salbutamol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822976035102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>R03AC02</atcCode>
+                    <atcText>Salbutamol</atcText>
+                    <doseFormCode>INHSPRS</doseFormCode>
+                    <doseFormText>inhalationsspray, suspension</doseFormText>
+                    <strength>0,1 mg/dosis</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>R03AC02</atcCode>
+                <atcText>Salbutamol</atcText>
+                <doseFormCode>INHSPRS</doseFormCode>
+                <doseFormText>inhalationsspray, suspension</doseFormText>
+                <strength>0,1 mg/dosis</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Ventoline (Salbutamol)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481822976035102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Ventoline (Salbutamol)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481822976035102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>R03AC02</atcCode>
+                    <atcText>Salbutamol</atcText>
+                    <doseFormCode>INHSPRS</doseFormCode>
+                    <doseFormText>inhalationsspray, suspension</doseFormText>
+                    <strength>0,1 mg/dosis</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>R03AC02</atcCode>
+                <atcText>Salbutamol</atcText>
+                <doseFormCode>INHSPRS</doseFormCode>
+                <doseFormText>inhalationsspray, suspension</doseFormText>
+                <strength>0,1 mg/dosis</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Saflutan (Tafluprost)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481823042214102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Saflutan (Tafluprost)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481823042214102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>S01EE05</atcCode>
+                    <atcText>Tafluprost</atcText>
+                    <doseFormCode>OJDRBOE</doseFormCode>
+                    <doseFormText>øjendråber, opløsning, enkeltdosisbeholder</doseFormText>
+                    <strength>15 mikrogram/ml</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>S01EE05</atcCode>
+                <atcText>Tafluprost</atcText>
+                <doseFormCode>OJDRBOE</doseFormCode>
+                <doseFormText>øjendråber, opløsning, enkeltdosisbeholder</doseFormText>
+                <strength>15 mikrogram/ml</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Saflutan (Tafluprost)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481823042214102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Saflutan (Tafluprost)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481823042214102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>S01EE05</atcCode>
+                    <atcText>Tafluprost</atcText>
+                    <doseFormCode>OJDRBOE</doseFormCode>
+                    <doseFormText>øjendråber, opløsning, enkeltdosisbeholder</doseFormText>
+                    <strength>15 mikrogram/ml</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>S01EE05</atcCode>
+                <atcText>Tafluprost</atcText>
+                <doseFormCode>OJDRBOE</doseFormCode>
+                <doseFormText>øjendråber, opløsning, enkeltdosisbeholder</doseFormText>
+                <strength>15 mikrogram/ml</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Dulcolax (Bisacodyl)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481823106879101L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Dulcolax (Bisacodyl)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481823106879101L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>A06AB02</atcCode>
+                    <atcText>Bisacodyl</atcText>
+                    <doseFormCode>ENTTAB</doseFormCode>
+                    <doseFormText>enterotabletter</doseFormText>
+                    <strength>5 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <atcCode>A06AB02</atcCode>
+                <atcText>Bisacodyl</atcText>
+                <doseFormCode>ENTTAB</doseFormCode>
+                <doseFormText>enterotabletter</doseFormText>
+                <strength>5 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Dulcolax (Bisacodyl)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481823106879101L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Dulcolax (Bisacodyl)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481823106879101L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>A06AB02</atcCode>
+                    <atcText>Bisacodyl</atcText>
+                    <doseFormCode>ENTTAB</doseFormCode>
+                    <doseFormText>enterotabletter</doseFormText>
+                    <strength>5 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <atcCode>A06AB02</atcCode>
+                <atcText>Bisacodyl</atcText>
+                <doseFormCode>ENTTAB</doseFormCode>
+                <doseFormText>enterotabletter</doseFormText>
+                <strength>5 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Soluvit (Vitaminer)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481823160529102L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Soluvit (Vitaminer)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481823160529102L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>B05XC</atcCode>
+                    <atcText>Vitaminer</atcText>
+                    <doseFormCode>INFPUL</doseFormCode>
+                    <doseFormText>pulver til infusionsvæske</doseFormText>
+                    <strength>Ukendt</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>B05XC</atcCode>
+                <atcText>Vitaminer</atcText>
+                <doseFormCode>INFPUL</doseFormCode>
+                <doseFormText>pulver til infusionsvæske</doseFormText>
+                <strength>Ukendt</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Soluvit (Vitaminer)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481823160529102L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Soluvit (Vitaminer)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481823160529102L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <atcCode>B05XC</atcCode>
+                    <atcText>Vitaminer</atcText>
+                    <doseFormCode>INFPUL</doseFormCode>
+                    <doseFormText>pulver til infusionsvæske</doseFormText>
+                    <strength>Ukendt</strength>
+                    <substitution>G</substitution>
+                    <dispensable>true</dispensable>
+                </associatedDocuments>
+                <atcCode>B05XC</atcCode>
+                <atcText>Vitaminer</atcText>
+                <doseFormCode>INFPUL</doseFormCode>
+                <doseFormText>pulver til infusionsvæske</doseFormText>
+                <strength>Ukendt</strength>
+                <substitution>G</substitution>
+                <dispensable>true</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Fenistil (Dimetinden)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                    <schema>IHE PCC</schema>
+                    <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481836152208101L1</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Fenistil (Dimetinden)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                        <schema>eHDSI formatCodes</schema>
+                        <value>urn:epsos:ep:pre:2010</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481836152208101L3</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <doseFormCode>GEL</doseFormCode>
+                    <doseFormText>gel</doseFormText>
+                    <strength>100 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <doseFormCode>GEL</doseFormCode>
+                <doseFormText>gel</doseFormText>
+                <strength>100 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+            <return>
+                <classCode>
+                    <nodeRepresentation>57833-6</nodeRepresentation>
+                    <schema>2.16.840.1.113883.6.1</schema>
+                    <value>57833-6</value>
+                </classCode>
+                <creationDate>2025-04-10T12:33:02Z</creationDate>
+                <description>Fenistil (Dimetinden)</description>
+                <formatCode>
+                    <nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation>
+                    <schema>eHDSI formatCodes</schema>
+                    <value>urn:epsos:ep:pre:2010</value>
+                </formatCode>
+                <mimeType>text/xml</mimeType>
+                <size>0</size>
+                <title>ePrescription</title>
+                <uuid>1.2.208.176.7.2.3^481836152208101L3</uuid>
+                <hcid>urn:oid:1.2.208</hcid>
+                <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                <authors>
+                    <person>Karl ePPS</person>
+                </authors>
+                <associatedDocuments>
+                    <classCode>
+                        <nodeRepresentation>57833-6</nodeRepresentation>
+                        <schema>2.16.840.1.113883.6.1</schema>
+                        <value>57833-6</value>
+                    </classCode>
+                    <creationDate>2025-04-10T12:33:02Z</creationDate>
+                    <description>Fenistil (Dimetinden)</description>
+                    <formatCode>
+                        <nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation>
+                        <schema>IHE PCC</schema>
+                        <value>urn:ihe:iti:xds-sd:pdf:2008</value>
+                    </formatCode>
+                    <mimeType>text/xml</mimeType>
+                    <size>0</size>
+                    <title>ePrescription</title>
+                    <uuid>1.2.208.176.7.2.3^481836152208101L1</uuid>
+                    <hcid>urn:oid:1.2.208</hcid>
+                    <repositoryId>1.2.208.176.7.2.3</repositoryId>
+                    <authors>
+                        <person>Karl ePPS</person>
+                    </authors>
+                    <doseFormCode>GEL</doseFormCode>
+                    <doseFormText>gel</doseFormText>
+                    <strength>100 mg</strength>
+                    <substitution>G</substitution>
+                    <dispensable>false</dispensable>
+                </associatedDocuments>
+                <doseFormCode>GEL</doseFormCode>
+                <doseFormText>gel</doseFormText>
+                <strength>100 mg</strength>
+                <substitution>G</substitution>
+                <dispensable>false</dispensable>
+            </return>
+        </ns2:queryDocumentsResponse>
+    </soap:Body>
+</soap:Envelope>

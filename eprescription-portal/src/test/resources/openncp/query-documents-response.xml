@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Constructed from src/test/resources/client-wsdl/ClientService.xsd (epsosDocument), not captured from a real connector.
+  Modeled on the real response in query-documents-response-2.xml: each prescription is listed twice, once with L1 on
+  top and once with L3 on top. The second prescription has almost no metadata.
+-->
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+  <soap:Body>
+    <ns2:queryDocumentsResponse xmlns:ns2="http://api.client.core.openncp.sante.ec.europa.eu">
+      <return>
+        <creationDate>2025-04-10T12:33:02+02:00</creationDate>
+        <description>Amoxicillin 500 mg capsules</description>
+        <formatCode><nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation><schema>IHE PCC</schema><value>PDF/A coded document</value></formatCode>
+        <mimeType>application/pdf</mimeType>
+        <title>ePrescription</title>
+        <uuid>1.2.246.10.1.2025.1^L1</uuid>
+        <hcid>2.16.17.710.850.1000.990.1</hcid>
+        <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+        <authors><person>Dr. Liisa Lääkäri</person></authors>
+        <associatedDocuments>
+          <classCode><nodeRepresentation>57833-6</nodeRepresentation><schema>2.16.840.1.113883.6.1</schema><value>ePrescription</value></classCode>
+          <creationDate>2025-04-10T12:33:02+02:00</creationDate>
+          <description>Amoxicillin 500 mg capsules</description>
+          <formatCode><nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation><schema>eHDSI formatCodes</schema><value>eHDSI coded ePrescription</value></formatCode>
+          <mimeType>text/xml</mimeType>
+          <title>ePrescription</title>
+          <uuid>1.2.246.10.1.2025.1^L3</uuid>
+          <hcid>2.16.17.710.850.1000.990.1</hcid>
+          <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+          <authors><person>Dr. Liisa Lääkäri</person><specialty>General practice</specialty></authors>
+          <atcCode>J01CA04</atcCode>
+          <atcText>amoxicillin</atcText>
+          <doseFormCode>10210000</doseFormCode>
+          <doseFormText>Capsule, hard</doseFormText>
+          <strength>500 mg</strength>
+          <substitution>G</substitution>
+          <dispensable>true</dispensable>
+        </associatedDocuments>
+        <atcCode>J01CA04</atcCode>
+        <atcText>amoxicillin</atcText>
+        <doseFormCode>10210000</doseFormCode>
+        <doseFormText>Capsule, hard</doseFormText>
+        <strength>500 mg</strength>
+        <substitution>G</substitution>
+        <dispensable>true</dispensable>
+      </return>
+      <return>
+        <classCode><nodeRepresentation>57833-6</nodeRepresentation><schema>2.16.840.1.113883.6.1</schema><value>ePrescription</value></classCode>
+        <creationDate>2025-04-10T12:33:02+02:00</creationDate>
+        <description>Amoxicillin 500 mg capsules</description>
+        <formatCode><nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation><schema>eHDSI formatCodes</schema><value>eHDSI coded ePrescription</value></formatCode>
+        <mimeType>text/xml</mimeType>
+        <title>ePrescription</title>
+        <uuid>1.2.246.10.1.2025.1^L3</uuid>
+        <hcid>2.16.17.710.850.1000.990.1</hcid>
+        <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+        <authors><person>Dr. Liisa Lääkäri</person><specialty>General practice</specialty></authors>
+        <associatedDocuments>
+          <creationDate>2025-04-10T12:33:02+02:00</creationDate>
+          <description>Amoxicillin 500 mg capsules</description>
+          <formatCode><nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation><schema>IHE PCC</schema><value>PDF/A coded document</value></formatCode>
+          <mimeType>application/pdf</mimeType>
+          <title>ePrescription</title>
+          <uuid>1.2.246.10.1.2025.1^L1</uuid>
+          <hcid>2.16.17.710.850.1000.990.1</hcid>
+          <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+          <authors><person>Dr. Liisa Lääkäri</person></authors>
+          <atcCode>J01CA04</atcCode>
+          <atcText>amoxicillin</atcText>
+          <doseFormCode>10210000</doseFormCode>
+          <doseFormText>Capsule, hard</doseFormText>
+          <strength>500 mg</strength>
+          <substitution>G</substitution>
+          <dispensable>true</dispensable>
+        </associatedDocuments>
+        <atcCode>J01CA04</atcCode>
+        <atcText>amoxicillin</atcText>
+        <doseFormCode>10210000</doseFormCode>
+        <doseFormText>Capsule, hard</doseFormText>
+        <strength>500 mg</strength>
+        <substitution>G</substitution>
+        <dispensable>true</dispensable>
+      </return>
+      <return>
+        <creationDate>2025-03-01T08:00:00</creationDate>
+        <description></description>
+        <formatCode><nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation></formatCode>
+        <title>ePrescription</title>
+        <uuid>1.2.246.10.1.2025.2^L1</uuid>
+        <hcid>2.16.17.710.850.1000.990.1</hcid>
+        <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+        <associatedDocuments>
+          <creationDate>2025-03-01T08:00:00</creationDate>
+          <description></description>
+          <formatCode><nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation></formatCode>
+          <title>ePrescription</title>
+          <uuid>1.2.246.10.1.2025.2^L3</uuid>
+          <hcid>2.16.17.710.850.1000.990.1</hcid>
+          <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+          <dispensable>false</dispensable>
+        </associatedDocuments>
+        <dispensable>false</dispensable>
+      </return>
+      <return>
+        <creationDate>2025-03-01T08:00:00</creationDate>
+        <description></description>
+        <formatCode><nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation></formatCode>
+        <title>ePrescription</title>
+        <uuid>1.2.246.10.1.2025.2^L3</uuid>
+        <hcid>2.16.17.710.850.1000.990.1</hcid>
+        <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+        <associatedDocuments>
+          <creationDate>2025-03-01T08:00:00</creationDate>
+          <description></description>
+          <formatCode><nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation></formatCode>
+          <title>ePrescription</title>
+          <uuid>1.2.246.10.1.2025.2^L1</uuid>
+          <hcid>2.16.17.710.850.1000.990.1</hcid>
+          <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+          <dispensable>false</dispensable>
+        </associatedDocuments>
+        <dispensable>false</dispensable>
+      </return>
+      <return>
+        <creationDate>2025-02-15T09:00:00Z</creationDate>
+        <formatCode><nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation></formatCode>
+        <title>ePrescription</title>
+        <uuid>1.2.246.10.1.2025.3^L1</uuid>
+        <hcid>2.16.17.710.850.1000.990.1</hcid>
+        <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+        <associatedDocuments>
+          <creationDate>2025-02-15T09:00:00Z</creationDate>
+          <formatCode><nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation></formatCode>
+          <title>ePrescription</title>
+          <uuid>1.2.246.10.1.2025.3^L3</uuid>
+          <hcid>2.16.17.710.850.1000.990.1</hcid>
+          <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+          <doseFormCode>10221000</doseFormCode>
+          <doseFormText>Film-coated tablet</doseFormText>
+          <strength>20 mg</strength>
+          <dispensable>true</dispensable>
+        </associatedDocuments>
+        <doseFormCode>10221000</doseFormCode>
+        <doseFormText>Film-coated tablet</doseFormText>
+        <strength>20 mg</strength>
+        <dispensable>true</dispensable>
+      </return>
+      <return>
+        <creationDate>2025-02-15T09:00:00Z</creationDate>
+        <formatCode><nodeRepresentation>urn:epsos:ep:pre:2010</nodeRepresentation></formatCode>
+        <title>ePrescription</title>
+        <uuid>1.2.246.10.1.2025.3^L3</uuid>
+        <hcid>2.16.17.710.850.1000.990.1</hcid>
+        <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+        <associatedDocuments>
+          <creationDate>2025-02-15T09:00:00Z</creationDate>
+          <formatCode><nodeRepresentation>urn:ihe:iti:xds-sd:pdf:2008</nodeRepresentation></formatCode>
+          <title>ePrescription</title>
+          <uuid>1.2.246.10.1.2025.3^L1</uuid>
+          <hcid>2.16.17.710.850.1000.990.1</hcid>
+          <repositoryId>2.16.17.710.850.1000.990.1.1</repositoryId>
+          <doseFormCode>10221000</doseFormCode>
+          <doseFormText>Film-coated tablet</doseFormText>
+          <strength>20 mg</strength>
+          <dispensable>true</dispensable>
+        </associatedDocuments>
+        <doseFormCode>10221000</doseFormCode>
+        <doseFormText>Film-coated tablet</doseFormText>
+        <strength>20 mg</strength>
+        <dispensable>true</dispensable>
+      </return>
+    </ns2:queryDocumentsResponse>
+  </soap:Body>
+</soap:Envelope>

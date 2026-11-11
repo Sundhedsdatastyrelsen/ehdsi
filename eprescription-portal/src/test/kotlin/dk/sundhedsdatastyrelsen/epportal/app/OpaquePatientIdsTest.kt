@@ -24,6 +24,7 @@ class OpaquePatientIdsTest {
     private fun session(creationTimestamp: Instant) = PatientSession(
         owner = Principal("0101011234"),
         demographics = PatientDemographics(
+            countryCode = "DK",
             givenName = null,
             familyName = null,
             birthDate = null,

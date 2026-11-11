@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionListClient
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.testMasks
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
@@ -38,7 +39,7 @@ class ShowPrescriptionIntegrationTest {
 
         val port = TestUtils.randomFreePort()
         app = WebApp.createApp(
-            WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient(), documents,
+            WebApp.Config(port), LocalAuth("0101019999"), testMasks(), DummyPatientSearchClient(), DummyPrescriptionListClient(), documents,
             TestUtils.cdaDisplay, Clock.System,
         )
         app.start(port)

@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://api.client.core.openncp.sante.ec.europa.eu"
+           targetNamespace="http://api.client.core.openncp.sante.ec.europa.eu" version="1.0">
+
+    <xs:element name="queryDocuments" type="tns:queryDocuments"/>
+
+    <xs:element name="queryDocumentsResponse" type="tns:queryDocumentsResponse"/>
+
+    <xs:element name="queryPatient" type="tns:queryPatient"/>
+
+    <xs:element name="queryPatientResponse" type="tns:queryPatientResponse"/>
+
+    <xs:element name="retrieveDocument" type="tns:retrieveDocument"/>
+
+    <xs:element name="retrieveDocumentResponse" type="tns:retrieveDocumentResponse"/>
+
+    <xs:element name="sayHello" type="tns:sayHello"/>
+
+    <xs:element name="sayHelloResponse" type="tns:sayHelloResponse"/>
+
+    <xs:element name="submitDocument" type="tns:submitDocument"/>
+
+    <xs:element name="submitDocumentResponse" type="tns:submitDocumentResponse"/>
+
+    <xs:complexType name="queryPatient">
+        <xs:sequence>
+            <xs:element name="arg0" type="tns:queryPatientRequest"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="queryPatientRequest">
+        <xs:complexContent>
+            <xs:extension base="tns:epsosServiceRequest">
+                <xs:sequence>
+                    <xs:element name="patientDemographics" type="tns:patientDemographics"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="epsosServiceRequest">
+        <xs:sequence>
+            <xs:element name="countryCode" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="patientId">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="root" type="xs:string"/>
+            <xs:element minOccurs="0" name="extension" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="patientDemographics">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="administrativeGender" type="xs:string"/>
+            <xs:element minOccurs="0" name="birthDate" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="city" type="xs:string"/>
+            <xs:element minOccurs="0" name="country" type="xs:string"/>
+            <xs:element minOccurs="0" name="email" type="xs:string"/>
+            <xs:element minOccurs="0" name="familyName" type="xs:string"/>
+            <xs:element minOccurs="0" name="givenName" type="xs:string"/>
+            <xs:element minOccurs="0" name="postalCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="streetAddress" type="xs:string"/>
+            <xs:element minOccurs="0" name="telephone" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="patientId" type="tns:patientId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="queryPatientResponse">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:patientDemographics"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="retrieveDocument">
+        <xs:sequence>
+            <xs:element name="arg0" type="tns:retrieveDocumentRequest"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="retrieveDocumentRequest">
+        <xs:complexContent>
+            <xs:extension base="tns:epsosServiceRequest">
+                <xs:sequence>
+                    <xs:element name="homeCommunityId" type="xs:string"/>
+                    <xs:element name="documentId" type="tns:documentId"/>
+                    <xs:element name="classCode" type="tns:genericDocumentCode"/>
+                    <xs:element name="targetLanguage" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="documentId">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="repositoryUniqueId" type="xs:string"/>
+            <xs:element minOccurs="0" name="documentUniqueId" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="retrieveDocumentResponse">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="return" type="tns:epsosDocument"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="epsosDocument">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="classCode" type="tns:genericDocumentCode"/>
+            <xs:element minOccurs="0" name="creationDate" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="eventDate" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="description" type="xs:string"/>
+            <xs:element minOccurs="0" name="formatCode" type="tns:genericDocumentCode"/>
+            <xs:element minOccurs="0" name="mimeType" type="xs:string"/>
+            <xs:element minOccurs="0" name="size" type="xs:integer"/>
+            <xs:element minOccurs="0" name="title" type="xs:string"/>
+            <xs:element minOccurs="0" name="uuid" type="xs:string"/>
+            <xs:element minOccurs="0" name="submissionSetId" type="xs:string"/>
+            <xs:element minOccurs="0" name="hcid" type="xs:string"/>
+            <xs:element minOccurs="0" name="repositoryId" type="xs:string"/>
+            <xs:element minOccurs="0" name="base64Binary" type="xs:base64Binary"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="authors" type="tns:author"/>
+            <xs:element minOccurs="0" name="reasonOfHospitalisation" type="tns:reasonOfHospitalisation"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="associatedDocuments" nillable="true"
+                        type="tns:epsosDocument"/>
+            <xs:element minOccurs="0" name="atcCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="atcText" type="xs:string"/>
+            <xs:element minOccurs="0" name="doseFormCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="doseFormText" type="xs:string"/>
+            <xs:element minOccurs="0" name="strength" type="xs:string"/>
+            <xs:element minOccurs="0" name="substitution" type="xs:string"/>
+            <xs:element default="false" name="dispensable" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="author">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="person" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="specialty" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="reasonOfHospitalisation">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="code" type="xs:string"/>
+            <xs:element minOccurs="0" name="text" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="documentMetaDataAssociation">
+        <xs:complexContent>
+            <xs:extension base="tns:epsosDocument">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="associationType" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="genericDocumentCode">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="nodeRepresentation" type="xs:string"/>
+            <xs:element minOccurs="0" name="schema" type="xs:string"/>
+            <xs:element minOccurs="0" name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="submitDocument">
+        <xs:sequence>
+            <xs:element name="arg0" type="tns:submitDocumentRequest"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="submitDocumentRequest">
+        <xs:complexContent>
+            <xs:extension base="tns:epsosServiceRequest">
+                <xs:sequence>
+                    <xs:element name="document" type="tns:epsosDocument"/>
+                    <xs:element minOccurs="0" name="patientDemographics" type="tns:patientDemographics"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="submitDocumentResponse">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="responseStatus" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="sayHello">
+        <xs:sequence>
+            <xs:element name="arg0" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="sayHelloResponse">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="return" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="queryDocuments">
+        <xs:sequence>
+            <xs:element name="arg0" type="tns:queryDocumentRequest"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="queryDocumentRequest">
+        <xs:complexContent>
+            <xs:extension base="tns:epsosServiceRequest">
+                <xs:sequence>
+                    <xs:element name="patientId" type="tns:patientId"/>
+                    <xs:element maxOccurs="unbounded" name="classCode" type="tns:genericDocumentCode"/>
+                    <xs:element minOccurs="0" name="filterParams" type="tns:filterParams"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="queryDocumentsResponse">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:epsosDocument"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filterParams">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="createdBefore" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="createdAfter" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="maximumSize" type="xs:integer"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -9,7 +9,7 @@
     hx-target="#search-results"
     hx-disable="find button[type=submit]"
     hx-sync="drop" <#-- do nothing if a country change request is in-flight -->
-    hx-indicator="closest form, #search-results-spinner" <#-- the form itself for the spinner in the button -->
+    hx-indicator="#search-results-spinner"
     <#-- remove the old results while the new ones load (the event also bubbles up from the fields and select) -->
     hx-on::before:request="if (event.target === this) document.getElementById('search-results').replaceChildren()"
     class="bg-white mt-10 max-w-4xl mx-auto section-border p-4 flex flex-col gap-8"

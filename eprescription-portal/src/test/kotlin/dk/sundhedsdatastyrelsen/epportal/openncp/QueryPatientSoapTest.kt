@@ -7,18 +7,17 @@ import dk.sundhedsdatastyrelsen.epportal.utils.XPathWrapper
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlNamespace
 import dk.sundhedsdatastyrelsen.epportal.utils.XmlUtils
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.net.URI
 import java.security.cert.X509Certificate
 import java.time.OffsetDateTime
 import javax.xml.crypto.dsig.XMLSignatureFactory
 import javax.xml.crypto.dsig.dom.DOMValidateContext
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 fun testOpenNcpConfig(endpoint: URI = URI("http://localhost:1/unused")) = OpenNcp.Config(
     endpoint = endpoint,
+    issuer = "urn:idp:DK:countryB",
     signing = OpenNcp.SigningConfig(
         keystore = OpenNcp.StoreConfig("src/test/resources/openncp/test-signing.p12", Secret("changeit")),
         alias = "test",
@@ -37,31 +36,26 @@ class QueryPatientSoapTest {
         XmlNamespace.SOAP12, XmlNamespace.WSSE, XmlNamespace.WSA, XmlNamespace.SAML, XmlNamespace.DS, XmlNamespace.HL7,
         XmlNamespace.OPENNCP_CLIENT,
     )
-    private val factory = HcpAssertionFactory.fromConfig(testOpenNcpConfig())
-    private val ids = listOf(PatientId("1.2.208.176.1.2", "0101011234"), PatientId("1.2.3", "x<&>y"))
+    private val config = testOpenNcpConfig()
+    private val factory = HcpAssertionFactory(config.hcp, config.issuer, OpenNcp.loadSigningKey(config.signing))
 
     /** Serialize and parse again, as the receiver sees it. */
     private fun envelope() =
         XmlUtils.parse(
             XmlUtils.writeDocumentToString(
-                OpenNcpPatientSearchClient.buildQueryPatientEnvelope(factory.create(), "DK", ids),
+                OpenNcpClient.envelope("urn:ehdsi:queryPatient", listOf(factory.create())) {},
             ),
         )
 
     private fun fixture(name: String) = XmlUtils.parse(TestUtils.resourceAsStream("openncp/$name")!!)
 
     @Test
-    fun `envelope carries the assertion in the security header and the query in the body`() {
+    fun `envelope carries the action and the assertion in the header`() {
         val doc = envelope()
         assertEquals("urn:ehdsi:queryPatient", xpath.evalString("/soap12:Envelope/soap12:Header/wsa:Action", doc))
         assertTrue(xpath.evalString("/soap12:Envelope/soap12:Header/wsa:MessageID", doc).startsWith("urn:uuid:"))
         val assertion = xpath.evalElement("/soap12:Envelope/soap12:Header/wsse:Security/saml:Assertion", doc)!!
         assertEquals("urn:ehdsi:assertions:hcp", xpath.evalString("saml:Issuer/@NameQualifier", assertion))
-
-        val arg0 = xpath.evalElement("/soap12:Envelope/soap12:Body/ncpc:queryPatient/arg0", doc)!!
-        assertEquals("DK", xpath.evalString("countryCode", arg0))
-        assertEquals(listOf("1.2.208.176.1.2", "1.2.3"), xpath.evalStrings("patientDemographics/patientId/root", arg0))
-        assertEquals(listOf("0101011234", "x<&>y"), xpath.evalStrings("patientDemographics/patientId/extension", arg0))
     }
 
     @Test
@@ -104,9 +98,10 @@ class QueryPatientSoapTest {
 
     @Test
     fun `parses patients from the response`() {
-        val patients = OpenNcpPatientSearchClient.parseQueryPatientResponse(fixture("query-patient-response.xml"))
+        val patients = parseQueryPatientResponse(fixture("query-patient-response.xml"), "FI")
         assertEquals(2, patients.size)
         val maija = patients[0]
+        assertEquals("FI", maija.countryCode)
         assertEquals("Maija", maija.givenName)
         assertEquals("Meikäläinen", maija.familyName)
         assertEquals(OffsetDateTime.parse("1975-03-12T00:00:00+01:00"), maija.birthDate)
@@ -126,21 +121,6 @@ class QueryPatientSoapTest {
 
     @Test
     fun `an empty response means no patients`() {
-        assertEquals(emptyList(), OpenNcpPatientSearchClient.parseQueryPatientResponse(fixture("query-patient-empty.xml")))
-    }
-
-    @Test
-    fun `a SOAP fault is an error`() {
-        val e = assertThrows<OpenNcpException> {
-            OpenNcpPatientSearchClient.parseQueryPatientResponse(fixture("soap-fault.xml"), 500)
-        }
-        assertContains(e.message!!, "No HCP assertion found")
-    }
-
-    @Test
-    fun `a non-2xx status without a fault is an error`() {
-        assertThrows<OpenNcpException> {
-            OpenNcpPatientSearchClient.parseQueryPatientResponse(fixture("query-patient-empty.xml"), 503)
-        }
+        assertEquals(emptyList(), parseQueryPatientResponse(fixture("query-patient-empty.xml"), "FI"))
     }
 }

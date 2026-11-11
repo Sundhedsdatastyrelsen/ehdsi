@@ -14,22 +14,26 @@
             <p>Styrke</p>
             <p>Udstedt</p>
             <p>Ordinerende læge</p>
+            <p>Substitution</p>
             <p>Kan udleveres</p>
           </div>
         </div>
         <div class="table-row-group">
           <#list prescriptions as prescription>
             <a
-              href="/prescriptions/${prescription.l3DocumentId?url}?opaque-id=${opaqueId?url}"
+              <#-- l3DocumentId should never be null. If it ever is, it's a big error, but we don't
+                   want to crash the full list. -->
+              href="/prescriptions/${(prescription.l3DocumentId!"")?url}?opaque-id=${opaqueId?url}"
               class="table-row hover:bg-blue-200 *:table-cell *:p-1 *:px-2 *:max-w-64 *:[word-break:break-word]"
             >
               <p>${prescription.productName!"Unknown"}</p>
-              <p>${prescription.atcCode}</p>
-              <p>${prescription.atcName}</p>
-              <p>${prescription.doseFormName}</p>
-              <p>${prescription.strength}</p>
-              <p>${prescription.effectiveTime}</p>
-              <p>${prescription.authorName}</p>
+              <p>${prescription.atcCode!""}</p>
+              <p>${prescription.atcName!""}</p>
+              <p>${prescription.doseFormName!""}</p>
+              <p>${prescription.strength!""}</p>
+              <p title="${prescription.effectiveTimeUtc!""}">${prescription.prettyDate!""}</p>
+              <p>${prescription.authorName!""}</p>
+              <p>${prescription.substitution!""}</p>
               <p>
                 <#if prescription.dispensable!false>Ja<#else>Nej</#if>
               </p>

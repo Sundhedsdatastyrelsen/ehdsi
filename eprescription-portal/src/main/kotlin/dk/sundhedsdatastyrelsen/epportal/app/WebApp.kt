@@ -3,11 +3,13 @@ package dk.sundhedsdatastyrelsen.epportal.app
 import dk.sundhedsdatastyrelsen.epportal.cdadisplay.CdaDisplayTransformer
 import dk.sundhedsdatastyrelsen.epportal.ism.SearchMaskRepository
 import dk.sundhedsdatastyrelsen.epportal.logger
-import dk.sundhedsdatastyrelsen.epportal.openncp.OpenNcpPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.openncp.OpenNcpClient
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientSearchClient
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionListClient
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionDocumentClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.PrescriptionListClient
 import dk.sundhedsdatastyrelsen.epportal.requestLogger
 import freemarker.template.Configuration
 import freemarker.template.TemplateExceptionHandler
@@ -73,6 +75,7 @@ object WebApp {
         auth: AuthProvider,
         searchMasks: SearchMaskRepository,
         patientSearch: PatientSearchClient,
+        prescriptionList: PrescriptionListClient,
         prescriptionDocuments: PrescriptionDocumentClient,
         cdaDisplay: CdaDisplayTransformer,
         clock: Clock,
@@ -131,7 +134,7 @@ object WebApp {
 
             auth.registerRoutes(config.routes)
             FindPatient.registerRoutes(config.routes, auth, searchMasks, patientSearch, clock)
-            Prescriptions.registerRoutes(config.routes, auth, prescriptionDocuments, cdaDisplay)
+            Prescriptions.registerRoutes(config.routes, auth, prescriptionList, prescriptionDocuments, cdaDisplay)
 
             // Serve the main index page (static)
             config.routes.get("/") { ctx ->
@@ -153,18 +156,19 @@ object WebApp {
 
     fun startServer(config: AppConfig) {
         val searchMasks = SearchMaskRepository.load(config.findPatient)
-        val patientSearch = if (config.openncp != null) {
-            log.info("Patient search via OpenNCP client connector at {}", config.openncp.endpoint)
-            OpenNcpPatientSearchClient.create(config.openncp)
-        } else {
-            log.warn("OpenNCP is not configured; patient search returns dummy data")
-            DummyPatientSearchClient()
+        val ncp = config.openncp?.let {
+            log.info("Using OpenNCP client connector at {}", it.endpoint)
+            OpenNcpClient.create(it)
+        }
+        if (ncp == null) {
+            log.warn("OpenNCP is not configured. Portal shows dummy data")
         }
         val app = createApp(
             config.webApp,
             config.auth.provider(),
             searchMasks = searchMasks,
-            patientSearch = patientSearch,
+            patientSearch = ncp ?: DummyPatientSearchClient(),
+            prescriptionList = ncp ?: DummyPrescriptionListClient(),
             prescriptionDocuments = DummyPrescriptionDocumentClient(),
             cdaDisplay = CdaDisplayTransformer(config.cdaDisplay),
             clock = Clock.System,

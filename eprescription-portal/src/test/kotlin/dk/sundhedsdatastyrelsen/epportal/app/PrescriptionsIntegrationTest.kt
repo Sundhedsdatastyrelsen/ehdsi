@@ -2,6 +2,7 @@ package dk.sundhedsdatastyrelsen.epportal.app
 
 import dk.sundhedsdatastyrelsen.epportal.TestUtils
 import dk.sundhedsdatastyrelsen.epportal.patient.DummyPatientSearchClient
+import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionListClient
 import dk.sundhedsdatastyrelsen.epportal.prescriptions.DummyPrescriptionDocumentClient
 import dk.sundhedsdatastyrelsen.epportal.testMasks
 import dk.sundhedsdatastyrelsen.epportal.withoutConnectionReuse
@@ -37,7 +38,7 @@ class PrescriptionsIntegrationTest {
             WebApp.Config(port),
             LocalAuth("0101019999"),
             testMasks(),
-            DummyPatientSearchClient(),
+            DummyPatientSearchClient(), DummyPrescriptionListClient(),
             DummyPrescriptionDocumentClient(),
             TestUtils.cdaDisplay,
             Clock.System
@@ -97,31 +98,39 @@ class PrescriptionsIntegrationTest {
         val body = resp.body.string()
         assertContains(body, "Diazepam")
         assertContains(body, "N02BE01")
+        assertContains(body, "Ja, generisk")
     }
 
     @Test
-    fun `prescriptions page without an opaque id is a 400`() {
+    fun `prescriptions page without an opaque id shows the error`() {
         val resp = getPrescriptions(loginCookieHeader(), "")
-        assertEquals(400, resp.code)
+        assertEquals(200, resp.code)
+        val body = resp.body.string()
+        assertContains(body, "Der er sket en fejl")
     }
 
     @Test
-    fun `prescriptions page with a malformed opaque id is a 400`() {
+    fun `prescriptions page with a malformed opaque id shows the error`() {
         val resp = getPrescriptions(loginCookieHeader(), "?opaque-id=not-a-uuid")
-        assertEquals(400, resp.code)
+        assertEquals(200, resp.code)
+        val body = resp.body.string()
+        assertContains(body, "Der er sket en fejl")
     }
 
     @Test
-    fun `prescriptions page with another user's opaque id is a 404`() {
+    fun `prescriptions page with another user's opaque id shows the error`() {
         val opaqueId = searchForOpaqueId(loginCookieHeader("1212121234"))
         val resp = getPrescriptions(loginCookieHeader("0101010001"), "?opaque-id=$opaqueId")
-        assertEquals(404, resp.code)
+        assertEquals(200, resp.code)
+        val body = resp.body.string()
+        assertContains(body, "Der er sket en fejl")
     }
 
     @Test
-    fun `prescriptions page with an unknown opaque id is a 404`() {
+    fun `prescriptions page with an unknown opaque id shows the error`() {
         val resp = getPrescriptions(loginCookieHeader(), "?opaque-id=${UUID.randomUUID()}")
-        assertEquals(404, resp.code)
-        assertContains(resp.body.string(), "please search again")
+        assertEquals(200, resp.code)
+        val body = resp.body.string()
+        assertContains(body, "Der er sket en fejl")
     }
 }

@@ -12,6 +12,7 @@ class DummyPatientSearchClient : PatientSearchClient {
         Thread.sleep(1000)
         return listOf(
             PatientDemographics(
+                countryCode = countryCode,
                 givenName = "Test",
                 familyName = "Testersen",
                 birthDate = OffsetDateTime.parse("1980-01-01T00:00:00Z"),

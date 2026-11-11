@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OpenNcpAssertionsTest {
     private static String soapHeader() {
@@ -34,5 +35,18 @@ class OpenNcpAssertionsTest {
         assertThat(
             ((Element) assertions.trcAssertion()
                 .getFirstChild()).getAttribute("NameQualifier"), equalTo("urn:ehdsi:assertions:trc"));
+    }
+
+    @Test
+    void missingTrcAssertionIsRejected() {
+        var header = soapHeader();
+        // The TRC assertion is the last one in the header.
+        var trcStart = header.lastIndexOf("<saml2:Assertion ");
+        var trcEnd = header.lastIndexOf("</saml2:Assertion>") + "</saml2:Assertion>".length();
+        var headerWithoutTrc = header.substring(0, trcStart) + header.substring(trcEnd);
+        assertThat(headerWithoutTrc, not(containsString("urn:ehdsi:assertions:trc")));
+        assertThat(headerWithoutTrc, containsString("urn:ehdsi:assertions:hcp"));
+
+        assertThrows(AuthenticationException.class, () -> OpenNcpAssertions.fromSoapHeader(headerWithoutTrc));
     }
 }

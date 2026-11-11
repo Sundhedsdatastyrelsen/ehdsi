@@ -31,13 +31,8 @@
   <div id="form-error"><#if formError??><p class="text-red-500">${formError}</p></#if></div>
 
   <div class="text-right">
-    <#-- The spinner is an htmx indicator: it shows while the form has a request in flight -->
     <button type="submit" class="blue-button relative">
       Søg
-      <span
-        class="htmx-indicator absolute right-3 top-1/2 -mt-2 size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
-        aria-hidden="true"
-      ></span>
     </button>
   </div>
 </#if>
