@@ -10,9 +10,9 @@ import kotlin.math.absoluteValue
 class DummyPrescriptionDocumentClient : PrescriptionDocumentClient {
     private val log = logger()
 
-    override fun retrieveDocument(documentId: String): String {
-        log.info("Using DummyPrescriptionDocumentClient: returning an example document for id {}", documentId)
-        val example = examples[documentId.hashCode().absoluteValue % examples.size]
+    override fun retrieveDocument(params: PrescriptionDocumentClient.Params): String {
+        log.info("Using DummyPrescriptionDocumentClient: returning an example document for id {}", params.documentId)
+        val example = examples[params.documentId.hashCode().absoluteValue % examples.size]
         return requireNotNull(javaClass.getResource("/ep-l3-examples/$example.xml")).readText()
     }
 

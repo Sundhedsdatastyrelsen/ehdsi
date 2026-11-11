@@ -90,7 +90,9 @@ object Prescriptions {
                             "substitution" to it.l3.substitution?.let(::substitutionLabel),
                             "dispensable" to it.l3.dispensable,
                             "l3DocumentId" to it.l3.documentUniqueId,
-                            "l1DocumentId" to it.l1.documentUniqueId
+                            "l1DocumentId" to it.l1.documentUniqueId,
+                            "homeCommunityId" to it.l3.homeCommunityId,
+                            "repositoryUniqueId" to it.l3.repositoryUniqueId
                         )
                     },
                 )
@@ -122,17 +124,54 @@ object Prescriptions {
                 ctx.redirect("/?error=not-authorized", HttpStatus.SEE_OTHER)
                 return
             }
+
+            val opaqueId = ctx.queryParam("opaque-id")
+            val homeCommunityId = ctx.queryParam("home-community-id")
+            val repositoryUniqueId = ctx.queryParam("repository-unique-id")
+
+            if (opaqueId == null || homeCommunityId == null || repositoryUniqueId == null) {
+                ctx.render("error-page.ftlh", mapOf("error" to "Der er sket en fejl. Prøv igen."))
+                return
+            }
+
             ctx.render(
                 "show-prescription.ftlh",
-                mapOf("documentId" to ctx.pathParam("documentId"), "opaqueId" to ctx.queryParam("opaque-id")),
+                mapOf(
+                    "documentId" to ctx.pathParam("documentId"),
+                    "opaqueId" to opaqueId,
+                    "homeCommunityId" to homeCommunityId,
+                    "repositoryUniqueId" to repositoryUniqueId,
+                ),
             )
         }
 
         /** The prescription rendered by the CDA display tool, a complete HTML document for the iframe. */
         fun display(ctx: Context) {
-            auth.require(ctx)
-            val cda = documents.retrieveDocument(ctx.pathParam("documentId"))
-                ?: throw NotFoundResponse("Prescription not found")
+            val principal = auth.require(ctx)
+            val opaqueId = ctx.queryParam("opaque-id")
+            val homeCommunityId = ctx.queryParam("home-community-id")
+            val repositoryUniqueId = ctx.queryParam("repository-unique-id")
+
+            if (opaqueId == null || homeCommunityId == null || repositoryUniqueId == null) {
+                throw NotFoundResponse("Prescription not found")
+            }
+
+            val opaquePatientId = opaqueId.let { runCatching { UUID.fromString(it) }.getOrNull() }
+                ?: throw NotFoundResponse("Invalid opaque patient id.")
+
+            val patientDemographics = OpaquePatientIds.resolve(ctx, principal, opaquePatientId)
+                ?: throw NotFoundResponse("Could not locate patient session, please search again.")
+
+            val cda = documents.retrieveDocument(
+                PrescriptionDocumentClient.Params(
+                    patientDemographics.countryCode,
+                    patientDemographics.patientIds.first(),
+                    homeCommunityId,
+                    repositoryUniqueId,
+                    ctx.pathParam("documentId"),
+                )
+            ) ?: throw NotFoundResponse("Prescription not found")
+
             // Content security policy: tell the browser not to allow any network requests from the rendered html, and
             // only to display the html on the same origin as the rest of the portal.
             ctx.header(
