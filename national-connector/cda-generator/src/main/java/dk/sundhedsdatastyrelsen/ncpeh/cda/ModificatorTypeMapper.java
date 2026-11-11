@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public class ModificatorTypeMapper {
 
+    private ModificatorTypeMapper() {}
+
     public enum ModificatorKind {
         HEALTHCARE_PROFESSIONAL,
         PARTLY_DEFINED_EFFECTUATOR,

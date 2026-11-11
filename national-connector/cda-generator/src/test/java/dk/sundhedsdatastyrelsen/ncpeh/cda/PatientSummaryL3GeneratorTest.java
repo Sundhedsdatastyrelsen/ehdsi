@@ -177,9 +177,12 @@ class PatientSummaryL3GeneratorTest {
             is("1"));
 
         assertThat(
-            "No information about medications entry is present",
-            xpathEngine.evaluate("(/hl7:ClinicalDocument//hl7:section[hl7:code/@code='10160-0']//hl7:manufacturedMaterial/hl7:name)[1]", generatedCda),
-            is("No information about medications"));
+            "No known medications entry is present",
+            xpathEngine.evaluate(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:code/@code='10160-0']"
+                    + "/hl7:entry/hl7:substanceAdministration/hl7:code/@code)[1]",
+                generatedCda),
+            is("no-known-medications"));
 
     }
 
@@ -446,6 +449,101 @@ class PatientSummaryL3GeneratorTest {
             "preferred health professional's country code is not there if it's empty",
             xpathEngine.selectNodes(preferredHealthProfessionalAddressPath + "/hl7:country", generatedCda),
             is(emptyIterable()));
+    }
+
+    @Test
+    void testFmkRetrievalFailure() throws JAXBException {
+        var cpr = "0410009234";
+        var immunization = DdvResponseStorage.getTestVaccination(cpr);
+
+        var input = new PatientSummaryInput("testtest", preferredHp("DK"), patient("DK"), null, immunization);
+
+        var cda = PatientSummaryL3Generator.generate(PatientSummaryL3Mapper.model(input));
+
+        assertSectionRetrievalFailed(cda, "10160-0", "FMK");
+        assertSectionRetrievalSucceeded(cda, "11369-6");
+    }
+
+    @Test
+    void testDdvRetrievalFailure() throws JAXBException {
+        var cpr = "0410009234";
+        var medicationSummary = FmkResponseStorage.getTestMedicineCards(cpr);
+
+        var input = new PatientSummaryInput(
+            "testtest",
+            preferredHp("DK"),
+            patient("DK"),
+            medicationSummary,
+            null // DDV retrieval failed
+        );
+
+        var cda = PatientSummaryL3Generator.generate(
+            PatientSummaryL3Mapper.model(input)
+        );
+
+        assertSectionRetrievalFailed(cda, "11369-6", "DDV");
+        assertSectionRetrievalSucceeded(cda, "10160-0");
+    }
+
+    @Test
+    void testBothRetrievalsFail() {
+        var input = new PatientSummaryInput("testtest", preferredHp("DK"), patient("DK"), null, null);
+
+        var cda = PatientSummaryL3Generator.generate(PatientSummaryL3Mapper.model(input));
+
+        assertSectionRetrievalFailed(cda, "10160-0", "FMK");
+        assertSectionRetrievalFailed(cda, "11369-6", "DDV");
+    }
+
+    private static void assertSectionRetrievalFailed(String cda, String sectionCode, String source) {
+        var xpathEngine = new JAXPXPathEngine();
+        xpathEngine.setNamespaceContext(Map.of("hl7", "urn:hl7-org:v3"));
+
+        var document = Input.fromString(cda).build();
+        var sectionPath = "/hl7:ClinicalDocument//hl7:section[hl7:code/@code='" + sectionCode + "']";
+
+        assertThat(source + " section must not have nullFlavor",
+            xpathEngine.evaluate(sectionPath + "/@nullFlavor", document), is(""));
+
+        assertThat(source + " retrieval failure message is present",
+            xpathEngine.evaluate(
+                "contains(string(" + sectionPath + "/hl7:text), 'retrieval failure from " + source + "')",
+                document),
+            is("true"));
+
+        assertThat(source + " section contains one structured entry",
+            xpathEngine.evaluate("count(" + sectionPath + "/hl7:entry)", document),
+            is("1"));
+
+        if ("FMK".equals(source)) {
+            assertThat("FMK contains no-medication-info",
+                xpathEngine.evaluate(
+                    sectionPath + "/hl7:entry/hl7:substanceAdministration/hl7:code/@code",
+                    document),
+                is("no-medication-info"));
+        } else if ("DDV".equals(source)) {
+            assertThat("DDV contains immunization placeholder",
+                xpathEngine.evaluate(
+                    sectionPath + "/hl7:entry/hl7:substanceAdministration/hl7:code/@code",
+                    document),
+                is("IMMUNIZ"));
+
+            assertThat("DDV placeholder has unknown effective time",
+                xpathEngine.evaluate(
+                    sectionPath + "/hl7:entry/hl7:substanceAdministration/hl7:effectiveTime/@nullFlavor",
+                    document),
+                is("UNK"));
+        }
+    }
+
+    private static void assertSectionRetrievalSucceeded(String cda, String sectionCode) {
+        var xpathEngine = new JAXPXPathEngine();
+        xpathEngine.setNamespaceContext(Map.of("hl7", "urn:hl7-org:v3"));
+
+        var document = Input.fromString(cda).build();
+        var sectionPath = "/hl7:ClinicalDocument//hl7:section[hl7:code/@code='" + sectionCode + "']";
+
+        assertThat("successful section must not have NAV", xpathEngine.evaluate(sectionPath + "/@nullFlavor", document), is(""));
     }
 
     private static Patient patient(String country) {
