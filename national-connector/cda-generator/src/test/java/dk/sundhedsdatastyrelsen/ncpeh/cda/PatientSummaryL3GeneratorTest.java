@@ -177,9 +177,12 @@ class PatientSummaryL3GeneratorTest {
             is("1"));
 
         assertThat(
-            "No information about medications entry is present",
-            xpathEngine.evaluate("(/hl7:ClinicalDocument//hl7:section[hl7:code/@code='10160-0']//hl7:manufacturedMaterial/hl7:name)[1]", generatedCda),
-            is("No information about medications"));
+            "No known medications entry is present",
+            xpathEngine.evaluate(
+                "(/hl7:ClinicalDocument//hl7:section[hl7:code/@code='10160-0']"
+                    + "/hl7:entry/hl7:substanceAdministration/hl7:code/@code)[1]",
+                generatedCda),
+            is("no-known-medications"));
 
     }
 
@@ -499,20 +502,37 @@ class PatientSummaryL3GeneratorTest {
         var document = Input.fromString(cda).build();
         var sectionPath = "/hl7:ClinicalDocument//hl7:section[hl7:code/@code='" + sectionCode + "']";
 
-        assertThat(source + " section must not have nullFlavor", xpathEngine.evaluate(sectionPath + "/@nullFlavor", document), is(""));
+        assertThat(source + " section must not have nullFlavor",
+            xpathEngine.evaluate(sectionPath + "/@nullFlavor", document), is(""));
 
-        assertThat(source + " retrieval failure message is present", xpathEngine.evaluate("contains(string(" + sectionPath + "/hl7:text), 'retrieval failure from " + source + "')", document), is("true"));
+        assertThat(source + " retrieval failure message is present",
+            xpathEngine.evaluate(
+                "contains(string(" + sectionPath + "/hl7:text), 'retrieval failure from " + source + "')",
+                document),
+            is("true"));
+
+        assertThat(source + " section contains one structured entry",
+            xpathEngine.evaluate("count(" + sectionPath + "/hl7:entry)", document),
+            is("1"));
 
         if ("FMK".equals(source)) {
-            assertThat(
-                "FMK section contains no-medication-info entry",
+            assertThat("FMK contains no-medication-info",
                 xpathEngine.evaluate(
-                    "count(" + sectionPath
-                        + "/hl7:entry/hl7:substanceAdministration"
-                        + "/hl7:code[@code='no-medication-info'"
-                        + " and @codeSystem='2.16.840.1.113883.5.1150.1'])",
+                    sectionPath + "/hl7:entry/hl7:substanceAdministration/hl7:code/@code",
                     document),
-                is("1"));
+                is("no-medication-info"));
+        } else if ("DDV".equals(source)) {
+            assertThat("DDV contains immunization placeholder",
+                xpathEngine.evaluate(
+                    sectionPath + "/hl7:entry/hl7:substanceAdministration/hl7:code/@code",
+                    document),
+                is("IMMUNIZ"));
+
+            assertThat("DDV placeholder has unknown effective time",
+                xpathEngine.evaluate(
+                    sectionPath + "/hl7:entry/hl7:substanceAdministration/hl7:effectiveTime/@nullFlavor",
+                    document),
+                is("UNK"));
         }
     }
 
