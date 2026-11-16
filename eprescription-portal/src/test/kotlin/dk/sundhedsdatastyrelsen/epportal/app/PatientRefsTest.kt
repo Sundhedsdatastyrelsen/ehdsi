@@ -1,8 +1,7 @@
 package dk.sundhedsdatastyrelsen.epportal.app
 
-import dk.sundhedsdatastyrelsen.epportal.app.OpaquePatientIds.PatientSession
+import dk.sundhedsdatastyrelsen.epportal.app.PatientRefs.PatientSession
 import dk.sundhedsdatastyrelsen.epportal.patient.PatientDemographics
-import io.javalin.http.Context
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.Test
@@ -12,7 +11,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-class OpaquePatientIdsTest {
+class PatientRefsTest {
 
     private class FakeClock(var time: Instant) : Clock {
         override fun now(): Instant = time
@@ -51,7 +50,7 @@ class OpaquePatientIdsTest {
             )
         )
 
-        OpaquePatientIds.cleanup(map, 1.days, clock)
+        PatientRefs.cleanup(map, 1.days, clock)
 
         assertEquals(setOf(fresh), map.keys)
     }
@@ -67,7 +66,7 @@ class OpaquePatientIdsTest {
             )
         )
 
-        OpaquePatientIds.cleanup(map, 1.days, clock)
+        PatientRefs.cleanup(map, 1.days, clock)
 
         assertEquals(setOf(atCutoff), map.keys)
     }
@@ -78,11 +77,11 @@ class OpaquePatientIdsTest {
         val map = ConcurrentHashMap(mapOf(id to session(now)))
 
         clock.time = now + 1.days
-        OpaquePatientIds.cleanup(map, 1.days, clock)
+        PatientRefs.cleanup(map, 1.days, clock)
         assertEquals(setOf(id), map.keys)
 
         clock.time = now + 1.days + 1.seconds
-        OpaquePatientIds.cleanup(map, 1.days, clock)
+        PatientRefs.cleanup(map, 1.days, clock)
         assertEquals(emptySet(), map.keys)
     }
 }

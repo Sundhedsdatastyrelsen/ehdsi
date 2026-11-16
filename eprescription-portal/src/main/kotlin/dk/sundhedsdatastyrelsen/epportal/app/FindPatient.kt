@@ -99,7 +99,7 @@ object FindPatient {
                 mapOf("patients" to patients.map {
                     toPatientView(
                         it,
-                        OpaquePatientIds.issue(ctx, principal, it, clock)
+                        PatientRefs.issue(ctx, principal, it, clock)
                     )
                 })
             } catch (e: Exception) {
@@ -186,12 +186,12 @@ private fun fieldViews(mask: SearchMask, values: Map<Int, String>, errors: Map<I
         )
     }
 
-private fun toPatientView(patient: PatientDemographics, opaqueId: UUID): Map<String, Any?> {
+private fun toPatientView(patient: PatientDemographics, patientRef: UUID): Map<String, Any?> {
     val name = listOfNotNull(patient.givenName, patient.familyName)
         .joinToString(" ")
         .ifBlank { null }
     return mapOf(
-        "opaqueId" to opaqueId,
+        "ref" to patientRef,
         "name" to name,
         "birthDate" to patient.birthDate?.format(birthDateFormatter),
         "gender" to patient.gender?.let { Labels.gender(it) },

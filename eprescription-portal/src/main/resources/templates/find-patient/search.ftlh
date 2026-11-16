@@ -21,7 +21,7 @@
     <div class="table-row-group">
       <#list patients as patient>
         <a
-          href="/prescriptions?opaque-id=${patient.opaqueId}"
+          href="/prescriptions?patient-ref=${patient.ref}"
           class="table-row hover:bg-blue-200 *:table-cell *:p-1 *:px-2 *:max-w-64 *:[word-break:break-word]"
         >
           <p>${patient.name!""}</p>

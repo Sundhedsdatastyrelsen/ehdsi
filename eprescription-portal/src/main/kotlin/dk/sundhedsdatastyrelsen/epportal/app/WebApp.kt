@@ -115,7 +115,7 @@ object WebApp {
                 auth.install(handler) // SAML adds its filters/servlet; LocalAuth no-op
             }
 
-            OpaquePatientIds.setup(config)
+            PatientRefs.setup(config)
 
             config.requestLogger.http(requestLogger(log))
 

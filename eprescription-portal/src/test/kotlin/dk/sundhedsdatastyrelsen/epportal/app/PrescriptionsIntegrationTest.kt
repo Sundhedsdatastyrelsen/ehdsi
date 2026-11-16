@@ -58,8 +58,8 @@ class PrescriptionsIntegrationTest {
         return cookies.joinToString("; ") { it.substringBefore(';') }
     }
 
-    /** Searches for a patient and returns the opaque id from the link to their prescriptions. */
-    private fun searchForOpaqueId(cookieHeader: String): String {
+    /** Searches for a patient and returns the patient reference from the link to their prescriptions. */
+    private fun searchForPatientRef(cookieHeader: String): String {
         val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
         val req = Request.Builder()
             .url("$baseUrl/find-patient/search")
@@ -69,7 +69,7 @@ class PrescriptionsIntegrationTest {
         val resp = client.newCall(req).execute()
         assertEquals(200, resp.code)
         val body = resp.body.string()
-        return Regex("/prescriptions\\?opaque-id=([0-9a-f-]+)").find(body)!!.groupValues[1]
+        return Regex("/prescriptions\\?patient-ref=([0-9a-f-]+)").find(body)!!.groupValues[1]
     }
 
     @Test
@@ -91,9 +91,9 @@ class PrescriptionsIntegrationTest {
     @Test
     fun `prescriptions page renders the example prescription list when logged in`() {
         val cookieHeader = loginCookieHeader()
-        val opaqueId = searchForOpaqueId(cookieHeader)
+        val patientRef = searchForPatientRef(cookieHeader)
 
-        val resp = getPrescriptions(cookieHeader, "?opaque-id=$opaqueId")
+        val resp = getPrescriptions(cookieHeader, "?patient-ref=$patientRef")
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "Diazepam")
@@ -102,7 +102,7 @@ class PrescriptionsIntegrationTest {
     }
 
     @Test
-    fun `prescriptions page without an opaque id shows the error`() {
+    fun `prescriptions page without a patient reference shows the error`() {
         val resp = getPrescriptions(loginCookieHeader(), "")
         assertEquals(200, resp.code)
         val body = resp.body.string()
@@ -110,25 +110,25 @@ class PrescriptionsIntegrationTest {
     }
 
     @Test
-    fun `prescriptions page with a malformed opaque id shows the error`() {
-        val resp = getPrescriptions(loginCookieHeader(), "?opaque-id=not-a-uuid")
+    fun `prescriptions page with a malformed patient reference shows the error`() {
+        val resp = getPrescriptions(loginCookieHeader(), "?patient-ref=not-a-uuid")
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "Der er sket en fejl")
     }
 
     @Test
-    fun `prescriptions page with another user's opaque id shows the error`() {
-        val opaqueId = searchForOpaqueId(loginCookieHeader("1212121234"))
-        val resp = getPrescriptions(loginCookieHeader("0101010001"), "?opaque-id=$opaqueId")
+    fun `prescriptions page with another user's patient reference shows the error`() {
+        val patientRef = searchForPatientRef(loginCookieHeader("1212121234"))
+        val resp = getPrescriptions(loginCookieHeader("0101010001"), "?patient-ref=$patientRef")
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "Der er sket en fejl")
     }
 
     @Test
-    fun `prescriptions page with an unknown opaque id shows the error`() {
-        val resp = getPrescriptions(loginCookieHeader(), "?opaque-id=${UUID.randomUUID()}")
+    fun `prescriptions page with an unknown patient reference shows the error`() {
+        val resp = getPrescriptions(loginCookieHeader(), "?patient-ref=${UUID.randomUUID()}")
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "Der er sket en fejl")

@@ -59,14 +59,14 @@ class ShowPrescriptionIntegrationTest {
         return resp.headers("Set-Cookie").joinToString("; ") { it.substringBefore(';') }
     }
 
-    /** Searches for a patient and returns the opaque id from the link to their prescriptions. */
-    private fun searchForOpaqueId(cookie: String): String {
+    /** Searches for a patient and returns the patient reference from the link to their prescriptions. */
+    private fun searchForPatientRef(cookie: String): String {
         val form = FormBody.Builder().add("country", "DK").add("id.0", "010101-1234").build()
         val resp = client.newCall(
             Request.Builder().url("$baseUrl/find-patient/search").post(form).header("Cookie", cookie).build()
         ).execute()
         assertEquals(200, resp.code)
-        return Regex("/prescriptions\\?opaque-id=([0-9a-f-]+)").find(resp.body.string())!!.groupValues[1]
+        return Regex("/prescriptions\\?patient-ref=([0-9a-f-]+)").find(resp.body.string())!!.groupValues[1]
     }
 
     private fun get(path: String, cookie: String? = null): Response = client.newCall(
@@ -74,30 +74,30 @@ class ShowPrescriptionIntegrationTest {
     ).execute()
 
     private fun makeShowUrl(
-        prescriptionId: String, opaqueId: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
+        prescriptionId: String, patientRef: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
     ): String =
-        "/prescriptions/$prescriptionId?opaque-id=$opaqueId&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
+        "/prescriptions/$prescriptionId?patient-ref=$patientRef&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
 
     private fun makeDisplayUrl(
-        prescriptionId: String, opaqueId: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
+        prescriptionId: String, patientRef: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
     ): String =
-        "/prescriptions/$prescriptionId/display?opaque-id=$opaqueId&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
+        "/prescriptions/$prescriptionId/display?patient-ref=$patientRef&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
 
     @Test
     fun `the prescription page frames the sandboxed display`() {
         val prescriptionId = "513671704568702L3"
         val cookie = loginCookieHeader()
-        val opaqueId = searchForOpaqueId(cookie)
+        val patientRef = searchForPatientRef(cookie)
         val resp = get(
-            makeShowUrl(prescriptionId, opaqueId), cookie
+            makeShowUrl(prescriptionId, patientRef), cookie
         )
 
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(
-            body, """src="${makeDisplayUrl(prescriptionId, opaqueId)}""""
+            body, """src="${makeDisplayUrl(prescriptionId, patientRef)}""""
         )
-        assertContains(body, """href="/prescriptions?opaque-id=$opaqueId"""")
+        assertContains(body, """href="/prescriptions?patient-ref=$patientRef"""")
         assertContains(body, """sandbox="allow-same-origin"""")
     }
 
@@ -105,9 +105,9 @@ class ShowPrescriptionIntegrationTest {
     fun `the display renders the prescription with a restrictive CSP`() {
         val prescriptionId = "513671704568702L3"
         val cookie = loginCookieHeader()
-        val opaqueId = searchForOpaqueId(cookie)
+        val patientRef = searchForPatientRef(cookie)
         val resp = get(
-            makeDisplayUrl(prescriptionId, opaqueId), cookie
+            makeDisplayUrl(prescriptionId, patientRef), cookie
         )
 
         assertEquals(200, resp.code)
@@ -120,12 +120,12 @@ class ShowPrescriptionIntegrationTest {
     @Test
     fun `an unknown prescription is not found`() {
         val cookie = loginCookieHeader()
-        val opaqueId = searchForOpaqueId(cookie)
-        assertEquals(404, get(makeDisplayUrl("unknown", opaqueId), cookie).code)
+        val patientRef = searchForPatientRef(cookie)
+        assertEquals(404, get(makeDisplayUrl("unknown", patientRef), cookie).code)
     }
 
     @Test
-    fun `without an opaque patient id the page shows an error`() {
+    fun `without a patient reference the page shows an error`() {
         val resp = get("/prescriptions/513671704568702L3", loginCookieHeader())
 
         assertEquals(200, resp.code)
