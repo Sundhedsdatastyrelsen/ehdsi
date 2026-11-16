@@ -115,6 +115,31 @@ class OpenNcpClientIntegrationTest {
     }
 
     @Test
+    fun `listDocuments returns no prescriptions when the connector reports ERROR_EP_NOT_FOUND`() {
+        responseStatus = 500
+        responseFixture = "soap-fault-ep-not-found.xml"
+        val prescriptions = client.listDocuments("FI", PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"))
+        assertEquals(emptyList(), prescriptions)
+    }
+
+    @Test
+    fun `ERROR_EP_NOT_FOUND is recognized regardless of the SOAP namespace prefix`() {
+        responseStatus = 500
+        responseFixture = "soap-fault-ep-not-found-other-prefix.xml"
+        val prescriptions = client.listDocuments("FI", PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"))
+        assertEquals(emptyList(), prescriptions)
+    }
+
+    @Test
+    fun `an ERROR_EP_NOT_FOUND subcode in another namespace is raised as an exception`() {
+        responseStatus = 500
+        responseFixture = "soap-fault-ep-not-found-other-namespace.xml"
+        assertThrows<OpenNcpException> {
+            client.listDocuments("FI", PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A"))
+        }
+    }
+
+    @Test
     fun `queryPatient request body is valid against ClientService_xsd`() {
         client.queryPatient("FI", listOf(PatientId("1.2.246.556.12001.4.1000.990.1", "120375-123A")))
         validateClientServiceBody(XmlUtils.parse(requests.single().body.inputStream()))
