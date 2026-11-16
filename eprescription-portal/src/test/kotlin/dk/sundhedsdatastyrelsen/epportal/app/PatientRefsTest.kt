@@ -41,8 +41,8 @@ class PatientRefsTest {
 
     @Test
     fun `removes sessions older than max age and keeps newer ones`() {
-        val old = UUID.randomUUID()
-        val fresh = UUID.randomUUID()
+        val old = "old"
+        val fresh = "new"
         val map = ConcurrentHashMap(
             mapOf(
                 old to session(now - 2.days),
@@ -57,8 +57,8 @@ class PatientRefsTest {
 
     @Test
     fun `keeps a session created exactly at the cutoff`() {
-        val atCutoff = UUID.randomUUID()
-        val justBefore = UUID.randomUUID()
+        val atCutoff = "a"
+        val justBefore = "b"
         val map = ConcurrentHashMap(
             mapOf(
                 atCutoff to session(now - 1.days),
@@ -73,7 +73,7 @@ class PatientRefsTest {
 
     @Test
     fun `sessions expire as the clock advances`() {
-        val id = UUID.randomUUID()
+        val id = "someId"
         val map = ConcurrentHashMap(mapOf(id to session(now)))
 
         clock.time = now + 1.days

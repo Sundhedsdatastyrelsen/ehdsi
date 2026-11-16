@@ -13,7 +13,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
-import java.util.UUID
 
 object Prescriptions {
     /**
@@ -55,10 +54,9 @@ object Prescriptions {
             }
 
             try {
-                // Get the patient ID query parameter
-                val patientRef =
-                    ctx.queryParam("patient-ref")?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-                        ?: throw PublicException("Invalid patient reference.")
+                // Get the patient ref query parameter
+                val patientRef = ctx.queryParam("patient-ref")?.ifEmpty { null }
+                    ?: throw PublicException("Invalid patient reference.")
 
                 val patientDemographics = PatientRefs.resolve(ctx, principal, patientRef)
                     ?: throw PublicException("Could not locate patient session, please search again.")
@@ -69,7 +67,7 @@ object Prescriptions {
                 val prescriptions = prescriptionList.listDocuments(patientDemographics.countryCode, patientId)
                 val dataModel = mapOf(
                     "patientId" to patientId.extension,
-                    "patientRef" to patientRef.toString(),
+                    "patientRef" to patientRef,
                     "prescriptions" to prescriptions.map {
                         mapOf(
                             "effectiveTimeUtc" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))
@@ -156,8 +154,7 @@ object Prescriptions {
                 throw NotFoundResponse("Prescription not found")
             }
 
-            val patientRef = patientRefParam.let { runCatching { UUID.fromString(it) }.getOrNull() }
-                ?: throw NotFoundResponse("Invalid patient reference.")
+            val patientRef = patientRefParam.ifEmpty { null } ?: throw NotFoundResponse("Invalid patient reference.")
 
             val patientDemographics = PatientRefs.resolve(ctx, principal, patientRef)
                 ?: throw NotFoundResponse("Could not locate patient session, please search again.")

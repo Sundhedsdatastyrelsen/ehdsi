@@ -33,10 +33,10 @@ object PatientRefs {
         val creationTimestamp: Instant,
     )
 
-    internal val patientIdMapKey = Key<ConcurrentMap<UUID, PatientSession>>("patient-ref-map")
+    internal val patientIdMapKey = Key<ConcurrentMap<String, PatientSession>>("patient-ref-map")
 
     fun setup(config: JavalinConfig): JavalinConfig = config.apply {
-        val map = ConcurrentHashMap<UUID, PatientSession>()
+        val map = ConcurrentHashMap<String, PatientSession>()
         appData(patientIdMapKey, map)
 
         // Hook up cleanup job to server start and stop
@@ -62,22 +62,19 @@ object PatientRefs {
     }
 
     fun issue(
-        ctx: Context,
-        owner: Principal,
-        patientData: PatientDemographics,
-        clock: Clock
-    ): UUID {
-        val uuid = UUID.randomUUID()
-        ctx.appData(patientIdMapKey)[uuid] = PatientSession(owner, patientData, clock.now())
-        return uuid
+        ctx: Context, owner: Principal, patientData: PatientDemographics, clock: Clock
+    ): String {
+        val ref = UUID.randomUUID().toString()
+        ctx.appData(patientIdMapKey)[ref] = PatientSession(owner, patientData, clock.now())
+        return ref
     }
 
     /** Only the user who did the search can look up the patient. */
-    fun resolve(ctx: Context, owner: Principal, patientRef: UUID): PatientDemographics? =
+    fun resolve(ctx: Context, owner: Principal, patientRef: String): PatientDemographics? =
         ctx.appData(patientIdMapKey)[patientRef]?.takeIf { it.owner == owner }?.demographics
 
     internal fun cleanup(
-        map: ConcurrentMap<UUID, PatientSession>,
+        map: ConcurrentMap<String, PatientSession>,
         maxAge: Duration,
         clock: Clock,
     ) {
