@@ -23,7 +23,7 @@
             <a
               <#-- l3DocumentId should never be null. If it ever is, it's a big error, but we don't
                    want to crash the full list. -->
-              href="/prescriptions/${(prescription.l3DocumentId!"")?url}?opaque-id=${opaqueId?url}"
+              href="/prescriptions/${prescription.l3DocumentId?url}?opaque-id=${opaqueId?url}&home-community-id=${prescription.homeCommunityId?url}&repository-unique-id=${prescription.repositoryUniqueId?url}"
               class="table-row hover:bg-blue-200 *:table-cell *:p-1 *:px-2 *:max-w-64 *:[word-break:break-word]"
             >
               <p>${prescription.productName!"Unknown"}</p>
