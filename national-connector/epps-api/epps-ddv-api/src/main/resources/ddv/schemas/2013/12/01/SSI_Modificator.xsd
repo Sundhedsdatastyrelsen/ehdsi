@@ -101,17 +101,15 @@
         <!-- Original: either AuthorisedHealthcareProfessional+Organisation or Other+optional Organisation. -->
         <!-- Replacement: -->
         <sequence>
-            <sequence>
-                <element name="AuthorisedHealthcareProfessional"
-                         type="vaccinationcard:AuthorisedHealthcareProfessionalType"
-                         minOccurs="0"/>
-                <element name="Other"
-                         type="vaccinationcard:ModificatorPersonType"
-                         minOccurs="0"/>
-                <element name="Organisation"
-                         type="vaccinationcard:OrganisationType"
-                         minOccurs="0"/>
-            </sequence>
+            <element name="AuthorisedHealthcareProfessional"
+                     type="vaccinationcard:AuthorisedHealthcareProfessionalType"
+                     minOccurs="0"/>
+            <element name="Other"
+                     type="vaccinationcard:ModificatorPersonType"
+                     minOccurs="0"/>
+            <element name="Organisation"
+                     type="vaccinationcard:OrganisationType"
+                     minOccurs="0"/>
         </sequence>
         <!-- End replacement -->
     </complexType>

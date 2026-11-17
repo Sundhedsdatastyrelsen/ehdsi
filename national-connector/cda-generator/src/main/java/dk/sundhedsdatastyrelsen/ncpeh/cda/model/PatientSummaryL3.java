@@ -1,5 +1,6 @@
 package dk.sundhedsdatastyrelsen.ncpeh.cda.model;
 
+import dk.sundhedsdatastyrelsen.ncpeh.cda.Either;
 import dk.sundhedsdatastyrelsen.ncpeh.cda.Utils;
 import lombok.Builder;
 import lombok.NonNull;
@@ -34,9 +35,10 @@ public class PatientSummaryL3 {
     /// Might be null if we don't have the information.
     PreferredHealthProfessional preferredHp;
 
-    MedicationSummary medicationSummary;
+    //Previously, null represented a failed retrieval. Now, the Either object itself should always exist.
+    @NonNull Either<RetrievalFailure, MedicationSummary> medicationSummary;
 
-    Immunizations immunizations;
+    @NonNull Either<RetrievalFailure, Immunizations> immunizations;
 
     /// Used for ids for empty sections.
     String randomUuid = UUID.randomUUID().toString();
