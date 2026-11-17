@@ -1,0 +1,63 @@
+# Local development: builds the image and runs it against this machine. The
+# ops repos copy these settings; see README.md.
+services:
+  host-updates-exporter:
+    build: .
+    container_name: host-updates-exporter
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      # apt: the host's sources, keys, pinning, proxy and credentials at their
+      # own paths (sources name keyrings by absolute path), its installed
+      # packages, and its machine-id (decides phased updates).
+      - /etc/apt:/etc/apt:ro
+      - /usr/share/keyrings:/usr/share/keyrings:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dpkg:/host/var/lib/dpkg:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /etc/hostname:/host/etc/hostname:ro
+      - host-updates-state:/var/lib/host-updates
+    # Writes only to the state volume and /tmp, as a user without privileges.
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 100
+    networks:
+      - host-updates
+      - host-updates-docker
+
+  # The exporter's only way to Docker; see docker-proxy/haproxy.cfg.
+  host-updates-docker-proxy:
+    image: haproxy:3.2.25-alpine
+    container_name: host-updates-docker-proxy
+    restart: unless-stopped
+    # Root, to open the socket on any host whatever its docker group id, but
+    # without any capabilities.
+    user: "0:0"
+    volumes:
+      - ./docker-proxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    pids_limit: 50
+    networks:
+      - host-updates-docker
+
+volumes:
+  host-updates-state:
+
+networks:
+  host-updates:
+  # Only the exporter and its Docker proxy, without internet access.
+  host-updates-docker:
+    internal: true

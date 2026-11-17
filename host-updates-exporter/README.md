@@ -1,0 +1,102 @@
+# host-updates-exporter
+
+A Prometheus exporter that reports, per host, what needs updating. It runs
+next to the stacks on every host (deployed by the ops repos) and serves
+`/metrics` on port 9090. Every series carries a `hostname` label; the
+`# HELP` lines on `/metrics` describe each metric.
+
+- **Pending packages** ([`packages.py`](exporter/packages.py), every 6 hours):
+  which packages apt would upgrade on the host, who patches each — `hosting`
+  (the Ubuntu archive) or `ours` (Docker) — whether it is a security update,
+  and since when it has been pending. Also whether a reboot is required (a
+  newer kernel is installed than the one running), and the OS and running
+  kernel. The exporter itself never installs anything: the ops repos'
+  `update-packages.sh` upgrades our packages on the host, asking this
+  container what is pending ([`pending.py`](exporter/pending.py)).
+- **End of life** ([`software.py`](exporter/software.py), daily): for the
+  images of the running containers (except our own builds), the Ubuntu
+  release and the Docker Engine, the running version, the newest releases,
+  and when the version's release cycle reaches end of life per
+  [endoflife.date](https://endoflife.date), or the latest GitHub release where
+  endoflife.date has no entry.
+
+## Configuration
+
+[`config.py`](exporter/config.py) has the defaults for:
+
+- which apt repositories are ours to upgrade,
+- which images we build ourselves (not reported),
+- which endoflife.date product or GitHub repository each third-party image is
+  looked up in.
+
+Each ops repo adds to them in its own `host-updates-exporter/config.toml`,
+mounted at `/etc/host-updates`; [`config.example.toml`](config.example.toml)
+describes the format. A third-party image no table covers shows up with
+`lookup="untracked"` until it is added to one.
+
+The file is read before every check, so a change applies without a restart. A
+broken file is logged and ignored as a whole, and the last valid one keeps
+applying.
+
+## How it sees the host
+
+Only through read-only bind mounts, listed in
+[`docker-compose.yml`](docker-compose.yml). apt runs with the host's
+configuration and installed packages but keeps its own package lists, in the
+state volume. It needs outbound HTTPS to the host's apt mirrors,
+endoflife.date and api.github.com.
+
+It runs as an unprivileged user with no capabilities on a read-only root
+filesystem, and can write only to the state volume and `/tmp`. As apt runs
+as that user too, it can't read credentials in the host's
+`/etc/apt/auth.conf.d` that only root may read (Ubuntu Pro, for one): those
+sources then fail to refresh and `host_updates_refresh_success` is 0.
+
+It never gets the Docker socket. It reaches Docker through
+`host-updates-docker-proxy`: the official HAProxy image with
+[`docker-proxy/haproxy.cfg`](docker-proxy/haproxy.cfg), on an internal network
+with only the exporter. The proxy allows only listing the containers,
+inspecting an image and reading the Docker version. Inspecting a container is
+refused, because it shows the container's environment, secrets included.
+
+So the exporter reads each container's image from the container list. Once
+an image's tag has been pulled anew, that list shows the image's id instead
+of the tag. The exporter then gets the repository from the image's digest,
+and trusts only a `<NAME>_VERSION` env var for the version.
+
+Every ops repo runs the two services with the settings of
+[`docker-compose.yml`](docker-compose.yml) and a copy of
+[`haproxy.cfg`](docker-proxy/haproxy.cfg); change them here and in the ops
+repos together.
+
+## Development
+
+```bash
+docker compose up --build   # runs against this machine on localhost:9090
+```
+
+To see the metrics in Grafana, run it with the local monitoring stack in
+[`../monitoring`](../monitoring). The override adds an Alloy that scrapes the
+exporter into that stack's Mimir, standing in for a host's alloy-edge:
+
+```bash
+docker compose -f ../monitoring/docker-compose.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.local-monitoring.yml up -d --build
+
+# Import the dashboard (or Dashboards → New → Import in the UI)
+curl -X POST localhost:3000/api/dashboards/db -H 'Content-Type: application/json' \
+    -d "{\"dashboard\": $(cat dashboards/host-updates.json), \"overwrite\": true}"
+```
+
+Then open <http://localhost:3000/d/host-updates>. The first results appear
+within a minute of starting. [`dashboards/host-updates.json`](dashboards/host-updates.json)
+is a copy of the one monitoring-ops provisions; export changes made in the UI
+back to both.
+
+The tests run as part of the image build ([`tests/`](tests/)); a failing test
+fails the build.
+[`build-host-updates-exporter-image.yml`](../.github/workflows/build-host-updates-exporter-image.yml)
+publishes `ghcr.io/sundhedsdatastyrelsen/ehdsi/host-updates-exporter:build-N`
+on changes to this directory, and weekly with the newest Ubuntu packages. A
+host's own updates need no new image; a new Ubuntu release on the hosts
+needs the base image in the [`Dockerfile`](Dockerfile) moved along.

@@ -1,0 +1,15 @@
+// Stands in for a host's alloy-edge: scrapes the exporter straight into the
+// Mimir of the local monitoring stack in ../../monitoring.
+prometheus.scrape "host_updates_exporter" {
+  targets = [
+    {"__address__" = "host-updates-exporter:9090", "deployment_environment_name" = "Local"},
+  ]
+  scrape_interval = "15s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.remote_write "mimir" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+  }
+}

@@ -1,0 +1,219 @@
+import support  # first: points config at a temporary host root
+
+import unittest
+from datetime import date, datetime, timezone
+from unittest import mock
+
+import config
+import software
+from software import Software
+from support import samples
+
+GRAFANA_RELEASES = [
+    {"name": "12.1", "releaseDate": "2025-07-22", "isLts": False, "isEol": False, "eolFrom": "2099-01-01", "latest": {"name": "12.1.10"}},
+    {"name": "12.0", "releaseDate": "2025-05-05", "isLts": False, "isEol": True, "eolFrom": "2026-02-05", "latest": {"name": "12.0.10"}},
+]
+UBUNTU_RELEASES = [
+    {"name": "25.10", "releaseDate": "2025-10-09", "isLts": False, "eolFrom": "2026-07-09", "latest": {"name": "25.10"}},
+    {"name": "24.04", "releaseDate": "2024-04-25", "isLts": True, "eolFrom": "2029-05-31", "latest": {"name": "24.04.3"}},
+    {"name": "22.04", "releaseDate": "2022-04-21", "isLts": True, "eolFrom": "2027-06-01", "latest": {"name": "22.04.5"}},
+]
+CADDY_RELEASES = [
+    {"name": "2", "releaseDate": "2020-05-04", "isEol": False, "eolFrom": None, "latest": {"name": "2.11.4"}},
+    {"name": "1", "releaseDate": "2016-01-01", "isEol": True, "eolFrom": "2020-07-01", "latest": {"name": "1.0.5"}},
+]
+
+
+class ImageRefTest(unittest.TestCase):
+    def test_split(self):
+        self.assertEqual(software.split_image_ref("grafana/grafana:12.0.2"), ("grafana/grafana", "12.0.2"))
+        self.assertEqual(software.split_image_ref("docker.io/library/mysql:9"), ("mysql", "9"))
+        self.assertEqual(software.split_image_ref("hashicorp/vault"), ("hashicorp/vault", "latest"))
+        self.assertEqual(software.split_image_ref("localhost:5000/tool"), ("localhost:5000/tool", "latest"))
+
+
+class RunningVersionTest(unittest.TestCase):
+    def test_tag(self):
+        self.assertEqual(software.running_version("grafana/grafana", "12.0.2", {}), ("12.0.2", "tag"))
+
+    def test_env_var_refines_a_floating_tag(self):
+        image_config = {"Env": ["PATH=/usr/bin", "MYSQL_VERSION=9.7.2-1.el9"]}
+        self.assertEqual(software.running_version("mysql", "9", image_config), ("9.7.2", "env"))
+
+    def test_label_for_latest(self):
+        self.assertEqual(software.running_version("hashicorp/vault", "latest", {"Labels": {"version": "2.1.1"}}),
+                         ("2.1.1", "label"))
+
+    def test_label_contradicting_the_tag_is_ignored(self):
+        image_config = {"Labels": {"org.opencontainers.image.version": "24.04"}}
+        self.assertEqual(software.running_version("grafana/alloy", "v1.12.2", image_config), ("1.12.2", "tag"))
+
+    def test_unknown(self):
+        self.assertEqual(software.running_version("busybox", "latest", {}), ("", "none"))
+
+
+class EndOfLifeTest(unittest.TestCase):
+    def test_most_specific_cycle(self):
+        self.assertEqual(software.find_cycle(GRAFANA_RELEASES, "12.0.2")["name"], "12.0")
+        self.assertEqual(software.find_cycle(CADDY_RELEASES, "2.11.4")["name"], "2")
+        self.assertIsNone(software.find_cycle(GRAFANA_RELEASES, "11.6.1"))
+
+    def test_apply(self):
+        grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
+        software.apply_endoflife(grafana, GRAFANA_RELEASES)
+        self.assertEqual((grafana.cycle, grafana.end_of_life, grafana.latest_in_cycle, grafana.latest),
+                         ("12.0", date(2026, 2, 5), "12.0.10", "12.1.10"))
+
+    def test_lts_cycle_compares_with_the_newest_lts_only(self):
+        lts = Software("os", "ubuntu", "22.04", "host", product="ubuntu")
+        software.apply_endoflife(lts, UBUNTU_RELEASES)
+        self.assertEqual(lts.latest, "24.04.3")
+        interim = Software("os", "ubuntu", "25.10", "host", product="ubuntu")
+        software.apply_endoflife(interim, UBUNTU_RELEASES)
+        self.assertEqual(interim.latest, "25.10")
+
+    def test_no_end_of_life_date_yet(self):
+        caddy = Software("image", "caddy", "2.11.4", "env", product="caddy")
+        software.apply_endoflife(caddy, CADDY_RELEASES)
+        self.assertIsNone(caddy.end_of_life)
+
+
+class UpdateAvailableTest(unittest.TestCase):
+    def update(self, version, latest_in_cycle, latest, kind="image"):
+        return software.update_available(
+            Software(kind, "x", version, "tag", latest_in_cycle=latest_in_cycle, latest=latest))
+
+    def test_patch_when_the_cycle_has_a_newer_release(self):
+        self.assertEqual(self.update("12.0.2", "12.0.10", "13.2.3"), "patch")
+
+    def test_newer_when_only_a_newer_cycle_has(self):
+        self.assertEqual(self.update("1.12.2", "", "1.20.1"), "newer")  # GitHub: no cycles
+        # An OS isn't patched by release: 24.04 is on 24.04.5 already.
+        self.assertEqual(self.update("24.04", "24.04.5", "26.04.1", kind="os"), "newer")
+
+    def test_none_when_running_the_latest(self):
+        self.assertEqual(self.update("2.1.1", "2.1.1", "2.1.1"), "none")
+        self.assertEqual(self.update("26.04", "26.04.1", "26.04.1", kind="os"), "none")
+
+    def test_unknown_for_a_floating_tag(self):
+        self.assertEqual(self.update("3.5", "3.5.12", "3.7.8"), "unknown")
+
+
+class RunningImagesTest(unittest.TestCase):
+    # (name, Image, ImageID) as /containers/json lists them. Image is the
+    # image's id when its tag has since been pulled anew.
+    CONTAINERS = [
+        ("/grafana", "grafana/grafana:12.0.2", "sha256:01"),
+        ("/grafana-2", "grafana/grafana:12.0.2", "sha256:01"),
+        ("/alloy", "grafana/alloy:v1.12.2", "sha256:02"),
+        ("/init", "busybox", "sha256:03"),
+        ("/our-app", "registry.example/our-app:build-334", "sha256:04"),
+        ("/mysql", "sha256:05", "sha256:05"),
+        ("/vault", "sha256:06", "sha256:06"),
+        ("/our-old-app", "sha256:07", "sha256:07"),
+    ]
+    # Inspect output of the images whose tag has moved on.
+    IMAGES = {
+        "sha256:05": {"RepoDigests": ["mysql@sha256:05"],
+                      "Config": {"Env": ["MYSQL_VERSION=9.7.2-1.el9"], "Labels": {"version": "1.0"}}},
+        "sha256:06": {"RepoDigests": ["hashicorp/vault@sha256:06"], "Config": {"Labels": {"version": "2.1.1"}}},
+        "sha256:07": {"RepoDigests": ["registry.example/our-app@sha256:07"], "Config": {}},
+    }
+    TABLES = {
+        "ENDOFLIFE_PRODUCTS": {"grafana/grafana": "grafana"},
+        "GITHUB_REPOSITORIES": {"grafana/alloy": "grafana/alloy", "grafana/grafana": "grafana/grafana"},
+        "OWN_IMAGE_PREFIXES": ("registry.example/",),
+    }
+
+    def docker_get(self, path):
+        if path == "/containers/json":
+            return [{"Names": [name], "Image": ref, "ImageID": image} for name, ref, image in self.CONTAINERS]
+        return self.IMAGES.get(path.split("/")[2], {"Config": {}})
+
+    def running_images(self):
+        with mock.patch.object(software, "docker_get", self.docker_get), mock.patch.multiple(config, **self.TABLES):
+            return {image.name: image for image in software.running_images()}
+
+    def test_groups_containers_and_skips_own_images(self):
+        images = self.running_images()
+        self.assertEqual(sorted(images), ["busybox", "grafana/alloy", "grafana/grafana", "hashicorp/vault", "mysql"])
+        self.assertEqual(images["grafana/grafana"].containers, ["grafana", "grafana-2"])
+
+    def test_moved_tag_trusts_only_the_env_var(self):
+        images = self.running_images()
+        self.assertEqual((images["mysql"].version, images["mysql"].version_source), ("9.7.2", "env"))
+        # Without the tag, nothing to check the label against.
+        self.assertEqual((images["hashicorp/vault"].version, images["hashicorp/vault"].version_source), ("", "none"))
+
+    def test_where_each_image_is_looked_up(self):
+        images = self.running_images()
+        # In both tables: endoflife.date, which has end-of-life dates.
+        self.assertEqual((images["grafana/grafana"].product, images["grafana/grafana"].github), ("grafana", ""))
+        self.assertEqual((images["grafana/alloy"].product, images["grafana/alloy"].github), ("", "grafana/alloy"))
+        self.assertEqual(images["busybox"].lookup, "untracked")
+
+
+class LookUpTest(unittest.TestCase):
+    def test_github_release(self):
+        alloy = Software("image", "grafana/alloy", "1.12.2", "tag", github="grafana/alloy")
+        with mock.patch.object(software, "fetch_json", return_value={"tag_name": "v1.20.1"}):
+            software.look_up(alloy)
+        self.assertEqual((alloy.latest, alloy.lookup), ("1.20.1", "found"))
+
+    def test_endoflife_release(self):
+        grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
+        with mock.patch.object(software, "fetch_json", return_value={"result": {"releases": GRAFANA_RELEASES}}):
+            software.look_up(grafana)
+        self.assertEqual((grafana.cycle, grafana.latest, grafana.lookup), ("12.0", "12.1.10", "found"))
+
+    def test_endoflife_format_changed(self):
+        # eolFrom renamed to eolDate
+        renamed_field = [{key.replace("eolFrom", "eolDate"): value for key, value in release.items()}
+                         for release in GRAFANA_RELEASES]
+        for response in ({"releases": GRAFANA_RELEASES}, {"result": {"releases": renamed_field}}):
+            with self.subTest(response=response):
+                grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
+                with mock.patch.object(software, "fetch_json", return_value=response), \
+                        self.assertLogs(software.log, "WARNING"):
+                    software.look_up(grafana)
+                self.assertEqual(grafana.lookup, "unexpected_response")
+
+    def test_unreachable(self):
+        grafana = Software("image", "grafana/grafana", "12.0.2", "tag", product="grafana")
+        with mock.patch.object(software, "fetch_json", return_value=None):
+            software.look_up(grafana)
+        self.assertEqual(grafana.lookup, "failed")
+
+    def test_falls_back_to_the_last_response(self):
+        with mock.patch("urllib.request.urlopen", side_effect=OSError("offline")):
+            self.assertIsNone(software.fetch_json("https://example.invalid/x", "test.json"))
+            software.RESPONSE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            (software.RESPONSE_CACHE_DIR / "test.json").write_text('{"cached": true}')
+            self.assertEqual(software.fetch_json("https://example.invalid/x", "test.json"), {"cached": True})
+
+    def test_response_that_isnt_json_isnt_cached(self):
+        # e.g. a proxy's error page
+        cached = software.RESPONSE_CACHE_DIR / "not-json.json"
+        with mock.patch("urllib.request.urlopen") as urlopen:
+            urlopen.return_value.__enter__.return_value.read.return_value = b"<html>Proxy error</html>"
+            self.assertIsNone(software.fetch_json("https://example.invalid/x", "not-json.json"))
+            software.RESPONSE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            cached.write_text('{"cached": true}')
+            self.assertEqual(software.fetch_json("https://example.invalid/x", "not-json.json"), {"cached": True})
+        self.assertEqual(cached.read_text(), '{"cached": true}')
+
+
+class MetricsTest(unittest.TestCase):
+    def test_end_of_life_once_per_version(self):
+        grafana = Software("image", "grafana/grafana", "12.0.2", "tag", image="grafana/grafana:12.0.2",
+                           product="grafana", cycle="12.0", end_of_life=date(2026, 2, 5))
+        same_under_another_ref = Software(**{**grafana.__dict__, "image": "docker.io/grafana/grafana:12.0.2"})
+        metrics = software.metrics("testhost", [grafana, same_under_another_ref], now=0)
+        self.assertEqual(len(samples(metrics, "host_updates_software_info")), 2)
+        self.assertEqual(samples(metrics, "host_updates_software_eol_timestamp_seconds"), [
+            ({"hostname": "testhost", "kind": "image", "name": "grafana/grafana", "version": "12.0.2", "cycle": "12.0"},
+             datetime(2026, 2, 5, tzinfo=timezone.utc).timestamp()),
+        ])
+
+if __name__ == "__main__":
+    unittest.main()
