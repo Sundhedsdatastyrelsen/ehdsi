@@ -200,9 +200,9 @@ class FindPatientIntegrationTest {
         assertContains(body, "Testersen")
         assertContains(body, "010101-1234 (1.2.208.176.1.2)")
         assertContains(body, "hx-swap-oob=\"innerMorph\"")
-        val opaqueId = Regex("href=\"/prescriptions\\?opaque-id=([^\"]+)\"").find(body)?.groupValues?.get(1)
-        assertThat(opaqueId).isNotNull()
-        assertThat(runCatching { UUID.fromString(opaqueId) }.isSuccess).isTrue()
+        val patientRef = Regex("href=\"/prescriptions\\?patient-ref=([^\"]+)\"").find(body)?.groupValues?.get(1)
+        assertThat(patientRef).isNotNull()
+        assertThat(runCatching { UUID.fromString(patientRef) }.isSuccess).isTrue()
         assertFalse(body.contains("text-red"))
     }
 

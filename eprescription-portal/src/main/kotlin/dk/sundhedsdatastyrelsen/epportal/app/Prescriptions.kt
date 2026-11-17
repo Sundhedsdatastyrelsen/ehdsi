@@ -13,7 +13,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
-import java.util.UUID
 
 object Prescriptions {
     /**
@@ -55,12 +54,11 @@ object Prescriptions {
             }
 
             try {
-                // Get the patient ID query parameter
-                val opaquePatientId =
-                    ctx.queryParam("opaque-id")?.let { runCatching { UUID.fromString(it) }.getOrNull() }
-                        ?: throw PublicException("Invalid opaque patient id.")
+                // Get the patient ref query parameter
+                val patientRef = ctx.queryParam("patient-ref")?.ifEmpty { null }
+                    ?: throw PublicException("Invalid patient reference.")
 
-                val patientDemographics = OpaquePatientIds.resolve(ctx, principal, opaquePatientId)
+                val patientDemographics = PatientRefs.resolve(ctx, principal, patientRef)
                     ?: throw PublicException("Could not locate patient session, please search again.")
 
                 // TODO what if there are more ids?
@@ -69,7 +67,7 @@ object Prescriptions {
                 val prescriptions = prescriptionList.listDocuments(patientDemographics.countryCode, patientId)
                 val dataModel = mapOf(
                     "patientId" to patientId.extension,
-                    "opaqueId" to opaquePatientId.toString(),
+                    "patientRef" to patientRef,
                     "prescriptions" to prescriptions.map {
                         mapOf(
                             "effectiveTimeUtc" to it.l3.effectiveTime?.atZone(ZoneId.of("UTC"))
@@ -125,11 +123,11 @@ object Prescriptions {
                 return
             }
 
-            val opaqueId = ctx.queryParam("opaque-id")
+            val patientRef = ctx.queryParam("patient-ref")
             val homeCommunityId = ctx.queryParam("home-community-id")
             val repositoryUniqueId = ctx.queryParam("repository-unique-id")
 
-            if (opaqueId == null || homeCommunityId == null || repositoryUniqueId == null) {
+            if (patientRef == null || homeCommunityId == null || repositoryUniqueId == null) {
                 ctx.render("error-page.ftlh", mapOf("error" to "Der er sket en fejl. Prøv igen."))
                 return
             }
@@ -138,7 +136,7 @@ object Prescriptions {
                 "show-prescription.ftlh",
                 mapOf(
                     "documentId" to ctx.pathParam("documentId"),
-                    "opaqueId" to opaqueId,
+                    "patientRef" to patientRef,
                     "homeCommunityId" to homeCommunityId,
                     "repositoryUniqueId" to repositoryUniqueId,
                 ),
@@ -148,18 +146,17 @@ object Prescriptions {
         /** The prescription rendered by the CDA display tool, a complete HTML document for the iframe. */
         fun display(ctx: Context) {
             val principal = auth.require(ctx)
-            val opaqueId = ctx.queryParam("opaque-id")
+            val patientRefParam = ctx.queryParam("patient-ref")
             val homeCommunityId = ctx.queryParam("home-community-id")
             val repositoryUniqueId = ctx.queryParam("repository-unique-id")
 
-            if (opaqueId == null || homeCommunityId == null || repositoryUniqueId == null) {
+            if (patientRefParam == null || homeCommunityId == null || repositoryUniqueId == null) {
                 throw NotFoundResponse("Prescription not found")
             }
 
-            val opaquePatientId = opaqueId.let { runCatching { UUID.fromString(it) }.getOrNull() }
-                ?: throw NotFoundResponse("Invalid opaque patient id.")
+            val patientRef = patientRefParam.ifEmpty { null } ?: throw NotFoundResponse("Invalid patient reference.")
 
-            val patientDemographics = OpaquePatientIds.resolve(ctx, principal, opaquePatientId)
+            val patientDemographics = PatientRefs.resolve(ctx, principal, patientRef)
                 ?: throw NotFoundResponse("Could not locate patient session, please search again.")
 
             val cda = documents.retrieveDocument(
