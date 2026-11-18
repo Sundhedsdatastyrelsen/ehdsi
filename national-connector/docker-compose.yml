@@ -23,6 +23,11 @@ services:
     volumes:
       - ./data:/app/data
 
+  # On developer machines, if you hit a failing call to NSP (the error message is "Sikkerhedsbillet ikke gyldig"),
+  # try restarting the national connector (`docker compose restart national-connector`).
+  # The problem is that the token cache counts elapsed time, and that pauses when your machine sleeps, so the token eviction time is off.
+  # Live environments don't susspend, so this won't happen in production.
+  # See https://github.com/ben-manes/caffeine/issues/2032 for more details.
   national-connector:
     image: ghcr.io/sundhedsdatastyrelsen/ehdsi/national-connector:latest
     build: .
