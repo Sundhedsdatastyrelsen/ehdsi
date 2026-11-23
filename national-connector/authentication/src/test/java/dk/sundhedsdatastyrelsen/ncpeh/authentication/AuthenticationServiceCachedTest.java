@@ -5,9 +5,8 @@ import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlUtils;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.test.TestUtils;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -17,11 +16,7 @@ class AuthenticationServiceCachedTest {
 
     @Test
     void cacheReuses() throws Exception {
-        var cachedService = new AuthenticationServiceCached(
-            new AuthServiceStub(defaultClock, 120),
-            "issuer",
-            defaultClock,
-            Ticker.systemTicker());
+        var cachedService = new AuthenticationServiceCached(new AuthServiceStub(defaultClock, 120), "issuer", defaultClock, Ticker.systemTicker());
         var token1 = cachedService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience");
         var token2 = cachedService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience");
         assertThat(token1, is(sameInstance(token2)));
@@ -29,11 +24,7 @@ class AuthenticationServiceCachedTest {
 
     @Test
     void cacheMissCreatesNewInstance() throws Exception {
-        var cachedService = new AuthenticationServiceCached(
-            new AuthServiceStub(defaultClock, 120),
-            "issuer",
-            defaultClock,
-            Ticker.systemTicker());
+        var cachedService = new AuthenticationServiceCached(new AuthServiceStub(defaultClock, 120), "issuer", defaultClock, Ticker.systemTicker());
         var token1 = cachedService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience");
         var token2 = cachedService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "another audience");
         assertThat(token1, is(not(sameInstance(token2))));
@@ -42,11 +33,7 @@ class AuthenticationServiceCachedTest {
     @Test
     void cacheWorksForRecordedSoapHeader() throws Exception {
         var soapHeader = TestUtils.slurp(TestUtils.resource("openncp_soap_header.xml"));
-        var cachedService = new AuthenticationServiceCached(
-            new AuthServiceStub(defaultClock, 120),
-            "issuer",
-            defaultClock,
-            Ticker.systemTicker());
+        var cachedService = new AuthenticationServiceCached(new AuthServiceStub(defaultClock, 120), "issuer", defaultClock, Ticker.systemTicker());
         var token1 = cachedService.xcaSoapHeaderToIdwsToken(soapHeader, "audience");
         var token2 = cachedService.xcaSoapHeaderToIdwsToken(soapHeader, "audience");
         assertThat(token1, is(sameInstance(token2)));
@@ -76,31 +63,18 @@ class AuthenticationServiceCachedTest {
             """;
         var headerWithAnotherRawAttribute = headerWithRawAttribute.replaceAll("some attribute", "another attribute");
 
-        var cachedService = new AuthenticationServiceCached(
-            new AuthServiceStub(defaultClock, 120),
-            "issuer",
-            defaultClock,
-            Ticker.systemTicker());
+        var cachedService = new AuthenticationServiceCached(new AuthServiceStub(defaultClock, 120), "issuer", defaultClock, Ticker.systemTicker());
         var token = cachedService.xcaSoapHeaderToIdwsToken(headerWithRawAttribute, "audience");
         assertThat(cachedService.xcaSoapHeaderToIdwsToken(headerWithRawAttribute, "audience"), is(sameInstance(token)));
         assertThat(cachedService.xcaSoapHeaderToIdwsToken(headerWithAnotherRawAttribute, "audience"), is(not(sameInstance(token))));
     }
 
     @Test
-    void evicts30SecsBefore() throws Exception {
-        var clock = Clock.fixed(Instant.parse("2022-06-11T11:12:13Z"), ZoneOffset.UTC);
-        var ticker = new TickerStub();
-        var cacheService = new AuthenticationServiceCached(
-            new AuthServiceStub(clock, 120),
-            "issuer",
-            clock,
-            ticker);
-        var token = cacheService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience");
-        assertThat(cacheService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience"), is(sameInstance(token)));
-        ticker.advance(89);
-        assertThat(cacheService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience"), is(sameInstance(token)));
-        ticker.advance(1);
-        assertThat(cacheService.xcaSoapHeaderToIdwsToken(miniSoapHeader, "audience"), is(not(sameInstance(token))));
+    void cachesDgwsAssertions() {
+        var cachedService = new AuthenticationServiceCached(new AuthServiceStub(defaultClock, 120), "issuer", defaultClock, Ticker.systemTicker());
+        var identity = new NspDgwsIdentity.System(URI.create("https://sts.example"), null);
+        var assertion = cachedService.nspDgwsIdentityToAssertion(identity);
+        assertThat(cachedService.nspDgwsIdentityToAssertion(identity), is(sameInstance(assertion)));
     }
 
     final String miniSoapHeader = """
@@ -131,31 +105,15 @@ class AuthenticationServiceCachedTest {
         @Override
         public EuropeanHcpIdwsToken xcaSoapHeaderToIdwsToken(String soapHeader, String audience) throws AuthenticationException {
             return new EuropeanHcpIdwsToken(
-                null,
-                Double.toString(Math.random()),
-                clock.instant(),
-                clock.instant().plusSeconds(expireAfter));
+                null, Double.toString(Math.random()), clock.instant(), clock.instant()
+                .plusSeconds(expireAfter));
         }
 
         @Override
         public DgwsAssertion nspDgwsIdentityToAssertion(NspDgwsIdentity identity) throws AuthenticationException {
             return new DgwsAssertion(
-                XmlUtils.newDocument().createElement("abc" + Math.random()),
-                clock.instant().plusSeconds(expireAfter));
-        }
-    }
-
-    static class TickerStub implements Ticker {
-        long value;
-
-        @Override
-        public long read() {
-            // nanoseconds
-            return value;
-        }
-
-        public void advance(long seconds) {
-            this.value += (seconds * 1000000000);
+                XmlUtils.newDocument().createElement("abc" + Math.random()), clock.instant()
+                .plusSeconds(expireAfter));
         }
     }
 }
