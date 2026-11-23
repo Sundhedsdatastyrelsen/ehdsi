@@ -134,16 +134,14 @@ public class PatientSummaryService {
         try {
            fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, fmkToken);
         } catch (JAXBException e) {
-            // log here
-            //throw new PublicException(500, "Could not retrieve prescriptions.", e);
+            log.error("Failed to retrieve medicine card from FMK", e);
         }
 
         GetVaccinationCardResponseType ddvCard = null;
         try {
            ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, ddvToken);
         } catch (JAXBException e) {
-            // Log here instead
-            //throw new PublicException(500, "Could not retrieve prescriptions.", e);
+            log.error("Failed to retrieve vaccination card from DDV", e);
         }
 
         return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);

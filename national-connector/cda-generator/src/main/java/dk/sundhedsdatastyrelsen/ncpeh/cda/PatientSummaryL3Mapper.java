@@ -61,13 +61,13 @@ public class PatientSummaryL3Mapper {
         Either<RetrievalFailure, MedicationSummary> medicationResult =
             input.fmkMedicineCardResponse() == null
                 ? Either.ofLeft(RetrievalFailure.UNAVAILABLE)
-                : Either.ofRight(medicationSummary(medications(input.fmkMedicineCardResponse()))
+                : Either.ofRight(medicationSummary(input.fmkMedicineCardResponse())
             );
 
         Either<RetrievalFailure, Immunizations> immunizationResult =
             input.ddvVaccinationCardResponse() == null
                 ? Either.ofLeft(RetrievalFailure.UNAVAILABLE)
-                : Either.ofRight(immunizations(vaccinations(input.ddvVaccinationCardResponse()))
+                : Either.ofRight(immunizations(input.ddvVaccinationCardResponse())
             );
 
 
@@ -93,10 +93,30 @@ public class PatientSummaryL3Mapper {
             .toList();
     }
 
-    private static List<VaccinationType> vaccinations(GetVaccinationCardResponseType response) {
+    public static String makeTitle(String documentId, Patient patient) {
+        var patientName = patient.getName();
+        return String.format(
+            "Patient Summary %s - %s", patientName.getFullName(), documentId);
+    }
+
+    private static MedicationSummary medicationSummary(GetMedicineCardResponseType response) {
+        var medications = response.getMedicineCard().stream()
+            .filter(Objects::nonNull)
+            .flatMap(card -> card.getDrugMedication().stream())
+            .filter(Objects::nonNull)
+            .toList();
+
+        return MedicationSummary.builder()
+            .items(medications.stream()
+                .map(PatientSummaryL3Mapper::medicationItem)
+                .toList())
+            .build();
+    }
+
+    private static Immunizations immunizations(GetVaccinationCardResponseType response) {
         // Sort by vaccination identifier, then by vaccination plan identifier,
         // and finally by vaccination plan item index. For easier reading in the CDA
-        return response.getVaccination().stream()
+        var vaccinations = response.getVaccination().stream()
             .filter(Objects::nonNull)
             .filter(v -> v.isNegativeConsentIndicator() == null || !v.isNegativeConsentIndicator())
             .sorted(
@@ -111,31 +131,6 @@ public class PatientSummaryL3Mapper {
                             .orElse(null), Comparator.nullsLast(Long::compareTo))
             )
             .toList();
-    }
-
-    public static String makeTitle(String documentId, Patient patient) {
-        var patientName = patient.getName();
-        return String.format(
-            "Patient Summary %s - %s", patientName.getFullName(), documentId);
-    }
-
-    private static MedicationSummary medicationSummary(List<DrugMedicationType> medications) {
-        if (medications == null)
-        {
-            return null;
-        }
-
-        return MedicationSummary.builder()
-            .items(medications.stream()
-                .map(PatientSummaryL3Mapper::medicationItem)
-                .toList())
-            .build();
-    }
-
-    private static Immunizations immunizations(List<VaccinationType> vaccinations) {
-        if (vaccinations == null) {
-            return null;
-        }
 
         return Immunizations.builder()
             .items(vaccinations.stream()
