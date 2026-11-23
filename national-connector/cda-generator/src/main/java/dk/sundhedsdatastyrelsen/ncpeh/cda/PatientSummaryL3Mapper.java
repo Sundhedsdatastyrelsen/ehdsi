@@ -84,15 +84,7 @@ public class PatientSummaryL3Mapper {
 
         return patientSummaryBuilder.build();
     }
-
-    private static List<DrugMedicationType> medications(GetMedicineCardResponseType response) {
-        return response.getMedicineCard().stream()
-            .filter(Objects::nonNull)
-            .flatMap(card -> card.getDrugMedication().stream())
-            .filter(Objects::nonNull)
-            .toList();
-    }
-
+    
     public static String makeTitle(String documentId, Patient patient) {
         var patientName = patient.getName();
         return String.format(
