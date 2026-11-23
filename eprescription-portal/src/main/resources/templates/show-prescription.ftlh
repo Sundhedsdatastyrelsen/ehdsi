@@ -5,16 +5,27 @@
       <a href="/prescriptions?patient-ref=${patientRef?url}" class="underline">Tilbage til recepter</a>
     </#if>
 
-    <#-- The prescription is rendered by the CDA display tool, which is sandboxed: without allow-scripts nothing in the
-         document can run, and allow-same-origin lets the script below read its height and listen to its events.
-         box-content keeps the border out of the height the script sets. -->
-    <iframe
-      id="prescription"
-      src="/prescriptions/${documentId?url}/display?patient-ref=${patientRef?url}&home-community-id=${homeCommunityId?url}&repository-unique-id=${repositoryUniqueId?url}"
-      title="Recept"
-      sandbox="allow-same-origin"
-      class="mt-4 w-full border box-content"
-    ></iframe>
+    <div class="relative mt-4">
+      <#-- The prescription is rendered by the CDA display tool, which is sandboxed: without allow-scripts nothing in
+           the document can run, and allow-same-origin lets the script below read its height and listen to its events.
+           box-content keeps the border out of the height the script sets. -->
+      <iframe
+        id="prescription"
+        src="/prescription/${documentId?url}/display?patient-ref=${patientRef?url}&home-community-id=${homeCommunityId?url}&repository-unique-id=${repositoryUniqueId?url}"
+        title="Recept"
+        sandbox="allow-same-origin"
+        class="block w-full border box-content"
+      ></iframe>
+      <#-- Shown on top of the empty iframe, after a delay so fast loads don't flash it, until the iframe has loaded
+           (removed by the script below) -->
+      <div
+        id="prescription-spinner"
+        class="absolute inset-0 flex items-center justify-center animate-[delayed-show_0s_200ms_both]"
+        aria-hidden="true"
+      >
+        <span class="size-6 animate-spin rounded-full border-2 border-blue-300 border-t-blue-500"></span>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -23,6 +34,7 @@
     // when the window is resized. A ResizeObserver doesn't work here: it doesn't report changes in the iframe's document.
     const frame = document.getElementById("prescription");
     frame.addEventListener("load", () => {
+      document.getElementById("prescription-spinner")?.remove();
       const doc = frame.contentDocument;
       // Without JavaScript the iframe keeps its own scrollbar, so the prescription can still be read
       doc.documentElement.style.overflow = "hidden";

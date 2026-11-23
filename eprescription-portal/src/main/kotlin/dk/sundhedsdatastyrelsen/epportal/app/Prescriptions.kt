@@ -30,9 +30,14 @@ object Prescriptions {
         cdaDisplay: CdaDisplayTransformer,
     ) {
         val handlers = Handlers(auth, prescriptionList, documents, cdaDisplay)
+        // Responses contain patient data and should not be cached
+        routes.before("/prescriptions*") { ctx -> ctx.header("Cache-Control", "no-store") }
         routes.get("/prescriptions", handlers::list)
-        routes.get("/prescriptions/{documentId}", handlers::show)
-        routes.get("/prescriptions/{documentId}/display", handlers::display)
+        routes.get("/prescriptions/list", handlers::listTable)
+        // Single-prescription routes also contain patient data and should not be cached.
+        routes.before("/prescription*") { ctx -> ctx.header("Cache-Control", "no-store") }
+        routes.get("/prescription/{documentId}", handlers::show)
+        routes.get("/prescription/{documentId}/display", handlers::display)
     }
 
     private class Handlers(
@@ -46,6 +51,7 @@ object Prescriptions {
         private val prettyDateFormatter: DateTimeFormatter =
             DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.of("da", "DK"))
 
+        /** Full page with the patient's id, loading the list itself with [listTable]. */
         fun list(ctx: Context) {
             val principal = auth.current(ctx)
             if (principal == null) {
@@ -54,7 +60,30 @@ object Prescriptions {
             }
 
             try {
-                // Get the patient ref query parameter
+                val patientRef = ctx.queryParam("patient-ref")?.ifEmpty { null }
+                    ?: throw PublicException("Invalid patient reference.")
+
+                val patientDemographics = PatientRefs.resolve(ctx, principal, patientRef)
+                    ?: throw PublicException("Could not locate patient session, please search again.")
+
+                // TODO what if there are more ids?
+                val patientId = patientDemographics.patientIds.first()
+
+                ctx.render(
+                    "prescriptions/index.ftlh",
+                    mapOf("patientId" to patientId.extension, "patientRef" to patientRef),
+                )
+            } catch (e: Exception) {
+                logListError(e)
+                ctx.render("error-page.ftlh", mapOf("error" to if (e is PublicException) e.message else null))
+            }
+        }
+
+        /** htmx fragment: the table of the patient's prescriptions, see prescriptions/list.ftlh. */
+        fun listTable(ctx: Context) {
+            val principal = auth.require(ctx)
+
+            try {
                 val patientRef = ctx.queryParam("patient-ref")?.ifEmpty { null }
                     ?: throw PublicException("Invalid patient reference.")
 
@@ -66,7 +95,6 @@ object Prescriptions {
 
                 val prescriptions = prescriptionList.listDocuments(patientDemographics.countryCode, patientId)
                 val dataModel = mapOf(
-                    "patientId" to patientId.extension,
                     "patientRef" to patientRef,
                     "prescriptions" to prescriptions.map {
                         mapOf(
@@ -95,16 +123,19 @@ object Prescriptions {
                     },
                 )
 
-                ctx.render("list-prescriptions.ftlh", dataModel)
+                ctx.render("prescriptions/list.ftlh", dataModel)
             } catch (e: Exception) {
-                if (e is PublicException) {
-                    log.warn("Public error while listing prescriptions", e)
-                } else {
-                    log.error("Unexpected error while listing prescriptions", e)
-                }
-                ctx.render("error-page.ftlh", mapOf("error" to if (e is PublicException) e.message else null))
+                logListError(e)
+                ctx.render("prescriptions/list.ftlh", mapOf("error" to if (e is PublicException) e.message else null))
             }
+        }
 
+        private fun logListError(e: Exception) {
+            if (e is PublicException) {
+                log.warn("Public error while listing prescriptions", e)
+            } else {
+                log.error("Unexpected error while listing prescriptions", e)
+            }
         }
 
         /** Danish label for an HL7 ActSubstanceAdminSubstitutionCode */

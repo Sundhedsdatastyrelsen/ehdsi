@@ -188,6 +188,9 @@
   .relative {
     position: relative;
   }
+  .inset-0 {
+    inset: calc(var(--spacing) * 0);
+  }
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
@@ -208,6 +211,9 @@
   }
   .box-content {
     box-sizing: content-box;
+  }
+  .block {
+    display: block;
   }
   .flex {
     display: flex;
@@ -261,6 +267,9 @@
   .border-collapse {
     border-collapse: collapse;
   }
+  .animate-\[delayed-show_0s_200ms_both\] {
+    animation: delayed-show 0s 200ms both;
+  }
   .animate-spin {
     animation: var(--animate-spin);
   }
@@ -269,6 +278,9 @@
   }
   .flex-col {
     flex-direction: column;
+  }
+  .items-center {
+    align-items: center;
   }
   .justify-center {
     justify-content: center;
