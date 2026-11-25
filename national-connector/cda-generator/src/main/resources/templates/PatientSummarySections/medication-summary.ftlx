@@ -3,7 +3,7 @@
 
 <#-- Medication Summary: https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.2.3-2020-09-07T095657.html -->
 <#macro render medicationResult>
-<#-- This is indented to make the xml body indention correct -->
+<#-- Indentation aligns the generated XML with the surrounding document structure. -->
                 <#local retrievalFailed = medicationResult.isLeft()>
                 <#if !retrievalFailed>
                 <#local medicationSummary = medicationResult.getRight()>
