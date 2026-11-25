@@ -76,12 +76,12 @@ class ShowPrescriptionIntegrationTest {
     private fun makeShowUrl(
         prescriptionId: String, patientRef: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
     ): String =
-        "/prescriptions/$prescriptionId?patient-ref=$patientRef&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
+        "/prescription/$prescriptionId?patient-ref=$patientRef&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
 
     private fun makeDisplayUrl(
         prescriptionId: String, patientRef: String, homeCommunityId: String = "123", repositoryUniqueId: String = "321"
     ): String =
-        "/prescriptions/$prescriptionId/display?patient-ref=$patientRef&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
+        "/prescription/$prescriptionId/display?patient-ref=$patientRef&home-community-id=$homeCommunityId&repository-unique-id=$repositoryUniqueId"
 
     @Test
     fun `the prescription page frames the sandboxed display`() {
@@ -126,7 +126,7 @@ class ShowPrescriptionIntegrationTest {
 
     @Test
     fun `without a patient reference the page shows an error`() {
-        val resp = get("/prescriptions/513671704568702L3", loginCookieHeader())
+        val resp = get("/prescription/513671704568702L3", loginCookieHeader())
 
         assertEquals(200, resp.code)
         val body = resp.body.string()
@@ -135,7 +135,7 @@ class ShowPrescriptionIntegrationTest {
 
     @Test
     fun `the pages require login`() {
-        assertEquals(303, get("/prescriptions/513671704568702L3").code)
-        assertEquals(401, get("/prescriptions/513671704568702L3/display").code)
+        assertEquals(303, get("/prescription/513671704568702L3").code)
+        assertEquals(401, get("/prescription/513671704568702L3/display").code)
     }
 }

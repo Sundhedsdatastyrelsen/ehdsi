@@ -79,9 +79,9 @@ class PrescriptionsIntegrationTest {
         assertEquals("/?error=not-authorized", resp.headers["Location"])
     }
 
-    private fun getPrescriptions(cookieHeader: String, query: String): Response {
+    private fun getPrescriptions(cookieHeader: String, query: String, path: String = "/prescriptions"): Response {
         val req = Request.Builder()
-            .url("$baseUrl/prescriptions$query")
+            .url("$baseUrl$path$query")
             .get()
             .header("Cookie", cookieHeader)
             .build()
@@ -89,11 +89,21 @@ class PrescriptionsIntegrationTest {
     }
 
     @Test
-    fun `prescriptions page renders the example prescription list when logged in`() {
+    fun `prescriptions page loads the prescription list when logged in`() {
         val cookieHeader = loginCookieHeader()
         val patientRef = searchForPatientRef(cookieHeader)
 
         val resp = getPrescriptions(cookieHeader, "?patient-ref=$patientRef")
+        assertEquals(200, resp.code)
+        assertContains(resp.body.string(), "/prescriptions/list?patient-ref=$patientRef")
+    }
+
+    @Test
+    fun `prescription list renders the example prescriptions when logged in`() {
+        val cookieHeader = loginCookieHeader()
+        val patientRef = searchForPatientRef(cookieHeader)
+
+        val resp = getPrescriptions(cookieHeader, "?patient-ref=$patientRef", "/prescriptions/list")
         assertEquals(200, resp.code)
         val body = resp.body.string()
         assertContains(body, "Diazepam")
