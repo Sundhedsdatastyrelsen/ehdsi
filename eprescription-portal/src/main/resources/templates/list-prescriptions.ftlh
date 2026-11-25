@@ -4,7 +4,7 @@
     <p class="font-bold">Patient-id: ${patientId}</p>
 
 <#if !prescriptions?has_content>
-    <p class="mt-4">Patienten har ingen recepter.</p>
+    <p class="mt-4">Patienten har ingen tilgængelige recepter.</p>
 <#else>
     <div class="overflow-x-auto">
       <div class="mt-4 table text-left border-collapse w-max min-w-full">
