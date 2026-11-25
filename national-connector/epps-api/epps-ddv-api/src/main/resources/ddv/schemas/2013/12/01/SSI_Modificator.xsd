@@ -85,33 +85,31 @@
     </complexType>
 
     <complexType name="AuthorisedModificatorType">
-        <!--         NCP: We simplify this choice to enable more useful code generation at the cost of precision -->
-        <!--                <sequence>-->
-        <!--                    <choice>-->
-        <!--                        <sequence>-->
-        <!--                            <element name="AuthorisedHealthcareProfessional" type="vaccinationcard:AuthorisedHealthcareProfessionalType"/>-->
-        <!--                            <element name="Organisation" type="vaccinationcard:OrganisationType"/>-->
-        <!--                        </sequence>-->
-        <!--                        <sequence>-->
-        <!--                            <element name="Other" type="vaccinationcard:ModificatorPersonType"/>-->
-        <!--                            <element name="Organisation" type="vaccinationcard:OrganisationType" minOccurs="0"/>-->
+        <!-- NCP: We simplify this choice to enable more useful code generation at the cost of precision -->
+        <!-- <sequence>-->
+        <!--     <choice>-->
+        <!--        <sequence>-->
+        <!--             <element name="AuthorisedHealthcareProfessional" type="vaccinationcard:AuthorisedHealthcareProfessionalType"/>-->
+        <!--             <element name="Organisation" type="vaccinationcard:OrganisationType"/>-->
+        <!--        </sequence>-->
+        <!--        <sequence>-->
+        <!--            <element name="Other" type="vaccinationcard:ModificatorPersonType"/>-->
+        <!--            <element name="Organisation" type="vaccinationcard:OrganisationType" minOccurs="0"/>-->
         <!--        </sequence>-->
         <!--     </choice>-->
         <!-- </sequence>-->
         <!-- Original: either AuthorisedHealthcareProfessional+Organisation or Other+optional Organisation. -->
         <!-- Replacement: -->
         <sequence>
-            <sequence>
-                <element name="AuthorisedHealthcareProfessional"
-                         type="vaccinationcard:AuthorisedHealthcareProfessionalType"
-                         minOccurs="0"/>
-                <element name="Other"
-                         type="vaccinationcard:ModificatorPersonType"
-                         minOccurs="0"/>
-                <element name="Organisation"
-                         type="vaccinationcard:OrganisationType"
-                         minOccurs="0"/>
-            </sequence>
+            <element name="AuthorisedHealthcareProfessional"
+                     type="vaccinationcard:AuthorisedHealthcareProfessionalType"
+                     minOccurs="0"/>
+            <element name="Other"
+                     type="vaccinationcard:ModificatorPersonType"
+                     minOccurs="0"/>
+            <element name="Organisation"
+                     type="vaccinationcard:OrganisationType"
+                     minOccurs="0"/>
         </sequence>
         <!-- End replacement -->
     </complexType>

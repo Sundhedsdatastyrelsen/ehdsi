@@ -1,6 +1,7 @@
 package dk.sundhedsdatastyrelsen.ncpeh.service;
 
 import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardRequestType;
+import dk.dkma.medicinecard.xml_schema._2015._06._01.e2.GetMedicineCardResponseType;
 import dk.sundhedsdatastyrelsen.ncpeh.authentication.EuropeanHcpIdwsToken;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.PublicException;
 import dk.sundhedsdatastyrelsen.ncpeh.base.utils.XmlException;
@@ -21,9 +22,12 @@ import dk.sundhedsdatastyrelsen.ncpeh.ncp.api.EpsosDocumentMetadataDto;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.FskMapper;
 import dk.sundhedsdatastyrelsen.ncpeh.service.mapping.PatientIdMapper;
 import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardRequestType;
+import dk.vaccinationsregister.schemas._2013._12._01.GetVaccinationCardResponseType;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.xml.bind.JAXBException;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -128,12 +132,20 @@ public class PatientSummaryService {
             .withPersonCivilRegistrationIdentifier(cpr)
             .build();
 
+        GetMedicineCardResponseType fmkCard = null;
         try {
-            var fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, fmkToken);
-            var ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, ddvToken);
-            return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
+           fmkCard = fmkServiceIdws.getMedicineCard(medicationCardRequest, fmkToken);
         } catch (JAXBException e) {
-            throw new PublicException(500, "Could not retrieve prescriptions.", e);
+            log.error("Failed to retrieve medicine card from FMK", e);
         }
+
+        GetVaccinationCardResponseType ddvCard = null;
+        try {
+           ddvCard = ddvClientIdws.getVaccinationCard(vaccineCard, ddvToken);
+        } catch (JAXBException e) {
+            log.error("Failed to retrieve vaccination card from DDV", e);
+        }
+
+        return new PatientSummaryInput(docId, FskMapper.preferredHealthProfessional(informationCard), FskMapper.patient((informationCard)), fmkCard, ddvCard);
     }
 }

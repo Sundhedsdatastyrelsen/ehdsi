@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public class ImmunizationMapper {
 
+    private ImmunizationMapper() {}
+
     public static CdaId immunizationId(VaccinationType vaccine) {
         var id = vaccine.getVaccinationIdentifier();
 
@@ -34,7 +36,7 @@ public class ImmunizationMapper {
     public static String getDrugName(SSIDrugType ssiDrug) {
         return Optional.ofNullable(ssiDrug)
             .map(SSIDrugType::getDrugName)
-            .orElse(null);
+            .orElse("Unknown vaccine");
     }
 
     public static String getStrength(SSIDrugType ssiDrug) {

@@ -196,39 +196,32 @@
         <structuredBody>
             <#-- Medication Summary: https://art-decor.ehdsi.eu/publication/epsos-html-20240422T073854/tmp-1.3.6.1.4.1.12559.11.10.1.3.1.2.3-2020-09-07T095657.html -->
             <component>
-                <@medicationSection.render medicationSummary=medicationSummary />
+                <@medicationSection.render medicationResult=medicationSummary />
             </component>
-
             <#-- Allergies -->
             <component>
                 <@allergySection.render />
             </component>
-
             <#-- Immunizations -->
             <component>
-                <@immunizationSection.render immunizations=immunizations />
+                <@immunizationSection.render immunizationResult=immunizations />
             </component>
-
             <#-- List of Surgeries -->
             <#-- DK has this information, but getting access to it is not in scope -->
             <component>
                 <@surgerySection.render />
             </component>
-
             <#-- History of past illnesses (not required) -->
-
             <#-- Active Problems -->
             <#-- Not in scope for the project. -->
             <component>
                 <@activeProblemsSection.render />
             </component>
-
             <#-- Medical Devices -->
             <#-- DK only has this in a very unstructured format -->
             <component>
                 <@medicalDevicesSection.render />
             </component>
-
             <#-- Health Maintenance Care Plan (not required) -->
             <#-- Functional Status (not required) -->
             <#-- Social History (not required) -->

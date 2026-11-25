@@ -22,11 +22,9 @@ import jakarta.xml.bind.annotation.XmlType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <sequence>
- *           <element name="AuthorisedHealthcareProfessional" type="{http://vaccinationsregister.dk/schemas/2013/12/01}AuthorisedHealthcareProfessionalType" minOccurs="0"/>
- *           <element name="Other" type="{http://vaccinationsregister.dk/schemas/2013/12/01}ModificatorPersonType" minOccurs="0"/>
- *           <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType" minOccurs="0"/>
- *         </sequence>
+ *         <element name="AuthorisedHealthcareProfessional" type="{http://vaccinationsregister.dk/schemas/2013/12/01}AuthorisedHealthcareProfessionalType" minOccurs="0"/>
+ *         <element name="Other" type="{http://vaccinationsregister.dk/schemas/2013/12/01}ModificatorPersonType" minOccurs="0"/>
+ *         <element name="Organisation" type="{http://vaccinationsregister.dk/schemas/2013/12/01}OrganisationType" minOccurs="0"/>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
