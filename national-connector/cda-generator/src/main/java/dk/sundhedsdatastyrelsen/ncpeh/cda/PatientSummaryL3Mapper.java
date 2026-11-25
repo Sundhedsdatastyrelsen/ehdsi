@@ -120,8 +120,7 @@ public class PatientSummaryL3Mapper {
     }
 
     private static MedicationSummary medicationSummary(List<DrugMedicationType> medications) {
-        if (medications == null)
-        {
+        if (medications == null) {
             return null;
         }
 

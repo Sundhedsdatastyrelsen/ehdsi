@@ -36,7 +36,7 @@ public class ImmunizationMapper {
     public static String getDrugName(SSIDrugType ssiDrug) {
         return Optional.ofNullable(ssiDrug)
             .map(SSIDrugType::getDrugName)
-            .orElse(null);
+            .orElse("Unknown vaccine");
     }
 
     public static String getStrength(SSIDrugType ssiDrug) {
