@@ -3,6 +3,9 @@
   <div class="mt-10 mx-auto bg-white p-4">
     <p class="font-bold">Patient-id: ${patientId}</p>
 
+<#if !prescriptions?has_content>
+    <p class="mt-4">Patienten har ingen tilgængelige recepter.</p>
+<#else>
     <div class="overflow-x-auto">
       <div class="mt-4 table text-left border-collapse w-max min-w-full">
         <div class="table-header-group">
@@ -42,5 +45,6 @@
         </div>
       </div>
     </div>
+</#if>
   </div>
 </@layout.page>

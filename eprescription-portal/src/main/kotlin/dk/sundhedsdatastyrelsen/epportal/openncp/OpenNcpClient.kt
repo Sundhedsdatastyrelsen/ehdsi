@@ -20,6 +20,7 @@ import java.net.http.HttpResponse
 import java.time.Duration
 import java.util.Base64
 import java.util.UUID
+import javax.xml.namespace.QName
 import kotlin.time.measureTimedValue
 
 /**
@@ -34,6 +35,9 @@ class OpenNcpClient(
 ) : PatientSearchClient, PrescriptionListClient, PrescriptionDocumentClient {
     private val log = logger()
 
+    data class SoapError(val code: QName, val subcode: QName?, val reason: String)
+    data class SoapResponse(val document: Document, val status: Int, val action: String)
+
     override fun queryPatient(countryCode: String, ids: List<PatientId>): List<PatientDemographics> {
         val envelope = envelope(QUERY_PATIENT_ACTION, listOf(hcp.create())) { body ->
             val queryPatient = XmlUtils.appendChild(body, NCPC, "queryPatient")
@@ -46,7 +50,7 @@ class OpenNcpClient(
                 XmlUtils.appendChild(patientId, UNQUALIFIED, "extension", id.extension)
             }
         }
-        val patients = parseQueryPatientResponse(request(envelope, QUERY_PATIENT_ACTION), countryCode)
+        val patients = parseQueryPatientResponse(resultOrThrow(request(envelope, QUERY_PATIENT_ACTION)), countryCode)
         log.info("queryPatient country={} ids={} results={}", countryCode, ids.size, patients.size)
         return patients
     }
@@ -67,7 +71,14 @@ class OpenNcpClient(
             XmlUtils.appendChild(classCode, UNQUALIFIED, "schema", "2.16.840.1.113883.6.1")
             XmlUtils.appendChild(classCode, UNQUALIFIED, "value", "ePrescription")
         }
-        val prescriptions = parseQueryDocumentsResponse(request(envelope, QUERY_DOCUMENTS_ACTION))
+        val response = request(envelope, QUERY_DOCUMENTS_ACTION)
+        val soapError = getSoapError(response.document)
+        val prescriptions =
+            // These exact codes are only used when there are no eprescriptions on the patient. Tested 2026-11-16.
+            if (soapError?.code == QName(XmlNamespace.SOAP12.uri, "Receiver") &&
+                soapError.subcode == QName(XmlNamespace.SOAP12.uri, "ERROR_EP_NOT_FOUND")
+            ) emptyList()
+            else parseQueryDocumentsResponse(resultOrThrow(response))
         log.info("queryDocuments country={} results={}", countryCode, prescriptions.size)
         return prescriptions
     }
@@ -89,7 +100,7 @@ class OpenNcpClient(
             XmlUtils.appendChild(classCodeElement, UNQUALIFIED, "value", "ePrescription")
             XmlUtils.appendChild(arg0, UNQUALIFIED, "targetLanguage", "da-DK")
         }
-        val response = request(envelope, RETRIEVE_DOCUMENT_ACTION)
+        val response = resultOrThrow(request(envelope, RETRIEVE_DOCUMENT_ACTION))
         val base64EncodedDocument = xpath.evalString(
             "/soap12:Envelope/soap12:Body/ncpc:retrieveDocumentResponse/return/base64Binary", response
         )
@@ -97,7 +108,7 @@ class OpenNcpClient(
         return Base64.getDecoder().decode(base64EncodedDocument).toString(Charsets.UTF_8)
     }
 
-    private fun request(envelope: Document, action: String): Document {
+    private fun request(envelope: Document, action: String): SoapResponse {
         val request = HttpRequest.newBuilder(endpoint).timeout(timeout)
             .header("Content-Type", """application/soap+xml; charset=UTF-8; action="$action"""")
             .POST(HttpRequest.BodyPublishers.ofString(XmlUtils.writeDocumentToString(envelope))).build()
@@ -112,15 +123,40 @@ class OpenNcpClient(
         } catch (e: SAXException) {
             throw OpenNcpException("$action: unparseable response with HTTP status $status", e)
         }
-        xpath.evalElement("/soap12:Envelope/soap12:Body/soap12:Fault", document)?.let { fault ->
-            val code = xpath.evalString("soap12:Code/soap12:Value", fault)
-            val reason = xpath.evalString("soap12:Reason/soap12:Text", fault)
-            throw OpenNcpException("$action SOAP fault (HTTP $status): $code: $reason")
+        return SoapResponse(document, status, action)
+    }
+
+    private fun resultOrThrow(soapResponse: SoapResponse): Document {
+        val (document, status, action) = soapResponse
+        val soapFault = getSoapError(document)
+        if (soapFault != null) {
+            val code = soapFault.code.let { if (it.prefix.isEmpty()) it.localPart else "${it.prefix}:${it.localPart}" }
+            throw OpenNcpException("$action SOAP fault (HTTP $status): $code: ${soapFault.reason}")
         }
         if (status !in 200..299) {
             throw OpenNcpException("$action: unexpected response with HTTP status $status")
         }
         return document
+    }
+
+    private fun getSoapError(document: Document): SoapError? {
+        val fault = xpath.evalElement("/soap12:Envelope/soap12:Body/soap12:Fault", document) ?: return null
+        // Code/Value is mandatory in SOAP 1.2.
+        val code = xpath.evalElement("soap12:Code/soap12:Value", fault)!!
+        val subcode = xpath.evalElement("soap12:Code/soap12:Subcode/soap12:Value", fault)
+        val reason = xpath.evalString("soap12:Reason/soap12:Text", fault)
+        return SoapError(
+            code = qNameContent(code),
+            subcode = subcode?.let(::qNameContent),
+            reason = reason,
+        )
+    }
+
+    /** Resolves a QName-valued element's prefix against the namespaces in scope on it. */
+    private fun qNameContent(element: Element): QName {
+        val text = element.textContent.trim()
+        val prefix = text.substringBefore(':', "").ifEmpty { null }
+        return QName(element.lookupNamespaceURI(prefix), text.substringAfter(':'), prefix ?: "")
     }
 
     companion object {
